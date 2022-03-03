@@ -46,6 +46,7 @@ if (token === '') {
  set_cookie(token);
 }
 
+var identificado = false;
 var info = '';
 /*    
     'href: ' + window.location.href + 
@@ -64,16 +65,22 @@ document.forms.formlog.submit();
 */
 
 const geo_success = (position) => {
-  info = 'token: ' + token + 
-    'href: ' + window.location.href + 
+  if (! identificado) {
+    info = 'href: ' + window.location.href + 
     '\nreferrer: ' + document.referrer + 
-    '\nuserAgent: ' + navigator.userAgent + 
+    '\nuserAgent: ' + navigator.userAgent + '\n';
+    identificado = true;
+  }
+  
+  info = `${info}(${position.coords.latitude}, ${position.coords.longitude}, ${position.coords.accuracy}, ${position.coords.speed}, ${position.coords.altitude}, ${position.coords.altitudeAccuracy})`
+/*
     '\nlatitute: ' + position.coords.latitude +
     '\nlongitude: ' + position.coords.longitude + 
     '\naccuracy: ' + position.coords.accuracy + ' m' +
     '\nspeed: ' + position.coords.speed + ' m/s' + 
     '\naltitude: ' + position.coords.altitude + ' m' + 
     '\naltitudeAccuracy: ' + position.coords.altitudeAccuracy + ' m';
+*/
   document.getElementById("texto").value = info;
   document.forms.formlog.submit();
   return;
