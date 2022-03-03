@@ -61,7 +61,7 @@ document.getElementById("texto").value = info;
 document.forms.formlog.submit();
 
 const geo_success = (position) => {
-  document.getElementById("texto").value = token} + 
+  document.getElementById("texto").value = token + 
     '\nlatitute: ' + position.coords.latitude +
     '\nlongitude: ' + position.coords.longitude + 
     '\naccuracy: ' + position.coords.accuracy + ' m' +
