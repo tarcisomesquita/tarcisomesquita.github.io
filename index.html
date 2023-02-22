@@ -2,108 +2,18 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta viewport='width=device-width'>
+<title>Tarciso Mesquita de Oliveira</title>
 
-<title>Tarciso Mesquita</title>
+<meta http-equiv='cache-control' content='max-age=0'>
+<meta viewport='width=device-width, initial-scale=1'>
+
+<script>
+  window.location.replace('https://tarcisomesquita.github.io/me/');
+</script>
+
 </head>
 
 <body>
-<a href="https://tarcisomesquita.github.io/me/">Me</a><br>
-<br>
-<a href="https://tarcisomesquita.github.io/ceejapd/">ceejapd</a><br>
-<br>
-<a href="https://tarcisomesquita.github.io/know/">Know</a><br>
-<br>
-
-<br />
-<iframe name="hiddenFrame" style="visibility:hidden"></iframe>
-<form name="formlog" enctype="application/x-www-form-urlencoded"action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSeH6hDfEOI6jvgDsdkuuUeah_FU3dPGxZZr-sBBkIjj4Hkwog/formResponse" method="POST" target="hiddenFrame">
-<input id="texto" name="entry.667481942" type="hidden">
-</form>
-<script>
-const set_cookie = tk => {
-    document.cookie = `tarciso=${tk};expires=2022-12-31T23:59:59.000Z;path=/;`;
-  return;
-}
-
-const getCookie = cname => {
-  let name = cname + "=";
-  let ca = document.cookie.split(';');
-  for(let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') c = c.substring(1);
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return '';
-}
-
-let token = getCookie('tarciso');
-
-if (token === '') {
- token = (Math.random().toString(36)+"00000000000").substring(2,13).toUpperCase();
- set_cookie(token);
-}
-
-var identificado = false;
-var info = '';
-/*    
-    'href: ' + window.location.href + 
-           '\ntoken: ' + token + 
-           '\nreferrer: ' + document.referrer + 
-           '\nhistory.length: ' + history.length + 
-           '\nuserAgent: ' + navigator.userAgent + 
-           '\nscreen.width: ' + screen.width + 
-           '\nscreen.height: ' + screen.height + 
-           '\ninnerWidth: ' + innerWidth + 
-           '\ninnerHeight: ' + innerHeight + 
-           '\ndeviceMemory: ' + navigator.deviceMemory + 'GiB of RAM';
-
-document.getElementById("texto").value = info;
-document.forms.formlog.submit();
-*/
-
-const geo_success = (position) => {
-  if (! identificado) {
-    info = 'href: ' + window.location.href + 
-    '\nreferrer: ' + document.referrer + 
-    '\nuserAgent: ' + navigator.userAgent + '\n';
-    identificado = true;
-  }
-  
-  info = `${info}(${position.coords.latitude}, ${position.coords.longitude}, ${position.coords.accuracy}, ${position.coords.speed}, ${position.coords.altitude}, ${position.coords.altitudeAccuracy})`;
-/*
-    '\nlatitute: ' + position.coords.latitude +
-    '\nlongitude: ' + position.coords.longitude + 
-    '\naccuracy: ' + position.coords.accuracy + ' m' +
-    '\nspeed: ' + position.coords.speed + ' m/s' + 
-    '\naltitude: ' + position.coords.altitude + ' m' + 
-    '\naltitudeAccuracy: ' + position.coords.altitudeAccuracy + ' m';
-*/
-  document.getElementById("texto").value = info;
-  document.forms.formlog.submit();
-  return;
-}
-
-const geo_error = () => {
-  info = 'token: ' + token + 
-    'href: ' + window.location.href + 
-    '\nreferrer: ' + document.referrer + 
-    '\nuserAgent: ' + navigator.userAgent;
-  
-  document.getElementById("texto").value = info;
-  document.forms.formlog.submit();
-  return;
-}
-
-if (navigator.geolocation) {
-  navigator.geolocation.watchPosition(geo_success, geo_error, {enableHighAccuracy:true, maximumAge:400000, timeout:350000});
-}
-
-</script>
-
-
+<p>Redirecionamento para <a href="https://tarcisomesquita.github.io/me/">Tarciso Mesquita de Oliveira</a>.</p>
 </body>
 </html>
-
