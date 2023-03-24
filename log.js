@@ -30,7 +30,7 @@ if (logEmail === '') {
   set_cookie('email', logEmail);
 }
 
-let logMsg = `entry.340072360=${location.href};${token};${email};${screen.width}x${screen.height};${navigator.deviceMemory};${navigator.userAgent.replace(/;/g,',')}`;
+let logMsg = `entry.340072360=${location.href};${logToken};${logEmail};${screen.width}x${screen.height};${navigator.deviceMemory};${navigator.userAgent.replace(/;/g,',')}`;
 
 fetch(
   'https://docs.google.com/forms/u/0/d/e/1FAIpQLScGwq8tvtiFUjhTQ58SlhN0b9rymqGGeXbJJoFB2YWks4FSPA/formResponse', 
