@@ -1,3 +1,6 @@
+let logToken = '';
+let logEmail = '';
+
 const set_cookie = (id,value) => {
   let expira = new Date((new Date()).getTime() + 365*24*3600*1000).toISOString();
   document.cookie = `${id}=${value};expires=${expira};path=/;`;
@@ -16,8 +19,8 @@ function getCookie(id) {
   return '';
 }
 
-let logToken = getCookie('token');
-let logEmail = getCookie('email');
+logToken = getCookie('token');
+logEmail = getCookie('email');
 
 
 if (logToken === '') {
