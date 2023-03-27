@@ -3,7 +3,7 @@ let logEmail = '';
 
 const set_cookie = (id,value) => {
   let expira = new Date((new Date()).getTime() + 365*24*3600*1000).toISOString();
-  document.cookie = `${id}=${value};expires=${expira};path=/;`;
+  document.cookie = `${id}=${value};expires=${expira};path=/;samesite=none;secure;`;
 }
 
 function getCookie(id) {
