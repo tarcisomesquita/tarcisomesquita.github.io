@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+
+<title>Login</title>
+<meta name="description" content="Login no CEEJA Paulo Decourt para acessar os serviços disponíveis">
+
+<meta http-equiv="cache-control" content="max-age=0">
+<meta viewport="width=device-width, initial-scale=1">
+
+<script src="https://tarcisomesquita.github.io/log.js"></script>
+
+<script>
+let parametros = new URLSearchParams(window.location.search);
+let a;
+let r;
+
+if (parametros.has('a')) a = parametros.get('a');
+else a = '';
+
+if (parametros.has('r')) r = parametros.get('r');
+else r = '';
+
+let s = document.createElement('script');
+s.src = `https://script.google.com/macros/s/${scriptId}/exec?a=${a}&r=${r}`;
+document.head.appendChild(s);
+</script>
+
+</head>
+
+<body>
+
+<p>Redirecionar para <a href="https://tarcisomesquita.github.io/index.html">página inicial</a>.</p>
+
+</body>
+</html>
