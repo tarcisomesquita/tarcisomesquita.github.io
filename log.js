@@ -22,10 +22,11 @@ function getCookie(id) {
 logToken = getCookie('token');
 logEmail = getCookie('email');
 
-
+console.log(`logToken = ${logToken}`);
 if (logToken === '') {
   logToken = (Math.random().toString(36)+"00000000000").substring(2,13).toUpperCase();
   set_cookie('token', logToken);
+  console.log(`logToken = ${logToken}`);
 }
 
 if (logEmail === '') {
@@ -33,7 +34,7 @@ if (logEmail === '') {
   set_cookie('email', logEmail);
 }
 
-let logMsg = `entry.340072360=${location.href};${logToken};${logEmail};${screen.width}x${screen.height};${navigator.deviceMemory};${navigator.userAgent.replace(/;/g,',')}`;
+let logMsg = `entry.340072360=${location.href};${logToken};${logEmail};${screen.width}x${screen.height};${document.body.clientWidth}x${document.body.clientHeight };${navigator.deviceMemory}GiB;${navigator.userAgent.replace(/;/g,',')}`;
 
 fetch(
   'https://docs.google.com/forms/u/0/d/e/1FAIpQLScGwq8tvtiFUjhTQ58SlhN0b9rymqGGeXbJJoFB2YWks4FSPA/formResponse', 
