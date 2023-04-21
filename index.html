@@ -61,11 +61,8 @@ function sair() {
 
 <style>
 body {
-  height: 100%;
-  background-color: #FFFFFF;
   font-family: 'Open Sans',sans-serif;
-  color: #000000;
-  font-size: 1em;
+  font-size: 1.5em;
   line-height: 1.5em;
   text-align: justify;
   margin: 0em;
@@ -78,95 +75,87 @@ body {
 
 <!-- begin barra login -->
 <div style="
-height: 60px;
-padding: 6px;
-
-font-family: 'Open Sans',sans-serif;
-color: #000000;
-font-size: 1em;
-line-height: 1.44em;
-
-text-align: center;
-letter-spacing: 0.25px;
-font-weight: 500;
-white-space: nowrap;
+margin: 0.5em;
+height: 3.5em;
+padding: 0px;
+line-height: 3.5em;
 ">
+
 <div style="
-height: 48px;
-padding-right: 4px;
 float: right;
+margin: 0px;
+height: 3.5em;
+padding: 0px;
 ">
-<p id="idBotao" style="display: none; margin: 0px; padding">
-<span onclick="login()" style="
+
+<p id="idBotao" onclick="login()" style="
+display: none;
+
 background: #1a73e8;
-height: 36px;
-min-width: 96px;
 
-border-width: 1px;
+margin: 0px;
+border-width: 0.125em;
 border-style: solid;
-border-radius: 4px;
+border-radius: 0.5em;
 border-color: #ffffff;
-
-padding-top:    9px;
-padding-bottom: 9px;
-padding-left:  23px;
-padding-right: 23px;
-
-margin-left:  8px;
-margin-right: 8px;
-
-block-size: 36px;
 box-sizing: border-box;
-display: inline-block;
+height: 3.5em;
+padding-top:  0.25em;
+padding-bottom: 0.25em;
+padding-left:  1.5em;
+padding-right: 1.5em;
 
-line-height: 16px;
+line-height: 2.75em;
 
 color: #ffffff;
+
+white-space: nowrap;
+
+text-align: center;
+vertical-align: middle;
+
 text-decoration: none;
 cursor: pointer;
 ">Fazer login</span></p>
+
+
 <p id="idEmail" style="
-display: none;
-
-height: 36px;
-padding-top:    9px;
-padding-bottom: 9px;
-padding-left:  23px;
-padding-right: 23px;
-
-margin-left:  8px;
-margin-right: 8px;
-
-block-size: 36px;
-box-sizing: border-box;
-
-line-height: 16px;
-
-">Usuário: <span id="textEmail" style='color:#DD4433'></span> <span onclick="sair()" style="
-background: #cccccc;
-height: 36px;
-min-width: 70px;
-
-border-width: 1px;
-border-style: solid;
-border-radius: 4px;
-border-color: #000000;
-
-padding-top:    9px;
-padding-bottom: 9px;
-padding-left:  23px;
-padding-right: 23px;
-
-margin-left:  8px;
-margin-right: 8px;
-
-block-size: 36px;
-box-sizing: border-box;
 display: inline-block;
 
-line-height: 16px;
+margin: 0px;
+border-width: 0px;
+height: 3.5em;
+padding-top:  0.25em;
+padding-bottom: 0.25em;
+padding-left:  1.5em;
+padding-right: 1.5em;
 
-color: #000000;
+line-height: 3em;
+
+white-space: nowrap;
+
+text-align: center;
+vertical-align: middle;
+">
+Usuário: 
+<span id="textEmail" style='color:#DD4433'></span>
+<span onclick="sair()" style="
+background: #cccccc;
+
+margin: 0px;
+border-width: 0.125em;
+border-style: solid;
+border-radius: 0.5em;
+border-color: #000000;
+box-sizing: border-box;
+height: 3em;
+padding-top:  0.25em;
+padding-bottom: 0.25em;
+padding-left:  1.5em;
+padding-right: 1.5em;
+
+line-height: 2.5em;
+
 text-decoration: none;
 cursor: pointer;
 ">Sair</span>
@@ -175,7 +164,7 @@ cursor: pointer;
 </div>
 <!-- end barra login -->
 
-<div style="text-align: center; heigth: 40em; ">
+<div style="text-align: center; heigth: 60em; ">
 <img src="https://tarcisomesquita.github.io/ceejapd/imagens/p_logo.svg" heigth="100%" alt="logo do CEEJA Paulo Decourt">
 </div>
 <h1 style="text-align:center">CEEJA Paulo Decourt</h1>
