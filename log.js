@@ -1,12 +1,7 @@
 let logToken = '';
 let logEmail = '';
 
-const set_cookie = (id,value) => {
-  let expira = new Date((new Date()).getTime() + 365*24*3600*1000).toISOString();
-  document.cookie = `${id}=${value};expires=${expira};path=/;samesite=none;secure;`;
-}
-
-function getCookie(id) {
+function loggetCookie(id) {
   let name = id + "=";
   let ca = document.cookie.split(';');
   for(let i = 0; i < ca.length; i++) {
@@ -19,25 +14,14 @@ function getCookie(id) {
   return '';
 }
 
-logToken = getCookie('token');
-logEmail = getCookie('email');
+logToken = loggetCookie('token');
+logEmail = loggetCookie('email');
 
-console.log(`getCookie() > token = ${logToken}; usuario = ${logEmail}`);
+console.log(`loggetCookie() > token = ${logToken}; usuario = ${logEmail}`);
 
-console.log(`logToken = ${logToken}`);
-if (logToken === '') {
-  logToken = (Math.random().toString(36)+"00000000000").substring(2,13).toUpperCase();
-  set_cookie('token', logToken);
-  console.log(`logToken = ${logToken}`);
-}
+let logMsg = `entry.340072360=${location.href};${logToken};${logEmail};${screen.width}x${screen.height};${navigator.deviceMemory}GiB;${navigator.userAgent.replace(/;/g,',')}`;
 
-if (logEmail === '') {
-  logEmail = 'indefinido@gmail.com';
-  set_cookie('email', logEmail);
-}
-
-let logMsg = `entry.340072360=${location.href};${logToken};${logEmail};${screen.width}x${screen.height};${document.body.clientWidth}x${document.body.clientHeight };${navigator.deviceMemory}GiB;${navigator.userAgent.replace(/;/g,',')}`;
-
+// to log_pagina
 fetch(
   'https://docs.google.com/forms/u/0/d/e/1FAIpQLScGwq8tvtiFUjhTQ58SlhN0b9rymqGGeXbJJoFB2YWks4FSPA/formResponse', 
   {
