@@ -9,14 +9,32 @@
 <meta http-equiv="cache-control" content="max-age=0">
 <meta viewport="width=device-width, initial-scale=1">
 
-<script src="https://tarcisomesquita.github.io/log.js"></script>
-
 <script>
+function getCookie(id) {
+  let name = id + "=";
+  let ca = document.cookie.split(';');
+  for(let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') c = c.substring(1);
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return '';
+}
+
+let logToken = getCookie('token');
+
+console.log(`logToken = ${logToken}`);
+
+if (logToken === '')  window.location.href = 'https://tarcisomesquita.github.io';
+
 let parametros = new URLSearchParams(window.location.search);
 let access_token;
 
 if (parametros.has('access_token')) {
   access_token = parametros.get('access_token');
+  console.log(`access_token = ${access_token}`);
   fetch(
     'https://docs.google.com/forms/u/0/d/e/1FAIpQLScGwq8tvtiFUjhTQ58SlhN0b9rymqGGeXbJJoFB2YWks4FSPA/formResponse', 
     {
@@ -42,13 +60,14 @@ else access_token = '';
 if (parametros.has('expires_in')) expires_in = parametros.get('expires_in');
 else expires_in = '';
 
+window.location.href = 'https://tarcisomesquita.github.io';
 </script>
 
 </head>
 
 <body>
 
-<p>Redirecionar para <a href="https://tarcisomesquita.github.io/index.html">página inicial</a>.</p>
+<p>Redirecionar para <a href="https://tarcisomesquita.github.io">página inicial</a>.</p>
 
 </body>
 </html>
