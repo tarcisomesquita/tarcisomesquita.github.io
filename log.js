@@ -22,6 +22,8 @@ function getCookie(id) {
 logToken = getCookie('token');
 logEmail = getCookie('email');
 
+console.log(`getCookie() > token = ${logToken}; usuario = ${logEmail}`);
+
 console.log(`logToken = ${logToken}`);
 if (logToken === '') {
   logToken = (Math.random().toString(36)+"00000000000").substring(2,13).toUpperCase();
