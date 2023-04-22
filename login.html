@@ -69,6 +69,8 @@ async function fetchInfo() {
       'https://www.googleapis.com/oauth2/v1/userinfo',
       {
         method: 'GET',
+        mode: 'no-cors',
+        credentials: 'omit',
         headers: {  
           Authorization: `Bearer ${access_token}`
         }
