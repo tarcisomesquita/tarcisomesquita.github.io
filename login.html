@@ -9,29 +9,6 @@
 <meta http-equiv="cache-control" content="max-age=0">
 <meta viewport="width=device-width, initial-scale=1">
 
-<script>
-function getCookie(id) {
-  let name = id + "=";
-  let ca = document.cookie.split(';');
-  for(let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') c = c.substring(1);
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return '';
-}
-
-let logToken = getCookie('token');
-
-console.log(`logToken = ${logToken}`);
-
-if (logToken === '')  {
-  console.log('Não tem logToken');
-  window.location.href = 'https://tarcisomesquita.github.io';
-}
-
 let parametros = new URLSearchParams(window.location.search);
 
 if (! parametros.has('access_token')) {
@@ -42,6 +19,7 @@ if (! parametros.has('access_token')) {
 let access_token = parametros.get('access_token');
 console.log(`access_token = ${access_token}`);
 
+/*
 async function enviarToken() {
   try {
     const response = await fetch(
@@ -96,6 +74,7 @@ userinfo.then((data) => {console.log(JSON.stringify(data))});
 //else expires_in = '';
 
 window.location.href = 'https://tarcisomesquita.github.io';
+*/
 </script>
 
 </head>
