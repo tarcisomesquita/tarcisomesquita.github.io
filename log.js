@@ -1,6 +1,3 @@
-let logToken = '';
-let logEmail = '';
-
 function loggetCookie(id) {
   let name = id + "=";
   let ca = document.cookie.split(';');
@@ -14,23 +11,32 @@ function loggetCookie(id) {
   return '';
 }
 
-logToken = loggetCookie('token');
-logEmail = loggetCookie('email');
+function logsend() {
+  let logCookie = loggetCookie('logCookie');
+  let logEmail = '';
+  console.log(`loggetCookie() > logCookie = ${logCookie}`);
 
-console.log(`loggetCookie() > token = ${logToken}; usuario = ${logEmail}`);
-
-let logMsg = `entry.340072360=${location.href};${logToken};${logEmail};${screen.width}x${screen.height};${navigator.deviceMemory}GiB;${navigator.userAgent.replace(/;/g,',')}`;
-
-// to log_pagina
-fetch(
-  'https://docs.google.com/forms/u/0/d/e/1FAIpQLScGwq8tvtiFUjhTQ58SlhN0b9rymqGGeXbJJoFB2YWks4FSPA/formResponse', 
-  {
-    method: 'POST',
-    mode: 'no-cors',
-    credentials: 'omit',
-    headers: {  
-      'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
-    },
-    'body': encodeURI(logMsg)
+  if (logCookie === '') {
+    logCookie = (Math.random().toString(36) + "00000000000").substring(2,13).toUpperCase();
+    document.cookie = `logCookie=${logCookie};expires=2024-01-01T00:00:00.000Z;path=/;samesite=none;secure;`;
   }
-);
+  console.log(`loggetCookie() > logCookie = ${logCookie}`);
+
+  let logMsg = `entry.340072360=${location.href};${logCookie};${logEmail};${screen.width}x${screen.height};${navigator.deviceMemory}GiB;${navigator.userAgent.replace(/;/g,',')}`;
+  
+  // to log_pagina
+  fetch(
+    'https://docs.google.com/forms/u/0/d/e/1FAIpQLScGwq8tvtiFUjhTQ58SlhN0b9rymqGGeXbJJoFB2YWks4FSPA/formResponse', 
+    {
+      method: 'POST',
+      mode: 'no-cors',
+      credentials: 'omit',
+      headers: {  
+        'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+      },
+     'body': encodeURI(logMsg)
+    }
+  );
+}
+
+window.onload = logsend;
