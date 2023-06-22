@@ -14,13 +14,13 @@ function loggetCookie(id) {
 function logsend() {
   let logCookie = loggetCookie('logCookie');
   let logEmail = loggetCookie('usuario');
-  console.log(`loggetCookie() > logCookie = ${logCookie}`);
+  //console.log(`loggetCookie() > logCookie = ${logCookie}`);
 
   if (logCookie === '') {
     logCookie = (Math.random().toString(36) + "00000000000").substring(2,13).toUpperCase();
     document.cookie = `logCookie=${logCookie};expires=2024-01-01T00:00:00.000Z;path=/;samesite=none;secure;`;
   }
-  console.log(`loggetCookie() > logCookie = ${logCookie}`);
+  //console.log(`loggetCookie() > logCookie = ${logCookie}`);
 
   let logMsg = `entry.340072360=${location.href};${logCookie};${logEmail};${screen.width}x${screen.height};${navigator.deviceMemory}GiB;${navigator.userAgent.replace(/;/g,',')}`;
   
@@ -37,8 +37,12 @@ function logsend() {
      'body': encodeURI(logMsg)
     }
   );
-
+  
   if (location.href === 'https://tarcisomesquita.github.io/ceejapd/index4.html') startApp();
+  if (
+    location.href === 'https://tarcisomesquita.github.io/ceejapd/' ||
+    location.href === 'https://tarcisomesquita.github.io/ceejapd/index.html'
+  ) startApp();
 }
 
 window.onload = logsend;
