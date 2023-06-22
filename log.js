@@ -13,7 +13,7 @@ function loggetCookie(id) {
 
 function logsend() {
   let logCookie = loggetCookie('logCookie');
-  let logEmail = '';
+  let logEmail = loggetCookie('usuario');
   console.log(`loggetCookie() > logCookie = ${logCookie}`);
 
   if (logCookie === '') {
@@ -37,6 +37,8 @@ function logsend() {
      'body': encodeURI(logMsg)
     }
   );
+
+  if (location.href === 'https://tarcisomesquita.github.io/ceejapd/index4.html') startApp();
 }
 
 window.onload = logsend;
