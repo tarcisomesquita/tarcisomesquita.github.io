@@ -38,7 +38,6 @@ function logsend() {
     }
   );
   
-  if (location.href === 'https://tarcisomesquita.github.io/ceejapd/index4.html') startApp();
   if (
     location.href === 'https://tarcisomesquita.github.io/ceejapd/' ||
     location.href === 'https://tarcisomesquita.github.io/ceejapd/index.html'
