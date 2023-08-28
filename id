@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+
+<title>Justificativa de ausência</title>
+<meta name="description" content="Justificar ausência no CEEJA Paulo Decourt">
+
+<meta http-equiv="cache-control" content="max-age=0">
+<meta viewport="width=device-width, initial-scale=1">
+
+<style>
+body {
+  height: 100%;
+  background-color: #FFFFFF;
+  font-family: 'Open Sans',sans-serif;
+  color: #000000;
+  font-size: 1em;
+  line-height: 1.44em;
+  text-align: justify;
+  margin: 0em;
+  padding: 1em;
+}
+</style>
+
+</head>
+
+<body>
+
+<p  id="mensagem">Espere<br><br>Registrando sua justificativa ...</p>
+
+<script>
+let scriptId = 'AKfycbxtgB04DVHy8qT4fu81EXkWmJC4ioWrn6gI-voE5wZi519nTYP0h1e3-Gd2at_RvZ9x'; // 11 30 dias
+
+let parametros = new URLSearchParams(window.location.search);
+let c;
+
+if (parametros.has('c')) c = parametros.get('c');
+else c = '';
+
+let s = document.createElement('script');
+s.src = `https://script.google.com/macros/s/${scriptId}/exec?c=${c}`;
+// document.head.appendChild(s);
+</script>
+
+</body>
+</html>
