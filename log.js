@@ -46,4 +46,4 @@ function logsend() {
   if (location.href === 'https://tarcisomesquita.github.io/ceejapd/teste_dev.html') startApp();
 }
 
-window.onload = logsend;
+logsend();
