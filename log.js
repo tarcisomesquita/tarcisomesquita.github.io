@@ -18,11 +18,12 @@ function logsend() {
 
   if (logCookie === '') {
     logCookie = (Math.random().toString(36) + "00000000000").substring(2,13).toUpperCase();
-    document.cookie = `logCookie=${logCookie};expires=2024-01-01T00:00:00.000Z;path=/;samesite=none;secure;`;
+    document.cookie = `logCookie=${logCookie};expires=2025-01-01T00:00:00.000Z;path=/;samesite=none;secure;`;
   }
   //console.log(`loggetCookie() > logCookie = ${logCookie}`);
-
-  let logMsg = `entry.340072360=${location.href};${logCookie};${logEmail};${screen.width}x${screen.height};${navigator.deviceMemory}GiB;${navigator.userAgent.replace(/;/g,',')}`;
+  
+  // definido em 2023/09/22
+  let logMsg = `entry.340072360=${document.URL};${logCookie};${logEmail};${screen.width}x${screen.height};${navigator.deviceMemory}GiB;${navigator.userAgent.replace(/;/g,',')};${document.referrer}`;
   
   // to log_pagina
   fetch(
