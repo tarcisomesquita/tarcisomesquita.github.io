@@ -34,7 +34,7 @@ function logsend() {
       headers: {  
         'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
       },
-     'body': encodeURI(logMsg)
+     'body': encodeURIComponent(logMsg)
     }
   );
   
