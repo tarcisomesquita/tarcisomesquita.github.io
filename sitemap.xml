@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://tarcisomesquita.github.io/me/index.html</loc>
+    <loc>https://tarcisomesquita.github.io/index.html</loc>
   </url>
   <url>
-    <loc>https://tarcisomesquita.github.io/me/Resume_Tarciso.pdf</loc>
+    <loc>https://tarcisomesquita.github.io/tarciso_2015.jpg</loc>
   </url>
   <url>
-    <loc>https://tarcisomesquita.github.io/me/reflexoes.html</loc>
+    <loc>https://tarcisomesquita.github.io/Resume_Tarciso.pdf</loc>
+  </url>
+  <url>
+    <loc>https://tarcisomesquita.github.io/reflexoes.html</loc>
   </url>
   <url>
     <loc>https://tarcisomesquita.github.io/know/index.html</loc>
