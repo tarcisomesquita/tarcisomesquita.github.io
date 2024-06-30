@@ -1,10 +1,12 @@
 // https://script.google.com/macros/s/AKfycbwI36juvWymTRdM5LJmKwuUd5cUr4ZUI3AlxGr5TBP6Zv7U-tHAtR-fkBwqbSJbn3BgHA/exec
 /*
+function doGet() {
+  let response = UrlFetchApp.fetch('https://raw.githubusercontent.com/tarcisomesquita/tarcisomesquita.github.io/main/eval.gs');
+  let entrada = response.getContentText();
   let saida = HtmlService.createHtmlOutput('');
-  
   eval(entrada);
-  
   return saida;
+}
 */
 
 let a = 2;
@@ -20,4 +22,3 @@ let output = `
 `;
 
 saida.setContent(output);
-
