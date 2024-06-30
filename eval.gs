@@ -1,3 +1,4 @@
+// https://script.google.com/macros/s/AKfycbwI36juvWymTRdM5LJmKwuUd5cUr4ZUI3AlxGr5TBP6Zv7U-tHAtR-fkBwqbSJbn3BgHA/exec
 /*
   let saida = HtmlService.createHtmlOutput('');
   
@@ -14,7 +15,7 @@ let output = `
   <p>${a + b} é o resultado de ${a} + ${b}</p>
 
   <script>
-  console.log('Estou AQUI');
+  console.log('Estou AQUI em ${(new Date()).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}');
   </script>
 `;
 
