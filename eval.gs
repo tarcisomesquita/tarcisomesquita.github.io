@@ -1,2 +1,2 @@
 // 
-return ContentService.createTextOutput("hello world!");
+return HtmlService.createHtmlOutput('<b>Hello, world!</b>');
