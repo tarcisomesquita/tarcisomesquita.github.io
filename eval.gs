@@ -1,4 +1,11 @@
-// 
+/*
+  let saida = HtmlService.createHtmlOutput('');
+  
+  eval(entrada);
+  
+  return saida;
+*/
+
 let a = 2;
 let b = 5;
 let output = `
