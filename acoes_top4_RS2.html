@@ -68,7 +68,12 @@ function html2array(codigoFonte) {
 async function atualizar() {
   let text = '';
   try {
-    const response = await fetch('https://www.dadosdemercado.com.br/bolsa/acoes');
+    const response = await fetch(
+      'https://www.dadosdemercado.com.br/bolsa/acoes', 
+      {
+        mode: 'no-cors'
+      }
+    );
     text = await response.text();
   } catch (error) {
     container.innerHTML = `<p>${error}</p>`;
@@ -98,7 +103,7 @@ async function atualizar() {
 `;
 }
 
-atualizar();
+await atualizar();
 </script>
 </body>
 </html>
