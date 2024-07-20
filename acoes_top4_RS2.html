@@ -75,35 +75,34 @@ async function atualizar() {
       }
     );
     text = await response.text();
+    const returnArray = html2array(text);
+    
+    let ultima, negocios, top = [];
+    for (let i = 2; i < returnArray.length; i++) {
+      ultima = parseFloat(returnArray[i][4].replace(',', '.'));
+      negocios = parseInt(returnArray[i][3].replace(/[.]/g, ''));
+      
+      if (ultima < 2 && negocios > 1000000) {
+        let classificacao = Math.trunc(negocios * ultima).toString().padStart(9, '0');
+        top.push([classificacao, returnArray[i][1], returnArray[i][4]]);
+      }
+    }
+  
+    top = top.sort().reverse();
+    console.log(JSON.stringify(top).replace(/\[/g, '\n['));
+    
+    container.innerHTML = `
+  <iframe class="cell c11" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${top[0][1]}" title="${top[0][1]}" frameborder="0" allowfullscreen></iframe>
+  <iframe class="cell c12" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${top[1][1]}" title="${top[1][1]}" frameborder="0" allowfullscreen></iframe>
+  <iframe class="cell c21" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${top[2][1]}" title="${top[2][1]}" frameborder="0" allowfullscreen></iframe>
+  <iframe class="cell c22" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${top[3][1]}" title="${top[3][1]}" frameborder="0" allowfullscreen></iframe>
+  `;
   } catch (error) {
     container.innerHTML = `<p>${error}</p>`;
   }
-  
-  const returnArray = html2array(text);
-  
-  let ultima, negocios, top = [];
-  for (let i = 2; i < returnArray.length; i++) {
-    ultima = parseFloat(returnArray[i][4].replace(',', '.'));
-    negocios = parseInt(returnArray[i][3].replace(/[.]/g, ''));
-    
-    if (ultima < 2 && negocios > 1000000) {
-      let classificacao = Math.trunc(negocios * ultima).toString().padStart(9, '0');
-      top.push([classificacao, returnArray[i][1], returnArray[i][4]]);
-    }
-  }
-
-  top = top.sort().reverse();
-  console.log(JSON.stringify(top).replace(/\[/g, '\n['));
-  
-  container.innerHTML = `
-<iframe class="cell c11" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${top[0][1]}" title="${top[0][1]}" frameborder="0" allowfullscreen></iframe>
-<iframe class="cell c12" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${top[1][1]}" title="${top[1][1]}" frameborder="0" allowfullscreen></iframe>
-<iframe class="cell c21" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${top[2][1]}" title="${top[2][1]}" frameborder="0" allowfullscreen></iframe>
-<iframe class="cell c22" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${top[3][1]}" title="${top[3][1]}" frameborder="0" allowfullscreen></iframe>
-`;
 }
 
-await atualizar();
+atualizar();
 </script>
 </body>
 </html>
