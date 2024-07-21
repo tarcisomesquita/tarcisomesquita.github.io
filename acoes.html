@@ -4,53 +4,28 @@
 <head>
   <meta charset="utf-8">
   <title>Ações mais negociadas</title>
-  <meta name="description" content="Ações mais negociadas com preço menor que R$5,00">
+  <meta name="description" content="Ações buy and hold">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+
+<script src="https://tarcisomesquita.github.io/log.js" defer></script>
 
 <style>
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr));
+  grid-template-columns: repeat(2, 1fr));
   grid-template-rows: repeat(2, 1fr);
   gap: 5px;
-	height: 100vh;
+  height: 100vh;
 }
 
-.one {
-  grid-column: 1;
-  grid-row: 1;
+.c11 { grid-row: 1; grid-column: 1; }
+.c12 { grid-row: 1; grid-column: 2; }
+.c21 { grid-row: 2; grid-column: 1; }
+.c22 { grid-row: 2; grid-column: 2; }
+
+.cell {
   width: 100%;
-  height: 100%;
-}
-.two {
-  grid-column: 2;
-  grid-row: 1;
-  width: 100%;
-  height: 100%;
-}
-.three {
-  grid-column: 3;
-  grid-row: 1;
-  width: 100%;
-  height: 100%;
-}
-.four {
-  grid-column: 1;
-  grid-row: 2;
-  width: 100%;
-  height: 100%;
-}
-.five {
-  grid-column: 2;
-  grid-row: 2;
-  width: 100%;
-  height: 100%;
-}
-.six {
-  grid-column: 3;
-  grid-row: 2;
-  width: 100%;
-  height: 100%;
+  height: 49vh;
 }
 
 iframe {
@@ -63,24 +38,18 @@ iframe {
 
 <body>
 
-<div class="grid-container">
-<iframe class="one" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=5D&symbol=HAPV3" title="HAPV3" frameborder="0" allowfullscreen></iframe>
-<iframe class="two" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=5D&symbol=COGN3" title="COGN3" frameborder="0" allowfullscreen></iframe>
-<iframe class="three" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=5D&symbol=PCAR3" title="PCAR3" frameborder="0" allowfullscreen></iframe>
-	
-<iframe class="four" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=5D&symbol=LWSA3" title="LWSA3" frameborder="0" allowfullscreen></iframe>
-<iframe class="five" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=5D&symbol=PETZ3" title="PETZ3" frameborder="0" allowfullscreen></iframe>
-<iframe class="six" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=5D&symbol=CVCB3" title="CVCB3" frameborder="0" allowfullscreen></iframe>
+<div class="grid-container" id="container">
+  <p>Aguarde, carregando ...</p>
 </div>
 
-<!--
-<iframe src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=5D&symbol=HAPV3" height="45%" width="30%" title="HAPV3"></iframe>
-<iframe src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=5D&symbol=COGN3" height="45%" width="30%" title="COGN3"></iframe>
-<iframe src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=5D&symbol=PCAR3" height="45%" width="30%" title="PCAR3"></iframe>
+<script>
+let acoes = [["CMIG4","CPFE3","VIVT3","CPEL6"]];
 
-<iframe src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=5D&symbol=LWSA3" height="45%" width="30%" title="LWSA3"></iframe>
-<iframe src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=5D&symbol=PETZ3" height="45%" width="30%" title="PETZ3"></iframe>
-<iframe src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=5D&symbol=CVCB3" height="45%" width="30%" title="CVCB3"></iframe>
--->
-</body>
+container.innerHTML = `
+  <iframe class="cell c11" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=60M&symbol=${acoes[0][0]}" title="${acoes[0][0]}" frameborder="0" allowfullscreen></iframe>
+  <iframe class="cell c12" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=60M&symbol=${acoes[0][1]}" title="${acoes[0][1]}" frameborder="0" allowfullscreen></iframe>
+  <iframe class="cell c21" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=60M&symbol=${acoes[0][2]}" title="${acoes[0][2]}" frameborder="0" allowfullscreen></iframe>
+  <iframe class="cell c22" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=60M&symbol=${acoes[0][3]}" title="${acoes[0][3]}" frameborder="0" allowfullscreen></iframe>
+`;
+</script></body>
 </html>
