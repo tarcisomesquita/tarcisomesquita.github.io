@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
 <style>
-.grid-container {
+.container {
   display: grid;
   grid-template-columns: repeat(2, 1fr));
   grid-template-rows: repeat(2, 1fr);
@@ -36,12 +36,19 @@ iframe {
 
 <body>
 
-<div class="grid-container">
-<iframe class="cell c11" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=HAPV3" title="HAPV3" frameborder="0" allowfullscreen></iframe>
-<iframe class="cell c12" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=JHSF3" title="JHSF3" frameborder="0" allowfullscreen></iframe>
-<iframe class="cell c21" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=COGN3" title="COGN3" frameborder="0" allowfullscreen></iframe>
-<iframe class="cell c22" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=PCAR3" title="PCAR3" frameborder="0" allowfullscreen></iframe>
+<div class="container">
+  <p>Aguarde, carregando ...</p>
 </div>
 
+<script>
+let acoes = [["COGN3","AMER3","CVCB3","MLAS3"],["HAPV3","COGN3","PCAR3","RAIZ4"]];
+
+container.innerHTML = `
+  <iframe class="cell c11" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${acoes[1][0]}" title="${acoes[1][0]}" frameborder="0" allowfullscreen></iframe>
+  <iframe class="cell c12" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${acoes[1][1]}" title="${acoes[1][1]}" frameborder="0" allowfullscreen></iframe>
+  <iframe class="cell c21" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${acoes[1][2]}" title="${acoes[1][2]}" frameborder="0" allowfullscreen></iframe>
+  <iframe class="cell c22" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${acoes[1][3]}" title="${acoes[1][3]}" frameborder="0" allowfullscreen></iframe>
+`;
+</script>
 </body>
 </html>
