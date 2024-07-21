@@ -39,70 +39,17 @@ iframe {
 <body>
 
 <div class="grid-container" id="container">
+  <p>Aguarde, carregando ...</p>
 </div>
 
 <script>
-function html2array(codigoFonte) {
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions
-  let csv = String(codigoFonte)
-    .replace(/^.*<table[^>]*>/s, '').replace(/<\/table>.*$/s, '')
-    .replace(/[\n\r\t ]{1,}</mg, '<').replace(/>[\n\r\t ]{1,}/mg, '>')
-    .replace(/<tr/g, '\n<tr')
-    .replace(/<t[dh][^>]*>/g, '<>')
-    .replace(/<[^>]{1,}>/g, '')
-    .replace(/&#193;/g, 'Á').replace(/&#194;/g, 'Â').replace(/&#195;/g, 'Ã')
-    .replace(/&#199;/g, 'Ç')
-    .replace(/&#201;/g, 'É').replace(/&#202;/g, 'Ê')
-    .replace(/&#205;/g, 'Í')
-    .replace(/&#211;/g, 'Ó').replace(/&#212;/g, 'Ô').replace(/&#213;/g, 'Õ')
-    .replace(/&#218;/g, 'Ú');
-  
-  const csvN = csv.split('\n');
-  let returnArray = [];
-  for (let i = 0; i < csvN.length; i++) {
-    returnArray[i] = csvN[i].split('<>');
-  }
-  return returnArray;
-}
+let acoes = [["COGN3","AMER3","CVCB3","MLAS3"],["HAPV3","COGN3","PCAR3","RAIZ4"]];
 
-async function atualizar() {
-  let text = '';
-  try {
-    const response = await fetch(
-      'https://www.dadosdemercado.com.br/bolsa/acoes', 
-      {
-        mode: 'no-cors'
-      }
-    );
-    text = await response.text();
-    const returnArray = html2array(text);
-    
-    let ultima, negocios, top = [];
-    for (let i = 2; i < returnArray.length; i++) {
-      ultima = parseFloat(returnArray[i][4].replace(',', '.'));
-      negocios = parseInt(returnArray[i][3].replace(/[.]/g, ''));
-      
-      if (ultima < 2 && negocios > 1000000) {
-        let classificacao = Math.trunc(negocios * ultima).toString().padStart(9, '0');
-        top.push([classificacao, returnArray[i][1], returnArray[i][4]]);
-      }
-    }
-  
-    top = top.sort().reverse();
-    console.log(JSON.stringify(top).replace(/\[/g, '\n['));
-    
-    container.innerHTML = `
-  <iframe class="cell c11" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${top[0][1]}" title="${top[0][1]}" frameborder="0" allowfullscreen></iframe>
-  <iframe class="cell c12" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${top[1][1]}" title="${top[1][1]}" frameborder="0" allowfullscreen></iframe>
-  <iframe class="cell c21" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${top[2][1]}" title="${top[2][1]}" frameborder="0" allowfullscreen></iframe>
-  <iframe class="cell c22" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${top[3][1]}" title="${top[3][1]}" frameborder="0" allowfullscreen></iframe>
-  `;
-  } catch (error) {
-    container.innerHTML = `<p>${error}</p>`;
-  }
-}
-
-atualizar();
-</script>
-</body>
+container.innerHTML = `
+  <iframe class="cell c11" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${acoes[0][0]}" title="${acoes[0][0]}" frameborder="0" allowfullscreen></iframe>
+  <iframe class="cell c12" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${acoes[0][1]}" title="${acoes[0][1]}" frameborder="0" allowfullscreen></iframe>
+  <iframe class="cell c21" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${acoes[0][2]}" title="${acoes[0][2]}" frameborder="0" allowfullscreen></iframe>
+  <iframe class="cell c22" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1D&symbol=${acoes[0][3]}" title="${acoes[0][3]}" frameborder="0" allowfullscreen></iframe>
+`;
+</script></body>
 </html>
