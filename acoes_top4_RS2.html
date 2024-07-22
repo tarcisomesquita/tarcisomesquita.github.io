@@ -53,7 +53,11 @@ async function atualizar() {
         credentials: 'omit'
       }
     );
-    
+
+    let txt = await response.text();
+    console.log(txt);
+    return;
+    /*
     let resp = await response.json();
     console.log(JSON.stringify(resp));
     
@@ -68,6 +72,7 @@ async function atualizar() {
       <iframe class="cell c21" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1M&symbol=${resp.top2[2]}" title="${resp.top2[2]}" frameborder="0" allowfullscreen></iframe>
       <iframe class="cell c22" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1M&symbol=${resp.top2[3]}" title="${resp.top2[3]}" frameborder="0" allowfullscreen></iframe>
     `;
+    */
   }
   catch(error) {
     container.innerHTML = `<p>${error}</p>`;
