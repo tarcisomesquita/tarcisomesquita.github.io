@@ -47,13 +47,9 @@ async function atualizar() {
   let resp = {};
   try {
     const response = await fetch(
-      'https://script.google.com/macros/s/AKfycbyBHLvZi6jozcfVoVumQgtJrpW8j6EVqHWolVsyGBa5np89yGs3LwKe9PnB1efdEqwZxQ/exec', 
-      {
-        mode: 'no-cors',
-        credentials: 'omit'
-      }
+      'https://script.google.com/macros/s/AKfycbyBHLvZi6jozcfVoVumQgtJrpW8j6EVqHWolVsyGBa5np89yGs3LwKe9PnB1efdEqwZxQ/exec'
     );
-
+    console.log('AQUI');
     let txt = await response.text();
     console.log(txt);
     return;
