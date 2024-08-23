@@ -1,0 +1,269 @@
+https://console.neo4j.io
+pode excluir a instância
+
+https://neo4j.com/docs/cypher-cheat-sheet/5/auradb-free/
+
+SHOW DATABASES
+
+apague tudo o que estiver no banco
+MATCH (n)
+DETACH DELETE n
+
+Deleted 1576 nodes, deleted 5419 relationships
+Em Query, continuaram as Categorias e as "Property keys"
+
+All existing properties can be removed from a node or relationship
+MATCH (p {name: 'Peter'})
+SET p = {}
+RETURN p.name, p.age
+
+remove labels
+MATCH (n {name: 'Peter'})
+REMOVE n:German
+RETURN n.name, labels(n)
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+WITH 4320512 AS TarcisoMesquita
+
+// Objetivo é identificar a hashtag que está presente em todos os tweets originais
+
+// Carrega os dados dos arquivos *.json
+UNWIND range(154, 700) AS arquivo
+WITH "https://raw.githubusercontent.com/tarcisomesquita/uninter/main/teste/tweets_coletados_" + arquivo + ".json" AS url
+CALL apoc.load.json(url) YIELD value
+UNWIND value.data as tweet
+
+// remove os conteúdos dos retweets atribuindo [] 
+WITH CASE tweet['referenced_tweets']
+  WHEN IS null THEN tweet.entities.hashtags
+  ELSE []
+END AS hashtags
+
+// remove os tweets sem conteúdo, ou seja, os []
+CALL {
+  WITH hashtags
+  WITH [x IN hashtags | x.tag] AS tags
+  WITH size(tags) AS size, tags AS tags
+  WHERE size > 0
+  RETURN tags
+}
+
+// Mostra, em cada linha, as hashtags de um tweet
+RETURN tags
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+WITH 4320512 AS TarcisoMesquita
+
+UNWIND range(154, 700) AS arquivo
+WITH "https://raw.githubusercontent.com/tarcisomesquita/uninter/main/teste/tweets_coletados_" + arquivo + ".json" AS url
+CALL apoc.load.json(url) YIELD value
+UNWIND value.data as tweet
+
+MERGE (t:Tuite {id_tuite: tweet.id})
+ON CREATE SET t += {
+  texto: "@" + tweet.text,
+  autor_id: tweet.author_id,
+  criado_em: apoc.text.replace(tweet.created_at, 'T.*$', '')}
+
+FOREACH (hashtags IN tweet.entities.hashtags |
+  MERGE (h:Hashtag {hashtag: "@" + apoc.text.replace(apoc.text.clean(hashtags.tag),'[^a-zA-Z0-9]', ''), autor:"Tarciso Mesquita", ra: "4320512"})
+  MERGE (h)<-[:POSSUI]-(t))
+
+FOREACH (ref_tweet IN tweet.referenced_tweets |
+  SET t.tipo_ref = coalesce(t.tipo_ref, []) + [ref_tweet.type], t.id_ref = coalesce(t.id_ref, []) + [ref_tweet.id])
+
+MERGE (u :User {user_id: tweet.author_id})
+MERGE (t)<-[f:TWEETOU]-(u);
+
+CALL {
+  MATCH (t) WHERE "retweeted" IN t.tipo_ref
+  SET t:Retuite
+  REMOVE t:Tuite
+}
+
+CALL {
+  MATCH (t) WHERE "replied_to" IN t.tipo_ref
+  SET t:Resposta_para
+  REMOVE t:Tuite
+}
+
+CALL {
+  MATCH (t) WHERE "quoted" IN t.tipo_ref
+  SET t:Citacao
+  REMOVE t:Tuite
+}
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+WITH 4320512 AS TarcisoMesquita
+
+UNWIND range(154, 155) AS arquivo
+WITH "https://raw.githubusercontent.com/tarcisomesquita/uninter/main/teste/tweets_coletados_" + arquivo + ".json" AS url
+CALL apoc.load.json(url) YIELD value
+UNWIND value.includes.users AS usuarios
+
+MATCH (u :User)
+WHERE u.user_id = usuarios.id
+SET u.nome = "@" + usuarios.name, u.local = usuarios.location
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+MATCH (t:Tuite)
+WITH DISTINCT t.criado_em AS criacao
+RETURN criacao
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+WITH 4320512 AS TarcisoMesquita
+
+MATCH (u:User)-[f :TWEETOU]->(t :Tuite {criado_em:"2020-04-01"})-[r :POSSUI]->(h:Hashtag)
+RETURN u, f, t, r, h
+
+WITH 4320512 AS TarcisoMesquita
+
+MATCH (u:User)-[f :TWEETOU]->(t {criado_em:"2020-04-01"})
+RETURN u, f, t
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+t.data[0].author_id
+t.data[0].created_at
+t.data[0].id
+t.data[0].text
+t.data[0].entities.hashtags[0].tag
+
+t.data[1].referenced_tweets[0].type = 'retweeted'
+t.data[1].referenced_tweets[0].id
+
+t.includes.users[0].id
+t.includes.users[0].name
+t.includes.users[0].location
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+WITH "https://api.stackexchange.com/2.2/questions?pagesize=100&order=desc&sort=creation&tagged=neo4j&site=stackoverflow&filter=!5-i6Zw8Y)4W7vpy91PMYsKM-k9yzEsSC1_Uxlf" AS url
+CALL apoc.load.json(url) YIELD value
+UNWIND value.items AS q
+MERGE (question:Question {id:q.question_id})
+ON CREATE SET question.title = q.title,
+              question.share_link = q.share_link,
+              question.favorite_count = q.favorite_count
+
+FOREACH (tagName IN q.tags | MERGE (tag:Tag {name:tagName}) MERGE (question)-[:TAGGED]->(tag))
+FOREACH (a IN q.answers |
+   MERGE (question)<-[:ANSWERS]-(answer:Answer {id:a.answer_id})
+   MERGE (answerer:User {id:a.owner.user_id}) ON CREATE SET answerer.display_name = a.owner.display_name
+   MERGE (answer)<-[:PROVIDED]-(answerer)
+)
+
+WITH * WHERE NOT q.owner.user_id IS NULL
+MERGE (owner:User {id:q.owner.user_id}) ON CREATE SET owner.display_name = q.owner.display_name
+MERGE (owner)-[:ASKED]->(question)
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
+
+
+RETURN apoc.convert.fromJsonList('[
+  {"name": "Neo4j"},
+  {"name": "Graph Data Science Library"},
+  {"name": "Bloom"}
+]', '.name') AS output;
+
+
+:param {url:"https://raw.githubusercontent.com/tarcisomesquita/uninter/main/teste/tweets_coletados_154.json"}
+tweets_coletados_154.json
+
+
+
+:param {url:"https://raw.githubusercontent.com/tarcisomesquita/uninter/main/teste/tweets_coletados_154.json"}
+CALL apoc.load.json($url) YIELD value
+UNWIND value.items as q
+RETURN keys(q)
+ 
+
+CALL apoc.load.json()
+YIELD value
+RETURN value;
+
+
+Invalid input 'apoc': expected
+  "ALTER"
+  "CALL"
+  "CREATE"
+
+apoc.load.jsonArray(url STRING, path STRING, config MAP<STRING, ANY>) - loads array from a JSON URL (e.g. web-API) to then import the given JSON file as a stream of values.
+
+
+
+WITH "https://raw.githubusercontent.com/tarcisomesquita/uninter/main/teste/tweets_coletados_154.json" AS url
+CALL apoc.load.json(url) YIELD value
+UNWIND value.items AS item
+RETURN item.title, item.owner, item.creation_date, keys(item)
+LIMIT 5;
+
+
+# Wait 60 seconds before connecting using these details, or login to https://console.neo4j.io to validate the Aura Instance is available
+NEO4J_URI=neo4j+s://f9d5dbe5.databases.neo4j.io
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=sFRdSEz_oGV71WKrG3vGGa42We33XWQwey-Xi61P8hU
+AURA_INSTANCEID=f9d5dbe5
+AURA_INSTANCENAME=Instance01
+
+nodes and relationships in your graph can have types and properties.
+
+Nodes can be tagged with labels, representing their different roles in your dataset (e.g. Supplier, Employee, Customer). They can also have any number of key-value pairs as properties (e.g. name:"Camembert Pierrot").
+
+Relationships provide directed, typed, or attributed, connections between two node entities (e.g. Shipper SHIPS Order).
+
+Relationships always have a direction, a type, a start node, and an end node. They can also have properties, just like nodes.
+
+CALL db.schema.visualization()
+
+MATCH (s:Supplier)-->(:Product)-->(c:Category)
+RETURN s.companyName as company, collect(distinct c.categoryName) as categories
+
+// which categories are the products of an order in
+MATCH (o:Order)-[:ORDERS]->(:Product)-[:PART_OF]->(c:Category)
+// retain same ordering of categories
+WITH o, c ORDER BY c.categoryName
+// aggregate categories by order into a list of names
+WITH o, collect(DISTINCT c.categoryName) as categories
+// only orders with more than one category
+WHERE size(categories) > 1
+// count how frequently the pairings occurr
+RETURN categories, count(*) as freq
+// order by frequency
+ORDER BY freq DESC
+LIMIT 50
+
+MATCH path=()-[:SIMILAR_TO]->() RETURN path
+
+
+MATCH (n:Product)<-[r:SUPPLIES]-(s:Supplier)
+RETURN n,r,s
+LIMIT 25
+
+MATCH path=(c:Customer)-[:PURCHASED]->()-[:ORDERS]->(:Product)<-[:SUPPLIES]-(:Supplier)
+WHERE c.companyName = 'Blauer See Delikatessen'
+RETURN path;
+
+MATCH path=(:Product)-[:PART_OF]->(c:Category)
+WHERE c.categoryName = 'Produce'
+RETURN path;
+
+MATCH (cust:Customer)-[:PURCHASED]->(:Order)-[o:ORDERS]->(p:Product),
+      (p)-[:PART_OF]->(c:Category {categoryName:'Produce'})
+RETURN cust.contactName as CustomerName,
+       sum(o.quantity) AS TotalProductsPurchased
+
+https://graphacademy.neo4j.com/categories/beginners/
+https://neo4j.com/docs/getting-started/current/languages-guides/
+
