@@ -1,4 +1,53 @@
+"things that make the life easier"
+
+https://www.musicca.com/pt/piano
+
+
+https://developers.google.com/apps-script/guides/content
+
+https://developers.google.com/sheets/api/guides/concepts
+https://developers.google.com/sheets/api/quickstart/nodejs
+
+https://github.com/googleapis/google-api-nodejs-client/blob/main/samples/sheets/quickstart.js
+
+
+https://firebase.google.com/codelabs/firestore-web?hl=en
+https://firebase.google.com/codelabs/firebase-web?hl=en
+
+https://firebase.google.com/codelabs/firebase-get-to-know-web?hl=en
+
+https://firebase.google.com/codelabs/firebase-rules?hl=en
+
+https://firebase.google.com/codelabs/firebase-get-to-know-web?hl=en
+
+https://firebase.google.com/codelabs/firebase-emulator?hl=en
+
+
+
+https://firebase.google.com/codelabs/firestore-web?hl=en
+
+https://firebase.google.com/codelabs/firestore-android?hl=en
+
+https://firebase.google.com/codelabs/auth-mfa-blocking-functions?hl=en
+
+https://firebase.google.com/codelabs/firebase-get-to-know-web?hl=en
+
+https://firebase.google.com/codelabs/firebase-rules?hl=en
+
+https://firebase.google.com/codelabs/textclassification-iOS?hl=en
+
+https://firebase.google.com/codelabs/textclassification-android?hl=en
+
+https://firebase.google.com/codelabs/firebase-web?hl=en
+
+https://firebase.google.com/codelabs/cross-device-controller?hl=en
+
+https://firebase.google.com/codelabs/firebase-emulator?hl=en
+
+
 https://beta.simet.nic.br/
+
+https://github.com/jimp-dev/jimp/
 
 https://jspaint.app/
 
@@ -44,6 +93,10 @@ Ciência/Engenharia de Dados e a Disciplina de Bancos de Dados - Aula 04/08 - Ba
 This is for everyone
 https://pt.wikipedia.org/wiki/Vocabulário_controlado
 
+https://jsbin.com/
+
 https://beautifier.io/
-https://github.com/jimp-dev/jimp/
+
+https://ideone.com
+
 
