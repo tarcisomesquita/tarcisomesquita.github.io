@@ -53,6 +53,15 @@ https://www.coursera.org/courses?query=cursos%20gratis
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+Um validador de textos é um software projetado para analisar textos e identificar erros ortográficos, gramaticais, de pontuação e, em alguns casos, até mesmo problemas de estilo.
+
+https://languagetool.org/pt-BR
+
+Analise o texto abaixo.
+"A inportância da educaçao não pode ser subestimada . Os indivídos, adquire conhecimendo e habilidades que lhes permite afasta seus objetivos."
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
 Explique o prefixo dbo em triplas rdf.
 
 Gemini, extraia todas as triplas RDF do seguinte texto:
