@@ -1,0 +1,208 @@
+JSON-LD (JavaScript Object Notation for Linked Data)
+
+https://json-ld.org/
+https://json-ld.org/playground/
+https://github.com/digitalbazaar/jsonld.js
+
+JSON-LD mapping from JSON to an RDF model.
+The context links object properties in a JSON document to concepts in an ontology.
+
+{
+  "@context": {
+    "dc11": "http://purl.org/dc/elements/1.1/",
+    "ex": "http://example.org/vocab#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "ex:contains": {
+      "@type": "@id"
+    }
+  },
+  "@graph": [
+    {
+      "@id": "http://example.org/library",
+      "@type": "ex:Library",
+      "ex:contains": "http://example.org/library/the-republic"
+    },
+    {
+      "@id": "http://example.org/library/the-republic",
+      "@type": "ex:Book",
+      "dc11:creator": "Plato",
+      "dc11:title": "The Republic",
+      "ex:contains": "http://example.org/library/the-republic#introduction"
+    },
+    {
+      "@id": "http://example.org/library/the-republic#introduction",
+      "@type": "ex:Chapter",
+      "dc11:description": "An introductory chapter on The Republic.",
+      "dc11:title": "The Introduction"
+    }
+  ]
+}
+
+
+compacted input
+<script type="application/ld+json">
+{
+  "@context": "https://json-ld.org/contexts/person.jsonld",
+  "@id": "http://dbpedia.org/resource/John_Lennon",
+  "name": "John Lennon",
+  "born": "1940-10-09",
+  "spouse": "http://dbpedia.org/resource/Cynthia_Lennon"
+}
+</script>
+
+expanded result
+[{
+  "@id": "http://dbpedia.org/resource/John_Lennon",
+  "http://xmlns.com/foaf/0.1/name": [{"@value": "John Lennon"}],
+  "http://schema.org/birthDate": [{"@value": "1940-10-09", "@type": "http://www.w3.org/2001/XMLSchema#date"}],
+  "http://schema.org/spouse": [{"@id": "http://dbpedia.org/resource/Cynthia_Lennon"}]
+}]
+
+
+turtle
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://dbpedia.org/resource/John_Lennon> foaf:name "John Lennon";
+  schema:birthDate "1940-10-09"^^xsd:date;
+  schema:spouse <http://dbpedia.org/resource/Cynthia_Lennon> .
+
+
+Base
+<html>
+  <head>
+    <base href="http://dbpedia.org/resource/"/>
+    <script type="application/ld+json">
+    {
+      "@context": "https://json-ld.org/contexts/person.jsonld",
+      "@id": "John_Lennon",
+      "name": "John Lennon",
+      "born": "1940-10-09",
+      "spouse": "Cynthia_Lennon"
+    }
+    </script>
+  </head>
+</html>
+
+
+
+<p>Data describing Dave</p>
+<script id="dave" type="application/ld+json">
+{
+  "@context": "http://schema.org/",
+  "@id": "https://digitalbazaar.com/author/dlongley/",
+  "@type": "Person",
+  "name": "Dave Longley"
+}
+</script>
+
+<p>Data describing Gregg</p>
+<script id="gregg" type="application/ld+json">
+{
+  "@context": "http://schema.org/",
+  "@id": "https://greggkellogg.net/foaf#me",
+  "@type": "Person",
+  "name": "Gregg Kellogg"
+}
+</script>
+
+
+EXAMPLE 150: Linked Data Dataset
+{
+  "@context": [
+    "http://schema.org/",
+    {"@base": "http://example.com/"}
+  ],
+  "@graph": [{
+    "@id": "people/alice",
+    "gender": [
+      {"@value": "weiblich", "@language": "de"},
+      {"@value": "female",   "@language": "en"}
+    ],
+    "knows": {"@id": "people/bob"},
+    "name": "Alice"
+  }, {
+    "@id": "graphs/1",
+    "@graph": {
+      "@id": "people/alice",
+      "parent": {
+        "@id": "people/bob",
+        "name": "Bob"
+      }
+    }
+  }, {
+    "@id": "graphs/2",
+    "@graph": {
+      "@id": "people/bob",
+      "sibling": {
+        "name": "Mary",
+        "sibling": {"@id": "people/bob"}
+      }
+    }
+  }]
+}
+
+
+Expanded
+[{
+  "@id": "http://example.com/people/alice",
+  "http://schema.org/name": [{"@value": "Alice"}],
+  "http://schema.org/gender": [
+    {"@value": "weiblich","@language": "de"},
+    {"@value": "female","@language": "en"}
+  ],
+  "http://schema.org/knows": [
+    {"@id": "http://example.com/people/bob"}
+  ]
+}, {
+  "@id": "http://example.com/graphs/1",
+  "@graph": [{
+    "@id": "http://example.com/people/alice",
+    "http://schema.org/parent": [{
+      "@id": "http://example.com/people/bob",
+      "http://schema.org/name": [{"@value": "Bob"}]
+    }]
+  }]
+}, {
+  "@id": "http://example.com/graphs/2",
+  "@graph": [{
+    "@id": "http://example.com/people/bob",
+    "http://schema.org/sibling": [{
+      "http://schema.org/name": [{"@value": "Mary"}],
+      "http://schema.org/sibling": [
+        {"@id": "http://example.com/people/bob"}
+      ]
+    }]
+  }]
+}]
+
+
+Values
+Graph	Subject	Property	Value	Language
+ 	http://example.com/people/alice	schema:name	Alice	
+ 	http://example.com/people/alice	schema:gender	weiblich	de
+ 	http://example.com/people/alice	schema:gender	female	en
+ 	http://example.com/people/alice	schema:knows	http://example.com/people/bob	
+http://example.com/graphs/1	http://example.com/people/bob	schema:name	Bob	
+http://example.com/graphs/1	http://example.com/people/alice	schema:parent	http://example.com/people/bob	
+http://example.com/graphs/2	http://example.com/people/bob	schema:sibling	_:b0	
+http://example.com/graphs/2	_:b0	schema:name	Mary	
+http://example.com/graphs/2	_:b0	schema:sibling	http://example.com/people/bob
+
+
+{
+  "@context": {
+    "name": "http://xmlns.com/foaf/0.1/name",
+    "homepage": {
+      "@id": "http://xmlns.com/foaf/0.1/workplaceHomepage",
+      "@type": "@id"
+    },
+    "Person": "http://xmlns.com/foaf/0.1/Person"
+  },
+  "@id": "https://me.example.com",
+  "@type": "Person",
+  "name": "John Smith",
+  "homepage": "https://www.example.com/"
+}
+

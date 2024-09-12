@@ -1,0 +1,6 @@
+function funcaoParametro(cor = 'amarelo') {
+  console.log(cor);
+}
+
+funcaoParametro('roxo');
+funcaoParametro();
