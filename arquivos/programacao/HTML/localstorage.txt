@@ -1,0 +1,139 @@
+developers.arcgis.com (widget)
+
+Cookies are limited to about 4 KB of data.
+
+userData allows web pages to store up to 64 KB of data per domain, in a hierarchical XML-based structure.
+
+5 megabytes is how much storage space each origin gets by default. 
+
+The FileSystem-API allows the creation of files and folders as well as their local storage using JavaScript. Files can be simple text files, but even more complex files such as images are possible.
+
+the FileSystem-API is only allowed to access a specific protected area on your local drive controlled by the browser.
+
+window.webkitRequestFileSystem(window.TEMPORARY, 1024*1024, SaveDatFileBro);
+window.webkitRequestFileSystem(window.PERSISTENT , 1024*1024, SaveDatFileBro);
+
+Permanent storage does require the explicit permission by the user.
+
+
+you’ll access HTML5 Storage through the localStorage object on the global window object.
+
+navigator.webkitPersistentStorage.requestQuota(1024*1024, function() {
+ &nbsp;window.webkitRequestFileSystem(window.PERSISTENT , 1024*1024, SaveDatFileBro);
+})
+
+function SaveDatFileBro(localstorage) {
+  localstorage.root.getFile("info.txt", {create: true});
+}
+
+function SaveDatFileBro(localstorage) {
+  localstorage.root.getFile("info.txt", {create: true}, function(DatFile) {
+    DatFile.createWriter(function(DatContent) {
+      var blob = new Blob(["Lorem Ipsum"], {type: "text/plain"});
+      DatContent.write(blob);
+    });
+  });
+}
+
+
+function SaveDatFileBro(localstorage) {
+  localstorage.root.getFile("info.txt", {create: false}, function(DatFile) { DatFile.remove(function() {}); })
+}
+
+function SaveDatFileBro(localstorage) {
+  localstorage.root.getDirectory("demo", {create: true}, function() {});
+}
+
+  localstorage.root.getFile("/demo/info.txt", {create: true});
+};
+function SaveDatFileBro(localstorage) {
+
+
+function SaveDatFileBro(localstorage) {
+  localstorage.root.getFile("info.txt", {}, function(DatFile) {
+    localstorage.root.getDirectory("demo/", {}, function(DatFolder) {
+      datei.moveTo(DatFolder);
+    });
+  });
+}
+
+function SaveDatFileBro(localstorage) {
+  localstorage.root.getFile("info.txt", {}, function(DatFile) {
+    datei.moveTo(localstorage.root, "new.txt");
+  });
+}
+
+
+As the created files and folders are stored to a protected area controlled by the browser, it is not possible to open them as usual by simple adding the file or folder names to the URL string. Instead we have a separate protocol to read-access these elements. Using the specific string you can embed them to other documents or simply call them from the address bar:
+filesystem:http://www.example.com/persistent/info.txt
+filesystem:http://www.example.com/temporary/info.txt
+
+
+function supports_html5_storage() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (e) {
+    return false;
+  }
+}
+
+
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title></title>
+
+<style>
+</style>
+
+<script>
+function supports_html5_storage() {
+  try {
+    return 'localStorage' in window && window['localStorage'] !== null;
+  } catch (e) {
+    return false;
+  }
+}
+
+if (supports_html5_storage()) alert("funciona");
+
+function saveGameState() {
+    if (!supportsLocalStorage()) { return false; }
+    localStorage["halma.game.in.progress"] = gGameInProgress;
+    for (var i = 0; i < kNumPieces; i++) {
+	localStorage["halma.piece." + i + ".row"] = gPieces[i].row;
+	localStorage["halma.piece." + i + ".column"] = gPieces[i].column;
+    }
+    localStorage["halma.selectedpiece"] = gSelectedPieceIndex;
+    localStorage["halma.selectedpiecehasmoved"] = gSelectedPieceHasMoved;
+    localStorage["halma.movecount"] = gMoveCount;
+    return true;
+}
+
+function resumeGame() {
+    if (!supportsLocalStorage()) { return false; }
+    gGameInProgress = (localStorage["halma.game.in.progress"] == "true");
+    if (!gGameInProgress) { return false; }
+    gPieces = new Array(kNumPieces);
+    for (var i = 0; i < kNumPieces; i++) {
+	var row = parseInt(localStorage["halma.piece." + i + ".row"]);
+	var column = parseInt(localStorage["halma.piece." + i + ".column"]);
+	gPieces[i] = new Cell(row, column);
+    }
+    gNumPieces = kNumPieces;
+    gSelectedPieceIndex = parseInt(localStorage["halma.selectedpiece"]);
+    gSelectedPieceHasMoved = localStorage["halma.selectedpiecehasmoved"] == "true";
+    gMoveCount = parseInt(localStorage["halma.movecount"]);
+    drawBoard();
+    return true;
+}
+</script>
+
+</head>
+<body>
+
+
+</body>
+</html>
+
