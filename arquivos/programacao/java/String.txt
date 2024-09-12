@@ -1,0 +1,62 @@
+String str = "abc";
+is equivalent to:
+char data[] = {'a', 'b', 'c'};
+String str = new String(data);
+ 
+Examples:
+String cde = "cde";
+System.out.println("abc" + cde);
+String c = "abc".substring(2, 3);
+String d = cde.substring(1, 2)
+
+
+char letra;
+String nome = "Joao";
+String nome2 = "Mario";
+int idade = 34;
+
+letra = nome.charAt(2);  // charAt(int i) - retorna caracter que estiver no dado índice i
+System.out.println("A letra na posicao 2 da palavra " + nome + "é " + letra);
+
+System.out.println(nome + " + Carlos = " + nome.concat("Carlos")); // concat(String s) - concatena duas strings
+nome = nome.concat(" Carlos");
+
+if (nome.equals(nome2))    // equals(Object o) - retorna true se a String for igual a outra
+   System.out.println(nome + " e igual a " + nome2);
+else
+   System.out.println(nome + " e diferente de " + nome2);
+
+System.out.println("A idade de " + nome + " é " + String.valueOf(idade) + " anos"); // valueOf(elemento) - retorna uma string do valor.
+
+// indexOf(char c) - retorna índice da primeira ocorrência do caractere c. Retornará -1 se não achar.
+System.out.println("A primeira letra o em " + nome + " esta na posicao "+ String.valueOf(nome.indexOf("o")));
+
+System.out.println(nome + " tem" + String.valueOf(nome.length()) + " caracteres"); // length() - retorna tamanho da String.
+
+System.out.println("A Troca da letra i por c de " + nome2 + " é " + nome2.replace('i','c')); // replace(char v, char n) - substitui caracteres
+nome2 = nome2.replace('i','c');
+
+// substring(int sI, int sF) - retorna String com os caracteres entre sI(inclusive) e sF(exclusive)
+System.out.println("Substring(0,2) de " + nome + " é " + nome.substring(0,2));
+nome = nome.substring(0,2);
+
+System.out.println(nome + " em minusculo é " + nome.toLowerCase()); // toLowerCase() - retorna String convertida para minúscula
+nome = nome.toLowerCase();
+
+System.out.println(nome + " em maiusculo é " + nome.toUpperCase()); // toUpperCase() - retorna String convertida para maiúscula
+nome = nome.toUpperCase();
+
+nome = nome.concat("ao Carlos ");
+System.out.println('*' + nome + "* sem brancos desnecessarios é *" + nome.trim() + '*'); // trim() - retorna String sem espaços
+nome = nome.trim();
+
+
+class ConcatDemo {
+    public static void main(String[] args){
+        String firstString = "This is";
+        String secondString = " a concatenated string.";
+        String thirdString = firstString+secondString;
+        System.out.println(thirdString);
+    }
+}
+

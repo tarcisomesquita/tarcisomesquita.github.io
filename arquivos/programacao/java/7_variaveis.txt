@@ -1,0 +1,83 @@
+int speed = 0;
+
+Terms "variable" and "field" refer to the same thing.
+
+* Variable names are case-sensitive. Is an unlimited-length sequence of Unicode letters and digits, beginning with a letter, the dollar sign "$", or the underscore character "_". The convention, however, is to always begin your variable names with a letter, not "$" or "_". Additionally, the dollar sign character, by convention, is never used at all. A similar convention exists for the underscore character. White space is not permitted.
+* When choosing a name for your variables, use full words instead of cryptic abbreviations.
+* If the name you choose consists of only one word, spell that word in all lowercase letters. If it consists of more than one word, capitalize the first letter of each subsequent word. Example: gearRatio and currentGear. If your variable stores a constant value, such as "static final int NUM_GEARS = 6", capitalize every letter and separating subsequent words with the underscore character.
+
+all variables must first be declared before they can be used.
+int gear = 1;
+
+boolean    valor true ou false
+char       16-bit,(caractere UNICODE) faixa: 0 a 65535.
+byte        8-bit, complemento de 2,  faixa:-128 até 127
+short      16-bit, complemento de 2,  faixa:-32768 até 32767
+int        32-bit, complemento de 2,  faixa:-2147483648 até 2147483647
+long       64-bit, compl. de 2,       faixa:-9223372036854775808 até 9223372036854775807
+float      32-bit  Ponto flutuante  IEEE754  faixa: +/-3.40282347E+38F  ex.: 1.380658e-23
+double     64-bit  Ponto flutuante  IEEE754  faixa: +/-1.79769313486231570E+308
+
+for precise values, such as currency, use java.math.BigDecimal
+
+int decVal = 26;      // in decimal
+int hexVal = 0x1a;    // in hexadecimal
+int binVal = 0b11010; // in binary
+int octVal = 032;     // in octal
+
+double d1 = 123.4;
+double d2 = 1.234e2; // same value as d1, but in scientific notation
+float  f1 = 123.4f;
+
+you can use the underscore in numeric literals:
+long creditCardNumber = 1234_5678_9012_3456L;
+
+float pi =  3.14_15F;
+long hexBytes = 0xFF_EC_DE_5E;
+long hexWords = 0xCAFE_BABE;
+long maxLong = 0x7fff_ffff_ffff_ffffL;
+byte nybbles = 0b0010_0101;
+long bytes = 0b11010010_01101001_10010100_10010010;
+int x3 = 5_______2;
+int x6 = 0x5_2; 
+
+char umCaracter = 'A';
+\b      backspace
+\t      tabulação horizontal
+\n      newline
+\f      form feed
+\r      carriage return
+\"      aspas
+\'      aspas simples
+\\      contrabarra
+\xxx    caracter com código de valor octal xxx, que pode assumir valores entre 000 e 377 na representação octal
+\uxxxx  caracter Unicode com código de valor hexadecimal xxxx, onde xxxx pode assumir valores entre 0000 e ffff na representação hexadecimal.
+
+String nome = new String("João");
+String teste = "isso é um teste";
+String tudo = nome + teste;
+
+comparação:
+nome.equals(teste);
+
+int é o padrão. Use "type cast":
+long a;
+a = (long)299792458;
+long valorQuePodeCrescer = 100L;
+
+double y = Math.pow(x, b); // x é elevado a b
+
+int[] vetor = new int[100];
+int[] impares = {2,3,5,7,9,11,13}
+int[][] matriz = new int[5][6];
+
+i = Integer.parseInt(“464”)
+
+
+kinds of variables:
+
+* Local Variables: Similar to how an object stores its state in fields, a method will often store its temporary state in local variables. The syntax for declaring a local variable is similar to declaring a field (for example, int count = 0;). There is no special keyword designating a variable as local; that determination comes entirely from the location in which the variable is declared — which is between the opening and closing braces of a method. As such, local variables are only visible to the methods in which they are declared; they are not accessible from the rest of the class.
+
+    * Instance Variables (Non-Static Fields): Objects store their individual states in "non-static fields", that is, fields declared without the static keyword. Non-static fields are also known as instance variables because their values are unique to each instance of a class (to each object, in other words); the currentSpeed of one bicycle is independent from the currentSpeed of another.
+    * Class Variables (Static Fields): A class variable is any field declared with the static modifier; this tells the compiler that there is exactly one copy of this variable in existence, regardless of how many times the class has been instantiated. A field defining the number of gears for a particular kind of bicycle could be marked as static since conceptually the same number of gears will apply to all instances. The code static int numGears = 6; would create such a static field. Additionally, the keyword final could be added to indicate that the number of gears will never change.
+    * Parameters: You've already seen examples of parameters, both in the Bicycle class and in the main method of the "Hello World!" application. Recall that the signature for the main method is public static void main(String[] args). Here, the args variable is the parameter to this method. The important thing to remember is that parameters are always classified as "variables" not "fields". This applies to other parameter-accepting constructs as well (such as constructors and exception handlers) that you'll learn about later in the tutorial.

@@ -1,0 +1,66 @@
+sintaxe:
+especificador class nome {
+   atributo
+   método
+}
+
+ESPECIFICADORES
+public: Estas classes são sempre acessíveis em todos os packages do seu código.
+Somente uma classe publica é permitida por arquivo, e o arquivo deve ter o mesmo nome da classe.
+
+private: Estas classes são acessíveis somente pelas classes declaradas no mesmo arquivo.
+Um arquivo pode possuir várias classes private, mas uma única classe public.
+
+Nada especificado: Estas classes podem ser acessadas no package que elas pertencem, se nenhum package é especificado, elas pertencem ao programa.
+
+
+
+Classes abstratas são classes que não produzem instâncias.
+
+astract class figura {
+   protected int x; // centro da fig. x
+   protected int y; // centro da fig. y
+   
+   public figura (int x1, int y1) {
+      x = x1;
+      y = y1;
+   }
+   
+   public abstract void desenha();
+   public abstract void apaga();
+   
+   public void move (int x1, int y1) {
+      this.apaga();
+      x = x1;
+      y = y1;
+      this.desenha();
+   }
+}
+
+Não é possível fazer: figura F = new figura(5,5);
+
+class quadrado extends figura {
+   int l;         // lado do quadrado
+   
+   public quadrado(int x1, int y1, int l1) {
+      super(x1, y1);
+      l = l1;
+   }
+   
+   public void desenha() {
+      System.out.println("Desenhando quadrado (" + x + "," + y + ") lado "+ l );
+   }
+   
+   public void apaga() {
+      System.out.println("Apagando quadrado (" + x + "," + y + ") lado " + l );
+   }
+}
+
+....
+quadrado q = new quadrado(20,30,10);
+q.desenha();
+q.move(50,40);
+q.apaga();
+...
+
+
