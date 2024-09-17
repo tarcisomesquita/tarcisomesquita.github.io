@@ -1,0 +1,123 @@
+
+# m h dom mon dow user    command
+
+# reinicia todo dia às 23:58
+58     23  * * * root   /home/fisica/Desktop/TMP/new_day.sh
+
+# se desconectar do speedy, conecta outra vez
+0-59/5 *   * * * root   if [ ! $(/bin/pidof pppd) ] ; then /usr/bin/poff ; /usr/bin/pon dsl-provider ; fi ;
+
+/home/fisica/Desktop/TMP/new_day.sh
+#!/bin/sh
+echo -e "\n\n"  >> /home/fisica/Desktop/TMP/rede.txt
+/bin/date       >> /home/fisica/Desktop/TMP/rede.txt
+echo -e "\n"    >> /home/fisica/Desktop/TMP/rede.txt
+/sbin/iptables -t filter -n -v -L --line-number >> /home/fisica/Desktop/TMP/rede.txt
+/usr/bin/poff
+/sbin/shutdown -r now
+
+
+CRONTAB(5)
+
+A /etc/crontab file contains instructions to the cron(8) daemon of the general form: "run this command at this time on this date".
+
+Each user has their own crontab, and commands in any given crontab will be executed as the user who owns the crontab.
+
+Blank lines and leading spaces and tabs are ignored.
+Lines whose first non-space character is a hash-sign (#) are comments, and are ignored.
+
+An active line in a crontab will be either an environment setting or a cron command.
+
+An environment setting is of the form,
+   name = value
+where the spaces around the equal-sign (=) are optional.
+The value string may be placed in quotes.
+The value string is not parsed for environmental substitutions, thus lines like
+   PATH = $HOME/bin:$PATH
+will not work as you might expect.
+
+Format of a cron command
+Each line has five time and date fields, followed by a command, followed by a newline character (’\n’).
+The fields may be separated by spaces or tabs.
+
+field          allowed values
+-----          --------------
+minute         0-59
+hour           0-23
+day of month   1-31
+month          1-12 (or names, see below)
+day of week    0-7 (0 or 7 is Sun, or use names)
+
+Range
+Example: 8-11 specifies 8, 9, 10 and 11.
+
+Lists
+Examples: "1,2,5,9", "0-4,8-12".
+
+Step values
+Example: "*/2" and "0-23/2" is the same as "0,2,4,6,8,10,12,14,16,18,20,22".
+
+Names can also be used for the "month" and "day of week" fields.
+Use the first three letters of the particular day or month.
+
+The "sixth" field is the user name.
+
+The "seventh" field (the rest of the line) specifies the command to be run.
+The entire command portion of the line, up to a newline or % character, will be executed by /bin/sh or by the shell specified in the SHELL variable of the crontab file.
+Percent-signs (%) in the command, unless escaped with backslash (\), will be changed into newline characters, and all data after the first % will be sent to the command as standard input.
+There is no way to split a single command line onto multiple lines, like the shell’s trailing "\".
+
+Instead of the first five fields, one of eight special strings may appear:
+string         meaning
+------         -------
+@reboot        Run once, at startup.
+@yearly        Run once a year, "0 0 1 1 *".
+@annually      (same as @yearly)
+@monthly       Run once a month, "0 0 1 * *".
+@weekly        Run once a week, "0 0 * * 0".
+@daily         Run once a day, "0 0 * * *".
+@midnight      (same as @daily)
+@hourly        Run once an hour, "0 * * * *".
+
+EXAMPLE CRON FILE
+# use /bin/bash to run commands, instead of the default /bin/sh
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+# mail any output to ‘paul’, no matter whose crontab this is
+MAILTO=paul
+#
+# run five minutes after midnight, every day
+5 0 * * *       $HOME/bin/daily.job >> $HOME/tmp/out 2>&1
+# run at 2:15pm on the first of every month -- output mailed to paul
+15 14 1 * *     $HOME/bin/monthly
+# run at 10 pm on weekdays, annoy Joe
+0 22 * * 1-5    mail -s "It’s 10pm" joe%Joe,%%Where are your kids?%
+23 0-23/2 * * * echo "run 23 minutes after midn, 2am, 4am ..., everyday"
+5 4 * * sun     echo "run at 5 after 4 every sunday"
+
+every 10 minutes
+0,10,20,30,40,50 * * * * /bin/execute/this/script.sh
+or
+*/10 * * * * /bin/execute/this/script.sh
+
+this would be valid:
+@daily /bin/execute/this/script.sh
+
+output is saved in a separate logfile:
+*/10 * * * * /bin/execute/this/script.sh 2>&1 >> /var/log/script_output.log
+
+aptitude install mailx
+*/10 * * * * /bin/execute/this/script.sh 2>&1 | mail -s "Cronjob ouput" yourname@yourdomain.com
+
+you don’t have to run the 'crontab' command to install the new version when you edit files in /etc/cron.d.
+
+# m h dom mon dow user    command
+42 6 * * *        root    run-parts --report /etc/cron.daily
+47 6 * * 7        root    run-parts --report /etc/cron.weekly
+52 6 1 * *        root    run-parts --report /etc/cron.monthly
+
+day of week, both day 0 and day 7 will be considered Sunday.
+
+4th Berkeley Distribution
+24 January 1994
+

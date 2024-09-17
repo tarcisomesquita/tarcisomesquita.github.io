@@ -1,0 +1,45 @@
+sudo lshw -numeric > lshw.txt
+cat lshw.txt | egrep '\*'
+
+LSHW(1)
+http://lshw.org/
+27 February 2008
+
+It supports DMI (x86 and IA-64 only), PCI/AGP, CPUID (x86), IDE/ATA/ATAPI, SCSI and USB.
+lshw must be run as super user or it will only report partial information.
+
+lshw [ -html | -short | -businfo ] [ -class class ... ] [ -numeric ]
+
+-html  Outputs the device tree as an HTML page.
+
+-short Outputs the device tree showing hardware paths, very much like the output of HP-UX's ioscan.
+
+-businfo
+       Outputs the device list showing bus information, detailing SCSI, USB, IDE and PCI addresses.
+
+-class class
+       Only show the given class of hardware. class can be found using lshw -short or lshw -businfo.
+
+-numeric
+       Also display numeric IDs (for PCI and USB devices).
+
+
+FILES
+/usr/share/misc/pci.ids
+/usr/share/hwdata/pci.ids
+A list of all known PCI ID's (vendors,  devices, classes and subclasses).
+
+/proc/bus/pci/*
+       Used to access the configuration of installed PCI busses and devices.
+
+/proc/ide/*
+       Used to access the configuration of installed IDE busses and devices.
+
+/proc/scsi/*, /dev/sg*
+       Used to access the configuration of installed SCSI devices.
+
+/proc/bus/usb/*
+       Used to access the configuration of installed USB busses and devices.
+
+/sys/* Used on 2.6 kernels to access hardware/driver configuration information.
+

@@ -1,0 +1,18 @@
+NICE(1)
+
+nice [OPTION] [COMMAND [ARG]...]
+
+Run COMMAND with an adjusted niceness, which affects process scheduling.
+With no COMMAND, print the current niceness.
+Nicenesses range from -20 (most favorable scheduling) to 19 (least favorable).
+
+-n, --adjustment=N
+   add integer N to the niceness (default 10)
+
+ex.: /usr/bin/nice -n -5 top
+
+GNU coreutils 6.9.92.4-f088d-dirty
+January 2008
+
+veja ionice
+

@@ -1,0 +1,124 @@
+sudo ntfswipe -f -a -b 0 -v /dev/sda2
+
+timedatectl
+      Local time: qui 2019-07-18 20:21:08 -03
+  Universal time: qui 2019-07-18 23:21:08 UTC
+        RTC time: qui 2019-07-18 23:21:08
+       Time zone: America/Sao_Paulo (-03, -0300)
+ Network time on: yes
+NTP synchronized: no
+ RTC in local TZ: no
+
+timedatectl set-time 09:08:07
+or
+date +%T -s "10:13:13"
+
+date --set="20140125 09:17:00"
+timedatectl set-time 20190115
+
+timedatectl list-timezones
+timedatectl set-timezone America/Sao_Paulo
+
+# timedatectl set-local-rtc 0
+# timedatectl set-local-rtc 1
+
+sudo hwclock 
+2019-07-18 20:25:08.249473-0300
+
+
+lsusb -tv
+lspci -tv
+
+findmnt                       	Displays target mount point for all filesystems
+
+sort --ignore-case
+uniq --ignore-case
+
+cat file1 
+Hello
+Hello
+How are you?
+Good morning
+Good morning
+Thank you
+
+uniq -d file1 
+Hello
+Good morning
+
+uniq -u file1 
+How are you?
+Thank you
+
+ignore characters at the beginning
+cat file1 
+1apple
+2apple
+3pears
+4banana
+5banana
+
+uniq -s 1 file1 
+1apple
+3pears
+4banana
+
+echo 'teaf tes
+dasfl tes' | uniq --skip-fields=1
+teaf tes
+
+
+#!/usr/bin/python3
+    import math
+    radius = int(input("Please enter the radius of the circle : "))
+    area_of_circle = math.pi * radius**2
+    print(area_of_circle)
+
+findmnt can be used to monitor changes in /proc/self/mountinfo file:
+findmnt -p
+
+findmnt --df
+or
+df -h
+
+systemctl status cron.service
+cat /etc/crontab 
+
+execute the /root/process.sh shell script at 5:20 PM and 5:40 PM Monday to Friday regardless of the day of the month or month of the year
+20,40 17 * * 1-5 root /root/script.sh
+
+As root user, you can also edit or list the crontab of another user with-u parameter
+
+# crontab -e -u stephen
+  # ping the gateway every 05 minutes and redirect the result in a file 
+  */5 * * * * ping -c 10 192.168.10.1 >> ping-file
+
+
+sudo apt-get install at
+
+at 04:47 09/08/17
+at> tail -f -n 30 /var/log/centreon-engine/centengine.log >> /home/paul/centengine-log
+at> <EOT>
+
+atq
+atrm
+
+
+lsof -u ubuntu | grep /home
+
+
+processes using some particular port
+lsof -i :25
+
+network connections
+lsof -i
+
+all open files by process ID
+lsof -p PID
+
+Ports and Services in ipv4
+sudo lsof -Pnl +M -i4
+
+TCP or UDP connections
+lsof -i tcp; lsof -i udp;
+

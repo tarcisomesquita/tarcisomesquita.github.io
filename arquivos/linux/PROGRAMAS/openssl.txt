@@ -1,0 +1,34 @@
+cat request.txt | nc -w 5 <someserver> 80
+$ cat request.txt | openssl s_client -connect server:443
+
+openssl s_client -connect mail.example.com:995
+or
+openssl s_client -crlf -connect mail.example.com:110 -starttls pop3
+
+
+
+Each key comes in two files: the certificate, which has the extension .x509.pem, and the private key, which has the extension .pk8. The private key should be kept secret and is needed to sign a package. The key may itself be protected by a password. The certificate, in contrast, contains only the public half of the key, so it can be distributed widely. It is used to verify a package has been signed by the corresponding private key.
+
+
+
+Manually generating keys
+
+# generate RSA key
+openssl genrsa -3 -out temp.pem 2048
+Generating RSA private key, 2048 bit long modulus
+....+++
+.....................+++
+e is 3 (0x3)
+
+# create a certificate with the public part of the key
+openssl req -new -x509 -key temp.pem -out releasekey.x509.pem -days 10000 -subj '/C=US/ST=California/L=San Narciso/O=Yoyodyne, Inc./OU=Yoyodyne Mobility/CN=Yoyodyne/emailAddress=yoyodyne@example.com'
+
+# create a PKCS#8-formatted version of the private key
+openssl pkcs8 -in temp.pem -topk8 -outform DER -out releasekey.pk8 -nocrypt
+
+# securely delete the temp.pem file
+shred --remove temp.pem
+
+The openssl pkcs8 command given above creates a .pk8 file with no password, suitable for use with the build system. To create a .pk8 secured with a password (which you should do for all actual release keys), replace the -nocrypt argument with -passout stdin; then openssl will encrypt the private key with a password read from standard input. No prompt is printed, so if stdin is the terminal the program will appear to hang when it's really just waiting for you to enter a password. Other values can be used for the-passout argument to read the password from other locations; for details, see the openssl documentation.
+
+

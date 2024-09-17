@@ -1,0 +1,140 @@
+apt-get install qemu-system-x86
+apt-get install tigervnc-viewer
+
+qemu-system-x86_64 [machine opts] [cpu opts] [accelerator opts] [device opts] [backend opts] [interface opts] [boot opts]
+
+-m 2G,slots=2,maxmem=4G
+-display curses
+
+chmod 0444 /media/arq/kolibri.img
+qemu-system-x86_64 -m 512M -hda /media/arq/kolibri.img
+qemu-system-x86_64 -m 512M -cdrom /media/arq/slax-64bit-11.6.0.iso
+vncviewer ::5900
+F8 escapar fullscreen
+
+qemu-system-x86_64 -global ide-hd.physical_block_size=4096 disk-image.img
+
+-boot [order=drives][,once=drives][,menu=on|off][,splash=sp_name][,splash-time=sp_time][,reboot-timeout=rb_timeout][,strict=on|off]
+
+-mem-path path
+Allocate guest RAM from a temporarily created file in path.
+
+-k pt-br
+Use keyboard layout language
+
+-audiodev alsa,id=example,in.frequency=44110,out.frequency=8000
+-audiodev alsa,id=example,out.channels=1 # leaves in.channels unspecified
+
+-hda file
+-hdb file
+-cdrom file
+-blockdev driver=file,node-name=disk,filename=disk.img
+-blockdev driver=raw,node-name=disk,file=disk_file
+
+if=interface
+This option defines on which type on interface the drive is connected. Available types are: ide, scsi, sd, mtd, floppy, pflash, virtio, none.
+
+media=media
+This option defines the type of the media: disk or cdrom.
+
+cache=cache
+cache is “none”, “writeback”, “unsafe”, “directsync” or “writethrough”
+
+Instead of -fda, -fdb, you can use:
+
+qemu-system-x86_64 -drive file=file,index=0,if=floppy
+qemu-system-x86_64 -drive file=file,index=1,if=floppy
+By default, interface is “ide” and index is automatically incremented:
+
+qemu-system-x86_64 -drive file=a -drive file=b
+is interpreted like:
+qemu-system-x86_64 -hda a -hdb b
+
+Instead of -fda, -fdb, you can use:
+
+qemu-system-x86_64 -drive file=file,index=0,if=floppy
+qemu-system-x86_64 -drive file=file,index=1,if=floppy
+By default, interface is “ide” and index is automatically incremented:
+
+-usbdevice devname
+Add the USB device devname, and enable an on-board USB controller if possible and necessary (just like it can be done via -machine usb=on).
+-usbdevice mouse
+
+qemu-system-x86_64 -display help
+
+-nic [tap|bridge|user|l2tpv3|vde|netmap|af-xdp|vhost-user|socket][,...][,mac=macaddr][,model=mn]
+
+qemu-system-x86_64 -nic user,ipv6=off,model=e1000,mac=52:54:98:76:54:32
+
+-kernel bzImage
+Use bzImage as kernel image. The kernel can be either a Linux kernel or in multiboot format.
+
+-append cmdline
+Use cmdline as kernel command line
+
+-initrd file
+Use file as initial ram disk.
+
+QEMU can automatically create a virtual FAT disk image from a directory tree. In order to use it, just type:
+qemu-system-x86_64 linux.img -hdb fat:/my_directory
+The default access is read-only.
+
+A read/write support is available for testing (beta stage) with the :rw: option:
+qemu-system-x86_64 linux.img -fda fat:floppy:rw:/my_directory
+
+What you should never do:
+use non-ASCII filenames
+write to the FAT directory on the host system while accessing it with the guest system
+
+Before starting QEMU, bind the host NVMe controller to the host vfio-pci driver. For example:
+
+# modprobe vfio-pci
+# lspci -n -s 0000:06:0d.0
+06:0d.0 0401: 1102:0002 (rev 08)
+# echo 0000:06:0d.0 > /sys/bus/pci/devices/0000:06:0d.0/driver/unbind
+# echo 1102 0002 > /sys/bus/pci/drivers/vfio-pci/new_id
+
+# qemu-system-x86_64 -drive file=nvme://HOST:BUS:SLOT.FUNC/NAMESPACE
+Alternative syntax using properties:
+
+qemu-system-x86_64 -drive file.driver=nvme,file.device=HOST:BUS:SLOT.FUNC,file.namespace=NAMESPACE
+
+
+qemu-system-x86_64 -cpu host
+qemu-system-x86_64 --enable-kvm --cpu host,hv_relaxed,hv_vpindex,hv_time, ...
+https://www.qemu.org/docs/master/system/i386/hyperv.html
+
+
+Ctrl-Alt
+Toggle mouse and keyboard grab.
+
+In the virtual consoles, you can use Ctrl-Up, Ctrl-Down, Ctrl-PageUp and Ctrl-PageDown to move in the back log.
+
+Verify that /proc/bus/usb is working (most Linux distributions should enable it by default). You should see something like that:
+ls /proc/bus/usb
+001  devices  drivers
+
+chown -R myuid /proc/bus/usb
+usb-host,vendorid=vendor,productid=product
+usb-storage,drive=drive_id
+qemu-system-x86_64 [...]                                   \
+ -drive if=none,id=stick,format=raw,file=/path/to/file.img \
+ -device nec-usb-xhci,id=xhci                              \
+ -device usb-storage,bus=xhci.0,drive=stick
+
+
+host USB 1.1 devices are handled by UHCI/OHCI and USB 2.0 by EHCI
+
+qemu-system-x86_64 -M pc [...]                            \
+     -usb                                                 \
+     -device usb-ehci,id=ehci                             \
+     -device usb-host,bus=usb-bus.0,hostbus=3,hostport=1  \
+     -device usb-host,bus=ehci.0,hostbus=1,hostport=1
+
+vendorid=<hexnr>
+Specifies the vendor ID of the device
+
+productid=<hexnr>
+Specifies the product ID of the device.
+
+usb-host,vendorid=0x1234,productid=0x5678

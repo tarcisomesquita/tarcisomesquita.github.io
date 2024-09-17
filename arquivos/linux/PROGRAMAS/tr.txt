@@ -1,0 +1,24 @@
+sudo dd if=/dev/nvme0n1p5 bs=256M status=progress | tr -c '0-9a-zçàáãéíóõúA-ZÇÀÁÃÉÍÓÕÚ ,.:/=?&<>"\n' '_' | tr -d '_' | tr 'a-zçàáãéíóõú' 'A-ZÇÀÁÃÉÍÓÕÚ' > /dev/null
+só reconhece UTF-8
+
+$ echo "aéção" | tr 'a-zçàáãéíóõú' 'A-ZÇÀÁÃÉÍÓÕÚ'
+AÉÇÃO
+
+$ echo teset | tr et ca
+acsca
+
+Complement
+$ echo teste | tr -c s a ; echo ""
+aasaaa
+
+Delete
+$ echo tteste | tr -d 'q-z'
+ee
+
+
+Interpreted sequences are:
+\NNN   character with octal value NNN (1 to 3 octal digits)
+\\     backslash
+\n     new line
+\r     return
+\t     horizontal tab

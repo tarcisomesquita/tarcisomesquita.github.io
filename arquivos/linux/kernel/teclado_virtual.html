@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html style="" class="no-js linux firefox firefox-17" lang="pt-br"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<title>Implementando um teclado virtual no Linux</title>
+</head>
+<body class="single single-post postid-2150 single-format-standard">
+
+<div id="all" class="clearfix">
+	<section id="content" class="clearfix">
+		<article class="post clearfix">
+			<header>
+				<h2>Implementando um teclado virtual no&nbsp;Linux</h2>
+			</header>
+			<div class="text">
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">O
+ obje­tivo era imple­men­tar um teclado vir­tual, de forma que um 
+processo ou apli­cação pudesse sim­u­lar o pres­sion­a­mento de uma 
+tecla, sem que esta tecla tivesse sido real­mente pres­sion­ada em um 
+teclado físico.<br>
+	</span></span></p>
+<p style="text-align: justify; "><strong><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;"><span class="caps">CAMADA</span> 0: <span class="caps">HARDWARE</span><br>
+	</span></span></strong></p>
+
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Quando
+ você pres­siona uma tecla, essa tecla é trans­for­mada em um código 
+chamado de scan­code. Cada tecla pos­sui um scan­code quando é 
+pres­sion­ada e outro quando é lib­er­ada (o bit mais sig­ni­fica­tivo é
+ setado). Por exem­plo, a letra ‘x’ emite o scan­code 0x2d quando é 
+pres­sion­ada e 0xad quando é lib­er­ada (no meu teclado <span class="caps">USB</span>).<br>
+	</span></span></p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="code"><pre class="text" style="font-family:monospace;">$ sudo showkey -s
+press any key (program terminates 10s after last keypress)...
+0x2d 0xad</pre></td></tr></tbody></table></div>
+
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Por­tanto, para cada tecla pres­sion­ada, uma inter­rupção é ger­ada para a <span class="caps">CPU</span>, e os scan­codes são envi­a­dos via bar­ra­mento de comu­ni­cação, depen­dendo do hard­ware do seu teclado (<span class="caps">PS2</span>, <span class="caps">USB</span>,&nbsp;etc).</span></span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Logo
+ após, a rotina de trata­mento de inter­rupção do teclado é acionada, 
+sendo respon­sável por rece­ber e tratar estes scan­codes, con­forme 
+ver­e­mos a seguir.<br>
+	</span></span></p>
+<p style="text-align: justify; "><strong><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;"><span class="caps">CAMADA</span> 1: <span class="caps">DEVICE</span> <span class="caps">DRIVER</span><br>
+	</span></span></strong></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Aqui
+ já esta­mos no ker­nel do Linux. Um device dri­ver vai con­ver­sar com o
+ hard­ware do seu teclado, rece­ber e tratar os scan­codes.<br>
+	</span></span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">E depen­dendo do hard­ware que você esta usando (teclado <span class="caps">USB</span>, <span class="caps">PS2</span>, etc), um difer­ente device dri­ver será o respon­sável por ler estes scan­codes. Por exem­plo, a imple­men­tação do teclado <span class="caps">PS2</span> padrão encontra-se nos fontes do ker­nel em <a href="http://lxr.free-electrons.com/source/drivers/input/keyboard/atkbd.c?v=3.0" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://lxr.free-electrons.com']);" target="_blank"><em>drivers/input/keyboard/atkbd.c</em></a>. Vai lá dar uma olhada, eu espero!<br>
+	</span></span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Após
+ ler os scan­codes, o device dri­ver irá convertê-los em um outro código
+ chamado key­codes. Cuidado para não con­fundir! Scan­code é um código 
+depen­dente do hard­ware do teclado e tratado pelo device dri­ver. 
+Key­code é um código que rep­re­senta uma tecla den­tro de um sis­tema 
+Linux.<br>
+	</span></span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Você
+ já viu que cada tecla pres­sion­ada gera dois scan­codes (pres­sion­ada
+ e lib­er­ada). Mas ela pos­sui um único key­code. Por exem­plo, no meu <span class="caps">PC</span>, quando pres­siono a tecla ‘x’, é ger­ado o key­code 45:<br>
+	</span></span></p>
+
+
+<div class="wp_syntax"><table><tbody><tr><td class="code"><pre class="text" style="font-family:monospace;">$ sudo showkey -k
+press any key (program terminates 10s after last keypress)...
+keycode  45 press
+keycode  45 release</pre></td></tr></tbody></table></div>
+
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Mas
+ como então o ker­nel difer­en­cia teclas pres­sion­adas e lib­er­adas 
+se o key­code é o mesmo? Fácil. O device dri­ver gera dois even­tos para
+ o ker­nel. Um para teclas pres­sion­adas e outro para teclas 
+lib­er­adas. E estes even­tos são envi­a­dos para camada input do 
+ker­nel.<br>
+	</span></span></p>
+<p style="text-align: justify; "><strong><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;"><span class="caps">CAMADA</span> 2: <span class="caps">INPUT</span> <span class="caps">SUBSYSTEM</span><br>
+	</span></span></strong></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">É nesta camada que percebe­mos toda a capaci­dade de mod­u­lar­iza­ção do ker­nel do Linux.&nbsp;<br>
+	</span></span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">A
+ camada input foi cri­ada para abstrair a cap­tura de even­tos de 
+dis­pos­i­tivos de entrada como mouse, teclado, joy­sticks, touch 
+screens, etc. Enquanto que cada um destes dis­pos­i­tivos pos­sui seu 
+respec­tivo device dri­ver, cada device dri­ver exporta os even­tos para
+ a camada input. Por sua vez, a camada input trata e exporta estes 
+even­tos em um for­mato padrão para arquivos de dis­pos­i­tivo em 
+/dev/input/:<br>
+	</span></span></p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="code"><pre class="text" style="font-family:monospace;">$ ls /dev/input
+event0  event1  event2  event3  event4  event5  mice  mouse0</pre></td></tr></tbody></table></div>
+
+
+
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Cada um destes arquivos de dis­pos­i­tivo rep­re­sen­tam um dis­pos­i­tivo de entrada.<br>
+	</span></span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Você pode usar a fer­ra­menta “evtest” para ver­i­ficar qual o dis­pos­i­tivo rela­cionado à deter­mi­nado arquivo:<br>
+	</span></span></p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="code"><pre class="text" style="font-family:monospace;">$ sudo evtest /dev/input/event4
+Input driver version is 1.0.1
+Input device ID: bus 0x3 vendor 0x1c4f product 0x2 version 0x110
+Input device name: "USB USB Keykoard"
+...</pre></td></tr></tbody></table></div>
+
+<p style="text-align: justify; "><span class="Apple-style-span" style="font-family: verdana, geneva, sans-serif; font-size: 14px; ">Veja que, na minha máquina, /dev/input/event4 é o arquivo de dis­pos­i­tivo que gera os even­tos do teclado <span class="caps">USB</span>.</span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">A
+ fer­ra­menta “evtest” tam­bém é capaz de mon­i­torar os even­tos de 
+dis­pos­i­tivos de entrada. Exe­cute nova­mente o comando acima, 
+pres­sione uma tecla e veja os even­tos que foram expor­ta­dos para 
+user­space através deste arquivo de dis­pos­i­tivo:<br>
+	</span></span></p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="code"><pre class="text" style="font-family:monospace;">...
+Event: time 1323720735.849223, type 1 (Key), code 45 (X), value 1
+Event: time 1323720735.849225, -------------- Report Sync ------------
+Event: time 1323720735.905222, type 1 (Key), code 45 (X), value 0
+Event: time 1323720776.880210, -------------- Report Sync ------------
+...</pre></td></tr></tbody></table></div>
+
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Perceba o key­code 45 para a tecla ‘x’ e os val­ores 1 para tecla pres­sion­ada e 0 para tecla lib­er­ada.<br>
+	</span></span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Por
+ fim, as bib­liote­cas grá­fi­cas mon­i­toram os even­tos nestes 
+arquivos de dis­pos­i­tivos e expor­tam estes even­tos para as 
+apli­cações. E assim você vê uma tecla ecoando em seu ter­mi­nal!<br>
+	</span></span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Linux é ou não é um dos <span class="caps">SOMLTT</span> — sis­temas opera­cionais mais legais de todos os tem­pos? :-)<br>
+	</span></span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Ape­nas
+ um detalhe aqui: no caso do teclado, além de expor­tar os even­tos para
+ “/dev/input/”, a camada input tam­bém exporta os even­tos de teclas 
+pres­sion­adas para a camada <span class="caps">TTY</span> ativa no 
+momento. Desta forma, se você estiver em um ter­mi­nal conec­tado à 
+/dev/tty2, por exem­plo, irá rece­ber este evento. Se quiser saber mais 
+sobre a camada <span class="caps">TTY</span>, leia o artigo “<a href="http://sergioprado.org/2011/04/25/por-dentro-da-console-em-sistemas-linux/" target="_blank">Por den­tro da con­sole em sis­temas Linux</a>”.<br>
+	</span></span></p>
+<p style="text-align: justify; "><strong><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;"><span class="caps">VOLTANDO</span> <span class="caps">AO</span> <span class="caps">NOSSO</span> <span class="caps">PROBLEMA</span>…<br>
+	</span></span></strong></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Depois
+ de todas estas expli­cações, espero que você não tenha se esque­cido do
+ nosso prob­lema orig­i­nal: emu­lar um teclado vir­tual inde­pen­dente 
+de bib­lioteca grá­fica, e que fun­cione em modo texto.<br>
+	</span></span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Agora ficou mais fácil pen­sar numa solução, não é verdade? </span></span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Reveja
+ as camadas. A camada 0 é hard­ware, e não temos hard­ware no nosso 
+caso. A camada 2 é genérica, e não é uma boa prática mexer nela. 
+Potanto, é na camada 1 que tra­bal­hare­mos.<br>
+	</span></span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Vamos
+ desen­volver um device dri­ver (no nosso caso, um módulo do ker­nel, já
+ que não falare­mos com nen­hum hard­ware) que irá gerar even­tos de 
+teclado para a camada input. Sim­ples assim!<br>
+	</span></span></p>
+<p style="text-align: justify; "><strong><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">A <span class="caps">SOLUÇÃO</span><br>
+	</span></span></strong></p>
+<p style="text-align: justify; "><span class="Apple-style-span" style="font-family: verdana, geneva, sans-serif; font-size: 14px; ">Para
+ não com­plicar muito, vamos escr­ever um mod­ulo sim­ples que irá 
+emu­lar a dig­i­tação de uma frase a cada 10 segun­dos. Assim que 
+car­regado, uma frase será “dig­i­tada” pelo módulo a cada 10 segun­dos.
+ E para deixar o tra­balho mais diver­tido, a frase será 
+“seg­men­ta­tion&nbsp;fault”!</span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Sem mais enro­lação, este é o código com­pleto do nosso módulo do ker­nel:<br>
+	</span></span></p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="code"><pre class="c" style="font-family:monospace;"><span style="color: #339933;">#include "linux/fs.h"</span>
+<span style="color: #339933;">#include "linux/cdev.h"</span>
+<span style="color: #339933;">#include "linux/module.h"</span>
+<span style="color: #339933;">#include "linux/kernel.h"</span>
+<span style="color: #339933;">#include "linux/delay.h"</span>
+<span style="color: #339933;">#include "linux/kthread.h"</span>
+<span style="color: #339933;">#include "linux/device.h"</span>
+<span style="color: #339933;">#include "linux/slab.h"</span>
+<span style="color: #339933;">#include "linux/tty.h"</span>
+<span style="color: #339933;">#include "linux/tty_flip.h"</span>
+<span style="color: #339933;">#include "linux/kbd_kern.h"</span>
+<span style="color: #339933;">#include "linux/input.h"</span>
+&nbsp;
+<span style="color: #808080; font-style: italic;">/* vtkbd kernel thread struct */</span>
+<span style="color: #993333;">static</span> <span style="color: #993333;">struct</span> task_struct <span style="color: #339933;">*</span>vtkbd_thread_task<span style="color: #339933;">;</span>
+&nbsp;
+<span style="color: #808080; font-style: italic;">/* vtkbd input device structure */</span>
+<span style="color: #993333;">static</span> <span style="color: #993333;">struct</span> input_dev <span style="color: #339933;">*</span>vtkbd_input_dev<span style="color: #339933;">;</span>
+&nbsp;
+<span style="color: #993333;">const</span> <span style="color: #993333;">char</span> str_keys<span style="color: #009900;">[</span><span style="color: #009900;">]</span> <span style="color: #339933;">=</span> <span style="color: #009900;">{</span> KEY_S<span style="color: #339933;">,</span> KEY_E<span style="color: #339933;">,</span> KEY_G<span style="color: #339933;">,</span> KEY_M<span style="color: #339933;">,</span> KEY_E<span style="color: #339933;">,</span> KEY_N<span style="color: #339933;">,</span>
+                          KEY_T<span style="color: #339933;">,</span> KEY_A<span style="color: #339933;">,</span> KEY_T<span style="color: #339933;">,</span> KEY_I<span style="color: #339933;">,</span> KEY_O<span style="color: #339933;">,</span> KEY_N<span style="color: #339933;">,</span>
+                          KEY_SPACE<span style="color: #339933;">,</span> KEY_F<span style="color: #339933;">,</span> KEY_A<span style="color: #339933;">,</span> KEY_U<span style="color: #339933;">,</span> KEY_L<span style="color: #339933;">,</span>
+                          KEY_T<span style="color: #339933;">,</span> KEY_ENTER <span style="color: #009900;">}</span><span style="color: #339933;">;</span>
+&nbsp;
+<span style="color: #808080; font-style: italic;">/* kernel thread */</span>
+<span style="color: #993333;">static</span> <span style="color: #993333;">int</span> vtkbd_thread<span style="color: #009900;">(</span><span style="color: #993333;">void</span> <span style="color: #339933;">*</span>unused<span style="color: #009900;">)</span>
+<span style="color: #009900;">{</span>
+    <span style="color: #993333;">int</span> i<span style="color: #339933;">;</span>
+&nbsp;
+    <span style="color: #b1b100;">while</span> <span style="color: #009900;">(</span><span style="color: #339933;">!</span>kthread_should_stop<span style="color: #009900;">(</span><span style="color: #009900;">)</span><span style="color: #009900;">)</span> <span style="color: #009900;">{</span>
+&nbsp;
+        <span style="color: #b1b100;">for</span> <span style="color: #009900;">(</span>i <span style="color: #339933;">=</span> <span style="color: #0000dd;">0</span><span style="color: #339933;">;</span> i <span style="color: #339933;">&lt;</span> <span style="color: #993333;">sizeof</span><span style="color: #009900;">(</span>str_keys<span style="color: #009900;">)</span><span style="color: #339933;">;</span> i<span style="color: #339933;">++</span><span style="color: #009900;">)</span> <span style="color: #009900;">{</span>
+&nbsp;
+            input_report_key<span style="color: #009900;">(</span>vtkbd_input_dev<span style="color: #339933;">,</span> str_keys<span style="color: #009900;">[</span>i<span style="color: #009900;">]</span><span style="color: #339933;">,</span> <span style="color: #0000dd;">1</span><span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+            input_report_key<span style="color: #009900;">(</span>vtkbd_input_dev<span style="color: #339933;">,</span> str_keys<span style="color: #009900;">[</span>i<span style="color: #009900;">]</span><span style="color: #339933;">,</span> <span style="color: #0000dd;">0</span><span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+            input_sync<span style="color: #009900;">(</span>vtkbd_input_dev<span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+&nbsp;
+        <span style="color: #009900;">}</span>
+&nbsp;
+        <span style="color: #808080; font-style: italic;">/* wait 10 seconds */</span>
+        msleep<span style="color: #009900;">(</span><span style="color: #0000dd;">10000</span><span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+    <span style="color: #009900;">}</span>
+&nbsp;
+    <span style="color: #b1b100;">return</span><span style="color: #009900;">(</span><span style="color: #0000dd;">0</span><span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+<span style="color: #009900;">}</span>
+&nbsp;
+<span style="color: #808080; font-style: italic;">/* driver initialization */</span>
+<span style="color: #993333;">static</span> <span style="color: #993333;">int</span> __init vtkbd_init<span style="color: #009900;">(</span><span style="color: #993333;">void</span><span style="color: #009900;">)</span>
+<span style="color: #009900;">{</span>
+    <span style="color: #993333;">static</span> <span style="color: #993333;">const</span> <span style="color: #993333;">char</span> <span style="color: #339933;">*</span>name <span style="color: #339933;">=</span> <span style="color: #ff0000;">"Virtual Keyboard"</span><span style="color: #339933;">;</span>
+    <span style="color: #993333;">int</span> i<span style="color: #339933;">;</span>
+&nbsp;
+    <span style="color: #808080; font-style: italic;">/* allocate input device */</span>
+    vtkbd_input_dev <span style="color: #339933;">=</span> input_allocate_device<span style="color: #009900;">(</span><span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+    <span style="color: #b1b100;">if</span> <span style="color: #009900;">(</span><span style="color: #339933;">!</span>vtkbd_input_dev<span style="color: #009900;">)</span> <span style="color: #009900;">{</span>
+        printk<span style="color: #009900;">(</span><span style="color: #ff0000;">"vtkbd_init: Error on input_allocate_device!<span style="color: #000099; font-weight: bold;">\n</span>"</span><span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+        <span style="color: #b1b100;">return</span> <span style="color: #339933;">-</span>ENOMEM<span style="color: #339933;">;</span>
+    <span style="color: #009900;">}</span>
+&nbsp;
+    <span style="color: #808080; font-style: italic;">/* set input device name */</span>
+    vtkbd_input_dev<span style="color: #339933;">-&gt;</span>name <span style="color: #339933;">=</span> name<span style="color: #339933;">;</span>
+&nbsp;
+    <span style="color: #808080; font-style: italic;">/* enable key events */</span>
+    set_bit<span style="color: #009900;">(</span>EV_KEY<span style="color: #339933;">,</span> vtkbd_input_dev<span style="color: #339933;">-&gt;</span>evbit<span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+    <span style="color: #b1b100;">for</span> <span style="color: #009900;">(</span>i <span style="color: #339933;">=</span> <span style="color: #0000dd;">0</span><span style="color: #339933;">;</span> i <span style="color: #339933;">&lt;</span> <span style="color: #0000dd;">256</span><span style="color: #339933;">;</span> i<span style="color: #339933;">++</span><span style="color: #009900;">)</span>
+        set_bit<span style="color: #009900;">(</span>i<span style="color: #339933;">,</span> vtkbd_input_dev<span style="color: #339933;">-&gt;</span>keybit<span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+&nbsp;
+    <span style="color: #808080; font-style: italic;">/* register input device */</span>
+    input_register_device<span style="color: #009900;">(</span>vtkbd_input_dev<span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+&nbsp;
+    <span style="color: #808080; font-style: italic;">/* start thread */</span>
+    vtkbd_thread_task <span style="color: #339933;">=</span> kthread_run<span style="color: #009900;">(</span>vtkbd_thread<span style="color: #339933;">,</span> NULL<span style="color: #339933;">,</span> <span style="color: #ff0000;">"%s"</span><span style="color: #339933;">,</span> <span style="color: #ff0000;">"vtkbd_thread"</span><span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+&nbsp;
+    printk<span style="color: #009900;">(</span><span style="color: #ff0000;">"Virtual Keyboard driver initialized.<span style="color: #000099; font-weight: bold;">\n</span>"</span><span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+&nbsp;
+    <span style="color: #b1b100;">return</span> <span style="color: #0000dd;">0</span><span style="color: #339933;">;</span>
+<span style="color: #009900;">}</span>
+&nbsp;
+<span style="color: #808080; font-style: italic;">/* driver exit */</span>
+<span style="color: #993333;">void</span> __exit vtkbd_exit<span style="color: #009900;">(</span><span style="color: #993333;">void</span><span style="color: #009900;">)</span>
+<span style="color: #009900;">{</span>
+    <span style="color: #808080; font-style: italic;">/* stop thread */</span>
+    kthread_stop<span style="color: #009900;">(</span>vtkbd_thread_task<span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+&nbsp;
+    <span style="color: #808080; font-style: italic;">/* unregister input device */</span>
+    input_unregister_device<span style="color: #009900;">(</span>vtkbd_input_dev<span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+&nbsp;
+    printk<span style="color: #009900;">(</span><span style="color: #ff0000;">"Virtual Keyboard driver.<span style="color: #000099; font-weight: bold;">\n</span>"</span><span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+<span style="color: #009900;">}</span>
+&nbsp;
+module_init<span style="color: #009900;">(</span>vtkbd_init<span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+module_exit<span style="color: #009900;">(</span>vtkbd_exit<span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+&nbsp;
+MODULE_LICENSE<span style="color: #009900;">(</span><span style="color: #ff0000;">"GPL"</span><span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+MODULE_AUTHOR<span style="color: #009900;">(</span><span style="color: #ff0000;">"Sergio Prado sergio.prado@embeddedlabworks.com"</span><span style="color: #009900;">)</span><span style="color: #339933;">;</span>
+MODULE_DESCRIPTION<span style="color: #009900;">(</span><span style="color: #ff0000;">"Virtual Keyboard driver"</span><span style="color: #009900;">)</span><span style="color: #339933;">;</span></pre></td></tr></tbody></table></div>
+
+
+
+<p style="text-align: justify; "><span class="Apple-style-span" style="font-family: verdana, geneva, sans-serif; font-size: 14px; ">O módulo tem basi­ca­mente 3 funções:&nbsp;<em>vtkbd_init()</em> para ini­cializar o módulo,&nbsp;<em>vtkbd_exit()</em> para fazer a limpeza ao descar­regar o módulo e&nbsp;<em>vtkbd_thread()</em> que faz a mág­ica de dig­i­tar a frase periodicamente.</span></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">Na função de ini­cial­iza­ção, o primeiro passo é alo­car um dis­pos­i­tivo de input com a função&nbsp;<em>input_allocate_device()</em>
+ na linha 54. Essa função vai devolver uma estru­tura que vai nos 
+pos­si­bil­i­tar con­ver­sar com a camada input e gerar os even­tos de 
+teclado. Nas lin­has 64 a 66 habili­ta­mos a ger­ação de even­tos em 
+todas as teclas (veja o loop) e na linha 69 reg­is­tramos o 
+dis­pos­i­tivo de input com a função&nbsp;<em>input_register_device()</em>.
+ Por último, cri­amos e ini­ci­amos a thread do ker­nel que irá fazer o 
+“tra­balho sujo”. Se você quiser ler mais sobre Ker­nel Threads, leia o 
+artigo “<a href="http://sergioprado.org/2011/04/18/linux-device-drivers-trabalhando-com-kernel-threads/" target="_blank">Linux Device Dri­vers — Tra­bal­hando com Ker­nel Threads</a>”</span></span></p>
+<p style="text-align: justify; "><font class="Apple-style-span" face="verdana, geneva, sans-serif"><span class="Apple-style-span" style="font-size: 14px;">Na função de limpeza, paramos a thread e remove­mos o dis­pos­i­tivo de input que reg­is­tramos na inicialização.</span></font></p>
+<p style="text-align: justify; "><span style="font-size:14px;"><span style="font-family:verdana,geneva,sans-serif;">A thread&nbsp;<em>vtkbd_thread()</em>
+ é bem sim­ples e faz toda a mág­ica. Ela é basi­ca­mente um loop 
+infinito que, a cada 10 segun­dos, gera os even­tos para emu­lar a 
+dig­i­tação. O vetor&nbsp;<em>str_keys[]</em> con­tém os key­codes para a frase “<em>seg­men­ta­tion fault</em>”. Esses key­codes estão definidos em <a href="http://lxr.free-electrons.com/source/include/linux/input.h?v=3.0" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://lxr.free-electrons.com']);" target="_blank">include/linux/input.h</a>. Para cada key­code, ger­amos dois even­tos com a função&nbsp;<em>input_report_key()</em>,
+ sim­u­lando a tecla pres­sion­ada na linha 34 e a tecla lib­er­ada na 
+linha 35 (veja os parâmet­ros 1 e 0, respec­ti­va­mente). Por último, 
+exe­cu­ta­mos a função&nbsp;<em>input_sync()</em>, noti­f­i­cando a camada input da existên­cia de novos even­tos a serem tratados.</span></span></p>
+<p style="text-align: justify; "><span class="Apple-style-span" style="font-family: verdana, geneva, sans-serif; font-size: 14px; ">Sim­ples,&nbsp;não?</span></p>
+<p style="text-align: justify; "><span class="Apple-style-span" style="font-family: verdana, geneva, sans-serif; font-size: 14px; ">Para com­pi­lar, crie um Make­file com o con­teúdo abaixo:</span></p>
+
+
+<div class="wp_syntax"><table><tbody><tr><td class="code"><pre class="text" style="font-family:monospace;">KVER := $(shell uname -r)
+KDIR := /usr/src/linux-headers-$(KVER)
+PWD  := $(shell pwd)
+&nbsp;
+obj-m += vtkbd.o
+&nbsp;
+default:
+        $(MAKE) -C $(KDIR) SUBDIRS=$(PWD) modules
+&nbsp;
+clean:
+        @rm -Rf *.o *.ko *.mod.c modules.order Module.symvers Module.markers</pre></td></tr></tbody></table></div>
+
+<p style="text-align: justify; "><span class="Apple-style-span" style="font-family: verdana, geneva, sans-serif; font-size: 14px; ">E com­pile:</span></p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="code"><pre class="text" style="font-family:monospace;">$ make</pre></td></tr></tbody></table></div>
+
+<p style="text-align: justify; "><span class="Apple-style-span" style="font-family: verdana, geneva, sans-serif; font-size: 14px; ">Para car­regar o módulo:</span></p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="code"><pre class="text" style="font-family:monospace;">$ sudo insmod vtkbd.ko</pre></td></tr></tbody></table></div>
+
+<p style="text-align: justify; "><font class="Apple-style-span" face="verdana, geneva, sans-serif"><span class="Apple-style-span" style="font-size: 14px;">E para remover o módulo:</span></font></p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="code"><pre class="text" style="font-family:monospace;">$ sudo rmmod vtkbd</pre></td></tr></tbody></table></div>
+
+<p style="text-align: justify; "><font class="Apple-style-span" face="verdana, geneva, sans-serif"><span class="Apple-style-span" style="font-size: 14px;">Como
+ o módulo ficará dig­i­tando “seg­men­ta­tion fault” a cada 10 
+segun­dos, este é o tempo que você terá para dig­i­tar o comando de 
+remoção do módulo antes dele bagunçar seu&nbsp;shell!</span></font></p>
+<p style="text-align: justify; "><font class="Apple-style-span" face="verdana, geneva, sans-serif"><span class="Apple-style-span" style="font-size: 14px;">E
+ lembre-se de que você esta tra­bal­hando em ker­nel space, com acesso 
+total e irrestrito à memória e I/Os. Por­tanto, o ideal aqui é 
+tra­bal­har em uma máquina vir­tual. É mais seguro e pode evi­tar muitos
+ aci­dentes, prin­ci­pal­mente para aque­les que estão começando os 
+estu­dos do Ker­nel do&nbsp;Linux.</span></font></p>
+<span class="clear"></span>			</div>
+		</article>
+	</section>
+</div>
+</body></html>

@@ -1,0 +1,9 @@
+wget https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/linux-5.4.tar.gz
+2020-12-26 09:20:06 (1,06 MB/s) - ‘linux-5.4.tar.gz.2’ saved [170244619/170244619]
+
+wget http://kernel.c3sl.ufpr.br/pub/linux/kernel/v5.x/linux-5.4.tar.gz
+2020-12-26 09:03:50 (4,32 MB/s) - ‘linux-5.4.tar.gz.1’ saved [170244619/170244619]
+echo "4.32*8" | bc -l
+34.56
+Internet de 35 Mbps
+

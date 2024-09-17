@@ -1,0 +1,2 @@
+cat /run/systemd/resolve/resolv.conf
+

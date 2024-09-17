@@ -1,0 +1,346 @@
+sudo apt-get install gstreamer1.0-libav
+ _______              ______________
+|       |            |              |
+| input |  demuxer   | encoded data |   decoder
+| file  | ---------> | packets      | -----+
+|_______|            |______________|      |
+                                           v
+                                       _________
+                                      |         |
+                                      | decoded |
+                                      | frames  |
+                                      |_________|
+ ________             ______________       |
+|        |           |              |      |
+| output | <-------- | encoded data | <----+
+| file   |   muxer   | packets      |   encoder
+|________|           |______________|
+
+formats:
+-demuxers  Show available demuxers.
+-muxers    Show available muxers.
+-devices   Show available devices.
+ D  aac             raw ADTS AAC (Advanced Audio Coding)
+ DE avi             AVI (Audio Video Interleaved)
+ D  bin             Binary text
+ D  concat          Virtual concatenation script
+ DE data            raw data
+ DE flac            raw FLAC
+ DE flv             FLV (Flash Video)
+ DE gif             CompuServe Graphics Interchange Format (GIF)
+ DE h264            raw H.264 video
+ DE ico             Microsoft Windows ICO
+ DE image2          image2 sequence
+ DE mp3             MP3 (MPEG audio layer 3)
+  E mp4             MP4 (MPEG-4 Part 14)
+ DE mpeg            MPEG-1 Systems / MPEG program stream
+  E oga             Ogg Audio
+ DE ogg             Ogg
+  E ogv             Ogg Video
+ DE srt             SubRip subtitle
+ DE u24le           PCM unsigned 24-bit little-endian
+ DE u8              PCM unsigned 8-bit
+ DE video4linux2,v4l2 Video4Linux2 output device
+ DE wav             WAV / WAVE (Waveform Audio)
+  E webp            WebP
+ D  x11grab         X11 screen capture, using XCB
+
+codecs:
+-decoders   Show available decoders.
+-encoders   Show all available encoders.
+Codecs:
+ D..... = Decoding supported
+ .E.... = Encoding supported
+ ..V... = Video codec
+ ..A... = Audio codec
+ ..S... = Subtitle codec
+ ...I.. = Intra frame-only codec
+ ....L. = Lossy compression
+ .....S = Lossless compression
+ -------
+ DEVI.S bmp                  BMP (Windows and OS/2 bitmap)
+ DEV..S gif                  CompuServe GIF (Graphics Interchange Format)
+ DEV.LS h264                 H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10 (decoders: h264 h264_v4l2m2m h264_qsv h264_cuvid ) (encoders: libx264 libx264rgb h264_nvenc h264_omx h264_qsv h264_v4l2m2m h264_vaapi nvenc nvenc_h264 )
+ DEVIL. mjpeg                Motion JPEG (decoders: mjpeg mjpeg_cuvid mjpeg_qsv ) (encoders: mjpeg mjpeg_qsv mjpeg_vaapi )
+ DEV..S png                  PNG (Portable Network Graphics) image
+ DEVI.S rawvideo             raw video
+ D.V..S svg                  Scalable Vector Graphics (decoders: librsvg )
+ DEV.L. theora               Theora (encoders: libtheora )
+ DEVI.S tiff                 TIFF image
+ DEVILS webp                 WebP (encoders: libwebp_anim libwebp )
+ DEV.L. wmv1                 Windows Media Video 7
+ DEVI.S yuv4                 Uncompressed packed 4:2:0
+ DEVI.S zlib                 LCL (LossLess Codec Library) ZLIB
+ DEAIL. aac                  AAC (Advanced Audio Coding) (decoders: aac aac_fixed )
+ DEAI.S flac                 FLAC (Free Lossless Audio Codec)
+ DEAIL. mp3                  MP3 (MPEG audio layer 3) (decoders: mp3float mp3 ) (encoders: libmp3lame libshine )
+ DEAI.S pcm_s16le            PCM signed 16-bit little-endian
+ DEAI.S pcm_s32le            PCM signed 32-bit little-endian
+ DEAI.S pcm_u8               PCM unsigned 8-bit
+ DEAIL. vorbis               Vorbis (decoders: vorbis libvorbis ) (encoders: vorbis libvorbis )
+ ..D... ttf                  TrueType font
+ DES... ass                  ASS (Advanced SSA) subtitle (decoders: ssa ass ) (encoders: ssa ass )
+ DES... dvd_subtitle         DVD subtitles (decoders: dvdsub ) (encoders: dvdsub )
+ ..S... srt                  SubRip subtitle with embedded timing
+ DES... text                 raw UTF-8 text
+
+-f fmt   Force file format. Format is auto detected for input files and guessed from the file extension for output.
+-r       frame rate
+-c:a     codec audio
+-c:v     codec video
+-q:v     video quality. Range is 0-10, where 10 is highest quality.
+
+mp4 (H264)
+-c:v libx264 -c:a aac
+
+ffprobe -hide_banner -show_format input.mp4
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+cat input.m2v | ffmpeg -i - -vcodec mpeg4 -f mp4 - > out.mp4
+ffmpeg -y -hide_banner
+ffplay -loglevel quiet -nodisp -ss 6.1 -t 1.4 input.wav
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+ffmpeg -f x11grab -video_size 1366x768 -r 25 -i :0.0+0,0 output.mp4
+ffmpeg -f x11grab -video_size 1366x768 -r 30 -i :0.0+0,0 -qscale 0 out.mpg # qualidade boa
+
+0,0 são coordenadas x,y
+-qscale Use fixed quality scale
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+ffmpeg -i imagem.png imagem.bmp 2>/dev/null
+ffmpeg -i imagem.png -s 683x599 imagem2.bmp
+
+ffmpeg -i imagem.png -f image2 -c  imagem.bmp 
+ffmpeg -i input.bmp -compression_level 100 output.png
+The valid range of compression level is 0-100.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+ffmpeg -f image2 -r 12 -i foo-%03d.jpeg -s 1366x768 foo.avi
+%03d is a decimal number composed of three digits padded with zero.
+foo-*.jpeg
+
+ffmpeg -f image2 -framerate 24 -i input_file_%06d.ext -c:v v210 output_file
+
+ffmpeg -y -i input.png -i input.wav -map 0:v:0 -map 1:a:0 -c:v libx264 -pix_fmt yuv420p -crf 15 -c:a aac -strict experimental -b:a 256k -maxrate 10m -bufsize 800k -r 48 output.mp4
+
+ffmpeg -loop 1 -t 20 -i 16_incricao.png -s:v 1280x720 -c:v libx264 -pix_fmt yuv420p -crf 15 -maxrate 10m -bufsize 800k -r 48 16.mp4
+
+MP3s to YouTube
+$ ffmpeg -loop 1 -i input.jpg -i input.mp3 -c:v libx264 -c:a aac -strict experimental -b:a 192k -shortest output.mp4
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+ffmpeg -i input.wav -c:a libmp3lame output.mp3
+ffmpeg -i input.ogg output.wav
+ffmpeg -i input.m4a -map_metadata -1 -c:a pcm_s32le output.wav
+ffmpeg -i input.wav -c:a libvorbis  output.ogg
+ffmpeg -i input.mp3 -c:a libvorbis -q:a 4 output.ogg
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+ffmpeg -i input.ogv -f mp4 output.wmv
+ffmpeg -i input.ogv -f mp4 output.mp4
+ffmpeg -i input.mp4 -acodec vorbis    -vcodec libtheora output.ogv
+
+ffmpeg -i input.ogv -c:v libx264 -crf 22 -c:a libmp3lame output.mp4
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+cut
+in most formats it is not possible to seek exactly, so will seek to the nearest seek point to pos.
+ffmpeg -i input.mp4 -c:v copy -c:a copy -ss 00:01:00 -to 00:02:00 output.mp4
+ffmpeg -i cut.mp4 -c:v rawvideo cut.wmv # video com 30 s ficou com tamanho 1,2 GiB.
+
+ffmpeg -i input.mp4 -ss 00:00:13 -t 20 -map_metadata -1 output.mp4
+
+ffplay -loglevel quiet -nodisp      -ss 6.1 -t 1.4 input.wav
+ffmpeg -y -hide_banner -i input.wav -ss 6.1 -t 1.4 output.wav; ffplay -loglevel quiet -nodisp output.wav
+
+extract audio
+or
+strip video
+ffmpeg -i input.mkv -vn audio_only.ogg
+-an audio
+-sn subtitle
+
+mix audio with video
+ffmpeg -i audio.mp3 -i video.avi video_audio_mix.mpg
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+ffmpeg -i video.flv image%d.jpg
+
+Extract only one frame
+ffmpeg -i coding_robots.mp4 -ss 00:01:07.000 -vframes 1 oneframe.jpg
+
+Get one frame every second from the video file called coding_robots.mp4
+ffmpeg -i coding_robots.mp4 -vf fps=1 coding%04d.jpg
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+increase video play back speed.
+$ ffmpeg -i video.mpg -vf "setpts=0.5*PTS" highspeed.mpg
+
+reduce video speed.
+$ ffmpeg -i video.mpg -vf "setpts=4.0*PTS" lowerspeed.mpg
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+watermark
+ffmpeg -i coding_robots.mp4 -i logo_flu.png -filter_complex "overlay" -codec:a copy coding_marked.mp4
+
+ffmpeg -i input.mp4 -c:v libx264 -crf 24 output.mp4
+c codec (a:audio v:video)
+crf is the quality in range 0-51, lower means better quality, 15-25 is usually good
+23 is the default
+17 is visually lossless
+0 is lossless
+
+ffmpeg -i coding_robots.mp4 thumb%04d.jpg
+extract a serie of images thumb0000.jpg
+another formats like png or bmp are also allowed.
+
+
+ffmpeg -f lavfi -i "sine=frequency=1000:duration=5" seno.wav
+
+ffmpeg -f lavfi -i "sine=frequency=1000:duration=5" -ac 2 seno_stereo.wav
+
+add silent audio
+ffmpeg -i entrada.mp4 -f lavfi -i aevalsrc=0 -c:v copy -c:a aac  -shortest entrada2.mp4
+
+
+gera audio
+ffmpeg -f lavfi -i aevalsrc=0 -ss 00:00:00 -t 3 -c:a aac  -shortest entrada.wav
+
+concatenar videos
+echo 'file input1.mp4
+file input2.mp4
+file input3.mp4' > mylist.txt
+ffmpeg -y -f concat -safe 0 -i mylist.txt -c copy output.mp4
+
+ffmpeg -i input1.mp4 -i input2.mp4 -filter_complex '[0:v] [1:v] concat=n=2:v=1 [v]' -map '[v]' output.mp4
+ffmpeg -i input1.mp4 -i input2.mp4 -filter_complex '[0:v] [0:a] [1:v] [1:a] concat=n=2:v=1:a=1 [v] [a]' -map '[v]' -map '[a]' output.mp4
+ffmpeg -i input1.mp4 -i input2.mp4 -i input3.mp4 -filter_complex '[0:v] [0:a] [1:v] [1:a] [2:v] [2:a] concat=n=3:v=1:a=1 [outv] [outa]' -map '[outv]' -map '[outa]' output.mp4
+
+sobrepor audio
+ffmpeg -i 1.mp3 -i 2.mp3 -filter_complex "[0:0][1:0] amixer=inputs=2:duration=longest" -c:a libmp3lame 3.mp3
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+in|out
+st=0 beggining
+d=0.5 duration of 0.5 s
+ffmpeg -i input.mp4 -filter:v "fade=t=in:st=0:d=0.5" output.mp4
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+$ ffmpeg -i video.mp4 -i subtitles.srt -map 0 -map 1 -c copy -c:v libx264 -crf 23 -preset veryfast video-output.mkv
+add subtitle to a movie file.
+
+ffmpeg -i t.srt t.ass
+
+ffmpeg -i v3.mp4 -vf ass=t.ass v4.mp4
+
+file t.srt
+1
+00:00:00,000 --> 00:01:32,000 X1:0 X2:1050 Y1:100 Y2:380
+<font color="#AAAAAA" size="12">
+AS BORBOLETAS
+<font size="9">(Vinícius de Morais)</font>
+\n
+<font color="#FFFFFF">Brancas</font>
+<font color="#5555FF">Azuis</font>
+<font color="#FFFF00">Amarelas</font>
+E <font color="#222222">pretas</font>
+Brincam
+</font>
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+https://support.google.com/youtube/answer/1722171?hl=pt-BR
+youtube
+ffmpeg -y -i input.mp4 -map_metadata -1 -maxrate 800k -bufsize 800k -r 24 -vf format=yuv420p teste4.mp4
+24 fps
+-maxrate 10m
+-r 48
+som 256 kbps
+-c:a aac
+
+youtube
+640x360   265 kb/s
+1280x720  477 kb/s
+1920x1080 800 kb/s
+
+nome das resoluções
+1280x720 HD
+1920x1080 Full HD
+2048x1080 2K
+3840x2160 4K ou Ultra HD
+7680x4320 8K
+10240x4320 10K
+
+minhas telas
+1366x768 tela notebook
+720x1280 tela celular
+
+-vf format=yuv420p
+-crf [0-51]
+0: lossless
+23: default
+51: worst quality
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+ffmpeg -i in.mp4 -vf "rotate=-3*PI/180" out.mp4
+se for retangular, corta a imagem.
+
+rotate videos by 180 degrees clockwise, you to need to mention transpose parameter two times
+ffmpeg -i input.mp4 -vf "transpose=2,transpose=2" output.mp4
+0 – Rotate by 90 degrees counter-clockwise and flip vertically. This is the default.
+1 – Rotate by 90 degrees clockwise.
+2 – Rotate by 90 degrees counter-clockwise.
+3 – Rotate by 90 degrees clockwise and flip vertically.
+
+ffmpeg -i input.mp4 -map_metadata 0 -metadata:s:v rotate="90" -codec copy output.mp4
+
+ffmpeg -hwaccel auto -i Wildlife.wmv -pix_fmt bgr24 -an -sn test%03d.bmp
+ffmpeg -i input.wmv -c:v bmp -f rawvideo -an - > output.bin
+
+ffmpeg -i video.webm thumb%04d.jpg -hide_banner
+
+ffmpeg -i video.webm -ss 00:00:07.000 -vframes 1 thumb.jpg
+
+one frame every second 
+ffmpeg -i video.webm -vf fps=1 thumb%04d.jpg -hide_banner
+
+one image every 5 seconds
+ffmpeg -i video.webm -vf fps=1/5 thumb%04d.jpg -hide_banner
+
+keyframes serve as reference to the following frames so video codecs can compress video storing differences between keyframes and the following frames instead of storing all frames.
+That is why we can expect better image quality on this frames.
+ffmpeg -i video.webm -vf "select=eq(pict_type\,I)" -vsync vfr thumb%04d.jpg -hide_banner
+
+ffmpeg -vcodec bmp -i /path/to/texture-file.bmp -vcodec rawvideo -f rawvideo -pix_fmt rgb565 texture.raw
+
+Creating a raw video output video in an avi container:
+
+ffmpeg -i input.mp4 -f avi -c:v rawvideo output.avi
+
+ffmpeg -i frame%04d.png -c:v libx264 -qp 0 -f mp4 output.mp4
+The -qp 0 flag is the key: higher values give lossy compression. (You can also give -crf 0 to get the same effect.)
+
+audio uncompressed WAV
+video  uncompressed .yuv
+
+extension   c:v         c:a
+.mp4        H.264       mp3/AAC
+.flv        H.264       mp3/AAC   youtube
+.webm       AV1         Vorbis    html5
+.ogg        Theodora    Vorbis
+.avi        any         any
+.mkv        any         any

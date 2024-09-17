@@ -1,0 +1,72 @@
+A process is a running instance of a command. For example, there may be one vi command on the system. But if vi is currently being run by 15 different users, that command is represented by 15 different running processes.
+A process is identifi ed on the system by what is referred to as a process ID. That process ID is unique for the current system. In other words, no other process can use that number as its process ID while that first process is still running. However, after a process is ended, another process can reuse that number.
+Each process is associated with a particular user account and group account.
+
+Information about running processes are stored in the /proc file system.
+
+use top to list process
+
+You can have many "terminals" (tty) on one screen by opening multiple Terminal windows on the desktop.
+
+echo $$ show pid of a terminal
+
+sign + in STAT column mean foreground
+
+ps aux | sed '1!d'; ps aux | grep pts | grep -v chromi
+
+VSZ (virtual set size) shows the size of the image process (in kilobytes)
+RSS (resident set size) shows the size of the program in memory.
+VSZ is the amount of memory allocated for the process
+RSS is the amount that is actually being used
+
+ps o pid,%mem,command --sort %mem
+
+top
+Press M to sort by memory usage instead of CPU, and then press P to return to sorting by CPU.
+Press R to reverse sort your output.
+Press u to select user to show
+
+para ver hierarquia de cgroup
+systemctl status
+
+/proc/PID/cgroup
+cat /proc/self/cgroup
+systemd-cgtop
+
+permitir 30% da CPU em uso:
+
+/etc/systemd/system/meu.slice
+[Slice]
+CPUQuota=30%
+Lembre-se de fazer systemd daemon-reload
+
+systemd.slice(5)
+
+[Service]
+MemoryMax=1G 
+
+IOReadBandwidthMax, IOWriteBandwidthMax,
+
+systemd-run --user --slice=meu.slice --shell
+
+cgroups podem ser ajustados durante o tempo de execução usando o comando systemctl set-property
+
+. A sintaxe é idêntica às opções de systemd.resource-control(5).
+
+Por exemplo, para cortar o acesso à internet de todas as sessões de usuário:
+$ systemctl set-property user.slice IPAddressDeny=any
+
+Os ajustes serão permanentes a não ser que a opção --runtime seja passada. As alterações são salvas em /etc/systend/system.control/ e, portanto, gerenciam as opções gerais do sistema, enquanto as opções de usuário são salvas em .config/systemd/user.control/.
+
+echo 10000000 > /sys/fs/cgroup/memory/groupname/foo/memory.limit_in_bytes
+
+ls -l /sys/fs/cgroup/
+
+Restrição de uso da memória por um comando
+systemd-run --scope -p MemoryMax=2G --user comando
+
+https://www.kernel.org/doc/html/latest/
+https://www.kernel.org/doc/html/latest/arch/x86/index.html
+
+
+

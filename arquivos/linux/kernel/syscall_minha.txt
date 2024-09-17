@@ -1,0 +1,91 @@
+
+/media/ARQUIVOS2/linux-2.6.28.10/arch/x86/kernel/syscall_table_32.S
+
+/media/ARQUIVOS2/linux-2.6.28.10/arch/x86/include/asm/unistd_32.h
+
+/media/ARQUIVOS2/linux-2.6.28.10/arch/x86/include/asm/syscalls.h
+
+/usr/src/linux/Makefile
+Add the directory mycall to core−y (Search for regex: core−y.*+=
+
+crie o diretório mycall
+
+/*−−−Start of mycall.c−−−−*/
+#include<linux/linkage.h>
+asmlinkage long sys_mycall(int i)
+{
+return i+10;
+}
+/*−−−End of mycall.c−−−−−−*/
+
+#####Makefile Start#####
+obj−y := mycall.o
+#####Makefile End#######
+
+
+Create a header file called testmycall.h. This header file should be included by any program calling our system call.
+
+testmycall.h
+/*−−−Start of header file−−−−−−*/
+#include<linux/unistd.h>
+#define __NR_mycall 317
+_syscall1(long, mycall, int, i)
+/*−−−End of header file−−−−−−−−*/
+
+1. _syscall1(int,mycall,int,number) indicates that:
+2. The name of the system call is mycall.
+3. It takes one argument.
+4. The argument is an int named number.
+5. It returns an int.
+When you expand _syscall1(long,mycall,int,i), you get the following code:
+long mycall(int i)
+{
+return syscall(__NR_mycall, i);
+}
+
+testmycall.c
+/*−−−Start of C file−−−−−−*/
+#include<stdio.h>
+#include "testmycall.h"
+int main(void)
+{
+printf("%d\n", mycall(15));
+}
+/*−−−End of C file−−−−−−*/
+
+
+Recompile and install the new kernel
+
+Compile and execute the user space C file (testmycall.c)
+
+
+
+ = = = = = = = = = 
+
+/*----------Start of mycall.c----------*/
+#include <linux/linkage.h>
+asmlinkage long sys_mycall(int i, int j)  {
+     return(i+j);
+}
+/*-----------End of mycall.c-----------*/
+
+########## Start of Makefile ##########
+obj-y := mycall.o
+##########  End of Makefile  ##########
+
+
+/*---------- Start of testmycall.c File ----------*/
+#include <unistd.h>
+#include <stdio.h>
+#define __NR_mycall <Last_System_Call_Num+1>
+long mycall(int i, int j) {
+     return syscall(__NR_mycall, i, j);
+};
+int main()     {
+     printf(“%d\n”, mycall(10, 20));
+     return 0;
+}
+/*---------- End of testmycall.c File ----------*/
+
+
+gcc testmycall.c –o testmycall

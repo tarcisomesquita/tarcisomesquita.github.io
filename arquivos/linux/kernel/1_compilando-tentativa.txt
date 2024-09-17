@@ -1,0 +1,46 @@
+    General setup  --->
+    [*] Initial RAM filesystem and RAM disk (initramfs/initrd) support
+    [*] Support initial ramdisks compressed using gzip (NEW)
+    [*] Configure standard kernel features (expert users)  --->
+        [*]   Enable signalfd() system call (NEW)
+    
+[*] Enable loadable module support  --->
+    [*]   Module unloading
+    
+-*- Enable the block layer  --->
+    [*] Block layer SG support v4
+        Partition Types  --->
+        [*] Advanced partition selection
+        [*] PC BIOS (MSDOS partition tables) support
+    
+    Processor type and features  --->
+    [*] DMA memory allocation support
+        Processor family (Core 2/newer Xeon)  --->
+    [*] Generic x86 support
+    [*] Supported processor vendors  --->
+        [*] Support Intel processors
+    (0x100000) Physical address where the kernel is loaded
+    (0x100000) Alignment value to which kernel should be aligned
+    [*] Built-in kernel command line
+    
+    Bus options (PCI etc.)  --->
+    [*] PCI support
+    
+    Executable file formats / Emulations  --->
+    [*] Kernel support for ELF binaries
+    <*> Kernel support for scripts starting with #!
+    
+    File systems  --->
+        Pseudo filesystems  --->
+        [*] /proc file system support
+        [*] Sysctl support (/proc/sys) (NEW)
+        [*] Enable /proc page monitoring (NEW)
+        [*] sysfs file system support
+    
+    -*- Native language support  --->
+    <*> Codepage 860 (Portuguese)
+    
+    Kernel hacking  --->
+    [*] Enable verbose x86 bootup info messages
+    [*] Early printk
+

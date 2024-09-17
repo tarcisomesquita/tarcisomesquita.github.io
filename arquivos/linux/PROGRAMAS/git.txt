@@ -1,0 +1,171 @@
+apt-get install git
+
+git config --global user.email "tarcisomesquita@gmail.com"
+git config --global user.name "tarcisomesquita"
+git config --list --show-origin
+
+usuario > settings > Developer Settings > Personal Access tokens > Tokens (classic) > Generate new token > Generate new token (classic) > 
+note: comentário
+Expiration > custom > 1 day
+repo: check
+
+git clone https://github.com/tarcisomesquita/tarcisomesquita.github.io.git
+cd tarcisomesquita.github.io
+git remote set-url origin https://<token>@github.com/tarcisomesquita/tarcisomesquita.github.io
+
+git add .
+git commit -m "saving changes"
+git push origin main
+
+git --help
+git push --help
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+cd /home/user/my_project
+git init
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+git clone https://github.com/tarcisomesquita/linux.git
+
+git switch main
+
+git status
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+git remote add origin https://github.com/tarcisomesquita/linux.git
+
+git remote -v
+git remote remove origin
+git remote set-url origin https://github.com/tarcisomesquita/linux.git
+
+git ls-remote https://github.com/tarcisomesquita/linux.git
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+cria um novo ramo e muda para ele
+command git checkout -b <branch-name>
+
+mudar de um ramo para outro, use:
+git checkout <branch-name>
+
+listar todos os ramos 
+git branch
+
+Para excluir um ramo:
+git branch –d <branch-name>
+
+mesclar uma ramificação ao ramo ativo
+git merge <branch-name>
+
+git diff <source-branch> <target-branch>
+
+git diff <source-branch> <target-branch>
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+git log
+
+redefinir o índice e o diretório de trabalho para o estado do último commit:
+git reset --hard HEAD
+
+git rm filename.txt
+
+git show
+
+obtenha todos os objetos do repositório remoto que atualmente não residem no diretório de trabalho local
+git fetch origin
+
+git ls-tree HEAD
+git cat-file –p d670460b4b4aece5915caf5c68d12f560a9fe3e4
+
+procure através das árvores de conteúdo frases e / ou palavras.
+git grep "palavra"
+
+git archive --format=tar master
+
+Apaga arquivo sem add?
+git prune
+
+
+https://raw.githubusercontent.com/progit/progit2/main/images/snapshots.svg
+
+you have the entire history of the project right there on your local disk
+Git uses the checksum SHA-1 hash
+
+states that your files can reside in: modified, staged, and committed
+
+git log --pretty=oneline
+git log -p -2 PROGRAMAS/git.txt
+git log --stat
+git log --oneline --decorate
+
+git log --pretty=oneline
+ab1afef80fac8e34258ff41fc1b867c702daa24b Modify repo.rb a bit
+484a59275031909e19aadb7c92262719cfcdf19a Create repo.rb
+1a410efbd13591db07496601ebc7a059dd55cfe9 Third commit
+cac0cab538b970a37ea1e769cbbde608743bc96d Second commit
+fdf4fc3344e67ab068f836878b6c4951e3b15f3d First commit
+Now, move the master branch back to the middle commit:
+$ git reset --hard 1a410efbd13591db07496601ebc7a059dd55cfe9
+apaga o histórico de log
+
+git revert --no-edit 6111116
+acrescenta um commit no histórico de log
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+example .gitignore file:
+
+# ignore all .a files
+*.a
+
+# but do track lib.a, even though you're ignoring .a files above
+!lib.a
+
+# only ignore the TODO file in the current directory, not subdir/TODO
+/TODO
+
+# ignore all files in any directory named build
+build/
+
+# ignore doc/notes.txt, but not doc/server/arch.txt
+doc/*.txt
+
+# ignore all .pdf files in the doc/ directory and any of its subdirectories
+doc/**/*.pdf
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+https://github.com/progit/progit2/blob/main/book/02-git-basics/sections/recording-changes.asc
+https://github.com/progit/progit2/blob/main/book/02-git-basics/sections/remotes.asc
+https://cli.github.com/
+
+git gc
+ls -lh .git/objects/pack/
+$ git count-objects -v
+count: 7
+size: 32
+in-pack: 17
+packs: 1
+size-pack: 4868
+prune-packable: 0
+garbage: 0
+size-garbage: 0
+The size-pack entry is the size of your packfiles in kilobytes
+
+
+echo 'test content' | git hash-object -w --stdin
+d670460b4b4aece5915caf5c68d12f560a9fe3e4
+
+
+find .git/objects -type f
+.git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4
+
+git cat-file -p d670460b4b4aece5915caf5c68d12f560a9fe3e4
+
+git cat-file -p master^{tree}
+
+

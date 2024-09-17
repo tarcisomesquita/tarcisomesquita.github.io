@@ -1,0 +1,38 @@
+  xdotool key Menu
+  xdotool key Alt_L+Tab   ; sleep 0.2
+  xdotool key 'Alt+Tab';
+  xdotool key Control_L+v
+  xdotool key KP_Enter
+  xdotool key Home; sleep 0.2;
+
+xdotool key 0x0054
+
+echo "SELECIONE O NAVEGADOR"
+xdotool selectwindow windowactivate
+WINDOW_NAVEGADOR=$(xdotool getwindowfocus)
+xdotool getactivewindow windowmove 0 0
+xdotool getactivewindow windowsize 800 700
+#xdotool getactivewindow getwindowgeometry --shell
+#eval $(xdotool getmouselocation --shell) && echo -e "xdotool mousemove $X $Y\nxdotool click 1"
+
+
+  echo -n $RN | xclip -selection clipboard;
+  xdotool mousemove 329 518; xdotool click 1; sleep 0.2;
+  xdotool key 'Ctrl+a'; sleep 0.2;
+  xdotool key 'Ctrl+v'; sleep 0.2;
+  
+  echo -n $RD | xclip -selection clipboard;
+  xdotool key 'Tab'; sleep 0.2;
+  xdotool key 'Delete'; xdotool key 'Ctrl+v'; sleep 0.2;
+
+
+  echo "Espera buscar";
+  for ((;;)) ; do
+    sleep 0.5
+    scrot -a 580,260,50,30 --overwrite tmp.bmp
+    
+    if diff -q tmp.bmp branco2.bmp >/dev/null; then break; fi
+  done 2> /dev/null
+
+  xclip -o >> dados_baixados.txt;
+

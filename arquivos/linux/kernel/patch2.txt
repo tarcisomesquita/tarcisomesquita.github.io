@@ -1,0 +1,11 @@
+Go to directory which holds the kernel source code
+
+# cd /usr/src/linux
+# bzip2 -dc /usr/src/patch-x.y.z.bz2 patch -p1 –dry-run
+
+–dry-run option to check that the patch applies cleanly. It can be a real pain to pull out a partially-applied patch. The -p1 option strips off part of the diff file’s pathnames for each changed file (see the patch(1) manpage for more details).
+
+Now you’ve checked that it should apply cleanly, run the following to actually apply it. Then you’re done!
+
+# bzip2 -dc /usr/src/patch-x.y.z.bz2 patch -p1
+

@@ -1,0 +1,16 @@
+tmpfs have size limits, and the ability to write the data to swap space.
+
+mount -t tmpfs -o size=10G,mode=700 tmpfs /mytmpfs
+
+size limits an be adjusted via 'mount -o remount ...'
+accept a suffix k, m or g
+
+tmpfs on /run type tmpfs (rw,nosuid,nodev,noexec,relatime,size=805460k,mode=755)
+tmpfs on /run/user/999 type tmpfs (rw,nosuid,nodev,relatime,size=805456k,mode=700,uid=999,gid=999)
+
+
+tmpfs pages will be shown as "Shmem" in /proc/meminfo and "Shared" in free(1).
+
+Notice that these counters also include shared memory (shmem, see ipcs(1)). The most reliable way to get the count is using df(1) and du(1).
+
+

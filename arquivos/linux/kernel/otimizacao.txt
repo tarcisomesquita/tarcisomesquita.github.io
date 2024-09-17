@@ -1,0 +1,39 @@
+make tinyconfig
+make ARCH=x86_64 tinyconfig
+make ARCH=x86_64 bzImage -j8
+produce a minimal kernel
+
+ls -l arch/x86/boot/bzImage
+
+arch/x86/boot/bzImage must be copied to the EFI and renamed with the extension ".efi"
+
+
+march=native
+
+$ cc -march=native -E -v - </dev/null 2>&1 | grep cc1
+veja que ele acrescenta o march
+
+quais as opções colocar na linha do CFLAGS do Makefile do diretório raiz do fonte do kernel
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -pipe -fomit-frame-pointer -march=native -mcx16 -msahf -mpopcnt -msse4.2 --param l1-cache-size=32 --param l1-cache-line-size=64 --param l2-cache-size=256 -mtune=generic
+
+- Acrescente a opção -pipe para acelerar a compilação
+
+Use um sistema com a mesma versão do GCC ou superior em que o kernel foi compilado!  
+
+Ative a opção fstack-protector no menuconfig do Kernel
+
+Citar
+/usr/src/linux-2.6.xx/arch/x86/boot/compressed/Makefile     - linha 12
+/usr/src/linux-2.6.xx/arch/x86/boot/Makefile       - linha 63
+
+/usr/src/linux-2.6.xx/arch/x86/kernel/acpi/realmode/Makefile   - linha 35
+
+/usr/src/linux-2.6.xx/arch/x86/Kconfig.cpu        - linha 300
+/usr/src/linux-2.6.xx/arch/x86/Makefile          - linhas 53, 54, 57, 58, 59, 60
+/usr/src/linux-2.6.xx/arch/x86/Makefile_32.cpu            - linhas 5, 7, 9, 14, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 43, 46, 47, 63
+
+Especial atenção para o arquivo Makefile_32.cpu!  Aí está a opção para otimzação do seu processador!!!!
+
+Em todos os arquivos acima listados, altere todas as opções ativas de -march=xx para -march=native, de -mtune=xx para -mtune=generic 
+
+

@@ -1,0 +1,41 @@
+
+# cat /proc/modules
+# cat /proc/cpuinfo
+# cat /proc/interrupts
+# cat /proc/meminfo
+# cat /proc/ioports
+# update-pciids
+# update-usbids
+# lspci
+# lsusb 
+
+Para verificar os módulos em execução: 
+
+# lsmod 
+
+Para verificar os módulos compilados: 
+
+# modprobe -l 
+
+Para identificar o que cada módulo faz, execute: 
+
+modinfo <nome_do_modulo> 
+
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Acesse: Networking support >> Networking options >> Network packet filtering framework (Netfilter) >> IP: Netfilter Configuration
+Marque: IPv4 NAT e iptables NAT support, ao marcar iptables NAT support vão abrir as opções: MASQUERADE target support, NETMAP target support e REDIRECT target support, marque as 3.
+
+Acesse: File Systems >> Native language support
+Marque com ‘*’ as opções: Codepage 860 (Portuguese), ASCII (United States), NLS ISO 8859-1 (Latin1; …) e NLS UTF-8.
+
+Acesse: Networking support >> Wireless
+Se você for um usuário mais experiente escolha as opções que deseja, caso seja iniciante pode marcar todas as opções nesta tela.
+Volte ao menu principal.
+
+Acesse: Device Drivers >> Network device support >> Wireless LAN
+Marque: Atheros Wireless Cards.
+Sem voltar acesse: Atheros Wireless Cards
+Marque: Atheros 802.11n wireless cards support e todas suas sub opções.
+
+make ARCH=arm CROSS_COMPILE=arm_linux_gnjeabi - uImage -j4

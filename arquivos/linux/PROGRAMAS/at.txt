@@ -1,0 +1,44 @@
+
+First, you'd type:
+
+at 12:45
+
+You will see:
+
+warning: commands will be executed using /bin/sh
+at >
+
+Now you'd write the commands you want carried out.
+Here we'll get the output of the command last, which tells us who's logged in to our servers lately, and write it to a file called 'log-ins'. The second command, separated by a semi-colon (;) will then print that file using lp.
+
+last > $HOME/log-ins; lp $HOME/log-ins
+
+press 'Enter' and then 'Ctl + d' and you will see the following:
+
+job 15 at 2003-02-16 12:45
+
+
+
+. You can cancel these jobs as well. If you type:
+
+atrm 15
+
+you will remove job 15 from the 'at' queue. To see what is in the 'at' queue, type:
+
+atq
+
+You can control which users are allowed to use 'at'. By default
+
+/etc/at.deny
+
+controls who cannot use 'at'. That is to say, the users listed in at.deny cannot use it. You can also create an
+
+/etc/at.allow
+
+file. Creating at.allow makes the at daemon ignore the
+
+/etc/at.deny
+
+Therefore, anyone who is not in at.allow cannot use 'at'.
+
+

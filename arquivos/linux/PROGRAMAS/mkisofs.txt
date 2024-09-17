@@ -1,0 +1,11 @@
+mkisofs -R -J -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -o grub.iso iso
+
+-J to generate Joliet directory that can be write directly to pendrive.
+
+
+Usage: genisoimage [options] file...
+Options:
+  -b FILE, -eltorito-boot FILE
+                              Set El Torito boot image name
+  -e FILE, -efi-boot FILE     Set EFI boot image name
+

@@ -1,0 +1,302 @@
+linux-4.6/Documentation/devices.txt
+
+cat /proc/devices
+
+/dev/fd -> /proc/self/fd
+
+ls -l /proc/self/fd
+0 -> /dev/pts/18
+1 -> /dev/pts/18
+2 -> /dev/pts/18
+
+Virtual consoles are named /dev/tty#, with numbering starting at /dev/tty1; /dev/tty0 is the current virtual console.
+
+The console device, /dev/console, is the device to which system messages should be sent, and on which logins should be permitted in single-user mode.
+/dev/console is managed by the kernel;
+
+ls -l /dev/ | egrep '^c' | sed 's/^\(.\{27\}\)\(.\{11\}\)/\2\1/' | sort -n | sed 's/^\(.\{11\}\)\(.\{27\}\)/\2\1/' | less
+
+ls -l /dev 2>/dev/null | grep '^c' | \
+sed 's/^.* \(.\{3\}\), \(.\{3\}\) .* \([^ ]*\)$/\1, \2 \3/' | \
+sed 's/,   /,  0/' | sed 's/,  /, 0/' | sort -n | sed 's/, 0/,  /' | sed 's/,  0/,   /' | less
+
+find /dev/ -exec ls -l '{}' \; 2>/dev/null | grep '^c' | \
+sed 's/^.* \([0-9]*\), \([0-9]*\) .* \([^ ]*\)$/ \1 \2 \3/' | sed -n '/ [^ ]\{1,\} [^ ]\{1,\} [^ ]\{1,\}/p' | \
+sed ':A; s/ \([0-9]\{1\}\) / 00\1 /; tA' | sed ':A; s/ \([0-9]\{2\}\) / 0\1 /; tA' | sort -n | \
+sed ':A; s/ 0\([0-9]\{2\}\)/  \1/; tA' | sed ':A; s/  0\([0-9]\{1\}\)/   \1/; tA' | less
+
+
+major           minor
+
+  1 char	Memory devices
+		  1 = /dev/mem		Physical memory access
+		  2 = /dev/kmem		Kernel virtual memory access
+		  3 = /dev/null		Null device
+		  4 = /dev/port		I/O port access
+		  5 = /dev/zero		Null byte source
+		  8 = /dev/random	Nondeterministic random number gen.
+		  9 = /dev/urandom	Faster, less secure random number gen.
+		 11 = /dev/kmsg		Writes to this come out as printk's
+
+  1 block	RAM disk
+		  0 = /dev/ram0		First RAM disk
+		  1 = /dev/ram1		Second RAM disk
+		    ...
+		250 = /dev/initrd	Initial RAM disk {2.6}
+
+		newer kernels use /dev/ram0 for the initrd.
+
+  4 char	TTY devices
+		  0 = /dev/tty0		Current virtual console
+
+		  1 = /dev/tty1		First virtual console
+		    ...
+		 63 = /dev/tty63	63rd virtual console
+		 64 = /dev/ttyS0	First UART serial port
+		    ...
+		255 = /dev/ttyS191	192nd UART serial port
+
+  5 char	Alternate TTY devices
+		  0 = /dev/tty		Current TTY device
+		  1 = /dev/console	System console
+
+  7 char	Virtual console capture devices
+		  0 = /dev/vcs		Current vc text contents
+		  1 = /dev/vcs1		tty1 text contents
+		    ...
+		 63 = /dev/vcs63	tty63 text contents
+		128 = /dev/vcsa		Current vc text/attribute contents
+		129 = /dev/vcsa1	tty1 text/attribute contents
+		    ...
+		191 = /dev/vcsa63	tty63 text/attribute contents
+
+		NOTE: These devices permit both read and write access.
+
+  7 block	Loopback devices
+		  0 = /dev/loop0	First loop device
+		  1 = /dev/loop1	Second loop device
+		    ...
+
+		The loop devices are used to mount filesystems not
+		associated with block devices.	The binding to the
+		loop devices is handled by mount(8) or losetup(8).
+
+  8 block	SCSI disk devices (0-15)
+		  0 = /dev/sda		First SCSI disk whole disk
+		 16 = /dev/sdb		Second SCSI disk whole disk
+		 32 = /dev/sdc		Third SCSI disk whole disk
+		    ...
+		240 = /dev/sdp		Sixteenth SCSI disk whole disk
+
+		For partitions, add to the whole disk device number:
+		  0 = /dev/sd?		Whole disk
+		  1 = /dev/sd?1		First partition
+		  2 = /dev/sd?2		Second partition
+		    ...
+		 15 = /dev/sd?15	15rd partition
+
+		For Linux/i386, partitions 1-4 are the primary
+		partitions, and 5 and above are logical partitions.
+		Other versions of Linux use partitioning schemes
+		appropriate to their respective architectures.
+
+ 10 char	Non-serial mice, misc features
+		  1 = /dev/psaux	PS/2-style mouse port
+		128 = /dev/beep		Fancy beep device
+		131 = /dev/temperature	Machine internal temperature
+		135 = /dev/rtc		Real Time Clock
+		142 = /dev/msr		x86 model-specific registers {2.6}
+		143 = /dev/pciconf	PCI configuration space
+		144 = /dev/nvram	Non-volatile configuration RAM
+		161 = /dev/userdma	User-space DMA access
+		183 = /dev/hwrng	Generic random number generator
+		184 = /dev/cpu/microcode CPU microcode update interface
+		223 = /dev/input/uinput		User level driver support for input
+		229 = /dev/fuse		Fuse (virtual filesystem in user-space)
+		230 = /dev/midishare	MidiShare driver
+		240-254			Reserved for local use
+		255			Reserved for MISC_DYNAMIC_MINOR
+
+ 11 block	SCSI CD-ROM devices
+		  0 = /dev/scd0		First SCSI CD-ROM
+		  1 = /dev/scd1		Second SCSI CD-ROM
+		    ...
+
+		The prefix /dev/sr (instead of /dev/scd) has been deprecated.
+
+ 13 char	Input core
+		 32 = /dev/input/mouse0	First mouse
+		 33 = /dev/input/mouse1	Second mouse
+		    ...
+		 63 = /dev/input/mice	Unified mouse
+		 64 = /dev/input/event0	First event queue
+		 65 = /dev/input/event1	Second event queue
+		    ...
+
+		Each device type has 5 bits (32 minors).
+
+ 14 char	Open Sound System (OSS)
+		  0 = /dev/mixer	Mixer control
+		  1 = /dev/sequencer	Audio sequencer
+		  2 = /dev/midi00	First MIDI port
+		  3 = /dev/dsp		Digital audio
+		  4 = /dev/audio	Sun-compatible digital audio
+		  6 = /dev/sndstat	Sound card status information {2.6}
+		  7 = /dev/audioctl	SPARC audio control device
+		  8 = /dev/sequencer2	Sequencer -- alternate device
+		 16 = /dev/mixer1	Second soundcard mixer control
+		 17 = /dev/patmgr0	Sequencer patch manager
+		 18 = /dev/midi01	Second MIDI port
+		 19 = /dev/dsp1		Second soundcard digital audio
+		 20 = /dev/audio1	Second soundcard Sun digital audio
+		 33 = /dev/patmgr1	Sequencer patch manager
+		 34 = /dev/midi02	Third MIDI port
+		 50 = /dev/midi03	Fourth MIDI port
+
+ 21 char	Generic SCSI access
+		  0 = /dev/sg0		First generic SCSI device
+		  1 = /dev/sg1		Second generic SCSI device
+		    ...
+
+		Most distributions name these /dev/sga, /dev/sgb...;
+		this sets an unnecessary limit of 26 SCSI devices in
+		the system and is counter to standard Linux
+		device-naming practice.
+
+ 29 char	Universal frame buffer
+		  0 = /dev/fb0		First frame buffer
+		  1 = /dev/fb1		Second frame buffer
+		    ...
+		 31 = /dev/fb31		32nd frame buffer
+
+ 30 char	iBCS-2 compatibility devices
+		  0 = /dev/socksys	Socket access
+		 32 = /dev/inet/ip	Network access
+		 33 = /dev/inet/icmp
+		 36 = /dev/inet/tcp
+		 39 = /dev/inet/udp
+		 41 = /dev/inet/rawip
+
+ 36 char	Netlink support
+		  0 = /dev/route	Routing, device updates, kernel to user
+		  1 = /dev/skip		enSKIP security cache control
+		  3 = /dev/fwmonitor	Firewall packet copies
+		 16 = /dev/tap0		First Ethertap device
+		    ...
+		 31 = /dev/tap15	16th Ethertap device
+
+ 81 char	video4linux
+		  0 = /dev/video0	Video capture/overlay device
+		    ...
+		 63 = /dev/video63	Video capture/overlay device
+		 64 = /dev/radio0	Radio device
+
+116 char	Advanced Linux Sound Driver (ALSA)
+
+136-143 char	Unix98 PTY slaves
+		  0 = /dev/pts/0	First Unix98 pseudo-TTY
+		  1 = /dev/pts/1	Second Unix98 pseudo-TTY
+		    ...
+
+		These device nodes are automatically generated with
+		the proper permissions and modes by mounting the
+		devpts filesystem onto /dev/pts with the appropriate
+		mount options (distribution dependent, however, on
+		*most* distributions the appropriate options are
+		"mode=0620,gid=<gid of the "tty" group>".)
+
+166 char	ACM USB modems
+		  0 = /dev/ttyACM0	First ACM modem
+		  1 = /dev/ttyACM1	Second ACM modem
+		    ...
+
+180 char	USB devices
+		  0 = /dev/usb/lp0	First USB printer
+		    ...
+		 15 = /dev/usb/lp15	16th USB printer
+		 48 = /dev/usb/scanner0	First USB scanner
+		    ...
+		 63 = /dev/usb/scanner15 16th USB scanner
+		 96 = /dev/usb/hiddev0	1st USB HID device
+		    ...
+		111 = /dev/usb/hiddev15	16th USB HID device
+
+188 char	USB serial converters
+		  0 = /dev/ttyUSB0	First USB serial converter
+		  1 = /dev/ttyUSB1	Second USB serial converter
+		    ...
+
+189 char	USB serial converters - alternate devices
+		  0 = /dev/cuusb0	Callout device for ttyUSB0
+		  1 = /dev/cuusb1	Callout device for ttyUSB1
+		    ...
+
+195 char	Nvidia graphics devices
+		  0 = /dev/nvidia0		First Nvidia card
+		  1 = /dev/nvidia1		Second Nvidia card
+		    ...
+		255 = /dev/nvidiactl		Nvidia card control device
+
+202 char	CPU model-specific registers
+		  0 = /dev/cpu/0/msr		MSRs on CPU 0
+		  1 = /dev/cpu/1/msr		MSRs on CPU 1
+		    ...
+
+203 char	CPU CPUID information
+		  0 = /dev/cpu/0/cpuid		CPUID on CPU 0
+		  1 = /dev/cpu/1/cpuid		CPUID on CPU 1
+		    ...
+
+204 char	Low-density serial ports
+		 154 = /dev/ttyAT0		ATMEL serial port 0
+		    ...
+		 169 = /dev/ttyAT15		ATMEL serial port 15
+
+212 char	LinuxTV.org DVB driver subsystem
+		  0 = /dev/dvb/adapter0/video0    first video decoder of first card
+		  1 = /dev/dvb/adapter0/audio0    first audio decoder of first card
+		  2 = /dev/dvb/adapter0/sec0      (obsolete/unused)
+		  3 = /dev/dvb/adapter0/frontend0 first frontend device of first card
+		  4 = /dev/dvb/adapter0/demux0    first demux device of first card
+		  5 = /dev/dvb/adapter0/dvr0      first digital video recoder device of first card
+		  6 = /dev/dvb/adapter0/ca0       first common access port of first card
+		  7 = /dev/dvb/adapter0/net0      first network device of first card
+		  8 = /dev/dvb/adapter0/osd0      first on-screen-display device of first card
+		  9 = /dev/dvb/adapter0/video1    second video decoder of first card
+		    ...
+		 64 = /dev/dvb/adapter1/video0    first video decoder of second card
+		    ...
+		128 = /dev/dvb/adapter2/video0    first video decoder of third card
+		    ...
+		196 = /dev/dvb/adapter3/video0    first video decoder of fourth card
+
+216 char	Bluetooth RFCOMM TTY devices
+		  0 = /dev/rfcomm0		First Bluetooth RFCOMM TTY device
+		  1 = /dev/rfcomm1		Second Bluetooth RFCOMM TTY device
+		    ...
+
+217 char	Bluetooth RFCOMM TTY devices (alternate devices)
+		  0 = /dev/curf0		Callout device for rfcomm0
+		  1 = /dev/curf1		Callout device for rfcomm1
+		    ...
+
+232 char	Biometric Devices
+		0 = /dev/biometric/sensor0/fingerprint	first fingerprint sensor on first device
+		1 = /dev/biometric/sensor0/iris		first iris sensor on first device
+		2 = /dev/biometric/sensor0/retina	first retina sensor on first device
+		3 = /dev/biometric/sensor0/voiceprint	first voiceprint sensor on first device
+		4 = /dev/biometric/sensor0/facial	first facial sensor on first device
+		5 = /dev/biometric/sensor0/hand		first hand sensor on first device
+		  ...
+		10 = /dev/biometric/sensor1/fingerprint	first fingerprint sensor on second device
+		  ...
+		20 = /dev/biometric/sensor2/fingerprint	first fingerprint sensor on third device
+		  ...
+
+240-254 char	LOCAL/EXPERIMENTAL USE
+
+240-254 block	LOCAL/EXPERIMENTAL USE
+		Allocated for local/experimental use.  For devices not
+		assigned official numbers, these ranges should be
+		used in order to avoid conflicting with future assignments.
+

@@ -1,0 +1,84 @@
+SYSKLOGD(8)
+
+start the syslogd with 'syslogd -r'
+configure your other machines to send the data adding an entry like this one in /etc/syslog.conf:
+facility.level   @your_loghost
+facility should be one of authpriv, cron, daemon, kern, lpr, mail, news, syslog, user, uucp and local1 up to local7.
+level should be alert, crit, err, warning, notice, info debug.
+If you want to log everything remote, just write:
+*.*   @your_loghost
+
+
+NAME
+       sysklogd - Linux system logging utilities.
+
+SYNOPSIS
+       syslogd [-a socket] [-d] [-f config file] [-h] [-l hostlist] [-m interval] [-n] [-p socket] [-r] [-s domainlist] [-u user] [-v]
+
+OPTIONS
+       -m interval
+              The syslogd logs a mark timestamp regularly.  The default interval between two -- MARK -- lines is 20 minutes.
+              Setting the interval to zero turns it off entirely.
+
+       -p socket
+              You can specify an alternative unix domain socket instead of /dev/log.
+
+       -r     This option will enable the facility to receive message from the network.
+
+       -u user
+              The syslogd daemon runs with full root privileges by default. If you specify this option, the daemon will drop its privileges to the  given
+              user  (and  the  primary  group of this user) before starting up logging. This greatly reduces the potential impact of exploitable security
+              holes in syslogd.
+              syslogd will still open all log files as root at startup.  However, after receiving a SIGHUP signal (which causes the  daemon  to  restart)
+              the  log  files will be reopened as the non-privileged user which fails if the log files are only writeable by root.
+
+CONFIGURATION FILE SYNTAX DIFFERENCES
+        For  example  the  following line caused ALL output from daemons using the daemon facilities (debug is the lowest priority, so every higher
+        will also match) to go into /usr/adm/daemons:
+        # Sample syslog.conf
+        daemon.debug             /usr/adm/daemons
+
+       The  *  specifies  that all messages for the specified facility are to be directed to the destination.
+
+       The = wildcard is used to restrict logging to the specified priority class.  This allows, for example, routing only debug messages to a particular
+       logging source.
+       *.=debug            /usr/adm/debug
+
+       The ! is used to exclude logging of the specified priorities.  This affects all (!) possibilities of specifying priorities.
+       To log all messages of the facility mail except those with the priority info to the /usr/adm/mail file.
+       mail.*;mail.!=info       /usr/adm/mail
+       To log all messages from news.info (including) to news.crit (excluding) would be logged to the /usr/adm/news file.
+       news.info;news.!crit     /usr/adm/news
+
+       The - may only be used to prefix a filename if you want to omit sync'ing the file after every write to it.
+
+SUPPORT FOR REMOTE LOGGING
+       The  strategy  is  to  have syslogd listen on a unix domain socket for locally generated log messages.  This behavior will allow syslogd to inter-
+       operate with the syslog found in the standard C library.
+
+       To syslogd listens network or send data, the services(5) files (typically found in /etc) must have the following entry:
+       syslog          514/udp
+
+       To cause messages to be forwarded to another host replace the normal file line in the syslog.conf file with the name of the host to which the mes-
+       sages is to be sent prepended with an @.
+              For example, to forward ALL messages to a remote host use the following syslog.conf entry:
+              *.*            @hostname
+
+              To forward all kernel messages to a remote host the configuration file would be as follows:
+              kern.*         @hostname
+
+FILES
+       /etc/syslog.conf
+          Configuration file for syslogd.  See syslog.conf(5) for exact information.
+          Lines that begin with the hash mark ("#") and empty lines are ignored. If an error occurs during parsing the whole line is ignored.
+       /dev/log
+              The Unix domain socket to from where local syslog messages are read.
+       /var/run/syslogd.pid
+              The file containing the process id of syslogd.
+
+SEE ALSO
+       syslog.conf(5), klogd(8), logger(1), syslog(2), syslog(3), services(5), savelog(8).
+
+Version 1.5
+27 May 2007
+

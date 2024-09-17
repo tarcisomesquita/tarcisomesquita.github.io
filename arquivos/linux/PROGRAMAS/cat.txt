@@ -1,0 +1,29 @@
+CAT(1)
+
+SYNOPSIS
+       cat [OPTION] [FILE]...
+
+DESCRIPTION
+       Concatenate FILE(s), or standard input, to standard output.
+       With no FILE, or when FILE is -, read standard input.
+
+       -b, --number-nonblank
+              number nonempty output lines
+
+       -E, --show-ends
+              display $ at end of each line
+
+       -n, --number
+              number all output lines
+
+       -s, --squeeze-blank
+              suppress repeated empty output lines
+
+       -T, --show-tabs
+              display TAB characters as ^I
+
+       --version
+              output version information and exit
+
+GNU coreutils 6.9.92.4-f088d-dirtJanuary 2008
+

@@ -1,0 +1,236 @@
+veja pdftotext
+
+tr '[:lower:]' '[:upper:]' | sed 's/[áâã]/A/g; s/ç/C/g; s/[éê]/E/g; s/í/I/g; s/[óôõ]/O/g; s/ú/U/g'
+
+
+cat biblia.txt | sed -n '/[^0-9A-ZÁÃÂÀÉÊÍÓÕÔÚÇÜa-záãâàéêíóõôúçü ,.;<>:/?!@#$%&*()_+={}°ºª"\x27\x5b\x5d\x5c-]/p'
+cat biblia.txt | sed 's/[ ,.;<>:/?!@#$%&*()_+={}°ºª"\x27\x5b\x5d\x5c-]/\n/g'
+
+cat biblia.txt | sed 's/[^A-ZÁÃÂÀÉÊÍÓÕÔÚÇÜa-záãâàéêíóõôúçü]/\n/g' | grep . | \
+tr '[:upper:]' '[:lower:]' | sed '
+s/Á/á/g; s/Ã/ã/g; s/Â/â/g; s/À/à/g; 
+s/É/é/g; s/Ê/ê/g; s/Í/í/g; 
+s/Ó/ó/g; s/Õ/õ/g; s/Ô/ô/g; 
+s/Ú/ú/g; s/Ü/ü/g; s/Ç/ç/g;
+' | sort | uniq -c | sort -h
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+cat teste.html | \
+sed -n  ':I; $p; /<script/{s/<script.*//; p; d;}; /<\/script/d; N; bI;' | \
+sed -n  ':I; $p; /<style/{s/<style.*//; p; d;}; /<\/style/d; N; bI;' | \
+sed 's/<[^>]*>//g' | \
+sed ':I; ${ :S; s/\n\n/\n/; tS; q;}; N; bI; '
+
+
+-n, --quiet, --silent
+
+-f script-file, --file=script-file
+
+-i
+echo -e "A\nB\nC" | sed '/B/ i # próxima linha tem B'
+
+-r
+echo "isso é um teste" | sed -n -r 's/[a-z ]{5}//;p'
+echo "isso é um teste" | sed -n    's/[a-z ]\{5\}//;p'
+
+
+COMMAND SYNOPSIS
+
+Zero-address "commands"
+: label
+   Label for b and t commands.
+
+#comment
+The comment extends until the next newline
+
+}
+The closing bracket of a { } block.
+
+
+Zero- or One- address commands
+=
+   Print the current line number.
+   echo -e "dd\n9ca\n0mn\n89l" | sed = | sed 'N;s/\n/\t/'
+$ echo -n -e "ab\ncd" | sed -n '$='
+2
+
+$ echo -n -e "ab\ncd\n" | sed -n '$='
+2
+
+
+c text
+   Replace the selected lines with text, which has each embedded newline preceded by a backslash.
+    echo -n -e "aSSb\nUU\n" | sed -e '/S/c T\nT'
+
+a text
+   Append text. Include newline before and after the text.
+   echo -n -e "SS\nUU\n" | sed -e '/S/a T\nT' 
+
+
+q
+   Immediately quit the sed script without processing any more input, except that if auto-print is not disabled the current pattern space will be printed.
+
+Q
+   Immediately quit the sed script without processing any more input.
+
+Commands which accept address ranges
+{
+   Begin a block of commands (end with a }).
+
+b label
+   Branch to label; if label is omitted, branch to end of script.
+   echo -e "loop infinito\nfim" | sed ':A;p;bA'
+
+t label
+   If a s/// has done a successful substitution since the last input line was read or since the last t or T command, then branch to label; if label is omitted, branch to end of script.
+   echo -n -e "SS\nUU\n" | sed -e ':A;s/S/T/;tA'
+
+T label
+   If no s/// has done a successful substitution since the last input line was read or since the last t or T command, then branch to label; if label is omitted, branch to end of script.
+
+
+d
+   Delete pattern space.
+   echo -n -e "SS\nUU" | sed -e 'N;/S/d' | hexdump -C
+   echo -n -e "te\n\n\ndf\n\n\n\n\n" | sed '/^$/d'       # deleta todas as linhas em branco (emula o "grep '.'")
+   echo -n -e "te\n\n\ndf\n\n\n\n\n" | sed '/./,/^$/!d'  # permite 1 linha em branco
+   echo -n -e "te\n\n\ndf\n\n\n\n\n" | sed -e ':A; $!{N;bA}; s/\n*$//' # deleta as linhas em branco no final
+   sed '/AAA/!d; /BBB/!d; /CCC/!d'                # procura e imprime por AAA e BBB e CCC (em qualquer ordem)
+   sed '/AAA.*BBB.*CCC/!d'                        # procura e imprime por AAA e BBB e CCC (nessa ordem)
+
+D
+   Delete up to the first embedded newline in the pattern space.
+   echo -n -e "SS\nUU" | sed -e 'N;/S/D' | hexdump -C
+   sed -e :a -e '$q;N;11,$D;ba'   # imprime as últimas 10 linhas de um arquivo (emula o "tail") 
+   sed '$!N; /^\(.*\)\n\1$/!P; D' # deleta linhas duplicadas de um arquivo (emula o "uniq").
+
+h/H
+   Copy/append pattern space to hold space.
+   echo -n -e "SS\nUU\n" | sed -n -e 'h; ${x; p;}'
+   echo -n -e "SS\nUU\n" | sed -n -e 'H; ${x; p;}'
+   echo -n -e "SS\nUU" | sed -e 'h;G'   | hexdump -C         # duplica as linhas
+   echo -e "linha 1\nlinha 2\nlinha 3" | sed '1!G;h;$!d'     # reverter a ordem das linhas
+
+g/G
+   Copy/append hold space to pattern space.
+   echo -n -e "SS\nUU" | sed G     | hexdump -C     # duplicar o número de linhas
+   echo -n -e "SS\nUU" | sed 'G;G' | hexdump -C # triplicar o número de linhas
+   echo -e "linha 1\nlinha 2\nlinha 3" | sed '/\n/!G;s/\(.\)\(.*\n\)/&\2\1/;//D;s/.//'  # reverte cada caractere em cada linha NÃO ENTENDI //D
+
+x
+   Exchange the contents of the hold and pattern spaces.
+
+n/N
+   Read/append the next line of input into the pattern space.
+   echo -e "0dd\nca\n0mn\n89l" | sed =  | sed 'N;s/\n/ /'
+   echo -e "0dd\n9ca\n0mn\n89l" | sed --quiet -e '/[0-9]/n;p'
+   echo -e "dd\n9ca\n0mn\n89l" | sed --quiet -e '/[0-9]/n;p'
+   echo -e "dd\n9ca\n0mn\n89l" | sed 'n;d'
+   echo -e "dd\n9ca\n0mn\n89l" | sed = | sed 'N;s/\n/\t/'   # N muda para a linha 2 e append a linha 1 no começo
+
+p
+   Print the current pattern space.
+   echo -n -e "SS\nUU" | sed -e 'N;/S/p' | hexdump -C
+   echo -e "abc\nd2d\nca20" | sed --quiet -e '/[0-9]/p'
+   sed -n '51q;45,50p' arquivo  # imprime as linhas nos. 45-50 mais rápido que sed -n '45,50p' arquivo
+   echo -n -e "SA\nUU\nSB\nFF\n" | sed -n '/S/h;${x;p;}' # Imprimir a última ocorrência
+   echo -e "A\nB\nC\nD\n" | sed '/B/b; /D/b; d' # egrep 'B|D'
+
+P
+   Print up to the first embedded newline of the current pattern space.
+   echo -n -e "SS\nUU" | sed -e 'N;/S/P' | hexdump -C
+
+s/regexp/replacement/
+Match regexp against the pattern space. If successful, replace that portion matched with replacement.
+echo '<p><b>This</b> is what <b>I</b> meant.</p>' | sed 's/<[^>]*>//g'
+sed '/foo/ s/foo/bar/g' arquivo   # executa de forma mais rápida que sed 's/foo/bar/g' arquivo
+sed '/foo/ s//bar/g' arquivo      # sintaxe mais sucinta
+echo -e "linha 1\nlinha 2\nlinha 3" | sed = | sed 'N; s/^/     /; s/ *\(.\{6\}\)\n/\1  /' # numera e formata cada linha de um arquivo
+
+The replacement may contain the special character & to refer to that portion of the pattern space which matched.
+echo -e "teste1\nteste2" | sed 's/.*/ralph said: &/'
+
+Special escapes \1 through \9 to refer to the corresponding matching sub-expressions in the regexp.
+echo "palavra1 palavra2 palavra3" | sed 's/\(.*\) \(.*\) \(.*\)/primeira: \1, segunda: \2, terceira: \3/'
+
+sed 's/^/     /'  # insere 5 espaços em branco no ínicio de cada linha
+sed 's/\x0D$//'   # EM AMBIENTE UNIX: converte o caractere de linha nova do DOS (CR/LF) para o formato unix
+sed 's/^[ \t]*//;s/[ \t]*$//'  # deleta AMBOS o espaço em branco final e inicial de cada linha
+
+sed -e :a -e 's/^.\{1,78\}$/ &/;ta'   # alinha todo a direita, numa coluna de 78 caracteres mais 1 espaço de largura
+
+echo -e "linha branco 1\n   linha 2\nlinha 3" | sed  -e :a -e 's/^.\{1,10\}$/ & /;ta'                     # método 1  centraliza o texto
+echo -e "linha branco 1\n   linha 2\nlinha 3" | sed  -e :a -e 's/^.\{1,10\}$/ &/;ta' -e 's/\( *\)\1/\1/'  # método 2  melhor, mas NÃO ENTENDI
+
+sed 's/foo/bar/'    # troca somente a 1a instância de uma linha
+sed 's/foo/bar/4'   # troca somente a 4a instância de uma linha
+sed 's/foo/bar/g'   # troca TODAS as instâncias de uma linha
+
+echo -e "foo\nbazfoo\nfoo" | sed '/baz/s/foo/bar/g'  # substitui "foo" por "bar" SOMENTE nas linhas que contem "baz" 
+echo -e "foo\nbazfoo\nfoo" | sed '/baz/!s/foo/bar/g' # substitui "foo" por "bar" EXCETO  nas linhas que contem "baz"
+
+r filename
+   Append text read from filename.
+
+R filename
+   Append a line read from filename.  Each invocation of  the  command reads a line from the file.
+
+w filename
+   Write the current pattern space to filename.
+
+W filename
+   Write the first line of the current pattern space to filename.
+
+y/source/dest/
+   Transliterate the characters in the pattern space which appear in source to the corresponding character in dest.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Addresses
+Sed commands can be given with:
+no  addresses, in which case the command will be executed for all input lines;
+echo -e "teste 1\nteste 2" | sed -n -e 'p'
+
+one address,   in which case the command will only be executed for input lines which match that address;
+echo -e "teste 1\nteste 2" | sed -n -e '/ 1/p'
+
+two addresses, in which case the command will be executed for all input lines which match the inclusive range of lines starting from the first address and continuing to the second address.
+echo -e "teste 1\nteste b\nAQ" | sed -n -e '/ 1/,/ b/p'
+echo -e "teste 1\nteste b\nAQ" | sed -n -e '/ 1/,/ b/!p'
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+The following address types are supported:
+
+number
+   Match only the specified line number.
+
+first~step
+   Match every step'th line starting with line first.  For example, "sed -n 1~2p" will print all the odd-numbered lines in the input stream, and the address 2~5 will match every fifth line, starting with the second. (This is an extension.)
+
+$
+   Match the last line.
+   sed -n '$=' # conta as linhas (emula o "wc -l")
+
+/regexp/
+   Match lines matching the regular expression regexp.
+   echo -n -e "SS\nUU" | sed -e '/S/aTT' | hexdump -C
+
+\cregexpc
+   Match lines matching the regular expression regexp.  The c may be any character.
+
+GNU sed also supports some special 2-address forms:
+
+0,addr2
+   Start out in "matched first address" state, until addr2 is found.  This is similar to 1,addr2, except that if addr2 matches the very first line of input the 0,addr2 form will be at the end of its range, whereas the 1,addr2 form will still be at the beginning of its range.
+
+addr1,+N
+   Will match addr1 and the N lines following addr1.
+   echo -e "teste 1\nteste b\nAQ" | sed -n -e '1,+1p'
+
+addr1,~N
+   Will match addr1 and the lines following addr1 until the next line whose input line number is a multiple of N.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+

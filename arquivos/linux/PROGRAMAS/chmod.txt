@@ -1,0 +1,158 @@
+
+CHMOD(1)    GNU coreutils 6.9.92.4-f088d-dirtJanuary 2008
+
+é usado para dar ou tirar permissão a arquivos ou diretórios.
+
+chmod - change file mode bits
+
+SYNOPSIS
+chmod [OPTION] OCTAL-MODE FILE...
+chmod [OPTION]... --reference=RFILE FILE...
+
+
+OPTIONS
+-f, --silent, --quiet
+   suppress most error messages
+
+--reference=RFILE
+   use RFILE’s mode instead of MODE values
+
+-R, --recursive
+   change files and directories recursively
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Usando o comando ls -l, as permissões são vistas da seguinte forma:
+-rwxrwxrwxt
+
+Se referindo respectivamente ao:
+dono = rwx
+grupo = rwx
+usuário = rwx
+
+Que tem as permissões de:
+r = read
+w = write
+x = execute (or search for directories)
+X = execute/search only if the file is a directory or already has execute permission for some user
+t = apenas o dono do arquivo ou diretório pode apagar ele, mesmo que todos tenham a permissão de escrita.
+s = set user or group ID on execution
+
+
+Tipos de arquivos:
+- = Arquivos comuns. (texto, música).
+d = Diretórios.
+l = Links.
+c = Caractere. Hardware que pode ser acessado seqüencialmente, como portas paralelas e/ou seriais.
+b = Bloco. Hardware que pode ser acessado em blocos de bytes, como o HD.
+s = Sockets.
+p = Pipes.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+As permissões podem ser entendidas como um número de 12 bits onde cada bit indica a ausência ou presença de uma permissão específica.
+
+3 bits para determinar os atributos do arquivo
+9 bits para a determinação da proteção do arquivo.
+
+O primeiro bit é o setuid (set user ID), faz com que o arquivo seja executado como se o fosse pelo seu dono.
+O segundo bit é o setgid (set group ID), faz com que o arquivo seja executado como se o fosse por um membro do grupo do seu dono - todo arquivo criado em um diretório com o bit setgid ativado, é criado com o mesmo grupo do diretório.
+O terceiro bit é o sticky (t), que, se estiver ligado, faz com que o arquivo possa ser apagado apenas pelo seu dono.
+
+You can set or clear the bits with symbolic modes like u+s and g-s, and you can set (but not clear) the bits with a numeric mode.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+NUMERIC MODE
+
+Cada letra significa um numero
+
+r = 4
+w = 2
+x = 1
+
+A soma dos 3 números é 7, que significa permissão total, ou seja, ler, gravar e executar.
+
+Exemplo:
+Para dar permissão de leitura(r), gravação(w) e execução(x) para o dono, leitura(r) e gravação(w) para o grupo e leitura(r) para os usuários do arquivo ou diretório file:
+$ chmod 0764 file
+
+0764 representa:
+-rwxrw-r--
+
+0764 representa um número OCTAL de 12 bits.
+
+Para incluir o bit sticky
+chmod 1777 jack
+chmod 0777 jill
+
+Para que o programa seja executado como root, independente de quem o execute.
+sudo chown root:root ./teste.elf 
+sudo chmod 4555 ./teste.elf 
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+SYMBOLIC MODE
+
+chmod [OPTION] MODE[,MODE]... FILE...
+The format of a symbolic mode is [ugoa][[+-=][rwxXst]]
+
+u: usuário dono do arquivo
+g: grupo de usuários do dono do arquivo
+o: todos os outros usuários
+a: todos os tipos de usuário (dono, grupo e outros) 
+
+Exemplos:
+
+chmod o=rwx *
+Atribui permissões de leitura, escritura e execução para os usuários "outros" a todos os arquivos da pasta.
+
+chmod a=rwx arquivo.txt
+Atribui todas as permissões a todos os usuários para o arquivo fichero.txt
+
+chmod go= *
+Tira todas as permissões para os usuários do grupo e os outros usuários.
+
+chmod u=rwx,g=rw,o= *
+Dá todas as permissões ao dono do arquivo, aos do grupo do dono lhe atribui permissões de leitura e escrita e aos outros usuários lhes tira todas as permissões.
+
+Nota:um espaço depois da vírgula "," nos distintos modos de permissões que se indiquem faz falhar o comando.
+
+chmod a=r *
+Dá permissões unicamente de leitura a todos os tipos de usuário.
+
+De um modo parecido ao que acabamos de ver, também se podem adicionar ou tirar permissões com os operadores + e -. Para isso, se indica o tipo de usuário e a permissão que se resta ou adiciona. Algo como isto:
+
+chmod a-wrx *
+Isto tira todos as permissões a todos os tipos de usuário.
+
+chmod a+r,gu+w *
+Este comando atribui permissões de leitura a todos os usuários e permissões de escritura ao dono do arquivo e o grupo do dono.
+
+chmod u=w,a+r *
+Este comando atribui permissões de escritura ao usuário dono e adiciona a todos os usuários permissão de leitura.
+
+
+Para que somente você (dono do arquivo) tenha permissão de execução
+para o primeiroexemplo.sh você faz:
+
+     $ chmod u+x,go-x primeiroexemplo.sh
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+# find / -type f -a \( -perm -4000 -o -perm -2000 \) -print
+localiza todos os arquivos do sistema com os bits setuid ou setgid ligados.
+
+# find / -perm -2 -print
+identifica todos os arquivos com permissão de escrita universal.
+
+# find / -nouser -o nogroup -print
+identifica arquivos que não pertencem a nenhum usuário ou a nenhum grupo.
+
+# ls -aslgR /bin /etc /usr >> MasterChecklist
+# find /bin/ /etc/ /usr/ \! -type d  -exec ls -aslg  '{}' \;  >> MasterChecklist
+O arquivo MasterChecklist contém uma lista completa de todos os arquivos nos diretórios dos arquivos de configuração do sistema. Deve fazê-lo imediatamente após a instalação de um sistema e guardá-lo em um local seguro para evitar adulterações.
+
+# diff MasterChecklist Currentlist
+Compara os arquivos MasterChecklist e Currentlist.
+

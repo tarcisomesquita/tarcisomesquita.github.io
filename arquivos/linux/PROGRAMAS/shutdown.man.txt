@@ -1,0 +1,26 @@
+shutdown(8)
+
+NAME
+shutdown - bring the system down in a safe way.
+
+SYNOPSIS
+shutdown [OPTION] TIME [MESSAGE]
+
+TIME
+now     bring the system down immediately
++m      where m is the number of minutes to wait until shutting down
+hh:mm   specifies the time on the 24hr clock.
+
+Once TIME has elapsed, shutdown sends a request to the init(8) daemon to bring the system down into the appropriate runlevel.
+
+OPTIONS
+-r     Requests that the system be rebooted after it has been brought down.
+-h     Requests that the system be either halted or powered off after it has been brought down, with the choice as to which left up to the system.
+-H     Requests that the system be halted after it has been brought down.
+-P     Requests that the system be powered off after it has been brought down.
+-c     Cancels a running shutdown.  TIME is not specified with this option, the first argument is MESSAGE.
+-k     Only send out the warning messages and disable logins, do not actually bring the system down.
+
+Upstart
+March 2007
+

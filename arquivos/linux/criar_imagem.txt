@@ -1,0 +1,10 @@
+
+$ dd if=/dev/zero of=file.img bs=1k count=10000
+
+$ losetup /dev/loop1 file.img
+
+$ mkfs.vfat -n "TESTE" /dev/loop1
+
+$ sudo mkdir /media/teste
+$ sudo mount -t vfat /dev/loop1 /media/teste
+

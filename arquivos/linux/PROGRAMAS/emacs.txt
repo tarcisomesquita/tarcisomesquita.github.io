@@ -1,0 +1,76 @@
+C-<chr>  means hold the CONTROL key while typing the character <chr>
+M-<chr>  means hold the ALT key down while typing <chr>.
+
+to end the Emacs session, type C-x C-c.
+
+To quit a partially entered command, type C-g.
+
+C-v	Move forward one screenful
+M-v	Move backward one screenful
+C-l	Clear screen and redisplay all the text, moving the text around the cursor to the center of the screen.
+
+
+C-f	Move forward a character
+C-b	Move backward a character
+
+M-f	Move forward a word
+M-b	Move backward a word
+
+C-n	Move to next line
+C-p	Move to previous line
+
+C-a	Move to beginning of line
+C-e	Move to end of line
+
+M-a	Move back to beginning of sentence
+M-e	Move forward to end of sentence
+
+M-< moves to the beginning of the whole text
+M-> moves to the end of the whole text.
+
+C-u 8 C-f moves forward eight characters
+
+C-x 1	One window (i.e., kill all other windows).
+
+C-h k C-f  display documentation on the C-f command.
+
+
+	<DEL>        Delete the character just before the cursor
+	C-d   	     Delete the next character after the cursor
+
+	M-<DEL>      Kill the word immediately before the cursor
+	M-d	     Kill the next word after the cursor
+
+	C-k	     Kill from the cursor position to end of line
+	M-k	     Kill to the end of the current sentence
+
+You can also kill a segment of text with one uniform method.  Move to
+one end of that part, and type C-<SPC>.  (<SPC> is the Space bar.)
+Next, move the cursor to the other end of the text you intend to kill.
+As you do this, Emacs highlights the text between the cursor and the
+position where you typed C-<SPC>.  Finally, type C-w.  This kills all
+the text between the two positions.
+
+The difference between "killing" and "deleting" is that "killed" text
+can be reinserted (at any position
+
+The command for yanking is C-y.  It reinserts the last killed text,
+at the current cursor position.
+
+After you have done C-y to get the most recent kill, typing
+M-y replaces that yanked text with the previous kill.  Typing M-y
+again and again brings in earlier and earlier kills.
+
+ undo command, C-/
+
+C-_ is an alternative undo command; it works exactly the same as C-/
+C-x u also works exactly like C-/
+
+
+C-x C-f   Find a file
+C-x C-s   Save the file
+ Type C-x C-s TUTORIAL <Return>.
+   This should save this tutorial to a file named TUTORIAL, and show
+   "Wrote ...TUTORIAL" at the bottom of the screen.
+
+

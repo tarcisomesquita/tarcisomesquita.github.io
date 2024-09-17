@@ -1,0 +1,46 @@
+
+#/home/ubuntu/.config/debconf
+#dconf dump / > debconf.txt
+
+# Aparência
+dconf write /org/gnome/desktop/background/picture-options 'none'
+dconf write /org/gnome/desktop/background/color-shading-type 'solid'
+dconf write /org/gnome/desktop/background/primary-color '#000000000000'
+dconf write /com/canonical/unity/integrated-menus "true"
+dconf write /com/canonical/unity/launcher/favorites "['unity://running-apps', 'unity://expo-icon', 'unity://devices']"
+dconf write /org/gnome/gedit/preferences/editor/scheme 'solarized-dark'
+conf write /org/gnome/gnome-system-monitor/proctree/columns-order "[12, 2, 3, 4, 6, 7, 8, 9, 10, 11, 15, 22, 1, 0, 13, 14, 16, 17, 18, 19, 20, 21]"
+dconf write /org/gnome/gnome-system-monitor/proctree/col-14-visible 'true'
+dconf write /org/gnome/gnome-system-monitor/proctree/col-14-width '150'
+dconf write /org/gnome/gnome-system-monitor/proctree/sort-col '8'
+dconf write /org/gnome/gnome-system-monitor/proctree/sort-order '0'
+
+#[org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
+#background-color='rgb(17,17,17)'
+#use-theme-colors=false
+#use-theme-transparency=false
+#foreground-color='rgb(0,221,0)'
+
+# Teclado
+dconf write /org/gnome/libgnomekbd/keyboard/layouts "['pt', 'br', 'br\tdvorak', 'br\tnativo']"
+dconf write /org/gnome/desktop/input-sources/sources "[('xkb', 'br')]"
+
+# Energia
+dconf write /org/gnome/settings-daemon/plugins/power/idle-dim "false"
+dconf write /org/gnome/settings-daemon/plugins/power/lid-close-ac-action "nothing"
+dconf write /org/gnome/settings-daemon/plugins/power/lid-close-battery-action "nothing"
+dconf write /org/gnome/desktop/session/idle-delay "uint32 0"
+
+# Auto run
+dconf write /org/gnome/desktop/media-handling/automount "false"
+dconf write /org/gnome/desktop/media-handling/automount-open "false"
+dconf write /org/gnome/desktop/media-handling/autorun-never "true"
+dconf write /org/gnome/desktop/media-handling/autorun-x-content-start-app "@as []"
+
+# Som
+dconf write /com/canonical/indicator/sound/global-mute "true"
+dconf write /com/canonical/indicator/sound/preferred-media-players "@as []"
+
+dconf write /com/canonical/unity/webapps/preauthorized-domains "@as []"
+
+

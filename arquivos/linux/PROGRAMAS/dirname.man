@@ -1,0 +1,28 @@
+
+/usr/bin/dirname
+
+       dirname - strip non-directory suffix from file name
+
+SYNOPSIS
+       dirname NAME
+       dirname OPTION
+
+DESCRIPTION
+       Print  NAME  with  its trailing /component removed; if NAME contains no /’s, output ‘.’ (meaning the current directory).
+
+       --help display this help and exit
+
+       --version
+              output version information and exit
+
+EXAMPLES
+       dirname /usr/bin/sort
+              Output "/usr/bin".
+
+       dirname stdio.h
+              Output ".".
+
+SEE ALSO
+       basename(1), readlink(1)
+
+GNU coreutils 6.9.92.4-f088d-dirtJanuary 2008                       DIRNAME(1)

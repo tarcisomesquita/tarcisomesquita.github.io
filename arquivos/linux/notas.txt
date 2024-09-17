@@ -1,0 +1,87 @@
+https://www.x.org/wiki/guide/concepts/
+
+https://www.x.org/wiki/Development/Documentation/HowVideoCardsWork/
+
+/etc/apt/sources.list
+
+deb http://deb.debian.org/debian/ bullseye main contrib non-free
+deb-src http://deb.debian.org/debian/ bullseye main contrib non-free
+deb http://security.debian.org/debian-security bullseye-security main contrib non-free
+deb-src http://security.debian.org/debian-security bullseye-security main contrib non-free
+deb http://deb.debian.org/debian/ bullseye-updates main contrib non-free
+deb-src http://deb.debian.org/debian/ bullseye-updates main contrib non-free
+
+Main – Canonical-supported free and open-source software.
+Universe – Community-maintained free and open-source software.
+Restricted – Proprietary drivers for devices.
+Multiverse – Software restricted by copyright or legal issues.
+
+https://en.wikipedia.org/wiki/Comparison_of_X_window_managers
+http://git.fluxbox.org/
+https://en.wikipedia.org/wiki/IceWM
+https://en.wikipedia.org/wiki/I3_(window_manager)
+https://ice-wm.org/
+
+systemd-run --scope -p MemoryMax=200M firefox
+
+systemd-run --timer-property=OnCalendar=$(systemd-analyze timestamp +5s) --timer-property=AccuracySec=1s ls 
+
+
+             2012-11-23 11:12:13 UTC
+                         @1395716396
+                                 +5s
+
+systemd-analyze timestamp +50s
+systemd-analyze timestamp "2021-11-03 11:03:50 UTC"
+systemd-analyze timestamp "+55s500ms"
+
+systemd-run --on-calendar="Tue 2021-11-02 11:18:20 UTC" --timer-property=AccuracySec=100ms touch /home/lubuntu/teste2.txt
+systemd-run --timer-property=OnCalendar="$(systemd-analyze timestamp +5s | grep UTC | cut -c 18-)" --timer-property=AccuracySec=100ms touch /home/lubuntu/teste5.txt
+
+systemd-run --on-calendar="$(systemd-analyze timestamp +5s | grep UTC | cut -c 18-)" --timer-property=AccuracySec=100ms bash -c 'whoami > /home/lubuntu/teste4.txt'
+
+cat /var/log/syslog | grep 'Started'
+
+
+xmodmap -e "keycode 62 = Menu"
+
+xev
+show keycode
+
+KeyRelease event, serial 48, synthetic NO, window 0x2600001,
+    root 0x12a, subw 0x0, time 7542900, (1175,263), root:(1177,293),
+    state 0x0, keycode 135 (keysym 0xff67, Menu), same_screen YES,
+    XLookupString gives 0 bytes: 
+    XFilterEvent returns: False
+
+xmodmap -pke > map.txt
+cat map.txt | grep 135
+keycode 135 = Menu NoSymbol Menu
+
+
+KeyPress event, serial 48, synthetic NO, window 0x2600001,
+    root 0x12a, subw 0x0, time 7627580, (736,384), root:(738,414),
+    state 0x0, keycode 105 (keysym 0xffe4, Control_R), same_screen YES,
+    XLookupString gives 0 bytes: 
+    XmbLookupString gives 0 bytes: 
+    XFilterEvent returns: False
+
+cat map.txt | grep 105
+keycode 105 = Control_R NoSymbol Control_R
+
+xmodmap -e "keycode 105 = Menu"
+
+xmodmap -pke | grep Menu
+keycode 105 = Menu NoSymbol Menu
+keycode 135 = Menu NoSymbol Menu
+
+sudo sed -i 's/#HandlePowerKey=poweroff/HandlePowerKey=ignore/' /etc/systemd/logind.conf
+sudo sed -i 's/#HandleHibernateKey=hibernate/HandleHibernateKey=ignore/' /etc/systemd/logind.conf
+sudo /usr/bin/systemctl kill -s HUP systemd-logind
+
+Pressão por longo tempo ainda desliga o computador
+
+https://wiki.archlinux.org/title/Power_management
+
+cat /sys/class/power_supply/BAT0/{status,capacity,energy_full,energy_now}
+

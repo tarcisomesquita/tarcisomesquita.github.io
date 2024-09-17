@@ -1,0 +1,147 @@
+O obje­tivo era imple­men­tar um teclado vir­tual, de forma que um processo ou apli­cação pudesse sim­u­lar o pres­sion­a­mento de uma tecla, sem que esta tecla tivesse sido real­mente pres­sion­ada em um teclado físico.
+
+para cada tecla pres­sion­ada, uma inter­rupção é ger­ada para a CPU, e os scan­codes são envi­a­dos via bar­ra­mento de comu­ni­cação, depen­dendo do hard­ware do seu teclado (PS2, USB, etc).
+
+
+ a imple­men­tação do teclado PS2 padrão encontra-se nos fontes do ker­nel em drivers/input/keyboard/atkbd.c
+
+???????????????
+     *-pnp00:05
+          product: PnP device PNP0303
+          physical id: a
+          capabilities: pnp
+          configuration: driver=i8042 kbd
+
+
+Após ler os scan­codes, o device dri­ver irá convertê-los em um outro código chamado key­codes.
+sudo showkey -s
+sudo showkey -k
+
+O device dri­ver gera dois even­tos para o ker­nel. Um para teclas pres­sion­adas e outro para teclas lib­er­adas. 
+
+Dri­ver exporta os even­tos para a camada input.
+A camada input trata e exporta estes even­tos em um for­mato padrão para arquivos de dis­pos­i­tivo em /dev/input/:
+
+$ ls /dev/input
+event0  event1  event2  event3  event4  event5  mice  mouse0
+Cada um destes arquivos de dis­pos­i­tivo rep­re­sen­tam um dis­pos­i­tivo de entrada.
+
+
+cat /proc/bus/input/devices | grep -C20 keyboard
+I: Bus=0011 Vendor=0001 Product=0001 Version=ab41
+N: Name="AT Translated Set 2 keyboard"
+P: Phys=isa0060/serio0/input0
+S: Sysfs=/devices/platform/i8042/serio0/input/input4
+U: Uniq=
+H: Handlers=sysrq kbd event4 leds 
+B: PROP=0
+B: EV=120013
+B: KEY=1100f02902000 8380307cf910f001 feffffdfffefffff fffffffffffffffe
+B: MSC=10
+B: LED=7
+
+sudo cat /dev/input/event4 | hexdump -C
+
+
+http://sergioprado.org/2011/04/25/por-dentro-da-console-em-sistemas-linux/
+
+um mod­ulo sim­ples que irá emu­lar a dig­i­tação de uma frase a cada 10 segun­dos.
+
+
+#include "linux/fs.h"
+#include "linux/cdev.h"
+#include "linux/module.h"
+#include "linux/kernel.h"
+#include "linux/delay.h"
+#include "linux/kthread.h"
+#include "linux/device.h"
+#include "linux/slab.h"
+#include "linux/tty.h"
+#include "linux/tty_flip.h"
+#include "linux/kbd_kern.h"
+#include "linux/input.h"
+ 
+/* vtkbd kernel thread struct */
+static struct task_struct *vtkbd_thread_task;
+ 
+// vtkbd input device structure
+static struct input_dev *vtkbd_input_dev;
+ 
+const char str_keys[] = { KEY_S, KEY_E, KEY_G, KEY_M, KEY_E, KEY_N,
+                          KEY_T, KEY_A, KEY_T, KEY_I, KEY_O, KEY_N,
+                          KEY_SPACE, KEY_F, KEY_A, KEY_U, KEY_L,
+                          KEY_T, KEY_ENTER };
+ 
+// kernel thread
+static int vtkbd_thread(void *unused) {
+    int i;
+ 
+    while (!kthread_should_stop()) {
+        for (i = 0; i < sizeof(str_keys); i++) {
+            input_report_key(vtkbd_input_dev, str_keys[i], 1);
+            input_report_key(vtkbd_input_dev, str_keys[i], 0);
+            input_sync(vtkbd_input_dev);
+        }
+        msleep(10000); // wait 10 seconds
+    }
+    return(0);
+}
+ 
+// driver initialization
+static int __init vtkbd_init(void) {
+    static const char *name = "Virtual Keyboard";
+    int i;
+ 
+    // allocate input device
+    vtkbd_input_dev = input_allocate_device();
+    if (!vtkbd_input_dev) {
+        printk("vtkbd_init: Error on input_allocate_device!\n");
+        return -ENOMEM;
+    }
+ 
+    // set input device name
+    vtkbd_input_dev->name = name;
+ 
+    // enable key events
+    set_bit(EV_KEY, vtkbd_input_dev->evbit);
+    for (i = 0; i < 256; i++)
+        set_bit(i, vtkbd_input_dev->keybit);
+ 
+    /* register input device */
+    input_register_device(vtkbd_input_dev);
+ 
+    /* start thread */
+    vtkbd_thread_task = kthread_run(vtkbd_thread, NULL, "%s", "vtkbd_thread");
+ 
+    printk("Virtual Keyboard driver initialized.\n");
+ 
+    return 0;
+}
+ 
+/* driver exit */
+void __exit vtkbd_exit(void)
+{
+    /* stop thread */
+    kthread_stop(vtkbd_thread_task);
+ 
+    /* unregister input device */
+    input_unregister_device(vtkbd_input_dev);
+ 
+    printk("Virtual Keyboard driver.\n");
+}
+ 
+module_init(vtkbd_init);
+module_exit(vtkbd_exit);
+ 
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Sergio Prado sergio.prado@embeddedlabworks.com");
+MODULE_DESCRIPTION("Virtual Keyboard driver");
+
+
+
+http://sergioprado.org/2011/04/18/linux-device-drivers-trabalhando-com-kernel-threads/
+
+
+você pode­ria usar o uin­put e deixar o processo em user space ao invés de uma thread do ker­nel. A gente faz isso no BlueZ para enviar para o sis­tema con­troles rece­bidos via AVRCP. Quando você abre o device /dev/uinput e chama ioctl(fd, UI_DEV_CREATE, NULL) ele vai criar um novo dis­pos­i­tivo de entrada. Tem um exem­plo bem fácil no seguinte link: http://thiemonge.org/getting-started-with-uinput
+
+

@@ -1,0 +1,76 @@
+sudo cat /proc/ioports 
+sudo cat /proc/iomem 
+
+#cat /dev/port TRAVA o sistema
+sudo dd if=/dev/port bs=1 skip=$((0x60)) count=1 status=none | hexdump -C -v
+(for i in {1..200} ; do sudo dd if=/dev/port  bs=1 skip=$((0x60)) count=1 status=none ;done ) | hexdump -C
+sudo showkey -s
+
+Another way to access I/O ports is to open() /dev/port (a character device, major number 1, minor 4) for reading and/or writing. lseek() to the appropriate byte in the file (file position 0 = port 0x00, file position 1 = port 0x01, and so on), and read() or write() a byte or word from or to it.
+
+
+Routines for accessing I/O ports are in /usr/include/asm/io.h.
+
+Permissions
+Before you access any ports, you must give your program permission to do so.
+#include <sys/io.h>
+int main() {
+   ioperm(0x300,5,1);  // syscall ioperm(0x300, 0x5, 1)
+   return 0;
+}
+give access to ports 0x300 through 0x304 (a total of 5 ports). The last argument is a Boolean value specifying whether to give access to the program to the ports (true (1)) or to remove access (false (0)).
+
+The ioperm() call requires your program to have root privileges.
+
+ioperm() can only give access to ports 0x000 through 0x3ff; for higher ports, you need to use iopl() (which gives you access to all ports at once). #include <sys/io.h>
+int main() {
+   iopl(3);  // syscall iopl(3)  give access to all I/O ports.
+   return 0;
+}
+
+inb(port) // returns the byte it got.
+outb(value, port)
+To input a word (16 bits) from ports x and x+1 (one byte from each to form the word, using the assembler instruction inw), call inw(x).
+To output a word to the two ports, use outw(value, x).
+
+Note that all port access instructions take at least about a microsecond to execute.
+
+#include <asm/io.h>
+
+
+
+
+Bus Mastering é acesso direto à memória, que permite que HDs leiam e gravem dados diretamente na memória RAM, deixando o processador livre.
+
+PCI, 32 bits, tem plug-and-play e bus mastering.
+Taxa de transmissão teórica de 133 MB/s.
+
+
+PCI Express ou PCIe
+É um barramento serial.
+podem operar a 2.5 GHz
+
+No PCI Express cada periférico possui um canal exclusivo de comunicação com o chipset (Não há compartilhamento).
+
+porta paralela em modo EPP --> 1 MB/s
+USB 2.0 --> 60 MB/s
+IDE ATA-133 --> 133 MB/s
+SATA 600 --> 600 MB/s
+PCI --> 133 MB/s compartilhados por todos os dispositivos
+PCI Express 2.0 x16 --> 8 GB/s
+
+existem 4 tipos de slots PCI Express, que vão do x1 ao x16. O número indica quantas linhas de dados são utilizadas pelo slot e, consequentemente, a banda disponível.
+
+Cada linha PCI Express utiliza 4 pinos de dados (dois para enviar e dois para receber), que operam em modo full-duplex (ou seja, são capazes de transmitir e receber dados simultaneamente).
+
+PCIe 1.1
+x1 --> 250 MB/s
+x4 --> 1 GB/s
+x8 --> 2 GB/s
+x16 --> 4 GB/s
+
+PCIe 2.0
+x1 --> 500 MB/s
+x4 --> 2 GB/s
+x8 --> 4 GB/s
+x16 --> 8 GB/s

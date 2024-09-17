@@ -1,0 +1,156 @@
+MAN(1)                        Manual pager utils                        MAN(1)
+
+MANWIDTH=10000 man -E utf8 grep > grep.txt
+
+
+NAME
+       man - an interface to the on-line reference manuals
+
+SYNOPSIS
+       man  [-C  file]  [-d]  [-D]  [--warnings[=warnings]]  [-R encoding] [-L
+       locale] [-m system[,...]] [-M path] [-S list]  [-e  extension]  [-i|-I]
+       [--regex|--wildcard]  [--names-only]  [-a]  [-u] [-P pager] [-r prompt]
+       [-7] [-E encoding] [--no-hyphenation]  [-p  string]  [-t]  [-T[device]]
+       [-H[browser]] [-X[dpi]] [-Z] [[section] page ...] ...
+       man -k [apropos options] regexp ...
+       man -f [whatis options] page ...
+       man  -l  [-C  file] [-d] [-D] [--warnings[=warnings]] [-R encoding] [-L
+       locale] [-P pager] [-r prompt] [-7]  [-E  encoding]  [-p  string]  [-t]
+       [-T[device]] [-H[browser]] [-X[dpi]] [-Z] file ...
+       man -w|-W [-C file] [-d] [-D] page ...
+       man -c [-C file] [-d] [-D] page ...
+       man [-hV]
+
+DESCRIPTION
+       argument given to man is normally the name of a program, utility or function.
+       The  default action is to search in all of the available sections, following a pre-defined order and to show only the first page found, even if page exists in several sections.
+
+       The table below shows the section numbers of the manual followed by the types of pages they contain.
+
+
+       1   Executable programs or shell commands
+       2   System calls (functions provided by the kernel)
+       3   Library calls (functions within program libraries)
+       4   Special files (usually found in /dev)
+       5   File formats and conventions eg /etc/passwd
+       6   Games
+       7   Miscellaneous (including macro  packages  and  conven-
+           tions), e.g. man(7), groff(7)
+       8   System administration commands (usually only for root)
+       9   Kernel routines [Non standard]
+
+
+       man -a intro
+           Display, in succession, all of the  available  intro  manual  pages
+           contained  within  the manual.
+
+       man -k printf
+           Search the short descriptions and manual page names for the keyword
+           printf as regular expression.  Print out any  matches.   Equivalent
+           to apropos -r printf.
+
+       man -f smail
+           Lookup the manual pages referenced by smail and print out the short
+           descriptions of any found.  Equivalent to whatis -r smail.
+
+read manpath(5)
+
+Native language manual pages are accessible if set either $LC_MESSAGES, $LANG
+
+
+       -C file, --config-file=file
+              Use this user configuration file rather than the default of ~/.manpath.
+
+       -d, --debug
+              Print debugging information.
+
+       -f, --whatis
+              Equivalent to whatis.  Display a short description from the man-
+              ual page, if available. See whatis(1) for details.
+
+       -k, --apropos
+              Equivalent  to  apropos.   Search the short manual page descrip-
+              tions for keywords and display any matches.  See apropos(1)  for
+              details.
+
+       -l, --local-file
+              Activate  'local'  mode.   Format and display local manual files
+              instead of searching through  the  system's  manual  collection.
+
+       -w, --where, --location
+              Don't  actually display the manual pages, but do print the loca-
+              tion(s) of the source nroff files that would be formatted.
+
+       -R encoding, --recode=encoding
+              Instead  of  formatting the manual page in the usual way, output
+              its source converted to the specified encoding.
+              You can also use manconv(1).
+
+
+   Finding manual pages
+       -L locale, --locale=locale
+              use this option to supply a locale string directly to man. Ex.: man -L pt_BR passwd
+
+       -M path, --manpath=path
+              Specify an alternate manpath to use.
+
+       -i, --ignore-case
+              Ignore case when searching for manual pages. This is the default.
+
+       -I, --match-case
+              Search for manual pages case-sensitively.
+
+       -a, --all
+              By  default,  man  will  exit after displaying the most suitable
+              manual page it finds.  Using this option forces man  to  display
+              all  the manual pages with names that match the search criteria.
+
+
+   Controlling formatted output
+
+       -E encoding, --encoding=encoding
+              Generate output for a character encoding other than the default.
+              For backward compatibility, encoding may be an nroff device such
+              as ascii, latin1, or utf8 as well as a true  character  encoding
+              such as UTF-8.
+
+       -H[browser], --html[=browser]
+              This option will cause groff to produce HTML  output,  and  will
+              display  that output in a web browser.
+
+
+EXIT STATUS
+       0      Successful program execution.
+
+       1      Usage, syntax or configuration file error.
+
+       2      Operational error.
+
+       3      A child process returned a non-zero exit status.
+
+       16     At least one of the pages/files/keywords didn't exist or  wasn't
+              matched.
+
+ENVIRONMENT
+
+       MANWIDTH
+              If  $MANWIDTH  is  set, its value is used as the line length for
+              which manual pages should be formatted.  If it is not set,  man-
+              ual  pages  will  be formatted with a line length appropriate to
+              the current terminal (using an ioctl(2) if available, the  value
+              of  $COLUMNS,  or  falling  back  to 80 characters if neither is
+              available).
+
+FILES
+       /etc/manpath.config
+              man-db configuration file.
+
+       /usr/share/man
+              A global manual page hierarchy.
+
+SEE ALSO
+       mandb(8), manpath(1),  manpath(5),  apropos(1),  whatis(1),  catman(8),
+       less(1),   nroff(1),   troff(1),  groff(1),  zsoelim(1),  setlocale(3),
+
+
+2.5.5                             2009-03-14                            MAN(1)

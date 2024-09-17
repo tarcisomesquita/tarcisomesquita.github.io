@@ -1,0 +1,3 @@
+nl teste.txt
+
+number lines of files
