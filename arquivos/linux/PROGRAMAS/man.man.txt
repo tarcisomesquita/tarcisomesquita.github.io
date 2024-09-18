@@ -2,6 +2,7 @@ MAN(1)                        Manual pager utils                        MAN(1)
 
 MANWIDTH=10000 man -E utf8 grep > grep.txt
 
+https://man7.org/linux/man-pages/index.html
 
 NAME
        man - an interface to the on-line reference manuals
@@ -119,18 +120,6 @@ Native language manual pages are accessible if set either $LC_MESSAGES, $LANG
               display  that output in a web browser.
 
 
-EXIT STATUS
-       0      Successful program execution.
-
-       1      Usage, syntax or configuration file error.
-
-       2      Operational error.
-
-       3      A child process returned a non-zero exit status.
-
-       16     At least one of the pages/files/keywords didn't exist or  wasn't
-              matched.
-
 ENVIRONMENT
 
        MANWIDTH
@@ -147,10 +136,3 @@ FILES
 
        /usr/share/man
               A global manual page hierarchy.
-
-SEE ALSO
-       mandb(8), manpath(1),  manpath(5),  apropos(1),  whatis(1),  catman(8),
-       less(1),   nroff(1),   troff(1),  groff(1),  zsoelim(1),  setlocale(3),
-
-
-2.5.5                             2009-03-14                            MAN(1)

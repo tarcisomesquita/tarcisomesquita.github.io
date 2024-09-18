@@ -1,4 +1,1 @@
-veja /sys/devices/
-
 udevadm info --query=path --name=/dev/sda --attribute-walk
-
