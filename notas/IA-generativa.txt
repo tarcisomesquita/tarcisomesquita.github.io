@@ -1,7 +1,7 @@
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-O tamanho máximo da pergunta que você pode fazer é de 5000 caracteres.
+@Google Drive Faça um ranking das 10 palavras mais importantes no texto do arquivo FIS_V1_U1_T1.pdf
 
 @Google Drive Responda as questões do arquivo HIS_P1.pdf
 
@@ -49,34 +49,22 @@ O Brasil é a capital da Argentina.
 
 Função referencial da linguagem tem por finalidade destacar a referência daquilo de que se fala. Usada em materiais didáticos e científicos.
 Google Acadêmico, SciELO, Portal de Periódicos da CAPES, Biblioteca Digital Brasileira (BDTD), JSTOR, arXiv, ResearchGate
-https://www.coursera.org/courses?query=cursos%20gratis
-
- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Um validador de textos é um software projetado para analisar textos e identificar erros ortográficos, gramaticais, de pontuação e, em alguns casos, até mesmo problemas de estilo.
-
-https://languagetool.org/pt-BR
 
 Analise o texto abaixo.
 "A inportância da educaçao não pode ser subestimada . Os indivídos, adquire conhecimendo e habilidades que lhes permite afasta seus objetivos."
 
- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-Explique o prefixo dbo em triplas rdf.
-
-Gemini, extraia todas as triplas RDF do seguinte texto:
-O Brasil é um país localizado na América do Sul. A capital do Brasil é Brasília.
-
-Gemini, extraia todas as triplas RDF do seguinte texto usando o esquema RDF do Wikidata:
-O Brasil é um país localizado na América do Sul. A capital do Brasil é Brasília.
-
-Gemini, extraia todas as triplas RDF do seguinte texto com o predicado "rdf:type":
-O Brasil é um país localizado na América do Sul. A capital do Brasil é Brasília.
-
-Gemini, extraia todas as triplas RDF do seguinte texto com o sujeito "Brasil":
-O Brasil é um país localizado na América do Sul. A capital do Brasil é Brasília.
-
-Gemini, extraia todas as triplas RDF do seguinte texto com o objeto "América do Sul":
-O Brasil é um país localizado na América do Sul. A capital do Brasil é Brasília.
+Extraia todas as triplas RDF do seguinte texto com o predicado "rdf:type":
+Extraia todas as triplas RDF do seguinte texto com o sujeito "física":
+Extraia todas as triplas RDF do seguinte texto com o objeto "ciência":
 
 Escreva em SPARQL a pergunta: Um gato pode comer?
+
+Marque links no texto a seguir ligando à base wikidata: O Brasil é um país.
+
+Converta o texto a seguir em uma tripla rdf ligada à base dbpedia: O Brasil é um país.
+<http://dbpedia.org/resource/Brazil> rdf:type <http://dbpedia.org/ontology/Country> .
+Q155 P31 Q6256
+
+wget -q -O - --no-check-certificate 'https://api.dbpedia-spotlight.org/pt/annotate?confidence=0.35&text=O Brasil é um país.'
+wget -q -O - --no-check-certificate 'https://api.dbpedia-spotlight.org/en/annotate?confidence=0.35&text=The Brazil is a country.'
+
