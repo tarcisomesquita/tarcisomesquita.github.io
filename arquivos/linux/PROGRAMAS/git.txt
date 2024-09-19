@@ -62,7 +62,9 @@ git merge <branch-name>
 
 git diff <source-branch> <target-branch>
 
-git diff <source-branch> <target-branch>
+git diff origin main
+
+git diff --name-only origin main
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
