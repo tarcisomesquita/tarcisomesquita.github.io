@@ -1,3 +1,14 @@
+.git/
+HEAD: referência do branch atual
+config: configurações do seu repositório.
+description: descrição do repositório.
+index: índice dos arquivos que serão incluídos no próximo commit.
+objects: Esta pasta contém os objetos binários que representam os arquivos e diretórios do seu projeto. Cada objeto tem um hash único que o identifica.
+refs: Esta pasta contém referências (pointers) para os objetos. É aqui que o Git armazena informações sobre branches, tags e o HEAD (que aponta para o commit atual).
+hooks: Esta pasta contém scripts que podem ser executados em eventos específicos do Git, como antes de um commit ou push.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
 apt-get install git
 
 git config --global user.email "tarcisomesquita@gmail.com"
@@ -18,7 +29,7 @@ git remote set-url origin https://<token>@github.com/tarcisomesquita/tarcisomesq
 git status # Tem mudanças
 
 git add .
-git commit -m "saving changes"
+git commit -m "$(date +%d-%m-%Y_%H:%M:%S)"
 git diff --name-only main origin # quais arquivos?
 git push
 
@@ -37,6 +48,14 @@ git init
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+git ls-tree HEAD
+git cat-file –p d670460b4b4aece5915caf5c68d12f560a9fe3e4
+
+git grep "palavra"
+
+git prune -v -n # somente mostra o que será apagado
+git prune -v    # apaga
+
 git log
 
 redefinir o índice e o diretório de trabalho para o estado do último commit:
@@ -44,19 +63,7 @@ git reset --hard HEAD
 
 git rm filename.txt
 
-git show
-
-git ls-tree HEAD
-git cat-file –p d670460b4b4aece5915caf5c68d12f560a9fe3e4
-
-procure através das árvores de conteúdo frases e / ou palavras.
-git grep "palavra"
-
 git archive --format=tar master
-
-git prune -v -n # somente mostra o que será apagado
-git prune -v    # apaga
-
 
 https://raw.githubusercontent.com/progit/progit2/main/images/snapshots.svg
 
