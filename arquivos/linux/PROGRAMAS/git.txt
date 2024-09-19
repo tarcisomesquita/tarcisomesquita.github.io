@@ -13,23 +13,12 @@ git clone https://github.com/tarcisomesquita/tarcisomesquita.github.io.git
 cd tarcisomesquita.github.io
 git remote set-url origin https://<token>@github.com/tarcisomesquita/tarcisomesquita.github.io
 
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
 git add .
 git commit -m "saving changes"
-git push origin main
-
-git --help
-git push --help
-
- = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-cd /home/user/my_project
-git init
-
- = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-tem commit para push?
-git status
-
+git status # tem commit para push?
+git push
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
@@ -43,6 +32,16 @@ git diff --name-only main origin
 git diff main origin
 
 git merge
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+cd /home/user/my_project
+git init
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
