@@ -57,14 +57,17 @@ git branch
 Para excluir um ramo:
 git branch –d <branch-name>
 
-mesclar uma ramificação ao ramo ativo
-git merge <branch-name>
+
+baixa os objetos do repositório remoto que são diferentes daqueles do diretório de trabalho local
+git fetch
 
 git diff <source-branch> <target-branch>
 
-git diff origin main
+git diff --name-only main origin
 
-git diff --name-only origin main
+git diff main origin
+
+git merge
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
@@ -76,9 +79,6 @@ git reset --hard HEAD
 git rm filename.txt
 
 git show
-
-obtenha todos os objetos do repositório remoto que atualmente não residem no diretório de trabalho local
-git fetch origin
 
 git ls-tree HEAD
 git cat-file –p d670460b4b4aece5915caf5c68d12f560a9fe3e4
