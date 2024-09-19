@@ -17,7 +17,8 @@ git remote set-url origin https://<token>@github.com/tarcisomesquita/tarcisomesq
 
 git add .
 git commit -m "saving changes"
-git status # tem commit para push?
+git status                       # tem commit para push?
+git diff --name-only main origin # quais arquivos?
 git push
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -37,11 +38,6 @@ git merge
 
 cd /home/user/my_project
 git init
-
- = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-
-
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
