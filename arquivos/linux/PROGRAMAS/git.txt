@@ -26,12 +26,12 @@ git remote set-url origin https://<token>@github.com/tarcisomesquita/tarcisomesq
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-git status # Tem mudanças
+echo 'status = = = = = = = ='; git status # Tem mudanças
 
-git add .
-git commit -m "$(date +%d-%m-%Y_%H:%M:%S)"
-git diff --name-only main origin # quais arquivos?
-git push
+echo 'add  = = = = = = = = ='; git add .
+echo 'commit = = = = = = = ='; git commit -m "$(date +%d-%m-%Y_%H:%M:%S)"
+echo 'diff = = = = = = = = ='; git diff --name-only main origin # quais arquivos?
+echo 'push = = = = = = = = ='; git push
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
