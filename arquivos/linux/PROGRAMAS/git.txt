@@ -15,23 +15,19 @@ git remote set-url origin https://<token>@github.com/tarcisomesquita/tarcisomesq
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+git status # Tem mudanças
+
 git add .
 git commit -m "saving changes"
-git status                       # tem commit para push?
 git diff --name-only main origin # quais arquivos?
 git push
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 baixa os objetos do repositório remoto que são diferentes daqueles do diretório de trabalho local
+
 git fetch
-
-git diff <source-branch> <target-branch>
-
 git diff --name-only main origin
-
-git diff main origin
-
 git merge
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -58,8 +54,8 @@ git grep "palavra"
 
 git archive --format=tar master
 
-Apaga arquivo sem add?
-git prune
+git prune -v -n # somente mostra o que será apagado
+git prune -v    # apaga
 
 
 https://raw.githubusercontent.com/progit/progit2/main/images/snapshots.svg
