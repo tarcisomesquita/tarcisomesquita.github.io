@@ -1,5 +1,17 @@
 "things that make the life easier"
 
+This is for everyone
+
+https://pt.wikipedia.org/wiki/Vocabulário_controlado
+
+https://jsbin.com/
+
+https://beautifier.io/
+
+https://ideone.com
+
+
+
 https://www.musicca.com/pt/piano
 
 
@@ -89,14 +101,4 @@ Ontologias - Aula 13 - Web & Web Semântica
 
 https://www.youtube.com/watch?v=SLDNQrJOX78&list=PL3JRjVnXiTBZ2EMkni7hyqdr-JChtVIwB
 Ciência/Engenharia de Dados e a Disciplina de Bancos de Dados - Aula 04/08 - Bancos de Dados 2023.2
-
-This is for everyone
-https://pt.wikipedia.org/wiki/Vocabulário_controlado
-
-https://jsbin.com/
-
-https://beautifier.io/
-
-https://ideone.com
-
 
