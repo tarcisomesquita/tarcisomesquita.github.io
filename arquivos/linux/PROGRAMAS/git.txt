@@ -125,3 +125,14 @@ git checkout <branch-name>
 
 excluir um ramo:
 git branch –d <branch-name>
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Configurando um subdomínio no github
+ex.: teste.t7m8.com.br
+acesse o repositório > Configurações > Pages > Domínio personalizado > Salvar > selecione Impor HTTPS (pode levar até 24 horas para que esta opção fique disponível)
+o arquivo CNAME é adicionado automaticamente
+No provedor DNS e crie um registro CNAME que aponte o subdomínio para o domínio padrão do seu site.
+ex.: CNAME teste.t7m8.com.br tarcisomesquita.github.io
+dig teste.t7m8.com.br +nostats +nocomments +nocmd
+dig ns t7m8.com.br +nostats +nocomments +nocmd
