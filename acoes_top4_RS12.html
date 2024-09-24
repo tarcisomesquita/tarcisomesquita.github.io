@@ -7,7 +7,7 @@
   <meta name="description" content="Ações mais negociadas com preço menor que R$12,00">
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<script src="https://tarcisomesquita.github.io/log.js" defer></script>
+<script src="https://tarcisomesquita.github.io/log.js" onload="logsend()" async defer></script>
 
 <style>
 .grid-container {
@@ -44,21 +44,21 @@ iframe {
 
 <script>
 async function atualizar() {
-  let resp = {};
-  try {
-    const response = await fetch(
-      'https://script.google.com/macros/s/AKfycbz05B7nQyCnDUCkLG14EGK8k_DSUNIGeFYNLaMgPaBiEjrlIz7iDQxfALx12PCYPq9jAw/exec'
-    );
+  let resp = {};
+  try {
+    const response = await fetch(
+      'https://script.google.com/macros/s/AKfycbz05B7nQyCnDUCkLG14EGK8k_DSUNIGeFYNLaMgPaBiEjrlIz7iDQxfALx12PCYPq9jAw/exec'
+    );
     
-    let resp = await response.json();
-    console.log(JSON.stringify(resp));
+    let resp = await response.json();
+    console.log(JSON.stringify(resp));
     
     if (resp.erro !== 'SUCESSO') {
       container.innerHTML = `<p>Script: ${resp.erro}</p>`;
       return;
     }
     
-    container.innerHTML = `
+    container.innerHTML = `
       <iframe class="cell c11" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1M&symbol=${resp.top12[0]}" title="${resp.top12[0]}" frameborder="0" allowfullscreen></iframe>
       <iframe class="cell c12" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1M&symbol=${resp.top12[1]}" title="${resp.top12[1]}" frameborder="0" allowfullscreen></iframe>
       <iframe class="cell c21" src="https://www.tradingview.com/bovespa/widgetembed/?style=3&withdateranges=1&locale=br&range=1M&symbol=${resp.top12[2]}" title="${resp.top12[2]}" frameborder="0" allowfullscreen></iframe>
@@ -66,8 +66,8 @@ async function atualizar() {
     `;
   }
   catch(error) {
-    container.innerHTML = `<p>Fetch: ${error}</p>`;
-  }
+    container.innerHTML = `<p>Fetch: ${error}</p>`;
+  }
 }
 
 atualizar();
