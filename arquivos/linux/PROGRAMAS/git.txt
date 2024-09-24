@@ -37,9 +37,9 @@ echo 'push = = = = = = = = ='; git push
 
 baixa os objetos do repositório remoto que são diferentes daqueles do diretório de trabalho local
 
-git fetch
-git diff --name-only main origin
-git merge
+echo 'fetch = = = = = = = = ='; git fetch
+echo 'diff  = = = = = = = = ='; git diff --name-only main origin
+echo 'merge = = = = = = = = ='; git merge
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 

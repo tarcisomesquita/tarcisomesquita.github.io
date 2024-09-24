@@ -1,11 +1,11 @@
 Cada ano, mais de 100 bilhões de toneladas de CO₂ e H₂O são convertidos em celulose pela fotossíntese.
 
-Carboidratos são compostos pelos elementos carbono, hidrogênio e oxigênio, na proporção (CH₂O)n.
+A fórmula molecular de um carboidrato é (CH₂O)n.
 Os carboidratos de importância no metabolismo celular têm um n que varia de 3 a 7.
 
 Conforme seu tamanho molecular: monossacarídeos, oligossacarídeos e polissacarídeos.
 
-Um monossacarídeo (Figura 3) consiste numa cadeia ou anel de carbonos unidos por ligações simples, em que cada átomo de carbono está ligado a um único grupo hidroxila (OH), com exceção de um, que carrega o grupo carbonila (C=O). Se o grupo carbonila estiver localizado em uma posição interna (para formar um grupo cetona), o açúcar é uma cetose; porém, se a carbonila estiver localizada na extremidade do açúcar, ela forma um grupo aldeído (COOH), e a molécula é conhecida como uma aldose.
+Um monossacarídeo é uma cadeia ou um anel de carbonos unidos por ligações simples, em que cada átomo de carbono está ligado a um único grupo hidroxila (OH), com exceção de um, que carrega o grupo carbonila (C=O). Se o grupo carbonila estiver localizado em uma posição interna (para formar um grupo cetona), o açúcar é uma cetose; porém, se a carbonila estiver localizada na extremidade do açúcar, ela forma um grupo aldeído (COOH), e a molécula é conhecida como uma aldose.
 
 Duas hexoses, uma aldose (glicose) e uma cetose (frutose)
 
