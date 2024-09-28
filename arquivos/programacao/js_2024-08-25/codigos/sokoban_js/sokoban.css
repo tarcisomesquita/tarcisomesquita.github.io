@@ -1,0 +1,96 @@
+/* Emacs settings: -*- mode: Fundamental; tab-width: 4; -*-
+
+////////////////////////////////////////////////////////////////////////////
+//                                                                        //
+// Sokoban: stylesheet                                                    //
+//                                                                        //
+// Copyright 2009-2010, Andrew Birrell                                    //
+//                                                                        //
+////////////////////////////////////////////////////////////////////////////
+
+*/
+body {
+	margin-top: 12px;
+	margin-left: 16px;
+	margin-right: 16px;
+	margin-bottom: 16px;
+	padding: 0px;
+	background-image: url(img/bg.jpg);
+	white-space: nowrap;
+}
+#controls {
+	text-align: center;
+}
+.hide {
+	display: none;
+}
+.btnGroup {
+	padding-right: 1.5em;
+}
+#score {
+	color: #FFFFFF;
+	font-weight: bold;
+}
+#board {
+	margin-top: 12px;
+	position: relative;
+}
+#scene {
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	font-size: 1px;
+	line-height: 1px;
+}
+#scene img {
+	vertical-align: top;
+}
+#man {
+	position: absolute;
+}
+.dlog {
+	background-image: url(img/wall_90.jpg);
+	display: none;
+	max-width: 68em;
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 14px;
+	line-height: 17px;
+	white-space: normal;
+}
+.dlog > table {
+	border-spacing: 24px;
+}
+.dlog p {
+	margin-bottom: 0px;
+}
+.dlog td {
+	border: 1px outset #FFFFFF;
+	padding: 24px;
+	background-image: url(translucent.png);
+	vertical-align: top;
+}
+#configuration td {
+	border-width: 0px;
+	padding: 0px;
+	background: inherit;
+	vertical-align: middle;
+}
+#colophon {
+	width: 16em;
+}
+#designContentsPane, #historyContentsPane {
+	border-width: 0px;
+	padding: 0px;
+	background: inherit;
+}
+.dlog textarea {
+	width: 330px;
+	height: 425px;
+	font-family: monospace;
+	font-size: inherit; /* override font-size from default stylesheet */
+	white-space: pre;
+}
+#designContents {
+	line-height: 1em;
+}

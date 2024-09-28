@@ -1,0 +1,5 @@
+
+isNaN recebe um argumento e determina se ele á ou não um número.
+retorna false, se     é um número
+retorna true,  se não é um número
+

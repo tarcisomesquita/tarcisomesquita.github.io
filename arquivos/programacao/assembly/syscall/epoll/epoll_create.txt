@@ -1,0 +1,34 @@
+EPOLL_CREATE(2)
+3.54 man-pages
+http://www.kernel.org/doc/man-pages/
+2012-04-15
+
+
+epoll_create, epoll_create1 - open an epoll file descriptor
+
+// #include <sys/epoll.h>
+extern int epoll_create(int size);
+extern int epoll_create1(int flags);
+
+Since Linux 2.6.8, the size argument is ignored, but must be greater than zero.
+
+returns a file descriptor referring to the new epoll instance. This file descriptor is used for all the subsequent calls to the epoll interface. The file descriptor should be closed by using close(2).
+
+epoll_create1()
+If flags is 0, then epoll_create1() is the same as epoll_create().
+The following value can be included in flags to obtain different behavior:
+
+EPOLL_CLOEXEC
+Set the close-on-exec (FD_CLOEXEC) flag on the new file descriptor.
+See the description of the O_CLOEXEC flag in open(2) for reasons why this may be useful.
+
+RETURN VALUE
+On success, these system calls return a nonnegative file descriptor. On error, -1 is returned, and errno is set to indicate the error.
+
+ERRORS
+EINVAL size is not positive.
+EINVAL (epoll_create1()) Invalid value specified in flags.
+EMFILE The per-user limit on the number of epoll instances imposed by /proc/sys/fs/epoll/max_user_instances was encountered.
+ENFILE The system limit on the total number of open files has been reached.
+ENOMEM There was insufficient memory to create the kernel object.
+

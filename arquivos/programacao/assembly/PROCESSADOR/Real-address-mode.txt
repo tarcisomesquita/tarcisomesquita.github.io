@@ -1,0 +1,48 @@
+Real-address mode is 16-bit.
+
+supports 1-MByte of RAM divided in segments of 64 kB.
+
+After reset the state of control register CR0 is 60000010H.
+The PE flag in CR0 determine if the processor is operating in real-address or protected mode.
+
+Some basic data structures and code modules must be loaded into physical memory to support further initialization of the processor. These data structures include the following:
+• A IDT.
+• A GDT.
+• A TSS.
+• (Optional) An LDT.
+• If paging is to be used, at least one page directory and one page table.
+• A code segment that contains the code to be executed when the processor switches to protected mode.
+• One or more code modules that contain the necessary interrupt and exception handlers.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+IA-32 Processor States Following Power-up, Reset, or INIT
+
+EFLAGS 00000002H
+EIP 0000FFF0H
+CR0 60000010H2
+CR2, CR3, CR4 00000000H
+CS Selector = F000H
+   Base = FFFF0000H
+   Limit = FFFFH
+   AR = Present, R/W, Accessed
+SS, DS, ES, FS, GS Selector = 0000H
+                   Base = 00000000H
+                   Limit = FFFFH
+                   AR = Present, R/W, Accessed
+EDX 00000FxxH  000n06xxH3  000005xxH  depende do processador
+EAX 0
+EBX, ECX, ESI, EDI, EBP, ESP  00000000H
+
+
+
+GDTR, IDTR      Base = 00000000H
+                Limit = FFFFH
+                AR = Present, R/W
+
+LDTR, Task Register    Selector = 0000H
+                       Base = 00000000H
+                       Limit = FFFFH
+                       AR = Present, R/W
+
+

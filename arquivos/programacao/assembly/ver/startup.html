@@ -1,0 +1,73 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<title>Startup state of a Linux/i386 ELF binary</title>
+</head>
+<body bgcolor="#ffffff" text="#000000">
+
+
+<table bordercolorlight="#FFFFFF" bordercolordark="#000000" align="center" border="1" bordercolor="#000000" cellspacing="0" width="100%">
+<tbody><tr><td align="center" bgcolor="#ffffb7">Function</td><td align="center" bgcolor="#ffffb7">Kernel file</td><td align="center" bgcolor="#ffffb7">Comments</td></tr>
+<tr><td align="center"><i>shell</i></td><td align="center">...</td><td align="center">on user side one types in program name and strikes enter</td></tr>
+<tr><td align="center"><i>execve()</i></td><td align="center">...</td><td align="center">shell calls libc function</td></tr>
+<tr><td align="center"><i>sys_execve()</i></td><td align="center">...</td><td align="center">libc calls kernel...</td></tr>
+<tr><td align="center" bgcolor="#c0c0c0"><i>sys_execve()</i></td><td align="center">arch/i386/kernel/process.c</td><td align="center">arrive to kernel side</td></tr>
+<tr><td align="center" bgcolor="#c0c0c0"><i>do_execve()</i></td><td align="center">fs/exec.c</td><td align="center">open file and do some preparation</td></tr>
+<tr><td align="center" bgcolor="#c0c0c0"><i>search_binary_handler()</i></td><td align="center">fs/exec.c</td><td align="center">find out type of executable</td></tr>
+<tr><td align="center" bgcolor="#c0c0c0"><i>load_elf_binary()</i></td><td align="center">fs/binfmt_elf.c</td><td align="center">load ELF (and needed libraries) and create user segment</td></tr>
+<tr><td align="center" bgcolor="#c0c0c0"><i>start_thread()</i></td><td align="center">include/asm-i386/processor.h</td><td align="center">and finally pass control to program code</td></tr>
+</tbody></table><p align="center"><font color="#004080" size="2"><i>Figure 1. Startup process of an ELF binary.</i></font></p>
+
+<p>
+Layout of segment created for an ELF binary shortly can be represented
+with <font color="#004080"><i>Figure 2</i></font>.
+Yellow parts represent correspondent program sections.
+Shared libraries are not shown here; their layout duplicates layout of program,
+except that they reside in earlier addresses.</p>
+
+<small><i>0x08048000</i></small>
+<table bordercolorlight="#FFFFFF" bordercolordark="#000000" align="center" border="1" bordercolor="#000000" cellspacing="0" width="100%">
+<tbody><tr><td align="center" bgcolor="#909090">code</td><td align="center" bgcolor="#ffffb7">.text section</td></tr>
+<tr><td align="center" bgcolor="#a0a0a0">data</td><td align="center" bgcolor="#ffffb7">.data section</td></tr>
+<tr><td align="center" bgcolor="#b0b0b0">bss</td><td align="center" bgcolor="#ffffb7">.bss section</td></tr>
+<tr><td align="center" bgcolor="#c0c0c0">...<br>...<br>...</td><td align="center">free space</td></tr>
+<tr><td align="center" bgcolor="#d0d0d0">stack</td><td align="center">stack (described later)</td></tr>
+<tr><td align="center" bgcolor="#e0e0e0">arguments</td><td align="center">program arguments</td></tr>
+<tr><td align="center" bgcolor="#f0f0f0">environment</td><td align="center">program environment</td></tr>
+<tr><td align="center" bgcolor="#f8f8f8">program name</td><td align="center">filename of program (duplicated in arguments section)</td></tr>
+<tr><td align="center">null (dword)</td><td align="center">final dword of zero</td></tr>
+</tbody></table><small><i>0xBFFFFFFF</i></small>
+<p align="center"><font color="#004080" size="2"><i>Figure 2. Segment layout of an ELF binary.</i></font></p>
+
+<p align="justify">
+Program takes at least two pages of memory (1 page == 4 KB),
+even if it consists of single sys_exit();
+at least one page for ELF data (yellow color),
+and one for stack, arguments, and environment.
+Stack is growing to meet .bss;
+also you can use memory beyond .bss section for dynamic data allocation.
+
+</p>
+
+<b>Stack layout</b>
+
+<table bordercolorlight="#FFFFFF" bordercolordark="#000000" align="center" border="1" bordercolor="#000000" cellspacing="0" width="50%">
+<tbody><tr><td align="center" bgcolor="#c0c0c0"><b>argc</b></td><td align="center">[dword] argument counter (integer)</td></tr>
+<tr><td align="center" bgcolor="#c0c0c0"><b>argv[0]</b></td><td align="center">[dword] program name (pointer)</td></tr>
+<tr><td align="center" bgcolor="#c0c0c0"><b>argv[1]</b><p><b>...</b></p><p><b>argv[argc-1]</b></p></td><td align="center">[dword] program args (pointers)</td></tr>
+<tr><td align="center" bgcolor="#c0c0c0"><b>NULL</b></td><td align="center">[dword] end of args (integer)</td></tr>
+<tr><td align="center" bgcolor="#c0c0c0"><b>env[0]</b><p><b>env[1]</b></p><p><b>...</b></p><p><b>env[n]</b></p></td><td align="center">[dword] environment variables (pointers)</td></tr>
+<tr><td align="center" bgcolor="#c0c0c0"><b>NULL</b></td><td align="center">[dword] end of environment (integer)</td></tr>
+</tbody></table>
+<p align="center"><font color="#004080" size="2"><i>Figure 3. Stack layout of an ELF binary.</i></font></p>
+
+
+<pre>	pop	eax				;get argument counter
+	pop	esi				;start of arguments
+	mov	edi,[esp+eax*4]			;end of arguments
+	mov	ebp,[esp+(eax+1)*4]		;start of environment
+</pre>
+
+<p align="justify">Program name also can be fetched by downstepping from 0xBFFFFFFB (0xBFFFFFF-4) address.</p>
+
+
+</body></html>

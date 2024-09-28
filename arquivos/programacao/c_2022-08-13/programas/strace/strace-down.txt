@@ -1,0 +1,9 @@
+http://ufpr.dl.sourceforge.net/project/strace/strace/4.5.20/strace-4.5.20.tar.bz2
+
+export CC=arm-unknown-linux-uclibcgnueabi-gcc
+export STRIP=arm-unknown-linux-uclibcgnueabi-strip
+export CFLAGS="-O2 -static"
+./configure --host=arm-linux
+make
+$STRIP strace
+

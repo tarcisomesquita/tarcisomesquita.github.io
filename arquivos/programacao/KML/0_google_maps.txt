@@ -1,0 +1,30 @@
+https://zoneamento.campinas.sp.gov.br/novo_zoneamento/posicao_cartografico_financas.php?cod_cartografico=3423.32.95.0407
+{"longitude":"-47.031286301959","latitude":"-22.900131571891","erro":"","cod_cartografico":"3423.32.95.0407"}
+
+https://www.google.com.br/maps/@-22.831605,-47.0855433,20z
+https://www.google.com.br/maps/@-22.900131571891,-47.031286301959,86m/data=!3m1!1e3
+
+converte endereço em coordenadas
+wget -q -O - 'https://www.google.com.br/maps/place/R. Quartzo, 448 - Jardim Melvi, Praia Grande - SP, 11712-350' | sed 's/[\x5d\x5b]/\n/g' | grep 'www.google.com.br/maps' | sed 's/^.*@\([^,]*,[^,]*\).*/\1/'
+
+Em desktop
+google maps > menu > seus lugares > mapas > criar mapa > importar kml
+
+wget -O 3.png 'https://khms3.google.com/kh/v=934?x=387305&y=592844&z=20'
+
+for ((x=95950; x<95971; x++)); do for ((y=149760; y<149781; y++)); do wget -O ${x}_${y}.png "https://khms1.google.com/kh/v=934?x=${x}&y=${y}&z=18"; sleep 0.4; done; done
+
+echo '<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>teste</title>
+</head>
+<body style="line-height: 0px; white-space: nowrap">
+' > teste.html
+
+for ((y=149760; y<149781; y++)); do for ((x=95950; x<95971; x++)); do echo -n "<img src=\"${x}_${y}.png\">" >> teste.html; done; echo -e "\n<br>" >> teste.html; done
+
+echo '</body>
+</html>
+' >> teste.html

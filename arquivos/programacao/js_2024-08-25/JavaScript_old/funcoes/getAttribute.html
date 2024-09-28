@@ -1,0 +1,18 @@
+<html>
+<head>
+   <script language="javascript">
+      function alerta(){
+         //Recuperando valores de atributos com o método "getAttribute"
+         alert(document.form.texto.getAttribute("a_atrib"));
+      }
+   </script>
+</head>
+<body>
+<form name="form">
+   <!--Neste caso, "a_atrib" é um atributo criado pelo programador, 
+       e "name" é um atributo nativo do html-->
+      <input type="text" name="texto" id="texte" a_atrib="valor do atributo">
+      <input type="button" name="bto" onClick="alerta();" value="Ok">
+</body>
+</form>
+</html>

@@ -1,0 +1,17 @@
+var pessoa = "Kobe";
+var outraPessoa = pessoa; //outraPessoa = valor de pessoa
+pessoa = "Bryant";        //valor de pessoa agora mudado
+
+console.log(outraPessoa); // Kobe
+console.log(pessoa);      // Bryant
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+var pessoa = { name: "Kobe" };
+var outraPessoa = pessoa;
+pessoa.name = "Bryant";
+
+console.log(outraPessoa.name); //Bryant
+console.log(pessoa.name);      //Bryant
+
+

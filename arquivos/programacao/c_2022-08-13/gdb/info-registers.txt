@@ -1,0 +1,29 @@
+ gdb ./a.out
+(gdb) break main
+(gdb) run
+(gdb) info registers
+eax            0x8059200        134582784
+ecx            0xbffffd94       -1073742444
+edx            0x0      0
+ebx            0x8097bf0        134839280
+esp            0xbffffdd8       0xbffffdd8
+ebp            0xbffffdd8       0xbffffdd8
+esi            0x1      1
+edi            0x8097088        134836360
+eip            0x80480f7        0x80480f7
+eflags         0x246    582
+cs             0x23     35
+ss             0x2b     43
+ds             0x2b     43
+es             0x2b     43
+fs             0x2b     43
+gs             0x2b     43
+
+"p/x $eax" which prints the value in the EAX register in hex.
+(gdb) p/x $eax
+$4 = 0x8059200
+
+type "s" or "step" to step to the next instruction.
+(gdb) step
+32              addb lo_temp,%al
+

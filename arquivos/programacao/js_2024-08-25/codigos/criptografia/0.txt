@@ -1,0 +1,35 @@
+
+aes.js
+    Advanced Encryption Standard (AES) implementation.
+aesprng.js
+    Pseudorandom number generator based on AES encryption.
+aesprng_test.html
+    Page which permits testing aesprng.js by generating pseudorandom sequences suitable for evaluation with the XD and ENT programs.
+
+armour.js
+    Utilities to "armour" binary data as various forms of ASCII text, and to "disarm" (decode) such text into the original binary.
+
+entropy.js
+    Tools for "entropy collection", which monitor events (time and date, mouse motion, key presses) etc. to create a difficult-to-guess seed for pseudorandom sequence generation.
+
+example.html
+    JavaScrypt tutorial.
+
+javascrypt.html
+    Encryption/Decryption page.
+
+jscrypt.html
+    "Lean" version of the Encryption/Decryption page. This version is created from javascrypt.html by embedding all the external JavaScript files it references, removing explanatory text, and compressing the JavaScript code by eliding comments and nonessential white space.
+
+jscrypt.js
+    JavaScript functions used by the Encryption/Decryption page.
+
+lecuyer.js
+    Pseudorandom number generator based on L'Ecuyer's modular algorithm with a Bays-Durham shuffle. Used for non-security-related pseudorandom sequence generation.
+
+md5.js
+    JavaScript implementation of the MD5 message digest algorithm.
+
+utf-8.js
+    Utilities for encoding and decoding Unicode strings in the UTF-8 byte stream representation.
+

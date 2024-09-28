@@ -1,0 +1,20 @@
+Intel® Core™ Duo Processor T2050
+
+sSpec Number: SL9BN
+CPU Speed: 1.60 GHz
+PCG: 
+Bus Speed: 533 MHz
+Bus/Core Ratio: 12
+L2 Cache Size: 2 MB
+L2 Cache Speed: 1.6 GHz
+
+Package Type: Micro-FCPGA
+Manufacturing Technology: 65 nm
+Core Stepping: C0
+CPUID String: 06E8h
+Thermal Design Power: 31W
+Thermal Specification: 100°C
+VID Voltage Range: 
+
+Product Documentation: http://developer.intel.com/design/mobile/core/duodocumentation.htm
+

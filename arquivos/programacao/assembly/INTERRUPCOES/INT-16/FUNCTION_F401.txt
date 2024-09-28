@@ -1,0 +1,14 @@
+
+Enable Cache (F401h)
+
+The Enable Cache BIOS function is called to enable the external cache controller as supported by the BIOS.
+
+Input Parameters:
+        AH - F4h, indicating the Cache Control Function.
+        AL - 01h, indicating the Enable Cache Subfunction.
+
+Output Parameters:
+        AH - cache status, as follows:
+               not modified - no cache status is available.
+               E2h - successful, operation performed.
+

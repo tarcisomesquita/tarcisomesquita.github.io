@@ -1,0 +1,6 @@
+The eval() function can compile and execute any JavaScript.
+
+Exemplo:
+minhaString = "window.alert('teste')"
+eval(minhaString);
+

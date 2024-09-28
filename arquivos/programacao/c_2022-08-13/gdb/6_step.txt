@@ -1,0 +1,6 @@
+
+Step program until it reaches a different source line.
+Não pula as subrotinas
+
+Argument N means do this N times (or till program stops for another reason).
+

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>teste</title>
+</head>
+<body>
+<script>
+WebAssembly.instantiateStreaming(fetch('teste.wasm'))
+.then(obj => {
+  const buffer = obj.instance.exports.memory.buffer;
+  console.log(new TextDecoder().decode(new Uint8Array(buffer, 16, 12)));
+});
+</script>
+</body>
+</html>

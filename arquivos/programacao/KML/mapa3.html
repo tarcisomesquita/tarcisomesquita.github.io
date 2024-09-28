@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <title>Exemplo Google Maps</title>
+    
+    <style type="text/css">
+    
+    	#mapa{
+	    	width:400px;
+	    	height:400px;	
+    	}
+    
+    </style>
+    
+    
+
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+    <script type="text/javascript" >
+		var map = null; 
+    	function carregar(){
+			var latlng = new google.maps.LatLng(-29.767954,-57.071657);
+			
+    		var myOptions = {
+      		zoom: 12,
+      		center: latlng,
+      		mapTypeId: google.maps.MapTypeId.ROADMAP
+    		};
+		
+			//criando o mapa
+    		map = new google.maps.Map(document.getElementById("mapa"), myOptions);
+    		
+
+    		var praca = new google.maps.LatLng(-29.756200185902156, -57.08757859271242);
+    		marcadorPraca = new google.maps.Marker({
+      			position: praca,
+      			map: map,
+      			title:"Praça da Cidade",
+  			});
+  			
+  			
+  			google.maps.event.addListener(map, 'click', function(event) {
+    			alert(event.latLng)
+  			});
+		
+    	}
+    </script>
+    </head>
+  	<body onload="carregar()">		
+		<div id="mapa"></div> 
+		
+		<a href="javascript:click();">clique</a>
+  </body>
+</html>

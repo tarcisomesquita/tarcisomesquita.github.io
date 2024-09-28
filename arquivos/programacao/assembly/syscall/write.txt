@@ -1,0 +1,470 @@
+.intel_syntax noprefix
+.text
+.global _start
+_start:
+
+ehdr:
+e_ident_0_3:                .byte 0x7F, 'E', 'L', 'F' # 0x0000
+e_ident_4:                  .byte 0x02                # 0x0004 64-bit objects
+e_ident_5:                  .byte 0x01                # 0x0005 Litle Endian
+e_ident_6:                  .byte 0x01                # 0x0006 Current version
+e_ident_7:                  .byte 0x03                # 0x0007 OS Linux
+e_ident_8_15:       .rept 8 .byte 0x00 ; .endr        # 0x0008 não é usado
+e_type:                     .word 0x0002              # 0x0010 Executable file
+e_machine:                  .word 0x003E              # 0x0012 x86-64
+e_version:                  .long 0x00000001          # 0x0014 Current version
+e_entry:                    .quad text                # 0x0018 Entry point          # 0x0000000000401BC0
+e_phoff:                    .quad phdr - ehdr         # 0x0020 Program Header table # 0x0000000000000040
+e_shoff:                    .quad 0x0000000000000000  # 0x0028 Section Header table # 0x00000000000D44D0
+e_flags:                    .long 0x00000000          # 0x0030 no flags
+e_ehsize:                   .word 0x0040              # 0x0034 Tamanho do Elf Header
+e_phentsize:                .word 0x0038              # 0x0036 Tamanho de uma linha da tabela Program Header
+e_phnum:                    .word 0x000A              # 0x0038 Quantas linhas tem a tabela Program Header
+e_shentsize:                .word 0x0040              # 0x003A Tamanho de uma linha da tabela Section Header
+e_shnum:                    .word 0x0020              # 0x003C Quantas linhas tem a tabela Section Header.
+e_shstrndx:                 .word 0x001F              # 0x003E Linha da tabela Section Header com o offset da Section .shstrtab
+
+phdr:
+p_type____00:               .long 0x00000001          # 0x0040 Loadable segment
+p_flags___00:               .long 0x00000004          # 0x0044 Permissions to segment (1=executar, 2=escrever, 4=ler)
+p_offset__00:               .quad 0x0000000000000000  # 0x0048 Segment file offset
+p_vaddr___00:               .quad 0x0000000000400000  # 0x0050 Segment virtual address
+p_paddr___00:               .quad 0x0000000000400000  # 0x0058 Segment physical address
+p_filesz__00:               .quad loadsize            # 0x0060 Segment size in file     # 0x0000000000000518
+p_memsz___00:               .quad loadsize            # 0x0068 Segment size in memory   # 0x0000000000000518
+p_align___00:               .quad 0x0000000000001000  # 0x0070 Segment alignment, file & memory
+
+p_type____01:               .long 0x00000001          # 0x0078 Loadable segment
+p_flags___01:               .long 0x00000005          # 0x007C Permissions to segment (1=executar, 2=escrever, 4=ler)
+p_offset__01:               .quad 0x0000000000001000  # 0x0080 Segment file offset
+p_vaddr___01:               .quad 0x0000000000401000  # 0x0088 Segment virtual address
+p_paddr___01:               .quad 0x0000000000401000  # 0x0090 Segment physical address
+p_filesz__01:               .quad loadsize            # 0x0098 Segment size in file     # 0x000000000009355D
+p_memsz___01:               .quad loadsize            # 0x00A0 Segment size in memory   # 0x000000000009355D
+p_align___01:               .quad 0x0000000000001000  # 0x00A8 Segment alignment, file & memory
+
+p_type____02:               .long 0x00000001          # 0x00B0 Loadable segment
+p_flags___02:               .long 0x00000004          # 0x00B4 Permissions to segment (1=executar, 2=escrever, 4=ler)
+p_offset__02:               .quad 0x0000000000095000  # 0x00B8 Segment file offset
+p_vaddr___02:               .quad 0x0000000000495000  # 0x00C0 Segment virtual address
+p_paddr___02:               .quad 0x0000000000495000  # 0x00C8 Segment physical address
+p_filesz__02:               .quad loadsize            # 0x00D0 Segment size in file     # 0x00000000000265C5
+p_memsz___02:               .quad loadsize            # 0x00D8 Segment size in memory   # 0x00000000000265C5
+p_align___02:               .quad 0x0000000000001000  # 0x00E0 Segment alignment, file & memory
+
+p_type____03:               .long 0x00000001          # 0x00E8 Loadable segment
+p_flags___03:               .long 0x00000006          # 0x00EC Permissions to segment (1=executar, 2=escrever, 4=ler)
+p_offset__03:               .quad 0x00000000000BC0C0  # 0x00F0 Segment file offset
+p_vaddr___03:               .quad 0x00000000004BD0C0  # 0x00F8 Segment virtual address
+p_paddr___03:               .quad 0x00000000004BD0C0  # 0x0100 Segment physical address
+p_filesz__03:               .quad loadsize            # 0x0108 Segment size in file     # 0x0000000000005170
+p_memsz___03:               .quad loadsize            # 0x0110 Segment size in memory   # 0x00000000000068C0
+p_align___03:               .quad 0x0000000000001000  # 0x0118 Segment alignment, file & memory
+
+p_type____04:               .long 0x00000004          # 0x0120  NOT loadable segment
+p_flags___04:               .long 0x00000004          # 0x0124 Permissions to segment (1=executar, 2=escrever, 4=ler)
+p_offset__04:               .quad 0x0000000000000270  # 0x0128 Segment file offset
+p_vaddr___04:               .quad 0x0000000000400270  # 0x0130 Segment virtual address
+p_paddr___04:               .quad 0x0000000000400270  # 0x0138 Segment physical address
+p_filesz__04:               .quad loadsize            # 0x0140 Segment size in file     # 0x0000000000000020
+p_memsz___04:               .quad loadsize            # 0x0148 Segment size in memory   # 0x0000000000000020
+p_align___04:               .quad 0x0000000000000008  # 0x0150 Segment alignment, file & memory
+
+p_type____05:               .long 0x00000004          # 0x0158  NOT loadable segment
+p_flags___05:               .long 0x00000004          # 0x015C Permissions to segment (1=executar, 2=escrever, 4=ler)
+p_offset__05:               .quad 0x0000000000000290  # 0x0160 Segment file offset
+p_vaddr___05:               .quad 0x0000000000400290  # 0x0168 Segment virtual address
+p_paddr___05:               .quad 0x0000000000400290  # 0x0170 Segment physical address
+p_filesz__05:               .quad loadsize            # 0x0178 Segment size in file     # 0x0000000000000044
+p_memsz___05:               .quad loadsize            # 0x0180 Segment size in memory   # 0x0000000000000044
+p_align___05:               .quad 0x0000000000000004  # 0x0188 Segment alignment, file & memory
+
+p_type____06:               .long 0x00000007          # 0x0190  NOT loadable segment
+p_flags___06:               .long 0x00000004          # 0x0194 Permissions to segment (1=executar, 2=escrever, 4=ler)
+p_offset__06:               .quad 0x00000000000BC0C0  # 0x0198 Segment file offset
+p_vaddr___06:               .quad 0x00000000004BD0C0  # 0x01A0 Segment virtual address
+p_paddr___06:               .quad 0x00000000004BD0C0  # 0x01A8 Segment physical address
+p_filesz__06:               .quad loadsize            # 0x01B0 Segment size in file     # 0x0000000000000020
+p_memsz___06:               .quad loadsize            # 0x01B8 Segment size in memory   # 0x0000000000000060
+p_align___06:               .quad 0x0000000000000008  # 0x01C0 Segment alignment, file & memory
+
+p_type____07:               .long 0x6474E553          # 0x01C8  NOT loadable segment
+p_flags___07:               .long 0x00000004          # 0x01CC Permissions to segment (1=executar, 2=escrever, 4=ler)
+p_offset__07:               .quad 0x0000000000000270  # 0x01D0 Segment file offset
+p_vaddr___07:               .quad 0x0000000000400270  # 0x01D8 Segment virtual address
+p_paddr___07:               .quad 0x0000000000400270  # 0x01E0 Segment physical address
+p_filesz__07:               .quad loadsize            # 0x01E8 Segment size in file     # 0x0000000000000020
+p_memsz___07:               .quad loadsize            # 0x01F0 Segment size in memory   # 0x0000000000000020
+p_align___07:               .quad 0x0000000000000008  # 0x01F8 Segment alignment, file & memory
+
+p_type____08:               .long 0x6474E551          # 0x0200  NOT loadable segment
+p_flags___08:               .long 0x00000006          # 0x0204 Permissions to segment (1=executar, 2=escrever, 4=ler)
+p_offset__08:               .quad 0x0000000000000000  # 0x0208 Segment file offset
+p_vaddr___08:               .quad 0x0000000000000000  # 0x0210 Segment virtual address
+p_paddr___08:               .quad 0x0000000000000000  # 0x0218 Segment physical address
+p_filesz__08:               .quad loadsize            # 0x0220 Segment size in file     # 0x0000000000000000
+p_memsz___08:               .quad loadsize            # 0x0228 Segment size in memory   # 0x0000000000000000
+p_align___08:               .quad 0x0000000000000010  # 0x0230 Segment alignment, file & memory
+
+p_type____09:               .long 0x6474E552          # 0x0238  NOT loadable segment
+p_flags___09:               .long 0x00000004          # 0x023C Permissions to segment (1=executar, 2=escrever, 4=ler)
+p_offset__09:               .quad 0x00000000000BC0C0  # 0x0240 Segment file offset
+p_vaddr___09:               .quad 0x00000000004BD0C0  # 0x0248 Segment virtual address
+p_paddr___09:               .quad 0x00000000004BD0C0  # 0x0250 Segment physical address
+p_filesz__09:               .quad loadsize            # 0x0258 Segment size in file     # 0x0000000000002F40
+p_memsz___09:               .quad loadsize            # 0x0260 Segment size in memory   # 0x0000000000002F40
+p_align___09:               .quad 0x0000000000000001  # 0x0268 Segment alignment, file & memory
+
+shdr:
+sh_name_______00:           .long 0x00000000          # 0x000D44D0: Section name (string tbl index)
+sh_type_______00:           .long 0x00000000          # 0x000D44D4: Section type
+sh_flags______00:           .quad 0x0000000000000000  # 0x000D44D8: Section flags
+sh_addr_______00:           .quad 0x0000000000000000  # 0x000D44E0: Section address
+sh_offset_____00:           .quad 0x0000000000000000  # 0x000D44E8: Section file offset
+sh_size_______00:           .quad 0x0000000000000000  # 0x000D44F0: Size of section in bytes
+sh_link_______00:           .long 0x00000000          # 0x000D44F8: Link to another section
+sh_info_______00:           .long 0x00000000          # 0x000D44FC: Additional section information
+sh_addralign__00:           .quad 0x0000000000000000  # 0x000D4500: Section alignment
+sh_entsize____00:           .quad 0x0000000000000000  # 0x000D4508: Entry size if section holds table
+
+sh_name_______01:           .long 0x0000001B          # 0x000D4510: Section name (string tbl index)
+sh_type_______01:           .long 0x00000007          # 0x000D4514: Section type
+sh_flags______01:           .quad 0x0000000000000002  # 0x000D4518: Section flags
+sh_addr_______01:           .quad 0x0000000000400270  # 0x000D4520: Section address
+sh_offset_____01:           .quad 0x0000000000000270  # 0x000D4528: Section file offset
+sh_size_______01:           .quad 0x0000000000000020  # 0x000D4530: Size of section in bytes
+sh_link_______01:           .long 0x00000000          # 0x000D4538: Link to another section
+sh_info_______01:           .long 0x00000000          # 0x000D453C: Additional section information
+sh_addralign__01:           .quad 0x0000000000000008  # 0x000D4540: Section alignment
+sh_entsize____01:           .quad 0x0000000000000000  # 0x000D4548: Entry size if section holds table
+
+sh_name_______02:           .long 0x0000002E          # 0x000D4550: Section name (string tbl index)
+sh_type_______02:           .long 0x00000007          # 0x000D4554: Section type
+sh_flags______02:           .quad 0x0000000000000002  # 0x000D4558: Section flags
+sh_addr_______02:           .quad 0x0000000000400290  # 0x000D4560: Section address
+sh_offset_____02:           .quad 0x0000000000000290  # 0x000D4568: Section file offset
+sh_size_______02:           .quad 0x0000000000000024  # 0x000D4570: Size of section in bytes
+sh_link_______02:           .long 0x00000000          # 0x000D4578: Link to another section
+sh_info_______02:           .long 0x00000000          # 0x000D457C: Additional section information
+sh_addralign__02:           .quad 0x0000000000000004  # 0x000D4580: Section alignment
+sh_entsize____02:           .quad 0x0000000000000000  # 0x000D4588: Entry size if section holds table
+
+sh_name_______03:           .long 0x00000041          # 0x000D4590: Section name (string tbl index)
+sh_type_______03:           .long 0x00000007          # 0x000D4594: Section type
+sh_flags______03:           .quad 0x0000000000000002  # 0x000D4598: Section flags
+sh_addr_______03:           .quad 0x00000000004002B4  # 0x000D45A0: Section address
+sh_offset_____03:           .quad 0x00000000000002B4  # 0x000D45A8: Section file offset
+sh_size_______03:           .quad 0x0000000000000020  # 0x000D45B0: Size of section in bytes
+sh_link_______03:           .long 0x00000000          # 0x000D45B8: Link to another section
+sh_info_______03:           .long 0x00000000          # 0x000D45BC: Additional section information
+sh_addralign__03:           .quad 0x0000000000000004  # 0x000D45C0: Section alignment
+sh_entsize____03:           .quad 0x0000000000000000  # 0x000D45C8: Entry size if section holds table
+
+sh_name_______04:           .long 0x0000004F          # 0x000D45D0: Section name (string tbl index)
+sh_type_______04:           .long 0x00000004          # 0x000D45D4: Section type
+sh_flags______04:           .quad 0x0000000000000042  # 0x000D45D8: Section flags
+sh_addr_______04:           .quad 0x00000000004002D8  # 0x000D45E0: Section address
+sh_offset_____04:           .quad 0x00000000000002D8  # 0x000D45E8: Section file offset
+sh_size_______04:           .quad 0x0000000000000240  # 0x000D45F0: Size of section in bytes
+sh_link_______04:           .long 0x00000000          # 0x000D45F8: Link to another section
+sh_info_______04:           .long 0x00000014          # 0x000D45FC: Additional section information
+sh_addralign__04:           .quad 0x0000000000000008  # 0x000D4600: Section alignment
+sh_entsize____04:           .quad 0x0000000000000018  # 0x000D4608: Entry size if section holds table
+
+sh_name_______05:           .long 0x00000059          # 0x000D4610: Section name (string tbl index)
+sh_type_______05:           .long 0x00000001          # 0x000D4614: Section type
+sh_flags______05:           .quad 0x0000000000000006  # 0x000D4618: Section flags
+sh_addr_______05:           .quad 0x0000000000401000  # 0x000D4620: Section address
+sh_offset_____05:           .quad 0x0000000000001000  # 0x000D4628: Section file offset
+sh_size_______05:           .quad 0x000000000000001B  # 0x000D4630: Size of section in bytes
+sh_link_______05:           .long 0x00000000          # 0x000D4638: Link to another section
+sh_info_______05:           .long 0x00000000          # 0x000D463C: Additional section information
+sh_addralign__05:           .quad 0x0000000000000004  # 0x000D4640: Section alignment
+sh_entsize____05:           .quad 0x0000000000000000  # 0x000D4648: Entry size if section holds table
+
+sh_name_______06:           .long 0x00000054          # 0x000D4650: Section name (string tbl index)
+sh_type_______06:           .long 0x00000001          # 0x000D4654: Section type
+sh_flags______06:           .quad 0x0000000000000006  # 0x000D4658: Section flags
+sh_addr_______06:           .quad 0x0000000000401020  # 0x000D4660: Section address
+sh_offset_____06:           .quad 0x0000000000001020  # 0x000D4668: Section file offset
+sh_size_______06:           .quad 0x0000000000000180  # 0x000D4670: Size of section in bytes
+sh_link_______06:           .long 0x00000000          # 0x000D4678: Link to another section
+sh_info_______06:           .long 0x00000000          # 0x000D467C: Additional section information
+sh_addralign__06:           .quad 0x0000000000000010  # 0x000D4680: Section alignment
+sh_entsize____06:           .quad 0x0000000000000000  # 0x000D4688: Entry size if section holds table
+
+sh_name_______07:           .long 0x0000005F          # 0x000D4690: Section name (string tbl index)
+sh_type_______07:           .long 0x00000001          # 0x000D4694: Section type
+sh_flags______07:           .quad 0x0000000000000006  # 0x000D4698: Section flags
+sh_addr_______07:           .quad 0x00000000004011A0  # 0x000D46A0: Section address
+sh_offset_____07:           .quad 0x00000000000011A0  # 0x000D46A8: Section file offset
+sh_size_______07:           .quad 0x0000000000091710  # 0x000D46B0: Size of section in bytes
+sh_link_______07:           .long 0x00000000          # 0x000D46B8: Link to another section
+sh_info_______07:           .long 0x00000000          # 0x000D46BC: Additional section information
+sh_addralign__07:           .quad 0x0000000000000010  # 0x000D46C0: Section alignment
+sh_entsize____07:           .quad 0x0000000000000000  # 0x000D46C8: Entry size if section holds table
+
+sh_name_______08:           .long 0x00000065          # 0x000D46D0: Section name (string tbl index)
+sh_type_______08:           .long 0x00000001          # 0x000D46D4: Section type
+sh_flags______08:           .quad 0x0000000000000006  # 0x000D46D8: Section flags
+sh_addr_______08:           .quad 0x00000000004928B0  # 0x000D46E0: Section address
+sh_offset_____08:           .quad 0x00000000000928B0  # 0x000D46E8: Section file offset
+sh_size_______08:           .quad 0x0000000000001CA0  # 0x000D46F0: Size of section in bytes
+sh_link_______08:           .long 0x00000000          # 0x000D46F8: Link to another section
+sh_info_______08:           .long 0x00000000          # 0x000D46FC: Additional section information
+sh_addralign__08:           .quad 0x0000000000000010  # 0x000D4700: Section alignment
+sh_entsize____08:           .quad 0x0000000000000000  # 0x000D4708: Entry size if section holds table
+
+sh_name_______09:           .long 0x00000077          # 0x000D4710: Section name (string tbl index)
+sh_type_______09:           .long 0x00000001          # 0x000D4714: Section type
+sh_flags______09:           .quad 0x0000000000000006  # 0x000D4718: Section flags
+sh_addr_______09:           .quad 0x0000000000494550  # 0x000D4720: Section address
+sh_offset_____09:           .quad 0x0000000000094550  # 0x000D4728: Section file offset
+sh_size_______09:           .quad 0x000000000000000D  # 0x000D4730: Size of section in bytes
+sh_link_______09:           .long 0x00000000          # 0x000D4738: Link to another section
+sh_info_______09:           .long 0x00000000          # 0x000D473C: Additional section information
+sh_addralign__09:           .quad 0x0000000000000004  # 0x000D4740: Section alignment
+sh_entsize____09:           .quad 0x0000000000000000  # 0x000D4748: Entry size if section holds table
+
+sh_name_______10:           .long 0x0000007D          # 0x000D4750: Section name (string tbl index)
+sh_type_______10:           .long 0x00000001          # 0x000D4754: Section type
+sh_flags______10:           .quad 0x0000000000000002  # 0x000D4758: Section flags
+sh_addr_______10:           .quad 0x0000000000495000  # 0x000D4760: Section address
+sh_offset_____10:           .quad 0x0000000000095000  # 0x000D4768: Section file offset
+sh_size_______10:           .quad 0x000000000001BFCC  # 0x000D4770: Size of section in bytes
+sh_link_______10:           .long 0x00000000          # 0x000D4778: Link to another section
+sh_info_______10:           .long 0x00000000          # 0x000D477C: Additional section information
+sh_addralign__10:           .quad 0x0000000000000020  # 0x000D4780: Section alignment
+sh_entsize____10:           .quad 0x0000000000000000  # 0x000D4788: Entry size if section holds table
+
+sh_name_______11:           .long 0x00000085          # 0x000D4790: Section name (string tbl index)
+sh_type_______11:           .long 0x00000001          # 0x000D4794: Section type
+sh_flags______11:           .quad 0x0000000000000002  # 0x000D4798: Section flags
+sh_addr_______11:           .quad 0x00000000004B0FCC  # 0x000D47A0: Section address
+sh_offset_____11:           .quad 0x00000000000B0FCC  # 0x000D47A8: Section file offset
+sh_size_______11:           .quad 0x0000000000000001  # 0x000D47B0: Size of section in bytes
+sh_link_______11:           .long 0x00000000          # 0x000D47B8: Link to another section
+sh_info_______11:           .long 0x00000000          # 0x000D47BC: Additional section information
+sh_addralign__11:           .quad 0x0000000000000001  # 0x000D47C0: Section alignment
+sh_entsize____11:           .quad 0x0000000000000000  # 0x000D47C8: Entry size if section holds table
+
+sh_name_______12:           .long 0x00000093          # 0x000D47D0: Section name (string tbl index)
+sh_type_______12:           .long 0x00000001          # 0x000D47D4: Section type
+sh_flags______12:           .quad 0x0000000000000002  # 0x000D47D8: Section flags
+sh_addr_______12:           .quad 0x00000000004B0FD0  # 0x000D47E0: Section address
+sh_offset_____12:           .quad 0x00000000000B0FD0  # 0x000D47E8: Section file offset
+sh_size_______12:           .quad 0x000000000000A544  # 0x000D47F0: Size of section in bytes
+sh_link_______12:           .long 0x00000000          # 0x000D47F8: Link to another section
+sh_info_______12:           .long 0x00000000          # 0x000D47FC: Additional section information
+sh_addralign__12:           .quad 0x0000000000000008  # 0x000D4800: Section alignment
+sh_entsize____12:           .quad 0x0000000000000000  # 0x000D4808: Entry size if section holds table
+
+sh_name_______13:           .long 0x0000009D          # 0x000D4810: Section name (string tbl index)
+sh_type_______13:           .long 0x00000001          # 0x000D4814: Section type
+sh_flags______13:           .quad 0x0000000000000002  # 0x000D4818: Section flags
+sh_addr_______13:           .quad 0x00000000004BB514  # 0x000D4820: Section address
+sh_offset_____13:           .quad 0x00000000000BB514  # 0x000D4828: Section file offset
+sh_size_______13:           .quad 0x00000000000000B1  # 0x000D4830: Size of section in bytes
+sh_link_______13:           .long 0x00000000          # 0x000D4838: Link to another section
+sh_info_______13:           .long 0x00000000          # 0x000D483C: Additional section information
+sh_addralign__13:           .quad 0x0000000000000001  # 0x000D4840: Section alignment
+sh_entsize____13:           .quad 0x0000000000000000  # 0x000D4848: Entry size if section holds table
+
+sh_name_______14:           .long 0x000000AF          # 0x000D4850: Section name (string tbl index)
+sh_type_______14:           .long 0x00000001          # 0x000D4854: Section type
+sh_flags______14:           .quad 0x0000000000000403  # 0x000D4858: Section flags
+sh_addr_______14:           .quad 0x00000000004BD0C0  # 0x000D4860: Section address
+sh_offset_____14:           .quad 0x00000000000BC0C0  # 0x000D4868: Section file offset
+sh_size_______14:           .quad 0x0000000000000020  # 0x000D4870: Size of section in bytes
+sh_link_______14:           .long 0x00000000          # 0x000D4878: Link to another section
+sh_info_______14:           .long 0x00000000          # 0x000D487C: Additional section information
+sh_addralign__14:           .quad 0x0000000000000008  # 0x000D4880: Section alignment
+sh_entsize____14:           .quad 0x0000000000000000  # 0x000D4888: Entry size if section holds table
+
+sh_name_______15:           .long 0x000000B6          # 0x000D4890: Section name (string tbl index)
+sh_type_______15:           .long 0x00000008          # 0x000D4894: Section type
+sh_flags______15:           .quad 0x0000000000000403  # 0x000D4898: Section flags
+sh_addr_______15:           .quad 0x00000000004BD0E0  # 0x000D48A0: Section address
+sh_offset_____15:           .quad 0x00000000000BC0E0  # 0x000D48A8: Section file offset
+sh_size_______15:           .quad 0x0000000000000040  # 0x000D48B0: Size of section in bytes
+sh_link_______15:           .long 0x00000000          # 0x000D48B8: Link to another section
+sh_info_______15:           .long 0x00000000          # 0x000D48BC: Additional section information
+sh_addralign__15:           .quad 0x0000000000000008  # 0x000D48C0: Section alignment
+sh_entsize____15:           .quad 0x0000000000000000  # 0x000D48C8: Entry size if section holds table
+
+sh_name_______16:           .long 0x000000BC          # 0x000D48D0: Section name (string tbl index)
+sh_type_______16:           .long 0x0000000E          # 0x000D48D4: Section type
+sh_flags______16:           .quad 0x0000000000000003  # 0x000D48D8: Section flags
+sh_addr_______16:           .quad 0x00000000004BD0E0  # 0x000D48E0: Section address
+sh_offset_____16:           .quad 0x00000000000BC0E0  # 0x000D48E8: Section file offset
+sh_size_______16:           .quad 0x0000000000000010  # 0x000D48F0: Size of section in bytes
+sh_link_______16:           .long 0x00000000          # 0x000D48F8: Link to another section
+sh_info_______16:           .long 0x00000000          # 0x000D48FC: Additional section information
+sh_addralign__16:           .quad 0x0000000000000008  # 0x000D4900: Section alignment
+sh_entsize____16:           .quad 0x0000000000000008  # 0x000D4908: Entry size if section holds table
+
+sh_name_______17:           .long 0x000000C8          # 0x000D4910: Section name (string tbl index)
+sh_type_______17:           .long 0x0000000F          # 0x000D4914: Section type
+sh_flags______17:           .quad 0x0000000000000003  # 0x000D4918: Section flags
+sh_addr_______17:           .quad 0x00000000004BD0F0  # 0x000D4920: Section address
+sh_offset_____17:           .quad 0x00000000000BC0F0  # 0x000D4928: Section file offset
+sh_size_______17:           .quad 0x0000000000000010  # 0x000D4930: Size of section in bytes
+sh_link_______17:           .long 0x00000000          # 0x000D4938: Link to another section
+sh_info_______17:           .long 0x00000000          # 0x000D493C: Additional section information
+sh_addralign__17:           .quad 0x0000000000000008  # 0x000D4940: Section alignment
+sh_entsize____17:           .quad 0x0000000000000008  # 0x000D4948: Entry size if section holds table
+
+sh_name_______18:           .long 0x000000D4          # 0x000D4950: Section name (string tbl index)
+sh_type_______18:           .long 0x00000001          # 0x000D4954: Section type
+sh_flags______18:           .quad 0x0000000000000003  # 0x000D4958: Section flags
+sh_addr_______18:           .quad 0x00000000004BD100  # 0x000D4960: Section address
+sh_offset_____18:           .quad 0x00000000000BC100  # 0x000D4968: Section file offset
+sh_size_______18:           .quad 0x0000000000002DF4  # 0x000D4970: Size of section in bytes
+sh_link_______18:           .long 0x00000000          # 0x000D4978: Link to another section
+sh_info_______18:           .long 0x00000000          # 0x000D497C: Additional section information
+sh_addralign__18:           .quad 0x0000000000000020  # 0x000D4980: Section alignment
+sh_entsize____18:           .quad 0x0000000000000000  # 0x000D4988: Entry size if section holds table
+
+sh_name_______19:           .long 0x000000E1          # 0x000D4990: Section name (string tbl index)
+sh_type_______19:           .long 0x00000001          # 0x000D4994: Section type
+sh_flags______19:           .quad 0x0000000000000003  # 0x000D4998: Section flags
+sh_addr_______19:           .quad 0x00000000004BFEF8  # 0x000D49A0: Section address
+sh_offset_____19:           .quad 0x00000000000BEEF8  # 0x000D49A8: Section file offset
+sh_size_______19:           .quad 0x00000000000000F0  # 0x000D49B0: Size of section in bytes
+sh_link_______19:           .long 0x00000000          # 0x000D49B8: Link to another section
+sh_info_______19:           .long 0x00000000          # 0x000D49BC: Additional section information
+sh_addralign__19:           .quad 0x0000000000000008  # 0x000D49C0: Section alignment
+sh_entsize____19:           .quad 0x0000000000000000  # 0x000D49C8: Entry size if section holds table
+
+sh_name_______20:           .long 0x000000E6          # 0x000D49D0: Section name (string tbl index)
+sh_type_______20:           .long 0x00000001          # 0x000D49D4: Section type
+sh_flags______20:           .quad 0x0000000000000003  # 0x000D49D8: Section flags
+sh_addr_______20:           .quad 0x00000000004C0000  # 0x000D49E0: Section address
+sh_offset_____20:           .quad 0x00000000000BF000  # 0x000D49E8: Section file offset
+sh_size_______20:           .quad 0x00000000000000D8  # 0x000D49F0: Size of section in bytes
+sh_link_______20:           .long 0x00000000          # 0x000D49F8: Link to another section
+sh_info_______20:           .long 0x00000000          # 0x000D49FC: Additional section information
+sh_addralign__20:           .quad 0x0000000000000008  # 0x000D4A00: Section alignment
+sh_entsize____20:           .quad 0x0000000000000008  # 0x000D4A08: Entry size if section holds table
+
+sh_name_______21:           .long 0x000000EF          # 0x000D4A10: Section name (string tbl index)
+sh_type_______21:           .long 0x00000001          # 0x000D4A14: Section type
+sh_flags______21:           .quad 0x0000000000000003  # 0x000D4A18: Section flags
+sh_addr_______21:           .quad 0x00000000004C00E0  # 0x000D4A20: Section address
+sh_offset_____21:           .quad 0x00000000000BF0E0  # 0x000D4A28: Section file offset
+sh_size_______21:           .quad 0x0000000000001A50  # 0x000D4A30: Size of section in bytes
+sh_link_______21:           .long 0x00000000          # 0x000D4A38: Link to another section
+sh_info_______21:           .long 0x00000000          # 0x000D4A3C: Additional section information
+sh_addralign__21:           .quad 0x0000000000000020  # 0x000D4A40: Section alignment
+sh_entsize____21:           .quad 0x0000000000000000  # 0x000D4A48: Entry size if section holds table
+
+sh_name_______22:           .long 0x000000F5          # 0x000D4A50: Section name (string tbl index)
+sh_type_______22:           .long 0x00000001          # 0x000D4A54: Section type
+sh_flags______22:           .quad 0x0000000000000003  # 0x000D4A58: Section flags
+sh_addr_______22:           .quad 0x00000000004C1B30  # 0x000D4A60: Section address
+sh_offset_____22:           .quad 0x00000000000C0B30  # 0x000D4A68: Section file offset
+sh_size_______22:           .quad 0x0000000000000048  # 0x000D4A70: Size of section in bytes
+sh_link_______22:           .long 0x00000000          # 0x000D4A78: Link to another section
+sh_info_______22:           .long 0x00000000          # 0x000D4A7C: Additional section information
+sh_addralign__22:           .quad 0x0000000000000008  # 0x000D4A80: Section alignment
+sh_entsize____22:           .quad 0x0000000000000000  # 0x000D4A88: Entry size if section holds table
+
+sh_name_______23:           .long 0x00000107          # 0x000D4A90: Section name (string tbl index)
+sh_type_______23:           .long 0x00000001          # 0x000D4A94: Section type
+sh_flags______23:           .quad 0x0000000000000003  # 0x000D4A98: Section flags
+sh_addr_______23:           .quad 0x00000000004C1B80  # 0x000D4AA0: Section address
+sh_offset_____23:           .quad 0x00000000000C0B80  # 0x000D4AA8: Section file offset
+sh_size_______23:           .quad 0x00000000000006A8  # 0x000D4AB0: Size of section in bytes
+sh_link_______23:           .long 0x00000000          # 0x000D4AB8: Link to another section
+sh_info_______23:           .long 0x00000000          # 0x000D4ABC: Additional section information
+sh_addralign__23:           .quad 0x0000000000000020  # 0x000D4AC0: Section alignment
+sh_entsize____23:           .quad 0x0000000000000000  # 0x000D4AC8: Entry size if section holds table
+
+sh_name_______24:           .long 0x00000119          # 0x000D4AD0: Section name (string tbl index)
+sh_type_______24:           .long 0x00000001          # 0x000D4AD4: Section type
+sh_flags______24:           .quad 0x0000000000000003  # 0x000D4AD8: Section flags
+sh_addr_______24:           .quad 0x00000000004C2228  # 0x000D4AE0: Section address
+sh_offset_____24:           .quad 0x00000000000C1228  # 0x000D4AE8: Section file offset
+sh_size_______24:           .quad 0x0000000000000008  # 0x000D4AF0: Size of section in bytes
+sh_link_______24:           .long 0x00000000          # 0x000D4AF8: Link to another section
+sh_info_______24:           .long 0x00000000          # 0x000D4AFC: Additional section information
+sh_addralign__24:           .quad 0x0000000000000008  # 0x000D4B00: Section alignment
+sh_entsize____24:           .quad 0x0000000000000000  # 0x000D4B08: Entry size if section holds table
+
+sh_name_______25:           .long 0x00000127          # 0x000D4B10: Section name (string tbl index)
+sh_type_______25:           .long 0x00000008          # 0x000D4B14: Section type
+sh_flags______25:           .quad 0x0000000000000003  # 0x000D4B18: Section flags
+sh_addr_______25:           .quad 0x00000000004C2240  # 0x000D4B20: Section address
+sh_offset_____25:           .quad 0x00000000000C1230  # 0x000D4B28: Section file offset
+sh_size_______25:           .quad 0x0000000000001718  # 0x000D4B30: Size of section in bytes
+sh_link_______25:           .long 0x00000000          # 0x000D4B38: Link to another section
+sh_info_______25:           .long 0x00000000          # 0x000D4B3C: Additional section information
+sh_addralign__25:           .quad 0x0000000000000020  # 0x000D4B40: Section alignment
+sh_entsize____25:           .quad 0x0000000000000000  # 0x000D4B48: Entry size if section holds table
+
+sh_name_______26:           .long 0x0000012C          # 0x000D4B50: Section name (string tbl index)
+sh_type_______26:           .long 0x00000008          # 0x000D4B54: Section type
+sh_flags______26:           .quad 0x0000000000000003  # 0x000D4B58: Section flags
+sh_addr_______26:           .quad 0x00000000004C3958  # 0x000D4B60: Section address
+sh_offset_____26:           .quad 0x00000000000C1230  # 0x000D4B68: Section file offset
+sh_size_______26:           .quad 0x0000000000000028  # 0x000D4B70: Size of section in bytes
+sh_link_______26:           .long 0x00000000          # 0x000D4B78: Link to another section
+sh_info_______26:           .long 0x00000000          # 0x000D4B7C: Additional section information
+sh_addralign__26:           .quad 0x0000000000000008  # 0x000D4B80: Section alignment
+sh_entsize____26:           .quad 0x0000000000000000  # 0x000D4B88: Entry size if section holds table
+
+sh_name_______27:           .long 0x00000140          # 0x000D4B90: Section name (string tbl index)
+sh_type_______27:           .long 0x00000001          # 0x000D4B94: Section type
+sh_flags______27:           .quad 0x0000000000000030  # 0x000D4B98: Section flags
+sh_addr_______27:           .quad 0x0000000000000000  # 0x000D4BA0: Section address
+sh_offset_____27:           .quad 0x00000000000C1230  # 0x000D4BA8: Section file offset
+sh_size_______27:           .quad 0x000000000000002A  # 0x000D4BB0: Size of section in bytes
+sh_link_______27:           .long 0x00000000          # 0x000D4BB8: Link to another section
+sh_info_______27:           .long 0x00000000          # 0x000D4BBC: Additional section information
+sh_addralign__27:           .quad 0x0000000000000001  # 0x000D4BC0: Section alignment
+sh_entsize____27:           .quad 0x0000000000000001  # 0x000D4BC8: Entry size if section holds table
+
+sh_name_______28:           .long 0x00000149          # 0x000D4BD0: Section name (string tbl index)
+sh_type_______28:           .long 0x00000007          # 0x000D4BD4: Section type
+sh_flags______28:           .quad 0x0000000000000000  # 0x000D4BD8: Section flags
+sh_addr_______28:           .quad 0x0000000000000000  # 0x000D4BE0: Section address
+sh_offset_____28:           .quad 0x00000000000C125C  # 0x000D4BE8: Section file offset
+sh_size_______28:           .quad 0x00000000000013E8  # 0x000D4BF0: Size of section in bytes
+sh_link_______28:           .long 0x00000000          # 0x000D4BF8: Link to another section
+sh_info_______28:           .long 0x00000000          # 0x000D4BFC: Additional section information
+sh_addralign__28:           .quad 0x0000000000000004  # 0x000D4C00: Section alignment
+sh_entsize____28:           .quad 0x0000000000000000  # 0x000D4C08: Entry size if section holds table
+
+sh_name_______29:           .long 0x00000001          # 0x000D4C10: Section name (string tbl index)
+sh_type_______29:           .long 0x00000002          # 0x000D4C14: Section type
+sh_flags______29:           .quad 0x0000000000000000  # 0x000D4C18: Section flags
+sh_addr_______29:           .quad 0x0000000000000000  # 0x000D4C20: Section address
+sh_offset_____29:           .quad 0x00000000000C2648  # 0x000D4C28: Section file offset
+sh_size_______29:           .quad 0x000000000000AED8  # 0x000D4C30: Size of section in bytes
+sh_link_______29:           .long 0x0000001E          # 0x000D4C38: Link to another section
+sh_info_______29:           .long 0x000002DE          # 0x000D4C3C: Additional section information
+sh_addralign__29:           .quad 0x0000000000000008  # 0x000D4C40: Section alignment
+sh_entsize____29:           .quad 0x0000000000000018  # 0x000D4C48: Entry size if section holds table
+
+sh_name_______30:           .long 0x00000009          # 0x000D4C50: Section name (string tbl index)
+sh_type_______30:           .long 0x00000003          # 0x000D4C54: Section type
+sh_flags______30:           .quad 0x0000000000000000  # 0x000D4C58: Section flags
+sh_addr_______30:           .quad 0x0000000000000000  # 0x000D4C60: Section address
+sh_offset_____30:           .quad 0x00000000000CD520  # 0x000D4C68: Section file offset
+sh_size_______30:           .quad 0x0000000000006E52  # 0x000D4C70: Size of section in bytes
+sh_link_______30:           .long 0x00000000          # 0x000D4C78: Link to another section
+sh_info_______30:           .long 0x00000000          # 0x000D4C7C: Additional section information
+sh_addralign__30:           .quad 0x0000000000000001  # 0x000D4C80: Section alignment
+sh_entsize____30:           .quad 0x0000000000000000  # 0x000D4C88: Entry size if section holds table
+
+sh_name_______31:           .long 0x00000011          # 0x000D4C90: Section name (string tbl index)
+sh_type_______31:           .long 0x00000003          # 0x000D4C94: Section type
+sh_flags______31:           .quad 0x0000000000000000  # 0x000D4C98: Section flags
+sh_addr_______31:           .quad 0x0000000000000000  # 0x000D4CA0: Section address
+sh_offset_____31:           .quad 0x00000000000D4372  # 0x000D4CA8: Section file offset
+sh_size_______31:           .quad 0x0000000000000157  # 0x000D4CB0: Size of section in bytes
+sh_link_______31:           .long 0x00000000          # 0x000D4CB8: Link to another section
+sh_info_______31:           .long 0x00000000          # 0x000D4CBC: Additional section information
+sh_addralign__31:           .quad 0x0000000000000001  # 0x000D4CC0: Section alignment
+sh_entsize____31:           .quad 0x0000000000000000  # 0x000D4CC8: Entry size if section holds table
+

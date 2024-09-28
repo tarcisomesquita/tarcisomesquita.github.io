@@ -1,0 +1,9 @@
+MinGW64\libexec\gcc\x86_64-w64-mingw32\4.9.2\cc1.exe -quiet -march=x86-64 -mtune=generic -masm=intel -I MinGW64\x86_64-w64-mingw32\include -o hello_static_libc.s hello_static_libc.c
+
+MinGW64\x86_64-w64-mingw32\bin\as.exe --64 -march=generic64 -o hello_static_libc.o hello_static_libc.s
+
+# talvez -march=corei7
+
+del hello_static_libc.exe
+MinGW64\x86_64-w64-mingw32\bin\ld.exe -Bstatic MinGW64\x86_64-w64-mingw32\lib\crt2.o MinGW64\x86_64-w64-mingw32\lib\crtbegin.o MinGW64\x86_64-w64-mingw32\lib\crtend.o hello_static_libc.o -LMinGW64\lib\gcc\x86_64-w64-mingw32\4.9.2 -LMinGW64\x86_64-w64-mingw32\lib -lmingw32 -lgcc -lmoldname -lmingwex -lmsvcrt -ladvapi32 -lshell32 -luser32 -lkernel32 -o hello_static_libc.exe && hello_static_libc.exe
+

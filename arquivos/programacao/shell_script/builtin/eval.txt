@@ -1,0 +1,6 @@
+eval string ...
+Concatenate all the arguments with spaces. Then reparse and execute the command.
+
+TESTE="ls"
+eval $TESTE
+

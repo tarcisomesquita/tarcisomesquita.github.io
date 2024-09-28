@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt_BR">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>PHP: Basic usage - Manual </title>
+
+ <link rel="shortcut icon" href="https://www.php.net/favicon.ico">
+ <link rel="search" type="application/opensearchdescription+xml" href="http://php.net/phpnetimprovedsearch.src" title="Add PHP.net search">
+ <link rel="alternate" type="application/atom+xml" href="https://www.php.net/releases/feed.php" title="PHP Release feed">
+ <link rel="alternate" type="application/atom+xml" href="https://www.php.net/feed.atom" title="PHP: Hypertext Preprocessor">
+
+ <link rel="canonical" href="https://www.php.net/manual/pt_BR/simplexml.examples-basic.php">
+ <link rel="shorturl" href="https://www.php.net/manual/pt_BR/simplexml.examples-basic.php">
+ <link rel="alternate" href="https://www.php.net/manual/pt_BR/simplexml.examples-basic.php" hreflang="x-default">
+
+ <link rel="contents" href="https://www.php.net/manual/pt_BR/index.php">
+ <link rel="index" href="https://www.php.net/manual/pt_BR/simplexml.examples.php">
+ <link rel="prev" href="https://www.php.net/manual/pt_BR/simplexml.examples.php">
+ <link rel="next" href="https://www.php.net/manual/pt_BR/simplexml.examples-errors.php">
+
+ <link rel="alternate" href="https://www.php.net/manual/en/simplexml.examples-basic.php" hreflang="en">
+ <link rel="alternate" href="https://www.php.net/manual/pt_BR/simplexml.examples-basic.php" hreflang="pt_BR">
+ <link rel="alternate" href="https://www.php.net/manual/zh/simplexml.examples-basic.php" hreflang="zh">
+ <link rel="alternate" href="https://www.php.net/manual/fr/simplexml.examples-basic.php" hreflang="fr">
+ <link rel="alternate" href="https://www.php.net/manual/de/simplexml.examples-basic.php" hreflang="de">
+ <link rel="alternate" href="https://www.php.net/manual/ja/simplexml.examples-basic.php" hreflang="ja">
+ <link rel="alternate" href="https://www.php.net/manual/ro/simplexml.examples-basic.php" hreflang="ro">
+ <link rel="alternate" href="https://www.php.net/manual/ru/simplexml.examples-basic.php" hreflang="ru">
+ <link rel="alternate" href="https://www.php.net/manual/es/simplexml.examples-basic.php" hreflang="es">
+ <link rel="alternate" href="https://www.php.net/manual/tr/simplexml.examples-basic.php" hreflang="tr">
+
+<link rel="stylesheet" type="text/css" href="/cached.php?t=1539771603&amp;f=/fonts/Fira/fira.css" media="screen">
+<link rel="stylesheet" type="text/css" href="/cached.php?t=1539765004&amp;f=/fonts/Font-Awesome/css/fontello.css" media="screen">
+<link rel="stylesheet" type="text/css" href="/cached.php?t=1540425603&amp;f=/styles/theme-base.css" media="screen">
+<link rel="stylesheet" type="text/css" href="/cached.php?t=1540425603&amp;f=/styles/theme-medium.css" media="screen">
+
+ <!--[if lte IE 7]>
+ <link rel="stylesheet" type="text/css" href="https://www.php.net/styles/workarounds.ie7.css" media="screen">
+ <![endif]-->
+
+ <!--[if lte IE 8]>
+ <script>
+  window.brokenIE = true;
+ </script>
+ <![endif]-->
+
+ <!--[if lte IE 9]>
+ <link rel="stylesheet" type="text/css" href="https://www.php.net/styles/workarounds.ie9.css" media="screen">
+ <![endif]-->
+
+ <!--[if IE]>
+ <script src="https://www.php.net/js/ext/html5.js"></script>
+ <![endif]-->
+
+ <base href="https://www.php.net/manual/pt_BR/simplexml.examples-basic.php">
+
+</head>
+<body class="docs ">
+
+<nav id="head-nav" class="navbar navbar-fixed-top">
+  <div class="navbar-inner clearfix">
+    <a href="/" class="brand"><img src="/images/logos/php-logo.svg" width="48" height="24" alt="php"></a>
+    <div id="mainmenu-toggle-overlay"></div>
+    <input type="checkbox" id="mainmenu-toggle">
+    <ul class="nav">
+      <li class=""><a href="/downloads">Downloads</a></li>
+      <li class="active"><a href="/docs.php">Documentation</a></li>
+      <li class=""><a href="/get-involved" >Get Involved</a></li>
+      <li class=""><a href="/support">Help</a></li>
+    </ul>
+    <form class="navbar-search" id="topsearch" action="/search.php">
+      <input type="hidden" name="show" value="quickref">
+      <input type="search" name="pattern" class="search-query" placeholder="Search" accesskey="s">
+    </form>
+  </div>
+  <div id="flash-message"></div>
+</nav>
+<div class="headsup"><a href='/conferences/index.php#id2020-01-17-1'>SunshinePHP 2020</a></div>
+<nav id="trick"><div><dl>
+<dt><a href='/manual/en/getting-started.php'>Getting Started</a></dt>
+	<dd><a href='/manual/en/introduction.php'>Introduction</a></dd>
+	<dd><a href='/manual/en/tutorial.php'>A simple tutorial</a></dd>
+<dt><a href='/manual/en/langref.php'>Language Reference</a></dt>
+	<dd><a href='/manual/en/language.basic-syntax.php'>Basic syntax</a></dd>
+	<dd><a href='/manual/en/language.types.php'>Types</a></dd>
+	<dd><a href='/manual/en/language.variables.php'>Variables</a></dd>
+	<dd><a href='/manual/en/language.constants.php'>Constants</a></dd>
+	<dd><a href='/manual/en/language.expressions.php'>Expressions</a></dd>
+	<dd><a href='/manual/en/language.operators.php'>Operators</a></dd>
+	<dd><a href='/manual/en/language.control-structures.php'>Control Structures</a></dd>
+	<dd><a href='/manual/en/language.functions.php'>Functions</a></dd>
+	<dd><a href='/manual/en/language.oop5.php'>Classes and Objects</a></dd>
+	<dd><a href='/manual/en/language.namespaces.php'>Namespaces</a></dd>
+	<dd><a href='/manual/en/language.errors.php'>Errors</a></dd>
+	<dd><a href='/manual/en/language.exceptions.php'>Exceptions</a></dd>
+	<dd><a href='/manual/en/language.generators.php'>Generators</a></dd>
+	<dd><a href='/manual/en/language.references.php'>References Explained</a></dd>
+	<dd><a href='/manual/en/reserved.variables.php'>Predefined Variables</a></dd>
+	<dd><a href='/manual/en/reserved.exceptions.php'>Predefined Exceptions</a></dd>
+	<dd><a href='/manual/en/reserved.interfaces.php'>Predefined Interfaces and Classes</a></dd>
+	<dd><a href='/manual/en/context.php'>Context options and parameters</a></dd>
+	<dd><a href='/manual/en/wrappers.php'>Supported Protocols and Wrappers</a></dd>
+</dl>
+<dl>
+<dt><a href='/manual/en/security.php'>Security</a></dt>
+	<dd><a href='/manual/en/security.intro.php'>Introduction</a></dd>
+	<dd><a href='/manual/en/security.general.php'>General considerations</a></dd>
+	<dd><a href='/manual/en/security.cgi-bin.php'>Installed as CGI binary</a></dd>
+	<dd><a href='/manual/en/security.apache.php'>Installed as an Apache module</a></dd>
+	<dd><a href='/manual/en/security.sessions.php'>Session Security</a></dd>
+	<dd><a href='/manual/en/security.filesystem.php'>Filesystem Security</a></dd>
+	<dd><a href='/manual/en/security.database.php'>Database Security</a></dd>
+	<dd><a href='/manual/en/security.errors.php'>Error Reporting</a></dd>
+	<dd><a href='/manual/en/security.globals.php'>Using Register Globals</a></dd>
+	<dd><a href='/manual/en/security.variables.php'>User Submitted Data</a></dd>
+	<dd><a href='/manual/en/security.magicquotes.php'>Magic Quotes</a></dd>
+	<dd><a href='/manual/en/security.hiding.php'>Hiding PHP</a></dd>
+	<dd><a href='/manual/en/security.current.php'>Keeping Current</a></dd>
+<dt><a href='/manual/en/features.php'>Features</a></dt>
+	<dd><a href='/manual/en/features.http-auth.php'>HTTP authentication with PHP</a></dd>
+	<dd><a href='/manual/en/features.cookies.php'>Cookies</a></dd>
+	<dd><a href='/manual/en/features.sessions.php'>Sessions</a></dd>
+	<dd><a href='/manual/en/features.xforms.php'>Dealing with XForms</a></dd>
+	<dd><a href='/manual/en/features.file-upload.php'>Handling file uploads</a></dd>
+	<dd><a href='/manual/en/features.remote-files.php'>Using remote files</a></dd>
+	<dd><a href='/manual/en/features.connection-handling.php'>Connection handling</a></dd>
+	<dd><a href='/manual/en/features.persistent-connections.php'>Persistent Database Connections</a></dd>
+	<dd><a href='/manual/en/features.safe-mode.php'>Safe Mode</a></dd>
+	<dd><a href='/manual/en/features.commandline.php'>Command line usage</a></dd>
+	<dd><a href='/manual/en/features.gc.php'>Garbage Collection</a></dd>
+	<dd><a href='/manual/en/features.dtrace.php'>DTrace Dynamic Tracing</a></dd>
+</dl>
+<dl>
+<dt><a href='/manual/en/funcref.php'>Function Reference</a></dt>
+	<dd><a href='/manual/en/refs.basic.php.php'>Affecting PHP's Behaviour</a></dd>
+	<dd><a href='/manual/en/refs.utilspec.audio.php'>Audio Formats Manipulation</a></dd>
+	<dd><a href='/manual/en/refs.remote.auth.php'>Authentication Services</a></dd>
+	<dd><a href='/manual/en/refs.utilspec.cmdline.php'>Command Line Specific Extensions</a></dd>
+	<dd><a href='/manual/en/refs.compression.php'>Compression and Archive Extensions</a></dd>
+	<dd><a href='/manual/en/refs.creditcard.php'>Credit Card Processing</a></dd>
+	<dd><a href='/manual/en/refs.crypto.php'>Cryptography Extensions</a></dd>
+	<dd><a href='/manual/en/refs.database.php'>Database Extensions</a></dd>
+	<dd><a href='/manual/en/refs.calendar.php'>Date and Time Related Extensions</a></dd>
+	<dd><a href='/manual/en/refs.fileprocess.file.php'>File System Related Extensions</a></dd>
+	<dd><a href='/manual/en/refs.international.php'>Human Language and Character Encoding Support</a></dd>
+	<dd><a href='/manual/en/refs.utilspec.image.php'>Image Processing and Generation</a></dd>
+	<dd><a href='/manual/en/refs.remote.mail.php'>Mail Related Extensions</a></dd>
+	<dd><a href='/manual/en/refs.math.php'>Mathematical Extensions</a></dd>
+	<dd><a href='/manual/en/refs.utilspec.nontext.php'>Non-Text MIME Output</a></dd>
+	<dd><a href='/manual/en/refs.fileprocess.process.php'>Process Control Extensions</a></dd>
+	<dd><a href='/manual/en/refs.basic.other.php'>Other Basic Extensions</a></dd>
+	<dd><a href='/manual/en/refs.remote.other.php'>Other Services</a></dd>
+	<dd><a href='/manual/en/refs.search.php'>Search Engine Extensions</a></dd>
+	<dd><a href='/manual/en/refs.utilspec.server.php'>Server Specific Extensions</a></dd>
+	<dd><a href='/manual/en/refs.basic.session.php'>Session Extensions</a></dd>
+	<dd><a href='/manual/en/refs.basic.text.php'>Text Processing</a></dd>
+	<dd><a href='/manual/en/refs.basic.vartype.php'>Variable and Type Related Extensions</a></dd>
+	<dd><a href='/manual/en/refs.webservice.php'>Web Services</a></dd>
+	<dd><a href='/manual/en/refs.utilspec.windows.php'>Windows Only Extensions</a></dd>
+	<dd><a href='/manual/en/refs.xml.php'>XML Manipulation</a></dd>
+	<dd><a href='/manual/en/refs.ui.php'>GUI Extensions</a></dd>
+</dl>
+<dl>
+<dt>Keyboard Shortcuts</dt><dt>?</dt>
+<dd>This help</dd>
+<dt>j</dt>
+<dd>Next menu item</dd>
+<dt>k</dt>
+<dd>Previous menu item</dd>
+<dt>g p</dt>
+<dd>Previous man page</dd>
+<dt>g n</dt>
+<dd>Next man page</dd>
+<dt>G</dt>
+<dd>Scroll to bottom</dd>
+<dt>g g</dt>
+<dd>Scroll to top</dd>
+<dt>g h</dt>
+<dd>Goto homepage</dd>
+<dt>g s</dt>
+<dd>Goto search<br>(current page)</dd>
+<dt>/</dt>
+<dd>Focus search box</dd>
+</dl></div></nav>
+<div id="goto">
+    <div class="search">
+         <div class="text"></div>
+         <div class="results"><ul></ul></div>
+   </div>
+</div>
+
+  <div id="breadcrumbs" class="clearfix">
+    <div id="breadcrumbs-inner">
+          <div class="next">
+        <a href="simplexml.examples-errors.php">
+          Dealing with XML errors &raquo;
+        </a>
+      </div>
+              <div class="prev">
+        <a href="simplexml.examples.php">
+          &laquo; Exemplos        </a>
+      </div>
+          <ul>
+            <li><a href='index.php'>Manual do PHP</a></li>      <li><a href='funcref.php'>Refer&ecirc;ncia das Fun&ccedil;&otilde;es</a></li>      <li><a href='refs.xml.php'>Manipula&ccedil;&atilde;o de XML</a></li>      <li><a href='book.simplexml.php'>SimpleXML</a></li>      <li><a href='simplexml.examples.php'>Exemplos</a></li>      </ul>
+    </div>
+  </div>
+
+
+
+
+<div id="layout" class="clearfix">
+  <section id="layout-content">
+  <div class="page-tools">
+    <div class="change-language">
+      <form action="/manual/change.php" method="get" id="changelang" name="changelang">
+        <fieldset>
+          <label for="changelang-langs">Change language:</label>
+          <select onchange="document.changelang.submit()" name="page" id="changelang-langs">
+            <option value='en/simplexml.examples-basic.php'>English</option>
+            <option value='pt_BR/simplexml.examples-basic.php' selected="selected">Brazilian Portuguese</option>
+            <option value='zh/simplexml.examples-basic.php'>Chinese (Simplified)</option>
+            <option value='fr/simplexml.examples-basic.php'>French</option>
+            <option value='de/simplexml.examples-basic.php'>German</option>
+            <option value='ja/simplexml.examples-basic.php'>Japanese</option>
+            <option value='ro/simplexml.examples-basic.php'>Romanian</option>
+            <option value='ru/simplexml.examples-basic.php'>Russian</option>
+            <option value='es/simplexml.examples-basic.php'>Spanish</option>
+            <option value='tr/simplexml.examples-basic.php'>Turkish</option>
+            <option value="help-translate.php">Other</option>
+          </select>
+        </fieldset>
+      </form>
+    </div>
+    <div class="edit-bug">
+      <a href="https://edit.php.net/?project=PHP&amp;perm=pt_BR/simplexml.examples-basic.php">Edit</a>
+      <a href="https://bugs.php.net/report.php?bug_type=Documentation+problem&amp;manpage=simplexml.examples-basic">Report a Bug</a>
+    </div>
+  </div><div id="simplexml.examples-basic" class="section">
+  <h2 class="title">Basic usage</h2>
+  <p class="para">
+   Many examples in this reference require an XML string. Instead of
+   repeating this string in every example, we put it into a file which
+   we include in each example. This included file is shown in the 
+   following example section. Alternatively, you could create an XML
+   document and read it with <span class="function"><a href="function.simplexml-load-file.php" class="function">simplexml_load_file()</a></span>.
+  </p>
+  <p class="para">
+   <div class="example" id="example-6421">
+    <p><strong>Exemplo #1 Include file example.php with XML string</strong></p>
+    <div class="example-contents">
+<div class="phpcode"><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br />$xmlstr&nbsp;</span><span style="color: #007700">=&nbsp;&lt;&lt;&lt;XML<br /></span><span style="color: #DD0000">&lt;?xml&nbsp;version='1.0'&nbsp;standalone='yes'?&gt;<br />&lt;movies&gt;<br />&nbsp;&lt;movie&gt;<br />&nbsp;&nbsp;&lt;title&gt;PHP:&nbsp;Behind&nbsp;the&nbsp;Parser&lt;/title&gt;<br />&nbsp;&nbsp;&lt;characters&gt;<br />&nbsp;&nbsp;&nbsp;&lt;character&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;name&gt;Ms.&nbsp;Coder&lt;/name&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;actor&gt;Onlivia&nbsp;Actora&lt;/actor&gt;<br />&nbsp;&nbsp;&nbsp;&lt;/character&gt;<br />&nbsp;&nbsp;&nbsp;&lt;character&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;name&gt;Mr.&nbsp;Coder&lt;/name&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&lt;actor&gt;El&nbsp;Act&amp;#211;r&lt;/actor&gt;<br />&nbsp;&nbsp;&nbsp;&lt;/character&gt;<br />&nbsp;&nbsp;&lt;/characters&gt;<br />&nbsp;&nbsp;&lt;plot&gt;<br />&nbsp;&nbsp;&nbsp;So,&nbsp;this&nbsp;language.&nbsp;It's&nbsp;like,&nbsp;a&nbsp;programming&nbsp;language.&nbsp;Or&nbsp;is&nbsp;it&nbsp;a<br />&nbsp;&nbsp;&nbsp;scripting&nbsp;language?&nbsp;All&nbsp;is&nbsp;revealed&nbsp;in&nbsp;this&nbsp;thrilling&nbsp;horror&nbsp;spoof<br />&nbsp;&nbsp;&nbsp;of&nbsp;a&nbsp;documentary.<br />&nbsp;&nbsp;&lt;/plot&gt;<br />&nbsp;&nbsp;&lt;great-lines&gt;<br />&nbsp;&nbsp;&nbsp;&lt;line&gt;PHP&nbsp;solves&nbsp;all&nbsp;my&nbsp;web&nbsp;problems&lt;/line&gt;<br />&nbsp;&nbsp;&lt;/great-lines&gt;<br />&nbsp;&nbsp;&lt;rating&nbsp;type="thumbs"&gt;7&lt;/rating&gt;<br />&nbsp;&nbsp;&lt;rating&nbsp;type="stars"&gt;5&lt;/rating&gt;<br />&nbsp;&lt;/movie&gt;<br />&lt;/movies&gt;<br /></span><span style="color: #007700">XML;<br /></span><span style="color: #0000BB">?&gt;</span>
+</span>
+</code></div>
+    </div>
+
+   </div>
+  </p>
+  <p class="para">
+   The simplicity of SimpleXML appears most clearly when one extracts
+   a string or number from a basic XML document.
+   <div class="example" id="example-6422">
+    <p><strong>Exemplo #2 Getting <em>&lt;plot&gt;</em></strong></p>
+    <div class="example-contents"><div class="phpcode"><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br /></span><span style="color: #007700">include&nbsp;</span><span style="color: #DD0000">'example.php'</span><span style="color: #007700">;<br /><br /></span><span style="color: #0000BB">$xml&nbsp;</span><span style="color: #007700">=&nbsp;new&nbsp;</span><span style="color: #0000BB">SimpleXMLElement</span><span style="color: #007700">(</span><span style="color: #0000BB">$xmlstr</span><span style="color: #007700">);<br /><br />echo&nbsp;</span><span style="color: #0000BB">$xml</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">movie</span><span style="color: #007700">[</span><span style="color: #0000BB">0</span><span style="color: #007700">]-&gt;</span><span style="color: #0000BB">plot</span><span style="color: #007700">;&nbsp;</span><span style="color: #FF8000">//&nbsp;"So&nbsp;this&nbsp;language.&nbsp;It's&nbsp;like..."<br /></span><span style="color: #0000BB">?&gt;</span>
+</span>
+</code></div>
+    </div>
+
+   </div>
+  </p>
+  <p class="para">
+   Accessing elements within an XML document that contain characters not permitted under 
+   PHP&#039;s naming convention (e.g. the hyphen) can be accomplished by encapsulating the
+   element name within braces and the apostrophe.
+   <div class="example" id="example-6423">
+    <p><strong>Exemplo #3 Getting <em>&lt;line&gt;</em></strong></p>
+    <div class="example-contents">
+<div class="phpcode"><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br /></span><span style="color: #007700">include&nbsp;</span><span style="color: #DD0000">'example.php'</span><span style="color: #007700">;<br /><br /></span><span style="color: #0000BB">$xml&nbsp;</span><span style="color: #007700">=&nbsp;new&nbsp;</span><span style="color: #0000BB">SimpleXMLElement</span><span style="color: #007700">(</span><span style="color: #0000BB">$xmlstr</span><span style="color: #007700">);<br /><br />echo&nbsp;</span><span style="color: #0000BB">$xml</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">movie</span><span style="color: #007700">-&gt;{</span><span style="color: #DD0000">'great-lines'</span><span style="color: #007700">}-&gt;</span><span style="color: #0000BB">line</span><span style="color: #007700">;&nbsp;</span><span style="color: #FF8000">//&nbsp;"PHP&nbsp;solves&nbsp;all&nbsp;my&nbsp;web&nbsp;problems"<br /></span><span style="color: #0000BB">?&gt;</span>
+</span>
+</code></div>
+    </div>
+
+   </div>
+  </p>
+  <p class="para">
+   <div class="example" id="example-6424">
+    <p><strong>Exemplo #4 Accessing non-unique elements in SimpleXML</strong></p>
+    <div class="example-contents"><p>
+     When multiple instances of an element exist as children of
+     a single parent element, normal iteration techniques apply.
+    </p></div>
+    <div class="example-contents">
+<div class="phpcode"><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br /></span><span style="color: #007700">include&nbsp;</span><span style="color: #DD0000">'example.php'</span><span style="color: #007700">;<br /><br /></span><span style="color: #0000BB">$xml&nbsp;</span><span style="color: #007700">=&nbsp;new&nbsp;</span><span style="color: #0000BB">SimpleXMLElement</span><span style="color: #007700">(</span><span style="color: #0000BB">$xmlstr</span><span style="color: #007700">);<br /><br /></span><span style="color: #FF8000">/*&nbsp;For&nbsp;each&nbsp;&lt;movie&gt;&nbsp;node,&nbsp;we&nbsp;echo&nbsp;a&nbsp;separate&nbsp;&lt;plot&gt;.&nbsp;*/<br /></span><span style="color: #007700">foreach&nbsp;(</span><span style="color: #0000BB">$xml</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">movie&nbsp;</span><span style="color: #007700">as&nbsp;</span><span style="color: #0000BB">$movie</span><span style="color: #007700">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;echo&nbsp;</span><span style="color: #0000BB">$movie</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">plot</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'&lt;br&nbsp;/&gt;'</span><span style="color: #007700">;<br />}<br /><br /></span><span style="color: #0000BB">?&gt;</span>
+</span>
+</code></div>
+    </div>
+
+   </div>
+  </p>
+  <p class="para">
+   <div class="example" id="example-6425">
+    <p><strong>Exemplo #5 Using attributes</strong></p>
+    <div class="example-contents"><p>
+     So far, we have only covered the work of reading element names
+     and their values. SimpleXML can also access element attributes.
+     Access attributes of an element just as you would elements
+     of an <span class="type"><a href="language.types.array.php" class="type array">array</a></span>.
+    </p></div>
+    <div class="example-contents">
+<div class="phpcode"><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br /></span><span style="color: #007700">include&nbsp;</span><span style="color: #DD0000">'example.php'</span><span style="color: #007700">;<br /><br /></span><span style="color: #0000BB">$xml&nbsp;</span><span style="color: #007700">=&nbsp;new&nbsp;</span><span style="color: #0000BB">SimpleXMLElement</span><span style="color: #007700">(</span><span style="color: #0000BB">$xmlstr</span><span style="color: #007700">);<br /><br /></span><span style="color: #FF8000">/*&nbsp;Access&nbsp;the&nbsp;&lt;rating&gt;&nbsp;nodes&nbsp;of&nbsp;the&nbsp;first&nbsp;movie.<br />&nbsp;*&nbsp;Output&nbsp;the&nbsp;rating&nbsp;scale,&nbsp;too.&nbsp;*/<br /></span><span style="color: #007700">foreach&nbsp;(</span><span style="color: #0000BB">$xml</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">movie</span><span style="color: #007700">[</span><span style="color: #0000BB">0</span><span style="color: #007700">]-&gt;</span><span style="color: #0000BB">rating&nbsp;</span><span style="color: #007700">as&nbsp;</span><span style="color: #0000BB">$rating</span><span style="color: #007700">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;switch((string)&nbsp;</span><span style="color: #0000BB">$rating</span><span style="color: #007700">[</span><span style="color: #DD0000">'type'</span><span style="color: #007700">])&nbsp;{&nbsp;</span><span style="color: #FF8000">//&nbsp;Get&nbsp;attributes&nbsp;as&nbsp;element&nbsp;indices<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #007700">case&nbsp;</span><span style="color: #DD0000">'thumbs'</span><span style="color: #007700">:<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;</span><span style="color: #0000BB">$rating</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'&nbsp;thumbs&nbsp;up'</span><span style="color: #007700">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br />&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;</span><span style="color: #DD0000">'stars'</span><span style="color: #007700">:<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;</span><span style="color: #0000BB">$rating</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'&nbsp;stars'</span><span style="color: #007700">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />}<br /></span><span style="color: #0000BB">?&gt;</span>
+</span>
+</code></div>
+    </div>
+
+   </div>
+  </p>
+  <p class="para">
+   <div class="example" id="example-6426">
+    <p><strong>Exemplo #6 Comparing Elements and Attributes with Text</strong></p>
+    <div class="example-contents"><p>
+     To compare an element or attribute with a string or pass it into a 
+     function that requires a string, you must cast it to a string using 
+     <em>(string)</em>. Otherwise, PHP treats the element as an object.
+    </p></div>
+    <div class="example-contents"><div class="phpcode"><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br /></span><span style="color: #007700">include&nbsp;</span><span style="color: #DD0000">'example.php'</span><span style="color: #007700">;<br /><br /></span><span style="color: #0000BB">$xml&nbsp;</span><span style="color: #007700">=&nbsp;new&nbsp;</span><span style="color: #0000BB">SimpleXMLElement</span><span style="color: #007700">(</span><span style="color: #0000BB">$xmlstr</span><span style="color: #007700">);<br /><br />if&nbsp;((string)&nbsp;</span><span style="color: #0000BB">$xml</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">movie</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">title&nbsp;</span><span style="color: #007700">==&nbsp;</span><span style="color: #DD0000">'PHP:&nbsp;Behind&nbsp;the&nbsp;Parser'</span><span style="color: #007700">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;print&nbsp;</span><span style="color: #DD0000">'My&nbsp;favorite&nbsp;movie.'</span><span style="color: #007700">;<br />}<br /><br /></span><span style="color: #0000BB">htmlentities</span><span style="color: #007700">((string)&nbsp;</span><span style="color: #0000BB">$xml</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">movie</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">title</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">?&gt;</span>
+</span>
+</code></div>
+    </div>
+
+   </div>
+  </p>
+  <p class="para">
+   <div class="example" id="example-6427">
+    <p><strong>Exemplo #7 Comparing Two Elements</strong></p>
+    <div class="example-contents"><p>
+     Two SimpleXMLElements are considered different even if they point to the
+     same element since PHP 5.2.0.
+    </p></div>
+    <div class="example-contents"><div class="phpcode"><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br />$el1&nbsp;</span><span style="color: #007700">=&nbsp;new&nbsp;</span><span style="color: #0000BB">SimpleXMLElement</span><span style="color: #007700">(</span><span style="color: #0000BB">$xmlstr</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$el2&nbsp;</span><span style="color: #007700">=&nbsp;new&nbsp;</span><span style="color: #0000BB">SimpleXMLElement</span><span style="color: #007700">(</span><span style="color: #0000BB">$xmlstr</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">var_dump</span><span style="color: #007700">(</span><span style="color: #0000BB">$el1&nbsp;</span><span style="color: #007700">==&nbsp;</span><span style="color: #0000BB">$el2</span><span style="color: #007700">);&nbsp;</span><span style="color: #FF8000">//&nbsp;false&nbsp;since&nbsp;PHP&nbsp;5.2.0<br /></span><span style="color: #0000BB">?&gt;</span>
+</span>
+</code></div>
+    </div>
+
+   </div>
+  </p>
+  <p class="para">
+   <div class="example" id="example-6428">
+    <p><strong>Exemplo #8 Using XPath</strong></p>
+    <div class="example-contents"><p>
+     SimpleXML includes built-in <acronym title="XML Path Language">XPath</acronym> support.
+     To find all <em>&lt;character&gt;</em> elements:
+    </p></div>
+    <div class="example-contents">
+<div class="phpcode"><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br /></span><span style="color: #007700">include&nbsp;</span><span style="color: #DD0000">'example.php'</span><span style="color: #007700">;<br /></span><span style="color: #0000BB">$xml&nbsp;</span><span style="color: #007700">=&nbsp;new&nbsp;</span><span style="color: #0000BB">SimpleXMLElement</span><span style="color: #007700">(</span><span style="color: #0000BB">$xmlstr</span><span style="color: #007700">);<br /><br />foreach&nbsp;(</span><span style="color: #0000BB">$xml</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">xpath</span><span style="color: #007700">(</span><span style="color: #DD0000">'//character'</span><span style="color: #007700">)&nbsp;as&nbsp;</span><span style="color: #0000BB">$character</span><span style="color: #007700">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;</span><span style="color: #0000BB">$character</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">name</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'played&nbsp;by&nbsp;'</span><span style="color: #007700">,&nbsp;</span><span style="color: #0000BB">$character</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">actor</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'&lt;br&nbsp;/&gt;'</span><span style="color: #007700">;<br />}<br /></span><span style="color: #0000BB">?&gt;</span>
+</span>
+</code></div>
+    </div>
+
+    <div class="example-contents"><p>
+     &#039;<em>//</em>&#039; serves as a wildcard. To specify absolute
+     paths, omit one of the slashes.
+    </p></div>
+   </div>
+  </p>
+  <p class="para">
+   <div class="example" id="example-6429">
+    <p><strong>Exemplo #9 Setting values</strong></p>
+    <div class="example-contents"><p>
+     Data in SimpleXML doesn&#039;t have to be constant. The object allows
+     for manipulation of all of its elements.
+    </p></div>
+    <div class="example-contents">
+<div class="phpcode"><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br /></span><span style="color: #007700">include&nbsp;</span><span style="color: #DD0000">'example.php'</span><span style="color: #007700">;<br /></span><span style="color: #0000BB">$xml&nbsp;</span><span style="color: #007700">=&nbsp;new&nbsp;</span><span style="color: #0000BB">SimpleXMLElement</span><span style="color: #007700">(</span><span style="color: #0000BB">$xmlstr</span><span style="color: #007700">);<br /><br /></span><span style="color: #0000BB">$xml</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">movie</span><span style="color: #007700">[</span><span style="color: #0000BB">0</span><span style="color: #007700">]-&gt;</span><span style="color: #0000BB">characters</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">character</span><span style="color: #007700">[</span><span style="color: #0000BB">0</span><span style="color: #007700">]-&gt;</span><span style="color: #0000BB">name&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #DD0000">'Miss&nbsp;Coder'</span><span style="color: #007700">;<br /><br />echo&nbsp;</span><span style="color: #0000BB">$xml</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">asXML</span><span style="color: #007700">();<br /></span><span style="color: #0000BB">?&gt;</span>
+</span>
+</code></div>
+    </div>
+
+    <div class="example-contents"><p>
+     The above code will output a new XML document, just like the original,
+     except that the new XML will change Ms. Coder to Miss Coder.
+    </p></div>
+   </div>
+  </p>
+  <p class="para">
+   <div class="example" id="example-6430">
+    <p><strong>Exemplo #10 Adding elements and attributes</strong></p>
+    <div class="example-contents"><p>
+     Since PHP 5.1.3, SimpleXML has had the ability to easily add children and
+     attributes.
+    </p></div>
+    <div class="example-contents">
+<div class="phpcode"><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br /></span><span style="color: #007700">include&nbsp;</span><span style="color: #DD0000">'example.php'</span><span style="color: #007700">;<br /></span><span style="color: #0000BB">$xml&nbsp;</span><span style="color: #007700">=&nbsp;new&nbsp;</span><span style="color: #0000BB">SimpleXMLElement</span><span style="color: #007700">(</span><span style="color: #0000BB">$xmlstr</span><span style="color: #007700">);<br /><br /></span><span style="color: #0000BB">$character&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">$xml</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">movie</span><span style="color: #007700">[</span><span style="color: #0000BB">0</span><span style="color: #007700">]-&gt;</span><span style="color: #0000BB">characters</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">addChild</span><span style="color: #007700">(</span><span style="color: #DD0000">'character'</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$character</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">addChild</span><span style="color: #007700">(</span><span style="color: #DD0000">'name'</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'Mr.&nbsp;Parser'</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$character</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">addChild</span><span style="color: #007700">(</span><span style="color: #DD0000">'actor'</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'John&nbsp;Doe'</span><span style="color: #007700">);<br /><br /></span><span style="color: #0000BB">$rating&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">$xml</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">movie</span><span style="color: #007700">[</span><span style="color: #0000BB">0</span><span style="color: #007700">]-&gt;</span><span style="color: #0000BB">addChild</span><span style="color: #007700">(</span><span style="color: #DD0000">'rating'</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'PG'</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$rating</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">addAttribute</span><span style="color: #007700">(</span><span style="color: #DD0000">'type'</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'mpaa'</span><span style="color: #007700">);<br /><br />echo&nbsp;</span><span style="color: #0000BB">$xml</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">asXML</span><span style="color: #007700">();<br /></span><span style="color: #0000BB">?&gt;</span>
+</span>
+</code></div>
+    </div>
+
+    <div class="example-contents"><p>
+     The above code will output an XML document based on the original but 
+     having a new character and rating.
+    </p></div>
+   </div>
+  </p>
+  <p class="para">
+   <div class="example" id="example-6431">
+    <p><strong>Exemplo #11 DOM Interoperability</strong></p>
+    <div class="example-contents"><p>
+     PHP has a mechanism to convert XML nodes between SimpleXML
+     and DOM formats. This example shows how one might change
+     a DOM element to SimpleXML.
+    </p></div>
+    <div class="example-contents">
+<div class="phpcode"><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br />$dom&nbsp;</span><span style="color: #007700">=&nbsp;new&nbsp;</span><span style="color: #0000BB">domDocument</span><span style="color: #007700">;<br /></span><span style="color: #0000BB">$dom</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">loadXML</span><span style="color: #007700">(</span><span style="color: #DD0000">'&lt;books&gt;&lt;book&gt;&lt;title&gt;blah&lt;/title&gt;&lt;/book&gt;&lt;/books&gt;'</span><span style="color: #007700">);<br />if&nbsp;(!</span><span style="color: #0000BB">$dom</span><span style="color: #007700">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;</span><span style="color: #DD0000">'Error&nbsp;while&nbsp;parsing&nbsp;the&nbsp;document'</span><span style="color: #007700">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit;<br />}<br /><br /></span><span style="color: #0000BB">$s&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">simplexml_import_dom</span><span style="color: #007700">(</span><span style="color: #0000BB">$dom</span><span style="color: #007700">);<br /><br />echo&nbsp;</span><span style="color: #0000BB">$s</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">book</span><span style="color: #007700">[</span><span style="color: #0000BB">0</span><span style="color: #007700">]-&gt;</span><span style="color: #0000BB">title</span><span style="color: #007700">;<br /></span><span style="color: #0000BB">?&gt;</span>
+</span>
+</code></div>
+    </div>
+
+   </div>
+  </p>
+ </div>
+<section id="usernotes">
+ <div class="head">
+  <span class="action"><a href="/manual/add-note.php?sect=simplexml.examples-basic&amp;redirect=https://www.php.net/manual/pt_BR/simplexml.examples-basic.php"><img src='/images/notes-add@2x.png' alt='add a note' width='12' height='12'> <small>add a note</small></a></span>
+  <h3 class="title">User Contributed Notes <span class="count">14 notes</span></h3>
+ </div><div id="allnotes">
+  <div class="note" id="117406">  <div class="votes">
+    <div id="Vu117406">
+    <a href="/manual/vote-note.php?id=117406&amp;page=simplexml.examples-basic&amp;vote=up" title="Vote up!" class="usernotes-voteu">up</a>
+    </div>
+    <div id="Vd117406">
+    <a href="/manual/vote-note.php?id=117406&amp;page=simplexml.examples-basic&amp;vote=down" title="Vote down!" class="usernotes-voted">down</a>
+    </div>
+    <div class="tally" id="V117406" title="81% like this...">
+    53
+    </div>
+  </div>
+  <a href="#117406" class="name">
+  <strong class="user"><em>rowan dot collins at gmail dot com</em></strong></a><a class="genanchor" href="#117406"> &para;</a><div class="date" title="2015-06-04 06:58"><strong>4 years ago</strong></div>
+  <div class="text" id="Hcom117406">
+<div class="phpcode"><code><span class="html">
+There is a common "trick" often proposed to convert a SimpleXML object to an array, by running it through json_encode() and then json_decode(). I'd like to explain why this is a bad idea.<br /><br />Most simply, because the whole point of SimpleXML is to be easier to use and more powerful than a plain array. For instance, you can write <span class="default">&lt;?php $foo</span><span class="keyword">-&gt;</span><span class="default">bar</span><span class="keyword">-&gt;</span><span class="default">baz</span><span class="keyword">[</span><span class="string">'bing'</span><span class="keyword">] </span><span class="default">?&gt;</span> and it means the same thing as <span class="default">&lt;?php $foo</span><span class="keyword">-&gt;</span><span class="default">bar</span><span class="keyword">[</span><span class="default">0</span><span class="keyword">]-&gt;</span><span class="default">baz</span><span class="keyword">[</span><span class="default">0</span><span class="keyword">][</span><span class="string">'bing'</span><span class="keyword">] </span><span class="default">?&gt;</span>, regardless of how many bar or baz elements there are in the XML; and if you write <span class="default">&lt;?php </span><span class="keyword">(string)</span><span class="default">$foo</span><span class="keyword">-&gt;</span><span class="default">bar</span><span class="keyword">[</span><span class="default">0</span><span class="keyword">]-&gt;</span><span class="default">baz</span><span class="keyword">[</span><span class="default">0</span><span class="keyword">] </span><span class="default">?&gt;</span> you get all the string content of that node - including CDATA sections - regardless of whether it also has child elements or attributes. You also have access to namespace information, the ability to make simple edits to the XML, and even the ability to "import" into a DOM object, for much more powerful manipulation. All of this is lost by turning the object into an array rather than reading understanding the examples on this page.<br /><br />Additionally, because it is not designed for this purpose, the conversion to JSON and back will actually lose information in some situations. For instance, any elements or attributes in a namespace will simply be discarded, and any text content will be discarded if an element also has children or attributes. Sometimes, this won't matter, but if you get in the habit of converting everything to arrays, it's going to sting you eventually.<br /><br />Of course, you could write a smarter conversion, which didn't have these limitations, but at that point, you are getting no value out of SimpleXML at all, and should just use the lower level XML Parser functions, or the XMLReader class, to create your structure. You still won't have the extra convenience functionality of SimpleXML, but that's your loss.</span>
+</code></div>
+  </div>
+ </div>
+  <div class="note" id="111643">  <div class="votes">
+    <div id="Vu111643">
+    <a href="/manual/vote-note.php?id=111643&amp;page=simplexml.examples-basic&amp;vote=up" title="Vote up!" class="usernotes-voteu">up</a>
+    </div>
+    <div id="Vd111643">
+    <a href="/manual/vote-note.php?id=111643&amp;page=simplexml.examples-basic&amp;vote=down" title="Vote down!" class="usernotes-voted">down</a>
+    </div>
+    <div class="tally" id="V111643" title="68% like this...">
+    80
+    </div>
+  </div>
+  <a href="#111643" class="name">
+  <strong class="user"><em>jishcem at gmail dot com</em></strong></a><a class="genanchor" href="#111643"> &para;</a><div class="date" title="2013-03-12 07:31"><strong>6 years ago</strong></div>
+  <div class="text" id="Hcom111643">
+<div class="phpcode"><code><span class="html">
+For me it was easier to use arrays than objects, <br /><br />So, I used this code, <br /><br />$xml = simplexml_load_file('xml_file.xml');<br />&nbsp; &nbsp; <br />$json_string = json_encode($xml);<br />&nbsp; &nbsp; <br />$result_array = json_decode($json_string, TRUE);<br /><br />Hope it would help someone</span>
+</code></div>
+  </div>
+ </div>
+  <div class="note" id="121547">  <div class="votes">
+    <div id="Vu121547">
+    <a href="/manual/vote-note.php?id=121547&amp;page=simplexml.examples-basic&amp;vote=up" title="Vote up!" class="usernotes-voteu">up</a>
+    </div>
+    <div id="Vd121547">
+    <a href="/manual/vote-note.php?id=121547&amp;page=simplexml.examples-basic&amp;vote=down" title="Vote down!" class="usernotes-voted">down</a>
+    </div>
+    <div class="tally" id="V121547" title="77% like this...">
+    5
+    </div>
+  </div>
+  <a href="#121547" class="name">
+  <strong class="user"><em>Anonymous</em></strong></a><a class="genanchor" href="#121547"> &para;</a><div class="date" title="2017-08-22 12:35"><strong>2 years ago</strong></div>
+  <div class="text" id="Hcom121547">
+<div class="phpcode"><code><span class="html">
+If your xml string contains booleans encoded with "0" and "1", you will run into problems when you cast the element directly to bool:<br /><br />$xmlstr = &lt;&lt;&lt;XML<br />&lt;?xml version='1.0' standalone='yes'?&gt;<br />&lt;values&gt;<br />&nbsp; &nbsp; &lt;truevalue&gt;1&lt;/truevalue&gt;<br />&nbsp; &nbsp; &lt;falsevalue&gt;0&lt;/falsevalue&gt;<br />&lt;/values&gt;<br />XML;<br />$values = new SimpleXMLElement($xmlstr);<br />$truevalue = (bool)$values-&gt;truevalue; // true<br />$falsevalue = (bool)$values-&gt;falsevalue; // also true!!!<br /><br />Instead you need to cast to string or int first:<br /><br />$truevalue = (bool)(int)$values-&gt;truevalue; // true<br />$falsevalue = (bool)(int)$values-&gt;falsevalue; // false</span>
+</code></div>
+  </div>
+ </div>
+  <div class="note" id="97111">  <div class="votes">
+    <div id="Vu97111">
+    <a href="/manual/vote-note.php?id=97111&amp;page=simplexml.examples-basic&amp;vote=up" title="Vote up!" class="usernotes-voteu">up</a>
+    </div>
+    <div id="Vd97111">
+    <a href="/manual/vote-note.php?id=97111&amp;page=simplexml.examples-basic&amp;vote=down" title="Vote down!" class="usernotes-voted">down</a>
+    </div>
+    <div class="tally" id="V97111" title="63% like this...">
+    17
+    </div>
+  </div>
+  <a href="#97111" class="name">
+  <strong class="user"><em>ie dot raymond at gmail dot com</em></strong></a><a class="genanchor" href="#97111"> &para;</a><div class="date" title="2010-04-01 03:07"><strong>9 years ago</strong></div>
+  <div class="text" id="Hcom97111">
+<div class="phpcode"><code><span class="html">
+If you need to output valid xml in your response, don't forget to set your header content type to xml in addition to echoing out the result of asXML():<br /><br /><span class="default">&lt;?php<br /><br />$xml</span><span class="keyword">=</span><span class="default">simplexml_load_file</span><span class="keyword">(</span><span class="string">'...'</span><span class="keyword">);<br />...<br />...</span><span class="default">xml stuff<br /></span><span class="keyword">...<br /><br /></span><span class="comment">//output xml in your response:<br /></span><span class="default">header</span><span class="keyword">(</span><span class="string">'Content-Type: text/xml'</span><span class="keyword">);<br />echo </span><span class="default">$xml</span><span class="keyword">-&gt;</span><span class="default">asXML</span><span class="keyword">();<br /></span><span class="default">?&gt;</span>
+</span>
+</code></div>
+  </div>
+ </div>
+  <div class="note" id="98523">  <div class="votes">
+    <div id="Vu98523">
+    <a href="/manual/vote-note.php?id=98523&amp;page=simplexml.examples-basic&amp;vote=up" title="Vote up!" class="usernotes-voteu">up</a>
+    </div>
+    <div id="Vd98523">
+    <a href="/manual/vote-note.php?id=98523&amp;page=simplexml.examples-basic&amp;vote=down" title="Vote down!" class="usernotes-voted">down</a>
+    </div>
+    <div class="tally" id="V98523" title="59% like this...">
+    4
+    </div>
+  </div>
+  <a href="#98523" class="name">
+  <strong class="user"><em>Max K.</em></strong></a><a class="genanchor" href="#98523"> &para;</a><div class="date" title="2010-06-20 02:38"><strong>9 years ago</strong></div>
+  <div class="text" id="Hcom98523">
+<div class="phpcode"><code><span class="html">
+From the README file:<br /><br />SimpleXML is meant to be an easy way to access XML data.<br /><br />SimpleXML objects follow four basic rules:<br /><br />1) properties denote element iterators<br />2) numeric indices denote elements<br />3) non numeric indices denote attributes<br />4) string conversion allows to access TEXT data<br /><br />When iterating properties then the extension always iterates over<br />all nodes with that element name. Thus method children() must be <br />called to iterate over subnodes. But also doing the following:<br />foreach ($obj-&gt;node_name as $elem) {<br />&nbsp; // do something with $elem<br />}<br />always results in iteration of 'node_name' elements. So no further <br />check is needed to distinguish the number of nodes of that type.<br /><br />When an elements TEXT data is being accessed through a property<br />then the result does not include the TEXT data of subelements.<br /><br />Known issues<br />============<br /><br />Due to engine problems it is currently not possible to access<br />a subelement by index 0: $object-&gt;property[0].</span>
+</code></div>
+  </div>
+ </div>
+  <div class="note" id="102167">  <div class="votes">
+    <div id="Vu102167">
+    <a href="/manual/vote-note.php?id=102167&amp;page=simplexml.examples-basic&amp;vote=up" title="Vote up!" class="usernotes-voteu">up</a>
+    </div>
+    <div id="Vd102167">
+    <a href="/manual/vote-note.php?id=102167&amp;page=simplexml.examples-basic&amp;vote=down" title="Vote down!" class="usernotes-voted">down</a>
+    </div>
+    <div class="tally" id="V102167" title="57% like this...">
+    5
+    </div>
+  </div>
+  <a href="#102167" class="name">
+  <strong class="user"><em>kdos</em></strong></a><a class="genanchor" href="#102167"> &para;</a><div class="date" title="2011-01-31 05:32"><strong>8 years ago</strong></div>
+  <div class="text" id="Hcom102167">
+<div class="phpcode"><code><span class="html">
+Using stuff like: is_object($xml-&gt;module-&gt;admin) to check if there actually is a node called "admin", doesn't seem to work as expected, since simplexml always returns an object- in that case an empty one&nbsp; - even if a particular node does not exist. <br />For me good old empty() function seems to work just fine in such cases.<br /><br />Cheers</span>
+</code></div>
+  </div>
+ </div>
+  <div class="note" id="102599">  <div class="votes">
+    <div id="Vu102599">
+    <a href="/manual/vote-note.php?id=102599&amp;page=simplexml.examples-basic&amp;vote=up" title="Vote up!" class="usernotes-voteu">up</a>
+    </div>
+    <div id="Vd102599">
+    <a href="/manual/vote-note.php?id=102599&amp;page=simplexml.examples-basic&amp;vote=down" title="Vote down!" class="usernotes-voted">down</a>
+    </div>
+    <div class="tally" id="V102599" title="56% like this...">
+    5
+    </div>
+  </div>
+  <a href="#102599" class="name">
+  <strong class="user"><em>gkokmdam at zonnet dot nl</em></strong></a><a class="genanchor" href="#102599"> &para;</a><div class="date" title="2011-02-23 01:54"><strong>8 years ago</strong></div>
+  <div class="text" id="Hcom102599">
+<div class="phpcode"><code><span class="html">
+A quick tip on xpath queries and default namespaces. It looks like the XML-system behind SimpleXML has the same workings as I believe the XML-system .NET uses: when one needs to address something in the default namespace, one will have to declare the namespace using registerXPathNamespace and then use its prefix to address the otherwise in the default namespace living element.<br /><br /><span class="default">&lt;?php<br />$string </span><span class="keyword">= &lt;&lt;&lt;XML<br /></span><span class="string">&lt;?xml version='1.0'?&gt; <br />&lt;document xmlns="<a href="http://www.w3.org/2005/Atom" rel="nofollow" target="_blank">http://www.w3.org/2005/Atom</a>"&gt;<br /> &lt;title&gt;Forty What?&lt;/title&gt;<br /> &lt;from&gt;Joe&lt;/from&gt;<br /> &lt;to&gt;Jane&lt;/to&gt;<br /> &lt;body&gt;<br />&nbsp; I know that's the answer -- but what's the question?<br /> &lt;/body&gt;<br />&lt;/document&gt;<br /></span><span class="keyword">XML;<br /><br /></span><span class="default">$xml </span><span class="keyword">= </span><span class="default">simplexml_load_string</span><span class="keyword">(</span><span class="default">$string</span><span class="keyword">);<br /></span><span class="default">$xml</span><span class="keyword">-&gt;</span><span class="default">registerXPathNamespace</span><span class="keyword">(</span><span class="string">"def"</span><span class="keyword">, </span><span class="string">"<a href="http://www.w3.org/2005/Atom" rel="nofollow" target="_blank">http://www.w3.org/2005/Atom</a>"</span><span class="keyword">);<br /><br /></span><span class="default">$nodes </span><span class="keyword">= </span><span class="default">$xml</span><span class="keyword">-&gt;</span><span class="default">xpath</span><span class="keyword">(</span><span class="string">"//def:document/def:title"</span><span class="keyword">);<br /><br /></span><span class="default">?&gt;</span>
+</span>
+</code></div>
+  </div>
+ </div>
+  <div class="note" id="95282">  <div class="votes">
+    <div id="Vu95282">
+    <a href="/manual/vote-note.php?id=95282&amp;page=simplexml.examples-basic&amp;vote=up" title="Vote up!" class="usernotes-voteu">up</a>
+    </div>
+    <div id="Vd95282">
+    <a href="/manual/vote-note.php?id=95282&amp;page=simplexml.examples-basic&amp;vote=down" title="Vote down!" class="usernotes-voted">down</a>
+    </div>
+    <div class="tally" id="V95282" title="52% like this...">
+    1
+    </div>
+  </div>
+  <a href="#95282" class="name">
+  <strong class="user"><em>php at keith tyler dot com</em></strong></a><a class="genanchor" href="#95282"> &para;</a><div class="date" title="2009-12-23 12:57"><strong>10 years ago</strong></div>
+  <div class="text" id="Hcom95282">
+<div class="phpcode"><code><span class="html">
+[Editor's Note: The SimpleXMLIterator class, however, does implement these methods.]<br /><br />While SimpleXMLElement claims to be iterable, it does not seem to implement the standard Iterator interface functions like ::next and ::reset properly. Therefore while foreach() works, functions like next(), current(), or each() don't seem to work as you would expect -- the pointer never seems to move or keeps getting reset.</span>
+</code></div>
+  </div>
+ </div>
+  <div class="note" id="113792">  <div class="votes">
+    <div id="Vu113792">
+    <a href="/manual/vote-note.php?id=113792&amp;page=simplexml.examples-basic&amp;vote=up" title="Vote up!" class="usernotes-voteu">up</a>
+    </div>
+    <div id="Vd113792">
+    <a href="/manual/vote-note.php?id=113792&amp;page=simplexml.examples-basic&amp;vote=down" title="Vote down!" class="usernotes-voted">down</a>
+    </div>
+    <div class="tally" id="V113792" title="43% like this...">
+    -6
+    </div>
+  </div>
+  <a href="#113792" class="name">
+  <strong class="user"><em>RiKdnUA at mail dot ru</em></strong></a><a class="genanchor" href="#113792"> &para;</a><div class="date" title="2013-12-02 09:40"><strong>6 years ago</strong></div>
+  <div class="text" id="Hcom113792">
+<div class="phpcode"><code><span class="html">
+Если кодировка XML-документа отличается от UTF-8, объявление кодировки должно следовать сразу после version='...' и перед standalone='...'. Это требование стандарта XML. <br /><br />If encoding XML-document differs from UTF-8. Encoding declaration should follow immediately after the version = '...' and before standalone = '...'. This requirement is standard XML. <br /><br />&lt;?xml version='1.0' encoding='windows-1251' standalone='yes'?&gt;<br />Ok<br />&lt;?xml version='1.0' standalone='yes' encoding='windows-1251'?&gt;<br />&lt;body&gt;Русский язык. Russian language&lt;/body&gt;<br />Fatal error: Uncaught exception 'Exception' with message 'String could not be parsed as XML' in...</span>
+</code></div>
+  </div>
+ </div>
+  <div class="note" id="90490">  <div class="votes">
+    <div id="Vu90490">
+    <a href="/manual/vote-note.php?id=90490&amp;page=simplexml.examples-basic&amp;vote=up" title="Vote up!" class="usernotes-voteu">up</a>
+    </div>
+    <div id="Vd90490">
+    <a href="/manual/vote-note.php?id=90490&amp;page=simplexml.examples-basic&amp;vote=down" title="Vote down!" class="usernotes-voted">down</a>
+    </div>
+    <div class="tally" id="V90490" title="43% like this...">
+    -5
+    </div>
+  </div>
+  <a href="#90490" class="name">
+  <strong class="user"><em>radams at circlepix com</em></strong></a><a class="genanchor" href="#90490"> &para;</a><div class="date" title="2009-04-24 10:52"><strong>10 years ago</strong></div>
+  <div class="text" id="Hcom90490">
+<div class="phpcode"><code><span class="html">
+To test whether an element exists: <br /><br /><span class="default">&lt;?php<br /><br />&nbsp; &nbsp; $xml </span><span class="keyword">= &lt;&lt;&lt;EOT<br /></span><span class="string">&lt;?xml version='1.0' standalone='yes'?&gt;<br />&lt;root&gt;<br />&nbsp; &nbsp; &lt;test1&gt;&lt;/test1&gt;<br />&nbsp; &nbsp; &lt;test2 /&gt;<br />&nbsp; &nbsp; &lt;test4&gt; &lt;/test4&gt;<br />&lt;/root&gt;<br /></span><span class="keyword">EOT;<br /><br />&nbsp; &nbsp; </span><span class="default">$xmlDoc </span><span class="keyword">= new </span><span class="default">SimpleXMLElement</span><span class="keyword">(</span><span class="default">$xml</span><span class="keyword">);<br /><br />echo </span><span class="string">"Test1: \n"</span><span class="keyword">;<br /></span><span class="default">var_dump</span><span class="keyword">(</span><span class="default">$xmlDoc</span><span class="keyword">-&gt;</span><span class="default">test1</span><span class="keyword">);<br />echo </span><span class="string">"\n(" </span><span class="keyword">. (bool)</span><span class="default">$xmlDoc</span><span class="keyword">-&gt;</span><span class="default">test1 </span><span class="keyword">. </span><span class="string">")"</span><span class="keyword">;<br />echo </span><span class="string">"\n\n"</span><span class="keyword">;<br /><br />echo </span><span class="string">"Test2: \n"</span><span class="keyword">;<br /></span><span class="default">var_dump</span><span class="keyword">(</span><span class="default">$xmlDoc</span><span class="keyword">-&gt;</span><span class="default">test2</span><span class="keyword">);<br />echo </span><span class="string">"\n(" </span><span class="keyword">. (bool)</span><span class="default">$xmlDoc</span><span class="keyword">-&gt;</span><span class="default">test2 </span><span class="keyword">. </span><span class="string">")"</span><span class="keyword">;<br />echo </span><span class="string">"\n\n"</span><span class="keyword">;<br /><br />echo </span><span class="string">"Test3: \n"</span><span class="keyword">;<br /></span><span class="default">var_dump</span><span class="keyword">(</span><span class="default">$xmlDoc</span><span class="keyword">-&gt;</span><span class="default">test3</span><span class="keyword">);<br />echo </span><span class="string">"\n(" </span><span class="keyword">. (bool)</span><span class="default">$xmlDoc</span><span class="keyword">-&gt;</span><span class="default">test3 </span><span class="keyword">. </span><span class="string">")"</span><span class="keyword">;<br />echo </span><span class="string">"\n\n"</span><span class="keyword">;<br /><br />echo </span><span class="string">"Test4: \n"</span><span class="keyword">;<br /></span><span class="default">var_dump</span><span class="keyword">(</span><span class="default">$xmlDoc</span><span class="keyword">-&gt;</span><span class="default">test4</span><span class="keyword">);<br />echo </span><span class="string">"\n(" </span><span class="keyword">. (bool)</span><span class="default">$xmlDoc</span><span class="keyword">-&gt;</span><span class="default">test4 </span><span class="keyword">. </span><span class="string">")"</span><span class="keyword">;<br />echo </span><span class="string">"\n\n"</span><span class="keyword">;<br /><br /></span><span class="default">?&gt;<br /></span><br />The var_dumps for test1, test2, and test3 are identical, but the (bool) test gives a '1' for test1 and test2, and a '' for test3.</span>
+</code></div>
+  </div>
+ </div>
+  <div class="note" id="93263">  <div class="votes">
+    <div id="Vu93263">
+    <a href="/manual/vote-note.php?id=93263&amp;page=simplexml.examples-basic&amp;vote=up" title="Vote up!" class="usernotes-voteu">up</a>
+    </div>
+    <div id="Vd93263">
+    <a href="/manual/vote-note.php?id=93263&amp;page=simplexml.examples-basic&amp;vote=down" title="Vote down!" class="usernotes-voted">down</a>
+    </div>
+    <div class="tally" id="V93263" title="38% like this...">
+    -8
+    </div>
+  </div>
+  <a href="#93263" class="name">
+  <strong class="user"><em>bjorn at xQmail dot eu</em></strong></a><a class="genanchor" href="#93263"> &para;</a><div class="date" title="2009-08-31 07:48"><strong>10 years ago</strong></div>
+  <div class="text" id="Hcom93263">
+<div class="phpcode"><code><span class="html">
+If you're not sure the XML will be valid you'd better use:<br /><br /><span class="default">&lt;?php<br />$xmlObject </span><span class="keyword">= </span><span class="default">simplexml_load_string</span><span class="keyword">(</span><span class="default">$xml</span><span class="keyword">);<br /></span><span class="comment">// or<br /></span><span class="default">$xmlObject </span><span class="keyword">= </span><span class="default">simplexml_load_file</span><span class="keyword">(</span><span class="default">xml</span><span class="keyword">);<br /></span><span class="default">?&gt;<br /></span><br />Both of these return a SimpleXMLElement Object or a libXMLError Object.</span>
+</code></div>
+  </div>
+ </div>
+  <div class="note" id="116435">  <div class="votes">
+    <div id="Vu116435">
+    <a href="/manual/vote-note.php?id=116435&amp;page=simplexml.examples-basic&amp;vote=up" title="Vote up!" class="usernotes-voteu">up</a>
+    </div>
+    <div id="Vd116435">
+    <a href="/manual/vote-note.php?id=116435&amp;page=simplexml.examples-basic&amp;vote=down" title="Vote down!" class="usernotes-voted">down</a>
+    </div>
+    <div class="tally" id="V116435" title="36% like this...">
+    -14
+    </div>
+  </div>
+  <a href="#116435" class="name">
+  <strong class="user"><em>mymymymy at mymymymy dot com</em></strong></a><a class="genanchor" href="#116435"> &para;</a><div class="date" title="2015-01-02 09:41"><strong>5 years ago</strong></div>
+  <div class="text" id="Hcom116435">
+<div class="phpcode"><code><span class="html">
+$children = $xml-&gt;children();<br />var_dump($children[0]["@attributes"]);//"NULL"<br />var_dump($children[0]);//(2) ["@attributes"]=&gt;array(1) {['x']=&gt; string(1) '2'}<br /><br />no faithfully (not true)<br />------<br />example:<br /><br />SimpleXMLElement Object<br />(<br />&nbsp; &nbsp; [@attributes] =&gt; Array<br />&nbsp; &nbsp; &nbsp; &nbsp; (<br />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [name] =&gt; USA<br />&nbsp; &nbsp; &nbsp; &nbsp; )<br />)<br /><br />print_r($xml-&gt;country-&gt;attributes()-&gt;name);<br />show:<br /> SimpleXMLElement Object<br />(<br />&nbsp; &nbsp; [0] =&gt; USA<br />)<br /><br />print_r((string)$xml-&gt;country-&gt;attributes()-&gt;name);<br />show:<br />USA</span>
+</code></div>
+  </div>
+ </div>
+  <div class="note" id="113423">  <div class="votes">
+    <div id="Vu113423">
+    <a href="/manual/vote-note.php?id=113423&amp;page=simplexml.examples-basic&amp;vote=up" title="Vote up!" class="usernotes-voteu">up</a>
+    </div>
+    <div id="Vd113423">
+    <a href="/manual/vote-note.php?id=113423&amp;page=simplexml.examples-basic&amp;vote=down" title="Vote down!" class="usernotes-voted">down</a>
+    </div>
+    <div class="tally" id="V113423" title="33% like this...">
+    -11
+    </div>
+  </div>
+  <a href="#113423" class="name">
+  <strong class="user"><em>eng dot emad_2010 at yahoo dot com</em></strong></a><a class="genanchor" href="#113423"> &para;</a><div class="date" title="2013-10-08 11:46"><strong>6 years ago</strong></div>
+  <div class="text" id="Hcom113423">
+<div class="phpcode"><code><span class="html">
+Example #&nbsp; DOM Interoperability التشغيل البيني&nbsp; &nbsp; <br />PHP has a mechanism to convert XML nodes between SimpleXML and DOM formats. This example shows how one might change a DOM element to SimpleXML&nbsp; . <br />The simplexml_import_dom() function returns a SimpleXMLElement object from a DOM node.<br />DOM&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; object<br /><br /><span class="default">&lt;?php<br /></span><span class="comment">//create DOM&nbsp; document $dom that contain XML<br /></span><span class="default">$dom </span><span class="keyword">= new </span><span class="default">DOMDocument</span><span class="keyword">;<br /></span><span class="default">$dom</span><span class="keyword">-&gt;</span><span class="default">loadXML</span><span class="keyword">(</span><span class="string">'&lt;books&gt;&lt;book&gt;&lt;title&gt;blah&lt;/title&gt;&lt;/book&gt;&lt;/books&gt;'</span><span class="keyword">);<br />if (!</span><span class="default">$dom</span><span class="keyword">) {<br />&nbsp; &nbsp; echo </span><span class="string">'Error while parsing the document'</span><span class="keyword">;<br />&nbsp; &nbsp; exit;<br />}<br /></span><span class="comment">//convert DOM document $dom to object $books <br /></span><span class="default">$books </span><span class="keyword">= </span><span class="default">simplexml_import_dom</span><span class="keyword">(</span><span class="default">$dom</span><span class="keyword">);<br /><br /></span><span class="comment">//access object $books <br /></span><span class="keyword">echo </span><span class="default">$books</span><span class="keyword">-&gt;</span><span class="default">book</span><span class="keyword">[</span><span class="default">0</span><span class="keyword">]-&gt;</span><span class="default">title</span><span class="keyword">;<br /></span><span class="default">?&gt;</span>
+</span>
+</code></div>
+  </div>
+ </div>
+  <div class="note" id="121784">  <div class="votes">
+    <div id="Vu121784">
+    <a href="/manual/vote-note.php?id=121784&amp;page=simplexml.examples-basic&amp;vote=up" title="Vote up!" class="usernotes-voteu">up</a>
+    </div>
+    <div id="Vd121784">
+    <a href="/manual/vote-note.php?id=121784&amp;page=simplexml.examples-basic&amp;vote=down" title="Vote down!" class="usernotes-voted">down</a>
+    </div>
+    <div class="tally" id="V121784" title="23% like this...">
+    -7
+    </div>
+  </div>
+  <a href="#121784" class="name">
+  <strong class="user"><em>dianarusu21 at gmail dot com</em></strong></a><a class="genanchor" href="#121784"> &para;</a><div class="date" title="2017-10-20 09:16"><strong>2 years ago</strong></div>
+  <div class="text" id="Hcom121784">
+<div class="phpcode"><code><span class="html">
+Quick start with xml.<br /><br />//PHP file:<br /><span class="default">&lt;?php<br />$xml </span><span class="keyword">= </span><span class="default">simplexml_load_file</span><span class="keyword">(</span><span class="string">"simpleXml.xml"</span><span class="keyword">);<br /><br />foreach (</span><span class="default">$xml </span><span class="keyword">as </span><span class="default">$key </span><span class="keyword">=&gt; </span><span class="default">$value</span><span class="keyword">) {<br />&nbsp; foreach (</span><span class="default">$value </span><span class="keyword">as </span><span class="default">$key </span><span class="keyword">=&gt; </span><span class="default">$value</span><span class="keyword">) {<br />&nbsp; &nbsp; echo </span><span class="default">$key</span><span class="keyword">.</span><span class="string">": "</span><span class="keyword">.</span><span class="default">$value</span><span class="keyword">.</span><span class="string">"&lt;/br&gt;"</span><span class="keyword">;<br />&nbsp; }<br />}<br /></span><span class="default">?&gt;<br /></span><br />//XML file:<br />&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br />&lt;locations&gt;<br />&nbsp; &lt;country&gt;<br />&nbsp; &nbsp; &lt;name&gt;Romania&lt;/name&gt;<br />&nbsp; &nbsp; &lt;capital&gt;Bucharest&lt;/capital&gt;<br />&nbsp; &nbsp; &lt;language&gt;Romanian&lt;/language&gt;<br />&nbsp; &lt;/country&gt;<br />&nbsp; &lt;country&gt;<br />&nbsp; &nbsp; &lt;name&gt;Frace&lt;/name&gt;<br />&nbsp; &nbsp; &lt;capital&gt;Paris&lt;/capital&gt;<br />&nbsp; &nbsp; &lt;language&gt;France&lt;/language&gt;<br />&nbsp; &lt;/country&gt;<br />&nbsp; &lt;country&gt;<br />&nbsp; &nbsp; &lt;name&gt;Spain&lt;/name&gt;<br />&nbsp; &nbsp; &lt;capital&gt;Madrid&lt;/capital&gt;<br />&nbsp; &nbsp; &lt;language&gt;Spanish&lt;/language&gt;<br />&nbsp; &lt;/country&gt;<br />&lt;/locations&gt;<br /><br />//Output:<br />// name: Romania<br />// capital: Bucharest<br />// language: Romanian<br />// name: Frace<br />// capital: Paris<br />// language: France<br />// name: Spain<br />// capital: Madrid<br />// language: Spanish<br /><br />NOTE: You don't need to include the xml file in the php file..</span>
+</code></div>
+  </div>
+ </div></div>
+
+ <div class="foot"><a href="/manual/add-note.php?sect=simplexml.examples-basic&amp;redirect=https://www.php.net/manual/pt_BR/simplexml.examples-basic.php"><img src='/images/notes-add@2x.png' alt='add a note' width='12' height='12'> <small>add a note</small></a></div>
+</section>    </section><!-- layout-content -->
+        <aside class='layout-menu'>
+
+        <ul class='parent-menu-list'>
+                                    <li>
+                <a href="simplexml.examples.php">Exemplos</a>
+
+                                    <ul class='child-menu-list'>
+
+                                                <li class="current">
+                            <a href="simplexml.examples-basic.php" title="Basic usage">Basic usage</a>
+                        </li>
+                                                <li class="">
+                            <a href="simplexml.examples-errors.php" title="Dealing with XML errors">Dealing with XML errors</a>
+                        </li>
+                        
+                    </ul>
+                
+            </li>
+                        
+                    </ul>
+    </aside>
+
+
+  </div><!-- layout -->
+
+  <footer>
+    <div class="container footer-content">
+      <div class="row-fluid">
+      <ul class="footmenu">
+        <li><a href="/copyright.php">Copyright &copy; 2001-2020 The PHP Group</a></li>
+        <li><a href="/my.php">My PHP.net</a></li>
+        <li><a href="/contact.php">Contact</a></li>
+        <li><a href="/sites.php">Other PHP.net sites</a></li>
+        <li><a href="/privacy.php">Privacy policy</a></li>
+      </ul>
+      </div>
+    </div>
+  </footer>
+
+    
+ <!-- External and third party libraries. -->
+ <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="/cached.php?t=1421837618&amp;f=/js/ext/modernizr.js"></script>
+<script src="/cached.php?t=1421837618&amp;f=/js/ext/hogan-2.0.0.min.js"></script>
+<script src="/cached.php?t=1421837618&amp;f=/js/ext/typeahead.min.js"></script>
+<script src="/cached.php?t=1421837618&amp;f=/js/ext/mousetrap.min.js"></script>
+<script src="/cached.php?t=1421837618&amp;f=/js/search.js"></script>
+<script src="/cached.php?t=1539765004&amp;f=/js/common.js"></script>
+
+<a id="toTop" href="javascript:;"><span id="toTopHover"></span><img width="40" height="40" alt="To Top" src="/images/to-top@2x.png"></a>
+
+</body>
+</html>

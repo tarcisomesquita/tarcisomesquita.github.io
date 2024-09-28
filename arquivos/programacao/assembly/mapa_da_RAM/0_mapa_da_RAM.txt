@@ -1,0 +1,23 @@
+0x00000 - 0x003FF Real Mode IVT (Interrupt Vector Table)
+0x00400 - 0x005FF BDA (BIOS data area) # Vários textos dizem que vai só até 0x004FF
+0x00600 - 0x9FC00 Livre (637,5 kiB)
+0x9FC00 - 0x9FFFF EBDA (Extended BIOS Data Area)
+0xA0000 - 0xAFFFF VGA framebuffer (64 KiB)
+0xB0000 - 0xB7FFF VGA text monochrome (32 KiB)
+0xB8000 - 0xBFFFF VGA text color (32 KiB)
+0xC0000 - 0xC7FFF Video BIOS
+0xC8000 - 0xEFFFF Memory Mapped I/O
+0xF0000 - 0xFFFFF BIOS
+
+(> 0x100000 = 1 MiB) "High or extended or Upper". Addressable only in protected mode.
+
+Use the BIOS function INT 15h, EAX=0xE820 to get a reliable map of Upper Memory.
+ver INT 0x15, AX=0xE801
+
+Escreve no vídeo
+00000000  B800B8            mov ax,0xb800
+00000003  8ED8              mov ds,ax
+00000005  BB0000            mov bx,0x0000
+00000008  C60752            mov byte [bx],0x52
+0000000B  C606020053        mov byte [0x0002],0x53
+

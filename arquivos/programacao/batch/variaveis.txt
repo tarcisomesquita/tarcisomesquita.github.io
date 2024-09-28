@@ -1,0 +1,16 @@
+
+teste.bat arg1
+
+%~n0  teste
+%~n1  arg1
+
+
+%~dpsfnx0
+
+echo "d %~d0"
+echo "p %~p0"
+echo "s %~s0"
+echo "f %~f0"
+echo "n %~n0"
+echo "x %~x0"
+

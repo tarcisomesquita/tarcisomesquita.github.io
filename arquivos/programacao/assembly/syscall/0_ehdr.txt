@@ -1,0 +1,147 @@
+# ehdr:
+
+# 0x0000
+# e_ident_0_3:
+echo -n -e \\x7FELF
+
+# 0x0004 64-bit objects
+# e_ident_4:
+echo -n -e \\x02
+
+# 0x0005 Litle Endian
+# e_ident_5:
+echo -n -e \\x01
+
+# 0x0006 Current version
+# e_ident_6:
+echo -n -e \\x01
+
+# 0x0007 OS Linux
+# e_ident_7:
+echo -n -e \\x03
+
+# 0x0008 não é usado
+# e_ident_8_15:
+echo -n -e \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00
+
+
+# 0x0010 Executable file
+# e_type:
+echo -n -e \\x02\\x00
+
+# 0x0012 x86-64
+# e_machine:
+echo -n -e \\x3E\\x00
+
+# 0x0014 Current version
+# e_version:
+echo -n -e \\x01\\x00\\x00\\x00
+
+# 0x0018 Entry point          # 0x00000000004000B0
+# e_entry:
+echo -n -e \\xB0\\x00\\x40\\x00\\x00\\x00\\x00\\x00
+
+# 0x0020 Program Header table # 0x0000000000000040
+# e_phoff:
+echo -n -e \\x40\\x00\\x00\\x00\\x00\\x00\\x00\\x00
+
+# 0x0028 Section Header table # 0x0000000000000000
+# e_shoff:
+echo -n -e \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00
+
+# 0x0030 no flags
+# e_flags:
+echo -n -e \\x00\\x00\\x00\\x00
+
+# 0x0034 Tamanho do Elf Header
+# e_ehsize:
+echo -n -e \\x40\\x00
+
+# 0x0036 Tamanho de uma linha da tabela Program Header
+# e_phentsize:
+echo -n -e \\x38\\x00
+
+# 0x0038 Quantas linhas tem a tabela Program Header
+# e_phnum:
+echo -n -e \\x02\\x00
+
+# 0x003A Tamanho de uma linha da tabela Section Header
+# e_shentsize:
+echo -n -e \\x40\\x00
+
+# 0x003C Quantas linhas tem a tabela Section Header.
+# e_shnum:
+echo -n -e \\x00\\x00
+
+# 0x003E Linha da tabela Section Header com o offset da Section .shstrtab
+# e_shstrndx:
+echo -n -e \\x00\\x00
+
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#phdr:
+
+# 0x0040 Loadable segment
+# p_type____00:
+echo -n -e \\x01\\x00\\x00\\x00
+
+# 0x0044 Permissions to segment (1=executar, 2=escrever, 4=ler)
+# p_flags___00:
+echo -n -e \\x05\\x00\\x00\\x00
+
+# 0x0048 Segment file offset
+# p_offset__00:
+echo -n -e \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00
+
+# 0x0050 Segment virtual address
+# p_vaddr___00:
+echo -n -e \\x00\\x00\\x40\\x00\\x00\\x00\\x00\\x00
+
+# 0x0058 Segment physical address
+# p_paddr___00:
+echo -n -e \\x00\\x00\\x40\\x00\\x00\\x00\\x00\\x00
+
+# 0x0060 Segment size in file     # 0x000000000000000C
+# p_filesz__00:
+echo -n -e \\x0C\\x00\\x00\\x00\\x00\\x00\\x00\\x00
+
+# 0x0068 Segment size in memory   # 0x000000000000000C
+# p_memsz___00:               .quad text                # 0x0058 Segment size in memory   # 0x000000000000000C
+echo -n -e \\x0C\\x00\\x00\\x00\\x00\\x00\\x00\\x00
+
+# 0x0070 Segment alignment, file & memory
+# p_align___00:               .quad align               # 0x005C Segment alignment, file & memory
+echo -n -e \\x00\\x10\\x00\\x00\\x00\\x00\\x00\\x00
+
+
+# 0x0040 Loadable segment
+# p_type____00:
+echo -n -e \\x01\\x00\\x00\\x00
+
+# 0x0044 Permissions to segment (1=executar, 2=escrever, 4=ler)
+# p_flags___00:
+echo -n -e \\x05\\x00\\x00\\x00
+
+# 0x0048 Segment file offset
+# p_offset__00:
+echo -n -e \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00
+
+# 0x004C Segment virtual address
+# p_vaddr___00:
+echo -n -e \\x00\\x00\\x40\\x00\\x00\\x00\\x00\\x00
+
+# 0x0050 Segment physical address
+# p_paddr___00:
+echo -n -e \\x00\\x00\\x40\\x00\\x00\\x00\\x00\\x00
+
+# 0x0054 Segment size in file     # 0x000000000000000C
+# p_filesz__00:
+echo -n -e \\x0C\\x00\\x00\\x00\\x00\\x00\\x00\\x00
+
+# 0x0058 Segment size in memory   # 0x000000000000000C
+# p_memsz___00:               .quad text                # 0x0058 Segment size in memory   # 0x000000000000000C
+echo -n -e \\x0C\\x00\\x00\\x00\\x00\\x00\\x00\\x00
+
+# 0x005C Segment alignment, file & memory
+# p_align___00:               .quad align               # 0x005C Segment alignment, file & memory
+echo -n -e \\x00\\x10\\x00\\x00\\x00\\x00\\x00\\x00

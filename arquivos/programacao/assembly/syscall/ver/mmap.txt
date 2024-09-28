@@ -1,0 +1,18 @@
+
+open("/home/ubuntu/.gnome2/evince/ev-metadata.xml", O_WRONLY|O_CREAT|O_TRUNC|O_LARGEFILE, 0666) = 27
+fstat64(27, {st_mode=S_IFREG|0644, st_size=0, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb6c89000
+write(27, "<?xml version=\"1.0\"?>\n<metadata>\n"..., 4096) = 4096
+write(27, "lo%20Processor%20on%2065%20nm.pdf"..., 2217) = 2217
+close(27)                               = 0
+munmap(0xb6c89000, 4096)                = 0
+read(6, 0x90f3118, 4096)                = -1 EAGAIN (Resource temporarily unavailable)
+
+veja o arquivo mmap.c
+
+                             mmap( ) system call, which allows part of a file or the memory
+residing on a device to be mapped into a part of a process address space. Memory mapping
+can provide an alternative to normal reads and writes for transferring data. If the same file is
+shared by several processes, its memory mapping is included in the address space of each of
+the processes that share it.
+

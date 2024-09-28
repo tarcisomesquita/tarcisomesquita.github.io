@@ -1,0 +1,132 @@
+mysql -v -u root  -p -h 34.95.228.122 -P 3306 -D ceejapd
+
+mysqlimport -h 34.95.228.122 -P 3306 -u root --local --fields-terminated-by=’,’ --lines-terminated-by=’\n’ matrix matrix2.csv
+
+CREATE DATABASE ceejapd;
+SHOW DATABASES;
+DROP DATABASE ceejapd;
+USE ceejapd;
+
+CREATE TABLE matrix (
+matricula CHAR(6) NOT NULL,
+nome VARCHAR(70) NULL,
+ra VARCHAR(20) NULL,
+rg VARCHAR(20) NULL
+);
+
+LOAD DATA INFILE '/home/sed_decourt/matrix2.csv' 
+INTO TABLE matrix 
+FIELDS TERMINATED by ',' 
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+
+
+CREATE TABLE contatos (
+        nome VARCHAR(50) NOT NULL,
+telefone VARCHAR(9) NOT NULL,
+ddd INT(2) NOT NULL,
+data_nasc DATE NULL
+        );
+
+SHOW TABLES;
+DROP TABLE contatos;
+
+https://dev.mysql.com/doc/refman/8.0/en/storage-requirements.html
+
+We will create a new table that has two columns s1 and s2 with the length of 32765(+2 for length prefix) and 32766 (+2).Note that 32765+2+32766+2=65535, which is the maximum row size.       
+CREATE TABLE IF NOT EXISTS varchar_test (
+    s1 VARCHAR(32765) NOT NULL,
+    s2 VARCHAR(32766) NOT NULL
+)  CHARACTER SET 'latin1' COLLATE LATIN1_DANISH_CI;
+
+
+acrescentar mais um campo
+ALTER TABLE contatos
+ADD ativo SMALLINT NOT NULL AFTER email;
+
+DESCRIBE contatos;
+
+ALTER TABLE contatos
+CHANGE telefone telefone CHAR(9) NOT NULL;
+
+INSERT INTO contatos VALUES(‘Bruno’
+,‘Santos’
+,11
+,999999999
+,‘2015-08-22’
+,‘contato@dominio.com.br’
+,1);
+
+UPDATE contatos SET
+sobrenome= ‘Nascimento’ WHERE nro_contato= 100;
+commit;
+
+
+DELETE FROM contatos WHERE nro_contato= 100;
+commit;
+
+SELECT nome, sobrenome FROM contatos;
+
+SELECT nome, sobrenome
+FROM contatos
+WHERE nro_contato= 100;
+
+SELECT nome, sobrenome
+FROM contatos
+WHERE nome= ‘Bruno’;
+
+Além dos operadores de comparação = e <>, temos os seguintes operadores:
+>: maior;
+<: menor;
+>=: maior e igual;
+<=: menor e igual.
+
+SELECT DISTINCT sobrenome FROM contatos;
+
+SELECT ALL sobrenome FROM contatos;
+
+SELECT nome FROM contatos ORDER BY nome DESC;
+
+A clausula LIMIT [inicio,] linhas retorna o número de linhas especificado. Se o valor inicio for fornecido, aquelas linhas são puladas antes do dado ser retornado. Lembre-se que a primeira linha é 0.
+SELECT * FROM contatos LIMIT 3,1;
+
+A função CURDATE() / CURRENTDATE() retorna a data atual na forma YYYY/MM/DD.
+
+SELECT LEFT(nome,3) from contatos
+
+SELECT STR_TO_DATE('21,5,2013','%d,%m,%Y');
+SELECT STR_TO_DATE('113005','%h%i%s');
+
+
+
+
+SHOW GRANTS FOR root ;
+
+
+mysql> SHOW GRANTS FOR root ;
+| Grants for root@%                                                                                                                                                                                                                                                                                                                                       
+
+| GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, SHUTDOWN, PROCESS, REFERENCES, INDEX, ALTER, SHOW DATABASES, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER, CREATE TABLESPACE ON *.* TO 'root'@'%' WITH GRANT OPTION
+
+CREATE USER 'usuario'@'%' IDENTIFIED BY 'testando';
+GRANT SELECT *.* TO 'usuariot'@'%' WITH GRANT OPTION;  NÃO FUNCIONOU
+FLUSH PRIVILEGES;
+
+GRANT SELECT,USAGE ON *.* TO 'usuario'@'%';
+SHOW GRANTS FOR 'usuario'@'%';
+
+CREATE ROLE 'r1', 'r2';
+GRANT SELECT ON db1.* TO 'r1';
+GRANT INSERT, UPDATE, DELETE ON db1.* TO 'r2';
+CREATE USER 'u1'@'localhost' IDENTIFIED BY 'u1pass';
+GRANT 'r1', 'r2' TO 'u1'@'localhost';
+
+SHOW GRANTS FOR 'u1'@'localhost' USING 'r1';
+
+mysql> REVOKE SELECT, INSERT ON mysql.* FROM u1;
+
+CREATE USER 'root'@'%' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;

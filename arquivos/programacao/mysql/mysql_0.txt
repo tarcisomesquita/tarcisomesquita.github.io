@@ -1,0 +1,58 @@
+apt-get install default-mysql-server
+#sudo apt-get install mysql-server
+
+systemctl status mysqld
+
+sudo mysql
+systemctl start mysqld
+
+mysqld --verbose --help
+list of all mysqld options and configurable system variables
+
+sudo mysqladmin variables > variaveis.txt
+
+groupadd mysql
+useradd -r -g mysql -s /bin/false mysql
+
+sudo mysqld  --initialize-insecure --user=mysql
+sudo mysql -u root --skip-password
+
+
+sudo mysqld --initialize --user=mysql
+systemctl status mysql
+
+systemctl {start|stop|restart|status} mysqld
+
+cat /etc/mysql/mysql.conf.d/mysqld.cnf 
+
+Em quais grupos o usuário lubuntu está?
+id lubuntu
+
+Adiciona o usuário lubuntu ao grupo mysql
+sudo usermod -G mysql -a lubuntu
+ou
+sudo gpasswd -a lubuntu mysql
+
+não funciona
+sudo usermod -p 'teste' mysql
+
+muda a senha do usuário root
+sudo passwd
+
+sudo passwd lubuntu
+
+
+sudo apt-get install openssh-server
+ssh lubuntu@127.0.0.1
+
+sudo systemctl status ssh
+
+
+
+use an ALTER USER statement to assign a new root password:
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'root-password';
+
+create user 'guest'@'localhost' identified by '12345';
+grant all privileges on *.* to 'guest'@'localhost' with grant option;
+flush privileges;
+show grants for 'guest'@'localhost';

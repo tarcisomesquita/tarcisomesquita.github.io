@@ -1,0 +1,24 @@
+
+switch (fruta) {
+   case "Laranja":
+      XYZ = 1
+      break
+   case "Banana":
+      XYZ = 2
+      break
+   default:
+      XYZ = 3
+}
+
+
+switch(n) {
+   case 1:
+      execute code block 1
+      break;
+   case 2:
+      execute code block 2
+      break;
+   default:
+      code to be executed if n is different from case 1 and 2
+}
+

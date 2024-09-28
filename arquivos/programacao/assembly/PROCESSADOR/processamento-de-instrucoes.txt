@@ -1,0 +1,9 @@
+
+o controlador de memória cache carrega um bloco de dados abaixo da atual posição que o processador acabou de carregar.
+
+L2 ("Cache de microinstruções" ou "Trace Cache") fica depois da unidade de decodificação e antes da unidade de busca.
+
+A unidade de busca é carrega as instruções da memória RAM e envia para a unidade de decodificação, que consulta à memória ROM chamada microcódigo, e as envia a unidade de agendamento, que enviará para uma unidade de execução. 
+
+existem diversas unidades de execução: FPU (Float Point Unit), ALU (Arithmetic and Logic Unit).
+

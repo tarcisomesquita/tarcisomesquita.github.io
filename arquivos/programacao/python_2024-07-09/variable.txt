@@ -1,0 +1,8 @@
+name:
+• Begin with a letter or underscore. [0-9A-z_]
+• Constant variables should be denoted by capitalized words.
+• Dynamic variables should be lowercase words separated by underscores.
+• Never be one of the following or any Python reserved words.
+
+
+ver types.txt

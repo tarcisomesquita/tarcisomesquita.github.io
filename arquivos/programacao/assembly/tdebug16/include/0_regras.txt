@@ -1,0 +1,17 @@
+
+Numa rotina deve estar especificado em "output:" todos os registradores que tem o valor alterado ao chamar a rotina, exceto o FLAG.
+
+
+; input:  
+; output: 
+
+%ifndef _
+   %define _
+:
+
+%endif
+
+
+o nome começa com um número que indica a camada a qual a função pertence
+
+funções com instruções e int pertence à camada 003 por que considero int uma função.

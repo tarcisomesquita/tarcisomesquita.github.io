@@ -1,0 +1,26 @@
+document.body.innerHTML = `
+<article
+  id="electric-cars"
+  data-columns="3"
+  data-index-number="12314"
+  data-parent="cars">
+</article>
+`
+
+JSON.stringify(document.getElementById('electric-cars').dataset)
+'{"columns":"3","indexNumber":"12314","parent":"cars"}' 
+
+The attribute name begins with data-. It can contain only letters, numbers, dashes (-), periods (.), colons (:), and underscores (_). Any ASCII capital letters (A to Z) are converted to lowercase.
+
+Attribute value is always a string.
+
+// set a data attribute
+el.dataset.dateOfBirth = "1960-10-03";
+
+delete el.dataset.dateOfBirth;
+
+if (!("someDataAttr" in el.dataset)) el.dataset.someDataAttr = "mydata";
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Element.getAttribute() and Element.setAttribute()

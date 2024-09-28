@@ -1,0 +1,117 @@
+
+PhoenixBIOS 4.0 User's Manual
+
+                        Interrupt 10h–Video Services, Continued
+
+                                                     Interrupt 10 Video Services
+                          AH = 00h Set video mode
+                              Entry:
+                              AL     Mode value (0-7):
+                                     0 = 40x25 Black & White
+                                     1 = 40x25 Color
+                                     2 = 80x25 Black & White
+                                     3 = 80x25 Color
+                                     4 = 320x200 Color
+                                     5 = 320x200 Black & White
+                                     6 = 640x200 Black & White
+                                     7 = Monochrome only
+                          AH = 01h Set cursor size
+                              Entry:
+                              CH     Bits 4-0 = Cursor top scan line
+                              CL     Bits 4-0 = Cursor bottom scan line
+                          AH = 02h Set cursor position
+                              Entry:
+                              BH     Page to set cursor
+                              DL     Character column position
+                              DH     Character row position
+                          AH = 03h Get cursor position of page
+                              Entry:
+                              BH     Page to return cursor
+                              Exit:
+                              DL     Character column position
+                              DH     Character row position
+                              CL     Cursor top scan line
+                              CH     Cursor bottom scan line
+                          AH = 05h Change displayed (active) page
+                              Entry:
+                              AL     Page number to display
+                          AH = 06h Scroll active page up
+                              Entry:
+                              CL     Upper left column to scroll up
+                              CH     Upper left row to scroll up
+                              DL     Lower right column to scroll up
+                              DH     Lower right row to scroll up
+                              BH     Attribute for blanked space
+                              AL     Number of lines to scroll up
+                                     0 = Blank screen
+                          AH = 07h Scroll active page down
+                              Entry:
+                              CL     Upper left column to scroll down
+                              CH     Upper left row to scroll down
+                              DL     Lower right column to scroll down
+                              DH     Lower right row to scroll down
+                              BH     Attribute for blanked space
+                              AL     Number of lines to scroll down
+                                     0 = Blank screen
+                          AH = 08h Read character and attribute
+                              Entry:
+                              BH     Video page to read character
+                              Exit:
+                              AL     Character
+                              AH     Character attribute
+                        AH = 09h Write character and attribute
+                             Entry:
+                             AL     Character to write
+                             BL     Character attribute (alpha)
+                                    Character color (graphics)
+                             BH     Page to write character
+                             CX     Count of characters to write
+                        AH = 0Ah Write character at cursor
+                             Entry:
+                             BH     Page to write character
+                             AL     Character to write
+                             CX     Count of characters to write
+                        AH = 0Bh Set color palette
+                             Entry:
+                             BH = 00 Set colors:
+                                    If mode = 4 or 5, BL = background color
+                                    If mode = 0-3, BL = border color
+                                    If mode = 6 or 11, BL = foreground color
+                             BL     0-31 = Intense versions of colors 0-15
+                             BH = 01 Set palette for mode 4 or 5
+                             BL     00 Palette = Green (1), Red (2), Yellow (3)
+                                    01 Palette = Cyan (1), Magenta (2), White (3)
+                        AH = 0Ch Write graphics pixel
+                             Entry:
+                             AL     Color value for pixel
+                                    (XORed if bit7=1)
+                             CX     Column to write pixel
+                             DX     Row to write pixel
+                        AH = 0D Read graphics pixel
+                             Entry:
+                             CX     Column to read pixel
+                             DX     Row to read pixel
+                             Exit:
+                             AL     Value of pixel read
+                        AH = 0E Teletype write character
+                             Entry:
+                             AL     Character to write
+                             BL     Foreground color (graphics only)
+                        AH = 0F Return Current Video Parameters
+                             Exit:
+                             AL     Current video mode
+                             AH     Number of character columns
+                             BH     Active page
+                        AH = 13h Write string
+                             Entry:
+                             ES:BP Pointer to string
+                             CX     Length of string to display
+                             DH     Character row for display
+                             DL     Character column for display
+                             BL     Display attribute
+                             AL     Write string mode
+                                    0 = Chars only, no cursor update
+                                    1 = Chars only, update cursor
+                                    2 = Char, Attrib, no cursor update
+                                    3 = Char, Attrib, update cursor
+

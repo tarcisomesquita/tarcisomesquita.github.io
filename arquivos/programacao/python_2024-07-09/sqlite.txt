@@ -1,0 +1,17 @@
+module, sqlite3
+
+>>> CREATE TABLE custodians (id INTEGER PRIMARY KEY, name TEXT);
+>>> INSERT INTO custodians (id, name) VALUES (null, 'Chell');
+>>> INSERT INTO custodians (id, name) VALUES (null, 'GLaDOS');
+
+>>> SELECT * FROM custodians;
+1|Chell
+2|GLaDOS
+
+>>> SELECT name,id FROM custodians WHERE id = 1;
+Chell|1
+
+SQLite supports five data types: TEXT, INTEGER, REAL, BLOB, NULL
+The BLOB (binary large object) preserves any input data exactly as is without casting it as a certain type.
+
+

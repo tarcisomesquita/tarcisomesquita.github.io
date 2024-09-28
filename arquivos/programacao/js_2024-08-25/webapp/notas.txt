@@ -1,0 +1,259 @@
+https://web.dev/progressive-web-apps/
+https://web.dev/learn/pwa/
+
+ceejapd atalho na tela inicial
+vídeo
+
+https://www.w3.org/TR/manifest-app-info/
+https://www.w3.org/TR/appmanifest/
+
+progressive web app example
+https://github.com/mdn/pwa-examples
+
+https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Installing
+
+log de registros, edições e remoções
+
+https://developer.mozilla.org/en-US/docs/Web/API/Background_Tasks_API
+
+
+<video controls id="myvideo">
+  <source src="somevideo.webm"></source>
+  <source src="somevideo.mp4"></source>
+</video>
+
+We can put that video into fullscreen mode as follows:
+
+const elem = document.getElementById("myvideo");
+if (elem.requestFullscreen) {
+  elem.requestFullscreen();
+}
+
+
+ Gecko automatically adds CSS rules to the element to stretch it to fill the screen: "width: 100%; height: 100%". WebKit doesn't do this; instead, it centers the fullscreen element at the same size in a screen that's otherwise black. To get the same fullscreen behavior in WebKit, you need to add your own "width: 100%; height: 100%;" CSS rules to the element yourself:
+
+#myvideo:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+}
+
+
+<!doctype html>
+<html>
+
+<head>
+  <title>Fullscreen API Example</title>
+  <script src="main.js"></script>
+  <link href="main.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="contents">
+    <p>A quick example to demonstrate usage of the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API">Fullscreen API</a>. Press <kbd>Enter</kbd> to toggle fullscreen mode.</p>
+
+    <video src="assets/bigbuckbunny.mp4" id="video" controls width="480"></video>
+
+    <div id="credits"><a href="https://peach.blender.org/download/">Video by Blender</a>;
+      <a href="https://peach.blender.org/about/">licensed CC-BY 3.0</a></div>
+  </div>
+</body>
+
+</html>
+
+main.css
+#credits {
+	padding: 0 0 10px 0;
+	font: italic 12px "Open Sans", sans-serif;
+}
+
+#video {
+	max-width: 100%;
+}
+
+main.js
+window.addEventListener("load", startup, false);
+
+function startup() {
+  // Get the reference to video
+  const video = document.getElementById("video");
+
+  // On pressing ENTER call toggleFullScreen method
+  document.addEventListener("keypress", function(e) {
+    if (e.key === 'Enter') {
+      toggleFullScreen(video);
+    }
+  }, false);
+}
+
+function toggleFullScreen(video) {
+  if (!document.fullscreenElement) {
+    // If the document is not in full screen mode
+    // make the video full screen
+    video.requestFullscreen();
+  } else {
+    // Otherwise exit the full screen
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    }
+  }
+}
+
+
+https://developer.mozilla.org/en-US/docs/Web/API/MediaStream_Recording_API
+
+tirar foto e colocar na matrícula
+https://developer.mozilla.org/en-US/docs/Web/API/Media_Capture_and_Streams_API
+
+
+
+// set up the page
+
+var mapCanvas = document.getElementById('map_canvas');
+var geoBtn = document.querySelector('.enable');
+var revokeBtn = document.querySelector('.revoke');
+geoBtn.onclick = function() {
+  console.log('Permission currently denied; future features of the Permissions API will allow us to request permission here.')
+  console.log('Currently you have to reset the permission state using the browser UI.')
+  console.log('In Firefox it is done with Tools > Page Info > Permissions > Access Your Location.')
+}
+
+revokeBtn.onclick = function() {
+  revokePermission();
+}
+
+// draw the google map, or not
+
+  
+var positionDenied = function() {
+  geoBtn.style.display = 'inline';
+};
+  
+var revealPosition = function(position) {
+  geoBtn.style.display = 'none';
+  var markerTitle = "You are here";
+
+  var latlng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+  var myOptions = {
+    zoom: 16,
+    center: latlng,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+  
+  var map = new google.maps.Map(mapCanvas, myOptions);
+
+  var marker = new google.maps.Marker({
+    position: latlng,
+    map: map,
+    title: markerTitle
+  });
+}
+
+// test for geolocation support, provide geolocation settings, determine location of the user's device
+
+
+if (!"geolocation" in navigator) {
+  alert("No geolocation available!");
+}
+  
+var geoSettings = {
+  enableHighAccuracy: false,
+  maximumAge        : 30000,
+  timeout           : 20000
+};
+
+// Start everything off
+
+function handlePermission() {
+  navigator.permissions.query({name:'geolocation'}).then(function(result) {
+    if (result.state == 'granted') {
+      report(result.state);
+      geoBtn.style.display = 'none';
+    } else if (result.state == 'prompt') {
+      report(result.state);
+      navigator.geolocation.getCurrentPosition(revealPosition,positionDenied,geoSettings);
+    } else if (result.state == 'denied') {
+      report(result.state);
+      geoBtn.style.display = 'inline';
+    }
+    result.onchange = function() {
+      report(result.state);
+    }
+  });
+}
+
+function revokePermission() {
+  navigator.permissions.revoke({name:'geolocation'}).then(function(result) {
+    report(result.state);
+  });
+}
+
+function report(state) {
+  console.log('Permission: ' + state);
+}
+
+handlePermission();
+
+
+
+
+
+
+
+
+
+https://developer.mozilla.org/en-US/docs/Web/API/Screen_Capture_API
+
+Window.localStorage 
+
+localStorage.setItem('myCat', 'Tom');
+
+The syntax for reading the localStorage item is as follows:
+
+const cat = localStorage.getItem('myCat');
+
+The syntax for removing the localStorage item is as follows:
+
+localStorage.removeItem('myCat');
+
+The syntax for removing all the localStorage items is as follows:
+
+localStorage.clear();
+
+
+
+https://en.wikipedia.org/wiki/Clean_URL
+
+The following are two example URIs and their component parts:
+
+         foo://example.com:8042/over/there?name=ferret#nose
+         \_/   \______________/\_________/ \_________/ \__/
+          |           |            |            |        |
+       scheme     authority       path        query   fragment
+          |   _____________________|__
+         / \ /                        \
+         urn:example:animal:ferret:nose
+         
+Reserved Characters
+":" / "/" / "?" / "#" / "[" / "]" / "@" / "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
+
+ ldap://[2001:db8::7]/c=GB?objectClass?one
+
+"%" HEXDIG HEXDIG
+
+   The uppercase hexadecimal digits 'A' through 'F' are equivalent to
+   the lowercase digits 'a' through 'f', respectively. 
+   
+authority   = [ userinfo "@" ] host [ ":" port ]
+
+
+websocket is faster than fetch
+https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
+
+Real-time Collaborative Editing
+
+Now you all have used google docs and have wondered how this works. With emergence of HTML5 Websockets, creating collaborative applications that allow users to work on same document becomes greatly simplified.
+
+5. Real-time Multimedia Chat
+8. Real-time Location Apps
+
+

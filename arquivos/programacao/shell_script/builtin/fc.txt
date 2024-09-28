@@ -1,0 +1,55 @@
+
+fc -s [old=new] [first]
+The fc builtin lists, or edits and re-executes, commands previ-
+ously entered to an interactive shell.
+
+-e editor
+       Use the editor named by editor to edit the commands.  The
+       editor string is a command name, subject to search via the
+       PATH variable.  The value in the FCEDIT variable is used as
+       a default when -e is not specified.  If FCEDIT is null or
+       unset, the value of the EDITOR variable is used.  If EDITOR
+       is null or unset, ed(1) is used as the editor.
+
+-l (ell)
+       List the commands rather than invoking an editor on them.
+       The commands are written in the sequence indicated by the
+       first and last operands, as affected by -r, with each com-
+       mand preceded by the command number.
+
+-n     Suppress command numbers when listing with -l.
+
+-r     Reverse the order of the commands listed (with -l) or
+       edited (with neither -l nor -s).
+
+-s     Re-execute the command without invoking an editor.
+
+first
+
+last   Select the commands to list or edit.  The number of previ-
+       ous commands that can be accessed are determined by the
+       value of the HISTSIZE variable.  The value of first or last
+       or both are one of the following:
+
+       [+]number
+              A positive number representing a command number;
+              command numbers can be displayed with the -l option.
+
+       -number
+              A negative decimal number representing the command
+              that was executed number of commands previously.
+              For example, -1 is the immediately previous command.
+
+string
+       A string indicating the most recently entered command that
+       begins with that string.  If the old=new operand is not
+       also specified with -s, the string form of the first
+       operand cannot contain an embedded equal sign.
+
+The following environment variables affect the execution of fc:
+
+FCEDIT    Name of the editor to use.
+
+HISTSIZE  The number of previous commands that are accessible.
+
+

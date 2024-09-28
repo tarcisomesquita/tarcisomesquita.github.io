@@ -1,0 +1,6 @@
+python3.6
+import subprocess
+subprocess.Popen('ulimit -Sv 512000000; /home/lubuntu/firefox/firefox', shell=True)
+
+
+

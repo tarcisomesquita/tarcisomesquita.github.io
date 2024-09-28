@@ -1,0 +1,15 @@
+ www.osdever.net
+
+x86 "direct hardware programming". You need to know how to program the hardware directly, especially the chips in your motherboard. You can practice this from within windows by developing an application that directly access the hardware. 
+bus protocol, such as PCI and LPC
+northbridge and southbridge control registers.
+
+PCI bus is a bus which is 32 bits wide
+ writing or reading to this bus will require 32 bits addresses
+this bus system is defined in the port CF8h - CFBh which acts as the configuration address port and port CFCh - CFFh which acts as the configuration data port. These ports are used to configure the corresponding PCI chip, i.e. reading/writing the PCI chip configuration register values.
+
+this bus system force us to communicate with PCI chips with the following algorithm (from host CPU point of view):
+  1. Write the target bus number, device number, function number and offset/register number to the Configuration Address Port and set the Enable bit in it to one. In plain english, write the address of the register you're willing to read/write into the PCI address port.
+  2. Perform a one-byte, two-byte, or four-byte I/O read from or a write to the Configuration Data Port. In plain english, write/read the data you're willing to read/write into the PCI data port.
+
+

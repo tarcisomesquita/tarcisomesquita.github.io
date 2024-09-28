@@ -1,0 +1,37 @@
+
+var link = window.document.createElement("a");
+window.document.body.appendChild(link);
+
+
+
+window.location = this.firstChild.getAttribute("href");
+document.getElementById("search_filtered_div").className = "showing";
+
+
+<script>
+function atualize(e) {
+   window.alert(e.shiftKey);
+// if(window.event.keyCode == 13){}
+// if(window.event.charCode == 97)
+// if(window.event.ctrlKey) se a tecla control está pressionada
+// if(window.event.shiftKey) se a tecla shift está pressionada
+/*
+	var KEY = {
+		UP: 38,
+		DOWN: 40,
+		DEL: 46,
+		TAB: 9,
+		RETURN: 13,
+		ESC: 27,
+		COMMA: 188,
+		PAGEUP: 33,
+		PAGEDOWN: 34,
+		BACKSPACE: 8
+	};
+		switch(event.keyCode) {
+			casewindow.event KEY.UP:
+*/
+}
+</script>
+<body onKeyPress="var e = window.event; atualize(e)">
+

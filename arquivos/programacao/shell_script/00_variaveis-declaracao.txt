@@ -1,0 +1,21 @@
+
+As variáveis por convenção são escritas em letras maiúsculas.
+nomes: [a-Z0-9_]
+
+Atribuição:
+NOME="José"
+HOJE=$(date)
+OBS.: Não pode haver espaço antes ou depois do igual.
+
+Ver conteúdo
+echo $NOME
+echo "$NOME"
+NUM=2; echo "isto é o ${NUM}nd"
+
+
+$ readonly NOME="Meleu Zord"
+$ declare -r NOME="Meleu Zord"
+
+O comando "readonly" quando usado sem parâmetros (ou o comando "declare" apenas com o parâmetro "-r") nos mostra todas as variáveis declaradas como somente-leitura.
+O único meio de apagar as variáveis readonly declaradas pelo usuário é saindo do shell (logout).
+

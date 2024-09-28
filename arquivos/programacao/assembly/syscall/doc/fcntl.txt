@@ -1,0 +1,253 @@
+File Control
+
+ver asm/fcntl.h
+
+eax := int fcntl (ebx: int fd, ecx: int command, edx: optional arg)
+
+commands:
+    F_DUPFD Duplicate fd.
+    F_GETFD Get fd flags.
+    F_SETFD Set fd flags.
+    F_GETFL Get status flags.
+    F_SETFL Set status flags.
+    F_GETLK Get a file lock.
+    F_SETLK Set or clear a file lock.
+    F_SETLKW F_SETLK, waiting for completion.
+    F_GETOWN Get PID or GID receiveing SIGIO signals.
+    F_SETOWN Set PID or GID receiveing SIGIO signals.
+
+
+Currently there is just one file descriptor flag: FD_CLOEXEC, which causes the descriptor to be closed if you use any of the exec... functions 
+int set_cloexec_flag (int desc, int value) {
+  int oldflags = fcntl (desc, F_GETFD, 0);
+  if (oldflags < 0) return oldflags;
+  if (value != 0) oldflags |= FD_CLOEXEC;
+  else oldflags &= ~FD_CLOEXEC;
+  return fcntl (desc, F_SETFD, oldflags);
+}
+
+
+File status flags are used to specify attributes of the opening of a file.
+O_RDONLY  Open the file for read access.
+O_WRONLY  Open the file for write access.
+O_RDWR    Open the file for reading and writing.
+
+
+O_CREAT      If set, the file will be created if it doesn't already exist.
+O_EXCL       If both O_CREAT and O_EXCL are set, then open fails if the specified file already exists.
+O_NONBLOCK   read and write operations return failure status if operation not can be done immediately
+O_NOCTTY     If the named file is a terminal device, don't make it the controlling terminal for the process.
+
+O_APPEND
+O_ASYNC   enables asynchronous input mode; SIGIO signals will be generated when input is available.
+O_FSYNC   enables synchronous writing for the file. If set, each write call will make sure the data is reliably stored on disk before returning.
+O_SYNC    same as O_FSYNC.
+O_NOATIME  will not update the access time of the file. re File Times. Only the owner of the file or the superuser may use this bit.
+
+int set_nonblock_flag (int desc, int value) {
+  int oldflags = fcntl (desc, F_GETFL, 0);
+  if (oldflags == -1) return -1;
+  if (value != 0) oldflags |= O_NONBLOCK;
+  else oldflags &= ~O_NONBLOCK;
+  return fcntl (desc, F_SETFL, oldflags);
+}
+
+
+
+
+F_GETLK
+requires a argument of type struct flock *:
+fcntl (fd, F_GETLK, lockp)
+fcntl (fd, F_SETLK, lockp)
+
+
+
+/usr/include/asm-generic/fcntl.h
+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+#ifndef _ASM_GENERIC_FCNTL_H
+#define _ASM_GENERIC_FCNTL_H
+
+#include <linux/types.h>
+#define O_ACCMODE	00000003
+#define O_RDONLY	00000000
+#define O_WRONLY	00000001
+#define O_RDWR		00000002
+#ifndef O_CREAT
+#define O_CREAT		00000100	/* not fcntl */
+#endif
+#ifndef O_EXCL
+#define O_EXCL		00000200	/* not fcntl */
+#endif
+#ifndef O_NOCTTY
+#define O_NOCTTY	00000400	/* not fcntl */
+#endif
+#ifndef O_TRUNC
+#define O_TRUNC		00001000	/* not fcntl */
+#endif
+#ifndef O_APPEND
+#define O_APPEND	00002000
+#endif
+#ifndef O_NONBLOCK
+#define O_NONBLOCK	00004000
+#endif
+#ifndef O_DSYNC
+#define O_DSYNC		00010000	/* used to be O_SYNC, see below */
+#endif
+#ifndef FASYNC
+#define FASYNC		00020000	/* fcntl, for BSD compatibility */
+#endif
+#ifndef O_DIRECT
+#define O_DIRECT	00040000	/* direct disk access hint */
+#endif
+#ifndef O_LARGEFILE
+#define O_LARGEFILE	00100000
+#endif
+#ifndef O_DIRECTORY
+#define O_DIRECTORY	00200000	/* must be a directory */
+#endif
+#ifndef O_NOFOLLOW
+#define O_NOFOLLOW	00400000	/* don't follow links */
+#endif
+#ifndef O_NOATIME
+#define O_NOATIME	01000000
+#endif
+#ifndef O_CLOEXEC
+#define O_CLOEXEC	02000000	/* set close_on_exec */
+#endif
+
+
+
+#ifndef O_SYNC
+#define __O_SYNC	04000000
+#define O_SYNC		(__O_SYNC|O_DSYNC)
+#endif
+
+#ifndef O_PATH
+#define O_PATH		010000000
+#endif
+
+#ifndef __O_TMPFILE
+#define __O_TMPFILE	020000000
+#endif
+
+/* a horrid kludge trying to make sure that this will fail on old kernels */
+#define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
+#define O_TMPFILE_MASK (__O_TMPFILE | O_DIRECTORY | O_CREAT)      
+
+#ifndef O_NDELAY
+#define O_NDELAY	O_NONBLOCK
+#endif
+
+#define F_DUPFD		0	/* dup */
+#define F_GETFD		1	/* get close_on_exec */
+#define F_SETFD		2	/* set/clear close_on_exec */
+#define F_GETFL		3	/* get file->f_flags */
+#define F_SETFL		4	/* set file->f_flags */
+#ifndef F_GETLK
+#define F_GETLK		5
+#define F_SETLK		6
+#define F_SETLKW	7
+#endif
+#ifndef F_SETOWN
+#define F_SETOWN	8	/* for sockets. */
+#define F_GETOWN	9	/* for sockets. */
+#endif
+#ifndef F_SETSIG
+#define F_SETSIG	10	/* for sockets. */
+#define F_GETSIG	11	/* for sockets. */
+#endif
+
+#ifndef CONFIG_64BIT
+#ifndef F_GETLK64
+#define F_GETLK64	12	/*  using 'struct flock64' */
+#define F_SETLK64	13
+#define F_SETLKW64	14
+#endif
+#endif
+
+#ifndef F_SETOWN_EX
+#define F_SETOWN_EX	15
+#define F_GETOWN_EX	16
+#endif
+
+#ifndef F_GETOWNER_UIDS
+#define F_GETOWNER_UIDS	17
+#endif
+
+/*
+ * Open File Description Locks
+ *
+ * Usually record locks held by a process are released on *any* close and are
+ * not inherited across a fork().
+ *
+ * These cmd values will set locks that conflict with process-associated
+ * record  locks, but are "owned" by the open file description, not the
+ * process. This means that they are inherited across fork() like BSD (flock)
+ * locks, and they are only released automatically when the last reference to
+ * the the open file against which they were acquired is put.
+ */
+#define F_OFD_GETLK	36
+#define F_OFD_SETLK	37
+#define F_OFD_SETLKW	38
+
+#define F_OWNER_TID	0
+#define F_OWNER_PID	1
+#define F_OWNER_PGRP	2
+
+struct f_owner_ex {
+	int	type;
+	__kernel_pid_t	pid;
+};
+
+/* for F_[GET|SET]FL */
+#define FD_CLOEXEC	1	/* actually anything with low bit set goes */
+
+/* for posix fcntl() and lockf() */
+#ifndef F_RDLCK
+#define F_RDLCK		0
+#define F_WRLCK		1
+#define F_UNLCK		2
+#endif
+
+/* for old implementation of bsd flock () */
+#ifndef F_EXLCK
+#define F_EXLCK		4	/* or 3 */
+#define F_SHLCK		8	/* or 4 */
+#endif
+
+/* operations for bsd flock(), also used by the kernel implementation */
+#define LOCK_SH		1	/* shared lock */
+#define LOCK_EX		2	/* exclusive lock */
+#define LOCK_NB		4	/* or'd with one of the above to prevent
+				   blocking */
+#define LOCK_UN		8	/* remove lock */
+
+#define LOCK_MAND	32	/* This is a mandatory flock ... */
+#define LOCK_READ	64	/* which allows concurrent read operations */
+#define LOCK_WRITE	128	/* which allows concurrent write operations */
+#define LOCK_RW		192	/* which allows concurrent read & write ops */
+
+#define F_LINUX_SPECIFIC_BASE	1024
+
+#ifndef HAVE_ARCH_STRUCT_FLOCK
+struct flock {
+	short	l_type;
+	short	l_whence;
+	__kernel_off_t	l_start;
+	__kernel_off_t	l_len;
+	__kernel_pid_t	l_pid;
+	__ARCH_FLOCK_PAD
+};
+#endif
+
+#ifndef HAVE_ARCH_STRUCT_FLOCK64
+struct flock64 {
+	short  l_type;   // F_RDLCK, F_WRLCK, or F_UNLCK
+	short  l_whence;  // SEEK_SET, SEEK_CUR, SEEK_END
+	__kernel_loff_t l_start; // offset in bytes of the region to lock
+	__kernel_loff_t l_len;  // length of the region to lock. 0 to extending the region till eof. 
+	__kernel_pid_t  l_pid;  // process ID of the process holding the lock. 
+	__ARCH_FLOCK64_PAD
+};
+#endif
+

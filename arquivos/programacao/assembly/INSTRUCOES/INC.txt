@@ -1,0 +1,12 @@
+
+ Instrução INC
+
+Proposito: Incrementar o operador.
+
+Sintaxe:
+
+INC destino
+
+esta instrucao adiciona 1 ao operador destino e mantem o resultado no mesmo
+operador.
+

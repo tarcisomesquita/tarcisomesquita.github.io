@@ -1,0 +1,2 @@
+dir /S /TA C:\ > a.txt
+dir /S /B  C:\ > b.txt

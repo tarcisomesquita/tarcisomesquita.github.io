@@ -1,0 +1,12 @@
+http://svgconv.blasiussecundus.me/
+SVGConv [72] - Converts SVG to JPEG, PNG, GIF, BMP, TGA, TIFF, PDF, PS, EPS. Allows the user to customize the output (like image size, background color) and has batch processing features (converting multiple files in a single step). Upload limit: 10MB
+
+http://vectormagic.com/home
+VectorMagic - Converts JPEG,GIF, PNG to vector formats like SVG, EPS, PS, PDF. No batch processing.
+
+http://image.online-convert.com/
+OnlineConvert - Converts to/from BMP, EPS, GIF, HDR, ICO, JPEG, PNG, SVG, TGA, TIFF, WBMP, WebP. No batch processing. The output (e. g. image size) is customizable.
+
+http://srufaculty.sru.edu/david.dailey/svg/
+Many examples of SVG animation, Filters and Tiling.
+

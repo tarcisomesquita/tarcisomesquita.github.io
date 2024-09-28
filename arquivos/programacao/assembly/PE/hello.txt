@@ -1,0 +1,72 @@
+This example shows how to go directly to the Windows API and not link in the C Standard Library.
+
+    global _main
+    extern  _GetStdHandle@4
+    extern  _WriteFile@20
+    extern  _ExitProcess@4
+
+    section .text
+_main:
+    ; DWORD  bytes;    
+    mov     ebp, esp
+    sub     esp, 4
+
+    ; hStdOut = GetstdHandle( STD_OUTPUT_HANDLE)
+    push    -11
+    call    _GetStdHandle@4
+    mov     ebx, eax    
+
+    ; WriteFile( hstdOut, message, length(message), &bytes, 0);
+    push    0
+    lea     eax, [ebp-4]
+    push    eax
+    push    (message_end - message)
+    push    message
+    push    ebx
+    call    _WriteFile@20
+
+    ; ExitProcess(0)
+    push    0
+    call    _ExitProcess@4
+
+    ; never here
+    hlt
+message:
+    db      'Hello, World', 10
+message_end:
+To compile, you'll need NASM and LINK.EXE (from Visual studio Standard Edition)
+
+   nasm -fwin32 hello.asm
+   link /subsystem:console /nodefaultlib /entry:main hello.obj 
+
+
+
+To get an .exe with NASM'compiler and Visual Studio's linker this code works fine:
+
+global WinMain
+extern ExitProcess  ; external functions in system libraries 
+extern MessageBoxA
+
+section .data 
+title:  db 'Win64', 0
+msg:    db 'Hello world!', 0
+
+section .text
+WinMain:
+    sub rsp, 28h  
+    mov rcx, 0       ; hWnd = HWND_DESKTOP
+    lea rdx,[msg]    ; LPCSTR lpText
+    lea r8,[title]   ; LPCSTR lpCaption
+    mov r9d, 0       ; uType = MB_OK
+    call MessageBoxA
+    add rsp, 28h  
+
+    mov  ecx,eax
+    call ExitProcess
+
+    hlt     ; never here
+If this code is saved on e.g. "test64.asm", then to compile:
+
+nasm -f win64 test64.asm
+Produces "test64.obj" Then to link from command prompt:
+

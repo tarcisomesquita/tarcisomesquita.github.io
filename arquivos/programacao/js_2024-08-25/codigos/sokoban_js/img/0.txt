@@ -1,0 +1,1 @@
+wget -O highlights_tl0_tr0_bl0_br2.jpg 'http://birrell.org/andrew/sokoban/image.php?img=highlights&tl=0&tr=0&bl=0&br=2'

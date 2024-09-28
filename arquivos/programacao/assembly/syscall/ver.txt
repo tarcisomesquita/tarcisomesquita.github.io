@@ -1,0 +1,35 @@
+
+0000000000401ce5 <main>:
+  401ce5:	f3 0f 1e fa          	endbr64 
+  401ce9:	55                   	push   rbp
+  401cea:	48 89 e5             	mov    rbp,rsp
+  401ced:	be 03 00 00 00       	mov    esi,0x3
+  401cf2:	bf 01 00 00 00       	mov    edi,0x1
+  401cf7:	b8 00 00 00 00       	mov    eax,0x0
+  401cfc:	e8 ff 75 04 00       	call   449300 <syscall>
+  401d01:	b8 00 00 00 00       	mov    eax,0x0
+  401d06:	5d                   	pop    rbp
+  401d07:	c3                   	ret    
+
+
+0000000000449300 <syscall>:
+  449300:	f3 0f 1e fa          	endbr64 
+  449304:	48 89 f8             	mov    rax,rdi
+  449307:	48 89 f7             	mov    rdi,rsi
+  44930a:	48 89 d6             	mov    rsi,rdx
+  44930d:	48 89 ca             	mov    rdx,rcx
+  449310:	4d 89 c2             	mov    r10,r8
+  449313:	4d 89 c8             	mov    r8,r9
+  449316:	4c 8b 4c 24 08       	mov    r9,QWORD PTR [rsp+0x8]
+  44931b:	0f 05                	syscall 
+  44931d:	48 3d 01 f0 ff ff    	cmp    rax,0xfffffffffffff001
+  449323:	73 01                	jae    449326 <syscall+0x26>
+  449325:	c3                   	ret    
+  449326:	48 c7 c1 c0 ff ff ff 	mov    rcx,0xffffffffffffffc0
+  44932d:	f7 d8                	neg    eax
+  44932f:	64 89 01             	mov    DWORD PTR fs:[rcx],eax
+  449332:	48 83 c8 ff          	or     rax,0xffffffffffffffff
+  449336:	c3                   	ret    
+
+
+

@@ -1,0 +1,27 @@
+.model small
+.stack
+.code
+
+start:
+
+mov ax,@data 		; programa ax com o segmento de dados
+mov es,ax 		; coloca em es
+
+mov bp,OFFSET Text 	; ES:BP aponta para a mensagem
+mov ah,13h 		; função 13 - escrever string
+mov al,01h 		; atributo em bl,move cursor
+xor bh,bh 		; página de vídeo 0
+mov bl,5 		; atributo - magenta
+mov cx,17 		; comprimento da string
+mov dh,5 		; linha para colocar a string
+mov dl,5 		; coluna para colocar a string
+int 10h 		; chamada de serviço bios
+
+mov ax,4C00h 		; retornar para o DOS
+int 21h
+
+.data
+
+Text DB "This is some text"
+
+end start

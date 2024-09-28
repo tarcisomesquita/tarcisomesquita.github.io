@@ -1,0 +1,165 @@
+>>> import requests
+
+>>> url = 'https://api.github.com/some/endpoint'
+>>> headers = {'user-agent': 'my-app/0.0.1'}
+
+>>> r = requests.get(url, headers=headers)
+
+
+>>> r = requests.get('https://api.github.com/events')
+>>> r = requests.post('http://httpbin.org/post', data = {'key':'value'})
+>>> r = requests.head('http://httpbin.org/get')
+>>> r = requests.options('http://httpbin.org/get')
+
+>>> payload = {'key1': 'value1', 'key2': ['value2', 'value3']}
+>>> r = requests.get('http://httpbin.org/get', params=payload)
+>>> print(r.url)
+http://httpbin.org/get?key1=value1&key2=value2&key2=value3
+
+server’s response
+>>> r = requests.get('https://api.github.com/events')
+>>> r.text
+u'[{"repository":{"open_issues":0,"url":"https://github.com/...
+
+>>> r.encoding
+'utf-8'
+>>> r.encoding = 'ISO-8859-1'
+
+Binary Response Content
+>>> r.content
+b'[{"repository":{"open_issues":0,"url":"https://github.com/...
+The gzip and deflate transfer-encodings are automatically decoded for you.
+
+Raw Response Content¶
+In the rare case that you’d like to get the raw socket response from the server, you can access r.raw. If you want to do this, make sure you set stream=True in your initial request. Once you do, you can do this:
+
+>>> r = requests.get('https://api.github.com/events', stream=True)
+
+>>> r.raw
+<urllib3.response.HTTPResponse object at 0x101194810>
+
+>>> r.raw.read(10)
+'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\x03'
+
+
+>>> import json
+>>> url = 'https://api.github.com/some/endpoint'
+>>> payload = {'some': 'data'}
+>>> r = requests.post(url, data=json.dumps(payload))
+
+>>> r.json()
+
+>>> url = 'https://api.github.com/some/endpoint'
+>>> payload = {'some': 'data'}
+>>> r = requests.post(url, json=payload)
+
+>>> url = 'http://httpbin.org/post'
+>>> files = {'file': open('report.xls', 'rb')}
+
+>>> r = requests.post(url, files=files)
+>>> r.text
+{
+  ...
+  "files": {
+    "file": "<censored...binary...data>"
+  },
+  ...
+}
+
+
+send strings to be received as files:
+
+>>> url = 'http://httpbin.org/post'
+>>> files = {'file': ('report.csv', 'some,data,to,send\nanother,row,to,send\n')}
+
+>>> r = requests.post(url, files=files)
+>>> r.text
+{
+  ...
+  "files": {
+    "file": "some,data,to,send\\nanother,row,to,send\\n"
+  },
+  ...
+}
+
+>>> r = requests.get('http://httpbin.org/get')
+>>> r.status_code
+200
+
+
+
+server’s response headers
+
+>>> r.headers
+{
+    'content-encoding': 'gzip',
+    'transfer-encoding': 'chunked',
+    'connection': 'close',
+    'server': 'nginx/1.0.4',
+    'x-runtime': '148ms',
+    'etag': '"e1ca502697e5c9317743dc078f67693f"',
+    'content-type': 'application/json'
+}
+
+>>> r.headers['Content-Type']
+'application/json'
+
+>>> r.headers.get('content-type')
+'application/json'
+
+If a response contains some Cookies, you can quickly access them:
+
+>>> url = 'http://example.com/some/cookie/setting/url'
+>>> r = requests.get(url)
+
+>>> r.cookies['example_cookie_name']
+'example_cookie_value'
+To send your own cookies to the server, you can use the cookies parameter:
+
+>>> url = 'http://httpbin.org/cookies'
+>>> cookies = dict(cookies_are='working')
+
+>>> r = requests.get(url, cookies=cookies)
+>>> r.text
+'{"cookies": {"cookies_are": "working"}}'
+
+>>> requests.get('http://github.com', timeout=0.001)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+requests.exceptions.Timeout: HTTPConnectionPool(host='github.com', port=80): Request timed out. (timeout=0.001)
+
+
+You can pass verify the path to a CA_BUNDLE file or directory with certificates of trusted CAs:
+
+>>> requests.get('https://github.com', verify='/path/to/certfile')
+or persistent:
+
+s = requests.Session()
+s.verify = '/path/to/certfile'
+Note
+If verify is set to a path to a directory, the directory must have been processed using the c_rehash utility supplied with OpenSSL.
+
+This list of trusted CAs can also be specified through the REQUESTS_CA_BUNDLE environment variable.
+
+Requests can also ignore verifying the SSL certificate if you set verify to False:
+
+>>> requests.get('https://kennethreitz.org', verify=False)
+<Response [200]>
+By default, verify is set to True. Option verify only applies to host certs.
+
+Client Side Certificates
+You can also specify a local cert to use as client side certificate, as a single file (containing the private key and the certificate) or as a tuple of both files’ paths:
+
+>>> requests.get('https://kennethreitz.org', cert=('/path/client.cert', '/path/client.key'))
+<Response [200]>
+or persistent:
+
+s = requests.Session()
+s.cert = '/path/client.cert'
+If you specify a wrong path or an invalid cert, you’ll get a SSLError:
+
+>>> requests.get('https://kennethreitz.org', cert='/wrong_path/client.pem')
+SSLError: [Errno 336265225] _ssl.c:347: error:140B0009:SSL routines:SSL_CTX_use_PrivateKey_file:PEM lib
+Warning
+The private key to your local certificate must be unencrypted. Currently, Requests does not support using encrypted keys.
+

@@ -1,0 +1,3 @@
+
+a API gráfica do Java ( nota: existe também a AWT, porém AWT está caindo em desuso devido a sua dificuldade de programação e compatibilidade entre as plataformas)
+

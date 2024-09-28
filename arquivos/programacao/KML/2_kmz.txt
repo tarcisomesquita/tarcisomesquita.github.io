@@ -1,0 +1,2 @@
+Aquivos .kmz são arquivos .kml comprimidos com algoritmo zip.
+

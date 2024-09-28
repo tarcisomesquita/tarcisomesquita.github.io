@@ -1,0 +1,9 @@
+
+Canonical input processing mode
+terminal input is processed in lines terminated by newline ('\n'), EOF, or EOL characters. No input can be read until an entire line has been typed by the user, and the read function returns at most a single line of input, no matter how many bytes are requested.
+
+Noncanonical input processing mode
+characters are not grouped into lines. The granularity with which bytes are read in noncanonical input mode is controlled by the MIN and TIME settings.
+
+The choice of canonical or noncanonical input is controlled by the ICANON flag in the c_lflag member of struct termios
+

@@ -1,0 +1,191 @@
+python3 -c "print(type('coração'))"
+<class 'str'>
+
+python3 -c "print(type('coração'.encode('utf-8')))"
+<class 'bytes'>
+
+python3 -c "print('coração'.encode('iso-8859-15'))"
+b'cora\xe7\xe3o'
+
+python3 -c "print(type(5))"
+<class 'int'>
+
+python3 -c "print(type(5.5))"
+<class 'float'>
+
+python3 -c "print(type([3, 4, 'hello']))"
+<class 'list'>
+
+python3 -c "print(type({'element': 'Mn', 'Atomic Number': 25, 'Atomic Mass': 54.938}))"
+<class 'dict'>
+
+python3 -c 'print(type((2, "Hello World!", 55.6, ["element1"])))'
+<class 'tuple'>
+
+tuple is a immutable list
+
+python3 -c "print(type(True))"
+<class 'bool'>
+
+
+>>> float('37.5') # The string 37.5
+37.5              # Is now the float 37.5
+
+str(), int(), float(), dict(), list(), set(), tuple() Class constructor methods
+hex(), oct() Converts an integer to base 16 (hex) or base 8 (octal) representation
+chr(), unichr() Converts an integer to an ASCII or Unicode character
+ord() Converts a character to an integer
+
+
+constructors int(), float(), and complex() can be used to produce numbers of a specific type.
+complex(re, im)	a complex number with real part re, imaginary part im. im defaults to zero.	(6)	complex()
+
+
+Operation	Meaning
+<	strictly less than
+<=	less than or equal
+>	strictly greater than
+>=	greater than or equal
+==	equal
+!=	not equal
+is	object identity
+is not	negated object identity
+
+operadores lógicos
+or, and, not
+
+Operation	Result	Notes	Full documentation
+x + y	sum of x and y	 	 
+x - y	difference of x and y	 	 
+x * y	product of x and y	 	 
+x / y	quotient of x and y	 	 
+x // y	floored quotient of x and y	(1)	 
+x % y	remainder of x / y	(2)	 
+-x	x negated	 	 
++x	x unchanged	 	 
+abs(x)	absolute value or magnitude of x	 	abs()
+c.conjugate()	conjugate of the complex number c	 	 
+divmod(x, y)	the pair (x // y, x % y)	(2)	divmod()
+pow(x, y)	x to the power y	(5)	pow()
+x ** y	x to the power y	(5)	 
+
+
+python3 -c "print(7//2)"
+3
+
+python3 -c "print(7%2)"
+1
+
+python3 -c "print(7/2)"
+3.5
+
+
+Operation	Result	Notes
+x | y	bitwise or of x and y	 
+x ^ y	bitwise exclusive or of x and y	 
+x & y	bitwise and of x and y	 
+x << n	x shifted left by n bits	(1)(2)
+x >> n	x shifted right by n bits	(1)(3)
+~x	the bits of x inverted	 
+
+>>> n = -37
+>>> bin(n)
+'-0b100101'
+>>> n.bit_length()
+6
+
+>>> (1024).to_bytes(2, byteorder='big')
+b'\x04\x00'
+>>> (1024).to_bytes(10, byteorder='big')
+b'\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00'
+>>> (-1024).to_bytes(10, byteorder='big', signed=True)
+b'\xff\xff\xff\xff\xff\xff\xff\xff\xfc\x00'
+>>> x = 1000
+>>> x.to_bytes((x.bit_length() + 7) // 8, byteorder='little')
+b'\xe8\x03'
+
+
+>>> int.from_bytes(b'\x00\x10', byteorder='big')
+16
+>>> int.from_bytes(b'\x00\x10', byteorder='little')
+4096
+>>> int.from_bytes(b'\xfc\x00', byteorder='big', signed=True)
+-1024
+>>> int.from_bytes(b'\xfc\x00', byteorder='big', signed=False)
+64512
+>>> int.from_bytes([255, 0, 0], byteorder='big')
+16711680
+
+
+Operation   Result
+x in s      True if an item of s is equal to x, else False
+ok = 'y'; if ok in ('y', 'ye', 'yes'): return True;
+x not in s  False if an item of s is equal to x, else True
+s + t       the concatenation of s and t
+s * n or n * s   equivalent to adding s to itself n times
+s[i]      ith item of s, origin 0
+s[i:j]    slice of s from i to j
+s[i:j:k]  slice of s from i to j with step k
+len(s)   length of s	 
+min(s)   smallest item of s	 
+max(s)   largest item of s	 
+s.index(x[, i[, j]])	index of the first occurrence of x in s (at or after index i and before index j)
+s.count(x)	total number of occurrences of x in s	 
+
+
+Operation	Result	Notes
+s[i] = x	item i of s is replaced by x	 
+s[i:j] = t	slice of s from i to j is replaced by the contents of the iterable t	 
+del s[i:j]	same as s[i:j] = []	 
+s[i:j:k] = t	the elements of s[i:j:k] are replaced by those of t	(1)
+del s[i:j:k]	removes the elements of s[i:j:k] from the list	 
+s.append(x)	appends x to the end of the sequence (same as s[len(s):len(s)] = [x])	 
+s.clear()	removes all items from s (same as del s[:])	(5)
+s.copy()	creates a shallow copy of s (same as s[:])	(5)
+s.extend(t) or s += t	extends s with the contents of t (for the most part the same as s[len(s):len(s)] = t)	 
+s *= n	updates s with its contents repeated n times	(6)
+s.insert(i, x)	inserts x into s at the index given by i (same as s[i:i] = [x])	 
+s.pop([i])	retrieves the item at i and also removes it from s	(2)
+s.remove(x)	remove the first item from s where s[i] == x	(3)
+s.reverse()	reverses the items of s in place	(4)
+
+mochila = ['Machado', 'Camisa', 'Bacon', 'Abacate']
+
+print(mochila)
+mochila[2] = 'Laranja'
+mochila.append('Ovos')
+mochila.insert(1, 'Canivete')
+print(mochila)
+
+del mochila[1]
+mochila.remove('Ovos')
+print(mochila)
+
+x = [5, 7, 9, 11]
+y = x # apenas referencia a memória
+y[0] = 2
+print(x)
+print(y)
+
+y = x[:] # cópia
+
+
+args = [3, 6]
+list(range(*args))            # call with arguments unpacked from a list
+[3, 4, 5]
+
+>>> r = range(0, 20, 2)
+>>> r
+range(0, 20, 2)
+>>> 11 in r
+False
+>>> 10 in r
+True
+>>> r.index(10)
+5
+>>> r[5]
+10
+>>> r[:5]
+range(0, 10, 2)
+>>> r[-1]
+18

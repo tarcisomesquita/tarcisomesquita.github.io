@@ -1,0 +1,17 @@
+The main method is similar to the main function in C and C++; it's the entry point for your application and will subsequently invoke all the other methods required by your program.
+
+public static void main(String args[])  
+
+Função principal do programa.
+
+public
+static
+void ; sem retorno
+
+precisa conter um parâmetro array do tipo String (String args[]). "args" é a variável array.
+
+
+funcionam as seguintes declarações
+# static void main(String [] args)  
+# final synchronized protected void main(String argumentos[]) 
+

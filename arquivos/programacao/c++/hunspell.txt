@@ -1,0 +1,36 @@
+short usage summary
+hunspell -h
+
+hunspell -d en_US
+that will start the program in a interactive shell. Type word and press enter to spell check it.
+
+export DICTIONARY=en-US
+export DICPATH=/usr/lib/firefox/dictionaries
+
+hunspell -d en_US filename.txt
+It launches into a interactive command line interface.
+
+cat myFile.txt | hunspell
+hunspell -l myFile.txt
+
+To list only the misspelled words, do:
+cat myFile.txt | hunspell -l -i utf-8
+
+How to check a single word?
+echo badword | hunspell
+echo somee words ar good some badd | hunspell
+
+
+hunspell -d en_US yourfile.txt
+    Type a number to choose the corresponding correction
+    R Replace the misspelled word completely.
+    Space Accept the word this time only.
+    A Accept the word for the rest of this hunspell session.
+    I Accept the word, capitalized as it is in the file, and update private dictionary.
+    U Accept the word, and add an uncapitalized (actually, all lower-case) version to the private dictionary.
+    S Ask a stem and a model word and store them in the private dictionary. The stem will be accepted also with the affixes of the model word.
+    X Write the rest of this file, ignoring misspellings, and start next file.
+    Q Exit immediately and leave the file unchanged.
+    ? Give help screen.
+
+

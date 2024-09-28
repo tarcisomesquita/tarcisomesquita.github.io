@@ -1,0 +1,37 @@
+
+NOTE
+Only the ELF header has a fixed position in the file.
+
+ = = = = = = = = = = = = = = = = = =
+
+Relocatable file (arquivos objetos)
+
+
+Elf header
+
+Program header table (optional)
+
+Section header table
+
+Section 1
+
+. . .
+
+Section n
+
+
+ = = = = = = = = = = = = = = = = = =
+
+(arquivos executáveis)
+
+
+Elf header
+
+Program header table
+
+Segment 1
+. . .
+Segment n
+
+Section header table
+

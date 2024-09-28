@@ -1,0 +1,44 @@
+function validaEmail(mail) {
+   var er = RegExp(/^[A-Za-z0-9_\-\.]+@[A-Za-z0-9_\-\.]{2,}\.[A-Za-z0-9]{2,}(\.[A-Za-z0-9])?/);
+   if (mail == "") {
+      window.alert("Informe seu e-mail!");
+   }
+   else if (er.test(mail) == false) {
+      window.alert("E-mail inválido!");
+   }
+}
+
+
+\xdd   hexadecimal
+\uxxxx unicode
+
+? equivale à {0,1}
+* equivale à {0,}
++ equivale à {1,}
+
+/(abc)+(def)/    encontra uma ou mais ocorrências de "abc" seguida(s) por uma ocorrência de "def".
+/(ab)|(cd)|(ef)/    encontra "ab" ou "cd" ou "ef".
+
+
+function validaData(data){
+           var er = RegExp("(0[1-9]|[012][0-9]|3[01])/(0[1-9]|1[012])/[12][0-9]{3}");
+           if(er.test(data)){
+              var barras = data.split("/");
+              var dia = barras[0];
+              var mes = barras[1];
+              var ano = barras[2];
+              var d = new Date(ano, mes-1, dia);
+              if(dia != d.getDate()){
+                 return false;
+              else if(mes != (d.getMonth() + 1)){
+                 return false;
+              }else if(ano != d.getFullYear()){
+                 return false;
+              }else{
+                 return true;
+              }
+           }else{
+              return    false;
+           }
+      }
+

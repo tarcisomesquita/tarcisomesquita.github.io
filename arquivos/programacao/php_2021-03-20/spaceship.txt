@@ -1,0 +1,29 @@
+Operator 	<=> Equivalent
+$x < $y 	($x <=> $y) === -1
+$x <= $y 	($x <=> $y) === -1 || ($x <=> $y) === 0
+$x == $y 	($x <=> $y) === 0
+$x != $y 	($x <=> $y) !== 0
+$x >= $y 	($x <=> $y) === 1 || ($x <=> $y) === 0
+$x > $y 	($x <=> $y) === 1
+
+The following example will show you how spaceship operator actually works:
+Example
+Run this code »
+
+<?php
+// Comparing Integers 
+echo 1 <=> 1; // Outputs: 0
+echo 1 <=> 2; // Outputs: -1
+echo 2 <=> 1; // Outputs: 1
+ 
+// Comparing Floats
+echo 1.5 <=> 1.5; // Outputs: 0
+echo 1.5 <=> 2.5; // Outputs: -1
+echo 2.5 <=> 1.5; // Outputs: 1
+ 
+// Comparing Strings
+echo "x" <=> "x"; // Outputs: 0
+echo "x" <=> "y"; // Outputs: -1
+echo "y" <=> "x"; // Outputs: 1
+?>
+

@@ -1,0 +1,148 @@
+sudo apt-get update
+sudo apt-get install mysql-client
+
+mysql --host='ceejapd.mysql.dbaas.com.br' --user='ceejapd' --password ceejapd
+
+mysql --host='ceejapd.mysql.dbaas.com.br' --user='ceejapd' --password ceejapd -e 'select * from log' > r.tab; cat r.tab
+
+echo -n 'select * from log' | mysql --host='ceejapd.mysql.dbaas.com.br' --user='ceejapd' --password ceejapd > r.tab; cat r.tab
+
+mysql db_name < script.sql > output.tab
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+SELECT DATABASE();
+USE ceejapd
+SHOW TABLES;
+
+DESCRIBE pet;
+
+SHOW CREATE TABLE
+
+show warnings;
+
+CREATE TABLE log (
+  id   INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  data DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  log  VARCHAR(500) NOT NULL DEFAULT '',
+  UNIQUE(id)
+) AUTO_INCREMENT = 1;
+
+DROP TABLE log;
+
+INSERT INTO log VALUES
+  (1,DEFAULT,'teste 1'),(DEFAULT,DEFAULT,'teste 2');
+
+delete from log where id=5;
+
+CREATE TABLE usuarios (
+  matricula CHAR(6)  NOT NULL,
+  senha     CHAR(32) NOT NULL,
+  PRIMARY KEY (matricula)
+);
+
+INSERT INTO usuarios VALUES ('502000','698dc19d489c4e4db73e28a713eab07b');
+UPDATE usuarios SET senha='698dc19d489c4e4db73e28a713eab07c' WHERE matricula='502000';
+
+
+CREATE TABLE shop (
+    article INT UNSIGNED  DEFAULT '0000' NOT NULL,
+    dealer  CHAR(20)      DEFAULT ''     NOT NULL,
+    price   DECIMAL(16,2) DEFAULT '0.00' NOT NULL,
+    PRIMARY KEY(article, dealer));
+INSERT INTO shop VALUES
+    (1,'A',3.45),(1,'B',3.99),(2,'A',10.99),(3,'B',1.45),
+    (3,'C',1.69),(3,'D',1.25),(4,'D',19.95);
+    
+CREATE TABLE atendimentos (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  matricula  CHAR(6)    DEFAULT '' NOT NULL,
+  nota       CHAR(4)    DEFAULT '' NOT NULL,
+  atividade  VARCHAR(4) DEFAULT ''  NOT NULL,
+  data       DATETIME NOT NULL
+) AUTO_INCREMENT = 1;
+
+SET @@time_zone = '-03:00';
+
+INSERT INTO ts (col) VALUES 
+  ('2020-01-01 10:10:10'),
+  ('2020-01-01 10:10:10+05:30'),
+  ('2020-01-01 10:10:10-08:00')
+;
+    
+To convert strings in other orders to year-month-day order, the STR_TO_DATE() function may be useful. 
+
+MySQL retrieves and displays DATETIME values in 'YYYY-MM-DD hh:mm:ss' format.
+
+
+https://dev.mysql.com/doc/refman/8.0/en/date-and-time-literals.html
+https://dev.mysql.com/doc/refman/8.0/en/numeric-types.html
+https://dev.mysql.com/doc/refman/8.0/en/data-types.html
+
+SHOW DATABASES;
+USE test
+
+SELECT VERSION(), CURRENT_DATE;
+SELECT SIN(PI()/4), (4+1)*5;
+SELECT VERSION(); SELECT NOW();
+mysql> SELECT
+    -> USER()
+    
+SELECT * FROM my_table WHERE name = 'Smith AND age < 30;
+    '
+SELECT * FROM shop ORDER BY article;
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<meta viewport='width=device-width' />
+<title>log resposta</title>
+</head>
+<body>
+
+<?php
+if (! $_POST["text_name"] || empty($_POST["text_name"])) {
+  header('Location: index.php');
+  exit();
+}
+
+// texto deve conter no máximo 500 caracteres
+$texto = $_POST["text_name"];
+
+$conexao2 = mysqli_connect("myshared0383", "ceejapd", "SENHA", "ceejapd") or die('Não foi possível conectar ao banco de dados ceejapd');
+
+$result = mysqli_query($conexao2, "INSERT INTO log VALUES (DEFAULT, DEFAULT, '$texto')");
+
+mysqli_close($conexao2);
+
+?>
+
+<p>Dados recebidos.</p>
+
+</body>
+</html>
+
+
+
+<?php
+$ch = curl_init();
+
+curl_setopt($ch, CURLOPT_URL,"https://www.t7m8.com.br/log.php");
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS,"text_name=livros.php | {$_SERVER['REMOTE_ADDR']} | {$_SERVER['REMOTE_PORT']} | {$_SERVER['HTTP_USER_AGENT']}");
+curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$server_output = curl_exec($ch);
+
+curl_close ($ch);
+?>
+<!DOCTYPE html>
+<html>
+...

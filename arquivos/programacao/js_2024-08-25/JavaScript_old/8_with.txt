@@ -1,0 +1,10 @@
+
+with (document) {
+   fgColor = “#000000”;
+   bgColor = “#FFFFFF”;
+}
+
+O código acima pode ser usado no lugar de:
+document.fgColor = “#000000”;
+document.bgColor = “#FFFFFF”;
+

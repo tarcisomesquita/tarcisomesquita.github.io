@@ -1,0 +1,48 @@
+echo -n -e \\xBE\\x00\\x10\\x40\\x00 > txt.bin #    mov esi,0x00401000
+echo -n -e \\x48\\xA3\\x00\\x10\\x40\\x00\\x00\\x00\\x00\\x00 >> t.bin; # mov dword [rsi],0x401000
+
+echo -n -e \\xBA\\x08\\x00\\x00\\x00 >>  txt.bin #    mov edx,0x00000008
+echo -n -e \\xBE\\x00\\x10\\x40\\x00 >> txt.bin #    mov esi,0x00401000
+echo -n -e \\xBF\\x01\\x00\\x00\\x00 >> txt.bin #    mov edi,0x00000001
+echo -n -e \\xB8\\x01\\x00\\x00\\x00 >> txt.bin #    mov eax,0x00000001
+echo -n -e \\x0F\\x05                >> txt.bin #    syscall
+
+echo -n -e \\xBF\\x01\\x00\\x00\\x00 >> txt.bin #    mov edi,0x00000001
+echo -n -e \\xB8\\xE7\\x00\\x00\\x00 >> txt.bin #    mov eax,0x00000001
+echo -n -e \\x0F\\x05                >> txt.bin #    syscall
+
+dd if=txt.bin of=001_writeb bs=1 seek=$((0xb0)) conv=notrunc
+
+./001_writeb | hexdump -C
+
+echo -n -e \\x48\\xA3\\x00\\x10\\x40\\x00\\x00\\x00\\x00\\x00\\x90\\x90 > t.bin; ./ndisasm -b 64 t.bin 
+00000000  48A3001040000000  mov [qword 0x401000],rax
+         -0000
+0000000A  90                nop
+0000000B  90                nop
+
+echo -n -e \\xA3\\x90\\x90\\x90\\x90\\x90\\x90\\x90\\x90\\x90\\x90 > t.bin; ./ndisasm -b 64 t.bin 
+00000000  A390909090909090  mov [qword 0x9090909090909090],eax
+         -90
+00000009  90                nop
+0000000A  90                nop
+
+echo -n -e \\x04\\x90\\x90 > t.bin
+./ndisasm -b 64 t.bin 
+00000000  0490              add al,0x90
+00000002  90                nop
+
+echo -n -e \\x05\\x90\\x90\\x90\\x90\\x90 > t.bin
+./ndisasm -b 64 t.bin 
+00000000  0590909090        add eax,0x90909090
+00000005  90                nop
+
+
+echo -n -e \\xC7\\x05\\x80\\x70\\x60\\x50\\x40\\x30\\x20\\x10\\x90 > t.bin; ./ndisasm -b 64 t.bin 
+00000000  C705807060504030  mov dword [rel 0x5060708a],0x10203040
+         -2010
+0000000A  90                nop
+
+echo -n -e \\xC7\\x06\\x00\\x10\\x40\\x00\\x90 > t.bin; ./ndisasm -b 64 t.bin 
+00000000  C70600104000      mov dword [rsi],0x401000
+00000006  90                nop

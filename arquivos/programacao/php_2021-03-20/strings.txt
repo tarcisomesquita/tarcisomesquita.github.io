@@ -1,0 +1,153 @@
+endereçao de ajuda... para "echo"
+https://www.php.net/manual/pt_BR/function.echo.php
+
+URL Funções
+    base64_decode — Decodifica dados codificados com MIME base64
+    base64_encode — Codifica dados com MIME base64
+    get_headers — Retorna todos os cabeçalhos enviados pelo servidor em resposta a uma requisição HTTP
+    get_meta_tags — Extrai as informações das tag meta de um arquivo e retorna como uma matriz
+    http_build_query — Gera a string de consulta (query) em formato URL
+    parse_url — Interpreta uma URL e retorna os seus componentes
+    rawurldecode — Decodifica uma URL
+    rawurlencode — Codifica uma URL de acordo com RFC 3986
+    urldecode — Decodifica uma URL codificada
+    urlencode — Codifica uma URL
+    
+Funções de String
+    addcslashes — String entre aspas com barras no estilo C
+    addslashes — Adiciona barras a uma string
+    bin2hex — Converte um dado binário em representação hexadecimal
+    chop — Sinônimo de rtrim
+    chr — Retorna um caracter específico
+    chunk_split — Divide uma string em pequenos pedaços
+    convert_cyr_string — Converte de um conjunto caracteres cirílico para outro
+    convert_uudecode — Decodifica uma string codificada com uuencode
+    convert_uuencode — Codifica com uuencode uma string
+    count_chars — Retorna informações sobre os caracteres usados numa string
+    crc32 — Calcula polinômio crc32 de uma string
+    crypt — Encriptação unidirecional de string (hashing)
+    echo — Exibe uma ou mais strings
+    explode — Divide uma string em strings
+    fprintf — Escreve uma string formatada para um stream
+    get_html_translation_table — Retorna a tabela de tradução usada por htmlspecialchars e htmlentities
+    hebrev — Converte texto lógico Hebraico para texto visual
+    hebrevc — Converte um texto lógico Hebráico para um texto visual com conversão newline
+    hex2bin — Decodes a hexadecimally encoded binary string
+    html_entity_decode — Converte todas as entidades HTML para os seus caracteres
+    htmlentities — Converte todos os caracteres aplicáveis em entidades html.
+    htmlspecialchars_decode — Converte especiais entidades HTML para caracteres
+    htmlspecialchars — Converte caracteres especiais para a realidade HTML
+    implode — Junta elementos de uma matriz em uma string
+    join — Sinônimo de implode
+    lcfirst — Torna minúsculo o primeiro caractere de uma string
+    levenshtein — Calcula a distância Levenshtein entre duas strings
+    localeconv — Obtém a informação da formatação numérica
+    ltrim — Retira espaços em branco (ou outros caracteres) do início da string
+    md5_file — Calcula hash md5 de um dado arquivo
+    md5 — Calcula o "hash MD5" de uma string
+    metaphone — Calcula a metaphone key de uma string
+    money_format — Formata um número como uma string de moeda
+    nl_langinfo — Retorna informação de linguagem e local
+    nl2br — Insere quebras de linha HTML antes de todas newlines em uma string
+    number_format — Formata um número com os milhares agrupados
+    ord — Retorna o valor ASCII do caractere
+    parse_str — Converte a string em variáveis
+    print — Mostra uma string
+    printf — Mostra uma string formatada
+    quoted_printable_decode — Converte uma string quoted-printable para uma string de 8 bit
+    quoted_printable_encode — Converte uma string de 8 bits em uma string quoted-printable
+    quotemeta — Adiciona uma barra invertida antes dos meta caracteres
+    rtrim — Retira espaço em branco (ou outros caracteres) do final da string
+    setlocale — Define informações locais
+    sha1_file — Calcula a hash sha1 de um arquivo
+    sha1 — Calcula a hash sha1 de uma string
+    similar_text — Calcula a similaridade entre duas strings
+    soundex — Calcula a chave soundex de uma string
+    sprintf — Retorna a string formatada
+    sscanf — Interpreta a entrada de uma string de acordo com um formato
+    str_contains — Determine if a string contains a given substring
+    str_ends_with — Checks if a string ends with a given substring
+    str_getcsv — Analisa uma string CSV e retorna os dados em um array
+    str_ireplace — Versão que não diferencia maiúsculas e minúsculas de str_replace.
+    str_pad — Preenche uma string para um certo tamanho com outra string
+    str_repeat — Repete uma string
+    str_replace — Substitui todas as ocorrências da string de procura com a string de substituição
+    str_rot13 — Executa a transformação rot13 em uma string
+    str_shuffle — Mistura uma string aleatoriamente
+    str_split — Converte uma string para um array
+    str_starts_with — Checks if a string starts with a given substring
+    str_word_count — Retorna informação sobre as palavras usadas em uma string
+    strcasecmp — Comparação de strings sem diferenciar maiúsculas e minúsculas segura para binário
+    strchr — Sinônimo de strstr
+    strcmp — Comparação de string segura para binário
+    strcoll — Comparação de string baseada no local
+    strcspn — Encontra o tamanho do segmento inicial que não contenha a máscara
+    strip_tags — Retira as tags HTML e PHP de uma string
+    stripcslashes — Desfaz o efeito de addcslashes
+    stripos — Encontra a primeira ocorrencia de uma string sem diferenciar maiúsculas e minúsculas
+    stripslashes — Desfaz o efeito de addslashes
+    stristr — strstr sem diferenciar maiúsculas e minúsculas
+    strlen — Retorna o tamanho de uma string
+    strnatcasecmp — Comparação de strings sem diferenciar maiúsculas/minúsculas usando o algoritmo "natural order"
+    strnatcmp — Comparação de strings usando o algoritmo "natural order"
+    strncasecmp — Comparação de string caso-sensitivo de Binário seguro dos primeiros n caracteres
+    strncmp — Comparação de string segura para binário para os primeiros n caracteres
+    strpbrk — Procura na string por um dos caracteres de um conjunto
+    strpos — Encontra a posição da primeira ocorrência de uma string
+    strrchr — Encontra a ultima ocorrência de um caractere em uma string
+    strrev — Reverte uma string
+    strripos — Encontra a posição da última ocorrência de uma string case-insensitive em uma string
+    strrpos — Encontra a posição da última ocorrência de um caractere em uma string
+    strspn — Encontra o comprimento do segmento inicial combinando com a máscara
+    strstr — Encontra a primeira ocorrencia de uma string
+    strtok — Tokeniza uma string
+    strtolower — Converte uma string para minúsculas
+    strtoupper — Converte uma string para maiúsculas
+    strtr — Traduz certos caracteres
+    substr_compare — A comparação binária entre duas strings de um offset até o limite do comprimento de caracteres
+    substr_count — Conta o número de ocorrências de uma substring
+    substr_replace — Substitui o texto dentro de uma parte de uma string
+    substr — Retorna uma parte de uma string
+    trim — Retira espaço no início e final de uma string
+    ucfirst — Converte para maiúscula o primeiro caractere de uma string
+    ucwords — Converte para maiúsculas o primeiro caractere de cada palavra
+    utf8_decode — Converts a string from UTF-8 to ISO-8859-1, replacing invalid or unrepresentable characters
+    utf8_encode — Converts a string from ISO-8859-1 to UTF-8
+    vfprintf — Escreve uma string formatada para um stream
+    vprintf — Mostra uma string formatada
+    vsprintf — Retorna uma string formatada
+    wordwrap — Quebra uma string em um dado número de caracteres
+    
+Funções cURL
+    curl_close — Fecha uma sessão cURL
+    curl_copy_handle — Copia um controlador cURL com todas as suas opções
+    curl_errno — Retorna o número do último erro
+    curl_error — Retorna uma string contendo o último erro da sessão atual
+    curl_escape — Codifica uma URL
+    curl_exec — Perform a cURL session
+    curl_file_create — Cria um objeto do tipo CURLFile
+    curl_getinfo — Get information regarding a specific transfer
+    curl_init — Initialize a cURL session
+    curl_multi_add_handle — Add a normal cURL handle to a cURL multi handle
+    curl_multi_close — Close a set of cURL handles
+    curl_multi_errno — Return the last multi curl error number
+    curl_multi_exec — Run the sub-connections of the current cURL handle
+    curl_multi_getcontent — Return the content of a cURL handle if CURLOPT_RETURNTRANSFER is set
+    curl_multi_info_read — Get information about the current transfers
+    curl_multi_init — Returns a new cURL multi handle
+    curl_multi_remove_handle — Remove a multi handle from a set of cURL handles
+    curl_multi_select — Wait for activity on any curl_multi connection
+    curl_multi_setopt — Configura uma opção no multi controlador cURL
+    curl_multi_strerror — Retorna uma string que descreve o código de erro
+    curl_pause — Pausa e despausa uma conexão
+    curl_reset — Reseta todas as opções de um controlador de sessão libcurl
+    curl_setopt_array — Set multiple options for a cURL transfer
+    curl_setopt — Set an option for a cURL transfer
+    curl_share_close — Fecha um controlador de compartilhamento de cURL
+    curl_share_errno — Return the last share curl error number
+    curl_share_init — Inicializa um controlador de compartilhamento de cURL
+    curl_share_setopt — Configura uma opção para um controlador de compartilhamento de cURL.
+    curl_share_strerror — Return string describing the given error code
+    curl_strerror — Retorna uma string que descreve o código de erro informado
+    curl_unescape — Decodifica a parte codificada da URL fornecida
+    curl_version — Gets cURL version information

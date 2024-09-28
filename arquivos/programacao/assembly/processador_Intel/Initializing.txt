@@ -1,0 +1,57 @@
+8.8.2
+Initializing Protected-Mode Exceptions and Interrupts
+Software initialization code must at a minimum load a protected-mode IDT with gate
+descriptor for each exception vector that the processor can generate. If interrupt or
+trap gates are used, the gate descriptors can all point to the same code segment,
+which contains the necessary exception handlers. If task gates are used, one TSS
+and accompanying code, data, and task segments are required for each exception
+handler called with a task gate.
+If hardware allows interrupts to be generated, gate descriptors must be provided in
+the IDT for one or more interrupt handlers.
+Before the IDT can be used, the base address and limit for the IDT must be loaded
+into the IDTR register using an LIDT instruction. This operation is typically carried out
+immediately after switching to protected mode.
+8.8.3
+Initializing Paging
+Paging is controlled by the PG flag in control register CR0. When this flag is clear (its
+state following a hardware reset), the paging mechanism is turned off; when it is set,
+paging is enabled. Before setting the PG flag, the following data structures and regis-
+ters must be initialized:
+• Software must load at least one page directory and one page table into physical
+memory. The page table can be eliminated if the page directory contains a
+directory entry pointing to itself (here, the page directory and page table reside
+in the same page), or if only 4-MByte pages are used.
+• Control register CR3 (also called the PDBR register) is loaded with the physical
+base address of the page directory.
+• (Optional) Software may provide one set of code and data descriptors in the GDT
+or in an LDT for supervisor mode and another set for user mode.
+With this paging initialization complete, paging is enabled and the processor is
+switched to protected mode at the same time by loading control register CR0 with an
+image in which the PG and PE flags are set. (Paging cannot be enabled before the
+processor is switched to protected mode.)
+Vol. 3 8-13PROCESSOR MANAGEMENT AND INITIALIZATION
+8.8.4
+Initializing Multitasking
+If the multitasking mechanism is not going to be used and changes between privilege
+levels are not allowed, it is not necessary load a TSS into memory or to initialize the
+task register.
+If the multitasking mechanism is going to be used and/or changes between privilege
+levels are allowed, software initialization code must load at least one TSS and an
+accompanying TSS descriptor. (A TSS is required to change privilege levels because
+pointers to the privileged-level 0, 1, and 2 stack segments and the stack pointers for
+these stacks are obtained from the TSS.) TSS descriptors must not be marked as
+busy when they are created; they should be marked busy by the processor only as a
+side-effect of performing a task switch. As with descriptors for LDTs, TSS descriptors
+reside in the GDT.
+After the processor has switched to protected mode, the LTR instruction can be used
+to load a segment selector for a TSS descriptor into the task register. This instruction
+marks the TSS descriptor as busy, but does not perform a task switch. The processor
+can, however, use the TSS to locate pointers to privilege-level 0, 1, and 2 stacks. The
+segment selector for the TSS must be loaded before software performs its first task
+switch in protected mode, because a task switch copies the current task state into
+the TSS.
+After the LTR instruction has been executed, further operations on the task register
+are performed by task switching. As with other segments and LDTs, TSSs and TSS
+descriptors can be either pre-allocated or allocated as needed.
+
+

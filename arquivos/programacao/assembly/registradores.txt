@@ -1,0 +1,22 @@
+  8 registradores de 32 bits: eax (o acumulador), ebx, ecx, edx,
+●
+  edi, esi, ebp (the frame pointer), e esp (the stack pointer).
+  8 registradores de 16 bits: ax, bx, cx, dx, di, si, bp, e sp.
+●
+  8 registradores de 8 bits: ah, al, bh, bl, ch, cl, dh, e dl (Estes
+●
+  são os maiores e menores bytes de ax, bx, cx, e dx).
+  6 registradores de seção: cs (seção de código), ds (seção de
+●
+  dados), ss (seção de pilha), es, fs, e gs.
+  3 registradores de controle do processador: cr0, cr2, e cr3.
+●
+  6 registradores de debug: db0, db1, db2, db3, db6, e db7.
+●
+  2 registradores de teste: tr6 e tr7.
+●
+  Pilha de 8 registradores de ponto flutuante: st (ou
+●
+  equivalentemente st(0), st(1), st(2), st(3), st(4), st(5), st
+  (6), e st(7)).
+

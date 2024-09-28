@@ -1,0 +1,108 @@
+
+
+nomedafuncao() {
+   comando 1
+   comando N
+}
+
+Uma função é como se fosse um script dentro do script, sendo assim ele também usa o mesmo esquema de parâmetros de um script comum ($1 para primeiro parâmetro, $2 para segunda, com a exceção do $0, que não retorna o nome da função!).
+
+Uma função também é capaz de retornar um valor usando o "return ValorDeRetorno", sendo que ValorDeRetorno ficará armazenado em "$?"
+Só é possível retornar valores inteiros no intervalo 0-255
+Se precisar de valores positivos maiores que 255 retorne-o como negativo e depois converta-o para positivo novamente. (Não sei como)
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#!/bin/bash
+function quit {
+   echo -e "\nTCHAU!\n"
+   exit
+}
+
+function e {
+   echo -n "$1 "
+}
+
+e Hello
+e World
+quit
+echo "Isso aqui não será impresso"
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#!/bin/bash
+
+PARAM_ERR=255 # Se for passado mais do que dois parâmetros.
+EQUAL=254     # Retorno se os parâmetros forem iguais.
+
+# Retorna o maior de dois números
+function maior {
+   # OBS: os números comparados precisam ser menores que 257
+   [ -z "$2" ] && return $PARAM_ERR
+   
+   if [ "$1" -eq "$2" ]; then
+      return $EQUAL
+   elif [ "$1" -gt "$2" ]; then
+      return $1
+   else
+      return $2
+   fi
+}
+
+read -p "Numero-1: " N1
+read -p "Numero-2: " N2
+maior $N1 $N2
+RET_VAL=$?
+
+if [ $RET_VAL -eq $PARAM_ERR ]; then
+   echo "É necessário passar dois parâmetros para a função."
+elif [ $RET_VAL -eq $EQUAL ]; then
+   echo "Os dois números são iguais."
+else
+   echo "O maior número é $RET_VAL."
+fi
+
+exit 0
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+Funções como comandos
+"Quando executamos um shellscript ele é executado num shell a parte (shell filho)"
+O comando source faz com que o script seja executado no shell pai, é como você estivesse digitando todo o conteúdo do arquivo na linha de comando.
+
+colocar o arquivo com as funções que você quer usar num arquivo oculto no seu $HOME (ex.: $HOME/.MyFunctions) e no seu $HOME/.bash_profile você coloca uma linha com o comando "source $HOME/.MyFunctions".
+
+
+# renomeia os arquivos que possuem nomes com caracteres feiosos
+# fazendo com que letras maiúsculas fiquem minúsculas;
+# letras acentuadas fiquem a letra correspondente sem acento;
+# e espaços em branco, símbolos e outras coisas feias fiquem
+# underline '_'
+function Marrumanome {
+[ "$1" ] || {
+	Mecho "Erro: você precisa passar os arquivos que quer renomear";
+	echo 'Uso: Marrumanome arquivo1 [arquivoN ...]'
+	return 1
+}
+
+local FILE NINICIAL NFINAL DIR
+
+for FILE in "$@"; do
+	[ -f "$FILE" ] || continue
+	NINICIAL=`basename "$FILE"`
+	DIR=`dirname "$FILE"`
+	NFINAL=`echo "$NINICIAL" | sed '
+y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/
+y/ÃãÀàÂâÄäÁáÈèÊêËëÉé/aaaaaaaaaaeeeeeeee/
+y/ÌìÎîÏïÍíÕõÒòÔôÖöÓó/iiiiiiiioooooooooo/
+y/ÙùÛûÜüÚúÇçÑñ/uuuuuuuuccnn/
+s/^-/_/
+s/[^a-z0-9._-]/_/g'`
+
+	[ "$NINICIAL" != "$NFINAL" ] && mv -- "$FILE" "$DIR/$NFINAL"
+done
+}
+
+

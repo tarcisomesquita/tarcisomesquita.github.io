@@ -1,0 +1,44 @@
+EPOLL(7)
+
+3.54 man-pages
+http://www.kernel.org/doc/man-pages/
+2012-04-17
+
+epoll - I/O event notification facility
+
+#include <sys/epoll.h>
+
+The epoll API performs a similar task to poll(2): monitoring multiple file descriptors to see if I/O is possible on any of them.
+
+* epoll_create(2) creates an epoll instance and returns a file descriptor referring to that instance.
+* epoll_create1(2) is more recent and extends the functionality of epoll_create(2).
+* epoll_ctl(2) make the register of file descriptors.
+* epoll_wait(2) waits for I/O events.
+
+edge-triggered mode (EPOLLET flag) delivers events only when changes occur on the monitored file descriptor. Bloqueia mesmo se ainda há dados para serem lidos no buffer de entrada.
+The application should use nonblocking file descriptors to avoid having a blocking read or write. Or wait for an event only after read(2) or write(2) return EAGAIN.
+
+level-triggered interface (the default, when EPOLLET is not specified).
+
+EPOLLONESHOT flag tell for epoll to disable the associated file descriptor after the receipt of an event with epoll_wait(2).
+When the EPOLLONESHOT flag is specified, it is the caller's responsibility to rearm the file descriptor using epoll_ctl(2) with EPOLL_CTL_MOD.
+
+/proc interfaces
+The following interfaces can be used to limit the amount of kernel memory consumed by epoll:
+
+/proc/sys/fs/epoll/max_user_watches (since Linux 2.6.28)
+This specifies a limit on the total number of file descriptors that a user can register across all epoll instances on the system. The limit is per real user ID. Each registered file descriptor costs roughly 90 bytes on a 32-bit kernel, and roughly 160 bytes on a 64-bit kernel. Currently, the default value for max_user_watches is 1/25 (4%) of the available low memory, divided by the registration cost in bytes.
+
+When used as an edge-triggered interface, for performance reasons, it is possible to add the file descriptor inside the epoll interface (EPOLL_CTL_ADD) once by specifying (EPOLLIN|EPOLLOUT). This allows you to avoid continuously switching between EPOLLIN and EPOLLOUT calling epoll_ctl(2) with EPOLL_CTL_MOD.
+
+Questions and answers
+What happens if you register the same file descriptor on an epoll instance twice?
+You will probably get EEXIST. However, it is possible to add a duplicate (dup(2), dup2(2), fcntl(2) F_DUPFD) descriptor to the same epoll instance. This can be a useful technique for filtering events, if the duplicate file descriptors are registered with different events masks.
+
+If more than one event occurs between epoll_wait(2) calls, are they combined or reported separately?
+They will be combined.
+
+For packet files (datagram socket), the only way to detect the end of the read/write I/O space is to continue to read/write until EAGAIN.
+
+For stream-oriented files (e.g., pipe, FIFO, stream socket), the condition that the read/write I/O space is exhausted can also be detected by checking the amount of data read from / written to the target file descriptor.
+

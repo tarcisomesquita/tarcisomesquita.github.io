@@ -1,0 +1,13 @@
+
+Clear breakpoint at specified line or function.
+
+Argument may be line number, function name, or "*" and an address.
+
+If line number is specified, all breakpoints in that line are cleared.
+If function is specified, breakpoints at beginning of function are cleared.
+If an address is specified, breakpoints at that address are cleared.
+
+With no argument, clears all breakpoints in the line that the selected frame is executing in.
+
+See also the "delete" command which clears breakpoints by number.
+

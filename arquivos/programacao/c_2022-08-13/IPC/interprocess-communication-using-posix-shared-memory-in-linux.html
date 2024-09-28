@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# book: http://ogp.me/ns/book# profile: http://ogp.me/ns/profile# video: http://ogp.me/ns/video# product: http://ogp.me/ns/product# content: http://purl.org/rss/1.0/modules/content/ dc: http://purl.org/dc/terms/ foaf: http://xmlns.com/foaf/0.1/ rdfs: http://www.w3.org/2000/01/rdf-schema# sioc: http://rdfs.org/sioc/ns# sioct: http://rdfs.org/sioc/types# skos: http://www.w3.org/2004/02/skos/core# xsd: http://www.w3.org/2001/XMLSchema#">
+
+<!-- Mirrored from www.softprayog.in/programming/interprocess-communication-using-posix-shared-memory-in-linux by HTTrack Website Copier/3.x [XR&CO'2017], Tue, 13 Feb 2018 03:10:38 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<head>
+  <link rel="profile" href="../../external.html?link=http://www.w3.org/1999/xhtml/vocab"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="amphtml" href="../../external.html?link=https://www.softprayog.in/programming/interprocess-communication-using-posix-shared-memory-in-linux?amp"/>
+<link rel="shortcut icon" href="../../external.html?link=https://www.softprayog.in/images/xsoftprayog_icon.png.pagespeed.ic.hiJFwYOF77.png" type="image/png"/>
+<meta name="description" content="POSIX shared memory calls are explained with example client-server programs."/>
+<meta name="abstract" content="POSIX shared memory calls are explained with example client-server programs."/>
+<meta name="keywords" content="shared memory, posix, ipc, interprocess, communication, linux, unix, shm_open, shm_unlink, ftruncate, mmap. munmap, example, program"/>
+<link rel="image_src" href="../../external.html?link=https://www.softprayog.in/images/system-logger.png"/>
+<link rel="canonical" href="interprocess-communication-using-posix-shared-memory-in-linux.html"/>
+<meta property="og:site_name" content="SoftPrayog"/>
+<meta property="og:type" content="article"/>
+<meta property="og:url" content="interprocess-communication-using-posix-shared-memory-in-linux.html"/>
+<meta property="og:title" content="Interprocess communication using POSIX Shared Memory in Linux"/>
+<meta property="og:image" content="../../external.html?link=https://www.softprayog.in/images/system-logger.png"/>
+<meta property="og:image:secure_url" content="../../external.html?link=https://www.softprayog.in/images/system-logger.png"/>
+<meta property="og:image:type" content="image/png"/>
+<meta property="og:image:width" content="1024"/>
+<meta property="og:image:height" content="512"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:creator" content="@softprayog"/>
+<meta name="twitter:creator:id" content="357517107"/>
+<meta name="twitter:url" content="interprocess-communication-using-posix-shared-memory-in-linux.html"/>
+<meta name="twitter:title" content="Interprocess communication using POSIX message queues in #Linux"/>
+<meta name="twitter:description" content="POSIX message queue calls for interprocess communication (IPC) between processes are explained with example of server and client programs under Linux."/>
+<meta name="twitter:image" content="../../external.html?link=https://www.softprayog.in/images/system-logger.png"/>
+<meta name="twitter:image:width" content="1024"/>
+<meta name="twitter:image:height" content="512"/>
+<meta name="twitter:image:alt" content="System Logger using shared memory"/>
+  <title>Interprocess communication using POSIX Shared Memory in Linux | SoftPrayog</title>
+  <link type="text/css" rel="stylesheet" href="../../external.html?link=https://www.softprayog.in/sites/default/files/css/A.css_lQaZfjVpwP_oGNqdtWCSpJT1EMqXdMiU84ekLLxQnc4.css+css_JCY_XIQAlFCN_AbvjWfbNrXAa03IOm7FrXUxsDgkibE.css+css_AFiD1shkKA6ExsN10E6BObXzxxI0JmYtAtUK-xCRVCk.css,Mcc.naK2EEFQI1.css.pagespeed.cf.QG-gOo3BAg.css" media="all"/>
+
+
+<link type="text/css" rel="stylesheet" href="../../external.html?link=http://cdn.jsdelivr.net/bootstrap/3.3.5/css/bootstrap.min.css" media="all"/>
+<link type="text/css" rel="stylesheet" href="../../external.html?link=https://www.softprayog.in/sites/default/files/css/A.css_vw8y9B56sfPXK-VnGiSIh1sj7wGjy1tJ2KgIcgLOfqE.css.pagespeed.cf.UQfvz8iMSu.css" media="all"/>
+  <!-- HTML5 element support for IE6-8 -->
+  <!--[if lt IE 9]>
+    <script src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <script src="../../external.html?link=https://www.softprayog.in/sites/default/files/js/js_WkOMkSyjg9rxsesVK2mUAVX_dhZTWbIE6jpIzuL-ygM.js.pagespeed.jm.mNM9zFdPvJ.js"></script>
+<script>jQuery.cookie=function(key,value,options){if(arguments.length>1&&(value===null||typeof value!=="object")){options=jQuery.extend({},options);if(value===null){options.expires=-1;}if(typeof options.expires==='number'){var days=options.expires,t=options.expires=new Date();t.setDate(t.getDate()+days);}return(document.cookie=[encodeURIComponent(key),'=',options.raw?String(value):encodeURIComponent(String(value)),options.expires?'; expires='+options.expires.toUTCString():'',options.path?'; path='+options.path:'',options.domain?'; domain='+options.domain:'',options.secure?'; secure':''].join(''));}options=value||{};var result,decode=options.raw?function(s){return s;}:decodeURIComponent;return(result=new RegExp('(?:^|; )'+encodeURIComponent(key)+'=([^;]*)').exec(document.cookie))?decode(result[1]):null;};;</script>
+<script src="../../external.html?link=http://cdn.jsdelivr.net/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="../../external.html?link=https://www.softprayog.in/sites/all/modules/mobile_navigation/js/mobile_menu.js?p3s4z6"></script>
+<script src="../../external.html?link=https://www.softprayog.in/sites/all,_modules,_mobile_navigation,_mobile_navigation.js,qp3s4z6+default,_files,_js,_js_CVXZ6gOX0w49thQ48VRqEpj_qgQDJqJSdVu0NkB6UdY.js.pagespeed.jc.H3JyN6kozk.js"></script><script>eval(mod_pagespeed_R4RauLVI_o);</script>
+<script>eval(mod_pagespeed_g7I_N40ZTp);</script>
+<script>jQuery.extend(Drupal.settings,{"basePath":"\/","pathPrefix":"","ajaxPageState":{"theme":"www_softprayog_in","theme_token":"c_AGgL7-oC6vSdxGjYE2jCfzLk1w7xjpIOK-dkgXxBg","js":{"sites\/all\/themes\/bootstrap\/js\/bootstrap.js":1,"sites\/all\/modules\/jquery_update\/replace\/jquery\/1.10\/jquery.min.js":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"sites\/all\/modules\/jquery_update\/replace\/ui\/external\/jquery.cookie.js":1,"\/\/cdn.jsdelivr.net\/bootstrap\/3.3.5\/js\/bootstrap.min.js":1,"sites\/all\/modules\/mobile_navigation\/js\/mobile_menu.js":1,"sites\/all\/modules\/mobile_navigation\/mobile_navigation.js":1,"sites\/all\/modules\/radioactivity\/js\/radioactivity.js":1,"sites\/all\/modules\/disqus\/js\/disqus.js":1},"css":{"modules\/system\/system.base.css":1,"modules\/field\/theme\/field.css":1,"modules\/node\/node.css":1,"sites\/all\/modules\/views\/css\/views.css":1,"sites\/all\/modules\/ctools\/css\/ctools.css":1,"sites\/all\/modules\/radioactivity\/css\/radioactivity.css":1,"sites\/all\/modules\/mobile_navigation\/mobile_navigation.css":1,"\/\/cdn.jsdelivr.net\/bootstrap\/3.3.5\/css\/bootstrap.min.css":1,"sites\/all\/themes\/bootstrap\/css\/3.3.5\/overrides.min.css":1,"sites\/all\/themes\/www_softprayog_in\/css\/style.css":1}},"mobile_navigation":{"breakpoint":"all and (min-width: 740px) and (min-device-width: 740px), (max-device-width: 800px) and (min-width: 740px) and (orientation:landscape)","menuSelector":"#navbar","menuPlugin":"basic","showEffect":"expand_down","showItems":"all","tabHandler":1,"menuWidth":"65","specialClasses":0,"mainPageSelector":"main-container","useMask":1,"menuLabel":"Menu","expandActive":0},"radioactivity":{"emitters":{"emitDefault":[{"accuracy":"100","bundle":"software_information_resource","energy":10,"entity_id":"144","entity_type":"node","field_name":"field_radioactivity","language":"und","storage":"File","type":"none","checksum":"cab1385dea02823bb9806b4654a66b70"}]},"config":{"emitPath":"\/sites\/all\/modules\/radioactivity\/emit.php","fpEnabled":0,"fpTimeout":"15"}},"disqus":{"domain":"softprayog","url":"https:\/\/www.softprayog.in\/programming\/interprocess-communication-using-posix-shared-memory-in-linux","title":"Interprocess communication using POSIX Shared Memory in Linux","identifier":"node\/144"},"urlIsAjaxTrusted":{"\/programming\/interprocess-communication-using-posix-shared-memory-in-linux":true},"bootstrap":{"anchorsFix":"0","anchorsSmoothScrolling":"0","formHasError":1,"popoverEnabled":1,"popoverOptions":{"animation":1,"html":0,"placement":"right","selector":"","trigger":"click","triggerAutoclose":1,"title":"","content":"","delay":0,"container":"body"},"tooltipEnabled":1,"tooltipOptions":{"animation":1,"html":0,"placement":"auto left","selector":"","trigger":"hover focus","delay":0,"container":"body"}}});</script>
+
+<meta name="google-site-verification" content="8nDw-c0gl91IgUaZLc7kxxBu--KmFtDj39aZluvpgE0"/>
+<meta name="google-translate-customization" content="eec210276b33745f-8949011a4fca8da3-g9691d99868403c1a-11"></meta>
+<meta name="msvalidate.01" content="DE886C06251AA9A43EBAEC2B1F07B5DD"/>
+
+<!-- Google Analytics -->
+<script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','../../external.html?link=https://www.google-analytics.com/analytics.js','ga');ga('create','UA-8649059-1','auto');ga('send','pageview');</script>
+<!-- End Google Analytics -->
+
+</head>
+<body class="html not-front not-logged-in one-sidebar sidebar-second page-node page-node- page-node-144 node-type-software-information-resource">
+  <div id="skip-link">
+    <a href="#main-content" class="element-invisible element-focusable">Skip to main content</a>
+  </div>
+    <div class="main-container container">
+
+  <header role="banner" id="page-header">
+    
+      <div class="region region-header">
+    <section id="block-block-1" class="block block-block clearfix">
+
+      
+  <p><a href="../../external.html?link=https://www.softprayog.in/"><img src="../../external.html?link=https://www.softprayog.in/images/xlogo.png.pagespeed.ic.w3MMPkD-RH.png" width="321" height="66" alt="SoftPrayog.in" title="SoftPrayog.in" border="0"/></a></p>
+</section>
+  </div>
+  </header> <!-- /#page-header -->
+
+<header id="navbar" role="banner" class="navbar container navbar-default">
+  <div class="container">
+
+          <div class="navbar-collapse collapse" id="navbar-collapse">
+        <nav role="navigation">
+                      <ul class="menu nav navbar-nav"><li class="first leaf"><a href="../../external.html?link=https://www.softprayog.in/">Home</a></li>
+<li class="leaf"><a href="../../external.html?link=https://www.softprayog.in/software-engineering" title="Software Engineering resources">Software Engineering</a></li>
+<li class="leaf"><a href="../../external.html?link=https://www.softprayog.in/tutorials" title="Tutorials for useful programs.">Tutorials</a></li>
+<li class="leaf"><a href="../../external.html?link=https://www.softprayog.in/troubleshooting" title="Troubleshooting day-to-day software development and usage problems.">Troubleshooting</a></li>
+<li class="last leaf"><a href="../../external.html?link=https://www.softprayog.in/programming" title="Programming resources">Programming</a></li>
+</ul>                                      </nav>
+      </div>
+      </div>
+</header>
+
+  <div class="row">
+
+    <section class="col-sm-8">
+                        <a id="main-content"></a>
+                    <h1 class="page-header">Interprocess communication using POSIX Shared Memory in Linux</h1>
+                                                          <div class="region region-content">
+    <section id="block-system-main" class="block block-system clearfix">
+
+      
+  <article id="node-144" class="node node-software-information-resource node-promoted clearfix" about="/programming/interprocess-communication-using-posix-shared-memory-in-linux" typeof="sioc:Item foaf:Document">
+    <header>
+            <span property="dc:title" content="Interprocess communication using POSIX Shared Memory in Linux" class="rdf-meta element-hidden"></span><span property="sioc:num_replies" content="0" datatype="xsd:integer" class="rdf-meta element-hidden"></span>      </header>
+    <div class="field field-name-body field-type-text-with-summary field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><h3>1.0 Shared Memory</h3>
+<p>
+Shared memory, message queues and semaphores form the suite of interprocess communication (IPC) mechanisms available under Linux and other Unix-like systems. In case of shared memory, the system provides a shared memory segment which the calling process can map to its address space. After that, it behaves just like any other part of the process's address space. 
+</p>
+<p>
+<img src="../../external.html?link=https://www.softprayog.in/images/xposix-shared-memory.png.pagespeed.ic.neNPh22H9n.png" alt="POSIX Shared Memory" title="POSIX Shared Memory"/></p>
+<p>
+If we look at the other IPC mechanisms like message queue or the <q>older</q> mechanisms like the pipe or the <em>fifo</em>, the work required for passing message involves, first copying the message from the address space of the first process to the kernel space via a <em>send</em>-like system call and, then, copying the message from the kernel space to the address space of the second process during a <em>receive</em>-like call. In the case of shared memory, the first process writes data in the shared memory segment and the data becomes available to the second process immediately. This makes shared memory faster than other mechanisms and is, in fact, the fastest way of passing data between two processes on the same host system.
+</p>
+<h3>2.0 System V and POSIX Shared Memory Calls</h3>
+<p>
+For each of the IPC mechanisms, there are two sets of calls, the traditional System V calls and the newer POSIX calls. In this post, we will look at the POSIX shared memory calls. Example programs for server and client processes that communicate via POSIX shared memory are given near the end of this post.
+</p>
+<h3>3.0 POSIX Shared Memory Calls</h3>
+<p>
+The POSIX shared memory calls seem to be based on the UNIX philosophy that if you do Input/Output operations on an object, that object has to be a file. So, since we do read and write to a  POSIX shared memory object, the latter is to be treated as a file. A POSIX shared memory object is a memory-mapped file. POSIX shared memory files are provided from a <span class="accented">tmpfs</span> filesystem mounted at <span class="accented">/dev/shm</span>. The individual shared memory files are created using the <span class="accented">shm_open</span> system call under <span class="accented">/dev/shm</span>. There are just two specialized POSIX shared memory system calls, <span class="accented">shm_open</span> and <span class="accented">shm_unlink</span>, which are analogous to <span class="accented">open</span> and <span class="accented">unlink</span> system calls for files. Other operations on POSIX shared memory are done using the <span class="accented">ftruncate</span>, <span class="accented">mmap</span> and <span class="accented">munmap</span> system calls for files. A program using POSIX shared memory calls needs to be linked with <span class="accented">-lrt</span>.
+</p>
+<h3>3.1 shm_open</h3>
+<p class="div_pre_code_snippet_much_wider">
+#include &lt;sys/mman.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+
+int shm_open (const char *name, int oflag, mode_t mode);
+</p>
+<p>
+<span class="accented">shm_open</span> is like the <span class="accented">open</span> system call for files. It opens a POSIX shared memory object and makes it available to the calling process via the returned file descriptor. The first parameter, <em>name</em>, is the name of the shared memory object and is of the form <em>/somename</em>, that is, it is a null-terminated string of a maximum of <span class="accented">NAME_MAX</span> characters, and, its first character is a slash and <em>none</em> of the other characters can be a slash. <em>oflag</em> is a bit mask constructed by OR-ing <em>either</em> <span class="accented">O_RDONLY</span> <em>or</em> <span class="accented">O_RDWR</span> with one or more of the following flags. <span class="accented">O_CREAT</span> creates the shared memory object if it does not exist. And, if it creates the object, the last nine bits of the third parameter, <em>mode</em> are taken for permissions except that the bits set in the file mode creation mask are cleared for the object. Also, if the shared memory object is created, the owner and group ids of the object are set the corresponding effective ids of the calling process. A newly created shared memory object is of size zero bytes. It can be made of the desired size by using the <span class="accented">ftruncate</span> system call. If <span class="accented">O_EXCL</span> flag is used together with the <span class="accented">O_CREAT</span> flag, and the shared memory object for the <em>name</em> already exists, <span class="accented">shm_open</span> fails and <span class="accented">errno</span> is set to <span class="accented">EEXIST</span>. There is another flag, <span class="accented">O_TRUNC</span>, which if specified, truncates the shared memory object, if it already exists, to size zero bytes. On success, <span class="accented">shm_open</span> returns the file descriptor for the shared memory object. If <span class="accented">shm_open</span> fails, it returns -1 and <span class="accented">errno</span> is set to the cause of the error.
+</p>
+<h3>3.2 shm_unlink</h3>
+<p class="div_pre_code_snippet_much_wider">
+#include &lt;sys/mman.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+
+int shm_unlink (const char *name);
+</p>
+<p>
+<span class="accented">shm_unlink</span> removes the previously created POSIX shared memory object. The <em>name</em> is the name of the shared memory object as described under <span class="accented">shm_open</span>, above.
+</p>
+<h3>4.0 Other System Calls used in POSIX Shared Memory Operations</h3>
+<h3>4.1 ftruncate</h3>
+<p class="div_pre_code_snippet_much_wider">
+#include &lt;unistd.h&gt;
+#include &lt;sys/types.h&gt;
+
+int ftruncate (int fd, off_t length);
+</p>
+<p>
+The <span class="accented">ftruncate</span> system call makes the object referred to by the file descriptor, <em>fd</em>, of size <em>length</em> bytes. When a POSIX shared memory is created, it is of size zero bytes. Using <span class="accented">ftruncate</span>, we can make the POSIX shared memory object of size <em>length</em> bytes. <span class="accented">ftruncate</span> returns zero on success. In case of error, <span class="accented">ftruncate</span> returns -1 and <span class="accented">errno</span> is set to the cause of the error.
+</p>
+<h3>4.2 mmap</h3>
+<p class="div_pre_code_snippet_much_wider">
+#include &lt;sys/mman.h&gt;
+
+void *mmap (void *addr, size_t length, int prot, int flags,
+            int fd, off_t offset);
+</p>
+<p>
+With the <span class="accented">mmap</span> system call, we can map a POSIX shared memory object to the calling process's virtual address space. <em>addr</em> specifies the address at which it should be mapped. In most cases, we do not care at what address mapping is done and a value of <span class="accented">NULL</span> for <em>addr</em> should suffice. <em>length</em> is the length of shared memory object that should be mapped. To keep things simple, we will map the whole object and length for us will be the length of the shared memory object. <em>prot</em> can have the values, <span class="accented">PROT_EXEC</span>, <span class="accented">PROT_READ</span>, <span class="accented">PROT_WRITE</span> and <span class="accented">PROT_NONE</span>. <span class="accented">PROT_EXEC</span> means that the mapped pages may be executed and <span class="accented">PROT_NONE</span> means that the mapped pages may not be accessed. These two values do not make sense for a shared memory object. So we will use <span class="accented">PROT_READ | PROT_WRITE</span> value for <em>prot</em>. There are many <em>flags</em> but the only one meaningful for shared memory is <span class="accented">MAP_SHARED</span>, which means that the updates to the mapped shared memory are visible to all other processes immediately. <em>fd</em> is, of course, the file descriptor for the shared memory received from an earlier <span class="accented">shm_open</span> call. <em>offset</em> is the location in the shared memory object at which the mapping starts; we will use the value zero for offset and map the shared memory object starting right from the beginning. On success, <span class="accented">mmap</span> returns the pointer to the location where the shared memory object has been mapped. In case of error, <span class="accented">MAP_FAILED</span>, which is, <span class="accented">(void *) -1</span>, is returned and <span class="accented">errno</span> is set to the cause of the error.
+</p>
+<h3>4.3 munmap</h3>
+<p class="div_pre_code_snippet_much_wider">
+#include &lt;sys/mman.h&gt;
+
+int munmap (void *addr, size_t length);
+</p>
+<p>
+<span class="accented">munmap</span> unmapps the shared memory object at location pointed by <em>addr</em> and having size, <em>length</em>. On success, <span class="accented">munmap</span> returns 0. In case of error, <span class="accented">munmap</span> returns -1 and <span class="accented">errno</span> is set to the cause of the error.
+</p>
+<h3>5.0 An example: System Logger</h3>
+<p>
+The System Logger process creates a POSIX shared memory object and maps it to its address space. Clients also map the shared memory object to their address spaces. When a client wants to log a message, it creates a string in the format <q>&lt;client pid&gt;&lt;timestamp&gt;&lt;message&gt;</q> and writes the string in the shared memory object. The logger reads strings from the shared memory object, one by one, and writes them in a log file in the chronological order.
+</p>
+<p>
+<img src="../../external.html?link=https://www.softprayog.in/images/system-logger.png.pagespeed.ce.MV82qbtitC.png" alt="system Logger" title="System Logger"/></p>
+<p>
+The server code is,
+</p>
+<p class="div_pre_code_snippet_much_wider">
+/*
+ *
+ *       logger.c: Write strings in POSIX shared memory to file
+ *                 (Server process)
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;semaphore.h&gt;
+#include &lt;sys/mman.h&gt;
+
+// Buffer data structures
+#define MAX_BUFFERS 10
+
+#define LOGFILE "/tmp/example.log"
+
+#define SEM_MUTEX_NAME "/sem-mutex"
+#define SEM_BUFFER_COUNT_NAME "/sem-buffer-count"
+#define SEM_SPOOL_SIGNAL_NAME "/sem-spool-signal"
+#define SHARED_MEM_NAME "/posix-shared-mem-example"
+
+struct shared_memory {
+    char buf [MAX_BUFFERS] [256];
+    int buffer_index;
+    int buffer_print_index;
+};
+
+void error (char *msg);
+
+int main (int argc, char **argv)
+{
+    struct shared_memory *shared_mem_ptr;
+    sem_t *mutex_sem, *buffer_count_sem, *spool_signal_sem;
+    int fd_shm, fd_log;
+    char mybuf [256];
+    
+    // Open log file
+    if ((fd_log = open (LOGFILE, O_CREAT | O_WRONLY | O_APPEND | O_SYNC, 0666)) == -1)
+        error ("fopen");
+
+    //  mutual exclusion semaphore, mutex_sem with an initial value 0.
+    if ((mutex_sem = sem_open (SEM_MUTEX_NAME, O_CREAT, 0660, 0)) == SEM_FAILED)
+        error ("sem_open");
+    
+    // Get shared memory 
+    if ((fd_shm = shm_open (SHARED_MEM_NAME, O_RDWR | O_CREAT, 0660)) == -1)
+        error ("shm_open");
+
+    if (ftruncate (fd_shm, sizeof (struct shared_memory)) == -1)
+       error ("ftruncate");
+    
+    if ((shared_mem_ptr = mmap (NULL, sizeof (struct shared_memory), PROT_READ | PROT_WRITE, MAP_SHARED,
+            fd_shm, 0)) == MAP_FAILED)
+       error ("mmap");
+    // Initialize the shared memory
+    shared_mem_ptr -&gt; buffer_index = shared_mem_ptr -&gt; buffer_print_index = 0;
+
+    // counting semaphore, indicating the number of available buffers. Initial value = MAX_BUFFERS
+    if ((buffer_count_sem = sem_open (SEM_BUFFER_COUNT_NAME, O_CREAT, 0660, MAX_BUFFERS)) == SEM_FAILED)
+        error ("sem_open");
+
+    // counting semaphore, indicating the number of strings to be printed. Initial value = 0
+    if ((spool_signal_sem = sem_open (SEM_SPOOL_SIGNAL_NAME, O_CREAT, 0660, 0)) == SEM_FAILED)
+        error ("sem_open");
+
+    // Initialization complete; now we can set mutex semaphore as 1 to 
+    // indicate shared memory segment is available
+    if (sem_post (mutex_sem) == -1)
+        error ("sem_post: mutex_sem");
+    
+    while (1) {  // forever
+        // Is there a string to print? P (spool_signal_sem);
+        if (sem_wait (spool_signal_sem) == -1)
+            error ("sem_wait: spool_signal_sem");
+    
+        strcpy (mybuf, shared_mem_ptr -&gt; buf [shared_mem_ptr -&gt; buffer_print_index]);
+
+        /* Since there is only one process (the logger) using the 
+           buffer_print_index, mutex semaphore is not necessary */
+        (shared_mem_ptr -&gt; buffer_print_index)++;
+        if (shared_mem_ptr -&gt; buffer_print_index == MAX_BUFFERS)
+           shared_mem_ptr -&gt; buffer_print_index = 0;
+
+        /* Contents of one buffer has been printed.
+           One more buffer is available for use by producers.
+           Release buffer: V (buffer_count_sem);  */
+        if (sem_post (buffer_count_sem) == -1)
+            error ("sem_post: buffer_count_sem");
+        
+        // write the string to file
+        if (write (fd_log, mybuf, strlen (mybuf)) != strlen (mybuf))
+            error ("write: logfile");
+    }
+}
+
+// Print system error and exit
+void error (char *msg)
+{
+    perror (msg);
+    exit (1);
+}
+</p>
+<p>
+And the client code is,
+</p>
+<p class="div_pre_code_snippet_much_wider">
+/*
+ *
+ *       client.c: Write strings for printing in POSIX shared memory object
+ *                 
+ */
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;string.h&gt;
+#include &lt;time.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;semaphore.h&gt;
+#include &lt;sys/mman.h&gt;
+
+// Buffer data structures
+#define MAX_BUFFERS 10
+
+#define LOGFILE "/tmp/example.log"
+
+#define SEM_MUTEX_NAME "/sem-mutex"
+#define SEM_BUFFER_COUNT_NAME "/sem-buffer-count"
+#define SEM_SPOOL_SIGNAL_NAME "/sem-spool-signal"
+#define SHARED_MEM_NAME "/posix-shared-mem-example"
+
+struct shared_memory {
+    char buf [MAX_BUFFERS] [256];
+    int buffer_index;
+    int buffer_print_index;
+};
+
+void error (char *msg);
+
+int main (int argc, char **argv)
+{
+    struct shared_memory *shared_mem_ptr;
+    sem_t *mutex_sem, *buffer_count_sem, *spool_signal_sem;
+    int fd_shm;
+    char mybuf [256];
+    
+    //  mutual exclusion semaphore, mutex_sem 
+    if ((mutex_sem = sem_open (SEM_MUTEX_NAME, 0, 0, 0)) == SEM_FAILED)
+        error ("sem_open");
+    
+    // Get shared memory 
+    if ((fd_shm = shm_open (SHARED_MEM_NAME, O_RDWR, 0)) == -1)
+        error ("shm_open");
+
+    if ((shared_mem_ptr = mmap (NULL, sizeof (struct shared_memory), PROT_READ | PROT_WRITE, MAP_SHARED,
+            fd_shm, 0)) == MAP_FAILED)
+       error ("mmap");
+
+    // counting semaphore, indicating the number of available buffers.
+    if ((buffer_count_sem = sem_open (SEM_BUFFER_COUNT_NAME, 0, 0, 0)) == SEM_FAILED)
+        error ("sem_open");
+
+    // counting semaphore, indicating the number of strings to be printed. Initial value = 0
+    if ((spool_signal_sem = sem_open (SEM_SPOOL_SIGNAL_NAME, 0, 0, 0)) == SEM_FAILED)
+        error ("sem_open");
+
+    char buf [200], *cp;
+
+    printf ("Please type a message: ");
+
+    while (fgets (buf, 198, stdin)) {
+        // remove newline from string
+        int length = strlen (buf);
+        if (buf [length - 1] == '\n')
+           buf [length - 1] = '\0';
+
+        // get a buffer: P (buffer_count_sem);
+        if (sem_wait (buffer_count_sem) == -1)
+            error ("sem_wait: buffer_count_sem");
+    
+        /* There might be multiple producers. We must ensure that 
+            only one producer uses buffer_index at a time.  */
+        // P (mutex_sem);
+        if (sem_wait (mutex_sem) == -1)
+            error ("sem_wait: mutex_sem");
+
+	    // Critical section
+            time_t now = time (NULL);
+            cp = ctime (&amp;now);
+            int len = strlen (cp);
+            if (*(cp + len -1) == '\n')
+                *(cp + len -1) = '\0';
+            sprintf (shared_mem_ptr -&gt; buf [shared_mem_ptr -&gt; buffer_index], "%d: %s %s\n", getpid (), 
+                     cp, buf);
+            (shared_mem_ptr -&gt; buffer_index)++;
+            if (shared_mem_ptr -&gt; buffer_index == MAX_BUFFERS)
+                shared_mem_ptr -&gt; buffer_index = 0;
+
+        // Release mutex sem: V (mutex_sem)
+        if (sem_post (mutex_sem) == -1)
+            error ("sem_post: mutex_sem");
+    
+	// Tell spooler that there is a string to print: V (spool_signal_sem);
+        if (sem_post (spool_signal_sem) == -1)
+            error ("sem_post: (spool_signal_sem");
+
+        printf ("Please type a message: ");
+    }
+ 
+    if (munmap (shared_mem_ptr, sizeof (struct shared_memory)) == -1)
+        error ("munmap");
+    exit (0);
+}
+
+// Print system error and exit
+void error (char *msg)
+{
+    perror (msg);
+    exit (1);
+}
+</p>
+<p>
+We can compile and run the server and a client as below.
+</p>
+<p class="div_pre_code_snippet_much_wider">
+$ gcc logger.c -o logger -lrt -lpthread
+$ gcc client.c -o client -lrt -lpthread
+$ ./logger &amp;
+[1] 3561
+$ ps
+  PID TTY          TIME CMD
+ 2924 pts/1    00:00:00 bash
+ 3561 pts/1    00:00:00 logger
+ 3562 pts/1    00:00:00 ps
+$ ./client
+Please type a message: Hello Logger
+Please type a message: She sells seashells by the seashore.
+...
+</p>
+<p>
+The Logger writes all messages to the <span class="accented">/tmp/example.log</span> file. We can see the contents of the log file with the <br/><span class="mybold"><span class="accented">tail -f</span></span> command.
+</p>
+<p class="div_pre_code_snippet_much_wider">
+$ tail -f /tmp/example.log 
+4535: Mon Jan 15 08:25:10 2018 Hello Logger
+4582: Mon Jan 15 08:25:49 2018 Hello Logger
+4535: Mon Jan 15 08:26:29 2018 It is a beautiful day!
+4598: Mon Jan 15 08:26:57 2018 Hello Logger
+4623: Mon Jan 15 08:27:17 2018 Hello Logger
+4623: Mon Jan 15 08:27:47 2018 So foul and fair a day I have not seen. (William Shakespeare: Macbeth)
+4535: Mon Jan 15 08:28:07 2018 He that lives upon hope will die fasting. (Benjamin Franklin)
+4582: Mon Jan 15 08:28:32 2018 She sells seashells by the seashore.
+4598: Mon Jan 15 08:29:09 2018 Not so happy, yet much happier. (William Shakespeare: Macbeth)
+
+</p>
+<h3>6.0 See Also</h3>
+<ol><li><a href="../../external.html?link=https://www.softprayog.in/programming/posix-semaphores">POSIX Semaphores</a></li>
+<li><a href="../../external.html?link=https://www.softprayog.in/programming/interprocess-communication-using-system-v-shared-memory-in-linux">Interprocess communication using System V Shared Memory in Linux</a></li>
+</ol></div></div></div><div class="field field-name-field-software field-type-taxonomy-term-reference field-label-above"><div class="field-label">Software:&nbsp;</div><div class="field-items"><div class="field-item even"><a href="../../external.html?link=https://www.softprayog.in/programming" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">Programming</a></div></div></div>    </article>
+
+</section>
+<section id="block-block-92" class="block block-block clearfix">
+
+      
+  <div class="my_block_new">
+<script async="" src="../../external.html?link=http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><!-- Site content end --><ins class="adsbygoogle" style="display:inline-block;width:336px;height:280px" data-ad-client="ca-pub-3963576887094645" data-ad-slot="0756129388"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>
+</section>
+<section id="block-block-88" class="block block-block clearfix">
+
+      
+  <div style="margin: 2em 0 2em 0; display: inline-block;">
+<div class="fb-share-button" data-layout="button_count" data-size="small" data-mobile-iframe="true" style="vertical-align:top;zoom:1;*display:inline"><a class="fb-xfbml-parse-ignore" target="_blank" href="../../external.html?link=https://www.facebook.com/sharer/sharer.php?u&amp;src=sdkpreparse">Share</a></div>   
+<a class="twitter-share-button" href="../../external.html?link=https://twitter.com/intent/tweet">Tweet</a> <div class="g-plus" data-action="share"></div> <script type="IN/Share"></script></div>
+</section>
+<section id="block-disqus-disqus-comments" class="block block-disqus clearfix">
+
+      
+  <div id="disqus_thread"><noscript><p><a href="../../external.html?link=http://softprayog.disqus.com/?url=https%3A%2F%2Fwww.softprayog.in%2Fprogramming%2Finterprocess-communication-using-posix-shared-memory-in-linux">View the discussion thread.</a></p></noscript></div>
+</section>
+  </div>
+    </section>
+
+          <aside class="col-sm-4" role="complementary">
+          <div class="region region-sidebar-second">
+    <section id="block-block-73" class="block block-block clearfix">
+
+      
+  <div style="margin-top: 7em;">
+<div class="my_view_heading">App</div>
+<div style="margin-bottom: 1em;">
+<div class="my_view">
+<ul><li><a href="../../external.html?link=https://randomquotesapp.com/">Random Quotes</a><br/><br/><a href="../../external.html?link=https://play.google.com/store/apps/details?id=in.softprayog.randomquote"><img src="../../external.html?link=https://www.softprayog.in/images/xgoogle-play-badge-169x50.png.pagespeed.ic.TewbhUxUkp.png" width="169" height="50"/></a></li>
+</ul></div>
+</div>
+</div>
+</section>
+<section id="block-block-89" class="block block-block clearfix">
+
+      
+  <div style="margin: 2em 0 1em 1em;"><div class="fb-share-button" data-layout="button_count" data-size="small" data-mobile-iframe="true" style="vertical-align:top;zoom:1;*display:inline"><a class="fb-xfbml-parse-ignore" target="_blank" href="../../external.html?link=https://www.facebook.com/sharer/sharer.php?u&amp;src=sdkpreparse">Share</a></div> <a class="twitter-share-button" href="../../external.html?link=https://twitter.com/intent/tweet">Tweet</a> <div class="g-plus" data-action="share"></div>  <script type="IN/Share"></script></div>
+</section>
+<section id="block-views-related-posts-block" class="block block-views clearfix">
+
+      
+  <div class="view view-related-posts view-id-related_posts view-display-id-block view-dom-id-d76f78d2ccba4aadbb6f99102ef0c74a">
+            <div class="view-header">
+      <div class="my_view_heading">Related Posts</div>    </div>
+  
+  
+  
+      <div class="view-content">
+      <div class="my_view">    <ul>          <li class="views-row views-row-1 views-row-odd views-row-first">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/programming/interprocess-communication-using-posix-message-queues-in-linux">Interprocess communication using POSIX message queues in Linux</a></span>  </div></li>
+          <li class="views-row views-row-2 views-row-even">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/programming/interprocess-communication-using-fifos-in-linux">Interprocess communication using FIFOs in Linux</a></span>  </div></li>
+          <li class="views-row views-row-3 views-row-odd">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/programming/interprocess-communication-using-pipes-in-linux">Interprocess communication using pipes in Linux</a></span>  </div></li>
+          <li class="views-row views-row-4 views-row-even">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/programming/interprocess-communication-using-system-v-message-queues-in-linux">Interprocess communication using System V message queues in Linux</a></span>  </div></li>
+          <li class="views-row views-row-5 views-row-odd views-row-last">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/programming/d-bus-tutorial">D-Bus Tutorial</a></span>  </div></li>
+      </ul></div>    </div>
+  
+  
+  
+  
+  
+  
+</div>
+</section>
+<section id="block-views-recent-posts-block" class="block block-views clearfix">
+
+      
+  <div class="view view-recent-posts view-id-recent_posts view-display-id-block view-dom-id-1d6d1ad7d5bf3ce5ca2b4c4cb607bbab">
+            <div class="view-header">
+      <div class="my_view_heading"><a href="../../external.html?link=https://www.softprayog.in/all-posts">Recent Posts</a></div>    </div>
+  
+  
+  
+      <div class="view-content">
+      <div class="my_view">    <ul>          <li class="views-row views-row-1 views-row-odd views-row-first">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/troubleshooting/dovecot-fatal-error-in-configuration-file-unknown-protocol-sieve">Dovecot: Fatal: Error in configuration file /etc/dovecot/dovecot.conf: protocols: Unknown protocol: sieve</a></span>  </div></li>
+          <li class="views-row views-row-2 views-row-even">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/troubleshooting/how-to-execute-php-code-in-html-under-nginx-server">How to execute PHP code in HTML under nginx server</a></span>  </div></li>
+          <li class="views-row views-row-3 views-row-odd">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/troubleshooting/ssl-certificate-expired-site-not-opening">SSL Certificate expired, site not opening</a></span>  </div></li>
+          <li class="views-row views-row-4 views-row-even">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/troubleshooting/how-to-preserve-exif-metadata-in-images-in-Linux">How to preserve exif metadata in images in Linux</a></span>  </div></li>
+          <li class="views-row views-row-5 views-row-odd views-row-last">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/troubleshooting/how-to-add-iptc-metadata-in-photographs-using-exiv2-in-linux">How to add the IPTC metadata in photographs using exiv2 in Linux</a></span>  </div></li>
+      </ul></div>    </div>
+  
+  
+  
+  
+      <div class="view-footer">
+      <div class="my_view_footer"><a href="../../external.html?link=https://www.softprayog.in/rss.xml"><img src="../../external.html?link=https://www.softprayog.in/misc/feed.png.pagespeed.ce.QQDQg_FkNK.png" height="16" width="16" alt="RSS" title="RSS"/></a></div>    </div>
+  
+  
+</div>
+</section>
+<section id="block-block-85" class="block block-block clearfix">
+
+      
+  <div style="margin: 2em 0 2em 0;">
+<script async="" src="../../external.html?link=http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><!-- site-respnsive-new --><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3963576887094645" data-ad-slot="1444179285" data-ad-format="auto"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>
+
+</section>
+<section id="block-views-most-popular-page-block" class="block block-views clearfix">
+
+      
+  <div class="view view-most-popular-page view-id-most_popular_page view-display-id-block view-dom-id-e412a41dc10ee3e43cf501abe2205049">
+            <div class="view-header">
+      <div class="my_view_heading"><a href="../../external.html?link=https://www.softprayog.in/most-popular-posts">Most Popular</a></div>    </div>
+  
+  
+  
+      <div class="view-content">
+      <div class="my_view">    <ul>          <li class="views-row views-row-1 views-row-odd views-row-first">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/programming/interprocess-communication-using-posix-message-queues-in-linux">Interprocess communication using POSIX message queues in Linux</a></span>  </div></li>
+          <li class="views-row views-row-2 views-row-even">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="interprocess-communication-using-posix-shared-memory-in-linux.html" class="active">Interprocess communication using POSIX Shared Memory in Linux</a></span>  </div></li>
+          <li class="views-row views-row-3 views-row-odd">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/programming/interprocess-communication-using-fifos-in-linux">Interprocess communication using FIFOs in Linux</a></span>  </div></li>
+          <li class="views-row views-row-4 views-row-even">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/programming/interprocess-communication-using-pipes-in-linux">Interprocess communication using pipes in Linux</a></span>  </div></li>
+          <li class="views-row views-row-5 views-row-odd">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/programming/creating-processes-with-fork-and-exec-in-linux">Creating processes with fork and exec in Linux</a></span>  </div></li>
+          <li class="views-row views-row-6 views-row-even">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/programming/interprocess-communication-using-system-v-message-queues-in-linux">Interprocess communication using System V message queues in Linux</a></span>  </div></li>
+          <li class="views-row views-row-7 views-row-odd">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/programming/d-bus-tutorial">D-Bus Tutorial</a></span>  </div></li>
+          <li class="views-row views-row-8 views-row-even">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/tutorials/ps-command-usage-examples-in-linux">ps command usage examples in Linux</a></span>  </div></li>
+          <li class="views-row views-row-9 views-row-odd">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/programming/interprocess-communication-using-system-v-shared-memory-in-linux">Interprocess communication using System V Shared Memory in Linux</a></span>  </div></li>
+          <li class="views-row views-row-10 views-row-even views-row-last">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="../../external.html?link=https://www.softprayog.in/programming/posix-semaphores">POSIX Semaphores</a></span>  </div></li>
+      </ul></div>    </div>
+  
+  
+  
+  
+  
+  
+</div>
+</section>
+<section id="block-block-86" class="block block-block clearfix">
+
+      
+  <div style="margin: 2em 0 0.5em 0;">
+<script async="" src="../../external.html?link=http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><!-- sp-resp2 --><ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3963576887094645" data-ad-slot="4072648487" data-ad-format="auto"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>
+
+
+
+</section>
+<section id="block-block-78--2" class="block block-block clearfix">
+
+      
+  <div style="width: 300px; margin: 2em;">
+<div style="margin-bottom: 0.7em;">
+GET INFO ABOUT NEW POSTS
+</div>
+<form style="border:1px solid #ccc;padding:3px;text-align:center;" action="../../external.html?link=https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open('../../external.html?link=https://feedburner.google.com/fb/a/mailverify?uri=Softprayog', 'popupwindow', 'scrollbars=yes,width=550,height=520');return true"><p>Enter your email address:</p><p><input type="text" style="width:140px" name="email"/></p><input type="hidden" value="Softprayog" name="uri"/><input type="hidden" name="loc" value="en_US"/><input type="submit" value="Subscribe"/><p>Delivered by <a href="../../external.html?link=https://feedburner.google.com/" target="_blank">FeedBurner</a></p></form>
+</div>
+</section>
+<section id="block-block-90" class="block block-block clearfix">
+
+      
+  <div style="margin: 2em 0 0 2em;">
+<div class="fb-follow" data-href="https://www.facebook.com/softprayog/" data-layout="button_count" data-size="small" data-show-faces="false"></div>
+<br/><br/><a class="twitter-follow-button" href="../../external.html?link=https://twitter.com/softprayog">Follow @softprayog</a>
+<br/><br/><!-- Place this tag where you want the widget to render. --><div class="g-follow" data-annotation="bubble" data-height="20" data-href="//plus.google.com/+Softprayogin" data-rel="publisher"></div>
+</div>
+</section>
+<section id="block-search-form" class="block block-search clearfix">
+
+      
+  <form class="form-search content-search" action="../../external.html?link=https://www.softprayog.in/programming/interprocess-communication-using-posix-shared-memory-in-linux" method="post" id="search-block-form" accept-charset="UTF-8"><div><div class="my_search_form">
+      <h2 class="element-invisible">Search form</h2>
+    <div class="input-group"><input title="Enter the terms you wish to search for." placeholder="Search" class="form-control form-text" type="text" id="edit-search-block-form--2" name="search_block_form" value="" size="15" maxlength="128"/><span class="input-group-btn"><button type="submit" class="btn btn-primary"><span class="icon glyphicon glyphicon-search" aria-hidden="true"></span>
+</button></span></div><div class="form-actions form-wrapper form-group" id="edit-actions"><button class="element-invisible btn btn-primary form-submit" type="submit" id="edit-submit" name="op" value="Search">Search</button>
+</div><input type="hidden" name="form_build_id" value="form-wI1sU21I-5lBymYoHq-u-ciu0-g2yWqAe7qtUFoGOyw"/>
+<input type="hidden" name="form_id" value="search_block_form"/>
+</div>
+</div></form>
+</section>
+  </div>
+      </aside>  <!-- /#sidebar-second -->
+    
+  </div>
+</div>
+
+  <footer class="footer container">
+      <div class="region region-footer">
+    <section id="block-block-5" class="block block-block clearfix">
+
+      
+  <div class="my_footer">
+<a href="../../external.html?link=https://www.softprayog.in/about">About SoftPrayog</a>            <a href="../../external.html?link=https://www.softprayog.in/privacy-policy">Privacy Policy</a>            <a href="../../external.html?link=https://www.softprayog.in/contact">Contact Us</a>            <a href="../../external.html?link=https://karuneshjohri.smugmug.com/">Photographs</a>
+</div>
+</section>
+  </div>
+<div class="copyright">
+Copyright &copy; 2007-2018 SoftPrayog.in. All Rights Reserved.
+</div>
+  </footer>
+  <script src="../../external.html?link=https://www.softprayog.in/sites/default/files/js/js_FbpwIZNwgzwEuuL4Q2HOM07BOSCY5LxL_gwSK4ohQBM.js.pagespeed.jm.u7qgH4z8U2.js"></script>
+
+<div id="fb-root"></div>
+<script>(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(d.getElementById(id))return;js=d.createElement(s);js.id=id;js.src="../../external.html?link=http://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8&appId=248709508475397";fjs.parentNode.insertBefore(js,fjs);}(document,'script','facebook-jssdk'));</script>
+
+<script>window.twttr=(function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],t=window.twttr||{};if(d.getElementById(id))return t;js=d.createElement(s);js.id=id;js.src="../../external.html?link=https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);t._e=[];t.ready=function(f){t._e.push(f);};return t;}(document,"script","twitter-wjs"));</script>
+<!-- Place this tag in your head or just before your close body tag. -->
+<script src="../../external.html?link=https://apis.google.com/js/platform.js" async defer></script>
+
+<script src="../../external.html?link=http://platform.linkedin.com/in.js" type="text/javascript" async defer> lang: en_US</script>
+</body>
+
+<!-- Mirrored from www.softprayog.in/programming/interprocess-communication-using-posix-shared-memory-in-linux by HTTrack Website Copier/3.x [XR&CO'2017], Tue, 13 Feb 2018 03:10:39 GMT -->
+</html>

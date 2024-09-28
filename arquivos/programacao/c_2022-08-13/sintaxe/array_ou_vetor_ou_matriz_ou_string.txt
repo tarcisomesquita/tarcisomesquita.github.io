@@ -1,0 +1,24 @@
+
+Todos os índices dos elementos de uma matriz começam em 0.
+
+int vetor[10];      // declara 10 elementos do tipo inteiro com índice de 0 a 9
+float matriz[2][5]; // matriz de 2 linhas com 5 colunas tipo float
+
+uma string é um array de elementos do tipo char. Toda string deve ser finalizada pelo caracter '\0'.
+
+Inicialização na declaração
+int vetor[5] = {2,4,6,8,10};
+int matriz[3][3] = {{2,15,0},{33,4,900},{-1,12,50}};
+char nome[]= {'C','O','M','P','U','T','A','C','A','O','\0'};
+char texto[10]="exemplo";  // tamanho 10 é opcional
+char texto2[]="exemplo2";
+
+Atribuição de valores:
+vetor[0] = 5;
+matriz[1][2] = matriz[1][2] + 1;
+texto[1] = nome[2];
+
+Strings não podem ser atribuídas com o operador de atribuição = (embora possam ser inicializadas)
+Strings não podem ser comparadas com o operador de comparação ==
+Strings não podem ser concatenadas com o operador +
+

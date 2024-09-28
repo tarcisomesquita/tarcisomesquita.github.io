@@ -1,0 +1,18 @@
+
+7 00401015 8D05 00304000 LEA EAX,DWORD PTR DS:[403000]
+8 0040101B 8D1D 09304000 LEA EBX,DWORD PTR DS:[403009]
+9 00401021 6A 00 PUSH 0 ; Style = MB_OK|MB_APPLMODAL
+10 00401023 50 PUSH EAX ; Title
+11 00401024 53 PUSH EBX ; Text
+12 00401025 6A 00 PUSH 0 ; hOwner = NULL
+13 00401027 E8 14000000 CALL <JMP.&user32.MessageBoxA> ; MessageBoxA
+
+exibe uma mensagem de texto
+MessageBoxA ( dono, endereço do texto, endereço do título, tipo )
+
+Tipo é o tipo da mensagem ( botão OK/Cancel, Yes/No, etc... ).
+Toda a função Call em ASM vai pegar os argumentos que você "puxou" na ordem reversa.
+
+
+00401023 6A 30 PUSH 30 ; Puxa o tipo da msgbox para janela com ícone de exlamação 
+

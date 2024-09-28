@@ -1,0 +1,17 @@
+https://www.kernel.org/doc/Documentation/admin-guide/sysrq.rst
+sudo bash -c 'echo 1 > /proc/sys/kernel/sysrq'
+
+As teclas de emergência do kernel são comandos de baixo nível
+
+Desligando o computador
+Mantendo ALT pressionado, tecle Print Screen e depois O.
+
+Reiniciando o computador
+Mantendo ALT pressionado, tecle Print Screen e depois B.
+
+Sincronizando os discos
+Mantendo ALT pressionado, tecle Print Screen e depois S.
+
+colocar os discos como somente leitura 
+Mantendo ALT pressionado, tecle Print Screen e depois U.
+

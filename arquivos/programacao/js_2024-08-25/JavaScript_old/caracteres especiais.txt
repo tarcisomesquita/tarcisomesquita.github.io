@@ -1,0 +1,12 @@
+
+\b - backspace 
+\f - form feed 
+\n - new line caracters 
+\r - carriage return 
+\t - tab characters 
+\” - “
+\' - '
+\\ - \
+\xXX - \x54 = T
+
+<p>I will display &#x250C;</p>

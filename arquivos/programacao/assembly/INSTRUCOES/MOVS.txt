@@ -1,0 +1,37 @@
+
+MOVS/MOVSB/MOVSW/MOVSD – Move Data from String to String     1010 010w
+
+
+
+Instruções MOVS (MOVSB) (MOVSW)
+
+Proposito: Mover byte ou cadeias de palavra da fonte, endereçada por SI, para o destino enderecado por DI.
+
+Sintaxe:
+
+MOVSB   ;moves whats at [DS:SI] into [ES:DI] and increases DI and SI by one
+        ;for movsw increase 2.
+
+NOTE: Up to here we have assumed that the DIRECTION flag was cleared. If the direction flag was set, the DI & SI would be DECREASED instead of INCREASED.
+ex:     cld     ;clears direction flag
+        std     ;sets direction flag
+
+
+MOVS
+
+este comando não necessita de parametros uma vez que toma como endereco
+fonte o conteudo do registrador SI e como destino o conteudo de DI. A
+seguinte sequencia de instrucoes ilustra isso:
+
+MOV SI, OFFSET VaR1
+MOV DI, OFFSET VaR2
+MOVS
+
+Primeiro inicializamos os valores de SI e DI com os enderecos das variaveis
+VaR1 e VaR2 respectivamente, entao apos a execução de MoVS o conteudo de
+VaR1 e copiado para VaR2.
+
+as instrucoes MoVSB e MoVSW são usadas do mesmo modo que MoVS, a primeira
+move um byte e a segunda move uma palavra.
+
+

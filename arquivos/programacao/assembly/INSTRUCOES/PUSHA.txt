@@ -1,0 +1,7 @@
+
+PUSHA/PUSHAD – Push All General Registers 0110 0000
+
+Opcode Instruction 64-Bit  Compat/  Description
+                   Mode    Leg Mode
+60     PUSHA       Invalid Valid    Push AX, CX, DX, BX, original SP, BP, SI, and DI.
+

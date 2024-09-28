@@ -1,0 +1,27 @@
+<html>
+<head>
+<title>document.getElementById.innerHTML</title>
+<script>
+function ChangeText() {
+   txt = document.getElementById("p1").innerHTML;
+   document.getElementById("p1").innerHTML = txt + "New text!<BR>";
+}
+</script>
+
+</head>
+<body>
+
+<p id="intro">Hello World!</p>
+
+<script>
+txt = document.getElementById("intro").innerHTML;
+document.write("<p>The text from the intro paragraph: " + txt + "</p>");
+</script>
+
+
+<p id="p1">Hello World 2!<BR></p>
+<input type="button" onclick="ChangeText()" value="Change text" />
+
+</body>
+</html>
+

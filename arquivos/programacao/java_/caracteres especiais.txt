@@ -1,0 +1,15 @@
+
+Representação visual: Função, significado:
+\n                    Pula linha, linefeed
+\r                    Retorno de carro
+\b                    Backspace{ XE "Backspace caractere especial"}
+\t                    Tabulação{ XE "Tabulação caractere especial"}
+\f                    Formfeed{ XE "Form feed caractere especial"}
+\'                    Apóstrofe
+\"                    Aspas
+\\                    Barra inversa
+\u223d                Caractere unicode{ XE "Caracteres UNICODE"}
+\gfa                  Octal
+\fff                  Hexadecimal
+
+

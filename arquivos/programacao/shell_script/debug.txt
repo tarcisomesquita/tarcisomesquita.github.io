@@ -1,0 +1,3 @@
+#!/bin/bash -x
+Write each command to standard error (preceded by a '+') before it is executed.
+

@@ -1,0 +1,38 @@
+IN - Input from Port
+
+Opcode   Instruction     64-Bit Mode    Leg Mode    Description
+E4 ib    IN AL, imm8     Valid          Valid       Input byte from imm8 I/O port address into AL.
+E5 ib    IN AX, imm8     Valid          Valid       Input word from imm8 I/O port address into AX.
+E5 ib    IN EAX, imm8    Valid          Valid       Input dword from imm8 I/O port address into EAX.
+EC       IN AL,DX        Valid          Valid       Input byte from I/O port in DX into AL.
+ED       IN AX,DX        Valid          Valid       Input word from I/O port in DX into AX.
+ED       IN EAX,DX       Valid          Valid       Input doubleword from I/O port in DX into EAX.
+
+Description
+Copies the value from the I/O port specified with the second operand (source operand) to the destination operand (first operand).
+
+When accessing an 8-bit I/O port, the opcode determines the port size; when accessing a 16- and 32-bit I/O port, the operand-size attribute determines the port size.
+
+This instruction is only useful for accessing I/O ports located in the processor’s I/O address space. See Chapter 16,
+“Input/Output,” in the Intel® 64 and IA-32 Architectures Software Developer’s Manual, Volume 1, for more information on accessing I/O ports in the I/O address space.
+
+
+As portas seriais são:
+Porta   Endereço
+COM1    3F8h
+COM2    3E8h
+COM3    2F8h
+COM4    2E8h
+
+A porta paralela geralmente é 378h (LPT1).
+
+Examples
+in      al, 60h         ;Read keyboard port
+
+mov     dx, 378h        ;Point at LPT1: data port
+in      al, dx          ;Read data from printer port.
+inc     ax              ;Bump the ASCII code by one.
+out     dx, al          ;Write data in AL to printer port.
+
+
+

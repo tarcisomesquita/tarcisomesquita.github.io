@@ -1,0 +1,55 @@
+sudo /etc/init.d/cups stop
+sudo strace -s 100  -f -v /etc/init.d/cups start > cups.txt 2>&1
+
+[pid 22305] socket(PF_INET, SOCK_STREAM, IPPROTO_IP) = 3
+[pid 22305] setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
+[pid 22305] bind(3, {sa_family=AF_INET, sin_port=htons(631), sin_addr=inet_addr("127.0.0.1")}, 16) = 0
+[pid 22305] listen(3, 128)              = 0
+[pid 22305] fcntl64(3, F_GETFD)         = 0
+[pid 22305] fcntl64(3, F_SETFD, FD_CLOEXEC) = 0
+
+
+epoll_wait(0, {{EPOLLIN, {u32=3096962368, u64=13805142305492428096}}}, 1024, -1) = 1
+accept(2, {sa_family=AF_INET, sin_port=htons(43366), sin_addr=inet_addr("127.0.0.1")}, [16]) = 6
+getsockname(6, {sa_family=AF_INET, sin_port=htons(631), sin_addr=inet_addr("127.0.0.1")}, [16]) = 0
+setsockopt(6, SOL_TCP, TCP_NODELAY, [1], 4) = 0
+fcntl64(6, F_GETFD)                     = 0
+fcntl64(6, F_SETFD, FD_CLOEXEC)         = 0
+epoll_ctl(0, EPOLL_CTL_ADD, 6, {EPOLLIN, {u32=3096961976, u64=3096961976}}) = 0
+
+epoll_wait(0, {{EPOLLIN, {u32=3096961976, u64=3096961976}}}, 1024, 1000) = 1
+recv(6, "G"..., 1, MSG_PEEK)            = 1
+poll([{fd=6, events=POLLIN}], 1, 10000) = 1 ([{fd=6, revents=POLLIN}])
+recv(6, "GET / HTTP/1.1\r\nHost: 127.0.0.1:631\r\nUser-Agent: Mozilla/5.0 (X11; Linux i686; rv:17.0) Gecko/2010010"..., 2048, 0) = 378
+
+stat64("/usr/share/cups/doc-root/index.html", {st_dev=makedev(0, 17), st_ino=26994, st_mode=S_IFREG|0644, st_nlink=1, st_uid=0, st_gid=0, st_blksize=1024, st_blocks=11, st_size=5242, st_atime=2009/04/17-09:19:17, st_mtime=2009/04/17-09:19:17, st_ctime=2009/04/17-09:19:17}) = 0
+open("/usr/share/cups/doc-root/index.html", O_RDONLY|O_LARGEFILE) = 8
+fcntl64(8, F_GETFD)                     = 0
+fcntl64(8, F_SETFD, FD_CLOEXEC)         = 0
+read(8, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose."..., 4096) = 4096
+close(8)                                = 0
+
+write(7, "localhost - - [10/Nov/2013:16:32:13 +0000] \"GET / HTTP/1.1\" 304 0 - -\n"..., 70) = 70
+
+send(6, "HTTP/1.1 304 Not Modified\r\nDate: Sun, 10 Nov 2013 16:32:13 GMT\r\nServer: CUPS/1.3\r\nConnection: Keep-Al"..., 184, 0) = 184
+
+epoll_wait(0, {{EPOLLIN, {u32=3096961976, u64=3096961976}}}, 1024, 1000) = 1
+poll([{fd=6, events=POLLIN}], 1, 10000) = 1 ([{fd=6, revents=POLLIN}])
+recv(6, "GET /cups.css HTTP/1.1\r\nHost: 127.0.0.1:631\r\nUser-Agent: Mozilla/5.0 (X11; Linux i686; rv:17.0) Gecko"..., 2048, 0) = 373
+
+stat64("/usr/share/cups/doc-root/cups.css", {st_dev=makedev(0, 17), st_ino=26995, st_mode=S_IFREG|0644, st_nlink=1, st_uid=0, st_gid=0, st_blksize=1024, st_blocks=8, st_size=3998, st_atime=2009/04/17-09:19:17, st_mtime=2009/04/17-09:19:17, st_ctime=2009/04/17-09:19:17}) = 0
+open("/usr/share/cups/doc-root/cups.css", O_RDONLY|O_LARGEFILE) = 8
+fcntl64(8, F_GETFD)                     = 0
+fcntl64(8, F_SETFD, FD_CLOEXEC)         = 0
+read(8, "BODY {\n  background: #cccc99;\n  color: #000000;\n  font-family: sans-serif;\n}\n\nH1, H2, H3, H4, H5, H6,"..., 4096) = 3998
+read(8, ""..., 4096)                    = 0
+close(8)                                = 0
+write(7, "localhost - - [10/Nov/2013:16:32:13 +0000] \"GET /cups.css HTTP/1.1\" 304 0 - -\n"..., 78) = 78
+send(6, "HTTP/1.1 304 Not Modified\r\nDate: Sun, 10 Nov 2013 16:32:13 GMT\r\nServer: CUPS/1.3\r\nConnection: Keep-Al"..., 184, 0) = 184
+
+epoll_wait(0, {}, 1024, 1000)           = 0
+time(NULL)                              = 1384101134
+time(NULL)                              = 1384101134
+time(NULL)                              = 1384101134
+epoll_wait(0,  <unfinished ...>
+

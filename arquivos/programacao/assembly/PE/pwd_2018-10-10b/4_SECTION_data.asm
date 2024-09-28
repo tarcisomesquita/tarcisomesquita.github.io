@@ -1,0 +1,12 @@
+# 00000600:
+.rept 16 .byte 0x00 ; .endr
+
+.ascii "_getcwd error"; .byte 0x00, 0x00, 0x00  # 0x0610
+
+# 00000620:
+.ascii "%s"; .byte 0x0a, 0x00 # 0x0620
+.long 0x00000001              # 0x0624
+
+.align 0x200, 0x00
+
+

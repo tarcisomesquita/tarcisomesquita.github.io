@@ -1,0 +1,26 @@
+
+Operators may be preceded and/or followed by whitespace.
+
+Prefix Operator
+- Negation. Two's complement negation. 
+~ Complementation. Bitwise not. 
+
+Infix Operators
+Infix operators take two arguments, one on either side. Operators have precedence, but operations with equal precedence are performed left to right.
+   1. Highest Precedence
+      * Multiplication.
+      / Division. Truncation is the same as the C operator `/'
+      % Remainder.
+      <
+      << Shift Left. Same as the C operator `<<'.
+      >
+      >> Shift Right. Same as the C operator `>>'. 
+   2. Intermediate precedence
+      | Bitwise Inclusive Or.
+      & Bitwise And.
+      ^ Bitwise Exclusive Or.
+      ! Bitwise Or Not. 
+   3. Lowest Precedence
+      + Addition. You may not add together arguments from different sections.
+      - Subtraction. You may not subtract arguments from different sections. 
+

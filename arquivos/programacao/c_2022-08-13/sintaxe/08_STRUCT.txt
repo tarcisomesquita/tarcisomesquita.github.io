@@ -1,0 +1,152 @@
+
+// STRUCT são grupos de variáveis organizadas arbitrariamente pelo programador.
+// Na memória é armazenada uma variável logo após a outra.
+
+Sintaxe:
+struct etiqueta_da_estrutura {
+   tipo membro_1;
+   tipo membro_2;
+   tipo membro_n;
+} variavel_da_estrutura;
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+extern int printf(char *, ...);
+
+struct pessoa {
+   unsigned short int idade;
+   char nome[51];  // vetor de 51 chars para o nome
+   unsigned long int rg;
+};
+
+int main() {
+   struct pessoa exemplo = {16, "Fulano", 123456789}; // declaração de uma variável tipo struct pessoa
+   
+   printf("Idade: %hu\n", exemplo.idade);
+   printf("Nome: %s\n", exemplo.nome);
+   printf("RG: %lu\n", exemplo.rg);
+   
+   return 0;
+}
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+extern int printf(char *, ...);
+
+#define TAMANHO 4
+
+struct data {
+   int dia, mes, ano;
+};
+
+struct aluno {
+   int matricula;
+   char nome[30];
+   struct data nascimento;
+};
+
+int main() {
+   struct aluno turma[TAMANHO] = {\
+         {9991, "Fulano", {10,5,1965}}, \
+         {9992, "Cicrano", {23,8,1977}}, \
+         {9993, "Beltrano", {14,1,1970}}, \
+         {9994, "Individuo", {2,10,1969}},\
+         };
+   
+   printf("\nturma[2].nascimento.ano = %d\n", turma[2].nascimento.ano);
+   
+   turma[2].nascimento.ano = 1979;
+   printf("turma[2].nascimento.ano = %d\n\n", turma[2].nascimento.ano);
+   return 0;
+}
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// Estruturas não podem ser passadas por valor para funções, deve-se passar um ponteiro para a estrutura.
+// Não podemos retornar uma struct em uma função mas pode-se retornar o endereço da estrutura.
+
+int printf(char *, ...);
+int scanf (const char *, ...);
+
+struct data
+{
+   int dia, mes, ano;
+};
+
+void exibedata(struct data *pd)
+{
+   char meses[12][10]={"Janeiro","Fevereiro","Marco","Abril", \
+                       "Maio", "Junho","Julho","Agosto",      \
+                       "Setembro","Outubro","Novembro","Dezembro"};
+   
+   pd->dia = 31;
+   printf("%02d de %s de %04d", pd->dia, meses[pd->mes-1], pd->ano);
+   printf("\n\n");
+}
+
+int main()
+{
+   struct data dt1;
+   
+   printf("Informe uma data: ");
+   scanf("%d/%d/%d", &dt1.dia, &dt1.mes, &dt1.ano);
+   exibedata(&dt1);
+   return(0);
+}
+
+/*
+
+
+// #include<stdio.h> // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+struct _IO_FILE;
+typedef struct _IO_FILE FILE;
+extern struct _IO_FILE *stdout;	
+extern struct _IO_FILE *stderr;	
+extern int fprintf(FILE *stream, const char *formatted_output, ...);
+
+struct str2 {
+   unsigned long int var1_str2;
+   unsigned long int var2_str2;
+};
+
+struct str1 {
+   unsigned long int var1_str1;
+   struct str2 *var2_str1;
+};
+
+int main() {
+   struct str1  teste1;
+   struct str2  teste2;
+
+   unsigned int pont;
+
+   teste1.var1_str1 = 0x00000007;
+   teste2.var1_str2 = 0x00000008;
+
+   teste1.var2_str1 = &teste2;
+
+   pont = (unsigned int)&teste1;
+
+   fprintf(stdout, "\n");
+
+   fprintf(stdout, "&teste1 = 0x%08X\n", pont );
+   fprintf(stdout, " teste1 = 0x%08X\n",  *(unsigned int  *)pont );
+
+   fprintf(stdout, "\n");
+
+   pont = pont + 4;
+   fprintf(stdout, "&teste1 = 0x%08X\n", pont );
+   fprintf(stdout, " teste1 = 0x%08X\n",  *(unsigned int  *)pont );
+   fprintf(stdout, "*teste1 = 0x%08X\n", **(unsigned int **)pont );
+
+   fprintf(stdout, "\n");
+
+   teste1.var2_str1->var1_str2 = 0x00000009;
+   fprintf(stdout, "&teste1 = 0x%08X\n", pont );
+   fprintf(stdout, " teste1 = 0x%08X\n",  *(unsigned int  *)pont );
+   fprintf(stdout, "*teste1 = 0x%08X\n", **(unsigned int **)pont );
+   
+   fprintf(stdout, "\n");
+
+   return 0;
+}

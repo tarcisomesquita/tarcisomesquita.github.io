@@ -1,0 +1,554 @@
+Metacaracteres tipo barra-letra
+
+b-l	nome    	tradução
+----------------------------------------------------
+\a	alert   	alerta (bipe)
+\b	backspace	caractere Backspace
+\e	escape  	caractere Esc
+\f	form feed	alimentação
+\n	newline 	linha nova
+\r	carriage ret	retorno de carro
+\t	htab    	tabulação horizontal
+\v	vtab    	tabulação vertical
+
+b-l	POSIX equiv.	mnemônico
+-------------------------------------------
+\d	[[:digit:]]	dígito
+\D	[^[:digit:]]	não-dígito
+\w	[[:alnum:]_]	palavra
+\W	[^[:alnum:]_]	não-palavra
+\s	[[:space:]]	branco
+\S	[^[:space:]]	não-branco
+
+ER para casar o RG:
+[0-9]\.[0-9]{3}\.[0-9]{3}-[0-9]
+\d\.\d{3}\.\d{3}-\d
+
+b-l	significado     	similar
+-----------------------------------------------------
+\a	alfabeto        	[[:alpha:]]
+\A	não-alfabeto    	[^[:alpha:]]
+\h	cabeça de palavra	[[:alpha]_]
+\H	não-cabeça de palavra	[^[:alpha:]_]
+\l	minúsculas      	[[:lower:]]
+\L	não-minúsculas  	[^[:lower:]]
+\u	maiúsculas      	[[:upper:]]
+\U	não-maiúsculas  	[^[:upper:]]
+\o	número octal    	[0-7]
+\O	não-número octal	[^0-7]
+\B	não-borda
+\A	início do texto
+\Z	fim do texto
+\l	torna minúscula
+\L	torna minúscula até \E
+\u	torna maiúscula
+\U	torna maiúscula até \E
+\Q	escapa até \E
+\E	fim da modificação
+\G	fim do casamento anterior
+
+
+
+
+ER - Expressões Regulares
+
+Os intervalos respeitam a ordem numérica da tabela ASCII
+var RegExp = /[0-9]/;  // somente números de 0-9
+a-z, A-Z, 5-9 , a-f, :-@, etc.
+[][-] casa um ] ou [ ou um -.
+[:-@] representa : ; < = > ? @
+classe POSIX	similar 	significa
+-----------------------------------------
+[:upper:]	[A-Z]   	letras maiúsculas
+[:lower:]	[a-z]   	letras minúsculas
+[:alpha:]	[A-Za-z]	maiúsculas/minúsculas
+[:alnum:]	[A-Za-z0-9]	letras e números
+[:digit:]	[0-9]   	números
+[:xdigit:]	[0-9A-Fa-f]	números hexadecimais
+[:punct:]	[.,!?:...]	sinais de pontuação
+[:blank:]	[ \t]   	espaço e TAB
+[:space:]	[ \t\n\r\f\v]	caracteres brancos
+[:cntrl:]	-       	caracteres de controle
+[:graph:]	[^ \t\n\r\f\v]	caracteres imprimíveis
+[:print:]	[^\t\n\r\f\v]	imprimíveis e o espaço
+
+Nos Estados Unidos, [[:upper:]] é igual a [A-Z]. No Brasil, [[:upper:]] é igual [A-ZÁÃÂÀÉÊÍÓÕÔÚÇ...]
+
+para colocarmos um ^ literal em uma lista, precisamos pô-lo em qualquer posição que não seja a primeira
+
+A ER ondas? tem a letra s marcada como opcional, então ela casa onda e ondas.
+* indica que a entidade anterior pode aparecer em qualquer quantidade.
+6*0 equivale a 0, 60, 660, 6660, ...
+b[ip]* equivale a b, bi, bip, biipp, bpipipi, biiiiip, bppp, ...
+
++ O mais tem funcionamento idêntico ao do asterisco, A única diferença é que o mais não é opcional, então a entidade anterior deve casar pelo menos uma vez, e pode ter várias.
+6+0     	60, 660, 6660, ..., 666666660, ...
+b[ip]+  	bi, bip, biipp, bpipipi, biiiiip, bppp, ...
+
+{n,m} significa de n até m vezes, assim algo como 6{1,4} casa 6, 66, 666 e 6666.
+{3,}	pelo menos 3 (3 ou mais)
+{0,3}	até 3
+{3}	exatamente 3
+{1}	exatamente 1
+{0,1}	zero ou 1    (igual ao opcional)
+{0,}	zero ou mais (igual ao asterisco)
+{1,}	um ou mais   (igual ao mais)
+
+^[0-9] Isso quer dizer: a partir do começo da linha, case um número , ou seja, procuramos linhas que começam com números.
+^[^0-9] o contrário, procuramos linhas que não começam com números.
+[0-9]^ Casa um número seguido de um circunflexo literal
+^^ linhas que começam com um circunflexo
+
+[0-9]$ casa linhas que terminam com um número.
+^$ linha vazia
+^.{20,60}$ linhas que tenham entre 20 e 60 caracteres
+
+
+\b marca os limites de uma palavra, ou seja, onde ela começa e/ou termina
+"palavra" aqui é um conceito que engloba [A-Za-z0-9_] apenas
+
+dia     	dia, diafragma, radial, melodia, bom-dia!
+\bdia   	dia, diafragma, bom-dia!
+dia\b   	dia, melodia, bom-dia!
+\bdia\b 	dia, bom-dia!
+
+Dentro da lista, todo metacaractere é normal
+lua[*] casa lua*
+\* é igual a [*] que é igual a um asterisco literal
+Similarmente podemos escapar todos os metacaracteres: \., \[ , \], \?, \+ , \{, \}, \(, \), \^, \$ e \\.
+
+| ou
+a lista [] é um ou para uma letra apenas
+[gpr]ato equivale a gato|pato|rato
+http://|ftp://
+
+() grupo
+(ha!)+          	ha!, ha!ha!, ha!ha!ha!, ...
+(\.[0-9]){3}    	.0.6.2, .2.8.9, .6.6.6, ...
+(www\.)?zz\.com 	www.zz.com, zz.com
+((su|hi)per)?mercado
+
+
+retrovisor "olha pra trás", para buscar um trecho já casado
+(quero)-\1 equivale a quero-quero
+\b([A-Za-z]+) \1\b  qualquer palavra repetida: lili bombom
+(lenta)(mente) é \2 \1	lentamente é mente lenta
+((band)eira)nte \1 \2a	bandeirante bandeira banda
+in(d)ol(or) é sem \1\2	indolor é sem dor
+((((a)b)c)d)-1 = \1,\2,\3,\4	abcd-1 = abcd,abc,ab,a
+
+
+
+
+
+ Criando uma Expressão Regular
+
+Existem duas maneiras de se criar uma ER:
+
+- Usando uma ER literal, como segue:
+er = /abc(?=yxz)/; // pegue a string abc somente se ela for seguida por yxz
+Se a ER se mantém constante, é recomendável usar esse modo de construção devido sua melhor perfomance.
+
+- Chamando a função construtor do objeto RegExp, como segue:
+er = new RegExp("abc(?=yxz)");
+
+A diferença desse modo de criar a ER é que nesta, a interpreatação da expressão é feita em tempo de execução e a anterior é feita quando o script é avaliado pelo interpretador js e então guardado na memória, use modelo de função construtor se não souber qual padrão de expressão ou se estiver pegando o padrão de um valor de elemento de entrada em um form, ex: <input type="text" onchange="funcao()">
+
+Exemplo prático:
+
+<html>
+<script language="javaScript1.2">
+<!-- script criado para o site: www.linhadecodigo.com.br
+//   autor: Manoel Messias Alves S. Jr  data: 14 de maio de 2004 10:40
+//   email: junmanoel@pop.com.br
+// exibe o 1º nome e a idade a partir da entrada digitada -->
+ var myRe1 = /\w+\s/;
+ var myRe2 = /\s\d+/;
+ 
+ function executa(valor){
+ 		nome = myRe1.exec(valor);
+		idade = myRe2.exec(valor);
+		if(nome == null || idade == null)
+			alert("Entrada não está correta, siga o ex: Nome Sobrenome idade");
+		else
+			alert("Nome: "+nome+"\nIdade: "+idade+" anos");
+		 }
+</script>
+<body>
+Digite seu nome, idade e clique em outro lugar, (ex: João Alencar Faria 32)
+<input type="text" onChange="executa(this.value);"/>
+</body>
+</html>
+
+Explicação do código acima:
+
+var myRe1 = /\w+\s/; - indica um padrão onde os primeiros digitos alfanumericos(\w) seguido de um espaço em branco(\s) será testado no momento que a função executa(valor) for chamanda.
+
+var myRe2 = /\s\d+/; - indica um padrão onde os primeiros digitos (\d+) de 0 a 9, será testado, também na chamada da função executa(valor),o parametro valor é o texto passado no imput text.
+
+Read more: http://www.linhadecodigo.com.br/artigo/328/javascriptexpressoes-regulares.aspx#ixzz21z4doLvZ
+
+
+Sinalizadores
+
+i Não faz distinção entre letras maiúsculas e minúsculas
+/Java/i encontrará tanto "java" quanto "Java" e "JAVA"
+
+g Pesquisa global de todas as ocorrências de um padrão
+/ca/g encontrará as duas ocorrências de "ca" na frase "É cada macaco no seu galho"
+
+
+
+método search retorna a posição do termo na string. Caso não seja encontrado, retorna -1.
+
+Sintaxe: texto.search(RegExp)
+
+Exemplos:
+<script>
+var texto = "Expressões regulares em Javascript para iniciantes!";
+var RegExp = /script/;
+if (texto.search(RegExp) != -1) document.write("Encontrado na posição: " + texto.search(RegExp));
+else document.write("Não encontrado!");
+</script>
+
+<script>
+var texto = "O meu e-mail é: klonder@klonder.com.br";
+var RegExp = /\b[\w]+@[\w]+\.[\w]+/;
+// (letras ou números) (\b[\w]+);
+// Seguidos de um arroba (@);
+// Seguido de outra sequência de um ou mais algarismos ([\w]+);
+// Seguidos de um ponto (\.);
+// Seguido de outra sequência de um ou mais algarismos ([\w]+).
+
+if (texto.search(RegExp) != -1) document.write("E-mail localizado na posição: " + texto.search(RegExp));
+else document.write("E-mail não encontrado!");
+</script>
+
+Sintaxe: RegExp.test(texto);
+Caso a Expressão seja encontrada, retorna "true", caso contrário retorna "false".
+
+Exemplo:
+<script>
+var texto = "klonder@klonder.com.br";
+var RegExp = /^[\w]+@[\w]+\.[\w|\.]+$/;
+
+// texto é iniciado por um ou mais letra ou número (^[\w]+);
+// seguidos de arroba (@);
+// Seguido de um ou mais letra ou número ([\w]+);
+// Seguido(s) de um ponto (\.);
+// Seguido (e finalizado) por um ou mais algarismos ou pontos ([\w|\.]+$);
+
+if (RegExp.test(texto) == true) document.write("Formato válido!");
+else document.write("Formato inválido!");
+</script>
+
+<script>
+var texto = "000.000.000-00";
+var RegExp = /^[\d]{3}\.[\d]{3}\.[\d]{3}\-[\d]{2}$/;
+// texto é iniciado por três números (^[\d]{3});
+// seguidos de ponto (\.);
+// seguido de três números ([\d]{3});
+// seguidos de ponto (\.);
+// seguido de três números ([\d]{3});
+// seguidos de hífen (\-);
+// seguido (e finalizado) por dois números ([\d]{2}$);
+if (RegExp.test(texto) == true) document.write("Formato válido!");
+else document.write("Formato inválido!");
+</script>
+
+
+<script>
+function validaEmail(mail) {
+   var er = RegExp(/^[A-Za-z0-9_\-\.]+@[A-Za-z0-9_\-\.]{2,}\.[A-Za-z0-9]{2,}(\.[A-Za-z0-9])?/);
+   // [A-Za-z0-9_\-\.]{2,}:  deve encontrar duas ou mais seqüências de caracteres que satisfaçam a condição  de ser alfanumérico, underline, traço ou ponto.
+
+Leia mais em: Expressões Regulares em JavaScript http://www.devmedia.com.br/expressoes-regulares-em-javascript/7347#ixzz21vsZ4aOT
+
+   if(er.test(mail) == false) window.alert("E-mail inválido!");
+}
+validaEmail("klonder@klonder");
+</script>
+
+
+3. Método match
+É o método de uma string e é capaz de armazenar em um array algumas propriedades da ER que forem localizadas na string. Em caso positivo, retorna cada termo localizado em um array associativo. Caso contrário, retorna null.
+
+Sintaxe: texto.match(RegExp)[propriedades ou índices]
+
+As suas propriedades são:
+3.1 - input -> String de entrada;
+3.2 - index -> Posição do primeiro caractere do segmento da string que atende à ER;
+3.3 - lastIndex -> Posição do último caractere do segmento da string que atende à ER;
+
+E os seus índices são:
+3.4 - [0] -> Retorna a parte da string que atende à ER;
+3.5 - [1],[2] etc -> Retorna os termos da string casados em cada grupo da ER;
+
+
+Exemplo 1 - Localizando a data em uma string
+Suponha que o usuário inseriu, dentre outras palavras de uma frase, uma expressão de data em um dos campos do seu formulário. Você quer então, capturar o dia, mês e ano dessa data, não importando a posição que a expressão de data ocupa na frase.
+
+<script type="text/javascript">
+//Frase recuperada de um campo text, por exemplo:
+var texto = "Eu nasci em 01/23/4567";
+
+/* Verificando se o texto recebido contém dois números (([\d]{2})): veja que estão entre parênteses;
+seguidos de barra (\/);
+Seguida de dois números (([\d]{2})): veja que estão entre parênteses;
+seguidos de barra (\/);
+Seguida de quatro números (([\d]{4})): veja que estão entre parênteses;
+
+Os parênteses determinam os grupos!
+*/
+var RegExp = /([\d]{2})\/([\d]{2})\/([\d]{4})/;
+
+if (texto.match(RegExp) != null) {
+                document.write("Propriedades do método match: <br>"+
+                "Frase: "+texto.match(RegExp).input+"<br>"+
+                "Posição do 1º caractere: "+texto.match(RegExp).index+"<br>"+
+                "Posição do último caractere: "+texto.match(RegExp).lastIndex+"<br>"+
+                "Resultado da ER: "+texto.match(RegExp)[0]+"<br>"+
+                "Primeiro grupo: "+texto.match(RegExp)[1]+"<br>"+
+                "Segundo grupo: "+texto.match(RegExp)[2]+"<br>"+
+                "Terceiro grupo: "+texto.match(RegExp)[3]+"<br>");
+} else {
+                document.write("Nenhum texto ou expressão foram casados!");
+}
+</script>
+
+
+
+
+Exemplo 2 - Localizando apenas números em uma expressão
+Suponha agora que o usuário deverá digitar uma chave-de-código em um formulário do seu site para fazer o download de uma apostila, por exemplo. Embora esse tipo de validação não seja tão eficiente em JavaScript, você quis utilizá-la mesmo assim pois seu servidor não tem ainda suporte a PHP ou ASP e, além disso, os seus usuários não entendem muito sobre código HTML ou JavaScript.
+Bom, sendo assim, você criou um campo texto no seu site e nesse campo deverá ser inserida essa chave de código, que contém números e letras, de tamanho variado. No entanto, você quer pegar apenas os números que estão espalhados nessa chave-de-código para fazer uma posterior validação, vendo se aquela é uma chave válida ou não.
+Como não existe local certo para os números ou letras, você resolveu utilizar ER para capturar apenas os números!
+
+Veja o código abaixo:
+
+<script type="text/javascript">
+//Chave de código recuperada de um campo text, por exemplo:
+var texto = "ÇASLDFE2FLAHÇS0DGKLJEIQWOE0IFJSDFKQÇLW9EKFJ";
+
+//Pegando apenas os números contidos em um texto recebido:
+var RegExp = /[\d]/g;
+
+if (texto.match(RegExp) != null) {
+        var strExpressao = "";
+        for (var i = 0; i < texto.match(RegExp).length; i++) {
+                strExpressao = strExpressao + texto.match(RegExp)[i];
+        }
+        document.write (strExpressao);
+} else {
+                document.write("Nenhum texto ou expressão foram casados!");
+}
+</script>
+
+
+
+Nesse caso, utilizamos o modificador global (g) para fazer uma busca por partes, porém em toda a string. Ao utilizar o modificar global, o método é convertido também em um array, porém cada índice (inclusive o zero) armazenará cada ocorrência da ER na string.
+Essa é uma maneira diferente de utilizar o método match, que também produz excelentes resultados!
+
+Tudo bem, você poderia considerar esse exemplo um tanto quanto simples e vulnerável, pois qualquer um poderia, num simples olhar, ver os números presentes na chave e saber qual a sequência numérica correta e, a partir disso, curtir contigo, dizer que seu sistema não funciona, que você não é um bom desenvolvedor etc etc etc...
+
+Mas é aí que eu queria chegar! E que tal inserirmos vários números e letras, tudo misturado, com números repetidos, letras ao acaso? Eu não digo que seria impossível, mas seria muito mais complicado alguém "descriptografar" a sua chave dessa maneira!!! O tempo que a pessoa iria gastar nisso talvez não valesse a pena!
+
+Sendo assim, para aumentar a segurança, vamos criar uma chave com vários números e letras. Mas antes de ver o código-fonte abaixo, tente descobrir uma maneira de obter a sequência numérica correta que, nesse caso, também é 2009:
+Chave = SL2K2K2LJH98759K0L825YWUK0LIEFHQ293485612985WEIOFH1K9L468VN234
+
+Você iria perder horas e horas tentando descobrir isso, mas as ER vieram para resolver esse tipo de problema de uma maneira mais simples e com menos linhas de código possível.
+Na chave acima, eu irei buscar por cada número que esteja entre as letras K e L (iniciais do meu nick), ou seja, a ER tentará localizar ...K2L....K0L....K0L.........K9L, resultando, após a extração dos números, em 2009! Assim, posso inserir quantas letras e números quiser, tendo apenas o cuidado de utilizar a sequência K*L em momentos especiais, mas em qualquer posição do código!
+
+Sendo assim, segue o código abaixo:
+
+<script type="text/javascript">
+//Chave de código recuperada de um campo text, por exemplo:
+var texto = "SL2K2K2LJH98759K0L825YWUK0LIEFHQ293485612985WEIOFH1K9L468VN234";
+
+// Verificando apenas os segmentos K#L contidos em um texto recebido;
+//Sendo que [\d] corresponde a um número qualquer.
+var RegExp = /K[\d]L/g;
+
+if (texto.match(RegExp) != null) {
+        var strExpressao = "";
+        for (var i = 0; i < texto.match(RegExp).length; i++) {
+                strExpressao = strExpressao + texto.match(RegExp)[i];
+        }
+        document.write ("RegExp extraiu da variável texto:<br>"+strExpressao);
+        document.write ("<br><br><br>");
+                //Retirando apenas os números de strExpressao:
+                var RegExp2 = /[\d]/g;
+                var strExpressao2 = "";
+                
+                if (strExpressao.match(RegExp2) != null) {
+                        for (var i = 0; i < strExpressao.match(RegExp2).length; i++) {
+                        strExpressao2 = strExpressao2 + strExpressao.match(RegExp2)[i];
+                        }
+                        
+                        document.write ("RegExp2 extraiu da variável strExpressao:<br>"+strExpressao2);
+                }
+        
+} else {
+                document.write("Nenhum texto ou expressão foram casados!");
+}
+</script>
+
+
+
+4. Método replace
+O método replace é o método de uma string e é nativo do JavaScript. No entanto, pode ser utilizado em conjunto com as Expressões Regulares extendendo significativamente a capacidade de manipulação dos grupos casados na string, pela ER.
+
+Sintaxe: texto.replace(RegExp,"grupos");
+
+string = "2 hours from now";
+string.replace(/2/, "3");
+// "3 hours from now"
+
+string = "2 hours from now";
+string.replace(/2/, "3");
+// "3 hours from now"
+
+Você também pode utilizar grupos na substituição.
+
+string = "<strong>JavaScript</strong>";
+string.replace(/<([^>]+)>(.*?)<\/\1>/, "$2");
+// "JavaScript"
+
+Às vezes, queremos fazer alguma operação matemática com algum número. E é aí que entra um "truque" que nem todos conhecem. A função String#replace permite passar uma função, cujo retorno será usado na substituição.
+
+string = "1 + 1 = ?";
+string.replace(/(\d+) \+ (\d+) = \?/, function(expression, n1, n2){
+  return n1 + " + " + n2 + " = " + (parseInt(n1, 10) + parseInt(n2, 10));
+});
+// 1 + 1 = 2
+
+
+
+Exemplo 1 - Máscaras para CPF
+Suponha que no seu site existe um campo para o usuário digitar os números do CPF. Esse campo aceita apenas números, mas, antes do valor ser enviado ao Banco de Dados, você deseja converter a sequência numérica para o formato padrão do CPF, que é: ###.###.###-## (#: qualquer número de 0 a 9).
+
+Segue o código:
+
+<script type="text/javascript">
+//CPF recuperada de um campo text, por exemplo:
+var texto = "00000000000";
+
+/* Dividindo por grupos:
+Verificando se a expressão é iniciada por 3 números (^([\d]{3}));
+seguidos de 3 números (([\d]{3}));
+seguidos de 3 números (([\d]{3}));
+seguidos de 2 números e finalizada (([\d]{2})$);
+*/
+var RegExp = /^([\d]{3})([\d]{3})([\d]{3})([\d]{2})$/;
+
+        if (texto.search(RegExp) != -1) {
+                var mascCPF = texto.replace(RegExp,"$1.$2.$3-$4");
+                document.write (mascCPF);
+        } else {
+                document.write("Nenhum texto ou expressão foram casados!");
+        }
+</script>
+
+
+JavaScript
+Está gostando da leitura? Está aprendendo? Compre o livro novo que traz mais conteúdo, texto atualizado e ilustrações!
+
+característica	como fazer
+-------------------------------------------------------
+busca   	métodos test, search, exec, match
+substituição	método replace
+divisão 	método split
+ER crua 	/entre barras/
+ignore M/m	modificador i
+global  	modificador g
+
+O suporte a ERs no Javascript foi incluído nos dois navegadores mais famosos desde as seguintes versões: Netscape 4.0x e Internet Explorer 4.0, e o nosso personagem principal agora vai ser o objeto global RegExp.
+
+Para definir uma ER no formato cru, basta colocá-la entre /barras/, e logo após a segunda barra, podemos colocar os modificadores de maiúsculas e minúsculas e substituição global, assim: /[a-z]/ig.
+
+Para criar um objeto do tipo RegExp, basta definir uma variável com uma /ER/. O método test é um dos que fazem a busca de padrões:
+
+var er = /^[a-z]+$/i;
+if (er.test("JAVA"))
+  alert("casou!");
+
+Fácil, não? Então para complicar, se você quiser fazer uma substituição, o método replace deve ser usado. Detalhe: ele é um método de uma string e não de uma /ER/, mas recebe ERs. Não entendeu? Veja:
+
+var eu = "estou com fome";
+document.write(eu.replace(/....$/, "sono"));
+
+Em Javascript, temos uma simetria entre os objetos regexp e string, com métodos de mesma função, mas nomes diferentes. Os "gêmeos siameses" são test e search para busca simples e exec e match para busca com pescagem de dados. E lembre-se de que um método regexp recebe como parâmetro uma string e vice-versa, veja:
+
+regexp.test("string")
+string.search(/regexp/)
+
+regexp.exec("string")
+string.match(/regexp/)
+
+Cuidado para não confundir! Falando em confundir, vamos ver o mais complicado de todos: o exec, que, além de fazer o casamento, povoa uma matriz com vários dados que podem ser recuperados posteriormente. Acompanhe o exemplo a seguir e note que o matriz[1] é o similar Javascript para o retrovisor \1 :
+
+var er = /^(\w+) (\w+)/;
+var matriz = er.exec("um dois três");
+document.write(matriz.index, "<BR>",
+               matriz.input, "<BR>",
+               matriz[0],    "<BR>",
+               matriz[1],    "<BR>",
+               matriz[2]);
+
+//Resultado:
+// 0              // índice do casamento
+// um dois três   // texto original
+// um dois        // trecho casado
+// um             // conteúdo do grupo 1
+// dois           // conteúdo do grupo 2
+
+Mais informações podem ser encontradas em:
+
+    http://www.webreference.com/js/column5
+
+
+(?#texto)
+Onde texto é um comentário, que não pode ter o caractere ) e é simplesmente ignorado pelo robozinho. Assim, pode-se colocar lembretes na ER como em (?#o nome)Homer (?#e agora o sobrenome)Simpson, que sem os comentários é Homer Simpson.
+
+(?:ER)
+É como um grupo normal () só que não é guardado nem incluído na contagem de grupos, ou seja, não é acessível com retrovisores ou $1, pode ser considerado um grupo fantasma. Assim ^(Homer) (?:J\.) (Simpson) casa o nome completo, mas \1 e \2 contém Homer e Simpson, respectivamente.
+
+(?=ER)
+Não casa caracteres na posição atual, mas dá uma "espiada" adiante e caso a ER embutida case, retorna sucesso. É como só apostar na loteria se você já souber o resultado. Por exemplo a ER Homer (?=Simpson) só casará o Homer se for seguido de Simpson. Mas o sobrenome não faz parte do trecho casado, serviu apenas para checagem.
+
+(?!ER)
+É o contrário do anterior, só casando um trecho se este não for seguido da ER embutida. Então Homer (?!morreu) casa o Homer do texto Homer comeu, mas não do Homer morreu. Para memorizar os dois últimos metacaracteres, veja seus identificadores: = e !, que lembram os operadores == e !=.
+
+(?<=ER)
+(?<!ER)
+Estes dois são complementares aos dois anteriores, a diferença é que em vez de espiar para frente, eles espiam para trás (note o < apontando para a esquerda). Então (?<!Barney) Simpson casará Simpson em Homer Simpson, mas não em Barney Simpson.
+
+(?modificador)
+Pode-se "configurar" uma parte da ER precedendo-a com esta construção, e modificador pode ser um único caractere, entre:
+    i: ignorar a diferença entre maiúsculas e minúsculas;
+    m: trata o texto como multilinha;
+    s: trata o texto como uma única linha;
+    x: permite inclusão de espaços e comentários;
+    L: levar em conta a localização do sistema (somente Python).
+
+(?(condição)ER-sim|ER-não)
+o "if-then-else" dos metacaracteres.
+
+A condição geralmente é um número, que referencia a um grupo prévio. Se esse grupo casou, a condição é verdadeira e ER-sim é a ER "da vez". Se a condição falhar, a ER-não é utilizada.
+É algo como "case um número entre possíveis parênteses, mas se tiver tem de ter o parênteses que abre E o que fecha", ou seja, 669 e (669) são válidos, mas (669 e 669) não. Veja como fica a ER: (\()?[0-9]+(?(1)\)). Isso porque nem preenchemos a possibilidade ER-não...
+
+gulosos
+---------------------
+a.*     	aaaaa
+a.+     	aaaaa
+a.?     	aa
+a.{1,3} 	aaaa
+
+não-gulosos
+---------------------
+a.*?    	a
+a.+?    	aa
+a.??    	a
+a.{1,3}?	aa
+
+

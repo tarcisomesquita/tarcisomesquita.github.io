@@ -1,0 +1,5 @@
+
+Enhanced Read Keyboard Status (11h)
+
+Igual a FUNCTION_01.txt
+

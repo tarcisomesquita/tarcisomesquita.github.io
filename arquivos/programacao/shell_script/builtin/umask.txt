@@ -1,0 +1,13 @@
+
+umask [mask]
+
+Set the value of umask (see umask(2)) to the specified octal value.  If the argument is omitted, the umask value is printed.
+
+umask 0022  drwxr-xr-x
+umask 0000  drwxrwxrwx
+umask 0111  drw-rw-rw-
+
+0001 b  = executar
+0010 b  = escrever
+0100 b  = ler
+

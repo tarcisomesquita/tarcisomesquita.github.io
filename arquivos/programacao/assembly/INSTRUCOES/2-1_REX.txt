@@ -1,0 +1,17 @@
+REX prefixes are a set of 16 bytes: 40H to 4FH.
+Only one REX is allowed per instruction.
+REX must immediately precede the opcode byte or the escape opcode byte (0FH).
+When a REX is used in conjunction with an instruction containing a mandatory prefix, the mandatory prefix must come before the REX.
+example, CVTDQ2PD with a REX prefix should have REX placed between F3 and 0F E6.
+
+REX.W can be used to determine the operand width. Like the 66H size prefix.
+REX.R modifies the ModR/M reg field when that field encodes a GPR, SSE, control or debug register.
+REX.X bit modifies the SIB index field.
+REX.B either modifies the base in the ModR/M r/m field or SIB base field; or it modifies the opcode reg field used for accessing GPRs.
+
+Field Name   Bit Position
+W            3
+R            2
+X            1
+B            0
+

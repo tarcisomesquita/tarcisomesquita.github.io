@@ -1,0 +1,47 @@
+
+main.c
+
+int main(int argc, char **argv)
+{
+   return(0);
+}
+
+
+main.asm
+
+	.intel_syntax noprefix
+
+	.section .text
+.globl main
+main:
+	lea	ecx, [esp+4]           # [esp+4] tem o valor de argc
+	and	esp, 0xFFFFFFF0        # [esp+8] tem o valor de argv
+	push	DWORD PTR [ecx-4]
+	push	ebp
+	mov	ebp, esp
+	push	ecx
+
+	mov	al, 0                  # return 0;
+	pop	ecx
+	pop	ebp
+	lea	esp, [ecx-4]
+	ret
+
+
+main.S
+	.section .text
+.globl main
+main:
+	leal	4(%esp), %ecx
+	andl	$-16, %esp
+	pushl	-4(%ecx)
+	pushl	%ebp
+	movl	%esp, %ebp
+	pushl	%ecx
+
+	movl	$0, %eax
+	popl	%ecx
+	popl	%ebp
+	leal	-4(%ecx), %esp
+	ret
+
