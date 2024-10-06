@@ -1,0 +1,4 @@
+http://ppa.launchpad.net/stellarium/stellarium-releases/ubuntu/pool/main/s/stellarium/
+
+sudo dpkg -i /media/ubuntu/TSD/SD/pacotes/archives/{libqt5serialport5_5.5.1-2build1_amd64.deb,libqt5script5_5.5.1+dfsg-2build1_amd64.deb,stellarium_0.14.3-1_amd64.deb,stellarium-data_0.14.3-1_all.deb}
+

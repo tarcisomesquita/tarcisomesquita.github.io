@@ -31,43 +31,6 @@ lspci -tv
 
 findmnt                       	Displays target mount point for all filesystems
 
-sort --ignore-case
-uniq --ignore-case
-
-cat file1 
-Hello
-Hello
-How are you?
-Good morning
-Good morning
-Thank you
-
-uniq -d file1 
-Hello
-Good morning
-
-uniq -u file1 
-How are you?
-Thank you
-
-ignore characters at the beginning
-cat file1 
-1apple
-2apple
-3pears
-4banana
-5banana
-
-uniq -s 1 file1 
-1apple
-3pears
-4banana
-
-echo 'teaf tes
-dasfl tes' | uniq --skip-fields=1
-teaf tes
-
-
 #!/usr/bin/python3
     import math
     radius = int(input("Please enter the radius of the circle : "))

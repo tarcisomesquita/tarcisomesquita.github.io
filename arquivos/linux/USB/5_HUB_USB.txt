@@ -1,0 +1,6 @@
+
+Em teoria, cada porta USB permite a conexão de até 127 dispositivos incluindo os HUBs.
+
+O maior problema é que tanto a banda, quanto a potência fornecida pela porta são compartilhadas entre todos os periféricos ligados ao hub
+
+

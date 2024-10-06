@@ -1,0 +1,161 @@
+Interrupts:
+Maskable interrupts: All Interrupt Requests (IRQs) issued by I/O devices give rise to maskable interrupts. A maskable interrupt can be in two states: masked or unmasked; a masked interrupt is ignored by the control unit as long as it remains masked.
+Nonmaskable interrupts: Only a few critical events (such as hardware failures) give rise to nonmaskable interrupts . Nonmaskable interrupts are always recognized by the CPU.
+Each interrupt or exception is identified by a number ranging from 0 to 255; Intel calls this 8-bit unsigned number a vector.
+The vectors of nonmaskable interrupts and exceptions are fixed, while those of maskable interrupts can be altered by programming the Interrupt Controller.
+
+IRQ lines are connected to the input pins of a hardware circuit called the
+Programmable Interrupt Controller, which performs the following actions:
+Monitors the IRQ lines, checking for raised signals. If two or more IRQ lines are raised,
+selects the one having the lower pin number.
+If a raised signal occurs on an IRQ line:
+Converts the raised signal received into a corresponding vector.
+Stores the vector in an Interrupt Controller I/O port, thus allowing the CPU to read
+it via the data bus.
+Sends a raised signal to the processor INTR pin, that is, issues an interrupt.
+Waits until the CPU acknowledges the interrupt signal by writing into one of the
+Programmable Interrupt Controllers (PIC) I/O ports; when this occurs, clears the
+INTR line.
+
+Intel's default vector associated with IRQ n is n+32.
+
+The I/O APIC consists of a set of 24 IRQ lines, a 24-entry Interrupt Redirection Table,
+programmable registers, and a message unit for sending and receiving APIC messages over
+the APIC bus.
+
+The following list gives the vector, the name, the type, and a brief description of the
+exceptions found in 80x86 processors.
+0 - "Divide error" (fault): Raised when a program issues an integer division by 0.
+1- "Debug" (trap or fault): Raised when the TF flag of eflags is set (quite useful to
+implement single-step execution of a debugged program) or when the address of an
+instruction or operand falls within the range of an active debug register .
+2 - Not used: Reserved for nonmaskable interrupts (those that use the NMI pin).
+3 - "Breakpoint" (trap): Caused by an int3 (breakpoint) instruction (usually inserted by a
+debugger).
+4 - "Overflow" (trap): An into (check for overflow) instruction has been executed while the OF
+(overflow) flag of eflags is set.
+5 - "Bounds check" (fault): A bound (check on address bound) instruction is executed with
+the operand outside of the valid address bounds.
+6 - "Invalid opcode" (fault): The CPU execution unit has detected an invalid opcode (the part
+of the machine instruction that determines the operation performed).
+7 - "Device not available" (fault): An ESCAPE, MMX, or SSE/SSE2 instruction has been
+executed with the TS flag of cr0 set.
+8 - "Double fault" (abort): Normally, when the CPU detects an exception while trying to call
+the handler for a prior exception, the two exceptions can be handled serially. In a few cases,
+however, the processor cannot handle them serially, so it raises this exception.
+9 - "Coprocessor segment overrun" (abort): Problems with the external mathematical
+coprocessor (applies only to old 80386 microprocessors).
+10 - "Invalid TSS" (fault): The CPU has attempted a context switch to a process having an
+invalid Task State Segment.
+11 - "Segment not present" (fault): A reference was made to a segment not present in
+memory (one in which the Segment-Present flag of the Segment Descriptor was cleared).
+12 - "Stack segment fault" (fault): The instruction attempted to exceed the stack segment
+limit, or the segment identified by ss is not present in memory.
+13 - "General protection" (fault): One of the protection rules in the protected mode of the
+80x86 has been violated.
+14 - "Page Fault" (fault): The addressed page is not present in memory, the corresponding
+Page Table entry is null, or a violation of the paging protection mechanism has occurred.
+15 - Reserved by Intel
+16 - "Floating-point error" (fault): The floating-point unit integrated into the CPU chip has
+signaled an error condition, such as numeric overflow or division by 0.
+17 - "Alignment check" (fault): The address of an operand is not correctly aligned (for
+instance, the address of a long integer is not a multiple of 4).
+18 - "Machine check" (abort): A machine-check mechanism has detected a CPU or bus
+error.
+19 - "SIMD floating point exception" (fault): The SSE or SSE2 unit integrated in the CPU
+chip has signaled an error condition on a floating-point operation.
+
+#
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+Exception
+Divide error
+Debug
+NMI
+Breakpoint
+Overflow
+Bounds check
+Invalid opcode
+Device not available
+Double fault
+Coprocessor segment overrun
+Invalid TSS
+Segment not present
+Stack segment fault
+General protection
+Page Fault
+Intel-reserved
+Floating-point error
+Alignment check
+Machine check
+SIMD floating point
+Exception handler
+divide_error( )
+debug( )
+nmi( )
+int3( )
+overflow( )
+bounds( )
+invalid_op( )
+device_not_available( )
+doublefault_fn( )
+coprocessor_segment_overrun( )
+invalid_TSS( )
+segment_not_present( )
+stack_segment( )
+general_protection( )
+page_fault( )
+None
+coprocessor_error( )
+alignment_check( )
+machine_check( )
+simd_coprocessor_error( )
+Signal
+SIGFPE
+SIGTRAP
+None
+SIGTRAP
+SIGSEGV
+SIGSEGV
+SIGILL
+None
+None
+SIGFPE
+SIGSEGV
+SIGBUS
+SIGBUS
+SIGSEGV
+SIGSEGV
+None
+SIGFPE
+SIGBUS
+None
+SIGFPE
+
+
+Interrupt Descriptor Table (IDT ) associates each interrupt or
+exception vector with the address of the corresponding interrupt or exception handler.
+
+idtr CPU register allows the IDT to be located anywhere in memory: it specifies both
+the IDT base physical address and its limit (maximum length). It must be initialized before
+enabling interrupts by using the lidt assembly language instruction.
+
+

@@ -1,0 +1,13 @@
+
+USB 2.0
+HIGH-SPEED:  25 Mb/s - 400 Mb/s  (storage, video)
+FULL-SPEED: 500 kb/s -  10 Mb/s  (audio, microphone, broadband)
+LOW-SPEED:   10 kb/s - 100 kb/s  (keyboard, mouse)
+
+
+USB 3.0:
+Super-Speed: 4800 megabits (introduzido pelo USB 3.0)
+High-Speed:   480 megabits (introduzido pelo USB 2.0)
+Full-Speed:    12 megabits (USB 1.x operando na velocidade máxima)
+Low-Speed:    1.5 megabits (usado por dispositivos lentos, como teclados e mouses)
+

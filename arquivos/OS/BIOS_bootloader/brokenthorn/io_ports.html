@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+
+<body>
+ 
+ 
+	<table border="1" bgcolor="CCCCCC"> 
+	<tbody><tr><th colspan="5" bgcolor="FFFFFF">Default x86 Port Address Assignments</th> 
+	</tr><tr bgcolor="AAAAAA"> 
+	<td>Address Range</td><td>First QWORD</td><td>Second QWORD</td><td>Third QWORD</td><td>Fourth QWORD</td> 
+ 
+	</tr> 
+ 
+	<tr><td bgcolor="ffffff">0x000-0x00F</td><td colspan="4">DMA Controller Channels 0-3</td></tr> 
+	<tr><td bgcolor="ffffff">0x010-0x01F</td><td colspan="4">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x020-0x02F</td><td>Interrupt Controller 1</td><td colspan="3">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x030-0x03F</td><td colspan="4">System Use</td></tr> 
+ 
+	<tr><td bgcolor="FFFFFF">0x040-0x04F</td><td>System Timers</td><td colspan="3">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x050-0x05F</td><td colspan="4">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x060-0x06F</td><td>Keyboard/PS2 Moude (Port 0x60)<br>Speaker (0x61)</td><td>Keyboard/PS2 Mouse (0x64)</td><td colspan="2">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x070-0x07F</td><td>RTC/CMOS/NMI (0x70, 0x71)</td><td colspan="3">DMA Controller Channels 0-3</td></tr> 
+ 
+	<tr><td bgcolor="FFFFFF">0x080-0x08F</td><td>DMA Page Register 0-2 (0x81 - 0x83)</td><td>DMA Page Register 3 (0x87)</td><td>DMA Page Register 4-6 (0x89-0x8B)</td><td>DMA Page Register 7 (0x8F)</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x090-0x09F</td><td colspan="4">System Use</td></tr> 
+ 
+	<tr><td bgcolor="FFFFFF">0x0A0-0x0AF</td><td>Interrupt Controller 2 (0xA0-0xA1)</td><td colspan="3">System Use</td></tr> 
+ 
+	<tr><td bgcolor="FFFFFF">0x0B0-0x0BF</td><td colspan="4">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x0C0-0x0CF</td><td colspan="4">DMA Controller Channels 4-7 (0x0C0-0x0DF), bytes 1-16</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x0D0-0x0DF</td><td colspan="4">DMA Controller Channels 4-7 (0x0C0-0x0DF), bytes 16-32</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x0E0-0x0EF</td><td colspan="4">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x0F0-0x0FF</td><td colspan="4">Floating Point Unit (FPU/NPU/Mah Copprocessor)</td></tr> 
+ 
+	<tr><td bgcolor="FFFFFF">0x100-0x10F</td><td colspan="4">System Use</td></tr> 
+ 
+	<tr><td bgcolor="FFFFFF">0x110-0x11F</td><td colspan="4">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x120-0x12F</td><td colspan="4">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x130-0x13F</td><td colspan="4">SCSI Host Adapter (0x130-0x14F), bytes 1-16</td></tr> 
+ 
+	<tr><td bgcolor="ffffff">0x140-0x14F</td><td colspan="2">SCSI Host Adapter (0x130-0x14F), bytes 17-32</td><td colspan="2">SCSI Host Adapter (0x140-0x15F), bytes 1-16</td></tr> 
+ 
+	<tr><td bgcolor="ffffff">0x150-0x15F</td><td colspan="4">SCSI Host Adapter (0x140-0x15F), bytes 17-32</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x160-0x16F</td><td colspan="2">System Use</td><td colspan="2">Quaternary IDE Controller, master slave</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x170-0x17F</td><td colspan="2">Secondary IDE Controller, Master drive</td><td colspan="2">System Use</td></tr> 
+ 
+	<tr><td bgcolor="FFFFFF">0x180-0x18F</td><td colspan="4">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x190-0x19F</td><td colspan="4">System Use</td></tr> 
+ 
+	<tr><td bgcolor="FFFFFF">0x1A0-0x1AF</td><td colspan="4">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x1B0-0x1BF</td><td colspan="4">System Use</td></tr> 
+ 
+	<tr><td bgcolor="FFFFFF">0x1C0-0x1CF</td><td colspan="4">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x1D0-0x1DF</td><td colspan="4">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x1E0-0x1EF</td><td colspan="2">System Use</td><td colspan="2">Tertiary IDE Controller, master slave</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x1F0-0x1FF</td><td colspan="2">Primary IDE Controller, master slave</td><td colspan="2">System Use</td></tr> 
+ 
+	<tr><td bgcolor="FFFFFF">0x200-0x20F</td><td colspan="2">Joystick Port</td><td colspan="2">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x210-0x21F</td><td colspan="4">System Use</td></tr> 
+	<tr><td rowspan="3" bgcolor="FFFFFF">0x220-0x22F</td> 
+ 
+		</tr><tr><td colspan="4">Sound Card</td></tr> 
+ 
+ 		<tr><td>Non-NE2000 Network Card</td><td colspan="3">System Use</td></tr> 
+ 
+	 
+	 
+	 
+ 
+	<tr><td bgcolor="FFFFFF">0x230-0x23F</td><td colspan="4">SCSI Host Adapter (0x220-0x23F), bytes 17-32)</td></tr> 
+	<tr><td rowspan="4" bgcolor="FFFFFF">0x240-0x24F</td><td colspan="4"> 
+ 
+		</td></tr><tr><td colspan="4">Sound Card</td></tr> 
+ 		<tr><td>Non-NE2000 Network Card</td><td colspan="3">System Use</td></tr> 
+		<tr><td colspan="4">NE2000 Network Card (0x240-0x25F) Bytes 1-16</td></tr> 
+	 
+	<tr><td bgcolor="FFFFFF">0x250-0x25F</td><td colspan="4">NE2000 Network Card (0x240-0x25F) Bytes 17-32</td></tr> 
+ 
+	<tr><td rowspan="4" bgcolor="FFFFFF">0x260-0x26F</td><td colspan="4"> 
+ 
+		</td></tr><tr><td colspan="4">Sound Card</td></tr> 
+ 		<tr><td>Non-NE2000 Network Card</td><td colspan="3">System Use</td></tr> 
+		<tr><td colspan="4">NE2000 Network Card (0x240-0x27F) Bytes 1-16</td></tr> 
+	 
+	<tr><td rowspan="4" bgcolor="FFFFFF">0x270-0x27F</td><td colspan="4"> 
+ 
+		</td></tr><tr><td>System Use</td><td>Plug and Play System Devices</td><td colspan="2">LPT2 - Second Parallel Port</td></tr> 
+ 		<tr><td colspan="2">System Use</td><td colspan="2">LPT3 - Third Parallel Port (Monochrome Systems)</td></tr> 
+		<tr><td colspan="4">NE2000 Network Card (0x260-0x27F) Bytes 17-32</td></tr> 
+	 
+ 
+ 
+	<tr><td rowspan="4" bgcolor="FFFFFF">0x280-0x28F</td><td colspan="4"> 
+		</td></tr><tr><td colspan="4">Sound Card</td></tr> 
+ 		<tr><td>Non NE2000 Network Card</td><td colspan="3">System Use</td></tr> 
+		<tr><td colspan="4">NE2000 Network Card (0x280-0x29F) Bytes 1-16</td></tr> 
+ 
+	 
+	<tr><td bgcolor="FFFFFF">0x290-0x29F</td><td colspan="4">NE2000 Network Card (0x280-0x29F) Bytes 17-32</td></tr> 
+ 
+	<tr><td rowspan="3" bgcolor="FFFFFF">0x2A0-0x2AF</td><td colspan="4"> 
+ 
+		</td></tr><tr><td>Non NE2000 Network Card</td><td colspan="3">System Use</td></tr> 
+		<tr><td colspan="4">NE2000 Network Card (0x280-0x29F) Bytes 1-16</td></tr> 
+ 
+	 
+ 
+	<tr><td bgcolor="FFFFFF">0x2B0-0x2BF</td><td colspan="4">NE2000 Network Card (0x280-0x29F) Bytes 17-32</td></tr> 
+ 
+	<tr><td bgcolor="FFFFFF">0x2C0-0x2CF</td><td colspan="4">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x2D0-0x2DF</td><td colspan="4">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x2E0-0x2EF</td><td colspan="2">System Use</td><td colspan="2">COM4 - Fourth Serial Port</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x2F0-0x2FF</td><td colspan="2">System Use</td><td colspan="2">COM2 - Second Serial Port</td></tr> 
+ 
+	<tr><td rowspan="4" bgcolor="FFFFFF">0x300-0x30F</td><td colspan="4"> 
+ 
+		</td></tr><tr><td>Sound Card / MIDI Port</td><td colspan="3">System Use</td></tr> 
+		<tr><td>Non NE2000 Network Card</td><td colspan="3">System Use</td></tr> 
+		<tr><td colspan="4">NE2000 Network Card (0x300-0x31F) Bytes 1-16</td></tr> 
+	 
+ 
+	<tr><td bgcolor="FFFFFF">0x310-0x31F</td><td colspan="4">NE2000 Network Card (0x300-0x32F) Bytes 17-32</td></tr> 
+	<tr><td rowspan="4" bgcolor="FFFFFF">0x320-0x32F</td><td colspan="4"> 
+ 
+		</td></tr><tr><td>Sound Card / MIDI Port (0x330, 0x331)</td><td colspan="3">System Use</td></tr> 
+		<tr><td colspan="4">NE2000 Network Card (0x300-0x31F) Bytes 17-32</td></tr> 
+		<tr><td colspan="4">SCSI Host Adapter (0x330-0x34F) Bytes 1-16</td> 
+ 
+	</tr> 
+	<tr><td rowspan="4" bgcolor="FFFFFF">0x330-0x33F</td><td colspan="4"> 
+ 
+ 
+		</td></tr><tr><td>Sound Card / MIDI Port</td><td colspan="3">System Use</td></tr> 
+		<tr><td>Non NE2000 Network Card</td><td colspan="3">System Use</td></tr> 
+		<tr><td colspan="4">NE2000 Network Card (0x300-0x31F) Bytes 1-16</td></tr> 
+ 
+	 
+	<tr><td rowspan="5" bgcolor="FFFFFF">0x340-0x34F</td><td colspan="4"> 
+ 
+		</td></tr><tr><td colspan="4">SCSI Host Adapter (0x330-0x34F) Bytes 17-32</td> 
+		</tr><tr><td colspan="4">SCSI Host Adapter (0x340-0x35F) Bytes 1-16</td> 
+		</tr><tr><td>Non NE2000 Network Card</td><td colspan="3">System Use</td></tr> 
+ 
+		<tr><td colspan="4">NE2000 Network Card (0x340-0x35F) Bytes 1-16</td></tr> 
+ 
+ 
+	 
+	<tr><td rowspan="3" bgcolor="FFFFFF">0x350-0x35F</td><td colspan="4"> 
+ 
+		</td></tr><tr><td colspan="4">SCSI Host Adapter (0x340-0x35F) Bytes 17-32</td></tr> 
+		<tr><td colspan="4">NE2000 Network Card (0x300-0x31F) Bytes 1-16</td></tr> 
+ 
+	 
+	<tr><td rowspan="4" bgcolor="FFFFFF">0x360-0x36F</td><td colspan="4"> 
+ 
+		</td></tr><tr><td>Tape Accelerator Card (0x360)</td><td colspan="2">System Use</td><td>Quaternary IDE Controller (Slave Drive)(0x36E-0x36F)</td></tr> 
+		<tr><td>Non NE2000 Network Card</td><td colspan="3">System Use</td></tr> 
+		<tr><td colspan="4">NE2000 Network Card (0x300-0x31F) Bytes 1-16</td></tr> 
+ 
+ 
+	 
+	<tr><td rowspan="4" bgcolor="FFFFFF">0x370-0x37F</td><td colspan="4"> 
+ 
+		</td></tr><tr><td>Tape Accelerator Card (0x370)</td><td>Secondary IDE Controller (Slave Drive)</td><td colspan="2">LPT1 - First Parallel Port (Color systems)</td></tr> 
+		<tr><td colspan="2">System Use</td><td colspan="2">LPT2 - Second Parallel Port (Monochrome Systems)</td></tr> 
+ 
+		<tr><td colspan="4">NE2000 Network Card (0x360-0x37F) Bytes 1-16</td></tr> 
+ 
+	 
+ 
+	<tr><td bgcolor="FFFFFF">0x380-0x38F</td><td colspan="2">System Use</td><td>Sound Card (FM Synthesizer)</td><td>System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x390-0x39F</td><td colspan="4">System Use</td></tr> 
+ 
+	<tr><td bgcolor="FFFFFF">0x3A0-0x3AF</td><td colspan="4">System Use</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x3B0-0x3BF</td><td colspan="3">VGA/Monochrome Video</td><td>LPT1 - First Parallel Port (Monochrome Systems)</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x3C0-0x3CF</td><td colspan="4">VGA/CGA Video</td></tr> 
+	<tr><td bgcolor="FFFFFF">0x3D0-0x3DF</td><td colspan="4">VGA/CGA Video</td></tr> 
+ 
+	<tr><td rowspan="3" bgcolor="FFFFFF">0x3E0-0x3EF</td><td colspan="4"> 
+ 
+		</td></tr><tr><td>Tape Accelerator Card (0x370)</td><td>System Use</td><td colspan="2">COM3 - Third Serial Port</td></tr> 
+		<tr><td colspan="3">System Use</td><td>Tertiary IDE Controller (Slave Drive)(0x3EE-0x3EF)</td></tr> 
+ 
+	 
+	<tr><td rowspan="3" bgcolor="FFFFFF">0x3F0-0x3FF</td><td colspan="4"> 
+ 
+		</td></tr><tr><td colspan="2">Floppy Disk Controller</td><td colspan="2">COM1 - First Serial Port</td></tr> 
+		<tr><td>Tape Accelerator Card (0x3F0)</td><td>Primary IDE Controller (Slave Drive)(0x3F6-0x3F7)</td><td colspan="2">System Use</td> 
+ 
+	</tr> 
+ 
+	</tbody></table> 
+ 
+	
+</body>
+</html>
+

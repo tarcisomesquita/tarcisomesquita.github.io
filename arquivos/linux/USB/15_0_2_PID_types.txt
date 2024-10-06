@@ -1,0 +1,54 @@
+
+                                                Table 8-1. PID Types
+
+
+      PID Type        PID Name      PID<3:0>*                              Description
+                     OUT               0001B      Address + endpoint number in host-to-function
+     Token
+                                                  transaction
+                     IN                1001B      Address + endpoint number in function-to-host
+                                                  transaction
+                     SOF               0101B      Start-of-Frame marker and frame number
+                     SETUP             1101B      Address + endpoint number in host-to-function
+                                                  transaction for SETUP to a control pipe
+
+
+                     DATA0             0011B      Data packet PID even
+     Data
+                     DATA1             1011B      Data packet PID odd
+                                       0111B      Data packet PID high-speed, high bandwidth isochronous
+                     DATA2
+                                                  transaction in a microframe (see Section 5.9.2 for more
+                                                  information)
+                     MDATA             1111B      Data packet PID high-speed for split and high bandwidth
+                                                  isochronous transactions (see Sections 5.9.2, 11.20, and
+                                                  11.21 for more information)
+
+
+                     ACK               0010B      Receiver accepts error-free data packet
+     Handshake
+                     NAK               1010B      Receiving device cannot accept data or transmitting
+                                                  device cannot send data
+                     STALL             1110B      Endpoint is halted or a control pipe request is not
+                                                  supported
+                     NYET              0110B      No response yet from receiver (see Sections 8.5.1 and
+                                                  11.17-11.21)
+
+
+                     PRE               1100B      (Token) Host-issued preamble. Enables downstream bus
+     Special
+                                                  traffic to low-speed devices.
+                     ERR               1100B      (Handshake) Split Transaction Error Handshake (reuses
+                                                  PRE value)
+                     SPLIT             1000B      (Token) High-speed Split Transaction Token (see
+                                                  Section 8.4.2)
+                     PING              0100B      (Token) High-speed flow control probe for a bulk/control
+                                                  endpoint (see Section 8.5.1)
+                     Reserved          0000B
+                                                  Reserved PID
+    *Note: PID bits are shown in MSb order. When sent on the USB, the rightmost bit (bit 0) will be sent first.
+196
+                           Universal Serial Bus Specification Revision 2.0
+PIDs are divided into four coding groups: token, data, handshake, and special, with the first two transmitted
+PID bits (PID<0:1>) indicating which group. This accounts for the distribution of PID codes.
+

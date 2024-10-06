@@ -1,0 +1,259 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 99.1 release (March 30, 1999)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>URB Functions</TITLE>
+<META NAME="description" CONTENT="URB Functions">
+<META NAME="keywords" CONTENT="usbdoc">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v99.1 release">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="usbdoc.css">
+
+<LINK REL="next" HREF="node25.html">
+<LINK REL="previous" HREF="node23.html">
+<LINK REL="up" HREF="node22.html">
+<LINK REL="next" HREF="node25.html">
+</HEAD>
+
+<BODY ><!doctype html public "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="de">
+<meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+<link REL="STYLESHEET" HREF="/zope/style.css" type="text/css">
+<script language="JavaScript"><!-- 
+  if(top.frames.length > 0) top.location.href=self.location; 
+  //--></script>
+</head>
+<body bgcolor="#FFFFFF" TOPMARGIN="1" LEFTMARGIN="3" MARGINWIDTH="3" MARGINHEIGHT="1">
+<a name=top></a>
+<!-- Kopfzeile mit Logos -->
+<center>
+<table width="100%" border="0" cellpadding="4" cellspacing="4">
+<tr>
+
+<td align="left" valign="middle">
+<a href="http://www.lrr.in.tum.de/"><img src="http://www.lrr.in.tum.de/zope/images/lrr_tum_logo_png" alt="LRR-TUM-Logo" height="74" width="67" border="0" />
+</a>
+</td>
+<td align="center" valign="middle">
+<a href="http://www.in.tum.de" target="_intum">
+<font COLOR="#A1A1A1" size=+2>Department of</font> <font COLOR="#0075CF" size=+2>Informatics</font></a><br>
+<a href="http://www.tum.de" taget="_blank">
+<font COLOR="#BFBFBF">Technische Universit&auml;t M&uuml;nchen</font></a><br>
+<font COLOR="#0075CF" size=+1> Informatik X: Rechnertechnik und Rechnerorganisation / Parallelrechnerarchitektur</font><br>
+
+<a href="http://www.lrr.in.tum.de/zope/people/bode"><font
+COLOR="#0075CF" size=-1>Prof. Dr. Arndt Bode</font></a>
+<font COLOR="#0075CF" size=-1>,</font>
+<a href="http://www.lrr.in.tum.de/zope/people/gerndt"><font
+COLOR="#0075CF" size=-1>Prof. Dr. Hans Michael Gerndt</font></a>
+</td>
+<td align="right" valign="middle">
+<a href="http://www.lrr.in.tum.de/zope/abacus"><img src="http://www.lrr.in.tum.de/zope/abakus50x50.gif" alt="abakus50x50.gif" height="51" width="50" border="0" /></a>
+</td>
+</tr>
+</table>
+</center>
+<!-- Ende Kopfzeile -->
+<!--Begin Horizontal Navigation-->
+<center>
+<table border="0" width="100%" cellpadding="2" cellspacing="2" bgcolor="FFFFFF">
+
+<tr>
+<td nowrap align="center" valign="middle"><font size="+1">
+&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope">Home</a>&nbsp;
+
+							|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/address">Addresses</a>&nbsp;
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/people">Staff</a>&nbsp;
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/research">Research</a>&nbsp;
+
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/lectures">Lectures</a>&nbsp;
+											</font></td></tr>
+<!--End Horizontal Navigation-->
+<tr><td bgcolor="#dddddd">
+<table width=100% border=0>
+<tr>
+<td align=left>
+
+                
+            
+</td>
+<td align=right>
+<a href="http://www.lrr.in.tum.de/zope/search">Search</a>&nbsp;
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</center>
+<!-- Ende Header -->
+
+<!--Navigation Panel-->
+<A NAME="tex2html428"
+ HREF="node25.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next_motif.gif"></A> 
+<A NAME="tex2html422"
+ HREF="node22.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_motif.gif"></A> 
+<A NAME="tex2html416"
+ HREF="node23.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="previous_motif.gif"></A> 
+<A NAME="tex2html424"
+ HREF="node2.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents_motif.gif"></A> 
+<A NAME="tex2html426"
+ HREF="node34.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html429"
+ HREF="node25.html">URB Macros</A>
+<B> Up:</B> <A NAME="tex2html423"
+ HREF="node22.html">USB Transfers</A>
+<B> Previous:</B> <A NAME="tex2html417"
+ HREF="node23.html">Transfer Data Structures &amp;</A>
+ &nbsp <B>  <A NAME="tex2html425"
+ HREF="node2.html">Contents</A></B> 
+ &nbsp <B>  <A NAME="tex2html427"
+ HREF="node34.html">Index</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION10053200000000000000">
+URB Functions</A>
+</H3>
+
+<P>
+There are four functions of the USB core that handle URBs.
+
+<P>
+
+<UL>
+<LI><TT> purb_t&nbsp;usb_alloc_urb(int&nbsp;iso_packets);</TT>
+
+<P>
+ 
+<A NAME="406"></A>
+Whenever a URB structure is needed this function has to be called. The argument
+<TT> iso_packets</TT> is used to specify the number of <TT> iso_frame_desc</TT>
+structures at the end of the URB structure when setting up isochronous
+transfers. If successful the return value is a pointer to a URB structure preset
+to zero otherwise a NULL pointer is returned.
+
+<P>
+ </LI>
+<LI><TT> void&nbsp;usb_free_urb&nbsp;(purb_t&nbsp;purb);</TT>
+
+<P>
+ 
+<A NAME="410"></A>
+To free memory allocated by <TT> usb_alloc_urb</TT> simply call this function.
+
+<P>
+ </LI>
+<LI><TT> int&nbsp;usb_submit_urb(purb_t&nbsp;purb);</TT>
+
+<P>
+ 
+<A NAME="413"></A>
+This function sends a transfer request asynchronously to the USB core. The
+argument <TT> purb</TT> is a pointer to a previously allocated and initialized URB
+structure. If successful the return value is 0 otherwise an appropriate error
+code is returned (see section&nbsp;<A HREF="node29.html#errorcodes">3.1</A>).
+<I>The function returns always non-blocking and it is possible to schedule
+several URBs for different endpoints without waiting. On
+isochronous endpoints it is even possible to schedule more URBs for one
+endpoint.</I> This limitation is caused due to error handling and retry mechanisms of the
+USB protocol (see [<A
+ HREF="node33.html#usbspec11">4</A>] section 8.5)
+
+<P>
+ </LI>
+<LI><TT> int&nbsp;usb_unlink_urb(purb_t&nbsp;purb);</TT>
+
+<P>
+ 
+<A NAME="419"></A>
+<A NAME="usb_unlink_urb"></A>This function cancels a scheduled request before it is completed. The
+argument <TT> purb</TT> is a pointer to a previously submitted URB structure. 
+The function can be called synchronously or asynchronously depending on the
+transfer_flag <TT> USB_ASYNC_UNLINK</TT> (see <A HREF="node23.html#USB_ASYNC_UNLINK">2.3.1</A>).
+Synchronously called the function waits for 1ms and must not be called from
+an interrupt or completion handler. The return value is 0 if the function
+succeeds. Asynchronously called the function returns immediately. The return
+value is -EINPROGRESS if the function was successfully started. When calling
+<TT> usb_unlink_urb</TT> the completion handler is called after the function
+completed. The URB status is marked with -ENOENT (synchronously
+called) or -ECONNRESET (asynchronously called).
+
+<P>
+ 
+<TT> usb_unlink_urb</TT> is also used to stop an interrupt transfer URB. As
+documented in sections&nbsp;<A HREF="node8.html#interrupt">1.2.2</A>,&nbsp;<A HREF="node23.html#interval">2.3.1</A> interrupt transfers
+are automatically rescheduled. Call <TT> usb_unlink_urb</TT> even for ``one
+shot interrupts''.
+
+<P></LI>
+</UL>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html428"
+ HREF="node25.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next_motif.gif"></A> 
+<A NAME="tex2html422"
+ HREF="node22.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_motif.gif"></A> 
+<A NAME="tex2html416"
+ HREF="node23.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="previous_motif.gif"></A> 
+<A NAME="tex2html424"
+ HREF="node2.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents_motif.gif"></A> 
+<A NAME="tex2html426"
+ HREF="node34.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html429"
+ HREF="node25.html">URB Macros</A>
+<B> Up:</B> <A NAME="tex2html423"
+ HREF="node22.html">USB Transfers</A>
+<B> Previous:</B> <A NAME="tex2html417"
+ HREF="node23.html">Transfer Data Structures &amp;</A>
+ &nbsp <B>  <A NAME="tex2html425"
+ HREF="node2.html">Contents</A></B> 
+ &nbsp <B>  <A NAME="tex2html427"
+ HREF="node34.html">Index</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Detlef Fliegl</I>
+<BR><I>2001-01-08</I>
+</ADDRESS>
+  <table class="changed" align="right">
+    <tr>
+	<td>
+		(none)
+	</td>
+      <td>
+        <a href="javascript:{var a='arch',b='mailbode.in.tum.de';location='mailto:'+a+'@'+b}">Webmaster</a>
+      </td>
+    </tr>
+
+  </table>
+
+</body></html>
+</BODY>
+</HTML>

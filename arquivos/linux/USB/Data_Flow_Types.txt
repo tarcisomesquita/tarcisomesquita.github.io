@@ -1,0 +1,49 @@
+
+Data Flow Types
+
+Data directed from the host to a device is called downstream or OUT transfer.
+The other direction is called upstream or IN transfer.
+
+    * Control transfers are used to request and send reliable short data packets. It is used to configure devices and every one is required to support a minimum set of control commands. Here is a list of standard commands:
+          o GET_STATUS
+          o CLEAR_FEATURE
+          o SET_FEATURE
+          o SET_ADDRESS
+          o GET_DESCRIPTOR
+          o SET_DESCRIPTOR
+          o GET_CONFIGURATION
+          o SET_CONFIGURATION
+          o GET_INTERFACE
+          o SET_INTERFACE
+          o SYNCH_FRAME
+
+      Further control commands can be used to transfer vendor specific data.
+
+
+    * Bulk transfers are used to request or send reliable data packets up to the full bus bandwidth. Devices like scanners or scsi adapters use this transfer type.
+
+    * Interrupt transfers are similar to bulk transfers which are polled periodically. If an interrupt transfer was submitted the host controller driver will automatically repeat this request in a specified interval (1ms - 255ms).
+
+    * Isochronous transfers send or receive data streams in realtime with guaranteed bus bandwidth but without any reliability. In general these transfer types are used for audio and video devices.
+
+
+Bulk transfers
+If an OUT endpoint is defined as using Bulk transfers, then the host will transfer data to it using OUT transactions.
+If an IN endpoint is defined as using Bulk transfers, then the host will transfer data from it using IN transactions.
+The max packet size is 8, 16, 32 or 64 at full Speed and 512 for high speed. Bulk transfers are not allowed at low speed.
+
+Interrupt
+packets can have any size from 1 to 8 bytes at low speed, from 1 to 64 at full speed or up to 1024 bytes at high speed.
+
+isochronous transfer
+there is no handshake packet at the end.
+An isochronous packet may contain up to 1023 bytes at full speed, or up to 1024 at high speed. Isochronous transfers are not allowed at low speed.
+
+Control Transfer
+is divided into three stages.
+SETUP stage carries 8 bytes called the Setup packet. This defines the request, and specifies whether and how much data should be transferred in the DATA stage.
+DATA stage is optional. If present, it always starts with a transaction containing a DATA1. The type of transaction then alternates between DATA0 and DATA1 until all the required data has been transferred.
+STATUS stage is a transaction containing a zero-length DATA1 packet. If the DATA stage was IN then the STATUS stage is OUT, and vice versa.
+Control transfers are used for initial configuration of the device by the host, using Endpoint 0 OUT and Endpoint 0 IN, which are reserved for this purpose.
+The max packet size for the data stage is 8 bytes at low speed, 8, 16, 32 or 64 at full Speed and 64 for high speed.
+

@@ -1,0 +1,21 @@
+dd if=/dev/zero of=/home/lubuntu/UEFI.img bs=1K count=$((64*1024 + 2)) # 2 * 1024 bytes no inicio
+
+echo -n -e \\x00\\xfe\\xff\\xff\\x0c\\xfe\\xff\\xff\\x04\\x00\\x00\\x00\\x00\\x00\\x02\\x00 | dd of=UEFI.img bs=1 seek=$((0x1be)) conv=notrunc
+echo -n -e \\x55\\xAA | dd of=UEFI.img bs=1 seek=$((0x1fe)) conv=notrunc
+hexdump -C -n 512 UEFI.img 
+
+LOOP=$(losetup -f)
+sudo losetup -o $((2 * 1024)) $LOOP /home/lubuntu/UEFI.img
+sudo mkfs.vfat -n "UEFI" $LOOP
+
+# MONTAR
+
+sudo chown -R lubuntu:lubuntu /media/lubuntu/UEFI
+mkdir -p /media/lubuntu/UEFI/EFI/BOOT
+mkdir -p /media/lubuntu/UEFI/boot/grub
+
+cp /media/lubuntu/ARQ/T_202*/OS_202*/EFI_grub/grub.cfg /media/lubuntu/UEFI/boot/grub/
+cp /media/lubuntu/ARQ/T_202*/OS_202*/EFI_grub/grubx64.efi /media/lubuntu/UEFI/EFI/BOOT/BOOTX64.EFI
+
+
+VBoxManage internalcommands createrawvmdk -filename /home/lubuntu/GRUB.vmdk -rawdisk /home/lubuntu/UEFI.img

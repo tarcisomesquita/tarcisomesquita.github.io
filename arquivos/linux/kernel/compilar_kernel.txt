@@ -1,0 +1,3 @@
+dependencias para compilar kernel
+sudo apt build-dep linux
+

@@ -1,0 +1,37 @@
+crt0-efi-x86_64.o: A CRT0 (C runtime initialization code) that provides an entry point that UEFI firmware will call when launching the application, which will in turn call the "efi_main" function that the developer writes.
+
+libgnuefi.a: A library containing a single function (_relocate) that is used by the CRT0.
+
+elf_x86_64_efi.lds: A linker script used to link UEFI applications.
+
+efi.h and other headers: Convenience headers that provide structures, typedefs, and constants improve readability when accessing the System Table and other UEFI resources.
+
+libefi.a: A library containing convenience functions like CRC computation, string length calculation, and easy text printing.
+efilib.h: Header for libefi.a. 
+
+
+At a bare minimum, a 64-bit UEFI application will need to link against crt0-efi-x86_64.o and libgnuefi.a using the elf_x86_64_efi.lds linker script. 
+
+
+A few notes:
+
+    efi.h is included so we can use types like EFI_STATUS, EFI_HANDLE, and EFI_SYSTEM_TABLE.
+    When creating a 32-bit UEFI application, EFIAPI is empty; GCC will compile the "efi_main" function using the standard C calling convention. When creating a 64-bit UEFI application, EFIAPI expands to "__attribute__((ms_abi))" and GCC will compile the "efi_main" function using Microsoft's x64 calling convention, as specified by UEFI. Only functions that will be called directly from UEFI (i.e. main) need to use the UEFI calling convention.
+    "InitializeLib" and "Print" are convenience functions provided by libefi.a with prototypes in efilib.h. "InitializeLib" lets libefi.a store a reference to the ImageHandle and SystemTable provided by BIOS. "Print" uses those stored references to print a string by reaching out to UEFI-provided functions in memory. (Later on we will see how to find and call UEFI-provided functions manually.) 
+
+
+
+    -fno-stack-protector—Stack protection isn't supported by EFI, so there's no point in building a binary with this feature active.
+    -fpic—EFI requires that code be position-independent, hence the use of this option.
+    -fshort-wchar—GCC defines the wchar_t type to be 32 bits by default, but EFI requires it to be 16 bits for 16-bit strings to work correctly.
+    -fmno-red-zone—On x86-64 systems, the red zone is an area that follows the stack pointer that can be used for temporary variables. The EFI may modify this area, though, so it's not safe to use, and you must compile EFI binaries with this option.
+    -Wall—When developing EFI applications, you might want to pay extra attention to compiler warnings, and this switch (which causes warnings to be treated as errors) can help.
+    -DEFI_FUNCTION_WRAPPER—This option is required on the x86-64 platform, but is not defined on the 32-bit x86 platform. It relates to the calling conventions for EFI functions, described on the Using EFI Services page.
+
+Linker flags are defined in LDFLAGS, of course. They have the following effects:
+
+    -nostdlib—An EFI application should not be linked against standard libraries, and this argument accomplishes this goal.
+    -nocombreloc—This argument causes the linker to not combine relocation sections.
+    -T $(EFI_LDS)—To create an EFI binary, a non-standard linker script must be used, and this option tells ld where to find it.
+    -shared—Even with GNU-EFI's new linker script, ld can't create the final executable. Instead, it creates a shared library, which is subsequently turned into the final binary.
+    -Bsymbolic—This option causes references to global symbols to be bound to the definitions within the shared library.

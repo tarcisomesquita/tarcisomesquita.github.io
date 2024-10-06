@@ -1,0 +1,2 @@
+O BIOS faz o POST (Power-On Self Test) e carrega a MBR (Master Boot Record) no endereço 0000:7C00 e o executa o programa bootstrap que tem nela.
+

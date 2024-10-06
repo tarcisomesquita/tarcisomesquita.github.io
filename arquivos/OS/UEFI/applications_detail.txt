@@ -1,0 +1,73 @@
+UEFI applications in detail
+Binary Format
+
+UEFI uses the PE-executable format, with its very own subtypes. Every UEFI application is basically a DLL without symbol tables et al, and another subtypes:
+
+    UEFI application (10).
+    UEFI boot service driver (11).
+    UEFI run-time driver (12). 
+
+TODO - I'd like to show a breakdown of a PE file containing a UEFI application here.
+Calling Conventions
+
+UEFI specifies the following calling conventions:
+
+    cdecl for x86 UEFI functions
+    Microsoft's 64-bit calling convention for x86-64 UEFI functions
+    SMC for ARM UEFI functions 
+
+This has two impacts on UEFI application developers:
+
+    A UEFI application's main entry point must expect to be called with the corresponding calling convention.
+    Any UEFI-provided functions that a UEFI application calls must be called with the corresponding calling convention. 
+
+Note that functions strictly internal to the application can use whatever calling convention the developer chooses.
+GNU-EFI and GCC
+
+cdecl is the standard calling convention used by GCC, so no special attributes or modifiers are needed for writing the main entry point or calling UEFI functions in an x86 UEFI application developed with GNU-EFI. For x86-64, however, the entry point function must be declared with the "___attribute___((ms_abi))" modifier and all calls to UEFI-provided functions must be made through the "uefi_call_wrapper" thunk. This thunk is called with cdecl, but then translates to the Microsoft x86-64 calling convention before calling the requested UEFI function. This is necessary because older releases of GCC do not support specifying calling conventions for function pointers.
+
+For developer convenience, GNU-EFI provides the "EFIAPI" macro, which expands to "cdecl" when targeting x86 and "__attribute__(ms_abi))" when targeting x86-64. Additionally, the "uefi_call_wrapper" thunk will simply pass the call through on x86. This allows the same source code to target x86 and x86-64. For example, the following main function will compile with the correct calling convention on both x86 and x86-64 and the call through the "uefi_call_wrapper" thunk will select the correct calling convention to use when calling the UEFI function (in this case, printing a string).
+
+EFI_STATUS EFIAPI efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
+{
+  EFI_STATUS status = uefi_call_wrapper(SystemTable->ConOut->OutputString,
+                                        2,
+                                        SystemTable->ConOut,
+                                        L"Hello, World!\n");
+  return status;
+}
+
+Language binding
+
+UEFI applications are typically written in C, although bindings could be written for any other language that compiles to machine code. Assembly is also an option; a uefi.inc is available for FASM that allows UEFI applications to be written as below.
+
+format pe64 dll efi
+entry main
+ 
+section '.text' code executable readable
+ 
+include 'uefi.inc'
+ 
+main:
+    ; initialize UEFI library
+    InitializeLib
+    jc @f
+ 
+    ; call uefi function to print to screen
+    uefi_call_wrapper ConOut, OutputString, ConOut, _hello
+ 
+@@: mov eax, EFI_SUCCESS
+    retn
+ 
+section '.data' data readable writeable
+ 
+_hello                                  du 'Hello World',13,10,0
+ 
+section '.reloc' fixups data discardable
+
+As a UEFI application contains normal x86 or x86-64 machine code, inline assembly is also an option in compilers that support it.
+EFI Byte Code
+
+UEFI also includes a virtual machine specification based on a byte code format called EFI Byte Code (EBC), which can be used to write platform-independent device drivers, but not UEFI applications. As of 2015 there has been limited use of EBC.
+
+

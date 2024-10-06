@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+
+<body>
+ 
+	<table border="1" bgcolor="CCCCCC"> 
+ 
+	<tbody><tr><th colspan="5" bgcolor="FFFFFF">Privileged Level (Ring 0) Instructions</th> 
+	</tr><tr bgcolor="AAAAAA"> 
+	<td>Instruction</td><td>Description</td> 
+	</tr> 
+	<tr><td bgcolor="ffffff">LGDT</td><td>Loads an address of a GDT into GDTR</td></tr> 
+	<tr><td bgcolor="ffffff">LLDT</td><td>Loads an address of a LDT into LDTR</td></tr> 
+ 
+	<tr><td bgcolor="ffffff">LTR</td><td>Loads a Task Register into TR</td></tr> 
+	<tr><td bgcolor="ffffff">MOV <i>Control Register</i></td><td>Copy data and store in Control Registers</td></tr> 
+	<tr><td bgcolor="ffffff">LMSW</td><td>Load a new Machine Status WORD</td></tr> 
+	<tr><td bgcolor="ffffff">CLTS</td><td>Clear Task Switch Flag in Control Register CR0</td></tr> 
+ 
+	<tr><td bgcolor="ffffff">MOV <i>Debug Register</i></td><td>Copy data and store in debug registers</td></tr> 
+	<tr><td bgcolor="ffffff">INVD</td><td>Invalidate Cache without writeback</td></tr> 
+	<tr><td bgcolor="ffffff">INVLPG</td><td>Invalidate TLB Entry</td></tr> 
+	<tr><td bgcolor="ffffff">WBINVD</td><td>Invalidate Cache with writeback</td></tr> 
+ 
+	<tr><td bgcolor="ffffff">HLT</td><td>Halt Processor</td></tr> 
+	<tr><td bgcolor="ffffff">RDMSR</td><td>Read Model Specific Registers (MSR)</td></tr> 
+	<tr><td bgcolor="ffffff">WRMSR</td><td>Write Model Specific Registers (MSR)</td></tr> 
+	<tr><td bgcolor="ffffff">RDPMC</td><td>Read Performance Monitoring Counter</td></tr> 
+	<tr><td bgcolor="ffffff">RDTSC</td><td>Read time Stamp Counter</td></tr> 
+ 
+	</tbody></table> 
+<p>Executing any of the above instructions by any other program that does not have Kernel mode access (Ring 0) will generate a General Protection Fault, or a Triple Fault.</p>
+	</body>
+</html>
+

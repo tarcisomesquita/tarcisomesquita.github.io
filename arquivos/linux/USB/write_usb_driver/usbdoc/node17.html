@@ -1,0 +1,272 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 99.1 release (March 30, 1999)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Framework Entry Points</TITLE>
+<META NAME="description" CONTENT="Framework Entry Points">
+<META NAME="keywords" CONTENT="usbdoc">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v99.1 release">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="usbdoc.css">
+
+<LINK REL="next" HREF="node18.html">
+<LINK REL="previous" HREF="node16.html">
+<LINK REL="up" HREF="node15.html">
+<LINK REL="next" HREF="node18.html">
+</HEAD>
+
+<BODY ><!doctype html public "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="de">
+<meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+<link REL="STYLESHEET" HREF="/zope/style.css" type="text/css">
+<script language="JavaScript"><!-- 
+  if(top.frames.length > 0) top.location.href=self.location; 
+  //--></script>
+</head>
+<body bgcolor="#FFFFFF" TOPMARGIN="1" LEFTMARGIN="3" MARGINWIDTH="3" MARGINHEIGHT="1">
+<a name=top></a>
+<!-- Kopfzeile mit Logos -->
+<center>
+<table width="100%" border="0" cellpadding="4" cellspacing="4">
+<tr>
+
+<td align="left" valign="middle">
+<a href="http://www.lrr.in.tum.de/"><img src="http://www.lrr.in.tum.de/zope/images/lrr_tum_logo_png" alt="LRR-TUM-Logo" height="74" width="67" border="0" />
+</a>
+</td>
+<td align="center" valign="middle">
+<a href="http://www.in.tum.de" target="_intum">
+<font COLOR="#A1A1A1" size=+2>Department of</font> <font COLOR="#0075CF" size=+2>Informatics</font></a><br>
+<a href="http://www.tum.de" taget="_blank">
+<font COLOR="#BFBFBF">Technische Universit&auml;t M&uuml;nchen</font></a><br>
+<font COLOR="#0075CF" size=+1> Informatik X: Rechnertechnik und Rechnerorganisation / Parallelrechnerarchitektur</font><br>
+
+<a href="http://www.lrr.in.tum.de/zope/people/bode"><font
+COLOR="#0075CF" size=-1>Prof. Dr. Arndt Bode</font></a>
+<font COLOR="#0075CF" size=-1>,</font>
+<a href="http://www.lrr.in.tum.de/zope/people/gerndt"><font
+COLOR="#0075CF" size=-1>Prof. Dr. Hans Michael Gerndt</font></a>
+</td>
+<td align="right" valign="middle">
+<a href="http://www.lrr.in.tum.de/zope/abacus"><img src="http://www.lrr.in.tum.de/zope/abakus50x50.gif" alt="abakus50x50.gif" height="51" width="50" border="0" /></a>
+</td>
+</tr>
+</table>
+</center>
+<!-- Ende Kopfzeile -->
+<!--Begin Horizontal Navigation-->
+<center>
+<table border="0" width="100%" cellpadding="2" cellspacing="2" bgcolor="FFFFFF">
+
+<tr>
+<td nowrap align="center" valign="middle"><font size="+1">
+&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope">Home</a>&nbsp;
+
+							|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/address">Addresses</a>&nbsp;
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/people">Staff</a>&nbsp;
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/research">Research</a>&nbsp;
+
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/lectures">Lectures</a>&nbsp;
+											</font></td></tr>
+<!--End Horizontal Navigation-->
+<tr><td bgcolor="#dddddd">
+<table width=100% border=0>
+<tr>
+<td align=left>
+
+                
+            
+</td>
+<td align=right>
+<a href="http://www.lrr.in.tum.de/zope/search">Search</a>&nbsp;
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</center>
+<!-- Ende Header -->
+
+<!--Navigation Panel-->
+<A NAME="tex2html328"
+ HREF="node18.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next_motif.gif"></A> 
+<A NAME="tex2html322"
+ HREF="node15.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_motif.gif"></A> 
+<A NAME="tex2html316"
+ HREF="node16.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="previous_motif.gif"></A> 
+<A NAME="tex2html324"
+ HREF="node2.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents_motif.gif"></A> 
+<A NAME="tex2html326"
+ HREF="node34.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html329"
+ HREF="node18.html">Framework Functions</A>
+<B> Up:</B> <A NAME="tex2html323"
+ HREF="node15.html">The USB Device Driver</A>
+<B> Previous:</B> <A NAME="tex2html317"
+ HREF="node16.html">Framework Data Structures</A>
+ &nbsp <B>  <A NAME="tex2html325"
+ HREF="node2.html">Contents</A></B> 
+ &nbsp <B>  <A NAME="tex2html327"
+ HREF="node34.html">Index</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION10051200000000000000"></A>
+<A NAME="142"></A>
+<BR>
+Framework Entry Points
+</H3>
+The USB driver framework adds two entry points to normal device drivers:
+
+<P>
+
+<A NAME="probe_function"></A><A NAME="145"></A>
+<UL>
+<LI><TT> void&nbsp;*probe(struct&nbsp;usb_device&nbsp;*dev,&nbsp;unsigned&nbsp;int&nbsp;interface,
+const&nbsp;struct&nbsp;usb_device_id&nbsp;*id_table);</TT>
+This entry point is called whenever a new device is attached to the bus. Then
+the device driver has to create a new instance of its internal data structures
+for the new device.
+
+<P>
+The <TT> dev</TT> argument specifies the device context, which contains pointers to
+all USB descriptors. The <TT> interface</TT> argument specifies the interface
+number. If a USB driver wants to bind itself to a particular device and
+interface it has to return a pointer. This pointer normally references the
+device driver's context structure.
+
+<P>
+Probing normally is done by checking the vendor and product identifications or
+the class and subclass definitions. If they match the interface number is
+compared with the ones supported by the driver. When probing is done class
+based it might be necessary to parse some more USB descriptors because the
+device properties can differ in a wide range.
+
+<P>
+A simple probe routine is shown in figure&nbsp;<A HREF="node17.html#probe">5</A>.
+
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="probe"></A><A NAME="154"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 5:</STRONG>
+A simple probe function</CAPTION>
+<TR><TD><IMG
+ WIDTH="491" HEIGHT="358" BORDER="0"
+ SRC="img5.gif"
+ ALT="\begin{figure}
+\centering\index{probe function}
+\begin{verbatim}
+void *probe(s...
+...tance context */
+return context;
+}return NULL;
+}\end{verbatim}\end{figure}"></TD></TR>
+</TABLE>
+</DIV><P></P>
+
+<P>
+ </LI>
+<LI><TT> void&nbsp;disconnect(struct&nbsp;usb_device&nbsp;*dev,&nbsp;void&nbsp;*drv_context);</TT>
+<A NAME="158"></A> This function is called whenever a device which was
+served by this driver is disconnected.
+
+<P>
+The argument <TT> dev</TT> specifies the device context and the <TT> driver_context</TT>
+returns a pointer to the previously registered <TT> driver_context</TT> of the probe
+function.
+After returning from the disconnect function the USB framework completly
+deallocates all data structures associated with this device. So especially the
+<TT> usb_device</TT> structure must not be used any longer by the usb driver.
+
+<P>
+A simple disconnect function is shown in figure&nbsp;<A HREF="node17.html#disconnect">6</A>.
+
+<P>
+
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="disconnect"></A><A NAME="168"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 6:</STRONG>
+A simple disconnect function</CAPTION>
+<TR><TD><IMG
+ WIDTH="632" HEIGHT="358" BORDER="0"
+ SRC="img6.gif"
+ ALT="\begin{figure}
+\centering\index{disconnect function}
+\begin{verbatim}static vo...
+...e */
+free_driver_resources(s);MOD_DEC_USE_COUNT;
+}\end{verbatim}\end{figure}"></TD></TR>
+</TABLE>
+</DIV><P></P></LI>
+</UL>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html328"
+ HREF="node18.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next_motif.gif"></A> 
+<A NAME="tex2html322"
+ HREF="node15.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_motif.gif"></A> 
+<A NAME="tex2html316"
+ HREF="node16.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="previous_motif.gif"></A> 
+<A NAME="tex2html324"
+ HREF="node2.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents_motif.gif"></A> 
+<A NAME="tex2html326"
+ HREF="node34.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html329"
+ HREF="node18.html">Framework Functions</A>
+<B> Up:</B> <A NAME="tex2html323"
+ HREF="node15.html">The USB Device Driver</A>
+<B> Previous:</B> <A NAME="tex2html317"
+ HREF="node16.html">Framework Data Structures</A>
+ &nbsp <B>  <A NAME="tex2html325"
+ HREF="node2.html">Contents</A></B> 
+ &nbsp <B>  <A NAME="tex2html327"
+ HREF="node34.html">Index</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Detlef Fliegl</I>
+<BR><I>2001-01-08</I>
+</ADDRESS>
+  <table class="changed" align="right">
+    <tr>
+	<td>
+		(none)
+	</td>
+      <td>
+        <a href="javascript:{var a='arch',b='mailbode.in.tum.de';location='mailto:'+a+'@'+b}">Webmaster</a>
+      </td>
+    </tr>
+
+  </table>
+
+</body></html>
+</BODY>
+</HTML>

@@ -1,0 +1,455 @@
+#!/bin/sh
+
+export PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+/bin/mkdir /sys
+/bin/mount -t sysfs -o nodev,noexec,nosuid sysfs /sys
+
+/bin/mkdir /proc
+/bin/mount -t proc -o nodev,noexec,nosuid proc /proc
+
+/bin/mkdir /tmp
+/bin/mkdir -p /cdrom
+/bin/mkdir -p /var/lock
+ 
+[ -d /dev         ] || /bin/mkdir -m 0755 /dev
+[ -e /dev/console ] || /bin/mknod -m 0600 /dev/console c 5 1
+[ -e /dev/null    ] || /bin/mknod         /dev/null    c 1 3
+/bin/mount -t devtmpfs -o nosuid,mode=0755 udev /dev;
+
+/bin/mkdir /dev/pts
+/bin/mount -t devpts -o noexec,nosuid,gid=5,mode=0620 devpts /dev/pts
+
+/bin/mount -t tmpfs -o "noexec,nosuid,size=10%,mode=0755" tmpfs /run
+/bin/mkdir -m 0755 /run/initramfs
+
+SYSTEMD_LOG_LEVEL=info /lib/systemd/systemd-udevd --daemon --resolve-names=never
+/bin/udevadm trigger --action=add
+/bin/udevadm settle
+
+/bin/kbd_mode -u
+/bin/loadkeys /br-abnt2.kmap.gz
+
+#ip address add 192.168.0.2/24 dev enp0s3
+#ip link set enp0s3 up
+#ip route add default via 192.168.0.1 dev enp0s3
+
+UUID="3573-7DF7"
+i=0
+while [ "$i" -lt 3 ]; do
+   #livefs_root=$(find_livefs $i)
+   for devname in /dev/sda1 /dev/sdb1 /dev/sda /dev/sdb ; do
+      fstype=$(/sbin/blkid -s TYPE -o value "${devname}")
+      if [ -z "$fstype" ] ; then continue ; fi
+      
+      if [ "$fstype" == "vfat" ] ; then
+         devuid=$(/sbin/blkid -s UUID -o value "$devname")
+         /bin/mount -t vfat -o ro,noatime "${devname}" /cdrom || continue
+         if [ -f /cdrom/casper/filesystem.squashfs ] && [ "$UUID" = "$devuid" ]; then
+            /bin/mkdir -p /toram
+            /bin/mount -t tmpfs -o mode=0755,size=1536M,noatime tmpfs /toram
+            /bin/echo ""
+            /bin/echo "Espere. Copiando sistema para a memória."
+            /bin/cp -R /cdrom/* /toram
+            /bin/sync
+            /bin/umount /cdrom
+            /bin/sync
+            /bin/mount -n -o move /toram /cdrom
+            /bin/sync
+         else
+            /bin/umount /cdrom
+         fi
+      fi
+   done
+   
+   if [ -f /cdrom/casper/filesystem.squashfs ]; then break ; fi
+   /bin/sleep 1
+   i="$(($i + 1))"
+done
+
+if [ ! -f /cdrom/casper/filesystem.squashfs ]; then
+   /bin/echo "Panic: Unable to find a medium containing a live file system"
+   /bin/sh
+   /bin/reboot
+fi
+
+/sbin/losetup /dev/loop0 /cdrom/casper/filesystem.squashfs
+/bin/mkdir -p /filesystem.squashfs
+/bin/mount -t squashfs -o ro,noatime /dev/loop0 /filesystem.squashfs
+
+/bin/mkdir -p /cow
+/bin/mount -t tmpfs -o rw,noatime,mode=755 tmpfs /cow
+
+/bin/mkdir -p /cow/work
+/bin/mkdir -p /cow/upper
+/bin/mount -t overlay -o "lowerdir=/filesystem.squashfs,upperdir=/cow/upper,workdir=/cow/work" /cow /root
+
+/bin/mkdir -p /root/rofs
+/bin/mount -o move /filesystem.squashfs /root/rofs
+
+
+echo "Running /scripts/casper-bottom"
+
+mkdir -p /root/cdrom
+mount -n -o move /cdrom /root/cdrom
+
+# temporary hack for LP#727783
+mkdir -p /root/media
+ln -s /cdrom /root/media/cdrom
+
+#mkdir -p /dev/.initramfs/varrun
+#pidof mount.ntfs >> /dev/.initramfs/varrun/sendsigs.omit
+#pidof mount.ntfs-3g >> /dev/.initramfs/varrun/sendsigs.omit
+
+cat > /root/etc/fstab <<EOF
+overlay / overlay rw 0 0
+tmpfs /tmp tmpfs nosuid,nodev 0 0
+EOF
+
+rm -f /root/etc/rcS.d/S*checkroot.sh
+
+printf 'LANG="pt_BR.UTF-8"\n' > /root/etc/default/locale
+printf 'pt_BR.UTF-8 UTF-8\n'  > /root/etc/locale.gen
+chroot /root /usr/sbin/locale-gen --keep-existing
+
+echo '[SeatDefaults]
+allow-guest=false
+autologin-guest=false
+autologin-user=ubuntu
+autologin-user-timeout=0' >> /root/etc/lightdm/lightdm.conf
+
+# Disabling systemd's GPT auto generator... automount
+rm -f /root/lib/systemd/system-generators/systemd-gpt-auto-generator
+
+echo "max" > /root/etc/hostname
+cat > /root/etc/hosts <<EOF
+127.0.0.1 localhost
+127.0.1.1 max
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+
+EOF
+hostname "max"
+
+echo '
+XKBMODEL="abnt2"
+XKBLAYOUT="br"
+XKBVARIANT=""
+XKBOPTIONS="lv3:ralt_switch"
+
+BACKSPACE="guess"
+' > /root/etc/default/keyboard
+
+echo '[org.gnome.desktop.lockdown]
+disable-lock-screen=true
+[org.gnome.desktop.screensaver]
+lock-enabled=false' >> /root/usr/share/glib-2.0/schemas/casper.gschema.override
+chroot /root glib-compile-schemas /usr/share/glib-2.0/schemas/
+
+chroot /root /usr/sbin/make-ssl-cert generate-default-snakeoil --force-overwrite
+
+cat > /root/etc/network/interfaces <<EOF
+# interfaces(5) file used by ifup(8) and ifdown(8)
+auto lo
+iface lo inet loopback
+EOF
+
+udevadm trigger
+udevadm settle
+
+#auto ${ifname}
+#iface ${ifname} inet static
+#    address ${ifaddress}
+#    netmask ${ifnetmask}
+#    gateway ${ifgateway}
+
+mkdir -p /run/resolvconf/interface/
+
+if [ ! -x /root/usr/sbin/NetworkManager ]; then
+    for device in /sys/class/net/*/device; do
+        name=$(basename ${device%*/device})
+
+        grep -q "iface $name" /root/etc/network/interfaces && continue
+        cat >> /root/etc/network/interfaces <<EOF
+auto $name
+iface $name inet dhcp
+
+EOF
+    done
+fi
+
+# ---------------------------------------------------------------------
+
+# fifo's for debconf-communicate.
+# Speeds up the Casper process considerably.
+/bin/mkfifo /tmp/debconf-in.fifo
+/bin/mkfifo /tmp/debconf-out.fifo
+
+DEBCONF_TMPDIR="$(chroot /root mktemp -dt debconf.XXXXXX)"
+/bin/cp -a /root/var/cache/debconf/config.dat "/root$DEBCONF_TMPDIR/"
+/bin/cp -a /root/var/cache/debconf/passwords.dat "/root$DEBCONF_TMPDIR/"
+/bin/sed "s,^Filename: /var/cache/debconf/\(config\|passwords\).dat$,Filename: $DEBCONF_TMPDIR/\1.dat,; /^Name: templatedb/a\
+Readonly: true" /root/etc/debconf.conf >"/root$DEBCONF_TMPDIR/debconf.conf"
+
+DEBCONF_SYSTEMRC="$DEBCONF_TMPDIR/debconf.conf" chroot /root debconf-communicate -fnoninteractive casper > /tmp/debconf-out.fifo < /tmp/debconf-in.fifo &
+debconfpid="$!"
+
+if [ ! -p /tmp/debconf-in.fifo ] || [ ! -p /tmp/debconf-out.fifo ]; then
+    echo "failed to setup debconf-communicate channel"
+fi
+
+# Order matters!
+# These file descriptors must stay open until we're finished with debconf-communicate.
+exec 4</tmp/debconf-out.fifo 3>/tmp/debconf-in.fifo
+
+casper-preseed /root "keyboard-configuration/variantcode" '' false
+
+casper-preseed /root "keyboard-configuration/optionscode" '' false
+# prefix remains console-setup even with keyboard-configuration
+casper-preseed /root console-setup/codesetcode '' false
+
+# The keyboard settings have changed, gsettings needs to be flushed
+if [ -f /root/home/ubuntu/.config/dconf/user ]; then
+   chroot /root sudo -u ubuntu dbus-launch --exit-with-session gsettings reset-recursively org.gnome.libgnomekbd.keyboard
+   mount -n -o bind /proc /root/proc
+   chroot /root killall dbus-launch
+   umount /root/proc
+fi
+
+
+export DEBIAN_HAS_FRONTEND=1
+export DEBCONF_REDIR=1
+exec <&4
+
+_db_cmd () {
+	_db_internal_IFS="$IFS"
+	IFS=' '
+	printf '%s\n' "$*" >&3
+	IFS="$_db_internal_IFS"
+	# Set to newline to get whole line.
+	IFS='
+' read -r _db_internal_line
+	# Disgusting, but it's the only good way to split the line,
+	# preserving all other whitespace.
+	RET="${_db_internal_line#[! 	][ 	]}"
+	case ${_db_internal_line%%[ 	]*} in
+		1)	# escaped data
+			RET="$(printf '%s' "$RET" | debconf-escape -u)"
+			return 0
+			;;
+	esac
+	return ${_db_internal_line%%[ 	]*}
+}
+
+db_capb ()	{ _db_cmd "CAPB $@"; }
+db_set ()	{ _db_cmd "SET $@"; }
+db_reset ()	{ _db_cmd "RESET $@"; }
+db_title ()	{ _db_cmd "TITLE $@"; }
+db_input ()	{ _db_cmd "INPUT $@"; }
+db_beginblock () { _db_cmd "BEGINBLOCK $@"; }
+db_endblock () 	{ _db_cmd "ENDBLOCK $@"; }
+db_go ()	{ _db_cmd "GO $@"; }
+db_get ()	{ _db_cmd "GET $@"; }
+db_register ()	{ _db_cmd "REGISTER $@"; }
+db_unregister () { _db_cmd "UNREGISTER $@"; }
+db_subst ()	{ _db_cmd "SUBST $@"; }
+db_fset ()	{ _db_cmd "FSET $@"; }
+db_fget ()	{ _db_cmd "FGET $@"; }
+db_purge ()	{ _db_cmd "PURGE $@"; }
+db_metaget ()	{ _db_cmd "METAGET $@"; }
+db_version ()	{ _db_cmd "VERSION $@"; }
+db_clear ()	{ _db_cmd "CLEAR $@"; }
+db_settitle ()	{ _db_cmd "SETTITLE $@"; }
+db_previous_module () { _db_cmd "PREVIOUS_MODULE $@"; }
+db_info ()	{ _db_cmd "INFO $@"; }
+db_progress ()	{ _db_cmd "PROGRESS $@"; }
+db_data ()	{ _db_cmd "DATA $@"; }
+db_x_loadtemplatefile ()	{ _db_cmd "X_LOADTEMPLATEFILE $@"; }
+
+# An old alias for input.
+db_text () {
+	db_input $@
+}
+
+# Cannot read a return code, since there is none and it would block.
+db_stop () {
+	echo STOP >&3
+}
+
+
+debconf_backup () {
+    local question backup
+    for question; do
+	backup="$question-casper-backup"
+	db_register debian-installer/dummy "$backup"
+	db_get "$question"
+	db_set "$backup" "$RET"
+	db_fget "$question" seen
+	db_fset "$backup" seen "$RET"
+    done
+}
+
+debconf_restore () {
+    local question backup
+    for question; do
+	backup="$question-casper-backup"
+	db_get "$backup"
+	db_set "$question" "$RET"
+	db_fget "$backup" seen
+	db_fset "$question" seen "$RET"
+	db_unregister "$backup"
+    done
+}
+
+debconf_backup \
+    passwd/root-password-crypted \
+    passwd/root-password passwd/root-password-again \
+    passwd/user-password-crypted \
+    passwd/user-password passwd/user-password-again \
+    passwd/user-fullname passwd/username passwd/user-uid
+
+# U6aMy0wojraho is just a blank password
+db_set passwd/root-password-crypted '*'
+db_set passwd/user-password-crypted U6aMy0wojraho
+db_set passwd/user-fullname "Como a primeira vez"
+db_set passwd/username "ubuntu"
+db_set passwd/user-uid 999
+
+chroot /root /usr/lib/user-setup/user-setup-apply > /dev/null
+
+# Clear out debconf database again to avoid confusing ubiquity later.
+debconf_restore \
+    passwd/root-password-crypted \
+    passwd/root-password passwd/root-password-again \
+    passwd/user-password-crypted \
+    passwd/user-password passwd/user-password-again \
+    passwd/user-fullname passwd/username passwd/user-uid
+
+# Close the fd's associated with debconf-communicate.
+exec 3>&- 4<&-
+rm -f /tmp/debconf-in.fifo
+rm -f /tmp/debconf-out.fifo
+wait $debconfpid
+
+#while /bin/true ; do echo -n "CMD: " ; read COMANDO ; $COMANDO ; done
+
+# ---------------------------------------------------------------------
+
+echo "ubuntu  ALL=(ALL) NOPASSWD: ALL" > /root/etc/sudoers.d/casper
+
+for f in /root/etc/init/tty*; do
+   sed -i -e "s|^exec.*|exec /bin/login -f ubuntu </dev/$(basename $f .conf) > /dev/$(basename $f .conf) 2>\&1|" $f
+done
+
+# Since we use autologin, lastlog doesn't make sense on the console.
+sed -i '/^[^#].*pam_lastlog\.so/s/^/# /' /root/etc/pam.d/login
+
+# This has the nice side effect of the cron.{daily,weekly,monthly} jobs in
+# /etc/crontab remaining disabled, yet also not run by anacron
+chroot /root dpkg-divert --add --rename --quiet /usr/sbin/anacron
+ln -s /bin/true /root/usr/sbin/anacron
+
+# Avoid clobbering the user's clock
+rm -f /root/etc/rc?.d/K??hwclock.sh /root/etc/init/hwclock-save.conf
+
+# Disable ureadahead too since we don't ship a pack file for it anyway, so
+# all we'll end up doing is profiling the live CD boot. ureadahead also
+# breaks partman occasionally by reading from its synchronisation FIFOs.
+rm -f /root/etc/init/ureadahead*.conf
+
+#disable cdrom mount
+ln -s /dev/null /root/lib/systemd/system/cdrom.mount
+
+# For GNOME, we divert away apt-check to avoid a regular 'apt-get update'
+# equivalent in the live session. We want to run update-notifier for crash
+# report handling.
+chroot /root dpkg-divert --add --rename --quiet \
+	/usr/lib/update-notifier/apt-check
+ln -sf /bin/true /root/usr/lib/update-notifier/apt-check
+
+# For KDE, adept_notifier's only useful function at the moment is an
+# 'apt-get update' equivalent, so we disable it entirely.
+rm -f /root/usr/share/autostart/adept_notifier_auto.desktop
+
+# Upgrading the live CD to new releases is probably not a great plan.
+chroot /root dpkg-divert --add --rename --quiet \
+	/usr/lib/ubuntu-release-upgrader/check-new-release
+ln -sf /bin/true /root/usr/lib/ubuntu-release-upgrader/check-new-release
+chroot /root dpkg-divert --add --rename --quiet \
+	/usr/lib/ubuntu-release-upgrader/check-new-release-gtk
+ln -sf /bin/true /root/usr/lib/ubuntu-release-upgrader/check-new-release-gtk
+
+#we don't want gnome-software's service to offer updates on the livecd for
+#anything it's plugins support
+rm -f /root/etc/xdg/autostart/gnome-software-service.desktop
+
+#disable hibernation
+cat <<EOF > /root/var/lib/polkit-1/localauthority/50-local.d/disable-hibernate.pkla
+[Disable hibernate in live system]
+Identity=unix-user:*
+Action=org.freedesktop.upower.hibernate
+ResultActive=no
+EOF
+
+
+sed '/^Exec/ s|/usr/bin/gnome-language-selector|& -n|' \
+        /rofs/usr/share/applications/language-selector.desktop \
+        > /root/usr/share/applications/language-selector.desktop
+
+# disable update initramfs
+chroot /root dpkg-divert --add --rename --quiet \
+        /usr/sbin/update-initramfs
+
+# configure PolicyKit in live session
+mkdir -p /root/var/lib/polkit-1/localauthority/10-vendor.d
+cat << EOF > /root/var/lib/polkit-1/localauthority/10-vendor.d/10-live-cd.pkla
+# Policy to allow the livecd user to bypass policykit
+[Live CD user permissions]
+Identity=unix-user:ubuntu;unix-user:lightdm
+Action=*
+ResultAny=no
+ResultInactive=yes
+ResultActive=yes
+EOF
+
+
+# Copy config database changes back to the master files.
+chroot /root debconf-copydb tmpdb config \
+    --config=Name:tmpdb --config=Driver:File \
+    --config="Filename:$DEBCONF_TMPDIR/config.dat"
+chroot /root debconf-copydb tmpdb passwords \
+    --config=Name:tmpdb --config=Driver:File \
+    --config="Filename:$DEBCONF_TMPDIR/passwords.dat"
+rm -rf "$DEBCONF_TMPDIR"
+
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+/sbin/udevadm settle --timeout=121 || true
+/sbin/udevadm control --exit
+
+/bin/mount -n -o move /dev /root/dev
+/bin/rm -rf /dev
+/bin/ln -s /root/dev /dev
+
+/bin/plymouth --newroot=/root
+
+# Move /run to the root
+/bin/mount -n -o move /run /root/run
+
+# Move virtual filesystems over to the real filesystem
+/bin/mount -n -o move /sys  /root/sys
+/bin/mount -n -o move /proc /root/proc
+
+# Chain to real filesystem
+exec run-init /root /sbin/init </root/dev/console >/root/dev/console 2>&1
+/bin/echo "Panic: Something went badly wrong in the initramfs."
+/bin/sh
+/bin/reboot
+while /bin/true ; do echo -n "CMD: " ; read COMANDO ; $COMANDO ; done
+

@@ -1,0 +1,209 @@
+Standard VGA memory resides in 0x000A0000 - 0x000BFFFF = 640 KB
+0xA0000 - EGA/VGA graphics modes (64 KB)
+0xB0000 - Monochrome text mode (32 KB)
+0xB8000 - Color text mode and CGA (32 KB)
+
+Interrupt 10 Video Services
+AH = 00h Set video mode
+AL = Mode
+
+Mode value (0-7):
+0 = 40x25 Black & White
+1 = 40x25 Color
+2 = 80x25 Black & White
+3 = 80x25 Color
+4 = 320x200 Color
+5 = 320x200 Black & White
+6 = 640x200 Black & White
+7 = Monochrome only
+
+text mode, (Mode 7) which could display 80 columns by 25 lines
+
+
+Mode    Resolution   Color depth
+00h     40x25 Text    16 Color
+01h     40x25 Text    16 Color
+02h     80x25 Text    16 Color
+03h     80x25 Text    16 Color
+04h     320x200        4 Color
+05h     320x200        4 Gray
+07h     80x25 Text     2 Color
+0Dh     320x200       16 Color
+0Eh     640x200       16 Color
+0Fh     640x350        2 Color
+10h     640x350       16 Color
+11h     640x480        2 Color
+12h     640x480       16 Color
+13h     320x200      256 Color
+
+AH = 0Ch Write graphics pixel
+Entry:
+AL Color value for pixel (XORed if bit7=1)
+CX Column to write pixel
+DX Row to write pixel
+
+AH = 0D Read graphics pixel
+Entry:
+CX Column to read pixel
+DX Row to read pixel
+Exit:
+AL Value of pixel read
+
+AH = 0F Return Current Video Parameters
+Exit:
+AL Current video mode
+AH Number of character columns
+BH Active page
+
+
+
+The CRT Controller (CRTC) is responsible for controlling the output of video data to the display monitor. It is accessed by an address and data register. Address register is at 3D4h the Data Register is at 3D5h (or 3B4h, 3B5h respectively if Miscellaneous Output Register I/O Address select field is set.)
+ Please reference the FreeVGA project page dedicated to describing the CRT registers in detail.
+
+INT 0x10 Function 4F01h – Get VBE Mode Info
+Input:
+  AX=4F01h
+  CX = Mode number (recall the format of a VBE mode number!)
+  ES:DI=Pointer to ModeInfoBlock structure (See following example)
+
+Output:
+  AX=Status
+
+Structure.
+ModeInfoBlock has the following structure. Due to the size of the structure we will not be describing all of the members. Important members that may be described in later chapters are commented.
+
+typedef struct _modeInfoBlock {
+  uint16_t attributes;
+  uint8_t windowA, windowB;
+  uint16_t granularity;
+  uint16_t windowSize;
+  uint16_t segmentA, segmentB;
+  uint32_t winFuncPtr;                      /* ptr to INT 0x10 Function 0x4F05 */
+  uint16_t pitch;                           /* bytes per scan line */
+
+  uint16_t resolutionX, resolutionY;        /* resolution */
+  uint8_t wChar, yChar, planes, bpp, banks; /* number of banks */
+  uint8_t memoryModel, bankSize, imagePages;
+  uint8_t reserved0;
+
+  uint8_t readMask, redPosition;            /* color masks */
+  uint8_t greenMask, greenPosition; 
+  uint8_t blueMask, bluePosition;
+  uint8_t reservedMask, reservedPosition;
+  uint8_t directColorAttributes;
+
+  uint32_t physbase;                        /* pointer to LFB in LFB modes */
+  uint32_t offScreenMemOff;
+  uint16_t offScreenMemSize;
+  uint8_t  reserved1 [206];
+}modeInfoBlock;
+
+The following example demonstrates calling the interrupt.
+
+Example.
+The following function uses the above interrupt for basic bank switching. Note the use of SEG and OFFSET to convert the 32 bit linear address of out to a 16 bit segment:offset far pointer.
+
+void vbe_get_mode (int mode, modeInfoBlock* descr) {
+   INTR in, out;
+
+   /* sanity check */
+   if (!descr)
+     return;
+
+   /* call BIOS */
+   in.eax.val = 0x4F01;
+   in.ecx.val = mode;
+   in.es      = SEG   ((unsigned int)descr);
+   in.edi.val = OFFSET((unsigned int)descr);
+   io_services (0x10, &in, &out);
+}
+
+INT 0x10 Function 4F02h – Set VBE Mode
+Input:
+  AX=4F02h
+  BX=Mode number (remember the VBE mode format!)
+
+Output:
+  AX=Status
+
+SuperVGA Mode 118h (1024x768)
+
+Graphics Controller
+The graphics controller is responsible for managing the interface between CPU and video memory. The address register is mapped to 3CEh and the data register is mapped to 3CFh. In order to access the graphics controller registers, write the index of the register into the address register and read or write from the data register.
+The following is a list of the standard registers. Please reference the FreeVGA project for a detailed description of each register.
+0 Set/Reset register
+1 Enable Set/Reset register
+2 Color compare register
+3 Data rotate register
+4 Read map select register
+5 Graphics mode register
+6 Miscellaneous graphics register
+7 Color don't care register
+8 Bit mask register
+
+Example.
+The following code plots a 8 bit pixel in a planar mode.
+void pixel_p (unsigned char color, unsigned int x, unsigned int y) {
+
+   unsigned int* fb        = (unsigned int*) 0xa0000;
+   unsigned int offset     = y * pitch + (x/8);
+   bankSwitch (offset >> 16);
+
+   /* writes to bit mask register of graphics controller to select plane */
+   outportb(0x3CE,8);
+   outportb(0x3CF,0x80 >> (x & 7));
+   fb [bankOffset] = color;
+}
+
+SuperVGA Interface support resolutions 2560x2048 and higher
+Vesa Bios Extensions (VBE)
+VESA defined modes
+Mode  Resolution   Color depth
+116h  1024x768     32K
+117h  1024x768     64K
+118h  1024x768     16.8M
+
+INT 0x10 Function 4F00h – Get VBE Controller Information
+
+Input:
+
+        AX=4F00h
+        ES:DI=Pointer to VbeInfoBlock structure (See following example)
+
+Output:
+
+        AX=Status
+
+Structure.
+	
+
+vbeInfoBlock structure has the following format.
+
+typedef struct _vbeInfoBlock {
+        uint8_t  signature[4];     // “VESA”
+        uint16_t version;          // Either 0x0200 (VBE 2.0) or 0x0300 (VBE 3.0)
+        uint32_t oemString;        // Far pointer to OEM name
+        uint8_t  capabilities[4];  // capabilities
+        uint32_t videoModesPtr;    // Far pointer to video mode list
+        uint16_t totalMemory;      // Memory size in 64K blocks
+        uint16_t oemSoftwareRev;
+        uint32_t oemVenderNamePtr;
+        uint32_t oemProductNamePtr;
+        uint32_t oemProductRevPtr;
+        uint8_t  reserved [222];
+        uint8_t  oemData [256];
+}vbeInfoBlock;
+
+
+
+The following C code plots a 16 bit red-green-blue (RGB) pixel to display.
+void pixel_16RGB (unsigned short color, unsigned short x, unsigned short y) {
+   unsigned short* fb = (unsigned short*) _modeInfo.physBasePtr;
+   unsigned short offset = x + y * (_modeInfo.bytesPerScanLine / 2);
+   fb [offset] = color;
+}
+
+ver
+http://www.osdever.net/FreeVGA/vga/vga.htm
+http://wiki.osdev.org/VGA_Hardware
+

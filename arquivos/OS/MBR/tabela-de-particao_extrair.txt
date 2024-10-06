@@ -1,0 +1,8 @@
+
+sudo dd if=/dev/sdb of=mbr.bin bs=1 skip=446 count=66
+
+
+Para escrever pode se usar o comando:
+
+dd if=mbr.bin of=/dev/sdb bs=1 seek=446 count=66 conv=notrunc
+

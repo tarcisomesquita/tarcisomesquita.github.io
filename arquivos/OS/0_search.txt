@@ -1,0 +1,1 @@
+find '/media/ubuntu/ARQ/x/OS/' -type f -exec bash -c "file '{}' | grep -q 'HTML document'" 2>/dev/null \; -exec bash -c "lynx -dump -nolist -width=100000 -force_html '{}' | grep --color=always -i uefi" \; -exec echo -n '> ' \; -print  -exec echo -e '\n' \;

@@ -1,0 +1,8 @@
+mplayer video.mpg # tela-cheia
+mplayer video.mpg -vo fbdev # ou fbdev2
+fbi imagem.png *.jpg imagem.gif # Você pode abrir muitas imagens
+links -g -driver fb arquivo.htm
+fbgs arquivo.pdf # usar outro modo p/ gerar imagem
+fbshot -c 4 imagem.png -s 5 # root, terminal 4, delay 5 s.
+fbshot --help
+

@@ -1,0 +1,2707 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="generator" content="MediaWiki 1.13.2" />
+		<meta name="keywords" content="EFI BOOT SERVICES,EFI BOOT SERVICES,EFI ALLOCATE TYPE,EFI DEVICE PATH PROTOCOL,EFI DRIVER BINDING PROTOCOL,EFI EVENT,EFI EVENT GROUP READY TO BOOT,EFI EVENT NOTIFY,EFI GUID,EFI HANDLE,EFI HII PACKAGE LIST PROTOCOL" />
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<link rel="search" type="application/opensearchdescription+xml" href="/wiki/opensearch_desc.php" title="PhoenixWiki (en)" />
+		<link rel="alternate" type="application/rss+xml" title="PhoenixWiki RSS Feed" href="http://wiki.phoenix.com/wiki/index.php?title=Special:RecentChanges&amp;feed=rss" />
+		<link rel="alternate" type="application/atom+xml" title="PhoenixWiki Atom Feed" href="http://wiki.phoenix.com/wiki/index.php?title=Special:RecentChanges&amp;feed=atom" />
+		<title>EFI BOOT SERVICES - PhoenixWiki</title>
+		<style type="text/css" media="screen, projection">/*<![CDATA[*/
+			@import "/wiki/skins/common/shared.css?164";
+			@import "/wiki/skins/phoenixskin_green/main.css?164";
+		/*]]>*/</style>
+		<link rel="stylesheet" type="text/css" media="print" href="/wiki/skins/common/commonPrint.css?164" />
+		<!--[if lt IE 5.5000]><style type="text/css">@import "/wiki/skins/phoenixskin_green/IE50Fixes.css?164";</style><![endif]-->
+		<!--[if IE 5.5000]><style type="text/css">@import "/wiki/skins/phoenixskin_green/IE55Fixes.css?164";</style><![endif]-->
+		<!--[if IE 6]><style type="text/css">@import "/wiki/skins/phoenixskin_green/IE60Fixes.css?164";</style><![endif]-->
+		<!--[if IE 7]><style type="text/css">@import "/wiki/skins/phoenixskin_green/IE70Fixes.css?164";</style><![endif]-->
+		<!--[if lt IE 7]><script type="text/javascript" src="/wiki/skins/common/IEFixes.js?164"></script>
+		<meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+		
+		<script type= "text/javascript">/*<![CDATA[*/
+var skin = "phoenixskin_green";
+var stylepath = "/wiki/skins";
+var wgArticlePath = "/wiki/index.php/$1";
+var wgScriptPath = "/wiki";
+var wgScript = "/wiki/index.php";
+var wgVariantArticlePath = false;
+var wgActionPaths = [];
+var wgServer = "http://wiki.phoenix.com";
+var wgCanonicalNamespace = "";
+var wgCanonicalSpecialPageName = false;
+var wgNamespaceNumber = 0;
+var wgPageName = "EFI_BOOT_SERVICES";
+var wgTitle = "EFI BOOT SERVICES";
+var wgAction = "view";
+var wgArticleId = "63";
+var wgIsArticle = true;
+var wgUserName = null;
+var wgUserGroups = null;
+var wgUserLanguage = "en";
+var wgContentLanguage = "en";
+var wgBreakFrames = false;
+var wgCurRevisionId = "3166";
+var wgVersion = "1.13.2";
+var wgEnableAPI = true;
+var wgEnableWriteAPI = false;
+var wgRestrictionEdit = ["sysop"];
+var wgRestrictionMove = ["sysop"];
+/*]]>*/</script>
+                
+		<script type="text/javascript" src="/wiki/skins/common/wikibits.js?164"><!-- wikibits js --></script>
+		<!-- Head Scripts -->
+		<script type="text/javascript" src="/wiki/skins/common/ajax.js?164"></script>
+		<script type="text/javascript" src="/wiki/index.php?title=-&amp;action=raw&amp;gen=js&amp;useskin=phoenixskin_green"><!-- site js --></script>
+		<style type="text/css">/*<![CDATA[*/
+@import "/wiki/index.php?title=MediaWiki:Common.css&usemsgcache=yes&action=raw&ctype=text/css&smaxage=18000";
+@import "/wiki/index.php?title=MediaWiki:Phoenixskin_green.css&usemsgcache=yes&action=raw&ctype=text/css&smaxage=18000";
+@import "/wiki/index.php?title=-&action=raw&gen=css&maxage=18000&useskin=phoenixskin_green";
+/*]]>*/</style>
+	</head>
+<body class="mediawiki ns-0 ltr page-EFI_BOOT_SERVICES">
+	<div id="globalWrapper">
+		<div id="column-content">
+	<div id="content">
+		<a name="top" id="top"></a>
+				<h1 class="firstHeading">EFI BOOT SERVICES</h1>
+		<div id="bodyContent">
+			<h3 id="siteSub">From PhoenixWiki</h3>
+			<div id="contentSub"></div>
+									<div id="jump-to-nav">Jump to: <a href="#column-one">navigation</a>, <a href="#searchInput">search</a></div>			<!-- start content -->
+			<p>Contains a table header and pointers to all of the boot services.
+</p>
+<table id="toc" class="toc" summary="Contents"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1"><a href="#Prototype"><span class="tocnumber">1</span> <span class="toctext">Prototype</span></a></li>
+<li class="toclevel-1"><a href="#Parameters"><span class="tocnumber">2</span> <span class="toctext">Parameters</span></a></li>
+<li class="toclevel-1"><a href="#Related_Definitions"><span class="tocnumber">3</span> <span class="toctext">Related Definitions</span></a></li>
+<li class="toclevel-1"><a href="#Description"><span class="tocnumber">4</span> <span class="toctext">Description</span></a></li>
+<li class="toclevel-1"><a href="#Members"><span class="tocnumber">5</span> <span class="toctext">Members</span></a>
+<ul>
+<li class="toclevel-2"><a href="#AllocatePages.28.29"><span class="tocnumber">5.1</span> <span class="toctext">AllocatePages()</span></a></li>
+<li class="toclevel-2"><a href="#AllocatePool.28.29"><span class="tocnumber">5.2</span> <span class="toctext">AllocatePool()</span></a></li>
+<li class="toclevel-2"><a href="#CloseEvent.28.29"><span class="tocnumber">5.3</span> <span class="toctext">CloseEvent()</span></a></li>
+<li class="toclevel-2"><a href="#CloseProtocol.28.29"><span class="tocnumber">5.4</span> <span class="toctext">CloseProtocol()</span></a></li>
+<li class="toclevel-2"><a href="#CopyMem.28.29"><span class="tocnumber">5.5</span> <span class="toctext">CopyMem()</span></a></li>
+<li class="toclevel-2"><a href="#CreateEvent.28.29"><span class="tocnumber">5.6</span> <span class="toctext">CreateEvent()</span></a></li>
+<li class="toclevel-2"><a href="#CreateEventEx.28.29"><span class="tocnumber">5.7</span> <span class="toctext">CreateEventEx()</span></a></li>
+<li class="toclevel-2"><a href="#Exit.28.29"><span class="tocnumber">5.8</span> <span class="toctext">Exit()</span></a></li>
+<li class="toclevel-2"><a href="#ExitBootServices.28.29"><span class="tocnumber">5.9</span> <span class="toctext">ExitBootServices()</span></a></li>
+<li class="toclevel-2"><a href="#FreePages.28.29"><span class="tocnumber">5.10</span> <span class="toctext">FreePages()</span></a></li>
+<li class="toclevel-2"><a href="#FreePool.28.29"><span class="tocnumber">5.11</span> <span class="toctext">FreePool()</span></a></li>
+<li class="toclevel-2"><a href="#GetMemoryMap.28.29"><span class="tocnumber">5.12</span> <span class="toctext">GetMemoryMap()</span></a></li>
+<li class="toclevel-2"><a href="#GetNextMonotonicCount.28.29"><span class="tocnumber">5.13</span> <span class="toctext">GetNextMonotonicCount()</span></a></li>
+<li class="toclevel-2"><a href="#HandleProtocol.28.29"><span class="tocnumber">5.14</span> <span class="toctext">HandleProtocol()</span></a></li>
+<li class="toclevel-2"><a href="#InstallConfigurationTable.28.29"><span class="tocnumber">5.15</span> <span class="toctext">InstallConfigurationTable()</span></a></li>
+<li class="toclevel-2"><a href="#InstallProtocolInterface.28.29"><span class="tocnumber">5.16</span> <span class="toctext">InstallProtocolInterface()</span></a></li>
+<li class="toclevel-2"><a href="#LoadImage.28.29"><span class="tocnumber">5.17</span> <span class="toctext">LoadImage()</span></a></li>
+<li class="toclevel-2"><a href="#LocateDevicePath.28.29"><span class="tocnumber">5.18</span> <span class="toctext">LocateDevicePath()</span></a></li>
+<li class="toclevel-2"><a href="#LocateHandle.28.29"><span class="tocnumber">5.19</span> <span class="toctext">LocateHandle()</span></a></li>
+<li class="toclevel-2"><a href="#LocateProtocol.28.29"><span class="tocnumber">5.20</span> <span class="toctext">LocateProtocol()</span></a></li>
+<li class="toclevel-2"><a href="#OpenProtocol.28.29"><span class="tocnumber">5.21</span> <span class="toctext">OpenProtocol()</span></a></li>
+<li class="toclevel-2"><a href="#OpenProtocolInformation.28.29"><span class="tocnumber">5.22</span> <span class="toctext">OpenProtocolInformation()</span></a></li>
+<li class="toclevel-2"><a href="#RaiseTPL.28.29"><span class="tocnumber">5.23</span> <span class="toctext">RaiseTPL()</span></a></li>
+<li class="toclevel-2"><a href="#RestoreTPL.28.29"><span class="tocnumber">5.24</span> <span class="toctext">RestoreTPL()</span></a></li>
+<li class="toclevel-2"><a href="#ReinstallProtocolInterface.28.29"><span class="tocnumber">5.25</span> <span class="toctext">ReinstallProtocolInterface()</span></a></li>
+<li class="toclevel-2"><a href="#RegisterProtocolNotify.28.29"><span class="tocnumber">5.26</span> <span class="toctext">RegisterProtocolNotify()</span></a></li>
+<li class="toclevel-2"><a href="#SetMem.28.29"><span class="tocnumber">5.27</span> <span class="toctext">SetMem()</span></a></li>
+<li class="toclevel-2"><a href="#SetEvent.28.29"><span class="tocnumber">5.28</span> <span class="toctext">SetEvent()</span></a></li>
+<li class="toclevel-2"><a href="#SetTimer.28.29"><span class="tocnumber">5.29</span> <span class="toctext">SetTimer()</span></a></li>
+<li class="toclevel-2"><a href="#SetWatchdogTimer.28.29"><span class="tocnumber">5.30</span> <span class="toctext">SetWatchdogTimer()</span></a></li>
+<li class="toclevel-2"><a href="#SignalEvent.28.29"><span class="tocnumber">5.31</span> <span class="toctext">SignalEvent()</span></a></li>
+<li class="toclevel-2"><a href="#Stall.28.29"><span class="tocnumber">5.32</span> <span class="toctext">Stall()</span></a></li>
+<li class="toclevel-2"><a href="#StartImage.28.29"><span class="tocnumber">5.33</span> <span class="toctext">StartImage()</span></a></li>
+<li class="toclevel-2"><a href="#UninstallProtocolInterface.28.29"><span class="tocnumber">5.34</span> <span class="toctext">UninstallProtocolInterface()</span></a></li>
+<li class="toclevel-2"><a href="#WaitForEvent.28.29"><span class="tocnumber">5.35</span> <span class="toctext">WaitForEvent()</span></a></li>
+</ul>
+</li>
+</ul>
+</td></tr></table><script type="text/javascript"> if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } </script>
+<a name="Prototype"></a><h1> <span class="mw-headline">Prototype</span></h1>
+<pre>typedef struct {
+  <a href="/wiki/index.php/EFI_TABLE_HEADER" title="EFI TABLE HEADER">EFI_TABLE_HEADER</a>                           Hdr;
+  EFI_RAISE_TPL                              <a href="#RaiseTPL.28.29" title="">RaiseTPL</a>;
+  EFI_RESTORE_TPL                            <a href="#RestoreTPL.28.29" title="">RestoreTPL</a>; 
+  EFI_ALLOCATE_PAGES                         <a href="#AllocatePages.28.29" title="">AllocatePages</a>; 
+  EFI_FREE_PAGES                             <a href="#FreePages.28.29" title="">FreePages</a>; 
+  EFI_GET_MEMORY_MAP                         <a href="#GetMemoryMap.28.29" title="">GetMemoryMap</a>; 
+  EFI_ALLOCATE_POOL                          <a href="#AllocatePool.28.29" title="">AllocatePool</a>; 
+  EFI_FREE_POOL                              <a href="#FreePool.28.29" title="">FreePool</a>; 
+  EFI_CREATE_EVENT                           <a href="#CreateEvent.28.29" title="">CreateEvent</a>; 
+  EFI_SET_TIMER                              <a href="#SetTimer.28.29" title="">SetTimer</a>; 
+  EFI_WAIT_FOR_EVENT                         <a href="#WaitForEvent.28.29" title="">WaitForEvent</a>; 
+  EFI_SIGNAL_EVENT                           <a href="#SignalEvent.28.29" title="">SignalEvent</a>; 
+  EFI_CLOSE_EVENT                            <a href="#CloseEvent.28.29" title="">CloseEvent</a>; 
+  EFI_CHECK_EVENT                            <a href="#CheckEvent.28.29" title="">CheckEvent</a>; 
+  EFI_INSTALL_PROTOCOL_INTERFACE             <a href="#InstallProtocolInterface.28.29" title="">InstallProtocolInterface</a>; 
+  EFI_REINSTALL_PROTOCOL_INTERFACE           <a href="#ReinstallProtocolInterface.28.29" title="">ReinstallProtocolInterface</a>; 
+  EFI_UNINSTALL_PROTOCOL_INTERFACE           <a href="#UninstallProtocolInterface.28.29" title="">UninstallProtocolInterface</a>; 
+  EFI_HANDLE_PROTOCOL                        <a href="#HandleProtocol.28.29" title="">HandleProtocol</a>; 
+  VOID*                                      Reserved; 
+  EFI_REGISTER_PROTOCOL_NOTIFY               <a href="#RegisterProtocolNotify.28.29" title="">RegisterProtocolNotify</a>; 
+  EFI_LOCATE_HANDLE                          <a href="#LocateHandle.28.29" title="">LocateHandle</a>; 
+  EFI_LOCATE_DEVICE_PATH                     <a href="#LocateDevicePath.28.29" title="">LocateDevicePath</a>; 
+  EFI_INSTALL_CONFIGURATION_TABLE            <a href="#InstallConfigurationTable.28.29" title="">InstallConfigurationTable</a>; 
+  EFI_IMAGE_LOAD                             <a href="#LoadImage.28.29" title="">LoadImage</a>; 
+  EFI_IMAGE_START                            <a href="#StartImage.28.29" title="">StartImage</a>; 
+  EFI_EXIT                                   <a href="#Exit.28.29" title="">Exit</a>; 
+  EFI_IMAGE_UNLOAD                           <a href="#UnloadImage.28.29" title="">UnloadImage</a>; 
+  EFI_EXIT_BOOT_SERVICES                     <a href="#ExitBootServices.28.29" title="">ExitBootServices</a>; 
+  EFI_GET_NEXT_MONOTONIC_COUNT               <a href="#GetNextMonotonicCount.28.29" title="">GetNextMonotonicCount</a>; 
+  EFI_STALL                                  <a href="#Stall.28.29" title="">Stall</a>; 
+  EFI_SET_WATCHDOG_TIMER                     <a href="#SetWatchdogTimer.28.29" title="">SetWatchdogTimer</a>; 
+  EFI_CONNECT_CONTROLLER                     <a href="#ConnectController.28.29" title="">ConnectController</a>; 
+  EFI_DISCONNECT_CONTROLLER                  <a href="#DisconnectController.28.29" title="">DisconnectController</a>;
+  EFI_OPEN_PROTOCOL                          <a href="#OpenProtocol.28.29" title="">OpenProtocol</a>; 
+  EFI_CLOSE_PROTOCOL                         <a href="#CloseProtocol.28.29" title="">CloseProtocol</a>; 
+  EFI_OPEN_PROTOCOL_INFORMATION              <a href="#OpenProtocolInformation.28.29" title="">OpenProtocolInformation</a>; 
+  EFI_PROTOCOLS_PER_HANDLE                   <a href="#ProtocolsPerHandle.28.29" title="">ProtocolsPerHandle</a>; 
+  EFI_LOCATE_HANDLE_BUFFER                   <a href="#LocateHandleBuffer.28.29" title="">LocateHandleBuffer</a>; 
+  EFI_LOCATE_PROTOCOL                        <a href="#LocateProtocol.28.29" title="">LocateProtocol</a>; 
+  EFI_INSTALL_MULTIPLE_PROTOCOL_INTERFACES   <a href="#InstallMultipleProtocolInterfaces.28.29" title="">InstallMultipleProtocolInterfaces</a>; 
+  EFI_UNINSTALL_MULTIPLE_PROTOCOL_INTERFACES <a href="#UninstallMultipleProtocolInterfaces.28.29" title="">UninstallMultipleProtocolInterfaces</a>; 
+  EFI_CALCULATE_CRC32                        <a href="#CalculateCrc32.28.29" title="">CalculateCrc32</a>; 
+  EFI_COPY_MEM                               <a href="#CopyMem.28.29" title="">CopyMem</a>; 
+  EFI_SET_MEM                                <a href="#SetMem.28.29" title="">SetMem</a>;
+  EFI_CREATE_EVENT_EX                        <a href="#CreateEventEx.28.29" title="">CreateEventEx</a>;
+} EFI_BOOT_SERVICES;
+</pre>
+<a name="Parameters"></a><h1> <span class="mw-headline">Parameters</span></h1>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Hdr
+</td><td> The table header for the EFI Boot Services Table. This header contains the EFI_BOOT_SERVICES_ SIGNATURE and EFI_BOOT_SERVICES_ REVISION values along with the size of the EFI_BOOT_SERVICES structure and a 32-bit CRC to verify that the contents of the EFI Boot Services Table are valid.
+</td></tr>
+<tr>
+<td> RaiseTPL
+</td><td> Raises the task priority level.
+</td></tr>
+<tr>
+<td> RestoreTPL
+</td><td> Restores/lowers the task priority level.
+</td></tr>
+<tr>
+<td> AllocatePages
+</td><td> Allocates pages of a particular type.
+</td></tr>
+<tr>
+<td> FreePages
+</td><td> Frees allocated pages.
+</td></tr>
+<tr>
+<td> GetMemoryMap
+</td><td> Returns the current boot services memory map and memory map key.
+</td></tr>
+<tr>
+<td> AllocatePool
+</td><td> Allocates a pool of a particular type.
+</td></tr>
+<tr>
+<td> FreePool
+</td><td> Frees allocated pool.
+</td></tr>
+<tr>
+<td> CreateEvent
+</td><td> Creates a general-purpose event structure.
+</td></tr>
+<tr>
+<td> SetTimer
+</td><td> Sets an event to be signaled at a particular time.
+</td></tr>
+<tr>
+<td> WaitForEvent
+</td><td> Stops execution until an event is signaled.
+</td></tr>
+<tr>
+<td> SignalEvent
+</td><td> Signals an event.
+</td></tr>
+<tr>
+<td> CloseEvent
+</td><td> Closes and frees an event structure.
+</td></tr>
+<tr>
+<td> CheckEvent
+</td><td> Checks whether an event is in the signaled state.
+</td></tr>
+<tr>
+<td> InstallProtocolInterface
+</td><td> Installs a protocol interface on a device handle.
+</td></tr>
+<tr>
+<td> ReinstallProtocolInterface
+</td><td> Reinstalls a protocol interface on a device handle.
+</td></tr>
+<tr>
+<td> UninstallProtocolInterface
+</td><td> Removes a protocol interface from a device handle.
+</td></tr>
+<tr>
+<td> HandleProtocol
+</td><td> Queries a handle to determine if it supports a specified protocol.
+</td></tr>
+<tr>
+<td> Reserved
+</td><td> Reserved. Must be NULL.
+</td></tr>
+<tr>
+<td> RegisterProtocolNotify
+</td><td> Registers an event that is to be signaled whenever an interface is installed for a specified protocol.
+</td></tr>
+<tr>
+<td> LocateHandle
+</td><td> Returns an array of handles that support a specified protocol.
+</td></tr>
+<tr>
+<td> LocateDevicePath
+</td><td> Locates all devices on a device path that support a specified protocol and returns the handle to the device that is closest to the path.
+</td></tr>
+<tr>
+<td> InstallConfigurationTable
+</td><td> Adds, updates, or removes a configuration table from the EFI System Table.
+</td></tr>
+<tr>
+<td> LoadImage
+</td><td> Loads an EFI image into memory.
+</td></tr>
+<tr>
+<td> StartImage
+</td><td> Transfers control to a loaded image’s entry point.
+</td></tr>
+<tr>
+<td> Exit
+</td><td> Exits the image’s entry point.
+</td></tr>
+<tr>
+<td> UnloadImage
+</td><td> Unloads an image.
+</td></tr>
+<tr>
+<td> ExitBootServices
+</td><td> Terminates boot services.
+</td></tr>
+<tr>
+<td> GetNextMonotonicCount
+</td><td> Returns a monotonically increasing count for the platform.
+</td></tr>
+<tr>
+<td> Stall
+</td><td> Stalls the processor.
+</td></tr>
+<tr>
+<td> SetWatchdogTimer
+</td><td> Resets and sets a watchdog timer used during boot services time.
+</td></tr>
+<tr>
+<td> ConnectController
+</td><td> Uses a set of precedence rules to find the best set of drivers to manage a controller.
+</td></tr>
+<tr>
+<td> DisconnectController
+</td><td> Informs a set of drivers to stop managing a controller.
+</td></tr>
+<tr>
+<td> OpenProtocol
+</td><td> Adds elements to the list of agents consuming a protocol interface.
+</td></tr>
+<tr>
+<td> CloseProtocol
+</td><td> Removes elements from the list of agents consuming a protocol interface.
+</td></tr>
+<tr>
+<td> OpenProtocolInformation
+</td><td> Retrieve the list of agents that are currently consuming a protocol interface.
+</td></tr>
+<tr>
+<td> ProtocolsPerHandle
+</td><td> Retrieves the list of protocols installed on a handle. The return buffer is automatically allocated.
+</td></tr>
+<tr>
+<td> LocateHandleBuffer
+</td><td> Retrieves the list of handles from the handle database that meet the search criteria. The return buffer is automatically allocated.
+</td></tr>
+<tr>
+<td> LocateProtocol
+</td><td> Finds the first handle in the handle database the supports the requested protocol.
+</td></tr>
+<tr>
+<td> InstallMultipleProtocolInterfaces
+</td><td> Installs one or more protocol interfaces onto a handle.
+</td></tr>
+<tr>
+<td> UninstallMultipleProtocolInterfaces
+</td><td> Uninstalls one or more protocol interfaces from a handle.
+</td></tr>
+<tr>
+<td> CalculateCrc32
+</td><td> Computes and returns a 32-bit CRC for a data buffer.
+</td></tr>
+<tr>
+<td> CopyMem
+</td><td> Copies the contents of one buffer to another buffer.
+</td></tr>
+<tr>
+<td> SetMem
+</td><td> Fills a buffer with a specified value.
+</td></tr>
+<tr>
+<td> CreateEventEx
+</td><td> Creates an event structure as part of an event group.
+</td></tr></table>
+<a name="Related_Definitions"></a><h1> <span class="mw-headline">Related Definitions</span></h1>
+<pre>#define EFI_BOOT_SERVICES_SIGNATURE 0x56524553544f4f42
+#define EFI_BOOT_SERVICES_REVISION EFI_SPECIFICATION_VERSION
+</pre>
+<a name="Description"></a><h1> <span class="mw-headline">Description</span></h1>
+<p>UEFI uses the EFI Boot Services Table, which contains a table header and pointers to all of the boot services. The definition for this table is shown in the following code fragments. The function pointers in this table are not valid after the operating system has taken control of the platform with a call to <a href="#ExitBootServices.28.29" title="">ExitBootServices()</a>.
+</p>
+<a name="Members"></a><h1> <span class="mw-headline">Members</span></h1>
+<a name="AllocatePages.28.29"></a><h2> <span class="mw-headline">AllocatePages()</span></h2>
+<p>Allocates memory pages from the system.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+AllocatePages(
+  IN     <a href="/wiki/index.php/EFI_ALLOCATE_TYPE" title="EFI ALLOCATE TYPE">EFI_ALLOCATE_TYPE</a>    Type,
+  IN     <a href="/wiki/index.php/EFI_MEMORY_TYPE" title="EFI MEMORY TYPE">EFI_MEMORY_TYPE</a>      MemoryType,
+  IN     UINTN                Pages,
+  IN OUT <a href="/wiki/index.php/EFI_PHYSICAL_ADDRESS" title="EFI PHYSICAL ADDRESS">EFI_PHYSICAL_ADDRESS</a> *Memory
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Type
+</td><td> The type of allocation to perform.
+</td></tr>
+<tr>
+<td> MemoryType
+</td><td> The type of memory to allocate. Normal allocations (that is, allocations by any UEFI application) are of type EfiLoaderData. MemoryType values in the range 0x80000000..0xFFFFFFFF are reserved for use by UEFI OS loaders that are provided by operating system vendors. The only illegal memory type values are those in the range EfiMaxMemoryType..0x7FFFFFFF.
+</td></tr>
+<tr>
+<td> Pages
+</td><td> The number of contiguous 4 KB pages to allocate.
+</td></tr>
+<tr>
+<td> Memory
+</td><td> Pointer to a physical address. On input, the way in which the address is used depends on the value of Type. See “Description” for more information. On output the address is set to the base of the page range that was allocated.
+</td></tr></table>
+<p><b>Description</b><br />
+The AllocatePages() function allocates the requested number of pages and returns a pointer to the base address of the page range in the location referenced by Memory. The function scans the memory map to locate free pages. When it finds a physically contiguous block of pages that is large enough and also satisfies the allocation requirements of Type, it changes the memory map to indicate that the pages are now of type MemoryType.
+</p><p>In general, UEFI OS loaders and applications should allocate memory (and pool) of type EfiLoaderData. Boot service drivers must allocate memory (and pool) of type EfiBootServicesData. Runtime drivers should allocate memory (and pool) of type EfiRuntimeServicesData (although such allocation can only be made during boot services time).
+</p><p>Allocation requests of Type AllocateAnyPages allocate any available range of pages that satisfies the request. On input, the address pointed to by Memory is ignored.
+</p><p>Allocation requests of Type AllocateMaxAddress allocate any available range of pages whose uppermost address is less than or equal to the address pointed to by Memory on input.
+</p><p>Allocation requests of Type AllocateAddress allocate pages at the address pointed to by Memory on input.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The requested pages were allocated.
+</td></tr>
+<tr>
+<td> EFI_OUT_OF_RESOURCES
+</td><td> The pages could not be allocated.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> <i>Type</i> is not AllocateAnyPages or AllocateMaxAddress or AllocateAddress.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> <i>MemoryType</i> is in the range EfiMaxMemoryType..0x7FFFFFFF.
+</td></tr>
+<tr>
+<td> EFI_NOT_FOUND
+</td><td> The requested pages could not be found.
+</td></tr></table>
+<a name="AllocatePool.28.29"></a><h2> <span class="mw-headline">AllocatePool()</span></h2>
+<p>Allocates pool memory.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+AllocatePool (
+  IN  <a href="/wiki/index.php/EFI_MEMORY_TYPE" title="EFI MEMORY TYPE">EFI_MEMORY_TYPE</a> PoolType,
+  IN  UINTN           Size,
+  OUT VOID            **Buffer
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> PoolType
+</td><td> The type of pool to allocate. PoolType values in the range 0x80000000..0xFFFFFFFF are reserved for use by UEFI OS loaders that are provided by operating system vendors. The only illegal memory type values are those in the range EfiMaxMemoryType..0x7FFFFFFF.
+</td></tr>
+<tr>
+<td> Size
+</td><td> The number of bytes to allocate from the pool.
+</td></tr>
+<tr>
+<td> Buffer
+</td><td> A pointer to a pointer to the allocated buffer if the call succeeds; undefined otherwise.
+</td></tr></table>
+<p><br />
+<b>Description</b><br />
+The AllocatePool() function allocates a memory region of Size bytes from memory of type PoolType and returns the address of the allocated memory in the location referenced by Buffer. This function allocates pages from <a href="/wiki/index.php?title=EF_MEMORY_TYPE&amp;action=edit&amp;redlink=1" class="new" title="EF MEMORY TYPE (not yet written)">EfiConventionalMemory</a> as needed to grow the requested pool type. All allocations are eight-byte aligned.
+</p><p>The allocated pool memory is returned to the available pool with the FreePool() function.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The requested number of bytes was allocated.
+</td></tr>
+<tr>
+<td> EFI_OUT_OF_RESOURCES
+</td><td> The pool requested could not be allocated.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> PoolType was invalid.
+</td></tr></table>
+<p>Computes and returns a 32-bit CRC for a data buffer.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+CalculateCrc32 (
+  IN VOID *Data,
+  IN UINTN DataSize,
+  OUT UINT32 *Crc32
+  );
+</pre>
+<p><b>Parameters</b><br />
+Data 
+A pointer to the buffer on which the 32-bit CRC is to be computed.
+DataSize 
+The number of bytes in the buffer Data.
+Crc32 
+The 32-bit CRC that was computed for the data buffer specified by Data and DataSize.
+</p><p><b>Description</b><br />
+This function computes the 32-bit CRC for the data buffer specified by Data and DataSize. If the 32-bit CRC is computed, then it is returned in Crc32 and EFI_SUCCESS is returned.
+</p><p>If Data is NULL, then EFI_INVALID_PARAMETER is returned. If Crc32 is NULL, then EFI_INVALID_PARAMETER is returned. If DataSize is 0, then EFI_INVALID_PARAMETER is returned.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The 32-bit CRC was computed for the data buffer and returned in Crc32.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Data is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Crc32 is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> DataSize is 0.
+</td></tr></table>
+<a name="CloseEvent.28.29"></a><h2> <span class="mw-headline">CloseEvent()</span></h2>
+<p>Closes an event.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+CloseEvent(
+  IN <a href="/wiki/index.php/EFI_EVENT" title="EFI EVENT">EFI_EVENT</a> Event
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Event
+</td><td> The event to close.
+</td></tr></table>
+<p><b>Description</b><br />
+The CloseEvent() function removes the caller’s reference to the event, removes it from any event group to which it belongs, and closes it. Once the event is closed, the event is no longer valid and may not be used on any subsequent function calls.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The event has been closed.
+</td></tr></table>
+<a name="CloseProtocol.28.29"></a><h2> <span class="mw-headline">CloseProtocol()</span></h2>
+<p>Closes a protocol on a handle that was opened using OpenProtocol().
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+(EFIAPI *EFI_CLOSE_PROTOCOL) (
+  IN <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a> Handle,
+  IN <a href="/wiki/index.php/EFI_GUID" title="EFI GUID">EFI_GUID</a>   *Protocol,
+  IN <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a> AgentHandle,
+  IN <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a> ControllerHandle
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Handle
+</td><td> The handle for the protocol interface that was previously opened with OpenProtocol(), and is now being closed.
+</td></tr>
+<tr>
+<td> Protocol
+</td><td> The published unique identifier of the protocol. It is the caller’s responsibility to pass in a valid GUID. See “Wired For Management Baseline” for a description of valid GUID values.
+</td></tr>
+<tr>
+<td> AgentHandle
+</td><td> The handle of the agent that is closing the protocol interface. For agents that follow the UEFI Driver Model, this parameter is the handle that contains the <a href="/wiki/index.php/EFI_DRIVER_BINDING_PROTOCOL" title="EFI DRIVER BINDING PROTOCOL">EFI_DRIVER_BINDING_PROTOCOL</a> instance that is produced by the UEFI driver that is opening the protocol interface. For UEFI applications, this is the image handle of the UEFI application. For applications that used HandleProtocol() to open the protocol interface, this will be the image handle of the EFI firmware.
+</td></tr>
+<tr>
+<td> ControllerHandle
+</td><td> If the agent that opened a protocol is a driver that follows the UEFI Driver Model, then this parameter is the controller handle that required the protocol interface. If the agent does not follow the UEFI Driver Model, then this parameter is optional and may be NULL.
+</td></tr></table>
+<p><b>Description</b><br />
+This function updates the handle database to show that the protocol instance specified by Handle and Protocol is no longer required by the agent and controller specified AgentHandle and ControllerHandle.
+</p><p>If Handle or AgentHandle is not a valid EFI_HANDLE, then EFI_INVALID_PARAMETER is returned. If ControllerHandle is not NULL, and ControllerHandle is not a valid EFI_HANDLE, then EFI_INVALID_PARAMETER is returned. If Protocol is NULL, then EFI_INVALID_PARAMETER is returned.
+</p><p>If the interface specified by Protocol is not supported by the handle specified by Handle, then EFI_NOT_FOUND is returned.
+</p><p>If the interface specified by Protocol is supported by the handle specified by Handle, then a check is made to see if the protocol instance specified by Protocol and Handle was opened by AgentHandle and ControllerHandle with <a href="#OpenProtocol.28.29" title="">OpenProtocol()</a>. If the protocol instance was not opened by AgentHandle and ControllerHandle, then EFI_NOT_FOUND is returned. If the protocol instance was opened by AgentHandle and ControllerHandle, then all of those references are removed from the handle database, and EFI_SUCCESS is returned.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The protocol instance was closed.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Handle is not a valid EFI_HANDLE.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> AgentHandle is not a valid EFI_HANDLE.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> ControllerHandle is not NULL and ControllerHandle is not a valid EFI_HANDLE.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Protocol is NULL.
+</td></tr>
+<tr>
+<td> EFI_NOT_FOUND
+</td><td> Handle does not support the protocol specified by Protocol.
+</td></tr>
+<tr>
+<td> EFI_NOT_FOUND
+</td><td> The protocol interface specified by Handle and Protocol is not currently open by AgentHandle and ControllerHandle.
+</td></tr></table>
+<p><b>Examples</b><br />
+</p>
+<pre>EFI_BOOT_SERVICES *gBS;
+EFI_HANDLE ImageHandle;
+EFI_DRIVER_BINDING_PROTOCOL *This;
+IN EFI_HANDLE ControllerHandle,
+extern EFI_GUID gEfiXyzIoProtocol;
+EFI_STATUS Status;
+//
+// Close the XYZ I/O Protocol that was opened on behalf of ControllerHandle
+//
+Status = gBS-&gt;CloseProtocol (
+  ControllerHandle,
+  &amp;gEfiXyzIoProtocol,
+  This-&gt;DriverBindingHandle,
+  ControllerHandle
+  );
+//
+// Close the XYZ I/O Protocol that was opened with BY_HANDLE_PROTOCOL
+//
+Status = gBS-&gt;CloseProtocol (
+  ControllerHandle,
+  &amp;gEfiXyzIoProtocol,
+  ImageHandle,
+  NULL
+  );
+</pre>
+<a name="CopyMem.28.29"></a><h2> <span class="mw-headline">CopyMem()</span></h2>
+<p>The CopyMem() function copies the contents of one buffer to another buffer.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+VOID
+CopyMem (
+  IN VOID  *Destination,
+  IN VOID  *Source,
+  IN UINTN Length
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Destination
+</td><td> Pointer to the destination buffer of the memory copy.
+</td></tr>
+<tr>
+<td> Source
+</td><td> Pointer to the source buffer of the memory copy.
+</td></tr>
+<tr>
+<td> Length
+</td><td> Number of bytes to copy from Source to Destination.
+</td></tr></table>
+<p><b>Description</b><br />
+The CopyMem() function copies Length bytes from the buffer Source to the buffer Destination.
+</p><p>The implementation of CopyMem() must be reentrant, and it must handle overlapping Source and Destination buffers. This means that the implementation of CopyMem() must choose the correct direction of the copy operation based on the type of overlap that exists between the Source and Destination buffers. If either the Source buffer or the Destination buffer crosses the top of the processor’s address space, then the result of the copy operation is unpredictable.
+</p><p>The contents of the Destination buffer on exit from this service must match the contents of the Source buffer on entry to this service. Due to potential overlaps, the contents of the Source buffer may be modified by this service. The following rules can be used to guarantee the correct behavior:
+</p>
+<ol><li> If Destination and Source are identical, then no operation should be performed.
+</li><li> If Destination &gt; Source and Destination &lt; (Source + Length), then the data should be copied from the Source buffer to the Destination buffer starting from the end of the buffers and working toward the beginning of the buffers.
+</li><li> Otherwise, the data should be copied from the Source buffer to the Destination buffer starting from the beginning of the buffers and working toward the end of the buffers.
+</li></ol>
+<p><b>Status Codes Returned</b><br />
+None.
+</p>
+<a name="CreateEvent.28.29"></a><h2> <span class="mw-headline">CreateEvent()</span></h2>
+<p>Creates an event. 
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+CreateEvent (
+  IN  UINT32           Type,
+  IN  <a href="/wiki/index.php/EFI_TPL" title="EFI TPL">EFI_TPL</a>          NotifyTpl,
+  IN  <a href="/wiki/index.php/EFI_EVENT_NOTIFY" title="EFI EVENT NOTIFY">EFI_EVENT_NOTIFY</a> NotifyFunction, OPTIONAL
+  IN  VOID             *NotifyContext, OPTIONAL
+  OUT <a href="/wiki/index.php/EFI_EVENT" title="EFI EVENT">EFI_EVENT</a>        *Event
+  );
+</pre>
+<p><b>Parameters</b><br />
+Type
+The type of event to create and its mode and attributes. 
+NotifyTpl
+The task priority level of event notifications, if needed. 
+NotifyFunction
+Pointer to the event’s notification function, if any. 
+NotifyContext
+Pointer to the notification function’s context; corresponds to parameter Context in the notification function.
+Event
+Pointer to the newly created event if the call succeeds; undefined otherwise.
+</p><p><b>Description</b><br />
+The CreateEvent() function creates a new event of type Type and returns it in the location referenced by Event. The event’s notification function, context, and task priority level are specified by NotifyFunction, NotifyContext, and NotifyTpl, respectively.
+</p><p>Events exist in one of two states, “waiting” or “signaled.” When an event is created, firmware puts it in the “waiting” state. When the event is signaled, firmware changes its state to “signaled” and, if EVT_NOTIFY_SIGNAL is specified, places a call to its notification function in a FIFO queue. There is a queue for each of the “basic” task priority levels defined in Section 6.1 (TPL_CALLBACK, and TPL_NOTIFY). The functions in these queues are invoked in FIFO order, starting with the highest priority level queue and proceeding to the lowest priority queue that is unmasked by the current TPL. If the current TPL is equal to or greater than the queued notification, it will wait until the TPL is lowered via <a href="/wiki/index.php/EFI_BOOT_SERVICES#RestoreTPL.28.29" title="EFI BOOT SERVICES">RestoreTPL()</a>.
+</p><p>In a general sense, there are two “types” of events, synchronous and asynchronous. Asynchronous events are closely related to timers and are used to support periodic or timed interruption of program execution. This capability is typically used with device drivers. For example, a network device driver that needs to poll for the presence of new packets could create an event whose type includes EVT_TIMER and then call the SetTimer() function. When the timer expires, the firmware signals the event.
+</p><p>Synchronous events have no particular relationship to timers. Instead, they are used to ensure that certain activities occur following a call to a specific interface function. One example of this is the cleanup that needs to be performed in response to a call to the ExitBootServices() function. ExitBootServices() can clean up the firmware since it understands firmware internals, but it cannot clean up on behalf of drivers that have been loaded into the system. The drivers have to do that themselves by creating an event whose type is EVT_SIGNAL_EXIT_BOOT_SERVICES and whose notification function is a function within the driver itself. Then, when ExitBootServices() has finished its cleanup, it signals each event of type EVT_SIGNAL_EXIT_BOOT_SERVICES.
+</p><p>Another example of the use of synchronous events occurs when an event of type EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE is used in conjunction with the <a href="/wiki/index.php/EFI_RUNTIME_SERVICES#SetVirtualAddressMap.28.29" title="EFI RUNTIME SERVICES">SetVirtualAddressMap()</a>.
+</p><p>The EVT_NOTIFY_WAIT and EVT_NOTIFY_SIGNAL flags are exclusive. If neither flag is specified, the caller does not require any notification concerning the event and the NotifyTpl, NotifyFunction, and NotifyContext parameters are ignored. If EVT_NOTIFY_WAIT is specified and the event is not in the signaled state, then the EVT_NOTIFY_WAIT notify function is queued whenever a consumer of the event is waiting for the event (via <a href="/wiki/index.php/EFI_BOOT_SERVICES#WaitForEvent.28.29" title="EFI BOOT SERVICES">WaitForEvent()</a> or <a href="/wiki/index.php/EFI_BOOT_SERVICES#CheckEvent.28.29" title="EFI BOOT SERVICES">CheckEvent()</a>). If the EVT_NOTIFY_SIGNAL flag is specified then the event’s notify function is queued whenever the event is signaled.
+</p><p>Note: Because its internal structure is unknown to the caller, Event cannot be modified by the caller.
+The only way to manipulate it is to use the published event interfaces.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The event structure was created.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> One of the parameters has an invalid value.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Event is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Type has an unsupported bit set.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Type has both EVT_NOTIFY_SIGNAL and EVT_NOTIFY_WAIT set.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Type has either EVT_NOTIFY_SIGNAL or EVT_NOTIFY_WAIT set and NotifyFunction is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Type has either EVT_NOTIFY_SIGNAL or EVT_NOTIFY_WAIT set and NotifyTpl is not a supported TPL level.
+</td></tr>
+<tr>
+<td> EFI_OUT_OF_RESOURCES
+</td><td> The event could not be allocated.
+</td></tr></table>
+<a name="CreateEventEx.28.29"></a><h2> <span class="mw-headline">CreateEventEx()</span></h2>
+<p>Creates an event in a group.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+CreateEventEx (
+  IN  UINT32           Type,
+  IN  <a href="/wiki/index.php/EFI_TPL" title="EFI TPL">EFI_TPL</a>          NotifyTpl,
+  IN  <a href="/wiki/index.php/EFI_EVENT_NOTIFY" title="EFI EVENT NOTIFY">EFI_EVENT_NOTIFY</a> NotifyFunction OPTIONAL,
+  IN  CONST VOID       *NotifyContext OPTIONAL,
+  IN  CONST EFI_GUID   *EventGroup OPTIONAL,
+  OUT <a href="/wiki/index.php/EFI_EVENT" title="EFI EVENT">EFI_EVENT</a>        *Event
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Type
+</td><td> The type of event to create and its mode and attributes.
+</td></tr>
+<tr>
+<td> NotifyTpl
+</td><td> The task priority level of event notifications,if needed. See <a href="/wiki/index.php/EFI_BOOT_SERVICES#RaiseTPL.28.29" title="EFI BOOT SERVICES">RaiseTPL()</a>.
+</td></tr>
+<tr>
+<td> NotifyFunction
+</td><td> Pointer to the event’s notification function, if any.
+</td></tr>
+<tr>
+<td> NotifyContext
+</td><td> Pointer to the notification function’s context; corresponds to parameter Context in the notification function.
+</td></tr>
+<tr>
+<td> EventGroup
+</td><td> Pointer to the unique identifier of the group to which this event belongs. If this is NULL, then the function behaves as if the parameters were passed to <a href="/wiki/index.php/EFI_BOOT_SERVICES#CreateEvent.28.29" title="EFI BOOT SERVICES">CreateEvent()</a>.
+</td></tr>
+<tr>
+<td> Event
+</td><td> Pointer to the newly created event if the call succeeds; undefined otherwise.
+</td></tr></table>
+<p><b>Description</b><br />
+The CreateEventEx function creates a new event of type Type and returns it in the specified location indicated by Event. The event’s notification function, context and task priority are specified by NotifyFunction, NotifyContext, and NotifyTpl, respectively. The event will be added to the group of events identified by EventGroup.
+</p><p>If no group is specified by EventGroup, then this function behaves as if the same parameters had been passed to CreateEvent.
+Event groups are collections of events identified by a shared EFI_GUID where, when one member event is signaled, all other events are signaled and their individual notification actions are taken (as described in CreateEvent). All events are guaranteed to be signaled before the first notification action is taken. All notification functions will be executed in the order specified by their NotifyTpl. A single event can only be part of a single event group. An event may be removed from an event group by using <a href="/wiki/index.php/EFI_BOOT_SERVICES#CloseEvent.28.29" title="EFI BOOT SERVICES">CloseEvent()</a>.
+</p><p>The Type of an event uses the same values as defined in CreateEvent except that EVT_SIGNAL_EXIT_BOOT_SERVICES and EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE are not valid.
+If Type has EVT_NOTIFY_SIGNAL or EVT_NOTIFY_WAIT, then NotifyFunction must be non- NULL and NotifyTpl must be a valid task priority level. Otherwise these parameters are ignored.
+More than one event of type EVT_TIMER may be part of a single event group. However, there is no mechanism for determining which of the timers was signaled.
+</p><p><i>Configuration Table Groups</i><br />
+The GUID for a configuration table also defines a corresponding event group GUID with the same value . If the data represented by a configuration table is changed,  <a href="/wiki/index.php/EFI_BOOT_SERVICES#InstallConfigurationTable.28.29" title="EFI BOOT SERVICES">InstallConfigurationTable()</a> should be called. When <a href="/wiki/index.php/EFI_BOOT_SERVICES#InstallConfigurationTable.28.29" title="EFI BOOT SERVICES">InstallConfigurationTable()</a> is called, the corresponding event is signaled. When this event is signaled, any components that cache information from the configuration table can optionally update their cached state.
+For example, EFI_ACPI_TABLE_GUID defines a configuration table for ACPI data. When ACPI data is changed, InstallConfigurationTable() is called. During the execution of <a href="/wiki/index.php/EFI_BOOT_SERVICES#InstallConfigurationTable.28.29" title="EFI BOOT SERVICES">InstallConfigurationTable()</a>, a corresponding event group with EFI_ACPI_TABLE_GUID is signalled, allowing an application to invalidate any cached ACPI data.
+</p><p>Pre-Defined Event Groups
+This section describes the pre-defined event groups used by the UEFI specification.
+</p>
+<ul><li> <a href="/wiki/index.php?title=EFI_EVENT_GROUP_EXIT_BOOT_SERVICES&amp;action=edit&amp;redlink=1" class="new" title="EFI EVENT GROUP EXIT BOOT SERVICES (not yet written)">EFI_EVENT_GROUP_EXIT_BOOT_SERVICES</a>
+</li><li> <a href="/wiki/index.php?title=EFI_EVENT_GROUP_VIRTUAL_ADDRESS_CHANGE&amp;action=edit&amp;redlink=1" class="new" title="EFI EVENT GROUP VIRTUAL ADDRESS CHANGE (not yet written)">EFI_EVENT_GROUP_VIRTUAL_ADDRESS_CHANGE</a>
+</li><li> <a href="/wiki/index.php?title=EFI_EVENT_GROUP_MEMORY_MAP_CHANGE&amp;action=edit&amp;redlink=1" class="new" title="EFI EVENT GROUP MEMORY MAP CHANGE (not yet written)">EFI_EVENT_GROUP_MEMORY_MAP_CHANGE</a>
+</li><li> <a href="/wiki/index.php/EFI_EVENT_GROUP_READY_TO_BOOT" title="EFI EVENT GROUP READY TO BOOT">EFI_EVENT_GROUP_READY_TO_BOOT</a>
+</li></ul>
+<p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The event structure was created.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> One of the parameters has an invalid value.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Event is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Type has an unsupported bit set.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Type has both EVT_NOTIFY_SIGNAL and EVT_NOTIFY_WAIT set.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Type has either EVT_NOTIFY_SIGNAL or EVT_NOTIFY_WAIT set and NotifyFunction is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Type has either EVT_NOTIFY_SIGNAL or EVT_NOTIFY_WAIT set and NotifyTpl is not a supported TPL level.
+</td></tr>
+<tr>
+<td> EFI_OUT_OF_RESOURCES
+</td><td> The event could not be allocated.
+</td></tr></table>
+<p><br />
+</p>
+<a name="Exit.28.29"></a><h2> <span class="mw-headline">Exit()</span></h2>
+<p>Terminates a loaded EFI image and returns control to boot services.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+Exit (
+  IN <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a> ImageHandle,
+  IN <a href="/wiki/index.php/EFI_STATUS" title="EFI STATUS">EFI_STATUS</a> ExitStatus,
+  IN UINTN      ExitDataSize,
+  IN CHAR16     *ExitData OPTIONAL
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> ImageHandle
+</td><td> Handle that identifies the image. This parameter is passed to the image on entry.
+</td></tr>
+<tr>
+<td> ExitStatus
+</td><td> The image’s exit code.
+</td></tr>
+<tr>
+<td> ExitDataSize
+</td><td> The size, in bytes, of ExitData. Ignored if ExitStatus is EFI_SUCCESS.
+</td></tr>
+<tr>
+<td> ExitData
+</td><td> Pointer to a data buffer that includes a Null-terminated Unicode string, optionally followed by additional binary data. The string is a description that the caller may use to further indicate the reason for the image’s exit. ExitData is only valid if ExitStatus is something other than EFI_SUCCESS. The ExitData buffer must be allocated by calling <a href="/wiki/index.php/EFI_BOOT_SERVICES#AllocatePool.28.29" title="EFI BOOT SERVICES">AllocatePool()</a>.
+</td></tr></table>
+<p><b>Description</b><br />
+The Exit() function terminates the image referenced by ImageHandle and returns control to boot services. This function may not be called if the image has already returned from its entry point (EFI_IMAGE_ENTRY_POINT) or if it has loaded any child images that have not exited (all child images must exit before this image can exit).
+</p><p>Using Exit() is similar to returning from the image’s <a href="/wiki/index.php/EFI_IMAGE_ENTRY_POINT" title="EFI IMAGE ENTRY POINT">EFI_IMAGE_ENTRY_POINT</a> except that Exit() may also return additional ExitData.
+</p><p>When an application exits a compliant system, firmware frees the memory used to hold the image. The firmware also frees its references to the ImageHandle and the handle itself. Before exiting, the application is responsible for freeing any resources it allocated. This includes memory (pages and/or pool), open file system handles, and so forth. The only exception to this rule is the ExitData buffer, which must be freed by the caller of <a href="/wiki/index.php/EFI_BOOT_SERVICES#StartImage.28.29" title="EFI BOOT SERVICES">StartImage()</a>. (If the buffer is needed, firmware must allocate it by calling AllocatePool() and must return a pointer to it to the caller of <a href="/wiki/index.php/EFI_BOOT_SERVICES#StartImage.28.29" title="EFI BOOT SERVICES">StartImage()</a>.)
+</p><p>When an EFI boot service driver or runtime service driver exits, firmware frees the image only if the ExitStatus is an error code; otherwise the image stays resident in memory. The driver must not return an error code if it has installed any protocol handlers or other active callbacks into the system that have not (or cannot) be cleaned up. If the driver exits with an error code, it is responsible for freeing all resources before exiting. This includes any allocated memory (pages and/or pool), open file system handles, and so forth.
+It is valid to call Exit() or <a href="/wiki/index.php/EFI_BOOT_SERVICES#UnloadImage.28.29" title="EFI BOOT SERVICES">UnloadImage()</a> for an image that was loaded by <a href="/wiki/index.php/EFI_BOOT_SERVICES#LoadImage.28.29" title="EFI BOOT SERVICES">LoadImage()</a> before calling StartImage(). This will free the image from memory without having started it.
+</p><p>If ImageHandle is a UEFI application, then all of the protocols that were opened by ImageHandle using the boot service <a href="/wiki/index.php/EFI_BOOT_SERVICES#OpenProtocol.28.29" title="EFI BOOT SERVICES">OpenProtocol()</a> are automatically closed with the boot service <a href="/wiki/index.php/EFI_BOOT_SERVICES#CloseProtocol.28.29" title="EFI BOOT SERVICES">CloseProtocol()</a>. If ImageHandle is an EFI boot services driver or runtime service driver, and ExitStatus is an error code, then all of the protocols that were opened by ImageHandle using the boot service <a href="/wiki/index.php/EFI_BOOT_SERVICES#OpenProtocol.28.29" title="EFI BOOT SERVICES">OpenProtocol()</a> are automatically closed with the boot service <a href="/wiki/index.php/EFI_BOOT_SERVICES#CloseProtocol.28.29" title="EFI BOOT SERVICES">CloseProtocol()</a>. If ImageHandle is an EFI boot services driver or runtime service driver, and ExitStatus is not an error code, then no protocols are automatically closed by this service.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> (Does not return.)
+</td><td> Image exit. Control is returned to the <a href="/wiki/index.php/EFI_BOOT_SERVICES#StartImage.28.29" title="EFI BOOT SERVICES">StartImage()</a> call that invoked the image specified by ImageHandle.
+</td></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The image specified by ImageHandle was unloaded. This condition only occurs for images that have been loaded with <a href="/wiki/index.php/EFI_BOOT_SERVICES#LoadImage.28.29" title="EFI BOOT SERVICES">LoadImage()</a> but have not been started with <a href="/wiki/index.php/EFI_BOOT_SERVICES#StartImage.28.29" title="EFI BOOT SERVICES">StartImage()</a>.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> The image specified by ImageHandle has been loaded and started with <a href="/wiki/index.php/EFI_BOOT_SERVICES#LoadImage.28.29" title="EFI BOOT SERVICES">LoadImage()</a> and <a href="/wiki/index.php/EFI_BOOT_SERVICES#StartImage.28.29" title="EFI BOOT SERVICES">StartImage()</a>, but the image is not the currently executing image.
+</td></tr></table>
+<a name="ExitBootServices.28.29"></a><h2> <span class="mw-headline">ExitBootServices()</span></h2>
+<p>Terminates all boot services.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+ExitBootServices (
+  IN <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a> ImageHandle,
+  IN UINTN      MapKey
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> ImageHandle
+</td><td> Handle that identifies the exiting image.
+</td></tr>
+<tr>
+<td> MapKey
+</td><td> Key to the latest memory map.
+</td></tr></table>
+<p><b>Description</b><br />
+The ExitBootServices() function is called by the currently executing EFI OS loader image to terminate all boot services. On success, the loader becomes responsible for the continued operation of the system. All events of type EVT_SIGNAL_EXIT_BOOT_SERVICES must be signaled before ExitBootServices() returns.
+</p><p>An EFI OS loader must ensure that it has the system’s current memory map at the time it calls ExitBootServices(). This is done by passing in the current memory map’s MapKey value as returned by <a href="#GetMemoryMap.28.29" title="">GetMemoryMap()</a>. Care must be taken to ensure that the memory map does not change between these two calls. It is suggested that <a href="#GetMemoryMap.28.29" title="">GetMemoryMap()</a> be called immediately before calling ExitBootServices(). If MapKey value is incorrect, ExitBootServices() returns EFI_INVALID_PARAMETER and <a href="#GetMemoryMap.28.29" title="">GetMemoryMap()</a> with ExitBootServices() must be called again. Firmware implementation may choose to do a partial shutdown of the boot services during the first call to ExitBootServices(). EFI OS loader should not make calls to any boot service function other then GetMemoryMap() after the first call to ExitBootServices().
+</p><p>On success, the EFI OS loader owns all available memory in the system. In addition, the loader can treat all memory in the map marked as EfiBootServicesCode and EfiBootServicesData as available free memory. No further calls to boot service functions or EFI device-handle-based protocols may be used, and the boot services watchdog timer is disabled. On success, several fields of the EFI System Table should be set to NULL. These include ConsoleInHandle, ConIn, ConsoleOutHandle, ConOut, StandardErrorHandle, StdErr, and BootServicesTable. In addition, since fields of the EFI System Table are being modified, the 32-bit CRC for the EFI System Table must be recomputed.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> Boot services have been terminated.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> <i>MapKey</i> is incorrect.
+</td></tr></table>
+<a name="FreePages.28.29"></a><h2> <span class="mw-headline">FreePages()</span></h2>
+<p>Frees memory pages.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+FreePages (
+  IN <a href="/wiki/index.php/EFI_PHYSICAL_ADDRESS" title="EFI PHYSICAL ADDRESS">EFI_PHYSICAL_ADDRESS</a> Memory,
+  IN UINTN                Pages
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Memory
+</td><td> The base physical address of the pages to be freed.
+</td></tr>
+<tr>
+<td> Pages
+</td><td> The number of contiguous 4 KB pages to free.
+</td></tr></table>
+<p><b>Description</b><br />
+The FreePages() function returns memory allocated by <a href="#AllocatePages.28.29" title="">AllocatePages()</a> to the firmware.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The requested memory pages were freed.
+</td></tr>
+<tr>
+<td> EFI_NOT_FOUND
+</td><td> The requested memory pages were not allocated with <a href="#AllocatePages.28.29" title="">AllocatePages()</a>.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Memory is not a page-aligned address or Pages is invalid.
+</td></tr></table>
+<a name="FreePool.28.29"></a><h2> <span class="mw-headline">FreePool()</span></h2>
+<p>Returns pool memory to the system.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+FreePool (
+  IN VOID *Buffer
+  );
+</pre>
+<p><br />
+<b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Buffer
+</td><td> Pointer to the buffer to free.
+</td></tr></table>
+<p><b>Description</b><br />
+The FreePool() function returns the memory specified by Buffer to the system. On return, the memory’s type is <a href="/wiki/index.php/EFI_MEMORY_TYPE#EfiConventionalMemory" title="EFI MEMORY TYPE">EfiConventionalMemory</a>. The Buffer that is freed must have been allocated by <a href="#AllocatePages.28.29" title="">AllocatePages()</a>.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The memory was returned to the system.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Buffer was invalid.
+</td></tr></table>
+<a name="GetMemoryMap.28.29"></a><h2> <span class="mw-headline">GetMemoryMap()</span></h2>
+<p>Returns the current memory map.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+GetMemoryMap (
+  IN OUT UINTN                 *MemoryMapSize,
+  IN OUT <a href="/wiki/index.php/EFI_MEMORY_DESCRIPTOR" title="EFI MEMORY DESCRIPTOR">EFI_MEMORY_DESCRIPTOR</a> *MemoryMap,
+  OUT    UINTN                 *MapKey,
+  OUT    UINTN                 *DescriptorSize,
+  OUT    UINT32                *DescriptorVersion
+);
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> MemoryMapSize
+</td><td> A pointer to the size, in bytes, of the MemoryMap buffer. On input, this is the size of the buffer allocated by the caller. On output, it is the size of the buffer returned by the firmware if the buffer was large enough, or the size of the buffer needed to contain the map if the buffer was too small.
+</td></tr>
+<tr>
+<td> MemoryMap
+</td><td> A pointer to the buffer in which firmware places the current memory map. The map is an array of <a href="/wiki/index.php/EFI_MEMORY_DESCRIPTOR" title="EFI MEMORY DESCRIPTOR">EFI_MEMORY_DESCRIPTORs</a>.
+</td></tr>
+<tr>
+<td> MapKey
+</td><td> A pointer to the location in which firmware returns the key for the current memory map.
+</td></tr>
+<tr>
+<td> DescriptorSize
+</td><td> A pointer to the location in which firmware returns the size, in bytes, of an individual <a href="/wiki/index.php/EFI_MEMORY_DESCRIPTOR" title="EFI MEMORY DESCRIPTOR">EFI_MEMORY_DESCRIPTOR</a>.
+</td></tr>
+<tr>
+<td> DescriptorVersion
+</td><td> A pointer to the location in which firmware returns the version number associated with the <a href="/wiki/index.php/EFI_MEMORY_DESCRIPTOR" title="EFI MEMORY DESCRIPTOR">EFI_MEMORY_DESCRIPTOR</a>.
+</td></tr></table>
+<p><b>Related Definitions</b><br />
+</p>
+<pre>#define EFI_MEMORY_DESCRIPTOR_VERSION 1
+</pre>
+<p><b>Description</b><br />
+The GetMemoryMap() function returns a copy of the current memory map. The map is an array of memory descriptors, each of which describes a contiguous block of memory. The map describes all of memory, no matter how it is being used. That is, it includes blocks allocated by <a href="#AllocatePages.28.29" title="">AllocatePages()</a> and <a href="#AllocatePool.28.29" title="">AllocatePool()</a>, as well as blocks that the firmware is using for its own purposes. The memory map is only used to describe memory that is present in the system. Memory descriptors are never used to describe holes in the system memory map.
+</p><p>Until <a href="#ExitBootServices.28.29" title="">ExitBootServices()</a> is called, the memory map is owned by the firmware and the currently executing EFI Image should only use memory pages it has explicitly allocated.
+</p><p>If the MemoryMap buffer is too small, the EFI_BUFFER_TOO_SMALL error code is returned and the MemoryMapSize value contains the size of the buffer needed to contain the current memory map. The actual size of the buffer allocated for the consequent call to GetMemoryMap() should be bigger then the value returned in MemoryMapSize, since allocation of the new buffer may potentially increase memory map size.
+</p><p>On success a <i>MapKey</i> is returned that identifies the current memory map. The firmware’s key is changed every time something in the memory map changes. In order to successfully invoke ExitBootServices() the caller must provide the current memory map key.
+The GetMemoryMap() function also returns the size and revision number of the <a href="/wiki/index.php/EFI_MEMORY_DESCRIPTOR" title="EFI MEMORY DESCRIPTOR">EFI_MEMORY_DESCRIPTOR</a>. The <i>DescriptorSize</i> represents the size in bytes of an <a href="/wiki/index.php/EFI_MEMORY_DESCRIPTOR" title="EFI MEMORY DESCRIPTOR">EFI_MEMORY_DESCRIPTOR</a> array element returned in MemoryMap. The size is returned to allow for future expansion of the <a href="/wiki/index.php/EFI_MEMORY_DESCRIPTOR" title="EFI MEMORY DESCRIPTOR">EFI_MEMORY_DESCRIPTOR</a> in response to hardware innovation. The structure of the EFI_MEMORY_DESCRIPTOR may be extended in the future but it will remain backwards compatible with the current definition. Thus OS software must use the <i>DescriptorSize</i> to find the start of each <a href="/wiki/index.php/EFI_MEMORY_DESCRIPTOR" title="EFI MEMORY DESCRIPTOR">EFI_MEMORY_DESCRIPTOR</a> in the <i>MemoryMap</i> array.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The memory map was returned in the <i>MemoryMap</i> buffer.
+</td></tr>
+<tr>
+<td> EFI_BUFFER_TOO_SMALL
+</td><td> The <i>MemoryMap</i> buffer was too small. The current buffer size needed to hold the memory map is returned in <i>MemoryMapSize</i>.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> <i>MemoryMapSize</i> is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> The <i>MemoryMap</i> buffer is not too small and <i>MemoryMap</i> is NULL.
+</td></tr></table>
+<a name="GetNextMonotonicCount.28.29"></a><h2> <span class="mw-headline">GetNextMonotonicCount()</span></h2>
+<p>Returns a monotonically increasing count for the platform.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+GetNextMonotonicCount (
+  OUT UINT64 *Count
+  );
+</pre>
+<p><b>Parameters</b><br />
+Count
+Pointer to returned value.
+</p><p><b>Description</b><br />
+The GetNextMonotonicCount() function returns a 64-bit value that is numerically larger then the last time the function was called.
+</p><p>The platform’s monotonic counter is comprised of two parts: the high 32 bits and the low 32 bits. The low 32-bit value is volatile and is reset to zero on every system reset. It is increased by 1 on every call to GetNextMonotonicCount(). The high 32-bit value is nonvolatile and is increased by one on whenever the system resets or the low 32-bit counter overflows.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The next monotonic count was returned.
+</td></tr>
+<tr>
+<td> EFI_DEVICE_ERROR
+</td><td> The device is not functioning properly.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Count is NULL.
+</td></tr></table>
+<a name="HandleProtocol.28.29"></a><h2> <span class="mw-headline">HandleProtocol()</span></h2>
+<p>Queries a handle to determine if it supports a specified protocol.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+HandleProtocol (
+  IN  <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a> Handle,
+  IN  <a href="/wiki/index.php/EFI_GUID" title="EFI GUID">EFI_GUID</a>   *Protocol,
+  OUT VOID       **Interface
+  );
+</pre>
+<p><b>Parameters</b><br />
+Handle
+The handle being queried. If Handle is not a valid EFI_HANDLE, then EFI_INVALID_PARAMETER is returned. 
+Protocol
+The published unique identifier of the protocol. It is the caller’s responsibility to pass in a valid GUID. See “Wired For Management Baseline” for a description of valid GUID values. 
+Interface
+Supplies the address where a pointer to the corresponding Protocol Interface is returned. NULL will be returned in *Interface if a structure is not associated with Protocol.
+</p><p><b>Description</b><br />
+The HandleProtocol() function queries Handle to determine if it supports Protocol. If it does, then on return Interface points to a pointer to the corresponding Protocol Interface. Interface can then be passed to any protocol service to identify the context of the request.
+</p><p>The HandleProtocol() function is still available for use by old EFI applications and drivers. However, all new applications and drivers should use OpenProtocol() in place of HandleProtocol(). The following code fragment shows a possible implementation of HandleProtocol() using <a href="#OpenProtocol.28.29" title="">OpenProtocol()</a>. The variable EfiCoreImageHandle is the image handle of the EFI core.
+</p>
+<pre>EFI_STATUS
+HandleProtocol (
+  IN EFI_HANDLE Handle,
+  IN EFI_GUID *Protocol,
+  OUT VOID **Interface
+  )
+{
+  return OpenProtocol (
+    Handle,
+    Protocol,
+    Interface,
+    EfiCoreImageHandle,
+    NULL,
+    EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL
+    );
+}
+</pre>
+<p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The interface information for the specified protocol was returned.
+</td></tr>
+<tr>
+<td> EFI_UNSUPPORTED
+</td><td> The device does not support the specified protocol.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Handle is not a valid EFI_HANDLE..
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Protocol is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Interface is NULL
+</td></tr></table>
+<a name="InstallConfigurationTable.28.29"></a><h2> <span class="mw-headline">InstallConfigurationTable()</span></h2>
+<p>Adds, updates, or removes a configuration table entry from the EFI System Table.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+InstallConfigurationTable (
+  IN EFI_GUID *Guid,
+  IN VOID     *Table
+  );
+</pre>
+<p><b>Parameters</b><br />
+Guid
+A pointer to the GUID for the entry to add, update, or remove.
+Table
+A pointer to the configuration table for the entry to add, update, or remove. May be NULL.
+</p><p><b>Description</b><br />
+The InstallConfigurationTable() function is used to maintain the list of configuration tables that are stored in the EFI System Table. The list is stored as an array of (GUID, Pointer) pairs. The list must be allocated from pool memory with PoolType set to EfiRuntimeServicesData.
+</p><p>If Guid is not a valid GUID, EFI_INVALID_PARAMETER is returned. If Guid is valid, there are four possibilities: • If Guid is not present in the System Table, and Table is not NULL, then the (Guid, Table) pair is added to the System Table. See Note below.
+</p>
+<ul><li> If Guid is not present in the System Table, and Table is NULL, then EFI_NOT_FOUND is returned.
+</li><li> If Guid is present in the System Table, and Table is not NULL, then the (Guid, Table) pair is updated with the new Table value.
+</li><li> If Guid is present in the System Table, and Table is NULL, then the entry associated with Guid is removed from the System Table. If an add, modify, or remove operation is completed, then EFI_SUCCESS is returned.
+</li></ul>
+<p>NOTE: If there is not enough memory to perform an add operation, then EFI_OUT_OF_RESOURCES is returned.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The (Guid, Table) pair was added, updated, or removed.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Guid is not valid.
+</td></tr>
+<tr>
+<td> EFI_NOT_FOUND
+</td><td> An attempt was made to delete a nonexistent entry.
+</td></tr>
+<tr>
+<td> EFI_OUT_OF_RESOURCES
+</td><td> There is not enough memory available to complete the operation.
+</td></tr></table>
+<a name="InstallProtocolInterface.28.29"></a><h2> <span class="mw-headline">InstallProtocolInterface()</span></h2>
+<p>Installs a protocol interface on a device handle. If the handle does not exist, it is created and added to the list of handles in the system. <a href="/wiki/index.php/EFI_BOOT_SERVICES#InstallMultipleProtocolInterfaces.28.29" title="EFI BOOT SERVICES">InstallMultipleProtocolInterfaces()</a> performs more error checking than <a href="/wiki/index.php/EFI_BOOT_SERVICES#InstallProtocolInterface.28.29" title="EFI BOOT SERVICES">InstallProtocolInterface()</a>, so it is recommended that <a href="/wiki/index.php/EFI_BOOT_SERVICES#InstallMultipleProtocolInterfaces.28.29" title="EFI BOOT SERVICES">InstallMultipleProtocolInterfaces()</a> be used in place of <a href="/wiki/index.php/EFI_BOOT_SERVICES#InstallProtocolInterface.28.29" title="EFI BOOT SERVICES">InstallProtocolInterface()</a>.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+InstallProtocolInterface (
+  IN OUT <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a>     *Handle,
+  IN <a href="/wiki/index.php/EFI_GUID" title="EFI GUID">EFI_GUID</a>           *Protocol,
+  IN <a href="/wiki/index.php/EFI_INTERFACE_TYPE" title="EFI INTERFACE TYPE">EFI_INTERFACE_TYPE</a> InterfaceType,
+  IN VOID               *Interface
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Handle
+</td><td> A pointer to the EFI_HANDLE on which the interface is to be installed. If *Handle is NULL on input, a new handle is created and returned on output. If *Handle is not NULL on input, the protocol is added to the handle, and the handle is returned unmodified. If *Handle is not a valid handle, then EFI_INVALID_PARAMETER is returned.
+</td></tr>
+<tr>
+<td> Protocol
+</td><td> The numeric ID of the protocol interface. It is the caller’s responsibility to pass in a valid GUID.
+</td></tr>
+<tr>
+<td> InterfaceType
+</td><td> Indicates whether Interface is supplied in native form. This value indicates the original execution environment of the request.
+</td></tr>
+<tr>
+<td> Interface
+</td><td> A pointer to the protocol interface. The Interface must adhere to the structure defined by Protocol. NULL can be used if a structure is not associated with Protocol.
+</td></tr></table>
+<p><b>Description</b><br />
+The InstallProtocolInterface() function installs a protocol interface (a GUID/Protocol Interface structure pair) on a device handle. The same GUID cannot be installed more than once onto the same handle. If installation of a duplicate GUID on a handle is attempted, an EFI_INVALID_PARAMETER will result.
+</p><p>Installing a protocol interface allows other components to locate the Handle, and the interfaces installed on it.
+</p><p>When a protocol interface is installed, the firmware calls all notification functions that have registered to wait for the installation of Protocol. For more information, see the <a href="/wiki/index.php/EFI_BOOT_SERVICES#RegisterProtocolNotify.28.29" title="EFI BOOT SERVICES">RegisterProtocolNotify()</a> function description.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The protocol interface was installed.
+</td></tr>
+<tr>
+<td> EFI_OUT_OF_RESOURCES
+</td><td> Space for a new handle could not be allocated.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Handle is NULL
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Protocol is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> InterfaceType is not EFI_NATIVE_INTERFACE.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Protocol is already installed on the handle specified by Handle.
+</td></tr></table>
+<a name="LoadImage.28.29"></a><h2> <span class="mw-headline">LoadImage()</span></h2>
+<p>Loads an EFI image into memory.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+LoadImage (
+  IN BOOLEAN BootPolicy,
+  IN EFI_HANDLE ParentImageHandle,
+  IN <a href="/wiki/index.php/EFI_DEVICE_PATH_PROTOCOL" title="EFI DEVICE PATH PROTOCOL">EFI_DEVICE_PATH_PROTOCOL</a> *DevicePath,
+  IN VOID *SourceBuffer OPTIONAL,
+  IN UINTN SourceSize,
+  OUT EFI_HANDLE *ImageHandle
+  );
+</pre>
+<p><br />
+<b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> BootPolicy
+</td><td> If TRUE, indicates that the request originates from the boot manager, and that the boot manager is attempting to load DevicePath as a boot selection. Ignored if SourceBuffer is not NULL.
+</td></tr>
+<tr>
+<td> ParentImageHandle
+</td><td> The caller’s image handle. This field is used to initialize the ParentHandle field of the EFI_LOADED_IMAGE_PROTOCOL for the image that is being loaded.
+</td></tr>
+<tr>
+<td> DevicePath
+</td><td> The DeviceHandle specific file path from which the image is loaded.
+</td></tr>
+<tr>
+<td> SourceBuffer
+</td><td> If not NULL, a pointer to the memory location containing a copy of the image to be loaded.
+</td></tr>
+<tr>
+<td> SourceSize
+</td><td> The size in bytes of SourceBuffer. Ignored if SourceBuffer is NULL.
+</td></tr>
+<tr>
+<td> ImageHandle
+</td><td> Pointer to the returned image handle that is created when the image is successfully loaded.
+</td></tr></table>
+<p><b>Description</b><br />
+The LoadImage() function loads a UEFI image into memory and returns a handle to the image. The image is loaded in one of two ways.
+</p>
+<ul><li> If SourceBuffer is not NULL, the function is a memory-to-memory load in which SourceBuffer points to the image to be loaded and SourceSize indicates the image’s size in bytes. In this case, the caller has copied the image into SourceBuffer and can free the buffer once loading is complete.
+</li><li> If SourceBuffer is NULL, the function is a file copy operation that uses the <a href="/wiki/index.php/EFI_SIMPLE_FILE_SYSTEM_PROTOCOL" title="EFI SIMPLE FILE SYSTEM PROTOCOL">EFI_SIMPLE_FILE_SYSTEM_PROTOCOL</a>. If there is no instance of <a href="/wiki/index.php/EFI_SIMPLE_FILE_SYSTEM_PROTOCOL" title="EFI SIMPLE FILE SYSTEM PROTOCOL">EFI_SIMPLE_FILE_SYSTEM_PROTOCOL</a> associated with file path, then this function will attempt to use <a href="/wiki/index.php/EFI_LOAD_FILE_PROTOCOL" title="EFI LOAD FILE PROTOCOL">EFI_LOAD_FILE_PROTOCOL</a> (BootPolicy is TRUE) or <a href="/wiki/index.php?title=EFI_LOAD_FILE2_PROTOCOL&amp;action=edit&amp;redlink=1" class="new" title="EFI LOAD FILE2 PROTOCOL (not yet written)">EFI_LOAD_FILE2_PROTOCOL</a>, and then <a href="/wiki/index.php/EFI_LOAD_FILE_PROTOCOL" title="EFI LOAD FILE PROTOCOL">EFI_LOAD_FILE_PROTOCOL</a> (BootPolicy is FALSE).
+</li></ul>
+<p>In all cases, this function will use the instance of these protocols associated with the handle that most closely matches DevicePath will be used. See the boot service description for more information on how the closest handle is located.
+</p>
+<ul><li> In the case of <a href="/wiki/index.php/EFI_SIMPLE_FILE_SYSTEM_PROTOCOL" title="EFI SIMPLE FILE SYSTEM PROTOCOL">EFI_SIMPLE_FILE_SYSTEM_PROTOCOL</a>, the path name from the File Path Media Device Path node(s) of DevicePath is used.
+</li><li> In the case of <a href="/wiki/index.php/EFI_LOAD_FILE_PROTOCOL" title="EFI LOAD FILE PROTOCOL">EFI_LOAD_FILE_PROTOCOL</a>, the remaining device path nodes of DevicePath and the BootPolicy flag are passed to the
+</li></ul>
+<p><a href="/wiki/index.php/EFI_LOAD_FILE_PROTOCOL#LoadFile.28.29" title="EFI LOAD FILE PROTOCOL">LoadFile()</a> function. The default image responsible for booting is loaded when DevicePath specifies only the device (and there are no further device nodes). 
+</p>
+<ul><li> In the case of <a href="/wiki/index.php?title=EFI_LOAD_FILE2_PROTOCOL&amp;action=edit&amp;redlink=1" class="new" title="EFI LOAD FILE2 PROTOCOL (not yet written)">EFI_LOAD_FILE2_PROTOCOL</a>, the behavior is the same as above, except that it is only used if BootOption is FALSE. 
+</li><li> If the platform supports driver signing and the image signature is not valid, then information about the image is recorded and EFI_SECURITY_VIOLATION is returned.
+</li><li> If the platform supports user authentication and loading of images on the specified FilePath is forbidden in the current user profile, then the information about the image is recorded and EFI_SECURITY_VIOLATION is returned.
+</li></ul>
+<p>Once the image is loaded, firmware creates and returns an EFI_HANDLE that identifies the image and supports <a href="/wiki/index.php/EFI_LOADED_IMAGE_PROTOCOL" title="EFI LOADED IMAGE PROTOCOL">EFI_LOADED_IMAGE_PROTOCOL</a> and the <a href="/wiki/index.php/EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL" title="EFI LOADED IMAGE DEVICE PATH PROTOCOL">EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL</a>. The caller may fill in the image’s “load options” data, or add additional protocol support to the handle before passing control to the newly loaded image by calling StartImage(). Also, once the image is loaded, the caller either starts it by calling <a href="#StartImage.28.29" title="">StartImage()</a> or unloads it by calling <a href="#UnloadImage.28.29" title="">UnloadImage()</a>.
+</p><p>Once the image is loaded, LoadImage() installs the <a href="/wiki/index.php/EFI_HII_PACKAGE_LIST_PROTOCOL" title="EFI HII PACKAGE LIST PROTOCOL">EFI_HII_PACKAGE_LIST_PROTOCOL</a> on the handle if the image contains a custom PE/COFF resource with the type 'HII'. The protocol's interface pointer points to the HII package list which is contained in the resource's data. 
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> Image was loaded into memory correctly.
+</td></tr>
+<tr>
+<td> EFI_NOT_FOUND
+</td><td> Both SourceBuffer and DevicePath are NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> One of the parameters has an invalid value.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> ImageHandle is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> ParentImageHandle is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> ParentImageHandle is not a valid EFI_HANDLE.
+</td></tr>
+<tr>
+<td> EFI_UNSUPPORTED
+</td><td> The image type is not supported.
+</td></tr>
+<tr>
+<td> EFI_OUT_OF_RESOURCES
+</td><td> Image was not loaded due to insufficient resources.
+</td></tr>
+<tr>
+<td> EFI_LOAD_ERROR
+</td><td> Image was not loaded because the image format was corrupt or not understood.
+</td></tr>
+<tr>
+<td> EFI_DEVICE_ERROR
+</td><td> Image was not loaded because the device returned a read error.
+</td></tr>
+<tr>
+<td> EFI_SECURITY_VIOLATION
+</td><td> Image was not loaded because the image's signature was invalid.
+</td></tr></table>
+<a name="LocateDevicePath.28.29"></a><h2> <span class="mw-headline">LocateDevicePath()</span></h2>
+<p>Locates the handle to a device on the device path that supports the specified protocol.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+LocateDevicePath (
+  IN     <a href="/wiki/index.php/EFI_GUID" title="EFI GUID">EFI_GUID</a>                 *Protocol,
+  IN OUT <a href="/wiki/index.php/EFI_DEVICE_PATH_PROTOCOL" title="EFI DEVICE PATH PROTOCOL">EFI_DEVICE_PATH_PROTOCOL</a> **DevicePath,
+  OUT    <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a>               *Device
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Protocol
+</td><td> The protocol to search for.
+</td></tr>
+<tr>
+<td> DevicePath
+</td><td> On input, a pointer to a pointer to the device path. On output, the device path pointer is modified to point to the remaining part of the device path—that is, when the function finds the closest handle, it splits the device path into two parts, stripping off the front part, and returning the remaining portion.
+</td></tr>
+<tr>
+<td> Device
+</td><td> A pointer to the returned device handle.
+</td></tr></table>
+<p><b>Description</b><br />
+The LocateDevicePath() function locates all devices on DevicePath that support Protocol and returns the handle to the device that is closest to DevicePath. DevicePath is advanced over the device path nodes that were matched.
+</p><p>This function is useful for locating the proper instance of a protocol interface to use from a logical parent device driver. For example, a target device driver may issue the request with its own device path and locate the interfaces to perform I/O on its bus. It can also be used with a device path that contains a file path to strip off the file system portion of the device path, leaving the file path and handle to the file system driver needed to access the file.
+</p><p>If the handle for DevicePath supports the protocol (a direct match), the resulting device path is advanced to the device path terminator node.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The resulting handle was returned.
+</td></tr>
+<tr>
+<td> EFI_NOT_FOUND
+</td><td> No handles matched the search.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Protocol is NULL
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> DevicePath is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> A handle matched the search and Device is NULL.
+</td></tr></table>
+<a name="LocateHandle.28.29"></a><h2> <span class="mw-headline">LocateHandle()</span></h2>
+<p>Returns an array of handles that support a specified protocol.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+LocateHandle (
+  IN     <a href="/wiki/index.php/EFI_LOCATE_SEARCH_TYPE" title="EFI LOCATE SEARCH TYPE">EFI_LOCATE_SEARCH_TYPE</a> SearchType,
+  IN     <a href="/wiki/index.php/EFI_GUID" title="EFI GUID">EFI_GUID</a>               *Protocol OPTIONAL,
+  IN     VOID                   *SearchKey OPTIONAL,
+  IN OUT UINTN                  *BufferSize,
+  OUT    <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a>             *Buffer
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> SearchType
+</td><td> Specifies which handle(s) are to be returned.
+</td></tr>
+<tr>
+<td> Protocol
+</td><td> Specifies the protocol to search by. This parameter is only valid if SearchType is ByProtocol.
+</td></tr>
+<tr>
+<td> SearchKey
+</td><td> Specifies the search key. This parameter is ignored if SearchType is AllHandles or ByProtocol. If SearchType is ByRegisterNotify, the parameter must be the Registration value returned by function RegisterProtocolNotify().
+</td></tr>
+<tr>
+<td> BufferSize
+</td><td> On input, the size in bytes of Buffer. On output, the size in bytes of the array returned in Buffer (if the buffer was large enough) or the size, in bytes, of the buffer needed to obtain the array (if the buffer was not large enough).
+</td></tr>
+<tr>
+<td> Buffer
+</td><td> The buffer in which the array is returned.
+</td></tr></table>
+<p><b>Description</b><br />
+The LocateHandle() function returns an array of handles that match the SearchType request. If the input value of BufferSize is too small, the function returns EFI_BUFFER_TOO_SMALL and updates BufferSize to the size of the buffer needed to obtain the array. 
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The array of handles was returned.
+</td></tr>
+<tr>
+<td> EFI_NOT_FOUND
+</td><td> No handles match the search.
+</td></tr>
+<tr>
+<td> EFI_BUFFER_TOO_SMALL
+</td><td> The BufferSize is too small for the result. BufferSize has been updated with the size needed to complete the request.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> SearchType is not a member of EFI_LOCATE_SEARCH_TYPE.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> SearchType is ByRegisterNotify and SearchKey is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> SearchType is ByProtocol and Protocol is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> One or more matches are found and BufferSize is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> BufferSize is large enough for the result and Buffer is NULL
+</td></tr></table>
+<a name="LocateProtocol.28.29"></a><h2> <span class="mw-headline">LocateProtocol()</span></h2>
+<p>Returns the first protocol instance that matches the given protocol.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+LocateProtocol (
+  IN  <a href="/wiki/index.php/EFI_GUID" title="EFI GUID">EFI_GUID</a> *Protocol,
+  IN  VOID     *Registration OPTIONAL,
+  OUT VOID     **Interface
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Protocol
+</td><td> Provides the protocol to search for.
+</td></tr>
+<tr>
+<td> Registration
+</td><td> Optional registration key returned from <a href="#RegisterProtocolNotify.28.29" title="">RegisterProtocolNotify()</a>. If <i>Registration</i> is NULL, then it is ignored.
+</td></tr>
+<tr>
+<td> Interface
+</td><td> On return, a pointer to the first interface that matches <i>Protocol</i> and <i>Registration</i>.
+</td></tr></table>
+<p><b>Description</b><br />
+The LocateProtocol() function finds the first device handle that support <i>Protocol</i>, and returns a pointer to the protocol interface from that handle in <i>Interface</i>. If no protocol instances are found, then <i>Interface</i> is set to NULL.
+</p><p>If <i>Interface</i> is NULL, then EFI_INVALID_PARAMETER is returned.
+If <i>Registration</i> is NULL, and there are no handles in the handle database that support <i>Protocol</i>, then EFI_NOT_FOUND is returned.
+</p><p>If <i>Registration</i> is not NULL, and there are no new handles for <i>Registration</i>, then EFI_NOT_FOUND is returned.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> A protocol instance matching <i>Protocol</i> was found and returned in <i>Interface</i>.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> <i>Interface</i> is NULL.
+</td></tr>
+<tr>
+<td> EFI_NOT_FOUND
+</td><td> No protocol instances were found that match <i>Protocol</i> and <i>Registration</i>.
+</td></tr></table>
+<a name="OpenProtocol.28.29"></a><h2> <span class="mw-headline">OpenProtocol()</span></h2>
+<p>Queries a handle to determine if it supports a specified protocol. If the protocol is supported by the handle, it opens the protocol on behalf of the calling agent. This is an extended version of the EFI boot service <a href="#HandleProtocol.28.29" title="">HandleProtocol()</a>.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+(EFIAPI *EFI_OPEN_PROTOCOL) (
+  IN  <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a> Handle,
+  IN  <a href="/wiki/index.php/EFI_GUID" title="EFI GUID">EFI_GUID</a>   *Protocol,
+  OUT VOID       **Interface OPTIONAL,
+  IN  <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a> AgentHandle,
+  IN  <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a> ControllerHandle,
+  IN  UINT32     Attributes
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Handle
+</td><td> The handle for the protocol interface that is being opened.
+</td></tr>
+<tr>
+<td> Protocol
+</td><td> The published unique identifier of the protocol. It is the caller’s responsibility to pass in a valid GUID. See “Wired For Management Baseline” for a description of valid GUID values.
+</td></tr>
+<tr>
+<td> Interface
+</td><td> Supplies the address where a pointer to the corresponding Protocol Interface is returned. NULL will be returned in *Interface if a structure is not associated with Protocol. This parameter is optional, and will be ignored if Attributes is EFI_OPEN_PROTOCOL_TEST_PROTOCOL.
+</td></tr>
+<tr>
+<td> AgentHandle
+</td><td> The handle of the agent that is opening the protocol interface specified by Protocol and Interface. For agents that follow the UEFI Driver Model, this parameter is the handle that contains the EFI_DRIVER_BINDING_PROTOCOL instance that is produced by the UEFI driver that is opening the protocol interface. For UEFI applications, this is the image handle of the UEFI application that is opening the protocol interface. For applications that use HandleProtocol() to open a protocol interface, this parameter is the image handle of the EFI firmware.
+</td></tr>
+<tr>
+<td> ControllerHandle
+</td><td> If the agent that is opening a protocol is a driver that follows the UEFI Driver Model, then this parameter is the controller handle that requires the protocol interface. If the agent does not follow the UEFI Driver Model, then this parameter is optional and may be NULL.
+</td></tr>
+<tr>
+<td> Attributes
+</td><td> The open mode of the protocol interface specified by Handle and Protocol. See "Related Definitions" for the list of legal attributes.
+</td></tr></table>
+<p><b>Description</b><br />
+This function opens a protocol interface on the handle specified by Handle for the protocol specified by Protocol. The first three parameters are the same as HandleProtocol(). The only difference is that the agent that is opening a protocol interface is tracked in an EFI's internal handle database. The tracking is used by the UEFI Driver Model, and also used to determine if it is safe to uninstall or reinstall a protocol interface.
+</p><p>The agent that is opening the protocol interface is specified by AgentHandle, ControllerHandle, and Attributes. If the protocol interface can be opened, then AgentHandle, ControllerHandle, and Attributes are added to the list of agents that are consuming the protocol interface specified by Handle and Protocol. In addition, the protocol interface is returned in Interface, and EFI_SUCCESS is returned. If Attributes is TEST_PROTOCOL, then Interface is optional, and can be NULL.
+</p><p>There are a number of reasons that this function call can return an error. If an error is returned, then AgentHandle, ControllerHandle, and Attributes are not added to the list of agents consuming the protocol interface specified by Handle and Protocol, and Interface is returned unmodified. The following is the list of conditions that must be checked before this function can return EFI_SUCCESS.
+</p><p>If Protocol is NULL, then EFI_INVALID_PARAMETER is returned.
+</p><p>If Interface is NULL and Attributes is not TEST_PROTOCOL, then EFI_INVALID_PARAMETER is returned.
+</p><p>If Handle is not a valid EFI_HANDLE, then EFI_INVALID_PARAMETER is returned.
+</p><p>If Handle does not support Protocol, then EFI_UNSUPPORTED is returned.
+</p><p>If Attributes is not a legal value, then EFI_INVALID_PARAMETER is returned. 
+</p><p>If Attributes is BY_CHILD_CONTROLLER, BY_DRIVER, EXCLUSIVE, or BY_DRIVER|EXCULSIVE, and AgentHandle is not a valid EFI_HANDLE, then EFI_INVALID_PARAMETER is returned.
+</p><p>If Attributes is BY_CHILD_CONTROLLER, BY_DRIVER, or BY_DRIVER|EXCULSIVE, and ControllerHandle is not a valid EFI_HANDLE, then EFI_INVALID_PARAMETER is returned. 
+</p><p>If Attributes is BY_CHILD_CONTROLLER and Handle is identical to ControllerHandle, then EFI_INVALID_PARAMETER is returned.
+</p><p>If Attributes is BY_DRIVER , BY_DRIVER|EXCLUSIVE, or EXCLUSIVE, and there are any items on the open list of the protocol interface with an attribute of EXCLUSIVE or BY_DRIVER|EXCLUSIVE, then EFI_ACCESS_DENIED is returned.
+</p><p>If Attributes is BY_DRIVER, and there are any items on the open list of the protocol interface with an attribute of BY_DRIVER, and AgentHandle is the same agent handle in the open list item, then EFI_ALREADY_STARTED is returned.
+</p><p>If Attributes is BY_DRIVER, and there are any items on the open list of the protocol interface with an attribute of BY_DRIVER, and AgentHandle is different than the agent handle in the open list item, then EFI_ACCESS_DENIED is returned.
+</p><p>If Attributes is BY_DRIVER|EXCLUSIVE, and there are any items on the open list of the protocol interface with an attribute of BY_DRIVER|EXCLUSIVE, and AgentHandle is the same agent handle in the open list item, then EFI_ALREADY_STARTED is returned.
+</p><p>If Attributes is BY_DRIVER|EXCLUSIVE, and there are any items on the open list of the protocol interface with an attribute of BY_DRIVER|EXCLUSIVE, and AgentHandle is different than the agent handle in the open list item, then EFI_ACCESS_DENIED is returned.
+</p><p>If Attributes is BY_DRIVER|EXCLUSIVE or EXCLUSIVE, and there is an item on the open list of the protocol interface with an attribute of BY_DRIVER, then the boot service <a href="#DisconnectController.28.29" title="">DisconnectController()</a> is called for the driver on the open list. If there is an item in the open list of the protocol interface with an attribute of BY_DRIVER remaining after the <a href="#DisconnectController.28.29" title="">DisconnectController()</a> call has been made, EFI_ACCESS_DENIED is returned.
+</p><p><b>Related Definitions</b><br />
+</p>
+<pre>#define EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL  0x00000001
+#define EFI_OPEN_PROTOCOL_GET_PROTOCOL        0x00000002
+#define EFI_OPEN_PROTOCOL_TEST_PROTOCOL       0x00000004
+#define EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER 0x00000008
+#define EFI_OPEN_PROTOCOL_BY_DRIVER           0x00000010
+#define EFI_OPEN_PROTOCOL_EXCLUSIVE           0x00000020
+</pre>
+<p><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Attribute
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL
+</td><td> Used in the implementation of HandleProtocol(). Since OpenProtocol() performs the same function as HandleProtocol() with additional functionality, HandleProtocol() can simply call OpenProtocol() with this Attributes value.
+</td></tr>
+<tr>
+<td> EFI_OPEN_PROTOCOL_GET_PROTOCOL
+</td><td> Used by a driver to get a protocol interface from a handle. Care must be taken when using this open mode because the driver that opens a protocol interface in this manner will not be informed if the protocol interface is uninstalled or reinstalled. The caller is also not required to close the protocol interface with CloseProtocol().
+</td></tr>
+<tr>
+<td> EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+</td><td>CloseProtocol()]].
+</td></tr>
+<tr>
+<td> EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+</td><td> Used by bus drivers to show that a protocol interface is being used by one of the child controllers of a bus. This information is used by the boot service <a href="#ConnectController.28.29" title="">ConnectController()</a> to recursively connect all child controllers and by the boot service <a href="#DisconnectController.28.29" title="">DisconnectController()</a> to get the list of child controllers that a bus driver created.
+</td></tr>
+<tr>
+<td> EFI_OPEN_PROTOCOL_BY_DRIVER
+</td><td> Used by a driver to gain access to a protocol interface. When this mode is used, the driver’s Stop() function will be called by <a href="#DisconnectController.28.29" title="">DisconnectController()</a> if the protocol interface is reinstalled or uninstalled. Once a protocol interface is opened by a driver with this attribute, no other drivers will be allowed to open the same protocol interface with the BY_DRIVER attribute.
+</td></tr>
+<tr>
+<td>EFI_OPEN_PROTOCOL_EXCLUSIVE
+</td><td> Used by a driver to gain exclusive access to a protocol interface. If any other drivers have the protocol interface opened with an attribute of BY_DRIVER, then an attempt will be made to remove them with <a href="#DisconnectController.28.29" title="">DisconnectController()</a>.
+</td></tr>
+<tr>
+<td> EFI_OPEN_PROTOCOL_EXCLUSIVE
+</td><td> Used by applications to gain exclusive access to a protocol interface. If any drivers have the protocol interface opened with an attribute of BY_DRIVER, then an attempt will be made to remove them by calling the driver’s <a href="/wiki/index.php/EFI_DRIVER_BINDING_PROTOCOL#Stop.28.29" title="EFI DRIVER BINDING PROTOCOL">Stop()</a> function.
+</td></tr></table>
+<p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+
+<tr>
+<td> EFI_SUCCESS
+</td><td> An item was added to the open list for the protocol interface, and the protocol interface was returned in Interface.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Protocol is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Interface is NULL, and Attributes is not TEST_PROTOCOL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Handle is not a valid EFI_HANDLE.
+</td></tr>
+<tr>
+<td> EFI_UNSUPPORTED
+</td><td> Handle does not support Protocol.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Attributes is not a legal value.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Attributes is BY_CHILD_CONTROLLER and AgentHandle is not a valid EFI_HANDLE.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Attributes is BY_DRIVER and AgentHandle is not a valid EFI_HANDLE.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td>EXCLUSIVE and AgentHandle is not a valid EFI_HANDLE.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Attributes is EXCLUSIVE and AgentHandle is not a valid EFI_HANDLE.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Attributes is BY_CHILD_CONTROLLER and ControllerHandle is not a valid EFI_HANDLE.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Attributes is BY_DRIVER and ControllerHandle is not a valid EFI_HANDLE.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td>EXCLUSIVE and ControllerHandle is not a valid EFI_HANDLE.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Attributes is BY_CHILD_CONTROLLER and Handle is identical to ControllerHandle.
+</td></tr>
+<tr>
+<td> EFI_ACCESS_DENIED
+</td><td>EXCLUSIVE or EXCLUSIVE.
+</td></tr>
+<tr>
+<td> EFI_ACCESS_DENIED
+</td><td>EXCLUSIVE and there is an item on the open list with an attribute of EXCLUSIVE.
+</td></tr>
+<tr>
+<td> EFI_ACCESS_DENIED
+</td><td>EXCLUSIVE or EXCLUSIVE.
+</td></tr>
+<tr>
+<td> EFI_ALREADY_STARTED
+</td><td> Attributes is BY_DRIVER and there is an item on the open list with an attribute of BY_DRIVER whose agent handle is the same as AgentHandle.
+</td></tr>
+<tr>
+<td> EFI_ACCESS_DENIED
+</td><td> Attributes is BY_DRIVER and there is an item on the open list with an attribute of BY_DRIVER whose agent handle is different than AgentHandle.
+</td></tr>
+<tr>
+<td> EFI_ALREADY_STARTED
+</td><td>EXCLUSIVE and there is an item on the open list with an attribute of BY_DRIVER|EXCLUSIVE whose agent handle is the same as AgentHandle.
+</td></tr>
+<tr>
+<td> EFI_ACCESS_DENIED
+</td><td>EXCLUSIVE and there is an item on the open list with an attribute of BY_DRIVER|EXCLUSIVE whose agent handle is different than AgentHandle.
+</td></tr>
+<tr>
+<td> EFI_ACCESS_DENIED
+</td><td>EXCLSUIVE or EXCLUSIVE and there are items in the open list with an attribute of BY_DRIVER that could not be removed when <a href="#DisconnectController.28.29" title="">DisconnectController()</a> was called for that open item.
+</td></tr></table>
+<p><b>Examples</b><br />
+</p>
+<pre>EFI_BOOT_SERVICES *gBS;
+EFI_HANDLE ImageHandle;
+EFI_DRIVER_BINDING_PROTOCOL *This;
+IN EFI_HANDLE ControllerHandle,
+extern EFI_GUID gEfiXyzIoProtocol;
+EFI_XYZ_IO_PROTOCOL *XyzIo;
+EFI_STATUS Status;
+//
+// EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL example
+// Retrieves the XYZ I/O Protocol instance from ControllerHandle
+// The application that is opening the protocol is identified by ImageHandle
+// Possible return status codes:
+// EFI_SUCCESS&nbsp;: The protocol was opened and returned in XyzIo
+// EFI_UNSUPPORTED&nbsp;: The protocol is not present on ControllerHandle
+//
+Status = gBS-&gt;OpenProtocol (
+  ControllerHandle,
+  &amp;gEfiXyzIoProtocol,
+  &amp;XyzIo,
+  ImageHandle,
+  NULL,
+  EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL
+  );
+</pre>
+<a name="OpenProtocolInformation.28.29"></a><h2> <span class="mw-headline">OpenProtocolInformation()</span></h2>
+<p>Retrieves the list of agents that currently have a protocol interface opened. 
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+(EFIAPI *EFI_OPEN_PROTOCOL_INFORMATION) (
+  IN  <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a>                          Handle,
+  IN  <a href="/wiki/index.php/EFI_GUID" title="EFI GUID">EFI_GUID</a>                            *Protocol,
+  OUT <a href="/wiki/index.php/EFI_OPEN_PROTOCOL_INFORMATION_ENTRY" title="EFI OPEN PROTOCOL INFORMATION ENTRY">EFI_OPEN_PROTOCOL_INFORMATION_ENTRY</a> **EntryBuffer,
+  OUT UINTN                               *EntryCount
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Handle
+</td><td> The handle for the protocol interface that is being queried.
+</td></tr>
+<tr>
+<td> Protocol
+</td><td> The published unique identifier of the protocol. It is the caller’s responsibility to pass in a valid GUID. See “Wired For Management Baseline” for a description of valid GUID values.
+</td></tr>
+<tr>
+<td> EntryBuffer
+</td><td> A pointer to a buffer of open protocol information in the form of EFI_OPEN_PROTOCOL_INFORMATION_ENTRY structures. See "Related Definitions" for the declaration of this type. The buffer is allocated by this service, and it is the caller's responsibility to free this buffer when the caller no longer requires the buffer's contents.
+</td></tr>
+<tr>
+<td> EntryCount
+</td><td> A pointer to the number of entries in EntryBuffer.
+</td></tr></table>
+<p><b>Description</b><br />
+This function allocates and returns a buffer of EFI_OPEN_PROTOCOL_INFORMATION_ENTRY structures. The buffer is returned in EntryBuffer, and the number of entries is returned in EntryCount.
+</p><p>If the interface specified by Protocol is not supported by the handle specified by Handle, then EFI_NOT_FOUND is returned.
+</p><p>If the interface specified by Protocol is supported by the handle specified by Handle, then EntryBuffer is allocated with the boot service AllocatePool(), and EntryCount is set to the number of entries in EntryBuffer. Each entry of EntryBuffer is filled in with the image handle, controller handle, and attributes that were passed to OpenProtocol() when the protocol interface was opened. The field OpenCount shows the number of times that the protocol interface has been opened by the agent specified by ImageHandle, ControllerHandle, and Attributes. After the contents of EntryBuffer have been filled in, EFI_SUCCESS is returned. It is the caller’s responsibility to call FreePool() on EntryBuffer when the caller no longer required the contents of EntryBuffer.
+</p><p>If there are not enough resources available to allocate EntryBuffer, then EFI_OUT_OF_RESOURCES is returned.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The open protocol information was returned in EntryBuffer, and the number of entries was returned EntryCount.
+</td></tr>
+<tr>
+<td> EFI_NOT_FOUND
+</td><td> Handle does not support the protocol specified by Protocol.
+</td></tr>
+<tr>
+<td> EFI_OUT_OF_RESOURCES
+</td><td> There are not enough resources available to allocate EntryBuffer.
+</td></tr></table>
+<a name="RaiseTPL.28.29"></a><h2> <span class="mw-headline">RaiseTPL()</span></h2>
+<p>Raises a task’s priority level and returns its previous level.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_TPL
+RaiseTPL (
+  IN <a href="/wiki/index.php/EFI_TPL" title="EFI TPL">EFI_TPL</a> NewTpl
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> NewTpl
+</td><td> The new task priority level. It must be greater than or equal to the current task priority level.
+</td></tr></table>
+<p><b>Description</b><br />
+The RaiseTPL() function raises the priority of the currently executing task and returns its previous priority level.
+</p><p>Only three task priority levels are exposed outside of the firmware during boot services execution. The first is TPL_APPLICATION where all normal execution occurs. That level may be interrupted to perform various asynchronous interrupt style notifications, which occur at the TPL_CALLBACK or TPL_NOTIFY level. By raising the task priority level to TPL_NOTIFY such notifications are masked until the task priority level is restored, thereby synchronizing execution with such notifications. Synchronous blocking I/O functions execute at TPL_NOTIFY. TPL_CALLBACK is the typically used for application level notification functions. Device drivers will typically use TPL_CALLBACK or TPL_NOTIFY for their notification functions. Applications and drivers may also use TPL_NOTIFY to protect data structures in critical sections of code.
+</p><p>The caller must restore the task priority level with <a href="#RestoreTPL.28.29" title="">RestoreTPL()</a> to the previous level before returning.
+</p><p>NOTE: If NewTpl is below the current TPL level, then the system behavior is indeterminate. Additionally, only TPL_APPLICATION, TPL_CALLBACK, TPL_NOTIFY, and TPL_HIGH_LEVEL may be
+used. All other values are reserved for use by the firmware; using them will result in unpredictable behavior. Good coding practice dictates that all code should execute at its lowest possible TPL level, and the use of TPL levels above TPL_APPLICATION must be minimized. Executing at TPL levels above TPL_APPLICATION for extended periods of time may also result in unpredictable behavior.
+</p><p><b>Status Codes Returned</b><br />
+Unlike other UEFI interface functions, RaiseTPL() does not return a status code. Instead, it returns the previous task priority level, which is to be restored later with a matching call to RestoreTPL().
+</p>
+<a name="RestoreTPL.28.29"></a><h2> <span class="mw-headline">RestoreTPL()</span></h2>
+<p>Restores a task’s priority level to its previous value.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+VOID
+RestoreTPL (
+  IN <a href="/wiki/index.php/EFI_TPL" title="EFI TPL">EFI_TPL</a> OldTpl
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> OldTpl
+</td><td> The previous task priority level to restore (the value from a previous, matching call to <a href="#RaiseTPL.28.29" title="">RaiseTPL()</a>).
+</td></tr></table>
+<p><b>Description</b><br />
+The RestoreTPL() function restores a task’s priority level to its previous value. Calls to RestoreTPL() are matched with calls to RaiseTPL().
+Note: If OldTpl is above the current TPL level, then the system behavior is indeterminate. Additionally, only TPL_APPLICATION, TPL_CALLBACK, TPL_NOTIFY, and TPL_HIGH_LEVEL may be
+used. All other values are reserved for use by the firmware; using them will result in unpredictable behavior. Good coding practice dictates that all code should execute at its lowest possible TPL level, and the use of TPL levels above TPL_APPLICATION must be minimized. Executing at TPL levels above TPL_APPLICATION for extended periods of time may also result in unpredictable behavior.
+</p><p><b>Status Codes Returned</b><br />
+None.
+</p>
+<a name="ReinstallProtocolInterface.28.29"></a><h2> <span class="mw-headline">ReinstallProtocolInterface()</span></h2>
+<p>Reinstalls a protocol interface on a device handle.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+ReinstallProtocolInterface (
+  IN EFI_HANDLE Handle,
+  IN EFI_GUID   *Protocol,
+  IN VOID       *OldInterface,
+  IN VOID       *NewInterface
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Handle
+</td><td> Handle on which the interface is to be reinstalled. If Handle is not a valid handle, then EFI_INVALID_PARAMETER is returned.
+</td></tr>
+<tr>
+<td> Protocol
+</td><td> The numeric ID of the interface. It is the caller’s responsibility to pass in a valid GUID. See “Wired For Management Baseline” for a description of valid GUID values.
+</td></tr>
+<tr>
+<td> OldInterface
+</td><td> A pointer to the old interface. NULL can be used if a structure is not associated with Protocol.
+</td></tr>
+<tr>
+<td> NewInterface
+</td><td> A pointer to the new interface. NULL can be used if a structure is not associated with Protocol.
+</td></tr></table>
+<p><b>Description</b><br />
+The ReinstallProtocolInterface() function reinstalls a protocol interface on a device handle. The OldInterface for Protocol is replaced by the NewInterface. NewInterface may be the same as OldInterface. If it is, the registered protocol notifies occur for the handle without replacing the interface on the handle.
+</p><p>As with <a href="#InstallProtocolInterface.28.29" title="">InstallProtocolInterface()</a>, any process that has registered to wait for the installation of the interface is notified. The caller is responsible for ensuring that there are no references to the OldInterface that is being removed.
+</p><p>The extension to this service directly addresses the limitations described in the section above. There may be some number of drivers currently consuming the protocol interface that is being reinstalled. In this case, it may be dangerous to replace a protocol interface in the system. It could result in an unstable state, because a driver may attempt to use the old protocol interface after a new one has been reinstalled. Since the usage of protocol interfaces is now being tracked for components that use the <a href="#OpenProtocol.28.29" title="">OpenProtocol()</a> and <a href="#CloseProtocol.28.29" title="">CloseProtocol()</a> boot services, a safe version of this function can be implemented.
+</p><p>When this function is called, a call is first made to the boot service <a href="#InstallProtocolInterface.28.29" title="">InstallProtocolInterface()</a>. This will guarantee that all of the agents are currently consuming the protocol interface OldInterface will stop using OldInterface. If <a href="#UninstallProtocolInterface.28.29" title="">UninstallProtocolInterface()</a> returns EFI_ACCESS_DENIED, then this function returns EFI_ACCESS_DENIED, OldInterface remains on Handle, and the protocol notifies are not processed because NewInterface was never installed.
+</p><p>If <a href="#UninstallProtocolInterface.28.29" title="">UninstallProtocolInterface()</a> succeeds, then a call is made to the boot service <a href="#InstallProtocolInterface.28.29" title="">InstallProtocolInterface()</a> to put the NewInterface onto Handle.
+</p><p>Finally, the boot service <a href="#ConnectController.28.29" title="">ConnectController()</a> is called so all agents that were forced to release OldInterface with <a href="#UninstallProtocolInterface.28.29" title="">UninstallProtocolInterface()</a> can now consume the protocol interface NewInterface that was installed with <a href="#InstallProtocolInterface.28.29" title="">InstallProtocolInterface()</a>. After OldInterface has been replaced with NewInterface, any process that has registered to wait for the installation of the interface is notified.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The protocol interface was reinstalled.
+</td></tr>
+<tr>
+<td> EFI_NOT_FOUND
+</td><td> The OldInterface on the handle was not found.
+</td></tr>
+<tr>
+<td> EFI_ACCESS_DENIED
+</td><td> The protocol interface could not be reinstalled, because OldInterface is still being used by a driver that will not release it.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Handle is not a valid EFI_HANDLE.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Protocol is NULL
+</td></tr></table>
+<a name="RegisterProtocolNotify.28.29"></a><h2> <span class="mw-headline">RegisterProtocolNotify()</span></h2>
+<p>Creates an event that is to be signaled whenever an interface is installed for a specified protocol.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+RegisterProtocolNotify (
+  IN <a href="/wiki/index.php/EFI_GUID" title="EFI GUID">EFI_GUID</a>  *Protocol,
+  IN <a href="/wiki/index.php/EFI_EVENT" title="EFI EVENT">EFI_EVENT</a> Event,
+  OUT VOID     **Registration
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Protocol
+</td><td> The numeric ID of the protocol for which the event is to be registered.
+</td></tr>
+<tr>
+<td> Event
+</td><td> Event that is to be signaled whenever a protocol interface is registered for Protocol. The same EFI_EVENT may be used for multiple protocol notify registrations.
+</td></tr>
+<tr>
+<td> Registration
+</td><td> A pointer to a memory location to receive the registration value. This value must be saved and used by the notification function of Event to retrieve the list of handles that have added a protocol interface of type Protocol.
+</td></tr></table>
+<p><b>Description</b><br />
+The RegisterProtocolNotify() function creates an event that is to be signaled whenever a protocol interface is installed for Protocol by <a href="#InstallProtocolInterface.28.29" title="">InstallProtocolInterface()</a> or <a href="#ReinstallProtocolInterface.28.29" title="">ReinstallProtocolInterface()</a>.
+</p><p>Once Event has been signaled, the LocateHandle() function can be called to identify the newly installed, or reinstalled, handles that support Protocol. The Registration parameter in RegisterProtocolNotify() corresponds to the SearchKey parameter in LocateHandle(). Note that the same handle may be returned multiple times if the handle reinstalls the target protocol ID multiple times. This is typical for removable media devices, because when such a device reappears, it will reinstall the Block I/O protocol to indicate that the device needs to be checked again. In response, layered Disk I/O and Simple File System protocols may then reinstall their protocols to indicate that they can be re-checked, and so forth.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The notification event has been registered.
+</td></tr>
+<tr>
+<td> EFI_OUT_OF_RESOURCES
+</td><td> Space for the notification event could not be allocated.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Protocol is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Event is NULL.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Registration is NULL.
+</td></tr></table>
+<a name="SetMem.28.29"></a><h2> <span class="mw-headline">SetMem()</span></h2>
+<p>The SetMem() function fills a buffer with a specified value.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+VOID
+SetMem (
+  IN VOID  *Buffer,
+  IN UINTN Size,
+  IN UINT8 Value
+  );
+</pre>
+<p><b>Parameters</b><br />
+Buffer 
+Pointer to the buffer to fill.
+Size 
+Number of bytes in Buffer to fill.
+Value 
+Value to fill Buffer with.
+</p><p><b>Description</b><br />
+This function fills Size bytes of Buffer with Value. The implementation of SetMem() must be reentrant. If Buffer crosses the top of the processor’s address space, the result of the SetMem() operation is unpredictable.
+</p><p><b>Status Codes Returned</b><br />
+None.
+</p>
+<a name="SetEvent.28.29"></a><h2> <span class="mw-headline">SetEvent()</span></h2>
+<p>Checks whether an event is in the signaled state.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+CheckEvent (
+  IN <a href="/wiki/index.php/EFI_EVENT" title="EFI EVENT">EFI_EVENT</a> Event
+  );
+</pre>
+<p><b>Parameters</b>
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Event
+</td><td> The event to check.
+</td></tr></table>
+<p><b>Description</b><br />
+The CheckEvent() function checks to see whether Event is in the signaled state. If Event is of type EVT_NOTIFY_SIGNAL, then EFI_INVALID_PARAMETER is returned. Otherwise, there are three possibilities:
+</p>
+<ul><li> If Event is in the signaled state, it is cleared and EFI_SUCCESS is returned.
+</li><li> If Event is not in the signaled state and has no notification function, EFI_NOT_READY is returned.
+</li><li> If Event is not in the signaled state but does have a notification function, the notification function is queued at the event’s notification task priority level. If the execution of the notification function causes Event to be signaled, then the signaled state is cleared and EFI_SUCCESS is returned; if the Event is not signaled, then EFI_NOT_READY is  returned.
+</li></ul>
+<p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The event is in the signaled state.
+</td></tr>
+<tr>
+<td> EFI_NOT_READY
+</td><td> The event is not in the signaled state.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Event is of type <a href="/wiki/index.php/EFI_EVENT#EVT_NOTIFY_SIGNAL" title="EFI EVENT">EVT_NOTIFY_SIGNAL</a>.
+</td></tr></table>
+<a name="SetTimer.28.29"></a><h2> <span class="mw-headline">SetTimer()</span></h2>
+<p>Sets the type of timer and the trigger time for a timer event.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+SetTimer (
+  IN <a href="/wiki/index.php/EFI_EVENT" title="EFI EVENT">EFI_EVENT</a>       Event,
+  IN <a href="/wiki/index.php/EFI_TIMER_DELAY" title="EFI TIMER DELAY">EFI_TIMER_DELAY</a> Type,
+  IN UINT64          TriggerTime
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Event
+</td><td> The timer event that is to be signaled at the specified time.
+</td></tr>
+<tr>
+<td> Type
+</td><td> The type of time that is specified in TriggerTime.
+</td></tr>
+<tr>
+<td> TriggerTime
+</td><td> The number of 100ns units until the timer expires. A TriggerTime of 0 is legal. If Type is TimerRelative and TriggerTime is 0, then the timer event will be signaled on the next timer tick. If Type is TimerPeriodic and TriggerTime is 0, then the timer event will be signaled on every timer tick.
+</td></tr></table>
+<p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The event has been set to be signaled at the requested time.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Event or Type is not valid.
+</td></tr></table>
+<a name="SetWatchdogTimer.28.29"></a><h2> <span class="mw-headline">SetWatchdogTimer()</span></h2>
+<p>Sets the system’s watchdog timer.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+SetWatchdogTimer (
+  IN UINTN   Timeout,
+  IN UINT64  WatchdogCode,
+  IN UINTN   DataSize,
+  IN CHAR16* WatchdogData OPTIONAL
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Timeout
+</td><td> The number of seconds to set the watchdog timer to. A value of zero disables the timer.
+</td></tr>
+<tr>
+<td> WatchdogCode
+</td><td> The numeric code to log on a watchdog timer timeout event. The firmware reserves codes 0x0000 to 0xFFFF. Loaders and operating systems may use other timeout codes.
+</td></tr>
+<tr>
+<td> DataSize
+</td><td> The size, in bytes, of WatchdogData.
+</td></tr>
+<tr>
+<td> WatchdogData
+</td><td> A data buffer that includes a Null-terminated Unicode string, optionally followed by additional binary data. The string is a description that the call may use to further indicate the reason to be logged with a watchdog event.
+</td></tr></table>
+<p><b>Description</b><br />
+The SetWatchdogTimer() function sets the system’s watchdog timer.
+</p><p>If the watchdog timer expires, the event is logged by the firmware. The system may then either reset with the Runtime Service <a href="/wiki/index.php/EFI_RUNTIME_SERVICES#ResetSystem.28.29" title="EFI RUNTIME SERVICES">ResetSystem()</a>, or perform a platform specific action that must eventually cause the platform to be reset. The watchdog timer is armed before the firmware's boot manager invokes an EFI boot option. The watchdog must be set to a period of 5 minutes. The EFI Image may reset or disable the watchdog timer as needed. If control is returned to the <a href="/wiki/index.php?title=Boot_Manager&amp;action=edit&amp;redlink=1" class="new" title="Boot Manager (not yet written)">Boot Manager</a>, the watchdog timer must be disabled.
+</p><p>The watchdog timer is only used during boot services. On successful completion of <a href="#ExitBootServices.28.29" title="">ExitBootServices()</a> the watchdog timer is disabled.
+</p><p>The accuracy of the watchdog timer is +/- 1 second from the requested Timeout.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The timeout has been set.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> The supplied WatchdogCode is invalid.
+</td></tr>
+<tr>
+<td> EFI_UNSUPPORTED
+</td><td> The system does not have a watchdog timer.
+</td></tr>
+<tr>
+<td> EFI_DEVICE_ERROR
+</td><td> The watch dog timer could not be programmed due to a hardware error.
+</td></tr></table>
+<a name="SignalEvent.28.29"></a><h2> <span class="mw-headline">SignalEvent()</span></h2>
+<p>Signals an event.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+SignalEvent (
+  IN <a href="/wiki/index.php/EFI_EVENT" title="EFI EVENT">EFI_EVENT</a> Event 
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Event
+</td><td> The event to signal.
+</td></tr></table>
+<p><b>Description</b><br />
+The supplied Event is placed in the signaled state. If Event is already in the signaled state, then EFI_SUCCESS is returned. If Event is of type EVT_NOTIFY_SIGNAL, then the event’s notification function is scheduled to be invoked at the event’s notification task priority level. SignalEvent() may be invoked from any task priority level.
+</p><p>If the supplied Event is a part of an event group, then all of the events in the event group are also signaled and their notification functions are scheduled.
+When signaling an event group, it is possible to create an event in the group, signal it and then close the event to remove it from the group. For example:
+</p>
+<pre>EFI_EVENT Event;
+EFI_GUID gMyEventGroupGuid = EFI_MY_EVENT_GROUP_GUID;
+
+gBS-&gt;CreateEventEx (
+  0,
+  0,
+  NULL,
+  NULL,
+  &amp;gMyEventGroupGuid,
+  &amp;Event
+  );
+
+gBS-&gt;SignalEvent (Event);
+gBS-&gt;CloseEvent (Event);
+</pre>
+<p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The event was signaled.
+</td></tr></table>
+<a name="Stall.28.29"></a><h2> <span class="mw-headline">Stall()</span></h2>
+<p>Induces a fine-grained stall.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+Stall (
+  IN UINTN Microseconds
+  );
+</pre>
+<p><b>Parameters</b><br />
+Microseconds
+The number of microseconds to stall execution.
+</p><p><b>Description</b><br />
+The Stall() function stalls execution on the processor for at least the requested number of microseconds. Execution of the processor is not yielded for the duration of the stall.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> Execution was stalled at least the requested number of Microseconds.
+</td></tr></table>
+<a name="StartImage.28.29"></a><h2> <span class="mw-headline">StartImage()</span></h2>
+<p>Transfers control to a loaded image’s entry point.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+StartImage (
+  IN  <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a> ImageHandle,
+  OUT UINTN      *ExitDataSize,
+  OUT CHAR16     **ExitData OPTIONAL
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> ImageHandle
+</td><td> Handle of image to be started.
+</td></tr>
+<tr>
+<td> ExitDataSize
+</td><td> Pointer to the size, in bytes, of ExitData. If ExitData is NULL, then this parameter is ignored and the contents of ExitDataSize are not modified.
+</td></tr>
+<tr>
+<td> ExitData
+</td><td> Pointer to a pointer to a data buffer that includes a Null-terminated Unicode string, optionally followed by additional binary data. The string is a description that the caller may use to further indicate the reason for the image’s exit.
+</td></tr></table>
+<p><b>Description</b><br />
+The StartImage() function transfers control to the entry point of an image that was loaded by <a href="/wiki/index.php/EFI_BOOT_SERVICES#LoadImage.28.29" title="EFI BOOT SERVICES">LoadImage()</a>. The image may only be started one time.
+</p><p>Control returns from StartImage() when the loaded image’s <a href="/wiki/index.php/EFI_IMAGE_ENTRY_POINT" title="EFI IMAGE ENTRY POINT">EFI_IMAGE_ENTRY_POINT</a> returns or when the loaded image calls Exit(). When that call is made, the ExitData buffer and ExitDataSize from <a href="/wiki/index.php/EFI_BOOT_SERVICES#Exit.28.29" title="EFI BOOT SERVICES">Exit()</a> are passed back through the ExitData buffer and ExitDataSize in this function. The caller of this function is responsible for returning the ExitData buffer to the pool by calling FreePool() when the buffer is no longer needed. Using Exit() is similar to returning from the image’s <a href="/wiki/index.php/EFI_IMAGE_ENTRY_POINT" title="EFI IMAGE ENTRY POINT">EFI_IMAGE_ENTRY_POINT</a> except that <a href="/wiki/index.php/EFI_BOOT_SERVICES#Exit.28.29" title="EFI BOOT SERVICES">Exit()</a> may also return additional ExitData. Exit() function description defines clean up procedure performed by the firmware once loaded image returns control.
+</p><p>To maintain compatibility with UEFI drivers that are written to the EFI 1.02 Specification, StartImage() must monitor the handle database before and after each image is started. If any handles are created or modified when an image is started, then <a href="/wiki/index.php/EFI_BOOT_SERVICES#ConnectController.28.29" title="EFI BOOT SERVICES">ConnectController()</a> must be called with the Recursive parameter set to TRUE for each of the newly created or modified handles before StartImage() returns.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> ImageHandle is either an invalid image handle or the image has already been initialized with StartImage
+</td></tr>
+<tr>
+<td> Exit code from image
+</td><td> Exit code from image.
+</td></tr></table>
+<hr />
+<a name="UninstallProtocolInterface.28.29"></a><h2> <span class="mw-headline">UninstallProtocolInterface()</span></h2>
+<p>Removes a protocol interface from a device handle. It is recommended that <a href="#UninstallMultipleProtocolInterfaces.28.29" title="">UninstallMultipleProtocolInterfaces()</a> be used in place of UninstallProtocolInterface().
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+UninstallProtocolInterface (
+  IN <a href="/wiki/index.php/EFI_HANDLE" title="EFI HANDLE">EFI_HANDLE</a> Handle,
+  IN <a href="/wiki/index.php/EFI_GUID" title="EFI GUID">EFI_GUID</a>   *Protocol,
+  IN VOID       *Interface
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> Handle
+</td><td> The handle on which the interface was installed. If Handle is not a valid handle, then EFI_INVALID_PARAMETER is returned.
+</td></tr>
+<tr>
+<td> Protocol
+</td><td> The numeric ID of the interface. It is the caller’s responsibility to pass in a valid GUID. See “Wired For Management Baseline” for a description of valid GUID values.
+</td></tr>
+<tr>
+<td> Interface
+</td><td> A pointer to the interface. NULL can be used if a structure is not associated with Protocol.
+</td></tr></table>
+<p><b>Description</b><br />
+The UninstallProtocolInterface() function removes a protocol interface from the handle on which it was previously installed. The Protocol and Interface values define the protocol interface to remove from the handle.
+</p><p>The caller is responsible for ensuring that there are no references to a protocol interface that has been removed. In some cases, outstanding reference information is not available in the protocol, so the protocol, once added, cannot be removed. Examples include Console I/O, Block I/O, Disk I/O, and (in general) handles to device protocols.
+If the last protocol interface is removed from a handle, the handle is freed and is no longer valid.
+</p><p>The extension to this service directly addresses the limitations described in the section above. There may be some drivers that are currently consuming the protocol interface that needs to be uninstalled, so it may be dangerous to just blindly remove a protocol interface from the system. Since the usage of protocol interfaces is now being tracked for components that use the OpenProtocol() and CloseProtocol() boot services, a safe version of this function can be implemented. Before the protocol interface is removed, an attempt is made to force all the drivers that are consuming the protocol interface to stop consuming that protocol interface. This is done by calling the boot service DisconnectController() for the driver that currently have the protocol interface open with an attribute of EFI_OPEN_PROTOCOL_BY_DRIVER or EFI_OPEN_PROTOCOL_BY_DRIVER | EFI_OPEN_PROTOCOL_EXCLUSIVE.
+</p><p>If the disconnect succeeds, then those agents will have called the boot service <a href="/wiki/index.php/EFI_BOOT_SERVICES#CloseProtocol.28.29" title="EFI BOOT SERVICES">CloseProtocol()</a> to release the protocol interface. Lastly, all of the agents that have the protocol interface open with an attribute of EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL, EFI_OPEN_PROTOCOL_GET_PROTOCOL, or EFI_OPEN_PROTOCOL_TEST_PROTOCOL are closed. If there are any agents remaining that still have the protocol interface open, the protocol interface is not removed from the handle and EFI_ACCESS_DENIED is returned. In addition, all of the drivers that were disconnected with the boot service <a href="/wiki/index.php/EFI_BOOT_SERVICES#DisconnectController.28.29" title="EFI BOOT SERVICES">DisconnectController()</a> earlier, are reconnected with the boot service ConnectController(). If there are no agents remaining that are consuming the protocol interface, then the protocol interface is removed from the handle as described above.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The interface was removed.
+</td></tr>
+<tr>
+<td> EFI_NOT_FOUND
+</td><td> The interface was not found.
+</td></tr>
+<tr>
+<td> EFI_ACCESS_DENIED
+</td><td> The interface was not removed because the interface is still being used by a driver.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Handle is not a valid EFI_HANDLE.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> Protocol is NULL
+</td></tr></table>
+<a name="WaitForEvent.28.29"></a><h2> <span class="mw-headline">WaitForEvent()</span></h2>
+<p>Stops execution until an event is signaled.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+(EFIAPI *EFI_WAIT_FOR_EVENT) (
+ IN  UINTN     NumberOfEvents,
+ IN  <a href="/wiki/index.php/EFI_EVENT" title="EFI EVENT">EFI_EVENT</a> *Event,
+ OUT UINTN     *Index
+ );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Description
+</th></tr>
+<tr>
+<td> NumberOfEvents
+</td><td> The number of events in the Event array.
+</td></tr>
+<tr>
+<td> Event
+</td><td> An array of <a href="/wiki/index.php/EFI_EVENT" title="EFI EVENT">EFI_EVENTs</a>.
+</td></tr>
+<tr>
+<td> Index
+</td><td> Pointer to the index of the event which satisfied the wait condition.
+</td></tr></table>
+<p><b>Description</b><br />
+This function must be called at priority level TPL_APPLICATION. If an attempt is made to call it at any other priority level, EFI_UNSUPPORTED is returned.
+</p><p>The list of events in the Event array are evaluated in order from first to last, and this evaluation is repeated until an event is signaled or an error is detected. The following checks are performed on each event in the Event array.
+</p>
+<ul><li> If an event is of type EVT_NOTIFY_SIGNAL, then EFI_INVALID_PARAMETER is returned and Index indicates the event that caused the failure.
+</li><li> If an event is in the signaled state, the signaled state is cleared and EFI_SUCCESS is returned, and Index indicates the event that was signaled.
+</li><li> If an event is not in the signaled state but does have a notification function, the notification function is queued at the event’s notification task priority level. If the execution of the event’s notification function causes the event to be signaled, then the signaled state is cleared, EFI_SUCCESS is returned, and Index indicates the event that was signaled.
+</li></ul>
+<p>To wait for a specified time, a timer event must be included in the Event array.
+</p><p>To check if an event is signaled without waiting, an already signaled event can be used as the last event in the list being checked, or the CheckEvent() interface may be used.
+</p><p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th>
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The event indicated by Index was signaled.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> NumberOfEvents is 0.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> The event indicated by Index is of type EVT_NOTIFY_SIGNAL.
+</td></tr>
+<tr>
+<td> EFI_UNSUPPORTED
+</td><td> The current TPL is not TPL_APPLICATION.
+</td></tr></table>
+<hr />
+<p>Copyright (C) 2008-2009 Phoenix Technologies Ltd. All Rights Reserved. Portions copyright (C) 2008 Unified EFI, Inc. Used with permission.
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 188/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key wikidb:pcache:idhash:63-0!1!0!!en!2!edit=0 and timestamp 20181120162254 -->
+<div class="printfooter">
+Retrieved from "<a href="http://wiki.phoenix.com/wiki/index.php/EFI_BOOT_SERVICES">http://wiki.phoenix.com/wiki/index.php/EFI_BOOT_SERVICES</a>"</div>
+			<div id='catlinks' class='catlinks'><div id="mw-normal-catlinks"><a href="/wiki/index.php/Special:Categories" title="Special:Categories">Categories</a>:&#32;<span dir='ltr'><a href="/wiki/index.php/Category:UEFI_2.0" title="Category:UEFI 2.0">UEFI 2.0</a></span> | <span dir='ltr'><a href="/wiki/index.php/Category:UEFI_2.1" title="Category:UEFI 2.1">UEFI 2.1</a></span> | <span dir='ltr'><a href="/wiki/index.php?title=Category:Memory_Management&amp;action=edit&amp;redlink=1" class="new" title="Category:Memory Management (not yet written)">Memory Management</a></span> | <span dir='ltr'><a href="/wiki/index.php/Category:SecureCore_Tiano%28TM%29_2.0" title="Category:SecureCore Tiano(TM) 2.0">SecureCore Tiano(TM) 2.0</a></span></div></div>			<!-- end content -->
+			<div class="visualClear"></div>
+		</div>
+	</div>
+		</div>
+		<div id="column-one">
+	<div id="p-cactions" class="portlet">
+		<h5>Views</h5>
+		<div class="pBody">
+			<ul>
+	
+				 <li id="ca-nstab-main" class="selected"><a href="/wiki/index.php/EFI_BOOT_SERVICES" title="View the content page [c]" accesskey="c">Page</a></li>
+				 <li id="ca-talk" class="new"><a href="/wiki/index.php?title=Talk:EFI_BOOT_SERVICES&amp;action=edit" title="Discussion about the content page [t]" accesskey="t">Discussion</a></li>
+				 <li id="ca-viewsource"><a href="/wiki/index.php?title=EFI_BOOT_SERVICES&amp;action=edit" title="This page is protected.&#10;You can view its source. [e]" accesskey="e">View source</a></li>
+				 <li id="ca-history"><a href="/wiki/index.php?title=EFI_BOOT_SERVICES&amp;action=history" title="Past versions of this page. [h]" accesskey="h">History</a></li>			</ul>
+		</div>
+	</div>
+	<div class="portlet" id="p-personal">
+		<h5>Personal tools</h5>
+		<div class="pBody">
+			<ul>
+				<li id="pt-login"><a href="/wiki/index.php?title=Special:UserLogin&amp;returnto=EFI_BOOT_SERVICES" title="You are encouraged to log in, it is not mandatory however. [o]" accesskey="o">Log in</a></li>
+			</ul>
+		</div>
+	</div>
+	<div class="portlet" id="p-logo">
+		<a style="background-image: url(http://colo-www2/wiki/logo/phoenixlogo.png);" href="/wiki/index.php/Main_Page" title="Visit the Main Page [z]" accesskey="z"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+	<div class='generated-sidebar portlet' id='p-navigation'>
+		<h5>Navigation</h5>
+		<div class='pBody'>
+			<ul>
+				<li id="n-mainpage-description"><a href="/wiki/index.php/Main_Page">Main Page</a></li>
+				<li id="n-portal"><a href="/wiki/index.php/PhoenixWiki:Community_Portal" title="About the project, what you can do, where to find things">Community portal</a></li>
+				<li id="n-currentevents"><a href="/wiki/index.php/PhoenixWiki:Current_events" title="Find background information on current events">Current events</a></li>
+				<li id="n-recentchanges"><a href="/wiki/index.php/Special:RecentChanges" title="The list of recent changes in the wiki. [r]" accesskey="r">Recent changes</a></li>
+				<li id="n-randompage"><a href="/wiki/index.php/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li>
+				<li id="n-help"><a href="/wiki/index.php/Help:Contents" title="The place to find out.">Help</a></li>
+			</ul>
+		</div>
+	</div>
+	<div id="p-search" class="portlet">
+		<h5><label for="searchInput">Search</label></h5>
+		<div id="searchBody" class="pBody">
+			<form action="/wiki/index.php/Special:Search" id="searchform"><div>
+				<input id="searchInput" name="search" type="text" title="Search PhoenixWiki [f]" accesskey="f" value="" />
+				<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="Go" title="Go to a page with this exact name if exists" />&nbsp;
+				<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="Search" title="Search the pages for this text" />
+			</div></form>
+		</div>
+	</div>
+	<div class="portlet" id="p-tb">
+		<h5>Toolbox</h5>
+		<div class="pBody">
+			<ul>
+				<li id="t-whatlinkshere"><a href="/wiki/index.php/Special:WhatLinksHere/EFI_BOOT_SERVICES" title="List of all wiki pages that link here [j]" accesskey="j">What links here</a></li>
+				<li id="t-recentchangeslinked"><a href="/wiki/index.php/Special:RecentChangesLinked/EFI_BOOT_SERVICES" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li>
+<li id="t-upload"><a href="/wiki/index.php/Special:Upload" title="Upload files [u]" accesskey="u">Upload file</a></li>
+<li id="t-specialpages"><a href="/wiki/index.php/Special:SpecialPages" title="List of all special pages [q]" accesskey="q">Special pages</a></li>
+				<li id="t-print"><a href="/wiki/index.php?title=EFI_BOOT_SERVICES&amp;printable=yes" title="Printable version of this page [p]" accesskey="p">Printable version</a></li>				<li id="t-permalink"><a href="/wiki/index.php?title=EFI_BOOT_SERVICES&amp;oldid=3166" title="Permanent link to this version of the page">Permanent link</a></li>			</ul>
+		</div>
+	</div>
+		</div><!-- end of the left (by default at least) column -->
+			<div class="visualClear"></div>
+			<div id="footer">
+				<div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="/wiki/skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>
+			<ul id="f-list">
+				<li id="lastmod"> This page was last modified on 7 October 2009, at 05:35.</li>
+
+				<li id="viewcount">This page has been accessed 112,663 times.</li>
+
+				<li id="privacy"><a href="/wiki/index.php/PhoenixWiki:Privacy_policy" title="PhoenixWiki:Privacy policy">Privacy policy</a></li>
+
+				<li id="about"><a href="/wiki/index.php/PhoenixWiki:About" title="PhoenixWiki:About">About PhoenixWiki</a></li>
+
+				<li id="disclaimer"><a href="/wiki/index.php/PhoenixWiki:General_disclaimer" title="PhoenixWiki:General disclaimer">Disclaimers</a></li>
+
+				<li id="support"><a href='mailto:devsupport@phoenix.com'>Support</a></li>
+
+			</ul>
+		</div>
+</div>
+
+		<script type="text/javascript">if (window.runOnloadHook) runOnloadHook();</script>
+<!-- Served in 0.254 secs. --></body></html>

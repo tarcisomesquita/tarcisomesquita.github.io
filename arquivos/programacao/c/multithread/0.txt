@@ -1,0 +1,242 @@
+Programação multithread em ambiente Unix: como criar e sincronizar 2 tarefas paralelas
+
+o S.O. deve ser capaz de guardar o estado (contador do programa, registradores, estado da pilha, etc)
+
+O conceito de thread pode ser implementado em user level e kernel level.
+
+Operacões em user level, se um thread está em uma operação bloqueante (e.x. fazendo I/O), todos os threads do processo param.
+
+A principal vantagem do uso de múltiplos threads em relação ao fork de um processo advém da facilidade de comunicação e compartilhamento de dados entres os threads, dado que ambos existem no mesmo espaco de endereco de um único processo e compartilham variáveis globais (Stevens & Rago, 2005). A comunicação entre processos por uso de sinais é limitada e mecanismos de IPC (Inter Process Comunication) apesar de variados (pipes, Shared Memory, etc) impõem uma complexidade por vezes desnecessária na programação. Além disso, em alguns S.O. pode ser mais eficiente criar um novo thread do que um novo processo, além de em algumas implementacões ser mais barato a mudanca de contexto de execução de um thread para outro, se comparado a mudanca de contexto entre processos (Matthew & Stones, 2004).
+
+Entretanto, o uso de threads também impõem algumas dificuldades tais como a necessidade de funcões reentrantes e o fato de que um thread pode quebrar toda a aplicacação por co-existirem em espaco de endereco comum de um único processo.
+
+2. POSIX
+A função utilizada para criar um thread (header pthread.h):
+
+int pthread_create(pthread_t *thread, // será preenchida com um identificador do thread
+	               pthread_attr_t *attr, // por ser um parâmetro opcional, geralmente se passa NULL
+	               void *(*start_routine)(void *), // função que irá ser executada dentro do thread: void *a_name(void* parameter)
+	               void *arg); // qualquer tipo de dados, depois a função thread faz um casting para o tipo adequado 
+
+Geralmente, após criar um thread extra em um programa, é necessário "coletar" este thread, juntando o thread principal da aplicação e o thread extra de execução (a menos, é claro, que o thread extra tenha sido criado com o atributo PTHREAD_CREATE_DETACHED). A função para juntar o(s) thread(s) extras com a aplicação segue abaixo:
+
+int pthread_join(pthread_t th, //a)
+	void **thread_return); //b) 
+
+a) Thread ID, valor recebido quando o thread foi criado;
+b) Ponteiro para ponteiro para um ponteiro do tipo void (pode ser utilizado para receber qualquer tipo de dado retornado pela função que rodou no thread extra);
+
+A função que roda no thread extra pode retornar informação para o thread principal da aplicação utilizando a função void pthread_exit(void *retval). Finalmente, os programas devem ser linkados com a biblioteca libpthread para utilizarem as funcões descritas.
+
+código de exemplo:
+int main(int argc, char* argv[]) {
+  int res; 
+  pthread_t thread; 
+  struct data obj; 
+  void *message; 
+  
+  obj.field = 10; 
+  obj.number = 1.3333; 
+  
+  res = pthread_create(&thread, NULL, simple, &obj); 
+11: if (res) 
+12: return -1; 
+13:  
+
+14: pthread_join(thread, &message); 
+15: printf("Received data is: %s\n", (char*)message); 
+16: 
+17: return 0; 
+18: } 
+
+Cria-se um thread novo na linha 10, passando para a função simple um ponteiro para uma estrutura data. Caso tenha ocorrido um erro (ou seja, valor de retorno da função diferente de zero), o programa retorna imediatamente.
+
+A partir deste momento, o thread extra vai executar processamento, enquanto que o thread principal da aplicação vai aguardar o retorno do thread extra devido a chamada da função pthread_join (linha 14). Quando o thread extra retornar, um valor de retorno será apontado para a variável message e imprimi-se uma mensagem retornada pela função. O restante do código era trivial e foi omitido, podendo o programa completo ser encontrado no arquivo minimal.c.
+
+Na existência de um recurso compartilhado entre dois ou mais threads, onde este recurso seja modificado pelos mesmos, exige-se a utilização de mecanismos de sincronização entre os threads. A API POSIX fornece para este fim os semáforos e os mutexes, cujo princí­pio de funcionamento é semelhante: existe uma sessão crí­tica de código onde somente 1 único thread poderá estar executando em um dado instante. Isto garante a atomicidade de uma operação, assegurando o comportamento esperado no programa.
+
+Para isso, o POSIX fornece o uso de semáforos e mutex (Mutual Exclusion). Ambos garantem a execução de um único thread em um certo trecho de código, com uma diferenca semântica: mutex são indicados para travar (lock) acesso a um recurso comum sendo geralmente utilizados para sincronizar dois threads, enquanto semáforos podem atuam como "porteiros" controlando o acesso de n threads a um recurso. De fato, é possí­vel implementar um mecanismo em função do outro, porém existem problemas onde a semântica dos semáforos se adapta melhor se comparada a mutex.
+
+Os semáforos discutidos abaixo fazem parte do padrão POSIX de extensões para tempo real, servindo unicamente para threads. O outro tipo de semáforos (conhecidos como Semáforos System V) servem para sincronizar processos diferentes e não serão discutidos neste artigo.
+
+Existem muitas semelhancas na implementação e uso de ambas as técnicas de sincronização, seguindo de forma geral os passos:
+
+    definição de uma variável de controle (pthread_mutex ou sem_t);
+    acesso a variável de controle para barrar acesso de outros threads na sessão crí­tica (pthread_mutex_lock ou sem_post);
+    liberar outros threads (pthread_unlock); 
+
+Os arquivos semaphore_simple.c e mutex_simple.c mostram como utilizar semáforos e mutex com POSIX. Dado a semelhanca entre ambos, vamos somente análisar o uso de semáforos.
+
+22: sem_t bin_sem; 
+23: 
+24: int main(int argc, char *argv[])
+25: {
+26: pthread_t t1, t2; 
+27: char argt1[] = "thread1"; 
+28: char argt2[] = "thread2"; 
+29: int rc; 
+30:  
+
+31: rc = sem_init(&bin_sem, 0, 0); 
+32: 
+33: rc = pthread_create(&t1, NULL, first, (void *)&argt1); 
+34: rc = pthread_create(&t2, NULL, second, (void *)&argt2); 
+35: 
+36: rc = pthread_join(t1, NULL); 
+37: rc = pthread_join(t2, NULL); 
+38:  
+
+39: sem_destroy(&bin_sem); 
+40: 
+41: return 0; 42: 
+43: } 
+
+Na linha 22 definimos a variável de controle do tipo sem_t sendo inicializada na linha 31 com a função sem_init. Ambos os threads devem ter acesso a ela e embora tenha sido definida como global, também pode ser passada como argumento na função do thread (i.e. first e second). Esta variável precisa ser posteriormente destruí­da utilizando a função sem_destroy, como pode ser visto na linha 39.
+
+Como dito anteriomente, um semáforo pode controlar o acesso de múltiplos threads, sendo o seu comportamento definido na inicialização. O protótipo da função é:
+
+int sem_init(sem_t *sem, //a) 
+	int pshared, //b) 
+	unsigned int value); //c) 
+
+Onde:
+
+a) Ponteiro para a variável semáforo;
+b) Comportamento do semáforo (zero significa que o semáforo é local para este processo);
+c) Valor com que ele é inicializado;
+
+A operação de incrementar/decrementar o valor do semáforo deve ser atí´mica (ou seja, apesar dela poder exigir múltiplas operacões em ASM, deve aparecer para o sistema operacional como uma operação única. Para tanto, se utilizam as funcões abaixo:
+
+int sem_wait(sem_t * sem); //incrementa atomicamente o semáforo
+int sem_post(sem_t * sem); //decrementa atomicamente o semáforo
+
+Onde:
+sem é um ponteiro para a variável semáforo. O código de uso das funcões do programa semaphore_simple.c aparece abaixo, nas funcões que rodam dentro de cada thread extra na aplicação:
+
+45: void *first(void *arg)
+46: {
+47: int i; 
+48: pthread_t myId; 
+49: myId = pthread_self(); 
+50: 
+51: printf("I"m the firsthread, my ID is: %d \n", myId); 
+52: sleep(5); 
+53: 
+54: for(i= 0;i
+A função first roda na primeira thread extra do programa e na linha 56 incrementa o valor do semáforo com a função sem_post. Enquanto este valor for zero, a função second ficará parada na chamada à função sem_wait (linha 72), ou seja, o segundo thread extra somente continua a execução após o semáforo puder ser decrementado.  
+
+
+
+3. Estudo de caso 
+
+
+O programa final deste artigo (arquivo mutex_final.c) apresenta o uso de mutex para controlar o acesso a um recurso global. Basicamente, teremos 2 threads rodando com funcões inversas: o primeiro thread acessa uma variável e incrementa ela, imprimindo o valor obtido e logo a seguir a decrementa para retornar ao estado original. Ou seja, se a variável valia 100, deve ser incrementada para 101 (sendo este o valor impresso) e logo a seguir restaurada para o valor original. O segundo thread faz o contrário: descrementa para 99, imprime o valor e retorna a variável para o valor original. 
+
+
+O programa permite execução em dois modos: sincronizado onde o acesso à variável global é controlado por um mutex, garantindo o resultado esperado. E não sincronizado, onde cada thread acessa o recurso global sem controle, permitindo o primeiro thread ser interrompido pelo segundo thread no meio da operação.  A figura 1 mostra o esquema de execução sincronizada do programa. 
+
+
+
+
+ 
+Figura 1: Diagrama lógico do programa sync_mutex. 
+
+
+O modo de execução do programa é controlado ao se definir a variável de ambiente RUN_MODE para SYNC (default) e UNSYNC, como na figura 2. Pelo fato do codigo ser relativamente extenso (mutex_final.c), optou-se por somente comentar alguns aspectos interessantes no mesmo: 
+
+
+    Na linha 26, definiu-se a macro __REENTRANT. Esta fornece uma dica para o compilador utilizar versões thread safe de funcões normais 
+    Na linha 42, a variável mutex é inicializada com pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER; 
+    A variável mutex precisa ser inicializada, sendo isso feito na linha 42 com 
+
+
+
+42: static pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER; 
+
+
+Esta macro deve utilizada somente se a variável mutex for estática (no caso deste programa, decidimos torná-la global para as funcões, embora isto não seja obrigatório). A macro acima seria o equivalente a chamar a função  
+
+int pthread_mutex_init(pthread_mutex_t *mutex, 
+	const pthread_mutexattr_t *mutexattr); 
+
+
+
+com parâmetro NULL para atributo de mutex. 
+
+
+    As funcões de mutex lock/unlock tem os protótipos: 
+
+
+int pthread_mutex_lock(pthread_mutex_t *mutex)); 
+int pthread_mutex_unlock(pthread_mutex_t *mutex); 
+
+
+
+Onde passa-se um ponteiro para a variável mutex, devendo-se lembrar de destravar o mutex após passar pelo trecho crí­tico de código. Tentar travar duas vezes o mesmo mutex tem comportamento indefinido, variando com a implementação do sistema utilizado. 
+
+
+Finalmente, para destruir um mutex, deve-se utilizar a função  
+
+
+int pthread_mutex_destroy(pthread_mutex_t *mutex); 
+
+
+
+
+
+Figura 2: O programa rodando em modo não sincronizado. 
+
+
+Vamos análisar os trechos interessantes do programa, no arquivo mutex_final.c. A diferenca no modo de execução (SYNC e UNSYNC) consiste nas funcões selecionadas para rodar nos threads da aplicação. Quando em modo UNSYNC, as funcões add e minus acessam a variável global sem a utilização de um mutex para permitir uma adição/subtração atí´mica, como nas linhas 128 e 132 abaixo: 
+
+121: void *add(void *msg)
+122: {
+123: printf("\tentering add\n");
+124: fflush(NULL);
+125: int i;
+126:
+127: for (i= 0; i 
+
+
+Em oposição, as funcões s_add e s_minus utilizam o sistema de mutex para garantir acesso único a variável global: 
+
+159: void *s_add(void *msg)
+160: {
+161: printf("\tentering s_add\n");
+162: fflush(NULL);
+163: int i;
+164:
+165: for (i= 0; i 
+
+
+Após fazer o lock no mutex na linha 166, incrementa-se a variável e logo a seguir imprimese o seu valor. Após decrementar o valor da variável (buscando restaurar seu valor inicial), destravamos o lock (linha 172) no mutex e simulamos uma operação matemática qualquer na chamada a função square. 
+
+
+Aqui, desejou-se deixar explí­cita a necessidade de permitir o acesso de outros threads ao recurso compartilhado o mais rapidamente possí­vel: supondo ter sido feito um lock antes do loop (linha 165) e fosse removido o lock somente no final do mesmo (linha 179), terí­amos somente um thread rodando na aplicação enquanto o segundo thread precisaria esperar uma eternidade pelo acesso à variável global. O resultado seria um programa multithread com o comportamento de um programa monothread. 
+
+
+Além disso, desejava-se mostrar como outras tarefas podem rodar fora do trecho crí­tico de código.  
+
+4. Ambientes 
+
+
+O padrão POSIX especifica uma interface, não ditando a maneira como é realizada a implementação de uma certa função (Steven & Rago, 2005). Desta maneira, um programa pode usar a mesma função (e.x.: pthread_create) sem se preocupar como que o S.O. a implementa. 
+
+
+Entretanto, é vantajoso conhecer como que diferentes S.O. implementam o suporte a múltiplos threads, podendo com o tipo de plataforma mudar a estratégia para paralelizar operacões. Assim, pode ser mais ou menos eficiente em alguns casos criar um thread ou um novo processo (e.x. o Windows NT é lendário por ter péssima performance para criar novos processos, sendo mais efetivo na criação de novos threads). 
+
+
+Visando atestar a portabilidade alcancada com o uso dos pthreads, o programa de exemplo foi testando em 3 plataformas distintas: Linux (kernel 2.6.15), FreeBSD 6.1, OpenSolaris 5.11. No caso do Linux, a distribuição testada foi o Ubuntu 6.06. Para FreeBSD, realizou-se o teste em uma distribuição chamada PCBSD, que oferece uma interface gráfica de instalação realmente amigável e um sistema de pacotes para instalação de software chamado PBI (interessados, visitem o site http://www.pcbsd.org). O OpenSolaris foi testado utilizando uma distribuição livecd chamada Belenix (http://www.belenix.org), cuja detecção automática de hardware foi realmente exemplar. A máquina de testes utilizada foi um notebook HP Pavilion zv5430 (processador Athlon 64 3200, 512 MB ram, ví­deo GeForce 4). 
+
+
+
+
+
+Figura 3: FreeBSD 6.1 (PCBSD). 
+
+
+Das distribuicões citadas, a única que revelou-se difí­cil para instalar foi o FreeBSD, que por conta de um bug na ACPI do notebook mapeava uma das teclas de multimedia para o botão de poweroff, desligando a máquina logo no inicio do processo de boot (dica: para ignorar a tecla, passe a seguinte opção de boot set hint.atkbd.0.flags=0x8 e depois de instalado, acrescente a mesma no arquivo /boot/device.hints). Também é interessante citar que tanto o BSD como o Solaris exigem uma partição primária para realizar a instalação, ao contrário do Linux que pode ser instalado em uma partição extendida/lógica. Gerenciadores de boot também podem ter problemas para bootar uma partição com o filesystem utilizado pelo BSD (UFS2) e Solaris, sendo útil neste momento uma atualização na versão do gerenciador de boot ou no caso do GRUB o uso da opção rootnoverify. 
+
+
+Finalmente, é possí­vel facilmente montar uma partição UFS no linux, tomando o cuidado de observar que tanto o BSD como o Solaris trabalham com o conceito de disk slices (fatias de disco) dentro de uma partição simples (estes slices *não* aparecem no linux ao chamar fdisk -l). Por exemplo, ao instalar o BSD na partição segunda particao primária do HD (hda2 no linux), foram criados 2 slices para a raiz do sistema (hda10) e área de troca (hda11). Uma chamada a dmesg uma vez bootado no Linux permite reunir as informacões necessárias para montar as particoes BSD/Solaris. 
+

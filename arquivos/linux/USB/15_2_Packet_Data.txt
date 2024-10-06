@@ -1,0 +1,6 @@
+
+Sync > PID     > DATA               > CRC16    > EOP
+       8 bits    (0-1024)x 8 bits     16 bits
+
+Used for DATA0, DATA1, DATA2 and MDATA packets. If a transaction has a data stage this is the packet format used.
+

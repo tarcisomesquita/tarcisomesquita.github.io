@@ -1,0 +1,11 @@
+kernel se descomprime
+configures the computer's memory
+configures the various hardware attached to the system, including all processors, I/O subsystems, and storage devices.
+
+It then looks for the compressed initrd image in a predetermined location in memory, decompresses it, mounts it
+
+the kernel converts initrd into a "normal" RAM disk (/dev/ram0)
+the initrd image is then mounted as root
+/sbin/init is executed with UID 0
+
+cat /var/log/kern.log | grep -i RAMDISK
