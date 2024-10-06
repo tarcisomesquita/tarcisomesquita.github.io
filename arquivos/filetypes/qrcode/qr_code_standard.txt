@@ -1,0 +1,57 @@
+https://public-api.qr-code-generator.com/v1/create/free?image_format=SVG&image_width=500&foreground_color=%23000000&frame_color=%23000000&frame_name=no-frame&qr_code_logo=&qr_code_pattern=rounded-3&qr_code_text=https:%2F%2Ftarcisomesquita.github.io%2Fid.html%3Fc%3D27785856800
+
+
+evolução:
+QR Code Model 1
+QR Code Model 2
+QR Code
+Micro QR Code
+
+p. 10 Terms and definitions
+
+p. 13
+e) 1) Maximum Micro QR Code symbol size (table in p. 27)
+- alphanumeric data: 21 characters (version M4) 
+
+p. 16 e 17 Structure
+Encoding region: refer to 7.1 to 7.10 (p. 26)
+
+p. 17
+version 1 have 21 modules
+version 2 have 25 modules
+...         add 4
+version 40 have 177 modules
+
+p. 24
+Micro QR Code have versions M1 to M4
+M1 with 11 x 11 modules
+... add 2 modules
+
+p. 29 alphanumeric mode
+
+p.31 mode indicadors (table 2)
+
+p. 34 encoding alphanumeric
+
+p. 35 encoding byte
+
+p. 41 data capacity (table 7)
+
+p. 46 error correction (table 9)
+
+p. 55 bits placement
+
+p. 56 characters arrangement
+
+p. 63 format information
+
+
+continue on p. 63
+
+
+p. 81 Annex A
+
+p. 102 symbol encoding examples
+
+
+https://en.wikipedia.org/wiki/QR_code

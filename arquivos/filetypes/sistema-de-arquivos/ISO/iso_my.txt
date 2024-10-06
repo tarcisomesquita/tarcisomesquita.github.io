@@ -1,0 +1,207 @@
+rm teste.iso
+
+dd if=/dev/zero bs=1 count=$((0x8000)) status=none >> teste.iso
+# 32768 = 0x8000 = 32 kB = 16 setores
+
+# VOLUME DESCRIPTOR
+echo -n -e  \\x01 >> teste.iso
+echo -n -e  \\x43\\x44\\x30\\x30\\x31\\x01 >> teste.iso # CD001
+echo -n -e  \\x00 >> teste.iso
+echo -n -e  LINUX\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20 >> teste.iso
+echo -n -e  \\x54\\x49\\x53\\x4f\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20\\x20 >> teste.iso # 0x028 volume identifier TISO
+echo -n -e  \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00 >> teste.iso
+echo -n -e  \\xaf\\x00\\x00\\x00 >> teste.iso # 0x050 total number of sectors
+echo -n -e  \\x00\\x00\\x00\\xaf >> teste.iso
+echo -n -e  \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00 >> teste.iso
+echo -n -e  \\x01\\x00 >> teste.iso # 0x078 volume size
+echo -n -e  \\x00\\x01 >> teste.iso
+echo -n -e  \\x01\\x00 >> teste.iso # 0x07c volume sequence number
+echo -n -e  \\x00\\x01 >> teste.iso
+echo -n -e  \\x00\\x08 >> teste.iso # 0x080 sector size
+echo -n -e  \\x08\\x00 >> teste.iso
+
+
+echo -n -e  \\x0a\\x00\\x00\\x00 >> teste.iso # 0x084 PATH TABLE length in bytes
+echo -n -e  \\x00\\x00\\x00\\x0a >> teste.iso
+
+echo -n -e  \\x13\\x00\\x00\\x00 >> teste.iso # 0x08c sector number of first  little endian PATH TABLE
+echo -n -e  \\x00\\x00\\x00\\x00 >> teste.iso # 0x090 sector number of second little endian PATH TABLE
+echo -n -e  \\x00\\x00\\x00\\x15 >> teste.iso # 0x094 sector number of first  big    endian PATH TABLE
+echo -n -e  \\x00\\x00\\x00\\x00 >> teste.iso # 0x098 sector number of second big    endian PATH TABLE
+
+
+# DIRECTORY RECORD
+echo -n -e  \\x22                >> teste.iso # 0x09c number of bytes in the record
+echo -n -e  \\x00                >> teste.iso #
+echo -n -e  \\x17\\x00\\x00\\x00 >> teste.iso # 0x09e first sector of file data or directory
+echo -n -e  \\x00\\x00\\x00\\x17 >> teste.iso #       first sector of file data or directory
+echo -n -e  \\x00\\x08\\x00\\x00 >> teste.iso # 0x0a6 number of bytes of file data or length of directory
+echo -n -e  \\x00\\x00\\x08\\x00 >> teste.iso #       number of bytes of file data or length of directory
+
+echo -n -e  \\x45                >> teste.iso #       number of years since 1900
+echo -n -e  \\x0c                >> teste.iso #       month, where 1=January, 2=February, etc.
+echo -n -e  \\x1f                >> teste.iso #       day of month, in the range from 1 to 31
+echo -n -e  \\x15                >> teste.iso #       hour, in the range from 0 to 23
+echo -n -e  \\x00                >> teste.iso #       minute, in the range from 0 to 59
+echo -n -e  \\x00                >> teste.iso #       second, in the range from 0 to 59
+echo -n -e  \\xf4                >> teste.iso #       offset from Greenwich Mean Time, in 15-minute intervals (negative time zones)
+echo -n -e  \\x02                >> teste.iso #       flags bits. 0x02 = directory, 0x00 = file, 0x01 = hidden file
+echo -n -e  \\x00                >> teste.iso #
+echo -n -e  \\x00                >> teste.iso #
+echo -n -e  \\x01\\x00           >> teste.iso #       volume sequence number
+echo -n -e  \\x00\\x01           >> teste.iso #       volume sequence number
+echo -n -e  \\x01                >> teste.iso #       identifier length
+echo -n -e  \\x00                >> teste.iso #       identifier
+
+
+for n in {1..128}; do echo -n -e \\x20 >> teste.iso; done # 0x0be volume set identifier
+for n in {1..128}; do echo -n -e \\x20 >> teste.iso; done # 0x13e publisher identifier
+echo -n 'XORRISO-1.2.4 2012.07.20.130001, LIBISOBURN-1.2.4, LIBISOFS-1.2.4, LIBBURN-1.2.4' >> teste.iso # 0x1be data preparer identifier
+for n in {1..48};  do echo -n -e \\x20 >> teste.iso; done
+for n in {1..128}; do echo -n -e \\x20 >> teste.iso; done # 0x23e application identifier
+for n in {1..37};  do echo -n -e \\x20 >> teste.iso; done # 0x2be copyright file identifier
+for n in {1..37};  do echo -n -e \\x20 >> teste.iso; done # 0x2e3 abstract file identifier
+for n in {1..37};  do echo -n -e \\x20 >> teste.iso; done # 0x308 bibliographical file identifier
+
+echo -n -e  \\x32\\x30\\x31\\x37 >> teste.iso # year 0x32d date and time of volume creation
+echo -n -e  \\x31\\x30           >> teste.iso # month
+echo -n -e  \\x31\\x37           >> teste.iso # day
+echo -n -e  \\x32\\x30           >> teste.iso # hour
+echo -n -e  \\x35\\x33           >> teste.iso # minute
+echo -n -e  \\x35\\x36           >> teste.iso # second
+echo -n -e  \\x30\\x30           >> teste.iso # hundredths of a second
+echo -n -e  \\x00                >> teste.iso # offset from Greenwich Mean Time, in 15-minute intervals
+
+echo -n -e  \\x32\\x30\\x31\\x37 >> teste.iso # year 0x33e date and time of most recent modification
+echo -n -e  \\x31\\x30           >> teste.iso # month
+echo -n -e  \\x31\\x37           >> teste.iso # day
+echo -n -e  \\x32\\x30           >> teste.iso # hour
+echo -n -e  \\x35\\x33           >> teste.iso # minute
+echo -n -e  \\x35\\x36           >> teste.iso # second
+echo -n -e  \\x30\\x30           >> teste.iso # hundredths of a second
+echo -n -e  \\x00                >> teste.iso # offset from Greenwich Mean Time, in 15-minute intervals
+
+echo -n -e  \\x00\\x00\\x00\\x00 >> teste.iso # year 0x34f date and time when volume expires
+echo -n -e  \\x00\\x00           >> teste.iso # month
+echo -n -e  \\x00\\x00           >> teste.iso # day
+echo -n -e  \\x00\\x00           >> teste.iso # hour
+echo -n -e  \\x00\\x00           >> teste.iso # minute
+echo -n -e  \\x00\\x00           >> teste.iso # second
+echo -n -e  \\x00\\x00           >> teste.iso # hundredths of a second
+echo -n -e  \\x00                >> teste.iso # offset from Greenwich Mean Time, in 15-minute intervals
+
+echo -n -e  \\x00\\x00\\x00\\x00 >> teste.iso # year 0x360 date and time when volume is effective
+echo -n -e  \\x00\\x00           >> teste.iso # month
+echo -n -e  \\x00\\x00           >> teste.iso # day
+echo -n -e  \\x00\\x00           >> teste.iso # hour
+echo -n -e  \\x00\\x00           >> teste.iso # minute
+echo -n -e  \\x00\\x00           >> teste.iso # second
+echo -n -e  \\x00\\x00           >> teste.iso # hundredths of a second
+echo -n -e  \\x00                >> teste.iso # offset from Greenwich Mean Time, in 15-minute intervals
+echo -n -e  \\x01                >> teste.iso # 0x371
+echo -n -e  \\x00                >> teste.iso # 0x372
+# $((0x800 - 0x373)) = 1165
+dd if=/dev/zero bs=1 count=1165 status=none >> teste.iso
+# 0x800
+sudo sync
+
+# VOLUME DESCRIPTOR Set Terminator
+echo -n -e  \\xFF >> teste.iso
+echo -n -e  \\x43\\x44\\x30\\x30\\x31\\x01 >> teste.iso # CD001
+echo -n -e  \\x00 >> teste.iso
+dd if=/dev/zero bs=1 count=$((0x1000 - 8)) status=none >> teste.iso
+
+sudo sync
+# ROOT DIRECTORY
+# PATH TABLE little endian
+echo -n -e  \\x01                 >> teste.iso # name length (or 1 for the root directory)
+echo -n -e  \\x00                 >> teste.iso 
+echo -n -e  \\x17\\x00\\x00\\x00  >> teste.iso # number of the first sector in the DIRECTORY
+echo -n -e  \\x01\\x00            >> teste.iso # number of record for parent directory (1 for the root directory)
+echo -n -e  \\x00                 >> teste.iso # name (or 0 for the root directory)
+dd if=/dev/zero bs=1 count=$((0x1000 - 9)) status=none >> teste.iso
+
+# PATH TABLE big endian
+echo -n -e  \\x01                 >> teste.iso # name length (or 1 for the root directory)
+echo -n -e  \\x00                 >> teste.iso 
+echo -n -e  \\x00\\x00\\x00\\x17  >> teste.iso # number of the first sector in the DIRECTORY
+echo -n -e  \\x00\\x01            >> teste.iso # number of record for parent directory (1 for the root directory)
+echo -n -e  \\x00                 >> teste.iso # name (or 0 for the root directory)
+dd if=/dev/zero bs=1 count=$((0x1000 - 9)) status=none >> teste.iso
+
+# DIRECTORY (root)
+echo -n -e  \\x22                >> teste.iso #       number of bytes in the record
+echo -n -e  \\x00                >> teste.iso #
+echo -n -e  \\x17\\x00\\x00\\x00 >> teste.iso #       first sector of file data or directory
+echo -n -e  \\x00\\x00\\x00\\x17 >> teste.iso #       first sector of file data or directory
+echo -n -e  \\x00\\x08\\x00\\x00 >> teste.iso #       number of bytes of file data or length of directory
+echo -n -e  \\x00\\x00\\x08\\x00 >> teste.iso #       number of bytes of file data or length of directory
+
+echo -n -e  \\x45                >> teste.iso #       number of years since 1900
+echo -n -e  \\x0c                >> teste.iso #       month, where 1=January, 2=February, etc.
+echo -n -e  \\x1f                >> teste.iso #       day of month, in the range from 1 to 31
+echo -n -e  \\x15                >> teste.iso #       hour, in the range from 0 to 23
+echo -n -e  \\x00                >> teste.iso #       minute, in the range from 0 to 59
+echo -n -e  \\x00                >> teste.iso #       second, in the range from 0 to 59
+echo -n -e  \\xf4                >> teste.iso #       offset from Greenwich Mean Time, in 15-minute intervals (negative time zones)
+echo -n -e  \\x02                >> teste.iso #       flags bits. 0x02 = directory, 0x00 = file, 0x01 = hidden file
+echo -n -e  \\x00                >> teste.iso #
+echo -n -e  \\x00                >> teste.iso #
+echo -n -e  \\x01\\x00           >> teste.iso #       volume sequence number
+echo -n -e  \\x00\\x01           >> teste.iso #       volume sequence number
+echo -n -e  \\x01                >> teste.iso #       identifier length
+echo -n -e  \\x00                >> teste.iso #       identifier
+
+# DIRECTORY
+echo -n -e  \\x22                >> teste.iso #       number of bytes in the record
+echo -n -e  \\x00                >> teste.iso #
+echo -n -e  \\x17\\x00\\x00\\x00 >> teste.iso #       first sector of file data or directory
+echo -n -e  \\x00\\x00\\x00\\x17 >> teste.iso #       first sector of file data or directory
+echo -n -e  \\x00\\x08\\x00\\x00 >> teste.iso #       number of bytes of file data or length of directory
+echo -n -e  \\x00\\x00\\x08\\x00 >> teste.iso #       number of bytes of file data or length of directory
+
+echo -n -e  \\x45                >> teste.iso #       number of years since 1900
+echo -n -e  \\x0c                >> teste.iso #       month, where 1=January, 2=February, etc.
+echo -n -e  \\x1f                >> teste.iso #       day of month, in the range from 1 to 31
+echo -n -e  \\x15                >> teste.iso #       hour, in the range from 0 to 23
+echo -n -e  \\x00                >> teste.iso #       minute, in the range from 0 to 59
+echo -n -e  \\x00                >> teste.iso #       second, in the range from 0 to 59
+echo -n -e  \\xf4                >> teste.iso #       offset from Greenwich Mean Time, in 15-minute intervals (negative time zones)
+echo -n -e  \\x02                >> teste.iso #       flags bits. 0x02 = directory, 0x00 = file, 0x01 = hidden file
+echo -n -e  \\x00                >> teste.iso #
+echo -n -e  \\x00                >> teste.iso #
+echo -n -e  \\x01\\x00           >> teste.iso #       volume sequence number
+echo -n -e  \\x00\\x01           >> teste.iso #       volume sequence number
+echo -n -e  \\x01                >> teste.iso #       identifier length
+echo -n -e  \\x01                >> teste.iso #       identifier
+
+# DIRECTORY
+echo -n -e  \\x2c                >> teste.iso #       number of bytes in the record
+echo -n -e  \\x00                >> teste.iso #
+echo -n -e  \\x18\\x00\\x00\\x00 >> teste.iso #       first sector of file data or directory
+echo -n -e  \\x00\\x00\\x00\\x18 >> teste.iso #       first sector of file data or directory
+echo -n -e  \\x12\\x00\\x00\\x00 >> teste.iso #       number of bytes of file data or length of directory
+echo -n -e  \\x00\\x00\\x00\\x12 >> teste.iso #       number of bytes of file data or length of directory
+
+echo -n -e  \\x45                >> teste.iso #       number of years since 1900
+echo -n -e  \\x0c                >> teste.iso #       month, where 1=January, 2=February, etc.
+echo -n -e  \\x1f                >> teste.iso #       day of month, in the range from 1 to 31
+echo -n -e  \\x15                >> teste.iso #       hour, in the range from 0 to 23
+echo -n -e  \\x00                >> teste.iso #       minute, in the range from 0 to 59
+echo -n -e  \\x00                >> teste.iso #       second, in the range from 0 to 59
+echo -n -e  \\xf4                >> teste.iso #       offset from Greenwich Mean Time, in 15-minute intervals (negative time zones)
+echo -n -e  \\x00                >> teste.iso #       flags bits. 0x02 = directory, 0x00 = file, 0x01 = hidden file
+echo -n -e  \\x00                >> teste.iso #
+echo -n -e  \\x00                >> teste.iso #
+echo -n -e  \\x01\\x00           >> teste.iso #       volume sequence number
+echo -n -e  \\x00\\x01           >> teste.iso #       volume sequence number
+echo -n -e  \\x0b                >> teste.iso #       identifier length
+echo -n -e  'TESTE.TXT;1'        >> teste.iso #       identifier
+#0x870
+dd if=/dev/zero bs=1 count=$((0x1000 - 0x870)) status=none >> teste.iso
+
+echo -n -e  "isso é one TESTU\n"  >> teste.iso #
+dd if=/dev/zero bs=1 count=309230 status=none >> teste.iso
+
+
+sudo sync

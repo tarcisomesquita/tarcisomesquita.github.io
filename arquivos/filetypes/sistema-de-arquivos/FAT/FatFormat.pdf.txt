@@ -1,0 +1,84 @@
+p 22
+
+
+The first data cluster is cluster 2.
+
+RootDirSectors = 0
+The first sector of cluster 2: FirstDataSector = reserved + (fats * length) = 32 + (2 * 4) = 40
+
+FATSz = length
+
+Given any valid data cluster number N, the sector number of the first sector of that cluster:
+FirstSectorofCluster = ((N – 2) * BPB_SecPerClus) + FirstDataSector
+
+Número de setores usados para dados
+DataSec = TotSec – FirstDataSector
+
+Número de clusters
+CountofClusters = DataSec / BPB_SecPerClus;
+
+If(CountofClusters < 4085) {
+   // Volume is FAT12
+}
+else if(CountofClusters < 65525) {
+   // Volume is FAT16
+}
+else {
+   // Volume is FAT32
+}
+This is the one and only way that FAT type is determined.
+
+struct DSKSZTOSECPERCLUS {
+   DWORD DiskSize;
+   BYTE  SecPerClusVal;
+};
+
+DSKSZTOSECPERCLUS DskTableFAT16 [] = {
+   {      8400,  0}, // disks up to 4.1 MB, the 0 value for SecPerClusVal trips an error
+   {     32680,  2}, // disks up to 16 MB, 1k cluster
+   {    262144,  4}, // disks up to 128 MB, 2k cluster
+   {    524288,  8}, // disks up to 256 MB, 4k cluster
+   {   1048576, 16}, // disks up to 512 MB, 8k cluster
+   // The entries after this point are not used unless FAT16 is forced
+   {   2097152, 32}, // disks up to 1 GB, 16k cluster
+   {   4194304, 64}, // disks up to 2 GB, 32k cluster
+   {0xFFFFFFFF,  0}  // any disk greater than 2GB, 0 value for SecPerClusVal trips an error
+};
+
+DSKSZTOSECPERCLUS DskTableFAT32 [] = {
+   {     66600,  0}, // disks up to 32.5 MB, the 0 value for SecPerClusVal trips an error
+   {    532480,  1}, // disks up to 260 MB, .5k cluster
+   {  16777216,  8}, // disks up to 8 GB, 4k cluster
+   {  33554432, 16}, // disks up to 16 GB, 8k cluster
+   {  67108864, 32}, // disks up to 32 GB, 16k cluster
+   {0xFFFFFFFF, 64}  // disks greater than 32GB, 32k cluster
+};
+
+Para 1   sector/cluster, menor FAT32 tem 32MiB.
+Para 128 sector/cluster, menor FAT32 tem  4GiB.
+
+TotSec = FirstDataSector + CountofClusters * BPB_SecPerClus
+
+Given any valid cluster number N, where in the FAT(s) is the entry for that cluster number?
+FATOffset = N * 4;
+
+32-bit FAT entries are not really 32-bit values; they are only 28-bit values. For example, all of these 32-bit cluster entry values: 0x10000000, 0xF0000000, and 0x00000000 all indicate that the cluster is FREE, because you ignore the high 4 bits.
+
+The cluster location in the FAT contains either an EOC mark or the cluster number of the next cluster of the file.
+0x0FFFFFFF is an EOC mark (End Of Clusterchain).
+To mark a cluster as bad, store the value 0x0FFFFFF7 in it.
+
+two reserved clusters at the start of the FAT:
+FAT[0] = 0x0FFFFFF8
+FAT[1] = 0x0FFFFFFF
+
+For Windows, any FAT volume smaller than 512 MB is FAT16, and any FAT volume of 512 MB or larger is FAT32.
+
+FirstRootDirSecNum = FirstDataSector
+root_cluster:  dd 0x00000002         ; 0x0000002C   first cluster of the root directory  . . . . . . . . . . . . . . . . . . . . . . . . . [OK]
+
+
+
+p 22
+
+

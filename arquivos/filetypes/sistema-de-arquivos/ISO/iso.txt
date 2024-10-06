@@ -1,0 +1,11 @@
+cat /usr/lib/grub/i386-pc/cdboot.img /usr/lib/grub/i386-pc/core.img > eltorito.img
+
+echo "isso é one TESTU" > TESTE.TXT
+
+mkisofs -R -b $(pwd)/eltorito.img -no-emul-boot -boot-load-size 4 -boot-info-table -o teste.iso TESTE.TXT
+
+mkisofs -V TISO -o teste.iso TESTE.TXT
+
+mkdir -p UEFI/EFI/BOOT
+cp /cdrom/EFI/BOOT/BOOTx64.EFI	UEFI/EFI/BOOT/BOOTx64.EFI
+mkisofs -V UEFI -o uefi.iso UEFI/

@@ -1,0 +1,4 @@
+The "Inode Bitmap" works in a similar way as the "Block Bitmap", difference being in each bit representing an inode in the "Inode Table" rather than a block.
+
+its location may be determined by reading the "bg_inode_bitmap" in its associated group descriptor.
+

@@ -1,0 +1,13 @@
+import csv
+scoresList=[]
+with open ("playerScores_v2.txt") as csvfile:
+           scores=csv.reader(csvfile, delimiter= ",")
+           for row in scores:
+              scoresList.append(row)
+
+
+playername=input("Enter the player name you would like the score for:")
+print("{0:40} {1:10} {2:10}".format("Name","Level","Score"))
+
+for i in range(0,len(scoresList)):
+   print("{0:40} {1:10} {2:10}".format(scoresList[i] [0],scoresList[i] [1], scoresList[i] [2]))
