@@ -1,62 +1,44 @@
-import as from
-export default
-
 const
 let
-var
-
-boolean
-char
-short
-int
-double
-long
-
-class
+var // não usar
 
 true
 false
+null
 
 if
 else
 
-
-abstract
-break
-byte
-case
-catch
-continue
-default
-do
-extends
-final
-finally
-float
-for
-function
-goto
-implements
-in
-instanceof
-interface
-native
-new
-null
-package
-private
-protected
-static
-public
-return
-super
 switch
-synchronized
+case
+default
+
+while
+for
+do
+break
+continue
+in
+of
+
+function  // não usar
+return
+
+try
+catch
+finally
+
+class
+extends
+implements
+instanceof
+new
+super
 this
 throw
 throws
-transient
-try
 void
-while
 with
+
+import as from
+export default

@@ -1,0 +1,28 @@
+let dayOfWeek = "Tuesday";
+
+switch (dayOfWeek) {
+  case "Monday":
+    console.log("It's Monday, let's get this week started!");
+    break;
+  case "Tuesday":
+    console.log("Tuesday, the middle of the week.");
+    dayOfWeek = "Saturday";
+  case "Wednesday":
+    console.log("Hump day! Almost there.");
+    break;
+  case "Thursday":
+    console.log("Thursday, the end of the workweek is near.");
+    break;
+  case "Tuesday":
+    console.log("Tuesday, the middle of the week.");
+    break;
+  case "Friday":
+    console.log("It's Friday! Time to relax.");
+    break;
+  case "Saturday":
+  case "Sunday":
+    console.log("Weekend vibes!");
+    break;
+  default:
+    console.log("Invalid day of the week.");
+}
