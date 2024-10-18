@@ -1,0 +1,140 @@
+metacaracteres . ? * + ^ $ | \ [ ] { } ( )
+
+Expressão Regular
+ca.a        reconhece "casa", "cama", "capa", "ca7a", etc
+ca[drt]a    reconhece "cada", "cara" e "cata"
+ca[^drt]a   reconhece "casa", "cama", "capa", etc, exceto "cada", "cara" e "cata"
+a[j-n]a     reconhece "aja", "aka", "ala", "ama" e "ana"
+asa\d       reconhece "asa1", "asa2", "asa3", etc
+car+o       reconhece "caro", "carro", "carrro", "carrrro", etc
+carros?     reconhece "carro" ou "carros"
+toc(toc)*   reconhece "toc", "toctoc", "toctoctoc", "toctoctoctoc", etc
+(\d\d)\1    reconhece "1212", "1313", "2121", "8989", etc
+^Portanto   reconhece a palavra "Portanto" no início de uma linha
+etc\.$      reconhece a string "etc." no fim de uma linha
+
+.	ponto   	um caractere qualquer
+[...]	lista   	lista de caracteres permitidos
+[^...]	lista negada	lista de caracteres proibidos
+
+([0-9]{2}/[0-9]{2}/)20([0-9]{2})
+o interior dos parênteses guardam o que será usado no futuro como $1$2 (javascript)
+'The best things in life are free'.replace(/(.e)/g, '$1$1')
+
+Quantificadores
+
+meta	mnemônico	função
+---------------------------------------------------------------
+?	opcional	zero ou um
+*	asterisco	zero, um ou mais
++	mais    	um ou mais
+{n,m}	chaves  	de n até m
+
+? equivale à {0,1}
+* equivale à {0,}
++ equivale à {1,}
+
+Âncoras
+
+meta	mnemônico	função
+---------------------------------------------------------------
+^	circunflexo	início da linha
+$	cifrão  	fim da linha
+\b	borda   	início ou fim de palavra
+
+
+Outros
+
+meta	mnemônico	função
+---------------------------------------------------------------
+\c	escape  	torna literal o caractere c
+|	ou      	ou um ou outro
+(...)	grupo   	delimita um grupo
+\1...\9	retrovisor	texto casado nos grupos 1...9
+
+(lenta)(mente) é \2 \1 -> lentamente é mente lenta
+((band)eira)nte \1 \2a -> bandeirante bandeira banda
+
+// pegue a string abc somente se ela for seguida por yxz
+'abcyxz'.match(/abc(?=yxz)/)
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+\xdd   hexadecimal
+\uxxxx unicode
+
+'The best things in life are free'.match(/.e/g) // return [ "he", "be", "fe", "re", "re" ]
+
+/.e/.test('free') // return true
+
+'The best things in life are free'.search(/.e/)  // return 1
+
+'The best things in life are free'.replace(/.e/g, 'T') // return "TT Tst things in liT aT fTe" 
+
+'The best things in life are free'.split(/.e/); return [ "T", " ", "st things in li", " a", " f", "e" ]
+
+-------------------------------------------
+\d	[[:digit:]]	dígito
+\D	[^[:digit:]]	não-dígito
+\w	[[:alnum:]_]	palavra
+\W	[^[:alnum:]_]	não-palavra
+\s	[[:space:]]	branco
+\S	[^[:space:]]	não-branco
+
+b-l	significado     	similar
+-----------------------------------------------------
+\a	alfabeto        	[[:alpha:]]
+\A	não-alfabeto    	[^[:alpha:]]
+\h	cabeça de palavra	[[:alpha]_]
+\H	não-cabeça de palavra	[^[:alpha:]_]
+\l	minúsculas      	[[:lower:]]
+\L	não-minúsculas  	[^[:lower:]]
+\u	maiúsculas      	[[:upper:]]
+\U	não-maiúsculas  	[^[:upper:]]
+\o	número octal    	[0-7]
+\O	não-número octal	[^0-7]
+\B	não-borda
+\A	início do texto
+\Z	fim do texto
+\l	torna minúscula
+\L	torna minúscula até \E
+\u	torna maiúscula
+\U	torna maiúscula até \E
+\Q	escapa até \E
+\E	fim da modificação
+\G	fim do casamento anterior
+
+\b marca os limites de uma palavra, ou seja, onde ela começa e/ou termina
+"palavra" aqui é um conceito que engloba [A-Za-z0-9_] apenas
+
+dia     	dia, diafragma, radial, melodia, bom-dia!
+\bdia   	dia, diafragma, bom-dia!
+dia\b   	dia, melodia, bom-dia!
+\bdia\b 	dia, bom-dia!
+
+Os intervalos respeitam a ordem numérica da tabela ASCII
+[][-] casa um ] ou [ ou um -.
+para colocarmos um ^ literal em uma lista, precisamos pô-lo em qualquer posição que não seja a primeira
+
+classe POSIX	similar 	significa
+-----------------------------------------
+[:upper:]	[A-Z]   	letras maiúsculas
+[:lower:]	[a-z]   	letras minúsculas
+[:alpha:]	[A-Za-z]	maiúsculas/minúsculas
+[:alnum:]	[A-Za-z0-9]	letras e números
+[:digit:]	[0-9]   	números
+[:xdigit:]	[0-9A-Fa-f]	números hexadecimais
+[:punct:]	[.,!?:...]	sinais de pontuação
+[:blank:]	[ \t]   	espaço e TAB
+[:space:]	[ \t\n\r\f\v]	caracteres brancos
+[:cntrl:]	-       	caracteres de controle
+[:graph:]	[^ \t\n\r\f\v]	caracteres imprimíveis
+[:print:]	[^\t\n\r\f\v]	imprimíveis e o espaço
+
+Nos Estados Unidos, [[:upper:]] é igual a [A-Z]. No Brasil, [[:upper:]] é igual [A-ZÁÃÂÀÉÊÍÓÕÔÚÇ...]
+
+i: ignorar a diferença entre maiúsculas e minúsculas;
+m: trata o texto como multilinha;
+s: trata o texto como uma única linha;
+x: permite inclusão de espaços e comentários;
+g: global

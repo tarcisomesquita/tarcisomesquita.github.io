@@ -1,0 +1,31 @@
+Acompanhar as atualizações na referência de javascritp
+
+location.href = 'https://developer.mozilla.org'
+
+fetch('https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined').then(response => response.text()).then(texto => console.log(texto))
+
+document.querySelector('article.main-page-content').innerHTML 
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+# 86400 s = 1 dia
+if [ $(($(date +%s) - $(date +%s --date="$(cat referencia/last.txt)"))) -lt 86400 ]; then
+   echo "Tem menos de um dia deste a última checagem!";
+fi
+
+for FILE in $(ls referencia/old/); do
+  echo "Baixando $FILE";
+  NAME=${FILE/%.html/};
+  wget -q -O - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/${NAME//\%//} | \
+  sed 's/\(<article[^>]*>\)/\n\1\n/; s|\(</article>\)|\n\1\n|;' | sed -n '/<article/,/article>/{p}' > referencia/new/${NAME}.html;
+  sleep 0.3;
+  if diff -q referencia/old/$FILE referencia/new/$FILE; then rm referencia/new/$FILE; fi
+done
+
+date +'%Y-%m-%d %H:%M:%S %z' > referencia/last.txt
+
+for FILE in $(ls referencia/new/); do
+  echo -e "\n = = = = = = = = = = = = = = = = = = = = = = = = = = = =\n"
+  echo $FILE;
+  diff referencia/old/$FILE referencia/new/$FILE;
+done

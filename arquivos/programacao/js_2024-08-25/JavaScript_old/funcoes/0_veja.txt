@@ -1,37 +1,22 @@
+document.body.innerHTML = '<textarea id="t0"></textarea>'
+t0.onkeydown = () => console.log(event)
 
-var link = window.document.createElement("a");
-window.document.body.appendChild(link);
-
-
-
-window.location = this.firstChild.getAttribute("href");
-document.getElementById("search_filtered_div").className = "showing";
-
-
-<script>
-function atualize(e) {
-   window.alert(e.shiftKey);
-// if(window.event.keyCode == 13){}
-// if(window.event.charCode == 97)
-// if(window.event.ctrlKey) se a tecla control está pressionada
-// if(window.event.shiftKey) se a tecla shift está pressionada
-/*
-	var KEY = {
-		UP: 38,
-		DOWN: 40,
-		DEL: 46,
-		TAB: 9,
-		RETURN: 13,
-		ESC: 27,
-		COMMA: 188,
-		PAGEUP: 33,
-		PAGEDOWN: 34,
-		BACKSPACE: 8
-	};
-		switch(event.keyCode) {
-			casewindow.event KEY.UP:
-*/
-}
-</script>
-<body onKeyPress="var e = window.event; atualize(e)">
-
+type: "keypress"
+key: "a"
+keyCode: 97
+charCode: 97
+code: "KeyA"
+altKey: false
+composed: true
+ctrlKey: false
+explicitOriginalTarget: <textarea id="t0">
+isComposing: false
+metaKey: false
+originalTarget: <textarea id="t0">
+repeat: false
+shiftKey: false
+srcElement: <textarea id="t0">​
+target: <textarea id="t0">
+timeStamp: 3602194
+view: Window about:newtab
+which: 97
