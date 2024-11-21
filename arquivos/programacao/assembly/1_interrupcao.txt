@@ -1,0 +1,68 @@
+An interrupt is a request of the processor to suspend its current program and transfer control to a new program called the Interrupt Service Routine (ISR). The ISR takes the appropriate action and then returns control to the original process that was suspended.
+
+When a processor receives an interrupt, it uses the vector number of the interrupt as an index into the interrupt table.
+In protected mode, the interrupt table is called the interrupt descriptor table (IDT).
+In real-address mode, the table is usually called the interrupt vector table (IVT).
+Veja IVT (Interrupt Vector Table) na pasta "mapa da RAM".
+
+In protected mode:
+interrupt table consists of eight-byte descriptors
+not need be located at physical address zero
+nor contain the full 256 entries (the address and size of the Interrupt Descriptor Table (IDT) may be manipulated with the LIDT and SIDT instructions). The limit of the interrupt vector table are contained in the IDTR register and can be changed using the LIDT instruction.
+descriptor for an interrupt number specifies HOW control is transferred to the interrupt handler. Three types of transfer are possible: Interrupt Gate, Trap Gate, and Task Gate.
+Interrupt Gate and Trap Gate transfer control to a handler running in the same process as the active program.
+Task Gate  performs a complete context switch in order to invoke a handler in a different process from the active program.
+Interrupt and Trap gates are identical except that an Interrupt Gate will clear IF and thus disable interrupts, while a Trap Gate leaves IF unchanged.
+
+
+When an interrupt is signaled, the processor halts execution of the current program and switches to a handler procedure that has been written specifically to handle the interrupt. When the handler has completed, processador return to program interrupted.
+
+The processor performs the following actions to make an call to the interrupt handler:
+1. Pushes the current values of the CS and EIP registers onto the stack. (Only the 16 least-significant bits of the EIP register are pushed.)
+2. Pushes the low-order 16 bits of the EFLAGS register onto the stack.
+3. Clears the IF flag in the EFLAGS register to disable interrupts.
+4. Clears the TF, RC, and AC flags, in the EFLAGS register.
+5. Transfers program control to the location specified in the interrupt vector table.
+
+An IRET instruction at the end of the handler procedure reverses these steps to return program control to the interrupted program. Exceptions do not return error codes in real-address mode.
+
+Processor does the following when calling an interrupt handler in protected mode:
+1. Pushes the current contents of the EFLAGS, CS, and EIP registers (in that order) on the stack.
+3. Loads the segment selector for the new code segment and the new instruction pointer (from the interrupt gate or trap gate) into the CS and EIP registers, respectively.
+4. If the call is through an interrupt gate, clears the IF flag in the EFLAGS register.
+5. Begins execution of the handler procedure.
+
+When executing a return from an interrupt or exception handler from the same privilege level as the interrupted procedure, the processor performs these actions:
+1. Restores the CS and EIP registers to their values prior to the interrupt or
+    exception.
+2. Restores the EFLAGS register.
+3. Increments the stack pointer appropriately.
+4. Resumes execution of the interrupted procedure.
+
+Stack Usage with No Privilege-Level Change
+
+|_____________| <--- ESP Before Transfer to Handler
+|___EFLAGS____|
+|_____CS______|
+|____EIP______|
+|_Error_Code__| <--- ESP After Transfer to Handler
+|_____________|
+
+
+                                 Stack Usage with Privilege-Level Change
+
+Interrupted Procedure’s Stack                Handler’s Stack
+|_____________| <--- ESP Before              |_____________|
+|_____________|      Transfer to Handler     |_____SS______|
+|_____________|                              |_____ESP_____|
+|_____________|                              |___EFLAGS____|
+|_____________|                              |_____CS______|
+                                             |_____EIP_____|
+                              ESP After ---> |_Error_Code__|
+                         Transfer to Handler |_____________|
+                               
+
+
+CPUs typically have an instruction to disable interrupts for use when a section of code has to run without being disturbed by external events. Because of this, most CPUs also have a special interrupt called a Non-Maskable Interrupt (NMI), which is responded to even when all other interrupts are disabled. The NMI is used to signal calamities such as memory failure or imminent power loss.
+
+

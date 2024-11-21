@@ -1,0 +1,94 @@
+Id	Section
+0	custom
+1	type
+2	import
+3	function
+4	table
+5	memory
+6	global
+7	export
+8	start
+9	element
+10	code
+11	data
+12	data
+
+section type (id 1) decode into a vector of function types.
+
+(module
+  (func $main (result i32)
+    i32.const 50
+  )
+  (export "main" (func $main))
+)
+
+
+echo -n -e \\x00\\x61\\x73\\x6d # WASM_BINARY_MAGIC
+echo -n -e \\x01\\x00\\x00\\x00 # WASM_BINARY_VERSION
+
+
+echo -n -e \\x01 # section type
+echo -n -e \\x05 # section size
+
+echo -n -e \\x01 # num types
+echo -n -e \\x60 # func
+echo -n -e \\x00 # num params
+echo -n -e \\x01 # rum results
+echo -n -e \\x7f # i32
+
+
+echo -n -e \\x03 # section code
+echo -n -e \\x02 # section size
+
+echo -n -e \\x01 # num functions
+echo -n -e \\x00 # signature index
+
+
+echo -n -e \\x07 # export section
+echo -n -e \\x08 # section size
+
+echo -n -e \\x01 # num exports
+echo -n -e \\x04 # string length
+echo -n -e "main" # export name
+echo -n -e 00 # export kind
+echo -n -e 00 # export func index
+
+echo -n -e \\x0a # code section
+echo -n -e \\x06 # section size
+
+echo -n -e \\x01 # num functions
+echo -n -e \\x04 # func body size
+echo -n -e \\x00 # local decl count
+echo -n -e \\x41 # ?
+echo -n -e \\x32 # ? i32 literale
+echo -n -e \\x0b # end
+
+
+echo -n -e \\x00 # custom section
+echo -n -e \\x14 # section size
+
+echo -n -e \\x04 # string length
+echo -n -e "name" # section name
+echo -n -e \\x01 # subsection type
+echo -n -e \\x08 # subsection size
+echo -n -e \\x01 # num names
+echo -n -e \\x00 # elem index
+
+00000030  05 66 75 6e 63 30 02 03  01 00 00                 |.func0.....|
+
+
+000002c: 01                                        ; name subsection type
+000002d: 00                                        ; subsection size (guess)
+000002e: 01                                        ; num names
+000002f: 00                                        ; elem index
+
+0000030: 04                                        ; string length
+0000031: 6d61 696e                                main  ; elem name 0
+000002d: 07                                        ; FIXUP subsection size
+0000035: 02                                        ; local name type
+0000036: 00                                        ; subsection size (guess)
+0000037: 01                                        ; num functions
+0000038: 00                                        ; function index
+0000039: 00                                        ; num locals
+0000036: 03                                        ; FIXUP subsection size
+0000026: 13                                        ; FIXUP section size

@@ -1,0 +1,171 @@
+# comentário
+
+construir em diretório remoto
+$ ../doofabble-3.0/configure
+$ make
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Estrutura de um arquivo Makefile
+
+VARIAVEL1 = variavel
+VARIAVEL2 = 2
+
+regra: dependência1 dependência2  # uma dependência pode ser um arquivo ou uma regra
+	comando                   # a linha de comando tem que começar com um TAB
+	@comando                  # o @ faz com que o comando não seja impresso na tela
+	-comando ...              # o - faz com que continue mesmo se retornar um número diferente de zero
+
+Dependência1:
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+EXEMPLO:
+
+all: jupiter
+jupiter: main.c
+	gcc -g -O0 main.c -o foo
+
+clean:
+	-rm foo
+
+install: all
+	mkdir -p /usr/local/bin
+	rm -f /usr/local/bin/jupiter
+	cp foo /usr/local/bin/jupiter
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Default values
+$(CC) = cc 
+$(MAKE) = make 
+$(SHELL) = /bin/sh  # os comando são executados no programa definido aqui.
+
+Especiais
+$@ = nome da regra
+$< = nome da primeira dependência. Ex.: @echo "$@ depende de $<"
+$^ = All dependencies of the current rule
+$+ = Like $^, but it keeps duplicates and order. Ex.: @echo "$@ depende de $+" ; gcc -o $@ $+ 
+$? = Changed dependents
+$* = Prefix shared by target and dependent files
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Pode se colocar várias regras juntas, como em:
+all clean jupiter:
+
+.PHONY: dependencia
+O programa continua mesmo se as dependências não existirem.
+
+exemplo:
+.PHONY: all clean teste.txt
+
+.SUFFIXES:
+.SUFFIXES: .c .o
+The first line clears out the suffix list, the second introduces all suffixes which may be subject to implicit rules.
+
+Exemplo:
+all: teste.o
+	@/bin/echo -e "\\x0AJá transformei teste.c em teste.o\\x0A"
+
+.SUFFIXES:
+.SUFFIXES: .c .o
+
+.c.o:  # match target that ends in .o
+	gcc -c $< -o $@
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+all: aescrypt
+
+aescrypt: aescrypt.o aes.o sha256.o password.o
+	gcc -Wall -o $@ $^
+	rm -f *.o
+
+%.o: %.c %.h
+	gcc -Wall -c $*.c
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+MACROS
+Macros start with a dollar sign, syntactic forms of `$(..)' are make variable expansions.
+
+Exemplo:
+
+PESSOA = eu
+all:
+	@echo $(PESSOA)
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+$(warning Isso é um aviso)
+
+ifndef KBUILD_VERBOSE
+  KBUILD_VERBOSE=0
+endif
+
+ifeq ($(KBUILD_VERBOSE),1)
+  quiet=
+  Q=
+else
+  quiet=quiet_
+  Q=@
+endif
+
+ifeq ($(filter $(noconfig_targets),allnoconfig),allnoconfig)
+all:
+	@echo if
+else
+all:
+	@echo else
+endif
+
+
+ifneq (,$(filter $(ARCH),ia32 x86_64))
+  T := $(ARCH)
+endif
+all:
+	@echo $(T)
+
+
+ARCH := x86_64
+export ARCH
+
+ARCH := "asdf x86_64 dfas"
+T := $(findstring x86_64,$(ARCH))
+all:
+	@echo $(T)
+
+TOPDIR := $(shell if [ "$$PWD" != "" ]; then echo $$PWD; else pwd; fi)
+
+BR2_HAVE_DOT_CONFIG=y
+ifeq ($(strip $(BR2_HAVE_DOT_CONFIG)),y)
+
+TOP=$(shell pwd)
+$(if $(BASE_DIR),, $(error output directory "$(O)" does not exist))
+
+T := $(if $(findstring gcc,$(CC)),-fno-merge-all-constants,)
+
+BR2_GCC_VERSION="3.3.5"
+GCC_VERSION:=$(strip $(subst ",, $(BR2_GCC_VERSION)))
+
+
+cd /home/ubuntu/Desktop/di524/buildroot/toolchain_build_mips/gcc-3.3.5/gcc
+if bison  -o c-p$$.c c-parse.y; then
+  echo IF 
+  test -f c-p$$.output && mv -f c-p$$.output c-parse.output ; 
+  mv -f c-p$$.c c-parse.c ;
+   
+else 
+  rm -f c-p$$.* ; 
+  false ; 
+fi
+cd -
+
+
+structsp_attr:
+	  struct_head identifier '{'
+		{ $$ = start_struct (RECORD_TYPE, $2);
+		  /* Start scope of tag before parsing components.  */
+		}
+

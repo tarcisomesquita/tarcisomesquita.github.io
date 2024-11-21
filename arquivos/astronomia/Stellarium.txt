@@ -1,0 +1,21 @@
+Stellarium
+Definir localização Campinas
+Pausar tempo em 31/03 20:00
+Dasativar planetas
+Desativar meteoros
+Ativar objetos do céu profundo
+Definir opções de visualização do céu:
+- poluiçao luminosa para 6
+- magnitude para 5.5 (aumentar e diminuir na Plêiades)
+Configurar informações de nome:
+- selecionar Plêiades
+- nenhuma informação
+- nome
+- tipo
+- magnitude visual
+- ascensão/declinação (J200)
+- distância
+Configurar extras
+- fronteira de constelações
+- imagem de nebulosas
+Baixar catálogo 5

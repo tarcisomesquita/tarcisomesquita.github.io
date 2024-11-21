@@ -1,0 +1,10 @@
+
+Reset (00h)
+The Reset disk BIOS function is called to reset the disk subsystem (ROM, RAM, RFD, floppy, and IDE). This function is used during POST and also whenever an error occurs as a result of a disk operation.
+Input Parameters:
+       AH - 00h, indicating the Reset Function.
+       DL - Drive number.
+Output Parameters:
+       CY - Set Carry flag if failure, else clear if success.
+       AH - Status code if failure (00h if success).
+

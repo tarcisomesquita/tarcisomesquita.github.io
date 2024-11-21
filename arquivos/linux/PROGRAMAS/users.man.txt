@@ -1,0 +1,17 @@
+USERS(1)
+
+SYNOPSIS
+users [FILE]
+users --version
+
+Output who is currently logged in according to FILE.
+
+FILE
+/var/run/utmp (default)
+/var/log/wtmp
+
+--version output version information and exit
+
+GNU coreutils 6.9.92.4-f088d-dirty
+January 2008
+

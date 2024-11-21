@@ -1,0 +1,48 @@
+
+for VAR in LISTA ; do
+   comandos
+done
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#!/bin/bash
+EU="mais um nome"
+for ITEM in $EU ; do
+   echo $ITEM ;
+done ;
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#!/bin/bash
+if [ -z "$1" ]; then
+  echo "Uso: `basename $0` argumento1 argumento2 etc."
+  exit 1
+fi
+num=1
+for arg in "$@"; do
+  echo "Arg #$num = $arg"
+  num=$[ $num + 1 ]
+done
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#!/bin/bash
+for i in {1..3} ; do touch ${RANDOM}.txt ; done
+# $RANDOM is a special variable that creates a random number between 0 and 65536 (I think that is the correct range)
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#!/bin/bash
+for file in *.txt ; do mv -v $file ${file%.txt}.bak ; done
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#!/bin/bash
+for x in $(cat list.txt) ; do echo $x; done
+
+#The IFS (Internal Field Separator) variable is what determines what separates the list.
+IFS='
+' #only a newline between the quotes
+for x in $(cat list.txt) ; do echo $x; done
+unset IFS # unset the change to IFS back to normal
+

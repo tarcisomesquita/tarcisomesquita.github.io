@@ -1,0 +1,62 @@
+000001b0  00 00 00 00 00 00 00 00  2c cb 1e 3e 00 00 00 20  |........,..>... |
+000001c0  21 00 0c 15 50 05 00 08  00 00 00 f8 3f 00 00 00  |!...P.......?...|
+000001d0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 fe  |................|
+000001e0  ff ff 83 fe ff ff 00 04  40 00 00 04 40 00 00 00  |........@...@...|
+000001f0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 55 aa  |..............U.|
+
+000001b0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+000001c0  02 00 ee 6b ed fd 01 00  00 00 fe df 77 00 00 00  |...k........w...|
+
+sudo gdisk /dev/sdb
+p show partition list
+x enter in expert menu
+a change attributes
+enter the partition number
+w write the changes
+
+20.04.2
+Firefox 85
+
+
+
+sudo hexdump -C -v -n 512 /dev/sda
+000001b0  60 39 00 00 00 00 00 00  2c cb 1e 3e 00 00 80 00  |`9......,..>....|
+000001c0  01 00 00 6c e0 f9 00 00  00 00 40 2e 36 00 00 fe  |...l......@.6...|
+000001d0  ff ff ef fe ff ff 08 f5  35 00 40 1f 00 00 00 4b  |........5.@....K|
+000001e0  82 0a 83 a0 88 98 00 08  80 00 00 00 00 07 00 00  |................|
+000001f0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 55 aa  |..............U.|
+
+dd if=/dev/zero of=GPT.bin bs=1 count=1024 status=none
+
+# LBA 0
+echo -n -e \\x00\\x00\\x02\\x00\\xEE\\xFF\\xFF\\xFF\\x01\\x00\\x00\\x00\\xFF\\xFF\\xFF\\xFF | dd of=GPT.bin bs=1 seek=$((0x1BE)) conv=notrunc status=none
+echo -n -e \\x55\\xAA | dd of=GPT.bin bs=1 seek=$((0x1FE)) conv=notrunc status=none
+
+# LBA 1
+echo -n -e 'EFI PART'\\x00\\x00\\x01\\x00\\x5C\\x00\\x00\\x00 | dd of=GPT.bin bs=1 seek=$((0x200)) conv=notrunc status=none
+
+
+
+hexdump -v -C GPT.bin
+
+
+globally unique identifiers (GUID)
+
+# LBA 1
+Offset 	Length 	Contents
+0 (0x00) 	8 bytes 	Signature ("EFI PART", 45h 46h 49h 20h 50h 41h 52h 54h or 0x5452415020494645ULL[a] on little-endian machines)
+8 (0x08) 	4 bytes 	Revision (for GPT version 1.0 (through at least UEFI version 2.7 (May 2017)), the value is 00h 00h 01h 00h)
+12 (0x0C) 	4 bytes 	Header size in little endian (in bytes, usually 5Ch 00h 00h 00h or 92 bytes)
+16 (0x10) 	4 bytes 	CRC32/zlib of header (offset +0 up to header size) in little endian, with this field zeroed during calculation
+20 (0x14) 	4 bytes 	Reserved; must be zero
+24 (0x18) 	8 bytes 	Current LBA (location of this header copy)
+32 (0x20) 	8 bytes 	Backup LBA (location of the other header copy)
+40 (0x28) 	8 bytes 	First usable LBA for partitions (primary partition table last LBA + 1)
+48 (0x30) 	8 bytes 	Last usable LBA (secondary partition table first LBA - 1)
+56 (0x38) 	16 bytes 	Disk GUID (also referred as UUID on UNIXes)
+72 (0x48) 	8 bytes 	Starting LBA of array of partition entries (always 2 in primary copy)
+80 (0x50) 	4 bytes 	Number of partition entries in array
+84 (0x54) 	4 bytes 	Size of a single partition entry (usually 80h or 128)
+88 (0x58) 	4 bytes 	CRC32/zlib of partition array in little endian
+92 (0x5C) 	* 	Reserved; must be zeroes for the rest of the block (420 bytes for a sector size of 512 bytes; but can be more with larger sector sizes)
+

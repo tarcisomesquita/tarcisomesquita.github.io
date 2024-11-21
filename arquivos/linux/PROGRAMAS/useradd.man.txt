@@ -1,0 +1,208 @@
+USERADD(8)
+
+useradd create a new user or update default new user information
+
+SYNOPSIS
+useradd [options] LOGIN
+useradd -D [options]
+
+LOGIN
+only use usernames that begin with a lower case letter or an underscore, and are only followed by lower case letters, digits, underscores, dashes, and optionally terminated by a dollar sign. In regular expression terms: [a-z_][a-z0-9_-]*[$]?
+Usernames may only be up to 32 characters long.
+
+OPTIONS
+The options which apply to the useradd command are:
+
+-c, --comment COMMENT
+    Any text string. It is generally a short description of the login, and is currently used as the field for the user´s full name.
+
+-D, --defaults
+    See below, the subsection "Changing the default values".
+
+-d, --home HOME_DIR
+    The new user will be created using HOME_DIR as the value for the user´s login directory.
+    Exemplo: /usr/sbin/adduser --home /home/teste2 teste2
+
+-e, --expiredate EXPIRE_DATE
+    The date on which the user account will be disabled. The date is specified in the format YYYY-MM-DD.
+
+-f, --inactive INACTIVE
+    The number of days after a password expires until the account is permanently disabled. A value of 0 disables the account as soon as the
+    password has expired, and a value of -1 disables the feature. The default value is -1.
+
+-g, --gid GROUP
+    The group name or number of the user´s initial login group. The group name must exist. A group number must refer to an already existing group.
+    The default group number is 1 or whatever is specified in /etc/default/useradd.
+
+-G, --groups GROUP1[,GROUP2,...[,GROUPN]]]
+    A list of supplementary groups which the user is also a member of. Each group is separated from the next by a comma, with no intervening
+    whitespace. The groups are subject to the same restrictions as the group given with the -g option. The default is for the user to belong only
+    to the initial group.
+
+-k, --skel SKEL_DIR
+    The skeleton directory, which contains files and directories to be copied in the user´s home directory.
+    Default is /etc/skel.
+
+-K, --key KEY=VALUE
+    Overrides /etc/login.defs defaults (UID_MIN, UID_MAX, UMASK, PASS_MAX_DAYS and others).
+
+    Example: -K PASS_MAX_DAYS=-1 can be used when creating system account to turn off password ageing, even though system account has no password
+    at all. Multiple -K options can be specified, e.g.: -K UID_MIN=100
+     -K UID_MAX=499
+
+    Note: -K UID_MIN=10,UID_MAX=499 doesn´t work yet.
+
+    For the compatibility with previous Debian´s useradd, the -O option is also supported.
+
+-N, --no-user-group
+    Do not create a group with the same name as the user, but add the user to the group specified by the -g option or by the GROUP variable in
+    /etc/default/useradd.
+
+    The default behavior (if the -g, -N, and -U options are not specified) is defined by the USERGROUPS_ENAB variable in login.defs.
+
+-p, --password PASSWORD
+    The encrypted password, as returned by crypt(3). The default is to disable the account.
+
+-r, --system
+    Create a system account.
+
+    System users will be created with no aging information in /etc/shadow, and their numeric identifiers are choosen in the
+    SYS_UID_MIN-SYS_UID_MAX range, defined in login.defs, instead of UID_MIN-UID_MAX (and their GID counterparts for the creation of groups).
+
+-s, --shell SHELL
+    The name of the user´s login shell.
+
+-u, --uid UID
+    The numerical value of the user´s ID. This value must be unique, unless the -o option is used. The value must be non-negative. The default is
+    to use the smallest ID value greater than 999 and greater than every other user. Values between 0 and 999 are typically reserved for system
+    accounts.
+
+-U, --user-group
+    Create a group with the same name as the user, and add the user to this group.
+
+    The default behavior (if the -g, -N, and -U options are not specified) is defined by the USERGROUPS_ENAB variable in login.defs.
+
+   Changing the default values
+When invoked with only the -D option, useradd will display the current default values.
+Exemplo:
+$ useradd -D
+GROUP=100
+HOME=/home
+INACTIVE=-1
+EXPIRE=
+SHELL=/bin/sh
+SKEL=/etc/skel
+CREATE_MAIL_SPOOL=no
+
+/etc/group, which lists the names of the groups on your system
+SKEL=/etc/skel means that the files located in /etc/skel will be copied to the users directory when you create the account.
+
+When invoked with -D plus other options, useradd will update the default values specified.
+
+-b, --base-dir BASE_DIR
+    The path prefix for home directory.
+
+-e, --expiredate EXPIRE_DATE
+    The date on which the user account is disabled.
+
+-f, --inactive INACTIVE
+    The number of days after a password has expired before the account will be disabled.
+
+-g, --gid GROUP
+    The group name or ID. The named group must exist, and a numerical group ID must have an existing entry.
+
+-s, --shell SHELL
+    The name of shell.
+
+CONFIGURATION
+The following configuration variables in /etc/login.defs change the behavior of this tool:
+
+GID_MAX (number), GID_MIN (number)
+    Range of group IDs used for the creation of regular groups by useradd, useradd, or newusers.
+
+MAIL_DIR (string)
+    The mail spool directory. This is needed to manipulate the mailbox when its corresponding user account is modified or deleted. If not
+    specified, a compile-time default is used.
+
+MAIL_FILE (string)
+    Defines the location of the users mail spool files relatively to their home directory.
+
+The MAIL_DIR and MAIL_FILE variables are used by useradd, usermod, and userdel to create, move, or delete the user´s mail spool.
+
+MAX_MEMBERS_PER_GROUP (number)
+    Maximum members per group entry. When the maximum is reached, a new group entry (line) is started in /etc/group (with the same name, same
+    password, and same GID).
+
+    The default value is 0, meaning that there are no limits in the number of members in a group.
+
+    This feature (split group) permits to limit the length of lines in the group file. This is useful to make sure that lines for NIS groups are
+    not larger than 1024 characters.
+
+    If you need to enforce such limit, you can use 25.
+
+    Note: split groups may not be supported by all tools (even in the Shadow toolsuite. You should not use this variable unless you really need
+    it.
+
+PASS_MAX_DAYS (number)
+    The maximum number of days a password may be used. If the password is older than this, a password change will be forced. If not specified, -1
+    will be assumed (which disables the restriction).
+
+PASS_MIN_DAYS (number)
+    The minimum number of days allowed between password changes. Any password changes attempted sooner than this will be rejected. If not
+    specified, -1 will be assumed (which disables the restriction).
+
+PASS_WARN_AGE (number)
+    The number of days warning given before a password expires. A zero means warning is given only upon the day of expiration, a negative value
+    means no warning is given. If not specified, no warning will be provided.
+
+SYS_GID_MAX (number), SYS_GID_MIN (number)
+    Range of group IDs used for the creation of system groups by useradd, groupadd, or newusers.
+
+SYS_UID_MAX (number), SYS_UID_MIN (number)
+    Range of user IDs used for the creation of system users by useradd or newusers.
+
+UID_MAX (number), UID_MIN (number)
+    Range of user IDs used for the creation of regular users by useradd or newusers.
+
+UMASK (number)
+    The permission mask is initialized to this value. If not specified, the permission mask will be initialized to 022.
+
+USERGROUPS_ENAB (boolean)
+
+FILES
+/etc/passwd
+    User account information.
+
+/etc/shadow
+    Secure user account information.
+
+/etc/group
+    Group account information.
+
+/etc/default/useradd
+    Default values for account creation.
+
+/etc/skel/
+    Directory containing default files.
+
+/etc/login.defs
+    Shadow password suite configuration.
+
+EXIT VALUES
+The useradd command exits with the following values:
+0   success
+1   can´t update password file
+2   invalid command syntax
+3   invalid argument to option
+4   UID already in use (and no -o)
+6   specified group doesn´t exist
+9   username already in use
+10  can´t update group file
+12  can´t create home directory
+13  can´t create mail spool
+
+SEE ALSO
+chfn(1), chsh(1), passwd(1), crypt(3), groupadd(8), groupdel(8), groupmod(8), login.defs(5), newusers(8), userdel(8), usermod(8).
+
+04/04/2009
+

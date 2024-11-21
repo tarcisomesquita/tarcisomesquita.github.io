@@ -1,0 +1,5 @@
+Two blocks near the start of each group are reserved for the block usage bitmap and the inode usage bitmap which show which blocks and inodes are in use. Since each bitmap is limited to a single block, this means that the maximum size of a block group is 8 times the size of a block.
+
+The block(s) following the bitmaps in each block group are designated as the inode table for that block group and the remainder are the data blocks.
+
+

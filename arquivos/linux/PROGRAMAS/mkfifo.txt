@@ -1,0 +1,20 @@
+
+mkfifo create named pipes (FIFOs) with the given NAMEs.
+
+mkfifo [OPTION]... NAME...
+
+-m, --mode=MODE
+   set file permission bits to MODE
+
+SEE ALSO
+mkfifo(3)
+Full documentation at: <http://www.gnu.org/software/coreutils/mkfifo>
+
+mkfifo -m 0666 testeF
+ou
+mknod  testeF p
+
+
+tee:  um input para vários output
+fifo: vários output para um input
+

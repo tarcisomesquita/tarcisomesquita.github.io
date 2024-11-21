@@ -1,0 +1,38 @@
+
+echo [-n] args...
+Print the arguments on the standard output.
+
+with -n option a newline is not printed in output following the arguments.
+
+If any of the following sequences of characters is encountered during output, the sequence is not output. Instead, the specified action is performed:
+
+\b      A backspace character is output.
+
+\c      Subsequent output is suppressed.  This is normally used at
+        the end of the last argument to suppress the trailing new-
+        line that echo would otherwise output.
+
+\f      Output a form feed.
+
+\n      Output a newline character.
+
+\r      Output a carriage return.
+
+\t      Output a (horizontal) tab character.
+
+\v      Output a vertical tab.
+
+\0digits
+        Output the character whose value is given by zero to three
+        octal digits.  If there are zero digits, a nul character
+        is output.
+
+\\      Output a backslash.
+
+All other backslash sequences elicit undefined behaviour.
+
+
+exemplo:
+echo \\124
+
+

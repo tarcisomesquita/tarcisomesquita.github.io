@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>How NTFS Works: Local File Systems | Microsoft Docs</title>
+</head>
+
+<body lang="en-us" dir="ltr">
+
+<p><strong>BPB and Extended BPB Fields on NTFS Volumes</strong></p>
+<table>
+<colgroup>
+<col style="">
+<col style="">
+<col style="">
+<col style="">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Byte Offset</th>
+<th>Field Length</th>
+<th>Sample Value</th>
+<th>Field Name and Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>0x0B</p></td>
+<td><p>2 bytes</p></td>
+<td><p>00 02</p></td>
+<td><p><strong>Bytes Per Sector</strong>. The size of a hardware sector. For most disks used in the United States, the value of this field is 512.</p></td>
+</tr>
+<tr class="even">
+<td><p>0x0D</p></td>
+<td><p>1 byte</p></td>
+<td><p>08</p></td>
+<td><p><strong>Sectors Per Cluster</strong>.The number of sectors in a cluster.</p></td>
+</tr>
+<tr class="odd">
+<td><p>0x0E</p></td>
+<td><p>2 bytes</p></td>
+<td><p>00 00</p></td>
+<td><p><strong>Reserved Sectors</strong>. Always 0 because NTFS places the boot sector at the beginning of the partition. If the value is not 0, NTFS fails to mount the volume.</p></td>
+</tr>
+<tr class="even">
+<td><p>0x10</p></td>
+<td><p>3 bytes</p></td>
+<td><p>00 00 00</p></td>
+<td><p>Value must be 0 or NTFS fails to mount the volume.</p></td>
+</tr>
+<tr class="odd">
+<td><p>0x13</p></td>
+<td><p>2 bytes</p></td>
+<td><p>00 00</p></td>
+<td><p>Value must be 0 or NTFS fails to mount the volume.</p></td>
+</tr>
+<tr class="even">
+<td><p>0x15</p></td>
+<td><p>1 byte</p></td>
+<td><p>F8</p></td>
+<td><p><strong>Media Descriptor</strong>. Provides information about the media being used. A value of F8 indicates a hard disk and F0 indicates a high-density 3.5-inch floppy disk. Media descriptor entries are a legacy of MS-DOS FAT16 disks and are not used in Windows Server 2003.</p></td>
+</tr>
+<tr class="odd">
+<td><p>0x16</p></td>
+<td><p>2 bytes</p></td>
+<td><p>00 00</p></td>
+<td><p>Value must be 0 or NTFS fails to mount the volume.</p></td>
+</tr>
+<tr class="even">
+<td><p>0x18</p></td>
+<td><p>2 bytes</p></td>
+<td><p>3F 00</p></td>
+<td><p>Not used or checked by NTFS.</p></td>
+</tr>
+<tr class="odd">
+<td><p>0x1A</p></td>
+<td><p>2 bytes</p></td>
+<td><p>FF 00</p></td>
+<td><p>Not used or checked by NTFS.</p></td>
+</tr>
+<tr class="even">
+<td><p>0x1C</p></td>
+<td><p>4 bytes</p></td>
+<td><p>3F 00 00 00</p></td>
+<td><p>Not used or checked by NTFS.</p></td>
+</tr>
+<tr class="odd">
+<td><p>0x20</p></td>
+<td><p>4 bytes</p></td>
+<td><p>00 00 00 00</p></td>
+<td><p>The value must be 0 or NTFS fails to mount the volume.</p></td>
+</tr>
+<tr class="even">
+<td><p>0x24</p></td>
+<td><p>4 bytes</p></td>
+<td><p>80 00 80 00</p></td>
+<td><p>Not used or checked by NTFS.</p></td>
+</tr>
+<tr class="odd">
+<td><p>0x28</p></td>
+<td><p>8 bytes</p></td>
+<td><p>1C 91 11 01 00 00 00 00</p></td>
+<td><p><strong>Total Sectors</strong>. The total number of sectors on the hard disk.</p></td>
+</tr>
+<tr class="even">
+<td><p>0x30</p></td>
+<td><p>8 bytes</p></td>
+<td><p>00 00 04 00 00 00 00 00</p></td>
+<td><p><strong>Logical Cluster Number for the File $MFT</strong>. Identifies the location of the MFT by using its logical cluster number.</p></td>
+</tr>
+<tr class="odd">
+<td><p>0x38</p></td>
+<td><p>8 bytes</p></td>
+<td><p>11 19 11 00 00 00 00 00</p></td>
+<td><p><strong>Logical Cluster Number for the File $MFTMirr</strong>. Identifies the location of the mirrored copy of the MFT by using its logical cluster number.</p></td>
+</tr>
+<tr class="even">
+<td><p>0x40</p></td>
+<td><p>1 byte</p></td>
+<td><p>F6</p></td>
+<td><p><strong>Clusters Per MFT Record</strong>. The size of each record. NTFS creates a file record for each file and a folder record for each folder that is created on an NTFS volume. Files and folders smaller than this size are contained within the MFT. If this number is positive (up to 7F), then it represents clusters per MFT record. If the number is negative (80 to FF), then the size of the file record is 2 raised to the absolute value of this number.</p></td>
+</tr>
+<tr class="odd">
+<td><p>0x41</p></td>
+<td><p>3 bytes</p></td>
+<td><p>00 00 00</p></td>
+<td><p>Not used by NTFS.</p></td>
+</tr>
+<tr class="even">
+<td><p>0x44</p></td>
+<td><p>1 byte</p></td>
+<td><p>01</p></td>
+<td><p><strong>Clusters Per Index Buffer</strong>. The size of each index buffer, which is used to allocate space for directories. If this number is positive (up to 7F), then it represents clusters per MFT record. If the number is negative (80 to FF), then the size of the file record is 2 raised to the absolute value of this number.</p></td>
+</tr>
+<tr class="odd">
+<td><p>0x45</p></td>
+<td><p>3 bytes</p></td>
+<td><p>00 00 00</p></td>
+<td><p>Not used by NTFS.</p></td>
+</tr>
+<tr class="even">
+<td><p>0x48</p></td>
+<td><p>8 bytes</p></td>
+<td><p>3A B2 7B 82 CD 7B 82 14</p></td>
+<td><p><strong>Volume Serial Number</strong>. The volume’s serial number.</p></td>
+</tr>
+<tr class="odd">
+<td><p>0x50</p></td>
+<td><p>4 bytes</p></td>
+<td><p>00 00 00 00</p></td>
+<td><p>Not used by NTFS.</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="master-file-table">Master File Table</h3>
+<p>When you format a volume with NTFS, Windows Server 2003 creates an MFT and metadata files on the partition. The MFT is a relational database that consists of rows of file records and columns of file attributes. It contains at least one entry for every file on an NTFS volume, including the MFT itself.</p>
+<p>The MFT stores the information required to retrieve files from the NTFS partition.</p>
+<h4 id="mft-and-metadata-files">MFT and Metadata Files</h4>
+<p>Because the MFT stores information about itself, NTFS reserves the first 16 records of the MFT for metadata files (approximately 16 KB), which are used to describe the MFT. Metadata files that begin with a dollar sign ($) are described in the table Metadata Files Stored in the MFT. The remaining records of the MFT contain the file and folder records for each file and folder on the volume.</p>
+<p><strong>Metadata Files Stored in the MFT</strong></p>
+<table>
+<colgroup>
+<col style="">
+<col style="">
+<col style="">
+<col style="">
+</colgroup>
+<thead>
+<tr class="header">
+<th>System File</th>
+<th>File Name</th>
+<th>MFT Record</th>
+<th>Purpose of the File</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>Master file table</p></td>
+<td><p>$Mft</p></td>
+<td><p>0</p></td>
+<td><p>Contains one base file record for each file and folder on an NTFS volume. If the allocation information for a file or folder is too large to fit within a single record, other file records are allocated as well.</p></td>
+</tr>
+<tr class="even">
+<td><p>Master file table mirror</p></td>
+<td><p>$MftMirr</p></td>
+<td><p>1</p></td>
+<td><p>Guarantees access to the MFT in case of a single-sector failure. It is a duplicate image of the first four records of the MFT.</p></td>
+</tr>
+<tr class="odd">
+<td><p>Log file</p></td>
+<td><p>$LogFile</p></td>
+<td><p>2</p></td>
+<td><p>Contains information used by NTFS for faster recoverability. The log file is used by Windows Server 2003 to restore metadata consistency to NTFS after a system failure. The size of the log file depends on the size of the volume, but you can increase the size of the log file by using the Chkdsk command.</p></td>
+</tr>
+<tr class="even">
+<td><p>Volume</p></td>
+<td><p>$Volume</p></td>
+<td><p>3</p></td>
+<td><p>Contains information about the volume, such as the volume label and the volume version.</p></td>
+</tr>
+<tr class="odd">
+<td><p>Attribute definitions</p></td>
+<td><p>$AttrDef</p></td>
+<td><p>4</p></td>
+<td><p>Lists attribute names, numbers, and descriptions.</p></td>
+</tr>
+<tr class="even">
+<td><p>Root file name index</p></td>
+<td><p>.</p></td>
+<td><p>5</p></td>
+<td><p>The root folder.</p></td>
+</tr>
+<tr class="odd">
+<td><p>Cluster bitmap</p></td>
+<td><p>$Bitmap</p></td>
+<td><p>6</p></td>
+<td><p>Represents the volume by showing free and unused clusters.</p></td>
+</tr>
+<tr class="even">
+<td><p>Boot sector</p></td>
+<td><p>$Boot</p></td>
+<td><p>7</p></td>
+<td><p>Includes the BPB used to mount the volume and additional bootstrap loader code used if the volume is bootable.</p></td>
+</tr>
+<tr class="odd">
+<td><p>Bad cluster file</p></td>
+<td><p>$BadClus</p></td>
+<td><p>8</p></td>
+<td><p>Contains bad clusters for a volume.</p></td>
+</tr>
+<tr class="even">
+<td><p>Security file</p></td>
+<td><p>$Secure</p></td>
+<td><p>9</p></td>
+<td><p>Contains unique security descriptors for all files within a volume.</p></td>
+</tr>
+<tr class="odd">
+<td><p>Upcase table</p></td>
+<td><p>$Upcase</p></td>
+<td><p>10</p></td>
+<td><p>Converts lowercase characters to matching Unicode uppercase characters.</p></td>
+</tr>
+<tr class="even">
+<td><p>NTFS extension file</p></td>
+<td><p>$Extend</p></td>
+<td><p>11</p></td>
+<td><p>Used for various optional extensions such as quotas, reparse point data, and object identifiers.</p></td>
+</tr>
+<tr class="odd">
+<td><p> </p></td>
+<td><p> </p></td>
+<td><p>12–15</p></td>
+<td><p>Reserved for future use.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The data segment locations for both the MFT and the backup MFT, $Mft and $MftMirr, respectively, are recorded in the boot sector. The $MftMirr is a duplicate image of either the first four records of the $Mft or the first cluster of the $Mft, whichever is larger. If any MFT records in the mirrored range are corrupted or unreadable, NTFS reads the boot sector to find the location of the $MftMirr. NTFS then reads the $MftMirr and uses the information in $MftMirr instead of the information in the MFT. If possible, the correct data from the $MftMirr is written back to the corresponding location in the $Mft.</p>
+<h4 id="mft-zone">MFT Zone</h4>
+<p>To prevent the MFT from becoming fragmented, NTFS reserves 12.5 percent of volume by default for exclusive use of the MFT. This space, known as the MFT zone, is not used to store data unless the remainder of the volume becomes full.</p>
+<p>Depending on the average file size and other variables, as the volume fills to capacity, either the MFT zone or the unreserved space on the volume becomes full first.</p>
+<ul>
+<li><p>Volumes that have a small number of large files exhaust the unreserved space first.</p>
+</li>
+<li><p>Volumes with a large number of small files exhaust the MFT zone space first.</p>
+</li>
+</ul>
+<p>In either case, fragmentation of the MFT occurs when one region or the other becomes full. You can change the size of the MFT zone for newly created volumes by to correspond to a percentage of the volume to be used as the MFT zone. The MFT zone sizes follow:</p>
+<ul>
+<li><p>Setting 1, the default, reserves approximately 12.5 percent of the volume.</p>
+</li>
+<li><p>Setting 2 reserves approximately 25 percent.</p>
+</li>
+<li><p>Setting 3 reserves approximately 37.5 percent.</p>
+</li>
+<li><p>Setting 4 reserves approximately 50 percent.</p>
+</li>
+</ul>
+<p>In most computers, the default setting of 1 is adequate. The default setting accommodates volumes with an average file size of 8 KB. Storing a large number of smaller files might necessitate that you increase the size of the MFT zone for new volumes.</p>
+<p>After you increase the size of the MFT zone, NTFS does not immediately allocate space to accommodate the size of the new MFT zone. Instead, NTFS exhausts the original reserved space before increasing the size of the MFT zone. When the original space is exhausted, NTFS looks for the next contiguous space large enough to hold the additional MFT zone, which can cause the MFT to become fragmented. You can adjust the zone size for the MFT if the defaults do not fit your needs.</p>
+<h3 id="ntfs-file-record-attributes">NTFS File Record Attributes</h3>
+<p>Every allocated sector on an NTFS volume belongs to a file. Even the file system metadata is part of a file. NTFS views each file (or folder) as a set of file attributes. File elements such as its name, its security information, and even its data are file attributes. Each attribute is identified by an attribute type code and an optional attribute name.</p>
+<p>File and folder records are 1 KB each and are stored in the MFT, the attributes of which are written to the allocated space in the MFT. Besides file attributes, each file record contains information about the position of the file record in the MFT.</p>
+<p>When a file’s attributes can fit within the MFT file record for that file, they are called resident attributes. Attributes such as file name and time stamp are always resident. When the amount of information for a file does not fit in its MFT file record, some file attributes become nonresident. Nonresident attributes are allocated one or more clusters of disk space. A portion of the nonresident attribute remains in the MFT and points to the external clusters. NTFS creates the Attribute List attribute to describe the location of all attribute records. The table NTFS File Attribute Types lists the file attributes currently defined by NTFS.</p>
+<p><strong>NTFS File Attribute Types</strong></p>
+<table>
+<colgroup>
+<col style="">
+<col style="">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Attribute Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>Standard Information</p></td>
+<td><p>Information such as access mode (read-only, read/write, and so forth) timestamp, and link count.</p></td>
+</tr>
+<tr class="even">
+<td><p>Attribute List</p></td>
+<td><p>Locations of all attribute records that do not fit in the MFT record.</p></td>
+</tr>
+<tr class="odd">
+<td><p>File Name</p></td>
+<td><p>A repeatable attribute for both long and short file names. The long name of the file can be up to 255 Unicode characters. The short name is the 8.3, case-insensitive name for the file. Additional names, or hard links, required by POSIX can be included as additional file name attributes.</p></td>
+</tr>
+<tr class="even">
+<td><p>Data</p></td>
+<td><p>File data. NTFS supports multiple data attributes per file. Each file typically has one unnamed data attribute. A file can also have one or more named data attributes.</p></td>
+</tr>
+<tr class="odd">
+<td><p>Object ID</p></td>
+<td><p>A volume-unique file identifier. Used by the distributed link tracking service. Not all files have object identifiers.</p></td>
+</tr>
+<tr class="even">
+<td><p>Logged Tool Stream</p></td>
+<td><p>Similar to a data stream, but operations are logged to the NTFS log file just like NTFS metadata changes. This attribute is used by EFS.</p></td>
+</tr>
+<tr class="odd">
+<td><p>Reparse Point</p></td>
+<td><p>Used for mounted drives. This is also used by Installable File System (IFS) filter drivers to mark certain files as special to that driver.</p></td>
+</tr>
+<tr class="even">
+<td><p>Index Root</p></td>
+<td><p>Used to implement folders and other indexes.</p></td>
+</tr>
+<tr class="odd">
+<td><p>Index Allocation</p></td>
+<td><p>Used to implement the B-tree structure for large folders and other large indexes.</p></td>
+</tr>
+<tr class="even">
+<td><p>Bitmap</p></td>
+<td><p>Used to implement the B-tree structure for large folders and other large indexes.</p></td>
+</tr>
+<tr class="odd">
+<td><p>Volume Information</p></td>
+<td><p>Used only in the $Volume system file. Contains the volume version.</p></td>
+</tr>
+</tbody>
+</table>
+<p>NTFS creates a file record for each file and a folder record for each folder created on an NTFS volume. The MFT includes a separate file record for the MFT itself. These file and folder records are 1 KB each and are stored in the MFT. The attributes of the file are written to the allocated space in the MFT. Besides file attributes, each file record contains information about the position of the file record in the MFT. The figure MFT Entry with Resident Record shows the contents of an MFT record for a small file or folder. Small files and folders (typically, 900 bytes or smaller) are entirely contained within the file’s MFT record.</p>
+<p><strong>MFT Entry with Resident Record</strong></p>
+<p><img src="images%5ccc781134.86787c15-cf0a-4cb9-8ba1-ff1afd37aaf5(ws.10).gif" alt="MFT Entry with Resident Record" title="MFT Entry with Resident Record" data-linktype="relative-path"></p>
+<p>Typically, each file uses one file record. However, if a file has a large number of attributes or becomes highly fragmented, it might need more than one file record. If this is the case, the first record for the file, the base file record, stores the location of the other file records required by the file.</p>
+<p>Folder records contain index information. Small folder records reside entirely within the MFT structure, while large folders are organized B-tree structures and have records with pointers to external clusters that contain folder entries that cannot be contained within the MFT structure.</p>
+<p>The benefit of using B-tree structures is evident when NTFS enumerates files in a large folder. The B-tree structure allows NTFS to group, or index, similar file names and then search only the group that contains the file, minimizing the number of disk accesses needed to find a particular file, especially for large folders. Because of the B-tree structure, NTFS outperforms FAT for large folders because FAT must scan all file names in a large folder before listing all of the files.</p>
+<h4 id="last-access-time">Last Access Time</h4>
+<p>Each file and folder on an NTFS volume contains an attribute called Last Access Time. This attribute shows when the file or folder was last accessed, such as when a user performs a folder listing, adds files to a folder, reads a file, or makes changes to a file. The most up-to-date Last Access Time is always stored in memory and is eventually written to disk within two places:</p>
+<ul>
+<li><p>The file’s attribute, which is part of its MFT record.</p>
+</li>
+<li><p>A directory entry for the file. The directory entry is stored in the folder that contains the file. Files with multiple hard links have multiple directory entries.</p>
+</li>
+</ul>
+<p>The Last Access Time on disk is not always current because NTFS looks for a one-hour interval before forcing the Last Access Time updates to disk. NTFS also delays writing the Last Access Time to disk when users or programs perform read-only operations on a file or folder, such as listing the folder’s contents or reading (but not changing) a file in the folder. If the Last Access Time is kept current on disk for read operations, all read operations become write operations, which impacts NTFS performance.</p>
+<p><strong>Note</strong></p>
+<ul>
+<li>File-based queries of Last Access Time are accurate even if all on-disk values are not current. NTFS returns the correct value on queries because the accurate value is stored in memory.</li>
+</ul>
+<p>NTFS eventually writes the in-memory Last Access Time to disk as follows.</p>
+<h5 id="within-the-files-attribute">Within the file’s attribute</h5>
+<p>NTFS typically updates a file’s attribute on disk if the current Last Access Time in memory differs by more than an hour from the Last Access Time stored on disk, or when all in-memory references to that file are gone, whichever is more recent. For example, if a file’s current Last Access Time is 1:00 P.M., and you read the file at 1:30 P.M., NTFS does not update the Last Access Time. If you read the file again at 2:00 P.M., NTFS updates the Last Access Time in the file’s attribute to reflect 2:00 P.M. because the file’s attribute shows 1:00 P.M. and the in-memory Last Access Time shows 2:00 P.M.</p>
+<h5 id="within-a-directory-entry-for-a-file">Within a directory entry for a file</h5>
+<p>NTFS updates the directory entry for a file during the following events:</p>
+<ul>
+<li><p>When NTFS updates the file’s Last Access Time and detects that the Last Access Time for the file differs by more than an hour from the Last Access Time stored in the file’s directory entry. This update typically occurs after a program closes the handle used to access a file within the directory. If the program holds the handle open for an extended time, a lag occurs before the change appears in the directory entry.</p>
+</li>
+<li><p>When NTFS updates other file attributes such as Last Modify Time, and a Last Access Time update is pending. In this case, NTFS updates the Last Access Time along with the other updates without additional performance impact.</p>
+</li>
+</ul>
+<p><strong>Note</strong></p>
+<ul>
+<li>NTFS does not update a file’s directory entry when all in-memory references to that file are gone.</li>
+</ul>
+<p>If you have an NTFS volume with a high number of folders or files, and a program is running that briefly accesses each of these in turn, the I/O bandwidth used to generate the Last Access Time updates can be a significant percentage of the overall I/O bandwidth.</p>
+<h4 id="multiple-data-streams">Multiple Data Streams</h4>
+<p>A data stream is a sequence of bytes. An application populates the stream by writing data at specific offsets within the stream. The application can then read the data by reading the same offsets in the read path. Every file has a main, unnamed stream associated with it, regardless of the file system used.</p>
+<p>However, NTFS supports additional named data streams in which each data stream is an alternate sequence of bytes as illustrated in the figure Unnamed and Named Streams. Applications can create additional named streams and access the streams by referring to their names. This feature permits related data to be managed as a single unit. For example, a graphics program can store a thumbnail image of bitmap in a named data stream within the NTFS file containing the image.</p>
+<p><strong>Unnamed and Named Streams</strong></p>
+<p><img src="images%5ccc781134.71c1e60b-b8a4-4e65-8bfc-a50995dbcfa8(ws.10).gif" alt="Unnamed and Named Streams" title="Unnamed and Named Streams" data-linktype="relative-path"></p>
+<p>FAT volumes support only the main, unnamed stream, so if you try to copy or move Streamexample.doc to a FAT volume or floppy disk, you receive an error message.</p>
+<h2 id="ntfs-processes-and-interactions">NTFS Processes and Interactions</h2>
+<p>The following sections describe NTFS processes and interactions.</p>
+<h3 id="mounting-an-ntfs-volume">Mounting an NTFS Volume</h3>
+<p>When mounting an NTFS volume, the MBR executes code to start up the boot sector. The boot sector then executes additional code to mount the volume.</p>
+<h5 id="master-boot-code-startup-process">Master Boot Code Startup Process</h5>
+<p>The MBR contains a small amount of executable code called the master boot code, the disk signature, and the partition table for the disk. During startup, the master boot code performs the following activities:</p>
+<ol>
+<li><p>Scans the partition table for the active partition.</p>
+</li>
+<li><p>Finds the starting sector of the active partition.</p>
+</li>
+<li><p>Loads a copy of the boot sector from the active partition into memory.</p>
+</li>
+<li><p>Transfers control to the executable code in the boot sector.</p>
+</li>
+</ol>
+<h5 id="boot-sector-startup-process">Boot Sector Startup Process</h5>
+<p>Computers use the boot sector to run instructions during startup. The initial startup process is summarized in the following steps:</p>
+<ol>
+<li><p>The system BIOS and the CPU initiate the power-on self test (POST).</p>
+</li>
+<li><p>The BIOS finds the boot device, which is typically the first disk the BIOS finds, unless the controller is configured to boot from a different disk.</p>
+</li>
+<li><p>The BIOS loads the first physical sector of the boot device into memory and transfers CPU execution to that memory address.</p>
+</li>
+</ol>
+<p>If the boot device is on a hard disk, the BIOS loads the MBR. The master boot code in the MBR loads the boot sector of the active partition, and transfers CPU execution to that memory address. On computers that are running Windows Server 2003, the executable boot code in the boot sector finds Ntldr, loads it into memory, and transfers execution to that file.</p>
+<p><strong>Note</strong></p>
+<ul>
+<li>Windows Server 2003 cannot start up from a spanned, striped, or RAID-5 volume on dynamic disks. These disk structures cannot be registered into the MBR partition table; therefore, a system volume that uses these structures cannot start.</li>
+</ul>
+<p>If drive A contains a floppy disk, the system BIOS loads the first sector (the boot sector) of the disk into memory. If the disk is a startup disk (formatted by MS-DOS with core operating system files applied), the boot sector loads into memory and uses the executable boot code to transfer CPU execution to Io.sys, a core MS-DOS operating system file. If the floppy disk is not a startup disk, the executable boot code displays an error message.</p>
+<p><strong>Note</strong></p>
+<ul>
+<li>These messages do not appear on normally functioning systems that are configured to look for the startup files on drive C first. On many computers, an option in the CMOS setup program allows the user to set the sequence of installed disks that the system searches to find the startup files.</li>
+</ul>
+<p>If you get similar errors when trying to start the computer from the hard disk, the boot sector might be corrupted.</p>
+<p>Initially, the startup process is independent of disk format and operating system. The unique characteristics of operating and file systems become important when the boot sector’s executable boot code starts.</p>
+<h3 id="formatting-volumes">Formatting Volumes</h3>
+<p>During volume format, Windows Server 2003 places key NTFS file system structures on the volume, including the boot sector and the MFT as well as replacing Ntldr. Formatting also aligns clusters at the cluster size boundary.</p>
+<p>Formatting a volume will check the integrity of all sectors on the volume during the process, as well as allow you to change the cluster size used on the volume. If a volume is formatted using Quick format, the file system structure on the volume is created, but the integrity of every sector in the volume is not checked.</p>
+<h3 id="converting-volumes">Converting Volumes</h3>
+<p>Windows Server 2003 can convert previous versions of NTFS to the new version of NTFS used in Windows Server 2003.</p>
+<h4 id="converting-ntfs-volumes-formatted-by-using-windows2000">Converting NTFS Volumes Formatted By Using Windows 2000</h4>
+<p>When Windows Server 2003 first mounts an NTFS volume that was formatted by using Windows 2000, Windows Server 2003 converts the NTFS volume to NTFS 3.1. The conversion consists of changing the NTFS version from 3.0 to 3.1. No other changes are made to existing metadata or files on the volume. However, Windows Server 2003 uses a different header style for new files created on NTFS 3.1 volumes. As a result of this change, some non-Microsoft imaging programs cannot create images of NTFS 3.1 volumes. Contact the manufacturer of your imaging program to find out if a version is available that supports NTFS 3.1 volumes in Windows Server 2003.</p>
+<p>Computers running Windows NT 4.0 with Service Pack 4 or later or Windows 2000 can access NTFS 3.1 volumes without any conversion or additional service packs. Also, note that NTFS 3.1 is identical in Windows XP and Windows Server 2003.</p>
+<h4 id="converting-ntfs-volumes-formatted-by-using-windowsnt40-and-earlier">Converting NTFS Volumes Formatted By Using Windows NT 4.0 and Earlier</h4>
+<p>When you upgrade the operating system from Windows NT 4.0 to Windows Server 2003, all local volumes formatted by using the version of NTFS used in Windows NT 4.0 and earlier are upgraded to NTFS 3.1. The upgrade occurs when Windows Server 2003 mounts the volume for the first time after Windows Server 2003 Setup is completed. (The upgrade does not take place during Setup.) Any NTFS volumes that are removed or turned off during Setup, or added after Setup, are converted when Windows Server 2003 mounts the volumes.</p>
+<p>The Ntfs.sys driver performs the conversion by determining which version of NTFS is used on the volume and converting the volume if necessary. The conversion takes only a few seconds on any size volume and consists of the following new records in the master file table:</p>
+<ul>
+<li><p>$Secure, which contains unique security descriptors for all files within a volume.</p>
+</li>
+<li><p>$Extend, which is used for extensions such as quotas, reparse point data, and object identifiers. The conversion process also adds three new files the to $Extend directory:</p>
+<ul>
+<li><p>$Quota, used for disk quotas.</p>
+</li>
+<li><p>$Reparse, used for reparse points.</p>
+</li>
+<li><p>$ObjID, used for distributed link tracking.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>Both $Secure and $Extend take the place of previously unused master file table (MFT) records, so sufficient space always exists in the volume for these two records. However, $Quota, $Reparse, and $ObjID are new additions to the MFT, and you must have enough free space in the volume to contain these files, or the conversion fails.</p>
+<p>If the conversion fails, the volume is still available, but you can only perform NTFS-related tasks that were available in Windows NT 4.0 or earlier. To convert the volume to NTFS 3.1, you must free disk space by deleting or moving files and then dismount the volume.</p>
+<p><strong>Note</strong></p>
+<ul>
+<li>Removable media that is formatted by using the previous version of NTFS is upgraded after the installation or upgrade process, or when you insert the media and Windows Server 2003 mounts it.</li>
+</ul>
+<h4 id="limitations-in-converting-volumes">Limitations in Converting Volumes</h4>
+<p>The conversion is a one-way process. After you convert a volume to NTFS, you cannot reconvert the volume to FAT without backing up your data, reformatting the volume as FAT, and then restoring your data. There should also be a certain amount of free space on the volume and sufficient memory to update the cache.</p>
+<p>The following limitations also apply to conversion of a volume from FAT to NTFS:</p>
+<ul>
+<li><p>In multiple-boot configurations, NTFS volumes are accessible only by using Windows NT 4.0 with Service Pack 4 or later, Windows 2000, Windows XP, or Windows Server 2003.</p>
+</li>
+<li><p>When you install Recovery Console onto a volume that is formatted for either the FAT16 or FAT32 file systems, and then convert the volume to NTFS, the Recovery Console no longer runs. This problem occurs because the file-system-specific boot files (in the cmdcons folder of the system volume) that are used to run Recovery Console are not valid for a volume that has been converted to NTFS. You can re-install Recovery Console from the Windows Server 2003 operating system disk after the conversion. You can also use the Windows Server 2003 operating system disk to start Recovery Console.</p>
+</li>
+<li><p>Because formatting in Windows Server 2003 aligns FAT data clusters at the cluster size boundary, conversion can preserve the cluster size for the size of the volume (up to 4 KB) instead of using the 512-byte cluster size used in Windows 2000 for converted volumes. The table Cluster Sizes for Volumes Converted to NTFS lists cluster sizes for volumes converted to NTFS.</p>
+<p><strong>Cluster Sizes for Volumes Converted to NTFS</strong></p>
+<table>
+<colgroup>
+<col style="">
+<col style="">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Original FAT Cluster Size</th>
+<th>Converted NTFS Cluster Size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>512 bytes</p></td>
+<td><p>512 bytes</p></td>
+</tr>
+<tr class="even">
+<td><p>1 KB</p></td>
+<td><p>1 KB</p></td>
+</tr>
+<tr class="odd">
+<td><p>2 KB</p></td>
+<td><p>2 KB</p></td>
+</tr>
+<tr class="even">
+<td><p>4 KB and larger</p></td>
+<td><p>4 KB</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<h3 id="file-naming">File Naming</h3>
+<p>Windows Server 2003 supports both long and short file names on NTFS volumes.</p>
+<h4 id="file-names-in-windows-server2003">File Names in Windows Server 2003</h4>
+<p>Every time you create a file with a long file name, NTFS creates a second file entry that has a similar 8.3 short file name. A file with an 8.3 short file name has a file name containing 1 to 8 characters and a file name extension containing 1 to 3 characters. The file name and file name extension are separated by a period.</p>
+<p>File names in Windows Server 2003 can be up to 255 characters and can contain spaces, multiple periods, and special characters that are not allowed in MS-DOS file names. Windows Server 2003 makes it possible for other operating systems to access files that have long names by generating an MS-DOS-readable (8.3) name for each file. These MS-DOS-readable names also enable MS-DOS-based and Windows 3.<em>x</em>–based applications to recognize and load files that have long file names. When a program saves a file on a computer running Windows Server 2003, both the 8.3 file name and long file name are retained.</p>
+<p><strong>Note</strong></p>
+<ul>
+<li><p>The 8.3 format means that files can have between 1 and 8 characters in the file name. The name must start with a letter or a number and can contain any characters except the following:</p>
+</li>
+<li><p>. &quot; / \ [ ] : ; | = , * ? (space)</p>
+</li>
+<li><p>An 8.3 file name typically has a file name extension that is from one to three characters long and has the same character restrictions. A period separates the file name from the file name extension.</p>
+</li>
+<li><p>Several special file names are reserved by the system and cannot be used for files or folders: CON, AUX, COM1, COM2, COM3, COM4, LPT1, LPT2, LPT3, PRN, NUL</p>
+</li>
+</ul>
+<h4 id="how-ntfs-generates-short-file-names">How NTFS Generates Short File Names</h4>
+<p>In Windows Server 2003, both FAT and NTFS use the Unicode character set, which contains several prohibited characters that MS-DOS cannot read, for their names. To generate a short MS-DOS-readable file name, Windows Server 2003 deletes all of these characters from the long file name and removes any spaces. Because an MS-DOS-readable file name can have only one period, Windows Server 2003 also removes extra periods from the file name. If necessary, Windows Server 2003 truncates the file name to six characters and appends a tilde (<strong>~</strong>) and a number. For example, each non-duplicate file name is appended with <strong>~1</strong>. Duplicate file names end with <strong>~2</strong>, then <strong>~3</strong>, and so on. After the file names are truncated, the file name extensions are truncated to three or fewer characters. Finally, when displaying file names at the command line, Windows Server 2003 translates all characters in the file name and extension to uppercase.</p>
+<p><strong>Note</strong></p>
+<ul>
+<li>You can permit extended characters by using the <strong>fsutil behavior set</strong> command. You must restart the computer before this setting takes effect. For more information about using the <strong>fsutil behavior set</strong> command, see the topic Fsutil: behavior in Help and Support Center in Windows Server 2003.</li>
+</ul>
+<p>When five or more files exist that can result in duplicate short file names, Windows Server 2003 uses a slightly different method for creating short file names. For the fifth and subsequent files, Windows Server 2003:</p>
+<ul>
+<li><p>Uses only the first two letters of the long file name.</p>
+</li>
+<li><p>Generates the next four letters of the short file name by mathematically manipulating the remaining letters of the long file name.</p>
+</li>
+<li><p>Appends <strong>~1</strong> (or another number, if necessary, to avoid a duplicate file name) to the result.</p>
+</li>
+</ul>
+<p>This method substantially improves performance when Windows Server 2003 must create short file names for a large number of files with similar long file names. Windows Server 2003 uses this method to create short names for files on both FAT and NTFS volumes.</p>
+<p>The following table shows the short file names for files created by six tests.</p>
+<p><strong>Short File Names Created by Windows Server 2003 — Example One</strong></p>
+<table>
+<colgroup>
+<col style="">
+<col style="">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Long File Name</th>
+<th>Short File Name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>This is test 1.txt</p></td>
+<td><p>THISIS~1.TXT</p></td>
+</tr>
+<tr class="even">
+<td><p>This is test 2.txt</p></td>
+<td><p>THISIS~2.TXT</p></td>
+</tr>
+<tr class="odd">
+<td><p>This is test 3.txt</p></td>
+<td><p>THISIS~3.TXT</p></td>
+</tr>
+<tr class="even">
+<td><p>This is test 4.txt</p></td>
+<td><p>THISIS~4.TXT</p></td>
+</tr>
+<tr class="odd">
+<td><p>This is test 5.txt</p></td>
+<td><p>THA1CA~1.TXT</p></td>
+</tr>
+<tr class="even">
+<td><p>This is test 6.txt</p></td>
+<td><p>THA1CE~1.TXT</p></td>
+</tr>
+</tbody>
+</table>
+<p>If the long file names in the preceding table are created in a different order, their short file names are different, as shown in the following table.</p>
+<p><strong>Short File Names Created by Windows Server 2003 — Example Two</strong></p>
+<table>
+<colgroup>
+<col style="">
+<col style="">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Long File Name</th>
+<th>Short File Name</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>This is test 2.txt</p></td>
+<td><p>THISIS~1.TXT</p></td>
+</tr>
+<tr class="even">
+<td><p>This is test 3.txt</p></td>
+<td><p>THISIS~2.TXT</p></td>
+</tr>
+<tr class="odd">
+<td><p>This is test 1.txt</p></td>
+<td><p>THISIS~3.TXT</p></td>
+</tr>
+<tr class="even">
+<td><p>This is test 4.txt</p></td>
+<td><p>THISIS~4.TXT</p></td>
+</tr>
+<tr class="odd">
+<td><p>This is test 5.txt</p></td>
+<td><p>THA1CA~1.TXT</p></td>
+</tr>
+<tr class="even">
+<td><p>This is test 6.txt</p></td>
+<td><p>THA1CE~1.TXT</p></td>
+</tr>
+</tbody>
+</table>
+<p>When you delete a file, its short file name is also deleted. When you create new files in the same folder, Windows Server 2003 might re-use short file names that have been deleted. For instance, in Example 1, if you delete the file “This is test 1.txt,” and then create a new file called “This is test 7.txt,” its short file name becomes THISIS~1.TXT.</p>
+<p>If you have a large number of files (300,000 or more) in a folder, and the files have long file names with the same initial characters, the time required to create the files increases. The increase occurs because NTFS bases the short file name on the first six characters of the long file name. In folders with more than 300,000 files, the short file names start to conflict after NTFS uses all of the 8.3 names that are similar to the long file names. Repeated conflicts between a generated short file name and existing short file names cause NTFS to regenerate the short file name from 6 to 8 times.</p>
+<h3 id="compression-of-files-and-folders">Compression of Files and Folders</h3>
+<p>NTFS supports compression on individual files, all files within a folder, and all files within NTFS volumes. Because compression is implemented within NTFS, any Windows-based program can read and write compressed files without determining the compression state of the file. Compression is set in a bit within the file header, while information about compression is stored in the Data file attribute.</p>
+<p>Files and directories are compressed and decompressed by passing FSCTL_SET_COMPRESSION code to DeviceIoControl. A compressed file or directory then has the flag FILE_ATTRIBUTE_COMPRESSED associated with it. Applications can determine a file or directory’s compression state using GetFileAttributes.</p>
+<p>When a program opens a compressed file, NTFS decompresses only the portion of the file being read and then copies that data to memory. By leaving data in memory uncompressed, NTFS performance is not impacted when it reads or modifies data in memory. NTFS compresses the modified or new data in the file when the data is later written to disk.</p>
+<p>The compression algorithms in NTFS support cluster sizes of up to 4 KB. When the cluster size is greater than 4 KB on an NTFS volume, none of the NTFS compression features are available.</p>
+<h4 id="moving-and-copying-files-or-folders">Moving and Copying Files or Folders</h4>
+<p>Moving and copying files and folders can change their compression state. The resulting compression state depends on whether you move or copy the files and whether you move the files between NTFS volumes or to FAT volumes.</p>
+<p>NTFS supports compression on one file, all files in a directory, or all files on a volume. Compression is set in a bit within the file header, while information about compression is stored in the Data file attribute. When the bit is set, the system compresses the file when it is saved and decompresses it as needed.</p>
+<p>Compression adds overhead to the system because a compressed NTFS file is decompressed, copied, and then recompressed as a new file even when the file is copied in the same computer. Any change to the compression attribute is applied to the files you specify for moving or copying. If you compress all files in the volume, the process might take a few minutes to finish, depending on the size of the volume, the number of files to compress, and the speed of the computer. The delay occurs because Windows Server 2003 must change the compression state of every folder on the volume and compress or uncompress every file on the volume.</p>
+<p>Changing the compression state of folders is relatively fast because for each folder Windows Server 2003 changes only the compression attribute. However, compressing or uncompressing every file on the volume takes longer because NTFS must read data in its current form (compressed or uncompressed) from the disk, convert the data to its new form in memory, and then write the data back to disk.</p>
+<h5 id="moving-files-or-folders-within-an-ntfs-volume">Moving Files or Folders within an NTFS Volume</h5>
+<p>When you move an uncompressed file or folder to another folder on the NTFS volume, the file remains uncompressed. The figure Moving an Uncompressed File to a Compressed Folder illustrates the result of moving an uncompressed file to a compressed folder.</p>
+<p><strong>Moving an Uncompressed File to a Compressed Folder</strong></p>
+<p><img src="images%5ccc781134.25020930-608e-463d-bfaf-047d12da52c6(ws.10).gif" alt="Moving Uncompressed File to Compressed Folder" title="Moving Uncompressed File to Compressed Folder" data-linktype="relative-path"></p>
+<p>When you move a compressed file to an uncompressed folder, the file remains uncompressed after the move. The figure Moving a Compressed File to an Uncompressed Folder illustrates the result of moving a compressed file or folder to a compressed folder.</p>
+<p><strong>Moving a Compressed File to an Uncompressed Folder</strong></p>
+<p><img src="images%5ccc781134.243edc64-3367-4cb5-8fe3-38b015cbe61d(ws.10).gif" alt="Moving a Compressed File to an Uncompressed Folder" title="Moving a Compressed File to an Uncompressed Folder" data-linktype="relative-path"></p>
+<h5 id="copying-files-or-folders-within-an-ntfs-volume">Copying Files or Folders within an NTFS Volume</h5>
+<p>Copying a file to a folder takes on the compression attribute of the target folder.</p>
+<p>If you copy a compressed file to an uncompressed folder, the file is uncompressed when it is copied to the folder, as shown in the figure Copying a Compressed File to an Uncompressed Folder.</p>
+<p><strong>Copying a Compressed File to an Uncompressed Folder</strong></p>
+<p><img src="images%5ccc781134.72fa8c1b-be2a-405c-8ee5-750cc65c4c73(ws.10).gif" alt="Copying Compressed File to Uncompressed Folder" title="Copying Compressed File to Uncompressed Folder" data-linktype="relative-path"></p>
+<p>When you copy a file to a folder that already contains a file of the same name, the copied file takes on the compression attribute of the target file, as shown in the figure Copying a File to a Folder that Contains a File of the Same Name.</p>
+<p><strong>Copying a File to a Folder that Contains a File of the Same Name</strong></p>
+<p><img src="images%5ccc781134.f7fd237f-33e6-4a97-8e01-337e3f3dce5f(ws.10).gif" alt="Copy File to Folder that Contains Same Name File" title="Copy File to Folder that Contains Same Name File" data-linktype="relative-path"></p>
+<h5 id="copying-files-between-fat-and-ntfs-volumes">Copying Files between FAT and NTFS Volumes</h5>
+<p>Files copied from a FAT folder to an NTFS folder take on the compression attribute of the target folder. Compressed files copied from an NTFS volume to a FAT volume or floppy disk are uncompressed.</p>
+<h3 id="mounted-drives-on-ntfs-volumes">Mounted Drives on NTFS Volumes</h3>
+<p>Mounted drives, also known as volume mount points or drive paths, are volumes attached to an empty folder on an NTFS volume. Mounted drives function the same way as any other volume, but are assigned a label or name instead of a drive letter. Mounted drives are robust against system changes that occur when devices are added or removed from a computer. They are not subject to the 26-volume limit imposed by drive letters, so you can use them for access to more than 26 volumes on your computer.</p>
+<p>The version of NTFS included with Windows Server 2003 must be used on the host volume. However, the volume to be mounted can be formatted in any file system supported by Windows Server 2003.</p>
+<p>One volume can host multiple mounted drives, providing a way for you to easily extend the storage capacity of any particular volume on a Windows Server 2003 system. Users on the local computer or users who connect to it over a network can continue to use the same drive letter for access to the volume, but multiple volumes can be in use simultaneously from that drive letter.</p>
+<p>Only NTFS volumes can hold a mounted drive, although any local drive can be mounted on one.</p>
+<h4 id="implementing-mounted-drives">Implementing Mounted Drives</h4>
+<p>NTFS mounted drives are implemented by using reparse points and are subject to their restrictions. Reparse points are a collection of user-defined data. The format of this data is understood by the application which stores the data, and a file system filter, which you install to interpret the data and process the file. When an application sets a reparse point, it stores this data, plus a reparse tag, which uniquely identifies the data it is storing. When the file system opens a file with a reparse point, it attempts to find the file system filter associated with the data format identified by the reparse tag. If a file system filter is found, the filter processes the file as directed by the reparse data. If a file system filter is not found, the file open operation fails.</p>
+<p>The following restrictions apply to reparse points:</p>
+<ul>
+<li><p>Reparse points can be established for a directory, but the directory must be empty. Otherwise, NTFS fails to establish the reparse point. In addition, you cannot create directories or files in a directory that contains a reparse point.</p>
+</li>
+<li><p>Reparse points and extended attributes are mutually exclusive. NTFS cannot create a reparse point when the file contains extended attributes, and it cannot create extended attributes on a file that contains a reparse point.</p>
+</li>
+<li><p>Reparse point data cannot exceed 16 kilobytes. Setting a reparse point fails if the amount of data to be placed in the reparse point exceeds this limit.</p>
+</li>
+</ul>
+<h3 id="hard-links">Hard Links</h3>
+<p>A hard link is an NTFS-only based link to a given file. When you create a hard link to a file on an NTFS volume, NTFS adds a directory entry for the hard link without duplicating the original file. By creating hard links you can:</p>
+<ul>
+<li><p>Use the same file name as the original file but appear in different folders.</p>
+</li>
+<li><p>Use different file names from the original file but appear in the same folder.</p>
+</li>
+<li><p>Use different file names from the original file and appear in different folders.</p>
+</li>
+</ul>
+<p>Because a hard link is a directory entry for a file, an application can modify a file by using any of its hard links. Applications that use any other hard link can detect the changes. However, directory entries for hard links are updated only when a user accesses a file by using the hard link. For example, if a user opens and modifies a file by using its hard link, and the size of the original file changes, the hard link that is used to access the file also shows the new size.</p>
+<p>Hard links do not have security descriptors; instead, the security descriptor belongs to the original file to which the hard link points. Thus, if you change the security descriptor of any hard link, you actually change the underlying file’s security descriptor. All hard links that point to the file allow the newly specified access. You cannot give a file different security descriptors on a per-hard-link basis.</p>
+<p>Hard links use the Win32 function CreateHardLink to create hard links between files.</p>
+<h3 id="distributed-link-tracking">Distributed Link Tracking</h3>
+<p>Distributed link tracking ensures that shell shortcuts and OLE links continue to work after the target file is renamed or moved. When you create a shortcut to a file on an NTFS volume, distributed link tracking stamps a unique object identifier (ID) into the target file, known as the link source. Information about the object ID is also stored within the referring file, known as the link client. Distributed link tracking uses this object ID to locate the link source in any combination of the following events that occur on NTFS volumes within a Windows Server 2003-based domain:</p>
+<ul>
+<li><p>The link source is renamed.</p>
+</li>
+<li><p>The link source is moved to another folder on the same volume or to a different volume on the same computer.</p>
+</li>
+<li><p>The link source is moved from one shared network folder to another shared network folder on different computers within the same domain.</p>
+</li>
+<li><p>The computer containing the link source is renamed.</p>
+</li>
+<li><p>The name of the shared network folder containing the link source has changed.</p>
+</li>
+<li><p>The volume containing the link source is moved to another computer within the same domain.</p>
+</li>
+</ul>
+<p><strong>Note</strong></p>
+<ul>
+<li>Distributed link tracking works only on NTFS volumes in computers running Windows 2000, Windows XP, or Windows Server 2003. The NTFS volumes cannot be on removable media.</li>
+</ul>
+<p>Distributed link tracking attempts to maintain even those links that do not occur within a domain: cross-domain, within a workgroup, or on a single computer that is not connected to a network. Links can always be maintained in these events when a link source is moved within a computer, or when the network shared folder on the link source computer is changed. Typically, links can be maintained when the link source is moved to another computer; however, this form of tracking is less reliable over time.</p>
+<p>Distributed link tracking uses different services for client and server:</p>
+<ul>
+<li><p>The Distributed Link Tracking Client service runs on all Windows 2000-based and Windows Server 2003-based computers. In computers that are not part of a network, the Client service performs all activities related to link tracking.</p>
+</li>
+<li><p>The Distributed Link Tracking Server service runs on Windows 2000 and Windows Server 2003 domain controllers. The Server service maintains information relating to the movement of link sources. Because of this service and the information it maintains, links within a domain are more reliable than those outside a domain. For computers that run in a domain, the Distributed Link Tracking Client service takes advantage of this information by communicating with the Distributed Link Tracking Server service.</p>
+</li>
+</ul>
+<p>The Distributed Link Tracking Client service monitors activity on NTFS volumes and stores maintenance information in a file called Tracking.log, which is located at the root of each volume in a hidden folder called System Volume Information. This folder is protected by permissions that allow only the system to have access to it. The System Volume Information folder is also used by other Windows Server 2003 services such as Indexing Service.</p>
+<h3 id="sparse-files">Sparse Files</h3>
+<p>Sparse files provide a method of saving disk space for files that contain meaningful data, as well as large sections of data composed of zeros. If an NTFS file is marked as sparse, then NTFS allocates disk clusters only for the data explicitly specified by the application. Non-specified ranges of the file are represented by non-allocated space on the disk. When a sparse file is read from allocated ranges, the data is returned as it was stored. Data read from non-allocated ranges is returned as zeros.</p>
+<p>File system application programming interfaces (APIs) allow for the file to be copied or backed as actual bits and sparse stream ranges.File system APIs also allow for querying allocated ranges. Programs that implement these APIs then need only to read allocated ranges to recover all data in the file. The result is efficient file system storage and access. The figure Sparse Data Storage shows how data is stored with and without the sparse file attribute set.</p>
+<p><strong>Sparse Data Storage</strong></p>
+<p><img src="images%5ccc781134.eda85415-6d21-4b03-8a50-644dd718dd90(ws.10).gif" alt="Sparse Data Storage" title="Sparse Data Storage" data-linktype="relative-path"></p>
+<p>For example, the properties of a file might show that the file is a 1-GB sparse file. Although the file is 1 GB, it occupies only 64 KB of disk space.</p>
+<p><strong>Note</strong></p>
+<ul>
+<li>Only NTFS volumes mounted by Windows 2000, Windows XP, or the Windows Server 2003 family support sparse files. If you copy or move a sparse file to a FAT volume or an NTFS volume mounted by an operating system other than those listed previously, the file is built to its originally specified size. If the required space is not available, the operation fails.</li>
+</ul>
+<h3 id="disk-quotas">Disk Quotas</h3>
+<p>You can enable disk quotas to restrict the amount of volume space users take up on remote or local computers with NTFS file systems. Disk quotas uses names from the domain in which the server resides. An administrator can then set disk quotas against those users in the domain.</p>
+<p>For additional information about Disk Quotas, see the <a href="cc786969%28v%3dws.10%29" data-linktype="relative-path">Disk Quotas Technical Reference</a>.</p>
+<h3 id="ntfs-change-journal">NTFS Change Journal</h3>
+<p>As files, folders, and other NTFS objects are added, deleted, and modified, NTFS enters change journal records in streams, one for each volume on the computer.</p>
+<p>The total size of all the records currently in the journal varies, but there is a configurable maximum size. The change journal can exceed the maximum size until the size reaches an outer threshold, at which point a portion of the oldest records are deleted until the change journal is restored to its maximum size. The maximum size of the change journal is configurable but cannot be reduced, only increased.</p>
+<p>The change journal conveys significant scalability benefits to applications that might otherwise need to scan an entire volume for changes. File system indexing, replication managers, virus scanners, and incremental backup applications can benefit from using the change journal.</p>
+<p>The change journal is much more efficient than time stamps or file notifications for determining changes in a particular namespace. Applications that must rescan an entire volume to determine changes can now scan once and subsequently refer to the change journal. The I/O cost depends on how many files have changed, not on how many files exist on the volume.</p>
+<p>The APIs are fully documented and can be leveraged by independent software vendors (ISVs). Microsoft uses the change journal in Windows Server 2003 components such as the Indexing Service and File Replication Service. ISVs can use this feature to enhance the scalability and robustness of a range of products including backup, antivirus, and auditing tools.</p>
+<h3 id="ntfs-file-system-recoverability">NTFS File System Recoverability</h3>
+<p>NTFS is a recoverable file system that guarantees the consistency of the volume by using standard transaction logging and recovery techniques. In the event of a system failure, NTFS runs a recovery procedure that accesses information stored in a transaction log file. The NTFS recovery procedure guarantees that the volume is restored to a consistent state. Transaction logging requires very little overhead.</p>
+<h4 id="recovering-ntfs-file-structures">Recovering NTFS File Structures</h4>
+<p>NTFS views each operation that modifies a file on a volume as a transaction and manages each one as an integral unit. NTFS might also break a single complex operation into multiple transactions. After a transaction is started, it is either completed, or if an event occurs that causes the operation to fail, it is rolled back, and the NTFS volume returns to its state before the transaction began. Events that can cause an operation to fail include bad sectors, transient low-memory conditions, and disconnected devices.</p>
+<p>To ensure that a transaction can either be completed or rolled back, NTFS performs the following steps for each transaction:</p>
+<ol>
+<li><p>Records the metadata operations of a transaction in a log file cached in memory.</p>
+</li>
+<li><p>Records the actual metadata operations in memory.</p>
+</li>
+<li><p>Marks the transaction in the cached log file as committed.</p>
+</li>
+<li><p>Flushes the log file to disk.</p>
+</li>
+<li><p>Flushes the actual metadata operations to disk.</p>
+</li>
+</ol>
+<p>Steps 4 and 5 occur in a lazy fashion after the transaction is completed, meaning that the flush operations are not tied to the transaction itself. Instead, NTFS modifies the log and metadata quickly in memory, and then flushes later at a convenient time to boost performance.</p>
+<p>NTFS guarantees that the log records containing the metadata operations of the transaction are written to disk before the metadata that is modified in the transaction is written to disk. After NTFS updates the cache, NTFS commits the transaction by recording in the cached log file that the transaction is complete. After the cached log file is flushed to disk, all committed transactions are guaranteed to be completed, even if the system fails before the changes are written to disk.</p>
+<p><strong>Note</strong></p>
+<ul>
+<li>Applications can specify the FILE_FLAG_WRITE_THROUGH Win32 flag to instruct the system to write through any intermediate cache and go directly to disk. The system can still cache write operations, but cannot lazily flush them.</li>
+</ul>
+<p>If a system failure occurs, NTFS has enough information in the log to complete or abort any partial NTFS transaction. During recovery operations, NTFS redoes each committed transaction found in the log file. Then NTFS locates in the log file the transactions that were not committed at the time of the system failure and undoes each metadata operation recorded in the log file. Because NTFS flushes the log to disk before any metadata changes are written to disk, NTFS has complete information available about any metadata changes that need to be rolled back during recovery.</p>
+<p><strong>Note</strong></p>
+<ul>
+<li>NTFS uses transaction logging and recovery to guarantee that the volume structure is not corrupted. For this reason, all file system data is accessible after a system failure. NTFS guarantees user data only if the program used to create the data uses the FILE_FLAG_WRITE_THROUGH Win32 flag. If the program does not use this flag, user data can be lost due to a system failure. If a system failure does occur, NTFS shows either the previous data, the new data, or zeros. Users do not see random data on the volume as the result of a crash.</li>
+</ul>
+<h4 id="caching-and-data-recovery">Caching and Data Recovery</h4>
+<p>The cache is the area of RAM that contains the most recently used data. When you write data to disk, the lazy-writetechnique in Windows Server 2003 indicates that the data is written when it is still in the cache. Cache memory can also be on the disk controller, such as cache memory available on SCSI controllers, or on the disk unit, such as cache memory available on Advanced Technology Attachment (ATA) disks. The following information can help you decide whether to enable the disk or the controller cache:</p>
+<ul>
+<li><p>Write caching improves disk performance, particularly if large amounts of data are being written to the disk.</p>
+</li>
+<li><p>Control of the write-back cache is a firmware function provided by the disk manufacturer. See the documentation supplied with the disk or disk controller. You cannot configure the write-back cache from Windows Server 2003.</p>
+</li>
+<li><p>Write caching does not impact the reliability of the file system’s own metadata as long as the firmware provided by the disk manufacturer honors write-through requests issued by the NTFS driver. NTFS instructs the disk device driver to ensure that metadata is written whether or not write caching is enabled. Non-metadata is typically written to disk and can be cached.</p>
+</li>
+<li><p>Read caching in the disk does not affect the reliability of a file system.</p>
+</li>
+</ul>
+<h4 id="cluster-remapping">Cluster Remapping</h4>
+<p>When NTFS detects a bad sector, NTFS dynamically remaps the cluster containing the bad sector — a recovery technique called cluster remapping — and allocates a new cluster for the data. If the error occurred during a read, NTFS returns a read error to the calling program, and the data is lost. If the error occurs during a write, NTFS writes the data to the new cluster, and no data is lost.</p>
+<p>NTFS puts the address of the cluster containing the bad sector in the bad cluster file, $BadClus, in the MFT so that the bad sector is not reused.</p>
+<h4 id="disk-recovery-operations">Disk Recovery Operations</h4>
+<p>NTFS ensures the integrity of all NTFS volumes by performing disk recovery operations whenever a volume is mounted after the computer is restarted or after the volume is dismounted. NTFS also uses a technique called cluster remapping to minimize the effects of a bad sector on an NTFS volume.</p>
+<p>NTFS views each operation that modifies a file on a volume as a transaction and manages each one as an integral unit. NTFS might also break a single complex operation into multiple transactions. After a transaction is started, it is either completed, or if an event occurs that causes the operation to fail, it is rolled back, and the NTFS volume returns to its state before the transaction began. Events that can cause an operation to fail include bad sectors, transient low-memory conditions, and disconnected devices.</p>
+<p>NTFS guarantees that the log records containing the metadata operations of the transaction are written to disk before the metadata that is modified in the transaction is written to disk. After NTFS updates the cache, NTFS commits the transaction by recording in the cached log file that the transaction is complete. After the cached log file is flushed to disk, all committed transactions are guaranteed to be completed, even if the system crashes before the changes are written to disk.</p>
+<p>If a system failure occurs, NTFS has enough information in the log to complete or abort any partial NTFS transaction. During recovery operations, NTFS redoes each committed transaction found in the log file. Then NTFS locates in the log file the transactions that were not committed at the time of the system failure and undoes each metadata operation recorded in the log file. Because NTFS flushes the log to disk before any metadata changes are written to disk, NTFS has complete information available about any metadata changes that need to be rolled back during recovery.</p>
+<h3 id="cleanup-operations-on-windowsntbased-volumes">Cleanup Operations on Windows NT–Based Volumes</h3>
+<p>Because files on volumes formatted by using the version of NTFS included with Windows Server 2003 can be read and written to by Windows NT 4.0 Service Pack 4 or later, Windows Server 2003 might need to perform cleanup operations to ensure the consistency of the data structures of a volume after it is mounted on a computer running Windows NT.</p>
+<p>Windows Server 2003 does not perform cleanup operations on volumes previously mounted by using Windows 2000 or Windows XP.</p>
+<p>Cleanup operations affect the following features:</p>
+<h5 id="reparse-points">Reparse points</h5>
+<p>Computers running Windows NT 4.0 or earlier cannot access files that have reparse points, so no cleanup operations are necessary. Reparse points are files or directories that have blocks of data called reparse data associated with them.</p>
+<h5 id="disk-quotas-1">Disk quotas</h5>
+<p>If disk quotas are turned off, Windows Server 2003 performs no cleanup operations. If disk quotas are turned on, Windows Server 2003 cleans up the quota information by rebuilding the index. If a user exceeds the disk quota while the NTFS volume is mounted by a Windows NT 4.0 SP4 or later system, and disk quotas are strictly enforced, all further disk allocations of data by that user using Windows Server 2003 fail. The user can still read and write data to any existing file but cannot increase the size of a file. However, the user can delete and shrink files. When usage falls below the assigned disk quota, disk allocations of data can resume.</p>
+<h5 id="encryption">Encryption</h5>
+<p>Encrypted files cannot be accessed by computers that are running Windows NT 4.0 or earlier, so no cleanup operations are necessary.</p>
+<h5 id="sparse-files-1">Sparse files</h5>
+<p>Computers running Windows NT 4.0 or earlier cannot access sparse files, so no cleanup operations are necessary.</p>
+<h5 id="change-journal">Change journal</h5>
+<p>Computers that are running Windows NT 4.0 or earlier do not log file changes in the change journal. When Windows Server 2003 starts, the change journals on volumes accessed by Windows NT are reset to indicate that the journal history is incomplete. Applications that use the change journal must be able to accept incomplete journals.</p>
+<h5 id="object-identifiers">Object identifiers</h5>
+<p>Windows Server 2003 maintains two references to the object identifier: one on the file and one in the volume-wide object identifier index. If you delete a file that has an object identifier, Windows Server 2003 must scan and clean up the entry in the index.</p>
+<h3 id="posix-compliance">POSIX Compliance</h3>
+<p>NTFS provides a several features to support the Portable Operating System Interface (POSIX) standard, which is defined by the Institute of Electrical and Electronic Engineers (IEEE) standard 1003.1-1990 (also known as ISO/IEC 9945-1:1990).</p>
+<p>NTFS includes the following POSIX-compliant features.</p>
+<h5 id="case-sensitive-naming">Case-sensitive naming</h5>
+<p>For example, POSIX interprets README.TXT, Readme.txt, and readme.txt as separate files.</p>
+<h5 id="hard-links-1">Hard links</h5>
+<p>A file can have more than one name. This allows two different file names, which can be in different folders on the same volume, to point to the same data.</p>
+<h5 id="additional-time-stamps">Additional time stamps</h5>
+<p>These show when the file was last accessed or modified.</p>
+<p>The POSIX subsystem included with Windows NT and Windows 2000 is not included with Windows Server 2003. A new subsystem supporting the broad functionality found on most UNIX systems beyond the POSIX.1 standard is shipped as part of Interix 2.2. The Interix subsystem can be certified to the NIST FIPS 151-2 POSIX Conformance Test Suite.</p>
+<p><strong>Note</strong></p>
+<ul>
+<li>You must use Interix-based programs to manage file names that differ only in case. You cannot use standard Windows Server 2003 command-line tools (such as <strong>copy</strong>, <strong>del</strong>, and <strong>move</strong>, or their equivalents in Windows Explorer or My Computer) to manage file names that differ only in case.</li>
+</ul>
+<h2 id="related-information">Related Information</h2>
+<ul>
+<li><p><a href="cc784732%28v%3dws.10%29" data-linktype="relative-path">Basic Disks and Volumes Technical Reference</a></p>
+</li>
+<li><p><a href="cc786969%28v%3dws.10%29" data-linktype="relative-path">Disk Quotas Technical Reference</a></p>
+</li>
+<li><p><a href="cc785638%28v%3dws.10%29" data-linktype="relative-path">Dynamic Disks and Volumes Technical Reference</a></p>
+</li>
+</ul>
+
+						<!-- </content> -->
+
+						</main>
+
+						<!-- feedback section -->
+
+
+
+
+
+						<!-- end feedback section -->
+
+						<div class="footerContainer is-visible-interactive has-default-focus ">
+<footer id="footer-interactive" data-bi-name="footer" class="footer-layout">
+
+    <a data-mscc-ic="false" class="locale-selector-link" href="#" data-bi-name="select-locale"><span class="icon docon docon-world is-size-4 has-margin-right-small" aria-hidden="true"></span><span class="local-selector-link-text"></span></a>
+
+    <ul class="links" data-bi-name="footerlinks">
+		<li><a data-mscc-ic="false" href="https://docs.microsoft.com/previous-versions/" data-bi-name="archivelink">Previous Version Docs</a></li>
+		<li><a data-mscc-ic="false" href="https://docs.microsoft.com/teamblog" data-bi-name="bloglink">Blog</a></li>
+		<li><a data-mscc-ic="false" href="https://docs.microsoft.com/contribute" data-bi-name="contributorGuide">Contribute</a></li>
+			<li><a data-mscc-ic="false" href="https://go.microsoft.com/fwlink/?LinkId=521839" data-bi-name="privacy">Privacy &amp; Cookies</a></li>
+		<li><a data-mscc-ic="false" href="/en-us/legal/termsofuse" data-bi-name="termsofuse">Terms of Use</a></li>
+		<li><a data-mscc-ic="false" href="https://aka.ms/sitefeedback" data-bi-name="feedback">Site Feedback</a></li>
+		<li><a data-mscc-ic="false" href="https://www.microsoft.com/en-us/legal/intellectualproperty/Trademarks/EN-US.aspx" data-bi-name="trademarks">Trademarks</a></li>
+    </ul>
+</footer>
+						</div>
+					</div>
+
+					<div id="page-actions" class="right-container column is-one-quarter is-one-fifth-desktop is-hidden-mobile is-hidden-tablet-only" data-bi-name="pageactions" role="complementary" aria-label="Page Actions">
+							<nav id="side-doc-outline" class="doc-outline is-fixed is-vertically-scrollable" data-bi-name="intopic toc" role="navigation" aria-label="Article Outline">
+								<h3>In this article</h3>
+							</nav>
+					</div>
+
+					<!--end of div.columns -->
+				</div>
+
+			<!--end of .primary-holder -->
+			</section>
+
+			<aside id="interactive-container" class="interactive-container is-visible-interactive column has-body-background-dark ">
+			</aside>
+		</div>
+
+		<!--end of .mainContainer -->
+	</div>
+
+	<div id="openFeedbackContainer" class="openfeedback-container"></div>
+
+	<div class="footerContainer has-default-focus is-hidden-interactive ">
+<footer id="footer" data-bi-name="footer" class="footer-layout uhf-container has-padding" role="contentinfo">
+
+    <a data-mscc-ic="false" class="locale-selector-link" href="#" data-bi-name="select-locale"><span class="icon docon docon-world is-size-4 has-margin-right-small" aria-hidden="true"></span><span class="local-selector-link-text"></span></a>
+
+    <ul class="links" data-bi-name="footerlinks">
+		<li><a data-mscc-ic="false" href="https://docs.microsoft.com/previous-versions/" data-bi-name="archivelink">Previous Version Docs</a></li>
+		<li><a data-mscc-ic="false" href="https://docs.microsoft.com/teamblog" data-bi-name="bloglink">Blog</a></li>
+		<li><a data-mscc-ic="false" href="https://docs.microsoft.com/contribute" data-bi-name="contributorGuide">Contribute</a></li>
+			<li><a data-mscc-ic="false" href="https://go.microsoft.com/fwlink/?LinkId=521839" data-bi-name="privacy">Privacy &amp; Cookies</a></li>
+		<li><a data-mscc-ic="false" href="/en-us/legal/termsofuse" data-bi-name="termsofuse">Terms of Use</a></li>
+		<li><a data-mscc-ic="false" href="https://aka.ms/sitefeedback" data-bi-name="feedback">Site Feedback</a></li>
+		<li><a data-mscc-ic="false" href="https://www.microsoft.com/en-us/legal/intellectualproperty/Trademarks/EN-US.aspx" data-bi-name="trademarks">Trademarks</a></li>
+    </ul>
+</footer>
+	</div>
+
+	<div id="action-panel" role="region" aria-label="Action Panel" class="action-panel has-default-focus" tabindex="-1"></div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+dd if=/dev/zero of=/media/ubuntu/ARQ_D/SO/L17.10.bin bs=1M count=968   # 64 + 904 
+echo -n -e \\x55\\xAA | dd of=/media/ubuntu/ARQ_D/SO/L17.10.bin bs=1 seek=510 conv=notrunc
+echo -n -e \\x00\\xfe\\xff\\xff\\x0c\\xfe\\xff\\xff\\x00\\x00\\x02\\x00\\x00\\x40\\x1C\\x00 | \
+dd of=/media/ubuntu/ARQ_D/SO/L17.10.bin bs=1 seek=$((0x1be)) conv=notrunc
+
+hexdump -C -n 1024 /media/ubuntu/ARQ_D/SO/L17.10.bin
+
+LOOP=$(losetup -f)
+sudo losetup -o $((0x00020000 * 512)) $LOOP /media/ubuntu/ARQ_D/SO/L17.10.bin
+
+sudo mkfs.fat -F 32 -i 30393137 -n L17.10 $LOOP
+
+
+mkdir teste1
+sudo mount $LOOP ./teste1
+
+mkdir teste2
+sudo mount -o loop /media/ubuntu/ARQ_D/SO/lubuntu-17.10-desktop-amd64.iso ./teste2
+
+sudo mkdir -p teste1/boot/grub
+sudo mkdir -p teste1/EFI/BOOT
+sudo mkdir -p teste1/casper
+
+sudo cp teste2/casper/filesystem.squashfs teste1/casper/
+sudo cp teste2/casper/vmlinuz.efi teste1/casper/
+sudo cp /media/ubuntu/TSD/SD/linux/boot/EFI/grubx64.efi teste1/EFI/BOOT/BOOTx64.EFI
+
+echo '
+set default=0
+set timeout=2
+
+set menu_color_normal=white/black
+set menu_color_highlight=black/light-gray
+
+menuentry "LUBUNTU 17.10" {
+linux  /casper/vmlinuz.efi  boot=casper lang=pt_BR locale=pt_BR keyboard-configuration/layoutcode?=br keyboard-configuration/modelcode?=abnt2
+initrd /casper/initrd.lz
+}
+' > grub.cfg
+
+sudo mv grub.cfg teste1/boot/grub/
+
+
+mkdir initrd
+cd initrd
+lzma -dc -S .lz ../teste2/casper/initrd.lz | cpio -imvd --no-absolute-filenames
+
+sed -i 's/(\[ "$skip_uuid_check" \] || \[ "$UUID" = "$devuid" \] || matches_uuid $mountpoint); then/[ 1 ] ; then\n            mkdir -p \/teste\n            mount -t tmpfs -o mode=0755,size=880M,noatime tmpfs \/teste\n            mkdir \/teste\/casper\n            cp \$mountpoint\/casper\/filesystem.squashfs \/teste\/casper\/\n            sync\n            umount \$mountpoint\n            sync\n            mount -n -o move \/teste $mountpoint\n            sync/' scripts/casper
+
+find . -print | cpio --quiet -R 0:0 -o -H newc | lzma >> ../initrd.lz
+
+cd ..
+sudo mv initrd.lz teste1/casper/
+
+sudo sync
+sudo umount ./teste1 ./teste2
+rm -r ./teste1 ./teste2 ./initrd
+
+sudo losetup -d $LOOP
+

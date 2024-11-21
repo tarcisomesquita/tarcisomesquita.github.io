@@ -1,0 +1,9 @@
+
+ &  E, AND
+ |  OU, OR
+ ^  OU Exclusivo, XOR
+ ~  NÃO, NOT
+<<  Deslocamento à esquerda
+>>  Deslocamento à direita
+>>> Deslocamento à direita com preenchimento de zeros
+

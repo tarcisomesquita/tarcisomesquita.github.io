@@ -1,0 +1,5 @@
+INSMOD(8)
+03 March 2009
+
+insmod [ filename ] [ module options ... ]
+

@@ -1,0 +1,27 @@
+
+lsinitramfs initrd
+unmkinitramfs initrd initramfs
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+gunzip -c /cdrom/casper/initrd.gz | cpio -idv
+find . -print | cpio -o -H newc | gzip -9 -c - > ../initrd.gz
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+mkdir /home/ubuntu/Desktop/initrd
+cd    /home/ubuntu/Desktop/initrd
+lzma -dc -S .lz /cdrom/casper/initrd.lz | cpio -imvd --no-absolute-filenames
+
+VBoxManage controlvm "efi" poweroff && \
+rm /media/ubuntu/EFI/casper/initrd.lz && \
+sudo sync && \
+find . -print | cpio --quiet -R 0:0 -o -H newc | lzma >> /media/ubuntu/EFI/casper/initrd.lz && \
+sudo sync && \
+VBoxManage startvm "efi" --type gui
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+mkinitramfs -o /new-initrd.gz 2.6.31-16-generic
+

@@ -1,0 +1,77 @@
+For data at rest AES 256 Bit
+For data in transit like secure websites TLS 1.2 RSA is considered best.
+
+gpg --version
+IDEA, 3DES, CAST5, BLOWFISH, AES, AES192, AES256, TWOFISH, CAMELLIA128, CAMELLIA192, CAMELLIA256
+
+$ gpg --symmetric --cipher-algo AES256 --output teste.txt.gpg teste.txt
+$ gpg --symmetric --cipher-algo AES256 --output teste.txt.gpg --armor teste.txt # to base64
+
+$ gpg --output teste2.txt --decrypt teste.txt.gpg
+
+tar czvpf - Files/ | gpg --symmetric --cipher-algo aes256 -o backup.tar.gz.gpg
+gpg --decrypt backup.tar.gz.gpg | tar xzvf -
+
+/bin/tar --create --same-permissions --same-owner files/       | \
+/usr/bin/xz --extreme -9 --compress --format=xz --to-stdout  - | \
+gpg --symmetric --cipher-algo aes256 -o files.tar.xz.gpg
+
+gpg --decrypt files.tar.xz.gpg       | \
+/usr/bin/xz --decompress --to-stdout | \
+/bin/tar --extract 
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+--gen-key
+  Generate  a  new  key  pair using teh current default parameters.  This is the standard command to create a new key.
+
+gpg --export             --armor --output public_key.txt
+gpg --export-secret-keys --armor --output secret_key.txt
+
+gpg --import public_key.txt
+gpg --import secret_key.txt
+
+--list-public-keys
+--list-secret-keys
+
+gpg --encrypt --recipient "Tarciso Mesquita" --output teste.txt.gpg teste.txt
+gpg --decrypt --output teste2.txt teste.txt.gpg
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Signature
+$ wget http://nginx.org/download/nginx-0.8.35.tar.gz
+$ wget http://nginx.org/download/nginx-0.8.35.tar.gz.asc
+$ wget http://sysoev.ru/pgp.txt
+
+$ gpg --import pgp.txt
+outputs:
+gpg: key A524C53E: public key "Igor Sysoev " imported
+
+Try to verify the software signature again:
+$ gpg nginx-0.8.35.tar.gz.asc
+outputs:
+gpg: Signature made Thursday 01 April 2010 09:18:53 PM IST using DSA key ID A524C53E
+gpg: Good signature from "Igor Sysoev "
+gpg: WARNING: This key is not certified with a trusted signature!
+
+$ gpg --edit-key igor@sysoev.ru trust
+  1 = I don't know or won't say
+  2 = I do NOT trust
+  3 = I trust marginally
+  4 = I trust fully
+  5 = I trust ultimately
+  m = back to the main menu
+Your decision? 5
+
+unless you restart the program.
+Command> q
+
+Now, try to verify the software signature again:
+$ gpg nginx-0.8.35.tar.gz.asc
+outputs:
+gpg: Signature made Thursday 01 April 2010 09:18:53 PM IST using DSA key ID A524C53E
+gpg: Good signature from "Igor Sysoev "
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+

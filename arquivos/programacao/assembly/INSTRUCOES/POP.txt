@@ -1,0 +1,22 @@
+
+POP – Pop a Word from the Stack
+  register                                  1000 1111 : 11 000 reg
+  register (alternate encoding)             0101 1 reg
+  memory                                    1000 1111 : mod 000 r/m
+POP – Pop a Segment Register from the Stack
+(Note: CS cannot be sreg2 in this usage.)
+  segment register DS, ES                   000 sreg2 111
+  segment register SS                       000 sreg2 111
+  segment register FS, GS                   0000 1111: 10 sreg3 001
+
+Exemplo:
+5e h = 0101 1 110
+5e  POP  SI
+
+59   popl   %ecx
+5D   popl   %ebp
+
+
+  001                CX
+  101                BP
+

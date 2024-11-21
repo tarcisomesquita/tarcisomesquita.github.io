@@ -1,0 +1,9 @@
+Operadores Bit-a-bit
+Exemplo	Nome	Resultado
+$a & $b	E (AND)	Os bits que estão ativos tanto em $a quanto em $b são ativados.
+$a | $b	OU (OR inclusivo)	Os bits que estão ativos em $a ou em $b são ativados.
+$a ^ $b	XOR (OR exclusivo)	Os bits que estão ativos em $a ou em $b, mas não em ambos, são ativados.
+~ $a	NÃO (NOT)	Os bits que estão ativos em $a não são ativados, e vice-versa.
+$a << $b	Deslocamento à esquerda	Desloca os bits de $a $b passos para a esquerda (cada passo significa "multiplica por dois")
+$a >> $b	Deslocamento à direita	Desloca os bits de $a $b passos para a direita (cada passo significa "divide por dois")
+

@@ -1,0 +1,1278 @@
+A PDF file have of four elements:
+• A one-line header identifying the version
+• A body containing the data structure
+• A cross-reference table
+• A trailer giving the location of the cross-reference table
+
+header
+%PDF-1.4
+
+is recommended that the header line be immediately followed by a comment line containing at least four characters whose codes are 128 or greater.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+except within strings, streams, and comments, PDF character set is divided into three classes: regular, delimiter, and white-space
+
+white-space: 0x00, 0x09, 0x0A, 0x0C, 0x0D, 0x20
+PDF treats any sequence of consecutive white-space characters as if there were just one.
+
+delimiter: (, ), <, >, [, ], {, }, / and %.
+
+regular: all not white-space or delimiter
+
+PDF is case-sensitive
+% outside a string or stream introduces a comment
+The comment consists of all characters between the percent sign and the end of the line
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+data structure is composed from a set of data object.
+
+data structure:
+Document catalog > Page tree > Page 1 > Content stream or Thumbnail image
+                             > Page n > Content stream or Thumbnail image
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Example of data object:
+12 0 obj
+  (Brillig)
+endobj
+
+12 0 R  % is an indirect reference to object 12 0
+
+The object identifier consists of two parts:
+• A positive integer object number. May be assigned in any arbitrary order.
+• A nonnegative integer generation number. All indirect objects have generation numbers of 0. Nonzero generation numbers may be introduced when the file is later updated.
+
+
+types of object:
+• Boolean values
+• Integer and real numbers
+• Strings
+• Names
+• Arrays
+• Dictionaries
+• Streams
+• The null object
+
+example boolean:
+1 0 obj
+  true
+endobj
+
+example integer:
+1 0 obj
+  -98
+endobj
+
+example float:
+1 0 obj
+  34.5
+endobj
+
+
+String Objects
+There are two conventions for writing a string object in PDF:
+• As a sequence of literal characters enclosed in parentheses ( )
+• As hexadecimal data enclosed in angle brackets < >
+
+Text strings are encoded in either PDFDocEncoding or Unicode.
+Strings encoded in Unicode, the first two bytes must be FE followed by FF
+
+example:
+/Creator <FEFF005700720069007400650072>
+echo -n "0: FEFF005700720069007400650072" | xxd -r | hexdump -C
+00000000  fe ff 00 57 00 72 00 69  00 74 00 65 00 72        |...W.r.i.t.e.r|
+
+Literal Strings
+(This is a string)
+(Strings may contain newlines
+and such.)
+(Strings may contain balanced parentheses ( ) and
+special characters (*!&}^% and so on).)
+(The following is an empty string.)
+()
+(It has zero (0) length.)
+
+\n Line feed (LF)
+\r Carriage return (CR)
+\t Horizontal tab (HT)
+\b Backspace (BS)
+\f Form feed (FF)
+\( Left parenthesis
+\) Right parenthesis
+\\ Backslash
+\ddd Character code ddd (octal)
+
+(These \
+two strings \
+are the same.)
+(These two strings are the same.)
+
+(This string contains \245two octal characters\307.)
+
+
+Name Objects
+The slash character (/) is not part of the name.
+Examples of valid names:
+/Name1
+/ASomewhatLongerName
+/A;Name_With-Various***Characters?
+/1.2
+/$$
+/@pattern
+/.notdef
+
+LITERAL NAME               RESULT
+/Adobe#20Green             Adobe Green
+/paired#28#29parentheses   paired()parentheses
+
+Array Objects
+An array is written as a sequence of objects enclosed in square brackets ( [ and ] ):
+[549 3.14 false (Ralph) /SomeName]
+
+Dictionary Objects
+Is a table containing pairs of key and value.
+The key must be a name. The value can be any kind of object.
+
+No two entries in the same dictionary should have the same key.
+
+example:
+<<
+/Type /Example
+/Subtype /DictionaryExample
+/Version 0.01
+/IntegerItem 12
+/StringItem (a string)
+/Subdictionary <<
+   /Item1 0.4
+   /Item2 true
+   /LastItem (not!)
+   /VeryLastItem (OK)
+   >>
+>>
+
+
+Stream Objects
+
+dictionary
+stream
+...Zero or more lines of bytes...
+endstream
+
+All streams must be indirect objects
+The keyword stream that follows the stream dictionary should be followed by a line feed (\n).
+
+exemplo:
+5 0 obj
+  <<
+    /Length 73
+  >>
+  stream
+    BT
+      /F1 24 Tf
+      100 100 Td
+      (Hello World) Tj
+    ET
+  endstream
+endobj
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+TABLE 4.1 Operator categories
+CATEGORY                 OPERATORS                                      TABLE   PAGE
+General graphics state   w, J, j, M, d, ri, i, gs                       4.7     156
+Special graphics state   q, Q, cm                                       4.7     156
+Path construction        m, l, c, v, y, h, re                           4.9     163
+Path painting            S, s, f, F, f*, B, B*, b, b*, n                4.10    167
+Clipping paths           W, W*                                          4.11    172
+Text objects             BT, ET                                         5.4     308
+Text state               Tc, Tw, Tz, TL, Tf, Tr, Ts                     5.2     302
+Text positioning         Td, TD, Tm, T*                                 5.5     310
+Text showing             Tj, TJ, ', "                                   5.6     311
+Type 3 fonts             d0, d1                                         5.10    326
+Color                    CS, cs, SC, SCN, sc, scn, G, g, RG, rg, K, k   4.21    216
+Shading patterns         sh                                             4.24    232
+Inline images            BI, ID, EI                                     4.38    278
+XObjects                 Do                                             4.34    261
+Marked content           MP, DP, BMC, BDC, EMC                          9.8     584
+Compatibility            BX, EX                                         3.20    95
+
+BT   Begin Text
+ET   End Text
+
+string Tj    Show a text string.
+
+tx ty Td     move to tx ty from  start of the current line
+   BT
+      /F1 24 Tf
+      100 100 Td
+      (Hello World) Tj
+      /F1 16 Tf
+      200 50 Td
+      (2 vezes) Tj
+   ET
+
+
+Deixa o texto como uma onda
+(This ) Tj
+–5 Ts
+(text ) Tj
+5 Ts
+(moves ) Tj
+0 Ts
+(around) Tj
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+3.3 Filters
+A filter indicate how the data in the stream must be decoded before it is used.
+For example, if a stream has an ASCIIHexDecode filter, an application reading the data in that stream will transform the ASCII hexadecimal-encoded data in the stream into binary data.
+
+Filters can be cascaded to form a pipeline:
+/Filter [/ASCII85Decode /LZWDecode]
+
+ASCIIHexDecode
+Decodes data encoded in an ASCII hexadecimal representation, reproducing the original binary data.
+precisa terminar com >. Espaços são ignorados.
+6 0 obj
+<< /Length 126
+/Filter /ASCIIHexDecode
+>>
+stream
+0000000000010000000032000003fffdff02fefefe000000
+01000000012ae225aea9a5a538b4d9999c5c8e56ef0f872
+7f2b53d4e37ef795cc5506dffac>
+endstream
+endobj
+
+FlateDecode
+Decompresses data encoded using the zlib/deflate compression method, reproducing the original text or binary data.
+RFCs 1950, ZLIB Compressed Data Format Specification, and 1951, DEFLATE Compressed Data Format Specification
+
+DCTDecode
+Decompresses data encoded using a DCT (discrete cosine transform) technique based on the JPEG standard, reproducing image sample data that approximates the original data.
+
+LZWDecode
+Decompresses data encoded using the LZW (Lempel-Ziv-Welch) adaptive compression method, reproducing the original text or binary data.
+Adopted as one of the standard compression methods in the Tag Image File Format (TIFF)
+
+Flate-encoded output is usually much more compact than LZW-encoded output for the same input.
+Flate and LZW decoding speeds are comparable, but Flate encoding is considerably slower than LZW encoding.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+3.4.3 Cross-Reference Table
+line containing the keyword xref
+line containing two numbers, separated by a space: the subsection and the number of entries in the subsection.
+For a file that has never been updated, the subsection is 0.
+
+example:
+28 5
+introduces a subsection containing five objects, numbered consecutively from 28 to 32.
+
+format of an entry:
+nnnnnnnnnn ggggg n eol
+
+where
+nnnnnnnnnn   is a 10-digit byte offset
+ggggg        is a 5-digit generation number
+n            n (for an in-use entry) or f (for a free entry)
+eol          is a 2-character end-of-line sequence
+
+The first entry in the table (object number 0) is always free and has a generation number of 65,535;
+
+example:
+xref
+0 1
+0000000000 65535 f
+3 1
+0000025325 00000 n
+23 2
+0000025518 00002 n
+0000025635 00000 n
+
+First subsection contains one entry, for object number 0, which is free.
+Second subsection contains one entry, for object number 3, which is in use.
+Third subsection contains two entries, for objects number 23 and 24, both of which are in use.
+Object number 23 has been reused, as can be seen from the fact that it has a generation number of 2.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+3.4.4 File Trailer
+trailer <<
+  /Size 22
+  /Root 2 0 R
+  /Info 1 0 R
+  /ID [ <81b14aafa313db63dbd6f981e49f94f4> <81b14aafa313db63dbd6f981e49f94f4> ]
+>>
+startxref
+18799
+%%EOF
+
+startxref
+Byte_offset_of_last_cross-reference_section
+
+KEY       TYPE         VALUE
+Size      integer      (Required) The total number of entries in the file’s cross-reference table.
+Root      dictionary   (Required; must be an indirect reference) The catalog dictionary.
+Encrypt   dictionary   (Required if document is encrypted; PDF 1.1) The document’s encryption dictionary
+Info      dictionary   (Optional; must be an indirect reference) The document’s information dictionary
+ID        array        (Optional; PDF 1.1) An array of two strings constituting a file identifier
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+TABLE 9.2 information dictionary
+KEY            TYPE          VALUE
+Title          text string   (Optional; PDF 1.1) The document’s title.
+Author         text string   (Optional) The name of the person who created the document.
+Subject        text string   (Optional; PDF 1.1) The subject of the document.
+CreationDate   date          (Optional) The date and time the document was created, in human-readable form (see Section 3.8.2, “Dates”).
+
+3.8.2 Dates
+A date is a string of the form
+(D:YYYYMMDDHHmmSSOHH'mm')
+where
+YYYY is the year
+MM is the month
+DD is the day ( 01 – 31 )
+HH is the hour ( 00 – 23 )
+mm is the minute ( 00 – 59 )
+SS is the second ( 00 – 59 )
+O is the relationship of local time to Universal Time (UT), denoted by one of
+the characters +, -, or Z (see below)
+HH followed by ' is the absolute value of the offset from UT in hours ( 00 – 23 )
+mm followed by ' is the absolute value of the offset from UT in minutes ( 00 – 59 )
+
+For example, December 23, 1998, at 7:52 PM, U.S. Pacific Standard Time, is represented by the string
+D:199812231952-08'00'
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+3.5 Encryption
+31666 0 obj <<
+  /Filter /Standard
+  /V 1
+  /R 3
+  /Length 40
+  /P -28
+  /O <63981688733872DEC7983D3C6EB1F412CC535EA2DAA2AB171E2BBC4E36B21887>
+  /U <09AA60206F43B4AB0D695D4F7F8758FD28BF4E5E4E758A4164004E56FFFA0108>
+>> endobj
+
+Filter   file’s security handler
+V        algorithm to use
+Length   length of the encryptionkey
+R        specifying which revision of the standard security handler; should be 3 if has any “Revision 3” access permissions set
+O        A 32-byte string, based on both the owner and user passwords.
+U        A 32-byte string, based on the user password.
+P        A set of flags specifying which operations are permitted when the document is opened with user access. (see TABLE 3.15 User access permissions
+
+V 1 Algorithm 3.1 on page 73, with an encryption key length of 40 bits; see below.
+
+Encryption algorithm known as RC4. RC4 is a symmetric stream cipher: the same algorithm is used for both encryption and decryption, and the algorithm does not change the length of the data.
+Proprietary: http://www.rsasecurity.com
+
+
+TABLE 3.15 User access permissions
+BIT POSITION   MEANING
+1–2            Reserved; must be 0.
+3              Print the document.
+4              Modify the contents of the document by operations other than those controlled by bits 6, 9, and 11.
+5              Copy or otherwise extract text and graphics from the document by operations other than that controlled by bit 10.
+6              Add or modify text annotations.
+7–8            Reserved; must be 1.
+9              Fill in existing interactive form fields (including signature fields), even if bit 6 is clear.
+10             Extract text and graphics (in support of accessibility to disabled users or for other purposes).
+11             Assemble the document (insert, rotate, or delete pages and create bookmarks or thumbnail images), even if bit 4 is clear.
+12             Print the document. When this bit is clear (and bit 3 is set), printing is limited to a low-level representation of the appearance.
+13–32          Reserved; must be 1.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+TABLE 3.16 Entries in the catalog dictionary
+KEY                 TYPE         VALUE
+Type                name         must be Catalog
+Version             name         /1.4
+Pages               dictionary   (must be an indirect reference) The page tree node that is the root of the document
+ViewerPreferences   dictionary   viewer preferences dictionary (see TABLE 8.1)
+PageLayout          name         A name object specifying the page layout to be used when the document is opened:
+                                    SinglePage       Display one page at a time.
+                                    OneColumn        Display the pages in one column.
+                                    TwoColumnLeft    Display the pages in two columns, with odd-numbered pages on the left.
+                                    TwoColumnRight   Display the pages in two columns, with odd-numbered pages on the right.
+PageMode            name         how the document should be displayed when opened:
+                                    UseNone       Neither document outline nor thumbnail images visible
+                                    UseOutlines   Document outline visible
+                                    UseThumbs     Thumbnail images visible
+                                    FullScreen    Full-screen mode, with no menu bar, window controls, or any other window visible
+Outlines            dictionary   (must be an indirect reference) root of the document’s outline hierarchy (see Section 8.2.2, “Document Outline”).
+
+TABLE 8.1 viewer preferences dictionary
+KEY               TYPE      VALUE
+HideToolbar       boolean   hide the viewer application’s tool bars
+HideMenubar       boolean   hide the viewer application’s menu bar
+HideWindowUI      boolean   hide user interface elements in the document’s window (such as scroll bars and navigation controls)
+FitWindow         boolean   resize the document’s window to fit the size of the first displayed page.
+CenterWindow      boolean   position the document’s window in the center of the screen
+DisplayDocTitle   boolean   window’s title bar should display
+
+TABLE 3.17 page tree
+KEY    TYPE       VALUE
+Type   name       The type of PDF object that this dictionary describes; must be Pages for a page tree node.
+Parent dictionary (Required except in root node; must be an indirect reference) The page tree node that is the immediate parent of this one.
+Kids   array      An array of indirect references to the immediate children of this node. may be page objects or other page tree nodes.
+Count  integer    The number of leaf nodes (page objects) that are descendants of this node within the page tree.
+
+TABLE 3.18 page object
+KEY           TYPE        VALUE
+Type          name        must be Page.
+Parent        dictionary  must be an indirect reference to page tree node.
+LastModified  date        The date and time when the page’s contents were modified.
+Resources     dictionary  A dictionary containing any resources required by the page. If no resources, should be an empty dictionary.
+MediaBox      rectangle   must be a rectangle (see Section 3.8.3, “Rectangles”), defining the boundaries of paper.
+Contents      stream or array   Contents of this page. The value may be either a single stream or an array of streams.
+Rotate        integer     Degrees by which the page should be rotated clockwise. The value must be a multiple of 90. Default value: 0.
+Metadata      stream      Contain metadata for the page
+PZ            number      The page’s preferred zoom.
+
+3.8.3 Rectangles
+[ll x ll y ur x ur y ]
+specifying the lower-left x, lower-left y, upper-right x, and upper-right y coordinates of the rectangle, in that order.
+
+TABLE 3.21 resource dictionary
+KEY           TYPE         VALUE
+ExtGState     dictionary   mapping resource names to graphics state (see Section 4.3.4, “Graphics State Parameter Dictionaries”).
+ColorSpace    dictionary   dictionary mapping each resource name to an array describing a color space (see Section 4.5, “Color Spaces”).
+Pattern       dictionary   A dictionary mapping resource names to pattern objects (see Section 4.6, “Patterns”).
+Shading       dictionary   A dictionary mapping resource names to shading dictionaries (see “Shading Dictionaries” on page 233).
+XObject       stream       A dictionary mapping resource names to external objects (see Section 4.7, “External Objects”).
+Font          dictionary   A dictionary mapping resource names to font dictionaries (see Chapter 5).
+ProcSet       array        Depreacted.
+Properties    dictionary   Dictionary mapping resource names to property list dictionaries for marked content. Inútil.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+TABLE 5.8 Type 1 font dictionary
+KEY        TYPE           VALUE
+Type       name           must be Font.
+Subtype    name           must be Type1
+BaseFont   name           must be the PostScript name of the font.
+FirstChar  integer        (Required except for the standard 14 fonts) The first character code defined in the font’s Widths array.
+LastChar   integer        (Required except for the standard 14 fonts) The last character code defined in the font’s Widths array.
+Widths     array          An array of ( LastChar - FirstChar + 1) widths
+                          The glyph widths are measured in units in which 1000 units corresponds to 1 unit in text space.
+FontDescriptor dictionary (must be an indirect reference) A font descriptor describing the font
+Encoding   name           A specification of the font’s character encoding.
+                          May be a predefined encoding (MacRomanEncoding, MacExpertEncoding, or WinAnsiEncoding)
+                          or an encoding dictionary that specifies differences from the font’s built-in encoding or from a specified pre-
+                          defined encoding (see Section 5.5.5, “Character Encoding”).
+ToUnicode  stream         A stream containing a CMap file that maps character codes to Unicode values (5.9 ToUnicode CMaps).
+
+font can be embedded as a stream
+
+Type 0 fonts are called composite fonts; other types of font are called simple fonts
+
+supports two classes of font-related objects, called CIDFonts and CMaps, described in Section 5.6.1
+
+Type1: A font that defines glyph shapes by using a special encoded format
+Type3: A font that defines glyphs with streams of PDF graphics operators
+TrueType: A font based on the TrueType font format (see Section 5.5.2, “TrueType Fonts”)
+
+Standard Type 1 Fonts
+Times-Roman
+Times-Bold
+Times-Italic
+Times-BoldItalic
+Helvetica
+Helvetica-Bold
+Helvetica-Oblique
+Helvetica-BoldOblique
+Courier
+Courier-Bold
+Courier-Oblique
+Courier-BoldOblique
+Symbol
+ZapfDingbats
+character sets and encodings for these fonts are given in Appendix D .
+
+from the current page’s resource dictionary
+/Resources << /Font << /F13 23 0 R >> >>
+23 0 obj
+<< /Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+
+Tf, fonte size: 1 unit in user space = 1/72 inch
+Tj treats each element of the string (an integer in the range 0 to 255) as a character code. Each code selects a glyph description in the font.
+
+50% gray:
+BT
+/F13 48 Tf
+20 40 Td
+0 Tr
+0.5 g
+(ABC) Tj
+ET
+
+stroked path
+BT
+/F13 48 Tf
+20 38 Td
+1 Tr
+2 w
+(ABC) Tj
+ET
+
+Tr sets the text rendering mode to 1 (stroke).
+w sets the line width to 2 units.
+
+In some fonts, the width is constant; it does not vary from glyph to glyph. Such fonts are called monospaced.
+
+TJ operator enables the text position to be adjusted between any consecutive pair of glyphs
+
+For all font types except Type 3, the units of glyph space are one-thousandth of a unit of text space
+
+gostei do grafico na pagina 298 (FIGURE 5.4 Glyph metrics)
+
+TABLE 5.2 Text state operators
+OPERANDS    OPERATOR   DESCRIPTION
+charSpace   Tc         Set the character spacing. Initial value: 0.
+wordSpace   Tw         Set the word spacing. Initial value: 0.
+scale       Tz         Set the horizontal scaling. scale is a number specifying the percentage of the normal width. Initial value: 100
+leading     TL         Set the text leading. Vertical distance between the baselines. Initial value: 0.
+font size   Tf         Set the text font to font and the text font size to size. font is name of a font resource; size is a number
+render      Tr         Set the text rendering mode. Initial value: 0.
+rise        Ts         Set the text rise. Initial value: 0.
+
+
+TABLE 5.5 Text-positioning operators
+OPERANDS      OPERATOR      DESCRIPTION
+tx ty         Td            Move to the start of the next line, offset from the start of the current line by (tx, ty)
+tx ty         TD            Same effect as the code -ty TL tx ty Td
+a b c d e f   Tm            Set the text matrix as follows:
+                               a b 0
+                               c d 0
+                               e f 1
+                               The initial value is the identity 1 0 0 1 0 0
+—             T*            Same effect as 0 Tl Td, where Tl is the current leading parameter
+
+TABLE 5.6 Text-showing operators
+OPERANDS       OPERATOR   DESCRIPTION
+string         Tj         Show a text string.
+string         '          Same effect as 
+                             T*
+                             string Tj
+aw ac string   "          Same effect as the code
+                             aw Tw
+                             ac Tc
+                             string '
+array          TJ         Show text strings, allowing individual glyph positioning
+                          Each element of array can be a string or a number.
+                          If is a string, this operator shows the string. If is a number, the operator adjusts the text position by that amount.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+17 0 obj
+<< /Type /Font
+/Subtype /TrueType
+/BaseFont /NewYork,Bold
+/FirstChar 0
+/LastChar 255
+/Widths 23 0 R
+/FontDescriptor 7 0 R
+/Encoding /MacRomanEncoding
+>>
+endobj
+23 0 obj
+[ 0 333 333 333 333 333 333 333 0 333 333 333 333 333 333 333 333 333
+...Omitted data...
+803 790 803 780 780 780 340 636 636 636 636 636 636 636 636 636 636
+]
+endobj
+
+TABLE 5.9 Entries in a Type 3 font dictionary
+KEY          TYPE        VALUE
+Type         name        must be Font
+Subtype      name        must be Type3
+FontBBox     rectangle   rectangle
+FontMatrix   array       six numbers specifying the font matrix, mapping glyph space to text space
+CharProcs    dictionary  each key is a character name
+                         and the value is a stream that constructs and paints the glyph for that character.
+                         must include operator d0 or d1 (TABLE 5.10).
+Encoding     dictionary  An encoding dictionary (TABLE 5.11)
+FirstChar    integer     The first character code defined in the font’s Widths array.
+LastChar     integer     The last character code defined in the font’s Widths array.
+Widths       array       each element being the glyph width for the character whose code is FirstChar plus the array index.
+Resources    dictionary  (TABLE 3.21)
+ToUnicode    stream      (5.9 ToUnicode CMaps)
+
+TABLE 5.10 Type 3 font operators
+OPERANDS: wx wy
+OPERATOR: d0
+DESCRIPTION: (this operator name ends in the digit 0). Declare shape, color and width of the glyph.
+             wx specifies the horizontal displacement.
+             wy must be 0.
+
+OPERANDS: wx wy ll x ll y ur x ur y
+OPERATOR: d1
+DESCRIPTION: (this operator name ends in the digit 1). Set width and bounding box.
+             wx specifies the horizontal displacement.
+             wy must be 0.
+             ll x and ll y are the coordinates of the lower-left corner of the glyph bounding box
+             ur x and ur y the upper-right corner of the glyph bounding box
+             This operator is permitted only in a content stream appearing in a Type 3 font’s CharProcs dictionary
+
+
+
+TABLE 5.11 encoding dictionary
+KEY            TYPE   VALUE
+Type           name   must be Encoding
+BaseEncoding   name   MacRomanEncoding, MacExpertEncoding, or WinAnsiEncoding
+                      If is absent, the Differences entry describes differences from an implicit base encoding.
+                      For a font program that is embedded in the PDF file, the implicit base encoding is the font program’s built-in encoding.
+Differences    array  An array describing the differences.
+
+Differences entry is an array of character codes and character names organized as follows:
+code 1 name 1,1 name 1,2 ...
+code 2 name 2,1 name 2,2 ...
+...
+code n name n,1 name n,2 ...
+
+Example 5.10
+25 0 obj
+  <<
+    /Type /Encoding
+    /Differences [
+      39 /quotesingle
+      96 /grave
+      128 /Adieresis /Aring /Ccedilla /Eacute /Ntilde /Odieresis /Udieresis /aacute /agrave /acircumflex /adieresis /atilde /aring /ccedilla /eacute /egrave /ecircumflex /edieresis /iacute /igrave /icircumflex /idieresis /ntilde /oacute /ograve /ocircumflex /odieresis /otilde /uacute /ugrave /ucircumflex /udieresis /dagger /degree /cent /sterling /section /bullet /paragraph /germandbls /registered /copyright /trademark /acute /dieresis
+      174 /AE /Oslash
+      177 /plusminus
+      180 /yen /mu
+      187 /ordfeminine /ordmasculine
+      190 /ae /oslash /questiondown /exclamdown /logicalnot
+      196 /florin
+      199 /guillemotleft /guillemotright /ellipsis
+      203 /Agrave /Atilde /Otilde /OE /oe /endash /emdash /quotedblleft /quotedblright /quoteleft /quoteright /divide
+      216 /ydieresis /Ydieresis /fraction /currency /guilsinglleft /guilsinglright /fi /fl /daggerdbl /periodcentered /quotesinglbase /quotedblbase /perthousand /Acircumflex /Ecircumflex /Aacute /Edieresis /Egrave /Iacute /Icircumflex /Idieresis /Igrave /Oacute /Ocircumflex
+      241 /Ograve /Uacute /Ucircumflex /Ugrave /dotlessi /circumflex /tilde /macron /breve /dotaccent /ring /cedilla /hungarumlaut /ogonek /caron
+    ]
+  >>
+endobj
+
+
+
+
+TABLE 5.12 Entries in a CIDSystemInfo dictionary
+KEY TYPE VALUE
+Registry string (Required) A string identifying the issuer of the character collection—for exam-
+ple, Adobe . For information about assigning a registry identifier, consult the ASN
+Developer Program Web site or contact the Adobe Solutions Network (see the
+Bibliography).
+Ordering string (Required) A string that uniquely names the character collection within the speci-
+fied registry—for example, Japan1 .
+Supplement integer (Required) The supplement number of the character collection. An original charac-
+ter collection has a supplement number of 0. Whenever additional CIDs are
+assigned in a character collection, the supplement number is increased. Supple-
+ments do not alter the ordering of existing CIDs in the character collection. This
+value is not used in determining compatibility between character collections.
+
+TABLE 5.13 Entries in a CIDFont dictionary
+KEY TYPE
+Type name
+VALUE
+(Required) The type of PDF object that this dictionary describes; must be
+Font for a CIDFont dictionary.
+Subtype name (Required) The type of CIDFont; CIDFontType0 or CIDFontType2 .
+BaseFont name (Required) The PostScript name of the CIDFont. For Type 0 CIDFonts, this
+is usually the value of the CIDFontName entry in the CIDFont program. For
+Type 2 CIDFonts, it is derived the same way as for a simple TrueType font;
+see Section 5.5.2, “TrueType Fonts.” In either case, the name can have a sub-
+set prefix if appropriate; see Section 5.5.3, “Font Subsets.”
+CIDSystemInfo dictionary (Required) A dictionary containing entries that define the character collec-
+tion of the CIDFont. See Table 5.12 on page 337.
+FontDescriptor dictionary (Required; must be an indirect reference) A font descriptor describing the
+CIDFont’s default metrics other than its glyph widths (see Section 5.7,
+“Font Descriptors”).
+DW integer (Optional) The default width for glyphs in the CIDFont (see “Glyph Met-
+rics in CIDFonts” on page 340). Default value: 1000.
+W array (Optional) A description of the widths for the glyphs in the CIDFont. The
+array’s elements have a variable format that can specify individual widths
+for consecutive CIDs or one width for a range of CIDs (see “Glyph Metrics
+in CIDFonts” on page 340). Default value: none (the DW value is used for
+all glyphs).
+DW2 array (Optional; applies only to CIDFonts used for vertical writing) An array of two
+numbers specifying the default metrics for vertical writing (see “Glyph
+Metrics in CIDFonts” on page 340). Default value: [880 -1000] .
+W2 array (Optional; applies only to CIDFonts used for vertical writing) A description of
+the metrics for vertical writing for the glyphs in the CIDFont (see “Glyph
+Metrics in CIDFonts” on page 340). Default value: none (the DW2 value is
+used for all glyphs).
+CIDToGIDMap
+stream
+or name
+(Optional; Type 2 CIDFonts only) A specification of the mapping from CIDs
+to glyph indices. If the value is a stream, the bytes in the stream contain the
+mapping from CIDs to glyph indices: the glyph index for a particular CID
+value c is a 2-byte value stored in bytes 2 × c and 2 × c + 1, where the first
+byte is the high-order byte. If the value of CIDToGIDMap is a name, it must
+be Identity , indicating that the mapping between CIDs and glyph indices is
+the identity mapping. Default value: Identity .
+This entry may appear only in a Type 2 CIDFont whose associated True-
+Type font program is embedded in the PDF file (see the next section).
+
+
+TABLE 5.16 Additional entries in a CMap dictionary
+KEY TYPE
+Type name
+VALUE
+(Required) The type of PDF object that this dictionary describes; must be
+CMap for a CMap dictionary. (Note that although this object is the value of
+an entry named Encoding in a Type 0 font, its type is CMap .)
+CMapName name (Required) The PostScript name of the CMap. This should be the same as the
+value of CMapName in the CMap file itself.
+CIDSystemInfo dictionary
+or array (Required) A dictionary or array containing entries that define the character
+collection for the CIDFont or CIDFonts associated with the CMap. If the
+CMap selects only font number 0 and specifies character selectors that are
+CIDs, this entry can be a dictionary identifying the character collection for
+the associated CIDFont. Otherwise, it is an array indexed by the font num-
+ber. If the character selectors for a given font number are CIDs, the corre-
+sponding array element is a dictionary identifying the character collection
+for the associated CIDFont. If the character selectors are names or codes (to
+be used with an associated font, not a CIDFont), the array element should
+be null . For details of the CIDSystemInfo dictionaries, see Section 5.6.2,
+“CIDSystemInfo Dictionaries.”
+Note: In all PDF versions up to and including PDF 1.4, CIDSystemInfo must be
+either a dictionary or a one-element array containing a dictionary.
+The value of this entry should be the same as the value of CIDSystemInfo in
+the CMap file itself.
+WMode
+integer
+(Optional) A code that determines the writing mode for any CIDFont with
+which this CMap is combined:
+0
+1
+Horizontal
+Vertical
+Default value: 0.
+The value of this entry should be the same as the value of WMode in the
+CMap file itself.
+UseCMap
+name or
+stream
+(Optional) The name of a predefined CMap, or a stream containing a CMap,
+that is to be used as the base for this CMap. This allows the CMap to be de-
+fined differentially, specifying only the character mappings that differ from
+the base CMap.
+
+Example 5.11
+22 0 obj
+<< /Type /CMap
+/CMapName /90ms-RKSJ-H
+/CIDSystemInfo << /Registry (Adobe)
+/Ordering (Japan1)
+/Supplement 2
+>>
+/WMode 0
+/Length 23 0 R
+>>
+stream
+%!PS-Adobe-3.0 Resource-CMap
+%%DocumentNeededResources: ProcSet (CIDInit)
+%%IncludeResource: ProcSet (CIDInit)
+%%BeginResource: CMap (90ms-RKSJ-H)
+%%Title: (90ms-RKSJ-H Adobe Japan1 2)
+%%Version: 10.001
+%%Copyright: Copyright 1990-2001 Adobe Systems Inc.
+%%Copyright: All Rights Reserved.
+%%EndComments
+/CIDInit /ProcSet findresource begin
+12 dict begin
+begincmap
+/CIDSystemInfo
+3 dict dup begin
+/Registry (Adobe) def
+/Ordering (Japan1) def
+/Supplement 2 def
+end def
+/CMapName /90ms-RKSJ-H def
+/CMapVersion 10.001 def
+/CMapType 1 def
+/UIDOffset 950 def
+/XUID [1 10 25343] def
+/WMode 0 def
+4 begincodespacerange
+<00>
+<80>
+<8140> <9FFC>
+<A0>
+<DF>
+<E040> <FCFC>
+endcodespacerange
+TextS E CTIO N 5 . 6
+351
+Composite Fonts
+1 beginnotdefrange
+<00>
+<1F>
+231
+endnotdefrange
+100 begincidrange
+<20>
+<7D>
+231
+<7E>
+<7E>
+631
+<8140> <817E> 633
+<8180> <81AC> 696
+<81B8> <81BF> 741
+<81C8> <81CE> 749
+...Additional ranges...
+<FB40> <FB7E> 8518
+<FB80> <FBFC> 8581
+<FC40> <FC4B> 8706
+endcidrange
+endcmap
+CMapName currentdict /CMap defineresource pop
+end
+end
+%%EndResource
+%%EOF
+endstream
+endobj
+
+
+TABLE 5.18 Entries common to all font descriptors
+KEY TYPE
+Type name
+VALUE
+(Required) The type of PDF object that this dictionary describes; must be
+FontDescriptor for a font descriptor.
+FontName name (Required) The PostScript name of the font. This should be the same as the
+value of BaseFont in the font or CIDFont dictionary that refers to this font
+descriptor.
+Flags integer (Required) A collection of flags defining various characteristics of the font
+(see Section 5.7.1, “Font Descriptor Flags”).
+FontBBox rectangle (Required) A rectangle (see Section 3.8.3, “Rectangles”), expressed in the
+glyph coordinate system, specifying the font bounding box. This is the small-
+est rectangle enclosing the shape that would result if all of the glyphs of the
+font were placed with their origins coincident and then filled.
+ItalicAngle number (Required) The angle, expressed in degrees counterclockwise from the verti-
+cal, of the dominant vertical strokes of the font. (For example, the 9-o’clock
+position is 90 degrees, and the 3-o’clock position is –90 degrees.) The value is
+negative for fonts that slope to the right, as almost all italic fonts do.
+Ascent number (Required) The maximum height above the baseline reached by glyphs in this
+font, excluding the height of glyphs for accented characters.
+Descent number (Required) The maximum depth below the baseline reached by glyphs in this
+font. The value is a negative number.
+Leading number (Optional) The desired spacing between baselines of consecutive lines of text.
+Default value: 0.
+CapHeight number (Required) The vertical coordinate of the top of flat capital letters, measured
+from the baseline.
+XHeight number (Optional) The font’s x height: the vertical coordinate of the top of flat non-
+ascending lowercase letters (like the letter x), measured from the baseline.
+Default value: 0.
+StemV number (Required) The thickness, measured horizontally, of the dominant vertical
+stems of glyphs in the font.
+StemH number (Optional) The thickness, measured invertically, of the dominant horizontal
+stems of glyphs in the font. Default value: 0.
+AvgWidth number (Optional) The average width of glyphs in the font. Default value: 0.
+MaxWidth number (Optional) The maximum width of glyphs in the font. Default value: 0.
+MissingWidth number (Optional) The width to use for character codes whose widths are not speci-
+fied in a font dictionary’s Widths array. This has a predictable effect only if all
+such codes map to glyphs whose actual widths are the same as the Missing-
+Width value. Default value: 0.
+FontFile stream (Optional) A stream containing a Type 1 font program (see Section 5.8,
+“Embedded Font Programs”).
+FontFile2 stream (Optional; PDF 1.1) A stream containing a TrueType font program (see Sec-
+tion 5.8, “Embedded Font Programs”).
+FontFile3 stream (Optional; PDF 1.2) A stream containing a font program other than Type 1 or
+TrueType. The format of the font program is specified by the Subtype entry
+in the stream dictionary (see Section 5.8, “Embedded Font Programs,” and
+implementation note 49 in Appendix H).
+At most, only one of the FontFile , FontFile2 , and FontFile3 entries may be
+present.
+CharSet
+string
+(Optional; meaningful only in Type 1 fonts; PDF 1.1) A string listing the char-
+acter names defined in a font subset. The names in this string must be in PDF
+syntax—that is, each name preceded by a slash ( / ). The names can appear in
+any order. The name .notdef should be omitted; it is assumed to exist in the
+font subset. If this entry is absent, the only indication of a font subset is the
+subset tag in the FontName entry (see Section 5.5.3, “Font Subsets”).
+
+
+TABLE 5.19 Font flags
+BIT POSITION
+NAME MEANING
+1 FixedPitch All glyphs have the same width (as opposed to proportional or variable-pitch
+fonts, which have different widths).
+2 Serif Glyphs have serifs, which are short strokes drawn at an angle on the top and
+bottom of glyph stems (as opposed to sans serif fonts, which do not).
+3 Symbolic Font contains characters outside the Adobe standard Latin character set. This
+flag and the Nonsymbolic flag cannot both be set or both be clear (see below).
+4 Script Glyphs resemble cursive handwriting.
+6 Nonsymbolic Font uses the Adobe standard Latin character set or a subset of it (see below).
+7 Italic Glyphs have dominant vertical strokes that are slanted.
+17 AllCap Font contains no lowercase letters; typically used for display purposes such as
+titles or headlines.
+18 SmallCap Font contains both uppercase and lowercase letters. The uppercase letters are
+similar to ones in the regular version of the same typeface family. The glyphs
+for the lowercase letters have the same shapes as the corresponding uppercase
+letters, but they are sized and their proportions adjusted so that they have the
+same size and stroke weight as lowercase glyphs in the same typeface family.
+19 ForceBold See below.
+
+7 0 obj
+<< /Type /FontDescriptor
+/FontName /AGaramond-Semibold
+/Flags 262178
+/FontBBox [-177 -269 1123 866]
+/MissingWidth 255
+/StemV 105
+/StemH 45
+/CapHeight 660
+/XHeight 394
+/Ascent 720
+/Descent -270
+/Leading 83
+/MaxWidth 1212
+/AvgWidth 478
+/ItalicAngle 0
+>>
+endobj
+
+
+5.8 Embedded Font Programs
+
+FontFile2 — (PDF 1.1) TrueType font program, as described in the TrueType Reference
+Manual. This entry can appear in the font descriptor for a TrueType font
+dictionary or (in PDF 1.3) for a CIDFontType2 CIDFont dictionary.
+
+TABLE 5.23 Additional entries in an embedded font stream dictionary
+KEY TYPE VALUE
+Length1 integer (Required for Type 1 and TrueType fonts) The length in bytes of the clear-text portion
+of the Type 1 font program (see below), or the entire TrueType font program, after it
+has been decoded using the filters specified by the stream’s Filter entry, if any.
+Length2 integer (Required for Type 1 fonts) The length in bytes of the encrypted portion of the Type 1
+font program (see below) after it has been decoded using the filters specified by the
+stream’s Filter entry.
+Length3 integer (Required for Type 1 fonts) The length in bytes of the fixed-content portion of the
+Type 1 font program (see below), after it has been decoded using the filters specified
+by the stream’s Filter entry. If Length3 is 0, it indicates that the 512 zeros and clearto-
+mark have not been included in the FontFile font program and must be added.
+Subtype name (Required if referenced from FontFile3 ; PDF 1.2) A name specifying the format of the
+embedded font program. The name must be Type1C for Type 1 compact fonts or CID-
+FontType0C for Type 0 compact CIDFonts. When additional font formats are added
+to PDF, more values will be defined for Subtype .
+Metadata stream (Optional; PDF 1.4) A metadata stream containing metadata for the embedded font
+program (see Section 9.2.2, “Metadata Streams”).
+
+
+Example 5.15
+12 0 obj
+<< /Filter /ASCII85Decode
+/Length 41116
+/Length1 2526
+/Length2 32393
+/Length3 570
+>>
+stream
+,p>`rDKJj'E+LaU0eP.@+AH9dBOu$hFD55nC
+...Omitted data...
+JJQ&Nt')<=^p&mGf(%:%h1%9c//K(/*o=.C>UXkbVGTrr~>
+endstream
+endobj
+
+5.9 ToUnicode CMaps
+Application can identify characters by:
+• predefined encodings MacRomanEncoding , MacExpertEncoding , WinAnsiEncoding
+• It is a Type 1 font whose character names are taken from the Adobe standard Latin character set and the set of named characters in the Symbol font, documented in Appendix D.
+
+If not defined in one of these ways, ToUnicode maps character codes to Unicode values.
+
+
+Example 5.16 illustrates a Type 0 font that uses the Identity-H CMap to map from
+character codes to CIDs, and whose descendant CIDFont uses the Identity map-
+ping from CIDs to TrueType glyph indices. Text strings shown using this font
+simply use a 2-byte glyph index for each character. In the absence of a ToUnicode
+entry, there would be no information available about what the characters mean.
+Example 5.16
+14 0 obj
+  <<
+    /Type /Font
+    /Subtype /Type0
+    /BaseFont /Ryumin-Light
+    /Encoding /Identity-H
+    /DescendantFonts [15 0 R]
+    /ToUnicode 16 0 R
+  >>
+endobj
+
+15 0 obj
+  <<
+    /Type /Font
+    /Subtype /CIDFontType2
+    /BaseFont /Ryumin-Light
+    /CIDSystemInfo 17 0 R
+    /FontDescriptor 18 0 R
+    /CIDToGIDMap /Identity
+  >>
+endobj
+
+16 0 obj
+  <<
+    /Length 433
+  >>
+stream
+/CIDInit /ProcSet findresource begin
+12 dict begin
+begincmap
+/CIDSystemInfo
+<< /Registry (Adobe)
+/Ordering (UCS)
+/Supplement 0
+>> defS E CTIO N 5 . 9
+371
+ToUnicode CMaps
+/CMapName /Adobe-Identity-UCS def
+/CMapType 2 def
+1 begincodespacerange
+<0000> <FFFF>
+endcodespacerange
+2 beginbfrange
+<0000> <005E> <0020>
+<005F> <0061> [<00660066> <00660069> <00660066006C>]
+endbfrange
+endcmap
+CMapName currentdict /CMap defineresource pop
+end
+end
+endstream
+endobj
+The begincodespacerange and endcodespacerange operators in Example 5.17
+define the source character code range to be the 2-byte character codes from
+<00 00> to <FF FF> . The specific mappings for several of the character codes are
+shown. For example, <00 00> to <00 5E> are mapped to the Unicode values
+U + 0020 to U + 007E (where Unicode values are conventionally written as U+ fol-
+lowed by four hexadecimal digits). This is followed by the definition of a map-
+ping used where each character code represents more than one Unicode value:
+<005F> <0061> [<00660066> <00660069> <00660066006C>]
+In this case, the original character codes are the glyph indices for the ligatures ff ,
+fi , and ffl . The entry defines the mapping from the character codes <00 5F> ,
+<00 60> , and <00 61> to the string of Unicode values with a code for each char-
+acter in the ligature: U + 0066 U + 0066 are the Unicode values for the character
+sequence f f , U + 0066 U + 0069 for f i , and U + 0066 U + 0066 U + 006c for f f l .
+Example 5.17 illustrates several extensions to the way destination values can be
+defined. To support mappings from a source code to a string of destination codes,
+the following extension has been made to the ranges defined after a beginbfchar
+operator:
+n beginbfchar
+srcCode dstString
+endbfcharCHA P TE R 5
+372
+Text
+where dstString can be a string of up to 512 bytes. Likewise, mappings after the
+beginbfrange operator may be defined as:
+n beginbfrange
+srcCode 1 srcCode 2 dstString
+endbfrange
+In this case, the last byte of the string will be incremented for each consecutive
+code in the source code range. When defining ranges of this type, care must be
+taken to ensure that the value of the last byte in the string is less than or equal to
+255 - ( srcCode 2 - srcCode 1 ). This ensures that the last byte of the string will not
+be incremented past 255; otherwise the result of mapping is undefined and an
+error occurs.
+To support more compact representations of mappings from a range of source
+character codes to a discontiguous range of destination codes, the CMaps used
+for the ToUnicode entry may use the following syntax for the mappings following
+a beginbfrange definition:
+n beginbfrange
+srcCode 1 srcCode n [dstString 1 dstString 2 ... dstString n ]
+endbfrange
+Consecutive codes starting with srcCode 1 and ending with srcCode n are mapped to
+the destination strings in t
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+TABLE 4.9 Path construction operators
+OPERANDS
+OPERATOR
+DESCRIPTION
+x y m Begin a new subpath by moving the current point to coordinates
+( x, y ), omitting any connecting line segment. If the previous path
+construction operator in the current path was also m, the new m
+overrides it; no vestige of the previous m operation remains in the
+path.
+x y l (lowercase L ) Append a straight line segment from the current point to the point
+( x, y ). The new current point is ( x, y ).
+x 1 y 1 x 2 y 2 x 3 y 3 c Append a cubic Bézier curve to the current path. The curve extends
+from the current point to the point ( x 3, y 3 ), using ( x 1, y 1 ) and
+( x 2, y 2 ) as the Bézier control points (see “Cubic Bézier Curves,” be-
+low). The new current point is ( x 3, y 3 ).
+x 2 y 2 x 3 y 3 v Append a cubic Bézier curve to the current path. The curve extends
+from the current point to the point ( x 3, y 3 ), using the current point
+and ( x 2, y 2 ) as the Bézier control points (see “Cubic Bézier Curves,”
+below). The new current point is ( x 3, y 3 ).
+x 1 y 1 x 3 y 3 y Append a cubic Bézier curve to the current path. The curve extends
+from the current point to the point ( x 3, y 3 ), using ( x 1, y 1 ) and
+( x 3, y 3 ) as the Bézier control points (see “Cubic Bézier Curves,” be-
+low). The new current point is ( x 3, y 3 ).
+— h Close the current subpath by appending a straight line segment
+from the current point to the starting point of the subpath. This
+operator terminates the current subpath; appending another seg-
+ment to the current path will begin a new subpath, even if the new
+segment begins at the endpoint reached by the h operation. If the
+current subpath is already closed, h does nothing.
+x y width height
+Graphics
+Append a rectangle to the current path as a complete subpath, with
+lower-left corner ( x, y ) and dimensions width and height in user
+space. The operation
+re
+x y width height re
+is equivalent to
+x y m
+(x + width) y l
+(x + width) (y + height) l
+x (y + height) l
+h
+
+
+TABLE 4.10 Path-painting operators
+OPERANDS
+OPERATOR
+DESCRIPTION
+— S Stroke the path.
+— s Close and stroke the path. This operator has the same effect as the sequence h S .
+— f Fill the path, using the nonzero winding number rule to determine the region to fill
+(see “Nonzero Winding Number Rule” on page 169).
+— F Equivalent to f ; included only for compatibility. Although applications that read
+PDF files must be able to accept this operator, those that generate PDF files should
+use f instead.
+— f* Fill the path, using the even-odd rule to determine the region to fill (see “Even-Odd
+Rule” on page 170).
+— B Fill and then stroke the path, using the nonzero winding number rule to determine
+the region to fill. This produces the same result as constructing two identical path
+objects, painting the first with f and the second with S . Note, however, that the fill-
+ing and stroking portions of the operation consult different values of several graph-
+ics state parameters, such as the current color. See also “Special Path-Painting
+Considerations” on page 462.
+— B* Fill and then stroke the path, using the even-odd rule to determine the region to fill.
+This operator produces the same result as B, except that the path is filled as if with
+f* instead of f . See also “Special Path-Painting Considerations” on page 462.
+— b Close, fill, and then stroke the path, using the nonzero winding number rule to de-
+termine the region to fill. This operator has the same effect as the sequence h B . See
+also “Special Path-Painting Considerations” on page 462.
+— b* Close, fill, and then stroke the path, using the even-odd rule to determine the re-
+gion to fill. This operator has the same effect as the sequence h B* . See also “Special
+Path-Painting Considerations” on page 462.
+— n End the path object without filling or stroking it. This operator is a “path-painting
+no-op,” used primarily for the side effect of changing the current clipping path (see
+Section 4.4.3, “Clipping Path Operators”).
+
+
+TABLE 4.11 Clipping path operators
+OPERANDS
+OPERATOR
+DESCRIPTION
+— W Modify the current clipping path by intersecting it with the current path, using the
+nonzero winding number rule to determine which regions lie inside the clipping
+path.
+— W* Modify the current clipping path by intersecting it with the current path, using the
+even-odd rule to determine which regions lie inside the clipping path.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+TABLE 4.4 Line cap styles
+STYLE
+APPEARANCE
+DESCRIPTION
+0 Butt cap. The stroke is squared off at the endpoint of the path. There is no
+projection beyond the end of the path.
+1 Round cap. A semicircular arc with a diameter equal to the line width is
+drawn around the endpoint and filled in.
+2 Projecting square cap. The stroke continues beyond the endpoint of the path
+for a distance equal to half the line width and is then squared off.
+
+TABLE 4.5 Line join styles
+STYLE
+APPEARANCE
+DESCRIPTION
+0 Miter join. The outer edges of the strokes for the two segments are extended
+until they meet at an angle, as in a picture frame. If the segments meet at
+too sharp an angle (as defined by the miter limit parameter—see “Miter
+Limit,” above), a bevel join is used instead.
+1 Round join. A circle with a diameter equal to the line width is drawn around
+the point where the two segments meet and is filled in, producing a round-
+ed corner.
+Note: If path segments shorter than half the line width meet at a sharp angle,
+an unintended “wrong side” of the circle may appear.
+2
+Bevel join. The two segments are finished with butt caps (see “Line Cap
+Style” on page 153) and the resulting notch beyond the ends of the seg-
+ments is filled with a triangle.
+
+TABLE 4.6 Examples of line dash patterns
+DASH ARRAY
+AND PHASE
+APPEARANCE
+DESCRIPTION
+[ ] 0 No dash; solid, unbroken lines
+[3] 0 3 units on, 3 units off, ...
+[2] 1 1 on, 2 off, 2 on, 2 off, ...
+[2 1] 0 2 on, 1 off, 2 on, 1 off, ...
+[3 5] 6 2 off, 3 on, 5 off, 3 on, 5 off, ...
+[2 3] 11 1 on, 3 off, 2 on, 3 off, 2 on, ...
+
+TABLE 4.7 Graphics state operators
+OPERANDS
+OPERATOR
+DESCRIPTION
+— q Save the current graphics state on the graphics state stack (see “Graphics
+State Stack” on page 152).
+— Q Restore the graphics state by removing the most recently saved state from
+the stack and making it the current state (see “Graphics State Stack” on
+page 152).
+a b c d e f cm Modify the current transformation matrix (CTM) by concatenating the
+specified matrix (see Section 4.2.1, “Coordinate Spaces”). Although the
+operands specify a matrix, they are written as six separate numbers, not as
+an array.
+lineWidth w Set the line width in the graphics state (see “Line Width” on page 152).
+lineCap J Set the line cap style in the graphics state (see “Line Cap Style” on page
+153).
+lineJoin j Set the line join style in the graphics state (see “Line Join Style” on page
+153).
+miterLimit M Set the miter limit in the graphics state (see “Miter Limit” on page 153).
+dashArray dashPhase d Set the line dash pattern in the graphics state (see “Line Dash Pattern” on
+page 155).
+intent ri (PDF 1.1) Set the color rendering intent in the graphics state (see “Ren-
+dering Intents” on page 197).
+flatness i Set the flatness tolerance in the graphics state (see Section 6.5.1, “Flatness
+Tolerance”). flatness is a number in the range 0 to 100; a value of 0 speci-
+fies the output device’s default flatness tolerance.
+dictName gs (PDF 1.2) Set the specified parameters in the graphics state. dictName is
+the name of a graphics state parameter dictionary in the ExtGState sub-
+dictionary of the current resource dictionary (see the next section).
+
+
+TABLE 4.8 Entries in a graphics state parameter dictionary
+KEY TYPE DESCRIPTION
+Type name (Optional) The type of PDF object that this dictionary describes; must be
+ExtGState for a graphics state parameter dictionary.
+LW number (Optional; PDF 1.3) The line width (see “Line Width” on page 152).
+LC integer (Optional; PDF 1.3) The line cap style (see “Line Cap Style” on page 153).
+LJ integer (Optional; PDF 1.3) The line join style (see “Line Join Style” on page 153).
+ML number (Optional; PDF 1.3) The miter limit (see “Miter Limit” on page 153).
+D array (Optional; PDF 1.3) The line dash pattern, expressed as an array of the form
+[dashArray dashPhase] , where dashArray is itself an array and dashPhase is an
+integer (see “Line Dash Pattern” on page 155).
+
+

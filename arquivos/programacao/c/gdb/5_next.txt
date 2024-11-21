@@ -1,0 +1,7 @@
+
+Step program, proceeding through subroutine calls.
+
+Like the "step" command as long as subroutine calls do not happen; when they do, the call is treated as one instruction.
+
+Argument N means do this N times (or till program stops for another reason).
+

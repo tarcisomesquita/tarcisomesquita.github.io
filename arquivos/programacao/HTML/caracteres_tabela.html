@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8"><!-- iso-8859-1 -->
+  <title>caracteres_tabela</title>
+  <meta name="description" content="Página de teste.">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="cache-control" content="max-age=0">
+<style>
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+</style>
+</head>
+
+<body>
+
+<script>
+H = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+
+for (let j=0; j<6; j++) {
+  document.write(`<p>`);
+  for (let i=0; i<H.length; i++) {
+    document.write(`&#x25${H[j]}${H[i]}; `);
+  }
+  document.write(`</p>`);
+}
+</script>
+
+<p>
+ ┌────┬────┐ <br>
+ │ TT │ TT │ <br>
+ │ TT │ TT │ <br>
+ ├────┼────┤ <br>
+ │ TT │ TT │ <br>
+ └────┴────┘ <br>
+</p>
+
+</body>
+</html>

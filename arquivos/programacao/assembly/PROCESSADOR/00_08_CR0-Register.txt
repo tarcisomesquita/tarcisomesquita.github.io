@@ -1,0 +1,56 @@
+CR0 Register
+
+After reset the state of control register CR0 is 60000010H.
+
+bit nº 0
+PE
+0: Real-address mode
+1: Protected mode
+
+bit nº 1
+MP
+0: WAIT/FWAIT instructions not trapped
+
+bit nº 2
+EM
+0: x87 FPU instructions not trapped
+
+bit nº 3
+TS
+0: No task switch
+
+bit nº 4
+1: Not used
+
+bit nº 5
+NE
+0: External x87 FPU error reporting
+
+bit nº 6-15
+Reserved
+
+bit nº 16
+WP
+0: Write-protect disabled
+
+bit nº 17
+
+bit nº 18
+AM
+0: Alignment check disabled
+
+bit nº 19-28
+Reserved
+
+bit nº 29
+NW
+1: Not write-through disabled
+
+bit nº 30
+CD
+1: Caching disabled
+
+bit nº 31
+PG
+0: Paging disabled
+

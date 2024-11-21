@@ -1,0 +1,9 @@
+
+      double x;
+      BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
+      
+      // Lê um dado double a partir do teclado
+      System.out.print("x = ");
+      x = Double.parseDouble(teclado.readLine());
+      
+      System.out.println("você digitou " + x);

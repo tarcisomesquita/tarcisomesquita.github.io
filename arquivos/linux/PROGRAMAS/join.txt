@@ -1,0 +1,6 @@
+echo -e 'A;f1\nB;f2' > 1.txt
+echo -e 'A;h1\nB;h2' > 2.txt
+
+join -t ';' 1.txt 2.txt 
+A;f1;h1
+B;f2;h2

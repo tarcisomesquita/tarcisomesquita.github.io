@@ -1,0 +1,14 @@
+WHICH(1)
+
+SYNOPSIS
+which filename ...
+
+DESCRIPTION
+which returns the pathnames of the files which would be executed in the current environment
+It does this by searching the PATH for executable files matching the names of the arguments.
+
+EXIT STATUS
+0      if all specified commands are found and executable
+1      if one or more specified commands is nonexistent or not executable
+2      if an invalid option is specified
+

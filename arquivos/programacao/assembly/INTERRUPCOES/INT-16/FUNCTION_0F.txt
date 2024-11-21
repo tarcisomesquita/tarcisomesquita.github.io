@@ -1,0 +1,15 @@
+
+Set CPU Speed (F0h)
+
+change the CPU's clocking to either the low or high states.
+
+Input Parameters:
+        AH - F0h, indicating the Set CPU Speed Function.
+        AL - speed to set, as follows:
+               00h - slow.
+               01h - medium.
+               02h - fast.
+
+Output Parameters:
+        none.
+

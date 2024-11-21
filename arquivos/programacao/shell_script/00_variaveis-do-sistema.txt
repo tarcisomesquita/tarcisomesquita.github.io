@@ -1,0 +1,38 @@
+
+Variáveis do sistema
+
+PS1 contém o prompt
+PS2 é o segundo prompt
+$ bash << EOF
+>
+
+HOME contém o diretório do usuário
+USER contém o nome do usuário
+PATH contém os locais onde contém scripts e programas que podem ser executados de qualquer parte do sistema.
+LANG=pt_BR.UTF-8
+PROMPT_COMMAND contém o comando a ser executado antes de mostrar o prompt
+
+Variaveis especiais
+$0                  é o nome do shell script (a.k.a. parâmetro zero);
+
+$1 a $9             $1 é o primeiro parâmetro, $9 o nono, e assim por diante;
+
+${10}, ${11}...     quando o número do parâmetro possui mais de um dígito é necessário o uso das chaves;
+
+$*                  todos os parâmetros em uma única string (exceto o $0);
+
+$@                  todos os parâmetros, cada um em strings separadas (exceto $0); for i in "$@" ; do echo $i ; done
+
+$#                  número de parâmetros (sem contar com o $0).
+
+$?                  valor de retorno do último comando;
+
+$$                  PID do script.
+
+$!                  PID of most recently backgrounded process (fg  bg  jobs)
+
+$-                  Current options
+
+
+o comando shift e o set são capazes de mudar os valores das variáveis do sistema
+

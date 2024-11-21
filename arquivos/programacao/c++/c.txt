@@ -1,0 +1,10 @@
+Um código em c pode ser compilado como c++.
+
+File extension of C++ source code that must be preprocessed.
+file.cc
+file.cp
+file.cxx
+file.cpp
+file.CPP
+file.c++
+file.C

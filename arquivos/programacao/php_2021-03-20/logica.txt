@@ -1,0 +1,10 @@
+// foo() nunca será chamada porque toda a expressão sofre curto circuito
+
+$a = (false && foo());
+$b = (true  || foo());
+$c = (false and foo());
+$d = (true  or  foo());
+
+// --------------------
+// "||" tem maior precedência que "or"
+

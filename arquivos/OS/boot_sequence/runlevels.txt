@@ -1,0 +1,17 @@
+
+telinit may be used to change the runlevel of the system.
+
+comando
+telinit RUNLEVEL
+
+RUNLEVEL
+2-5: multi-user
+0: halt the system
+6: reboot the system
+1: to bring the system down into single-user mode.
+S or s: place the system directly into single-user mode without actually stopping  processes  first.
+
+Runlevels 2 through 5 get all six virtual consoles, while runlevel 1 (single user mode) gets only one and runlevels 0 and 6 get none.
+
+The /sbin/mingetty process opens communication pathways to tty devices, sets their modes, prints the login prompt, gets the user name, and initiates the login process for the user.
+

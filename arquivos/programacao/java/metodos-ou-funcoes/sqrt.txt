@@ -1,0 +1,5 @@
+
+import java.lang.Math;
+
+System.out.println("raiz quadrada de x é " + Math.sqrt(x));
+

@@ -1,0 +1,101 @@
+mov ax,1A00h 		; Requisita informação de vídeo do VGA
+int 10h 		; Obtém Código de Combinação do Display
+cmp al,1Ah 		; VGA ou MCGA está presente?
+je Mode_13h_OK 		; modo 13h é suportado
+stc 			; modo 13h não é suportado CF=1
+
+
+
+É muito simples ligar o modo. Isto é feito assim:
+
+    mov ax,13h 	; programa modo 13h
+    int 10h 	; chamada de serviço bios
+
+Se você estiver no modo 13h e já acabou de fazer o que queria será necessário retornar ao modo de vídeo em que o computador estava anteriormente.
+
+Isto é feito em duas partes. Primeiramente precisamos salvar o modo de vídeo e então reiniciar aquele modo.
+
+    VideoMode db ?
+    .
+    .
+    mov ah,0Fh 	 ; função 0Fh - obtém modo atual
+    int 10h 	 ; Chamada a serviço de vídeo da bios
+    mov VideoMode,al ; salva modo atual
+
+    ; coloque o código do programa aqui
+
+    mov al,VideoMode ; programar modo de vídeo anterior
+    xor ah,ah 	 ; zerar ah - programar modo
+    int 10h 	 ; chamada de serviço bios
+
+
+
+
+Agora que entramos no modo 13h vamos fazer algumas coisas. Primeiro vamos ligar alguns pixels na tela.
+
+Função 0Ch: Escrever pixels gráficos
+
+Isto coloca um ponto colorido na tela nas coordenadas gráficas especificadas.
+
+ENTRADA:
+
+AH = 0Ch
+AL = Cor do ponto
+CX = Coluna na tela (coordenada x)
+DX = Linha na tela (coordenada y)
+
+SAÍDA:
+
+Nada além do pixel na tela.
+
+Observação: Esta função executa um OU exclusivo (XOR) entre o novo valor da cor e o contexto atual do pixel se o bit 7 de AL estiver ligado.
+
+Este programa demonstra como traçar pixels. Ele irá colocar quatro pontos vermelhos no meio da tela..
+
+    Listagem 19: PIXINT.ASM
+
+    ; exemplo de traçado de pixels no modo 13 usando serviços da bios - 
+    ; INT 10h
+
+    .model tiny
+    .code
+    org 100h
+    start:
+
+    mov ax,13 	; modo = 13h 
+    int 10h 	; chamada de serviço bios
+
+    mov ah,0Ch 	; função 0Ch
+    mov al,4 	; cor 4 - vermelho
+    mov cx,160 	; posição x = 160
+    mov dx,100 	; posição y = 100
+    int 10h 	; chamada de serviço bios
+
+    inc dx 		; escreve pixel de cima para baixo
+    int 10h 	; chamada de serviço bios
+    inc cx 		; escreve pixel para a direita
+    int 10h 	; chamada de serviço bios
+    dec dx 		; escreve pixel para cima
+    int 10h 	; chamada de serviço bios
+
+    xor ax,ax 	; função 00h - obtém uma tecla
+    int 16h 	; chamada de serviço bios
+
+    mov ax,3 	; modo = 3
+    int 10h 	; chamada de serviço bios
+
+    mov ax,4C00h 	; sair para o dos
+    int 21h
+
+    end start
+
+Poderíamos fazê-lo muito mais rápido escrevendo diretamente na memória de vídeo.
+O segmento VGA começa em 0A000h. Para calcular onde fica cada pixel utilize esta fórmula simples para obter o offset.
+Offset = X + ( Y * 320 )
+
+    mov es:[di], color
+
+
+Se você usar a instrução MOV poderá ser necessário incrementar DI (o que STOSB faz sozinha).
+
+Se tivessemos um programa que mostrasse uma figura que precisasse ser continuamente desenhada, apagada e redesenhada teríamos problemas com cintilações. Para evitar isto você pode usar um 'buffer duplo'. Isto é uma outra parte da memória na qual você escreve e então copia toda a informação, no caso a figura, para a tela. 

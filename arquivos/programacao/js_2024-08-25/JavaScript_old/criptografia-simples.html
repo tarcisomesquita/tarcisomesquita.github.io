@@ -1,0 +1,123 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style>
+.saida {
+   background-color: #FFFFFF;
+   
+   width: 95%;
+   margin-left: 2.5%;
+   margin-right: 2.5%;
+
+   height: 40%;
+   margin-top: 2.5%;
+   margin-bottom: 2.5%;
+
+   overflow: auto;
+   
+   border: 1px solid gray;
+   padding: 3px;
+}
+
+</style>
+
+<script>
+var tamanho = 0;
+function entrada(frase) {
+   t2 = frase.length;
+   frase_encr  = "";
+   frase_dencr = "";
+   bits_roll = 2; // variar esse parâmetro com o tempo.
+
+   if (t2 != tamanho) {
+      tamanho = t2;
+      for (n=0 ; n < frase.length ; n++) {
+         letra_encr = frase.charCodeAt(n);
+         letra_encr = (~letra_encr) & 0xFF ;
+         letra_encr2 = (letra_encr & (0xFF >> (8-bits_roll))) << (8-bits_roll);
+         letra_encr = letra_encr >> bits_roll;
+         letra_encr = letra_encr | letra_encr2;
+         frase_encr = frase_encr + String.fromCharCode(letra_encr);
+      }
+      
+      frase_encr2 = "";
+      for (n=0 ; n < (frase_encr.length - 3); n = n + 4) {
+         letra_encr1 = frase_encr.charCodeAt(n+0);
+         letra_encr2 = frase_encr.charCodeAt(n+1);
+         letra_encr3 = frase_encr.charCodeAt(n+2);
+         letra_encr4 = frase_encr.charCodeAt(n+3);
+         
+         letra_encr1H = (letra_encr1 & 0xF0);
+         letra_encr1L = (letra_encr1 & 0x0F);
+         letra_encr2H = (letra_encr2 & 0xF0);
+         letra_encr2L = (letra_encr2 & 0x0F);
+         letra_encr3H = (letra_encr3 & 0xF0);
+         letra_encr3L = (letra_encr3 & 0x0F);
+         letra_encr4H = (letra_encr4 & 0xF0);
+         letra_encr4L = (letra_encr4 & 0x0F);
+         
+         letra_encr1 = (letra_encr3L << 4) | (letra_encr1H >> 4);
+         letra_encr3 = (letra_encr1L << 4) | (letra_encr3H >> 4);
+         
+         letra_encr2 = (letra_encr4L << 4) | (letra_encr2H >> 4);
+         letra_encr4 = (letra_encr2L << 4) | (letra_encr4H >> 4);
+         
+         frase_encr2 = frase_encr2 + String.fromCharCode(letra_encr1) + String.fromCharCode(letra_encr2) + String.fromCharCode(letra_encr3) + String.fromCharCode(letra_encr4);
+      }
+      
+      for (i=0 ; i < (frase_encr.length - n) ; i++) {
+         frase_encr2 = frase_encr2 + frase_encr.charAt(n+i);
+      }
+      
+      
+      frase_dencr2 = "";
+      for (n=0 ; n < (frase_encr2.length - 3); n = n + 4) {
+         letra_encr1 = frase_encr2.charCodeAt(n+0);
+         letra_encr2 = frase_encr2.charCodeAt(n+1);
+         letra_encr3 = frase_encr2.charCodeAt(n+2);
+         letra_encr4 = frase_encr2.charCodeAt(n+3);
+         
+         letra_encr1H = (letra_encr1 & 0xF0);
+         letra_encr1L = (letra_encr1 & 0x0F);
+         letra_encr2H = (letra_encr2 & 0xF0);
+         letra_encr2L = (letra_encr2 & 0x0F);
+         letra_encr3H = (letra_encr3 & 0xF0);
+         letra_encr3L = (letra_encr3 & 0x0F);
+         letra_encr4H = (letra_encr4 & 0xF0);
+         letra_encr4L = (letra_encr4 & 0x0F);
+         
+         letra_encr1 = (letra_encr1L << 4) | (letra_encr3H >> 4);
+         letra_encr3 = (letra_encr3L << 4) | (letra_encr1H >> 4);
+         
+         letra_encr2 = (letra_encr2L << 4) | (letra_encr4H >> 4);
+         letra_encr4 = (letra_encr4L << 4) | (letra_encr2H >> 4);
+         
+         frase_dencr2 = frase_dencr2 + String.fromCharCode(letra_encr1) + String.fromCharCode(letra_encr2) + String.fromCharCode(letra_encr3) + String.fromCharCode(letra_encr4);
+      }
+      
+      for (i=0 ; i < (frase_encr2.length - n) ; i++) {
+         frase_dencr2 = frase_dencr2 + frase_encr2.charAt(n+i);
+      }
+      
+      for (n=0 ; n < frase_dencr2.length ; n++) {
+         letra_encr = frase_dencr2.charCodeAt(n);
+         letra_dencr = (letra_encr << bits_roll) & 0xFF;
+         letra_dencr2 = (letra_encr & (0xFF << (8-bits_roll))) >> (8-bits_roll);
+         letra_dencr = letra_dencr | letra_dencr2;
+         letra_dencr = (~letra_dencr) & 0xFF ;
+         frase_dencr = frase_dencr + String.fromCharCode(letra_dencr);
+      }
+      document.getElementById('saida').innerHTML = "<br><br>" + frase_encr2 + "<br><br>" + frase_dencr + "</pre>";
+   }
+}
+</script>
+</head>
+<body>
+<p>Digite um texto para ser encriptografado:</p><br>
+<textarea id="entrada" class="entrada" autofocus="autofocus" wrap="off" style="" name="" value="" onKeyUp="entrada(this.value)"></textarea>
+
+<div id="saida" class="saida"></div>
+<div id="teste"></div>
+</body>
+</html>
+

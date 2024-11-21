@@ -1,0 +1,26 @@
+
+Segment Registers
+
+CS 
+Code Segment
+16-bit number that points to the active code-segment.
+Ele contém o endereço do código que está atualmente sendo executado (não mexa nele).
+
+DS
+Data Segment
+16-bit number that points to the active data-segment.
+Contém o endereço dos dados do programa (não mexa nele). O endereço do segmento da memória.
+
+SS
+Stack Segment
+16-bit number that points to the active stack-segment
+Segmento de pilha: nele está o endereço da pilha, que contém valores retornados de instruções.
+
+ES
+Extra Segment
+16-bit number that points to the active extra-segment.
+Este segmento aponta para onde você quer que ele aponte, use-o como você quiser.
+
+FS e GS
+É parecido com o ES (processadores acima do 386)
+

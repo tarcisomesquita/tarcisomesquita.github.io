@@ -1,0 +1,52 @@
+C:\Windows\system32>bcdedit
+
+Gerenciador de Inicialização do Windows
+--------------------
+identificador           {bootmgr}
+device                  partition=\Device\HarddiskVolume1
+description             Windows Boot Manager
+locale                  pt-BR
+inherit                 {globalsettings}
+default                 {current}
+resumeobject            {6297a5e5-62b2-11e9-940b-df10c4f9c22b}
+displayorder            {current}
+                        {7619dcc9-fafe-11d9-b411-000476eba25f}
+toolsdisplayorder       {memdiag}
+timeout                 30
+
+Carregador de Inicialização do Windows
+-------------------
+identificador           {current}
+device                  partition=C:
+path                    \Windows\system32\winload.exe
+description             Windows 7
+locale                  pt-BR
+inherit                 {bootloadersettings}
+recoverysequence        {6297a5e7-62b2-11e9-940b-df10c4f9c22b}
+recoveryenabled         Yes
+osdevice                partition=C:
+systemroot              \Windows
+resumeobject            {6297a5e5-62b2-11e9-940b-df10c4f9c22b}
+nx                      OptIn
+
+Carregador de Inicialização do Windows
+-------------------
+identificador           {7619dcc9-fafe-11d9-b411-000476eba25f}
+device                  ramdisk=[boot]\sources\boot.wim,{7619dcc8-fafe-11d9-b411
+-000476eba25f}
+path                    \windows\system32\boot\winload.exe
+description             Windows Setup
+locale                  en-US
+inherit                 {bootloadersettings}
+osdevice                ramdisk=[boot]\sources\boot.wim,{7619dcc8-fafe-11d9-b411
+-000476eba25f}
+systemroot              \windows
+detecthal               Yes
+winpe                   Yes
+ems                     Yes
+
+
+
+
+bcdedit /delete {7619dcc9-fafe-11d9-b411-000476eba25f}
+bcdedit /timeout 3

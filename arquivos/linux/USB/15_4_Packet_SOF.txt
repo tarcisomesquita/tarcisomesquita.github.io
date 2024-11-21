@@ -1,0 +1,7 @@
+
+Sync > PID     > Frame No. > CRC5 > EOP
+       8 bits    11 bits     5 bits
+
+The Start of Frame packet is sent every 1 ms on full speed links. The frame is used as a time frame in which to schedule the data transfers which are required. For example, an isochronous endpoint will be assigned one transfer per frame.
+At high speed the 1 ms frame is divided into 8 microframes of 125 us. A SOF is sent at the start of each of these 8 microframes, each having the same frame number, which then increments every 1 ms frame.
+

@@ -1,0 +1,61 @@
+
+
+PRIVILEGED INSTRUCTIONS
+Some of the system instructions (called “privileged instructions”) are protected from
+use by application programs. The privileged instructions control system functions
+(such as the loading of system registers). They can be executed only when the CPL is
+0 (most privileged). If one of these instructions is executed when the CPL is not 0, a
+Vol. 3 4-33PROTECTION
+general-protection exception (#GP) is generated. The following system instructions
+are privileged instructions:
+LGDT — Load GDT register.
+LLDT — Load LDT register.
+LTR — Load task register.
+LIDT — Load IDT register.
+MOV (control registers) — Load and store control registers.
+LMSW — Load machine status word.
+CLTS — Clear task-switched flag in register CR0.
+MOV (debug registers) — Load and store debug registers.
+INVD — Invalidate cache, without writeback.
+WBINVD — Invalidate cache, with writeback.
+INVLPG —Invalidate TLB entry.
+HLT— Halt processor.
+RDMSR — Read Model-Specific Registers.
+WRMSR —Write Model-Specific Registers.
+RDPMC — Read Performance-Monitoring Counter.
+RDTSC — Read Time-Stamp Counter.
+
+
+Interrupt Descriptor Table (IDT)
+
+The LIDT (load IDT register) and SIDT (store IDT register) instructions load and store
+the contents of the IDTR register, respectively. The LIDT instruction loads the IDTR
+register with the base address and limit held in a memory operand. This instruction
+can be executed only when the CPL is 0. It normally is used by the initialization code
+of an operating system when creating an IDT. An operating system also may use it to
+change from one IDT to another. The SIDT instruction copies the base and limit value
+stored in IDTR to memory. This instruction can be executed at any privilege level.
+
+
+IDTR Register
+47                16 15          0
+ +------------------+------------+
+ | IDT Base Address | IDT Limit  |
+ +------------------+------------+
+
+
+IDT
+
+
+
+
+ +------------------------+ IDT Base Address + IDT Limit
+ | Gate for interrupt #n  |
+ +------------------------+ (n-1)*8
+ | Gate for interrupt #2  |
+ +------------------------+ 16
+ | Gate for interrupt #2  |
+ +------------------------+ 8
+ | Gate for interrupt #1  |   IDT Base Address
+ +------------------------+
+ 7                        0

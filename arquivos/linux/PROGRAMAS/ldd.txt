@@ -1,0 +1,18 @@
+LDD(1)
+
+SYNOPSIS
+       ldd [OPTION]...  FILE...
+
+DESCRIPTION
+       ldd prints the shared libraries required by each program or shared library specified on the command line.
+
+OPTIONS
+       -r --function-relocs
+              Perform  relocations  for both data objects and functions, and report any missing objects or functions (ELF only).
+
+       -u --unused
+              Print unused direct dependencies.
+
+SEE ALSO
+       ldconfig(8), ld.so(8).
+

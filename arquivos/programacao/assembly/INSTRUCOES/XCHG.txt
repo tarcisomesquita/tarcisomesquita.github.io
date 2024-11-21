@@ -1,0 +1,14 @@
+
+XCHG
+
+Exchanges the contents of the destination (first) and source (second) operands. The
+operands can be two general-purpose registers or a register and a memory location
+
+Operation
+TEMP <-- DEST;
+DEST <-- SRC;
+SRC <-- TEMP;
+
+Flags Affected
+None.
+

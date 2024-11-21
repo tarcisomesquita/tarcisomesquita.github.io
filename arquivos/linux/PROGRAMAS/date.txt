@@ -1,0 +1,57 @@
+
+echo $(date '+%m-%d-%y')
+05-31-09
+
+$ LC_ALL=C TZ=UTC0 date
+Mon Mar  1 00:21:42 UTC 2004
+
+$ TZ=UTC0 date +'%Y-%m-%d %H:%M:%SZ'
+2004-03-01 00:21:42Z
+
+$ date --iso-8601=ns | tr T ' '  # --iso-8601 is a GNU extension.
+2004-02-29 16:21:42,692722128-0800
+
+$ date +'@%s.%N'                # %s and %N are GNU extensions.
+@1078100502.692722128
+
+$ date +'%Y-%m-%d %H:%M:%S %z'  # %z is a GNU extension.
+2004-02-29 16:21:42 -0800
+
+$ date --rfc-2822  # a GNU extension
+Sun, 29 Feb 2004 16:21:42 -0800
+
+ISO 8601 format 'YEAR-MONTH-DAY'
+
+All these strings specify the same calendar date:
+1972-09-24     # ISO 8601.
+72-9-24        # Assume 19xx for 69 through 99, 20xx for 00 through 68.
+72-09-24       # Leading zeros are ignored.
+9/24/72        # Common U.S. writing.
+24 September 1972
+24 Sept 72     # September has a special abbreviation.
+24 Sep 72      # Three-letter abbreviations always allowed.
+Sep 24, 1972
+24-sep-72
+24sep72
+
+The year can also be omitted.
+9/24
+sep 24
+
+time of day
+examples, all represent the same time:
+20:02:00.000000
+20:02
+8:02pm
+15:02-0500      # In EST (U.S. Eastern Standard Time).
+23:02:00.000000+03:00
+
+Seconds since the Epoch
+1970-01-01 00:00:00 UTC, so `@0' represents this time
+`@-1' represents 1969-12-31 23:59:59 UTC
+
+What time is it in New York when a Paris clock shows 6:30am on October 31, 2004?
+$ TZ="America/New_York"  date --date='TZ="Europe/Paris" 2004-10-31 06:30'
+Sun Oct 31 01:30:00 EDT 2004
+
+TZ="America/Sao_Paulo"

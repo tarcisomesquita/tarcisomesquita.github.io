@@ -1,0 +1,10 @@
+
+LGDT
+Load Global Descriptor Table Register
+0000 1111 : 0000 0001 : modA 010 r/m
+
+
+LIDT
+Load Interrupt Descriptor Table Register
+0000 1111 : 0000 0001 : modA 011 r/m
+

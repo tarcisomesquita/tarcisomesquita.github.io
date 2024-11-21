@@ -1,0 +1,151 @@
+cd /home/ubuntu/Desktop
+sudo umount /home/ubuntu/Desktop/chroot/proc
+rm -r chroot
+
+mkdir -p /home/ubuntu/Desktop/chroot/bin
+cp --preserv=all /bin/bash                     /home/ubuntu/Desktop/chroot/bin
+
+mkdir -p /home/ubuntu/Desktop/chroot/opt
+
+cd /home/ubuntu/Desktop/chroot/opt
+tar --extract --bzip2 --file /media/SD/pacotes/firefox-17.0.1.tar.bz2
+
+cd /home/ubuntu/Desktop/chroot/bin
+ln -s ../opt/firefox/firefox ./firefox
+cd /home/ubuntu/Desktop
+
+mkdir -p /home/ubuntu/Desktop/chroot/lib
+cp --preserv=all /lib/ld-2.9.so                       /home/ubuntu/Desktop/chroot/lib # bash, firefox
+cp --preserv=all /lib/libdbus-1.so.3.4.0              /home/ubuntu/Desktop/chroot/lib # bash
+cp --preserv=all /lib/libncurses.so.5.7               /home/ubuntu/Desktop/chroot/lib # bash
+cp --preserv=all /lib/libgcc_s.so.1                   /home/ubuntu/Desktop/chroot/lib # firefox
+cp --preserv=all /lib/librt-2.9.so                    /home/ubuntu/Desktop/chroot/lib # firefox
+cp --preserv=all /lib/tls/i686/cmov/libc-2.9.so       /home/ubuntu/Desktop/chroot/lib # bash, firefox
+cp --preserv=all /lib/tls/i686/cmov/libdl-2.9.so      /home/ubuntu/Desktop/chroot/lib # bash, firefox
+cp --preserv=all /lib/tls/i686/cmov/libm-2.9.so       /home/ubuntu/Desktop/chroot/lib # firefox
+cp --preserv=all /lib/tls/i686/cmov/libpthread-2.9.so /home/ubuntu/Desktop/chroot/lib # firefox
+
+cp --preserv=all /usr/lib/libasound.so.2.0.0          /home/ubuntu/Desktop/chroot/lib # firefox
+cp --preserv=all /usr/lib/libdbus-glib-1.so.2.1.0     /home/ubuntu/Desktop/chroot/lib # firefox
+cp --preserv=all /usr/lib/libnspr4.so                 /home/ubuntu/Desktop/chroot/lib # firefox
+cp --preserv=all /usr/lib/libplc4.so                  /home/ubuntu/Desktop/chroot/lib # firefox
+cp --preserv=all /usr/lib/libplds4.so                 /home/ubuntu/Desktop/chroot/lib # firefox
+cp --preserv=all /usr/lib/libstdc++.so.6.0.10         /home/ubuntu/Desktop/chroot/lib # firefox
+cp --preserv=all /usr/lib/libXrender.so.1.3.0         /home/ubuntu/Desktop/chroot/lib # firefox
+
+
+cd /home/ubuntu/Desktop/chroot/lib
+ln -s ./ld-2.9.so                 ./ld-linux.so.2
+ln -s ./libasound.so.2.0.0        ./libasound.so.2
+ln -s ./libdbus-1.so.3.4.0        ./libdbus-1.so.3
+ln -s ./libdbus-glib-1.so.2.1.0   ./libdbus-glib-1.so.2
+ln -s ./libncurses.so.5.7         ./libncurses.so.5
+ln -s ./libc-2.9.so               ./libc.so.6
+ln -s ./libdl-2.9.so              ./libdl.so.2
+ln -s ./libm-2.9.so               ./libm.so.6
+ln -s ./libpthread-2.9.so         ./libpthread.so.0
+ln -s ./librt-2.9.so              ./librt.so.1
+ln -s ./libstdc++.so.6.0.10       ./libstdc++.so.6
+ln -s ./libXrender.so.1.3.0       ./libXrender.so.1
+ln -s ../opt/firefox/libxul.so    ./libxul.so
+#ln -s ./ ./
+cd /home/ubuntu/Desktop
+
+
+mkdir -p /home/ubuntu/Desktop/chroot/proc
+sudo mount -o bind /proc /home/ubuntu/Desktop/chroot/proc
+
+sudo chroot /home/ubuntu/Desktop/chroot
+
+
+sudo chroot /home/ubuntu/Desktop/chroot firefox -DISPLAY=:0.0
+
+
+
+mkdir -p /home/ubuntu/Desktop/chroot/usr/bin
+cp --preserv=all /usr/bin/xhost                /home/ubuntu/Desktop/chroot/usr/bin
+
+cp --preserv=all /usr/lib/libX11.so.6          /home/ubuntu/Desktop/chroot/lib # xhost
+cp --preserv=all /usr/lib/libXmuu.so.1         /home/ubuntu/Desktop/chroot/lib # xhost
+cp --preserv=all /usr/lib/libXau.so.6          /home/ubuntu/Desktop/chroot/lib # xhost
+cp --preserv=all /usr/lib/libxcb.so.1          /home/ubuntu/Desktop/chroot/lib # xhost
+cp --preserv=all /usr/lib/libXdmcp.so.6        /home/ubuntu/Desktop/chroot/lib # xhost
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+set the display of the chroot system to be identical to your system's main X server and provide access to it.
+# export DISPLAY=:0.0
+# xhost +
+
+to run Firefox in a chroot jail
+# chroot /var/chroot firefox -DISPLAY=:0.0
+
+
+create display
+# apt-get install xhost xnest
+# Xnest -ac :1
+A blank Xnest window should appear.
+
+In another Terminal
+# chroot /var/chroot
+# export DISPLAY=127.0.0.1:1
+You can install a complete Ubuntu desktop in the chroot by installing the ubuntu-desktop package.
+GNOME can be started from the command line by running the gnome-session command. 
+
+ = =  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+Exemplo 1
+
+# mount -t squashfs -o loop /mnt/iso/casper/filesystem.squashfs /tmp/livecd
+# chroot /tmp/livecd
+# mount -t proc  none /proc
+# mount -t sysfs none /sys
+export HOME=/root
+export LC_ALL=C
+# cd /dev/
+# MAKEDEV generic
+# /etc/init.d/dbus restart
+# startx
+
+ = =  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+Exemplo 2
+
+# mount --bind /dev/    /media/ubuntu/dev
+# mount --bind /dev/pts /media/ubuntu/dev/pts
+# mount --bind /dev/shm /media/ubuntu/dev/shm
+# chroot /media/ubuntu
+# mount -t sysfs sysfs /sys
+# mount -t proc  proc  /proc
+
+ = =  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+Exemplo 3
+
+sudo chroot chroot
+mount /proc
+mount /sys
+mount -t devpts none /dev/pts
+
+and then do whatever you want...
+
+To leave, you need to run:
+umount -lf /proc
+umount -lf /sys
+umount -lf /dev/pts
+exit
+
+ = =  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+Exemplo 
+
+
+CHROOT(8)
+chroot - run command or interactive shell with special root directory
+
+SYNOPSIS
+chroot NEWROOT [COMMAND...]
+
+DESCRIPTION
+Run COMMAND with root directory set to NEWROOT.
+If no command is given, run "${SHELL} -i" (default: /bin/sh).
+
+GNU coreutils 6.9.92.4-f088d-dirt
+January 2008
+

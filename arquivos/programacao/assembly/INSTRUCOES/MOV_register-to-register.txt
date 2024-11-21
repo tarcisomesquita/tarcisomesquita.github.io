@@ -1,0 +1,20 @@
+
+register1 to register2 1000 100w : 11 reg1 reg2
+register2 to register1 1000 101w : 11 reg1 reg2
+
+
+89 h = 1000 1001 b
+8B h = 1000 1011 b
+
+
+e1 h = 11 100 001 b
+e5 h = 11 100 101 b
+
+89 e1  MOV CX,SP
+89 e5  MOV BP,SP
+
+001        CX
+100        SP
+101        BP
+
+

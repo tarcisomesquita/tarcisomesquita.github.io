@@ -1,0 +1,12 @@
+Precisa ter carregado um site.
+
+localStorage só armazena strings, então use JSON.stringify()
+até 5 MB por domínio
+
+localStorage.setItem('nome', 'João');
+let nomeArmazenado = localStorage.getItem('nome');
+console.log(nomeArmazenado);
+
+localStorage.length
+localStorage.removeItem('nome');
+localStorage.clear()

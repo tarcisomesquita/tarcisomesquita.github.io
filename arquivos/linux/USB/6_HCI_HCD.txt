@@ -1,0 +1,20 @@
+
+HCI (Host Controller Interface)
+
+USB 1.1:
+OHCI (Open HCI) da Compaq
+UHCI (Universal HCI) da Intel
+
+USB 2.0:
+EHCI (Enhanced HCI) from Intel
+
+The hardware vendor provides an interface for the programmer that allows the system to interact with the hardware and this is called the HCD (Host Controller Device).
+
+    + ----  Hardware  ----   + ----  Software  ---- +
+    |                        |                      |
+    | [USB Dev] -+-> {EHCI} -+--->  ( EHCD )        |
+    |            |           |                      |  User
+    |            `-> {UHCI} -+--->  ( UHCD )        |
+    |                        |                      |
+    + ----  Hardware  ----   + ----  Software  ---- +
+

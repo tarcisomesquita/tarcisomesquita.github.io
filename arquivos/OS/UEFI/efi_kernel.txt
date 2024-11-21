@@ -1,0 +1,118 @@
+tar -x -f tar -x -f linux-5.14.tar.gz
+
+cd linux-5.14
+#make distclean          # Remove all generated files + config + various backup files + remove editor backup and patch files
+make x86_64_defconfig   # Build for x86_64
+#make localmodconfig     # Update current config disabling modules not loaded
+
+make -j 4 bzImage
+
+make -j 4 modules       # Build all modules
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+cp linux-5.14/arch/x86_64/boot/bzImage my_img/EFI/BOOT/BOOTx64.EFI
+
+find ./ -type f -name 'efi*' -print
+
+The EFI boot stub is enabled with the CONFIG_EFI_STUB kernel option.
+
+
+Arguments to the kernel can be passed after bzImage.efi, e.g.::
+
+	fs0:> bzImage.efi console=ttyS0 root=/dev/sda4
+
+
+"initrd=" is the only EFI stub-specific command line parameter, everything else is passed to the kernel when it boots.
+
+example
+fs0:\Kernels> bzImage.efi initrd=\Kernels\initrd-large.img
+
+you can save the command to a shell script such as linux.nsh on your UEFI System Partition, then run it with:
+
+> fs0:
+> linux
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+    CONFIG_EFI=y
+    CONFIG_EFI_VARS=y or m
+
+
+
+The required Linux Kernel configuration options[2] for UEFI systems are:
+
+CONFIG_EFI=y
+CONFIG_EFI_STUB=y
+CONFIG_RELOCATABLE=y
+CONFIG_X86_SYSFB=y
+CONFIG_FB_SIMPLE=y
+CONFIG_FRAMEBUFFER_CONSOLE=y
+cat .config | egrep 'CONFIG_EFI=y|CONFIG_EFI_STUB=|CONFIG_RELOCATABLE=|CONFIG_X86_SYSFB=|CONFIG_FB_SIMPLE=|CONFIG_FRAMEBUFFER_CONSOLE='
+
+/usr/bin/efibootmgr. The below config option has been added in kernel 3.10 and above.
+
+CONFIG_EFIVAR_FS=y
+mounted in /sys/firmware/efi/efivars
+can be edited with program efibootmgr
+
+CONFIG_EFI_VARS=n
+mounted in /sys/firmware/efi/vars
+should be disabled to prevent any potential issues
+
+CONFIG_EFI_PARTITION=y
+GUID Partition Table (GPT)
+
+CONFIG_EFI_MIXED=y
+to boot a x64_64 kernel on a IA32 UEFI
+
+
+make menuconfig
+
+Processor type and features  --->
+    [*] EFI runtime service support 
+    [*]   EFI stub support
+    [*] Built-in kernel command line
+    (boot=casper)
+
+General setup  --->
+    [*] Initial RAM filesystem and RAM disk (initramfs/initrd) support
+    (initramfs.cpio) Initramfs source file(s)
+
+Device Drivers
+    Graphics support
+        Frame buffer Devices
+            <*> Support for frame buffer devices
+                [*] EFI-based Framebuffer Support
+ 
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+steps from Documentation/x86/x86_64/uefi.rst
+- Build the kernel with the following configuration::
+	CONFIG_FB_EFI=y
+	CONFIG_FRAMEBUFFER_CONSOLE=y
+
+  If EFI runtime services are expected, the following configuration should be selected::
+	CONFIG_EFI=y
+	CONFIG_EFI_VARS=y or m		# optional
+
+- Create a VFAT partition on the disk
+- Copy the following to the VFAT partition:
+	kernel image and initrd
+
+- Boot to EFI shell
+
+cat .config | egrep 'CONFIG_FB_EFI=|CONFIG_FRAMEBUFFER_CONSOLE=|CONFIG_EFI=|CONFIG_EFI_VARS='
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+CONFIG_EFI_STUB
+
+CONFIG_CMDLINE_BOOL=y
+CONFIG_CMDLINE="root=..."
+CONFIG_BLK_DEV_INITRD=y
+CONFIG_INITRAMFS_SOURCE="my_initrd.cpio"
+cat .config | egrep 'CONFIG_CMDLINE_BOOL=|CONFIG_CMDLINE=|CONFIG_BLK_DEV_INITRD=|CONFIG_INITRAMFS_SOURCE='
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

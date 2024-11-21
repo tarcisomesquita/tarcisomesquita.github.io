@@ -1,0 +1,4 @@
+Limite típico do brilho da luz visível a olho nu: 4.0×10⁻³ W/cm². Equivale à magnitude aparente 6.
+
+Estrelas cujas magnitudes variam de 1,5 a 2,5 são chamados estrelas de segunda magnitude
+Estrelas mais brilhantes do que 1,5 são as estrelas de primeira magnitude

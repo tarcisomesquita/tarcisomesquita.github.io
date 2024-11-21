@@ -1,0 +1,19 @@
+https://docs.google.com/spreadsheets/d/1VtD0Q3UgqWmGuPqViuEfOcx4uKzExkq_1VOAGF2jnPE/edit?usp=drivesdk
+
+fis
+
+
+segui este tutorial:
+https://developers.google.com/sheets/api/quickstart/php
+
+Client ID
+194539195303-e6kpjlsr40p7sh7s7ov319f6ikl166a8.apps.googleusercontent.com
+Client Secret
+27jmqLn53SNrmX6DCXHZ5l_2
+
+baixei credentials.json
+php composer.php -vv require google/apiclient:^2.0
+
+php sheet_quickstart.php
+4/vwFXVYkm2xONn4CEAwRUXNa0KAN8mlpkyozaFDPd7b2CHbMi0a4d3wI
+

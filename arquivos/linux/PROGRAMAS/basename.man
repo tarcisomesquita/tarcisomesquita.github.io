@@ -1,0 +1,30 @@
+
+/usr/bin/basename
+
+NAME
+       basename - strip directory and suffix from filenames
+
+SYNOPSIS
+       basename NAME [SUFFIX]
+       basename OPTION
+
+DESCRIPTION
+       Print  NAME  with  any leading directory components removed.  If specified, also remove a trailing SUFFIX.
+
+       --help display this help and exit
+
+       --version
+              output version information and exit
+
+EXAMPLES
+       basename /usr/bin/sort
+              Output "sort".
+
+       basename include/stdio.h .h
+              Output "stdio".
+
+SEE ALSO
+       dirname(1), readlink(1)
+
+GNU coreutils 6.9.92.4-f088d-dirtJanuary 2008                      BASENAME(1)
+

@@ -1,0 +1,54 @@
+
+veja a instrução NEG
+
+com n bits podemos representar valores com sinal entre
+-2^(n-1) e 2^(n-1)-1
+
+para n=8 temos -128 e 127
+
+
+O microprocessador 80x86 usa a notação de complemento de dois. Neste sistema, o bit mais significativo é que sinaliza se o número é positivo ou negativo: se for 0, o número é positivo; se for 1, o número é negativo. Veja os exemplos:
+
+8000h é negativo => 1000 0000 0000 0000
+0100h é positivo => 0000 0001 0000 0000
+
+
+Conversão entre positivo e negativo
+
+   1.  Inverta todos os bits do número com uma operação lógica NOT.
+   2. Adicione 1 ao resultado.
+
+No seguinte exemplo faremos a conversão de +5 para -5 usando o complemto de dois usando apenas 8 bits:
+
+	decimal 5		binário	0000 0101		(05h)
+	inverter bits		1111 1010		(0FAh)
+	somar 1			1111 1011		(0FBh)
+
+Se repetirmos a operação com o valor encontrado para -5, voltamos a obter o valor original:
+
+	decimal -5	binário	1111 1011		(0FBh)
+	inverter bits		0000 0100		(04h)
+	somar 1			0000 0101		(05h)
+
+
+Se tentarmos realizar o complemento de dois com o menor número negativo, o processador 80x86 vai dar erro de overflow na aritmética com sinal.
+
+
+As operações com números negativos não é problema. Imagine a operação de soma com os números +5 e -5, sendo que o -5 foi obtido com o sistema de complemento de dois:
+
+	 		1 1111 1111 (vermelho)
+	5d		  0000 0101
+	-5d		+ 1111 1011
+			------------
+		(verde)	1 0000 0000  
+
+Os dígitos em vermelho são os famosos "vai um", que acontecem quando somamos dois bits de valor 1. O bit em verde é o bit que excedeu o comprimento de oito bits, chamado de carry (o excedente). Se ignorarmos o carry, o resultado está absolutamente correto, pois 5 + (-5) = 0. E é exatamente assim que o processador opera.
+
+
+extenão: mudar de 8 bits para 16 bits
+
+Para fazer a extensão com sinal de um valor com qualquer número de bits para um número maior de bits, basta copiar o bit de sinal para todos os bits adicionais. Por exemplo, para ampliar um número de 8 bits com sinal para um número de 16 bits com sinal, só é preciso copiar o bit 7 do número de oito bits para os bits de 8 a 15 do número de 16 bits.
+
+A contração com sinal, ou seja, converter um valor com determinado número de bits para um valor idêntico com um número menor de bits é um processo um pouco mais complicado. A extensão com sinal sempre é possível, já a contração com sinal nem sempre o é. Por exemplo, o valor decimal -448, representado como hexadecimal de 16 bits, é 0FE40h. Neste caso, é impossível obter este valor com apenas 8 bits, ou seja, a contração com sinal não é possível pois perderíamos o valor original. Aliás, este é um exemplo de overflow que pode ocorrer numa conversão impossível.
+
+

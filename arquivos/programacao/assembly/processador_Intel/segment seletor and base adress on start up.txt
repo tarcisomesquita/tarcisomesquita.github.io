@@ -1,0 +1,5 @@
+
+On power up or reset of the processor, segment selector and base address are set to
+the default value of 0; the limit is set to FFFFH.
+
+

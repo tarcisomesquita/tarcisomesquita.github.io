@@ -1,0 +1,31 @@
+source: kernel.org/pub/linux/utils/util-linux/
+
+losetup [-o offset] [-r] loop_device file
+
+-a, --all
+show status of all loop devices
+
+-d, --detach
+detach the file or device associated with the specified loop device
+
+-o, --offset offset
+the data start is moved offset bytes into the specified file or device
+
+-r, --read-only
+setup read-only loop device
+
+EXAMPLE
+# insmod loop.ko
+
+
+# dd if=/dev/zero of=file.bin bs=1M count=100
+# losetup /dev/loop3 file.bin
+# mke2fs -t ext4 /dev/loop3
+sudo mkdir /media/teste
+sudo mount -t ext4 /dev/loop3 /media/teste
+sudo chown lubuntu:lubuntu -R /media/teste
+sudo umount /media/teste
+# losetup -d /dev/loop3
+
+# rmmod loop
+

@@ -1,0 +1,6 @@
+PDF/A-1 is based on PDF 1.4
+
+in PDF/A-1: all fonts used must be embedded in the document.
+
+PDF/A-1b is sufficient for uniform visual display of documents.
+

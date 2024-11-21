@@ -1,0 +1,171 @@
+
+Input:
+ES:DI  Buffer         Pointer to an Address Range Descriptor structure that the BIOS fills in. 
+EDX    'SMAP'         Signature used by the BIOS.
+ECX    Buffer Size    The length in bytes of the structure passed to the BIOS. The minimum size is 20 bytes.
+EBX    Continuation   Value returned by a previous call to this routine. On first call, EBX=zero.
+EAX    E820h
+
+Output:
+CF     Carry Flag   Non-Carry – Indicates No Error. Ignore information returned by the BIOS when the carry flag is set.
+EAX    'SMAP'       Signature. = 0x534D4150
+ES:DI  Buffer       Returned Address Range Descriptor pointer. Same value as on input.
+ECX    Buffer Size  Number of bytes returned by the BIOS in the address range descriptor.
+EBX    Continuation Contains the continuation value to get the next address range descriptor. A return value of zero means that this is the last descriptor.
+
+Address Range Descriptor Structure
+Offset in Bytes       Name                      Description
+0                     BaseAddrLow               Low 32 Bits of Base Address
+4                     BaseAddrHigh              High 32 Bits of Base Address
+8                     LengthLow                 Low 32 Bits of Length in Bytes
+12                    LengthHigh                High 32 Bits of Length in Bytes
+16                    Type                      Address type of this range
+20                    Extended Attributes       See Table 14-5
+
+Não combina com a descrição abaixo
+     First qword = Base address
+    Second qword = Length of "region" (if this value is 0, ignore the entry)
+    Next dword = Region "type"
+        Type 1: Usable (normal) RAM
+        Type 2: Reserved - unusable
+        Type 3: ACPI reclaimable memory
+        Type 4: ACPI NVS memory
+        Type 5: Area containing bad memory 
+    Next dword = ACPI 3.0 Extended Attributes bitfield (if 24 bytes are returned, instead of 20)
+        Bit 0 of the Extended Attributes indicates if the entire entry should be ignored (if the bit is clear). This is going to be a huge compatibility problem because most current OSs won't read this bit and won't ignore the entry.
+        Bit 1 of the Extended Attributes indicates if the entry is non-volatile (if the bit is set) or not. The standard states that "Memory reported as non-volatile may require characterization to determine its suitability for use as conventional RAM."
+        The remaining 30 bits of the Extended Attributes are currently undefined. 
+
+
+
+BaseAddrLow and BaseAddrHigh together are the 64-bit physical address.
+LengthLow and LengthHigh together are the 64-bit length of this range in bytes.
+Type describes the usage, that may be:
+
+Value   Mnemonic                 Description
+1       AddressRangeMemory       Usable by the operating system.
+2       AddressRangeReserved     In use or reserved by the system.
+3       AddressRangeACPI         ACPI Reclaim Memory. Usable by the OS after it reads the ACPI tables.
+4       AddressRangeNVS          ACPI NVS Memory. In use or reserved. Must not be used by the operating system.
+5       AddressRangeUnusuable    Memory in which errors have been detected.
+6       AddressRangeDisabled     Memory not enabled.
+Other   Undefined                Reserved for future use. Treat as AddressRangeReserved.
+
+The BIOS does not return a range description for the memory mapping of PCI devices and Play cards because the OS has mechanisms available to detect them.
+Standard PC address ranges are not reported. For example, video memory at A0000 to BFFFF physical addresses are not described by this function.
+
+.globl get_mmap_entry ; get_mmap_entry:
+   push %ebp
+   push %ebx
+   push %edi
+   push %esi
+   
+   movl 0x14(%esp), %eax  // addr
+   addl $4, %eax
+   movl %eax, %edi
+   andl $0xf, %edi
+   shrl $4, %eax
+   movl %eax, %esi
+   
+   movl 0x18(%esp), %ebx   // cont
+
+   movl $0x14, %ecx        // set to default the maximum buffer size
+
+   movl $0x534d4150, %edx  // set EDX to 'SMAP'
+
+   call prot_to_real
+   .code16
+
+   movw %si, %es
+   movl $0xe820, %eax
+   int $0x15
+
+   data32 jc xnosmap
+
+   cmpl $0x534d4150, %eax
+   data32 jne xnosmap
+
+   cmpl $0x14, %ecx
+   data32 jl xnosmap
+
+   cmpl $0x400, %ecx
+   data32 jg xnosmap
+
+   data32 jmp xsmap
+
+xnosmap:
+   movl $0, %ecx
+
+xsmap:
+   data32 call real_to_prot
+   .code32
+   
+   movl 0x14(%esp), %eax   // write length of buffer (zero if error) into "addr"
+   movl %ecx, (%eax)
+
+   movl %ebx, %eax   // set return value to continuation
+
+   pop %esi
+   pop %edi
+   pop %ebx
+   pop %ebp
+   ret
+
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+; use the INT 0x15, eax= 0xE820 BIOS function to get a memory map
+; inputs: es:di -> destination buffer for 24 byte entries
+; outputs: bp = entry count, trashes all registers except esi
+do_e820:
+	xor ebx, ebx		; ebx must be 0 to start
+	xor bp, bp		; keep an entry count in bp
+	mov edx, 0x0534D4150	; Place "SMAP" into edx
+	mov eax, 0xe820
+	mov [es:di + 20], dword 1	; force a valid ACPI 3.X entry
+	mov ecx, 24		; ask for 24 bytes
+	int 0x15
+	jc short .failed	; carry set on first call means "unsupported function"
+	mov edx, 0x0534D4150	; Some BIOSes apparently trash this register?
+	cmp eax, edx		; on success, eax must have been reset to "SMAP"
+	jne short .failed
+	test ebx, ebx		; ebx = 0 implies list is only 1 entry long (worthless)
+	je short .failed
+	jmp short .jmpin
+.e820lp:
+	mov eax, 0xe820		; eax, ecx get trashed on every int 0x15 call
+	mov [es:di + 20], dword 1	; force a valid ACPI 3.X entry
+	mov ecx, 24		; ask for 24 bytes again
+	int 0x15
+	jc short .e820f		; carry set means "end of list already reached"
+	mov edx, 0x0534D4150	; repair potentially trashed register
+.jmpin:
+	jcxz .skipent		; skip any 0 length entries
+	cmp cl, 20		; got a 24 byte ACPI 3.X response?
+	jbe short .notext
+	test byte [es:di + 20], 1	; if so: is the "ignore this data" bit clear?
+	je short .skipent
+.notext:
+	mov ecx, [es:di + 8]	; get lower dword of memory region length
+	or ecx, [es:di + 12]	; "or" it with upper dword to test for zero
+	jz .skipent		; if length qword is 0, skip entry
+	inc bp			; got a good entry: ++count, move to next storage spot
+	add di, 24
+.skipent:
+	test ebx, ebx		; if ebx resets to 0, list is complete
+	jne short .e820lp
+.e820f:
+	mov [mmap_ent], bp	; store the entry count
+	clc			; there is "jc" on end of list to this point, so the carry must be cleared
+	ret
+.failed:
+	stc			; "function unsupported" error exit
+	ret
+
+
+
+
+
+
+

@@ -1,0 +1,1 @@
+Shared memory is used as a form of interprocess communication; the system calls used are shmget( ), shmctl( ), shmat( ), and shmdt( ).

@@ -1,0 +1,53 @@
+
+-o file
+    Especifica o nome do arquivo de saída. Não importa se é um executable file, an object file, an assembler file or preprocessed C code.
+    $ gcc -o hello hello.c
+
+-c  
+    Apenas cria o arquivo objeto.
+    exemplo: gcc -c teste.c
+             cria teste.o
+
+-C  Do not discard comments.
+    All comments are passed through to the output file, except for comments in processed directives, which are deleted along with the directive.
+
+-Wall
+    The `-Wall' flag tells the compiler to issue warnings when it sees bad programming style.
+    $ gcc -Wall hello.c -o hello
+
+-dCHARS
+   CHARS is a sequence of one or more of the following characters, and must not be preceded by a space.
+   M   Instead of the normal output, generate a list of #define directives for all the macros defined during the execution of
+       the preprocessor, including predefined macros.
+   D   Like M except in two respects: it does not include the predefined macros, and it outputs both the #define directives and the result of preprocessing.
+   I   Output #include directives in addition to the result of preprocessing.
+   
+   Exemplo: gcc -E -dMDI -CC teste.c -o teste.pre.c
+
+
+-E  Stop after the preprocessing stage; do not run the compiler proper.
+    The output is in the form of preprocessed source code, which is sent to the standard output.
+    Input files which don't require preprocessing are ignored.
+
+-P  Inhibit generation of linemarkers in the output from the preprocessor.  This might be useful when running the preprocessor on something that is not C code, and will be sent to a program which might be confused by the linemarkers.
+
+-g
+    Add debugging information to the executable. Used by gdb.
+
+-MM
+The compiler will compute and output the dependency lines that you need to include in your Makefile. For example:
+% gcc -MM foo1.c
+foo1.o: foo1.c gleep2.h gleep3.h
+
+-MT stream.o -MD -MP -MF .deps/stream.Tpo
+Escreve em .deps/stream.Tpo as dependencias de stream.o
+
+-v   mostra detalhes do processo de compilação.
+
+-S gera código assembly
+gcc -S -o teste.S teste.c
+
+-masm=intel
+gera código assembly com a sintaxe intel
+
+-march=native

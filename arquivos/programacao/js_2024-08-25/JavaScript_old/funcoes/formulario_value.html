@@ -1,0 +1,29 @@
+<html>
+<head>
+<meta content="charset=UTF-8">
+<title>Formulario</title>
+
+<script>
+window.tarciso={
+   nome:"",
+   mudou:function(){
+      window.tarciso.nome = window.document.form1.nome.value;
+      window.alert(window.tarciso.nome);
+   }
+};
+
+</script>
+
+</head>
+
+<body>
+
+<form name=form1>
+Digite seu nome:<br>
+<input name="nome" type="text" onchange="window.tarciso.mudou()"> <input onclick="window.tarciso.mudou()" name="completo" type="submit">
+</form>
+
+
+</body>
+
+</html>

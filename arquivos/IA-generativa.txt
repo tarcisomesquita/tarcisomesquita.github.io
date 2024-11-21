@@ -1,0 +1,70 @@
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+@Google Drive Faça um ranking das 10 palavras mais importantes no texto do arquivo FIS_V1_U1_T1.pdf
+
+@Google Drive Responda as questões do arquivo HIS_P1.pdf
+
+Resuma o texto abaixo.
+
+Cite exemplos de ...
+
+Crie perguntas de alternativas para alunos do Ensino Médio sobre o assunto do texto abaixo.
+
+Classifique as perguntas anteriores por nível de dificuldade.
+
+Quais são as ideias mais importantes do texto abaixo?
+
+No texto abaixo, quais são as ideias principais?
+
+No texto anterior, liste as 5 palavras mais importantes.
+
+No texto anterior, faça um ranking com as 3 principais palavras.
+
+No texto abaixo, faça um ranking das 10 palavras mais importantes.
+
+Crie um material de aprendizagem personalizado sobre energia cinética para um aluno do Ensino Médio que prefere aprender olhando.
+
+Crie um material de aprendizagem personalizado sobre energia cinética para um aluno do Ensino Médio que prefere aprender lendo.
+
+Crie um material de aprendizagem personalizado sobre energia cinética para um aluno do Ensino Médio que prefere aprender ouvindo e mora em Campinas.
+
+Traduza para inglês a pergunta a seguir.
+Qual é a energia cinética de carro com massa 1.000 kg que se move a uma velocidade 50 km/h?
+
+Answer in Portuguese the question: What is the kinetic energy of a 1,000 kg car moving at a speed of 36 km/h?
+
+No cálculo, você esqueceu do número 100.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Desejo que as pessoas escrevam usando sequências de palavras que as máquinas entendam.
+
+Como posso analisar se uma sequência de palavras está de acordo com uma base de conhecimento?
+- Verificação de coerência: Verifica se as palavras da sequência estão relacionadas de forma lógica. Por exemplo, se a sequência diz "O gato comeu o rato", o algoritmo deve verificar se "gato" e "rato" são animais e se "comer" é uma ação que um gato pode realizar.
+- Verificação de precisão: Verifica se as informações contidas na sequência são consistentes com as informações contidas na base de conhecimento. Por exemplo, se a sequência diz "O Brasil é a capital da Argentina", o algoritmo deve verificar se a base de conhecimento afirma que a capital da Argentina é Buenos Aires.
+
+Analise o texto abaixo.
+O Brasil é a capital da Argentina.
+
+Função referencial da linguagem tem por finalidade destacar a referência daquilo de que se fala. Usada em materiais didáticos e científicos.
+Google Acadêmico, SciELO, Portal de Periódicos da CAPES, Biblioteca Digital Brasileira (BDTD), JSTOR, arXiv, ResearchGate
+
+Analise o texto abaixo.
+"A inportância da educaçao não pode ser subestimada . Os indivídos, adquire conhecimendo e habilidades que lhes permite afasta seus objetivos."
+
+Extraia todas as triplas RDF do seguinte texto com o predicado "rdf:type":
+Extraia todas as triplas RDF do seguinte texto com o sujeito "física":
+Extraia todas as triplas RDF do seguinte texto com o objeto "ciência":
+
+Escreva em SPARQL a pergunta: Um gato pode comer?
+
+Marque links no texto a seguir ligando à base wikidata: O Brasil é um país.
+
+Converta o texto a seguir em uma tripla rdf ligada à base dbpedia: O Brasil é um país.
+<http://dbpedia.org/resource/Brazil> rdf:type <http://dbpedia.org/ontology/Country> .
+Q155 P31 Q6256
+
+wget -q -O - --no-check-certificate 'https://api.dbpedia-spotlight.org/pt/annotate?confidence=0.35&text=O Brasil é um país.'
+wget -q -O - --no-check-certificate 'https://api.dbpedia-spotlight.org/en/annotate?confidence=0.35&text=The Brazil is a country.'
+

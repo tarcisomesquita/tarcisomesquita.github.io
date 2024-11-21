@@ -1,0 +1,41 @@
+CP(1)
+
+SYNOPSIS
+cp [OPTION]... [-T] SOURCE DEST
+cp [OPTION]... SOURCE... DIRECTORY
+
+DESCRIPTION
+cp - copy files and directories
+Copy SOURCE to DEST, or multiple SOURCE(s) to DIRECTORY.
+
+Mandatory arguments to long options are mandatory for short options too.
+
+-f, --force
+   if an existing destination file cannot be opened, remove it and try again
+
+-i, --interactive
+   prompt before overwrite
+
+-l, --link
+   link files instead of copying
+
+-L, --dereference
+   always follow symbolic links in SOURCE
+
+--preserve[=ATTR_LIST]
+   preserve the specified attributes (default: mode,ownership,timestamps), if possible additional attributes: context, links, all
+
+-R, -r, --recursive
+   copy directories recursively
+
+-u, --update
+   copy only when the SOURCE file is newer than the destination file or when the destination file is missing
+
+-v, --verbose
+   explain what is being done
+
+--version
+
+GNU coreutils 6.9.92.4-f088d-dirty
+January 2008
+

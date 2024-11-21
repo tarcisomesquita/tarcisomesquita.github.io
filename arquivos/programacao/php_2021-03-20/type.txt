@@ -1,0 +1,45 @@
+<?php
+
+$data = array(1, 1., NULL, new stdClass, 'foo');
+
+foreach ($data as $value) {
+    echo gettype($value), "\n";
+}
+
+?>
+
+você pode usar a função var_dump() para ver o tipo.
+
+$foo = "5bar"; // string
+$bar = true;   // boolean
+
+settype($foo, "integer"); // $foo é agora 5   (integer)
+settype($bar, "string");  // $bar é agora "1" (string)
+
+
+<?php
+$foo = (int) $bar;
+$foo = ( int ) $bar;
+?>
+Convertendo strings literais e variáveis para strings binárias:
+
+<?php
+$binary = (binary)$string;
+$binary = b"binary string";
+?>
+
+<?php
+$foo = 10;             // $foo é um inteiro
+$bar = (boolean) $foo; // $bar é um booleano
+?>
+As conversões permitidas são:
+
+(int), (integer) - molde para inteiro
+(bool), (boolean) - converte para booleano
+(float), (double), (real) - converte para número de ponto flutuante
+(string) - converte para string
+(array) - converte para array
+(object) - converte para objeto
+(unset) - converte para NULL
+(binary) e o prefixo b foram adicionados no PHP 5.2.1. Note que (binary) é essencialmente o mesmo que (string), mas não deve ser invocado
+

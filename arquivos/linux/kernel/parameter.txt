@@ -1,0 +1,138 @@
+vga=normal|ext|ask
+arch/i386/boot/video.S
+CONFIG_VIDEO_SVGA - enables autodetection of SVGA cards.
+
+	init=		[KNL]
+			Format: <full_path>
+			Run specified binary instead of /sbin/init as init process.
+
+	initrd=		[BOOT] Specify the location of the initial ramdisk
+
+	rdinit=		[KNL]
+			Format: <full_path>
+			Run specified binary instead of /init from the ramdisk, used for early userspace startup. See initrd.
+
+	root=		[KNL] Root filesystem
+			See name_to_dev_t comment in init/do_mounts.c.
+
+	rootflags=	[KNL] Set root filesystem mount option string
+
+	rootfstype=	[KNL] Set root filesystem type
+
+	rw		[KNL] Mount root device read-write on boot
+
+	debug		[KNL] Enable kernel debugging (events log level).
+
+	earlyprintk=
+			earlyprintk=vga
+			earlyprintk=efi
+
+			Append ",keep" to not disable it when the real console takes over.
+
+
+acpi_backlight=video
+use video.ko
+
+acpi=off
+
+
+	apic=
+			Format: { quiet (default) | verbose | debug }
+			Change the amount of debugging information output
+			when initialising the APIC and IO-APIC components.
+
+	debug		[KNL] Enable kernel debugging (events log level).
+
+	disable=	[IPV6]
+			See Documentation/networking/ipv6.txt.
+
+
+	disable_ipv6=	[IPV6]
+			See Documentation/networking/ipv6.txt.
+
+	max_addr=nn[KMG]	[KNL,BOOT,ia64] All physical memory greater
+			than or equal to this physical address is ignored.
+
+	mem=nn[KMG]	[KNL,BOOT] Force usage of a specific amount of memory
+			Amount of memory to be used when the kernel is not able
+			to see the whole system memory or for test.
+			[X86-32] Use together with memmap= to avoid physical
+			address space collisions. Without memmap= PCI devices
+			could be placed at addresses belonging to unused RAM.
+            The value is in decimal or hexadecimal (prefix 0x)
+
+
+	memmap=nn[KMG]@ss[KMG]
+			[KNL] Force usage of a specific region of memory
+			Region of memory to be used, from ss to ss+nn.
+
+	memmap=nn[KMG]#ss[KMG]
+			[KNL,ACPI] Mark specific memory as ACPI data.
+			Region of memory to be used, from ss to ss+nn.
+
+	memmap=nn[KMG]$ss[KMG]
+			[KNL,ACPI] Mark specific memory as reserved.
+			Region of memory to be used, from ss to ss+nn.
+			Example: Exclude memory from 0x18690000-0x1869ffff
+			         memmap=64K$0x18690000
+			         or
+			         memmap=0x10000$0x18690000
+
+	memtest=	[KNL,X86] Enable memtest
+			Format: <integer>
+			default : 0 <disable>
+			Specifies the number of memtest passes to be
+			performed. Each pass selects another test
+			pattern from a given set of patterns. Memtest
+			fills the memory with this pattern, validates
+			memory contents and reserves bad memory
+			regions that are detected.
+
+
+	nousb		[USB] Disable the USB subsystem
+
+
+	pci=option[,option...]	[PCI] various PCI subsystem options:
+		earlydump	[X86] dump PCI config space before the kernel
+			        changes anything
+		off		[X86] don't probe for the PCI bus
+		bios		[X86-32] force use of PCI BIOS, don't access
+				the hardware directly. Use this if your machine
+				has a non-standard PCI host bridge.
+		nobios		[X86-32] disallow use of PCI BIOS, only direct
+				hardware access methods are allowed. Use this
+				if you experience crashes upon bootup and you
+				suspect they are caused by the BIOS.
+
+		noacpi		[X86] Do not use ACPI for IRQ routing
+				or for PCI scanning.
+
+	pcie_ports=	[PCIE] PCIe ports handling:
+		auto	Ask the BIOS whether or not to use native PCIe services
+			associated with PCIe ports (PME, hot-plug, AER).  Use
+			them only if that is allowed by the BIOS.
+		native	Use native PCIe services associated with PCIe ports
+			unconditionally.
+		compat	Treat PCIe ports as PCI-to-PCI bridges, disable the PCIe
+			ports driver.
+
+
+	ramdisk_size=	[RAM] Sizes of RAM disks in kilobytes
+			See Documentation/blockdev/ramdisk.txt.
+
+	resume=		[SWSUSP]
+			Specify the partition device for software suspend
+
+
+	video=		[FB] Frame buffer configuration
+			See Documentation/fb/modedb.txt.
+
+
+              netdev=0,0,eth1
+              Note that the values of zero for the IRQ and I/O base in the above example tell the driver(s) to autoprobe.
+
+	netdev=		[NET] Network devices parameters
+			Format: <irq>,<io>,<mem_start>,<mem_end>,<name>
+			Note that mem_start is often overloaded to mean something different and driver-specific.
+			This usage is only documented in each driver source file if at all.
+

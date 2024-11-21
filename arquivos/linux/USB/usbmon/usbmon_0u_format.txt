@@ -1,0 +1,95 @@
+# cat /sys/kernel/debug/usb/usbmon/0u > /tmp/1.mon.out
+
+ffff96391fd04600 1527945669 C Ci:1:085:0 0 18 = 12011001 e0010140 f30c3600 01000000 0001
+ffff9637b5f9a6c0 1527945809 S Ci:1:004:0 s 80 06 0100 0000 0028 40 <
+
+ffff96391de059c0 1539710313 S Bi:1:108:1 -115 512 <
+ffff96391de059c0 1539711791 C Bi:1:108:1 0 512 = 2e202020 20202020 20202010 0000f7ab 3b503b50 1700f7ab 3b50098c 00000000
+
+Every text line is a event.
+Event can be: URB submission, URB callback, submission error.
+
+Words, from left to right:
+- Tag used to identify URBs. Is an URB structure in hexadecimal.
+
+- Timestamp in microseconds, a decimal number.
+
+- Event Type. Available types are: S - submission, C - callback, E - submission error.
+
+- "Address" word. It consists of four fields, separated by colons: URB type and direction, Bus number, Device address, Endpoint number.
+  Type and direction are encoded with two bytes in the following manner:
+    Ci Co   Control input and output
+    Zi Zo   Isochronous input and output
+    Ii Io   Interrupt input and output
+    Bi Bo   Bulk input and output
+
+- URB Status word. This is either a letter, or several numbers separated by colons: URB status, interval, start frame, and error count.
+  Unlike the "address" word, all fields save the status are optional.
+
+  The status field is a decimal number, sometimes negative, which represents a "status" field of the URB.
+
+- Setup packet, if present, consists of 5 words: one of each for bmRequestType, bRequest, wValue, wIndex, wLength, as specified by the USB Specification 2.0.
+  These words are safe to decode if Setup Tag was 's'. Otherwise, the setup packet was present, but not captured, and the fields contain filler.
+
+- Number of isochronous frame descriptors and descriptors themselves.
+  If an Isochronous transfer event has a set of descriptors, a total number
+  of them in an URB is printed first, then a word per descriptor, up to a
+  total of 5. The word consists of 3 colon-separated decimal numbers for
+  status, offset, and length respectively. For submissions, initial length
+  is reported. For callbacks, actual length is reported.
+
+- Data Length. For submissions, this is the requested length. For callbacks, this is the actual length.
+
+- Data tag. The usbmon may not always capture data, even if length is nonzero.
+  The data words are present only if this tag is '='.
+
+- Data words follow, in big endian hexadecimal format. Notice that they are
+  not machine words, but really just a byte stream split into words to make
+  it easier to read. Thus, the last word may contain from one to four bytes.
+  The length of collected data is limited and can be less than the data length
+  report in Data Length word.
+
+Here is an example of code to read the data stream in a well known programming language:
+
+class ParsedLine {
+	int data_len;		/* Available length of data */
+	byte data[];
+
+	void parseData(StringTokenizer st) {
+		int availwords = st.countTokens();
+		data = new byte[availwords * 4];
+		data_len = 0;
+		while (st.hasMoreTokens()) {
+			String data_str = st.nextToken();
+			int len = data_str.length() / 2;
+			int i;
+			int b;	// byte is signed, apparently?! XXX
+			for (i = 0; i < len; i++) {
+				// data[data_len] = Byte.parseByte(
+				//     data_str.substring(i*2, i*2 + 2),
+				//     16);
+				b = Integer.parseInt(
+				     data_str.substring(i*2, i*2 + 2),
+				     16);
+				if (b >= 128)
+					b *= -1;
+				data[data_len] = (byte) b;
+				data_len++;
+			}
+		}
+	}
+}
+
+Examples:
+
+An input control transfer to get a port status.
+
+d5ea89a0 3575914555 S Ci:1:001:0 s a3 00 0000 0003 0004 4 <
+d5ea89a0 3575914560 C Ci:1:001:0 0 4 = 01050000
+
+An output bulk transfer to send a SCSI command 0x5E in a 31-byte Bulk wrapper
+to a storage device at address 5:
+
+dd65f0e8 4128379752 S Bo:1:005:2 -115 31 = 55534243 5e000000 00000000 00000600 00000000 00000000 00000000 000000
+dd65f0e8 4128379808 C Bo:1:005:2 0 31 >
+

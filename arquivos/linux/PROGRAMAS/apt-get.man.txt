@@ -1,0 +1,106 @@
+APT-GET(8)
+
+Install the dependencies for build the application BasKet
+apt-get build-dep basket
+
+cat /etc/apt/sources.list
+deb cdrom:[Lubuntu 20.04.4 LTS _Focal Fossa_ - Release amd64 (20220223)]/ focal main multiverse restricted universe
+deb http://archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse
+deb-src http://archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse #Added by software-properties
+deb http://security.ubuntu.com/ubuntu/ focal-security main restricted universe multiverse
+deb-src http://security.ubuntu.com/ubuntu/ focal-security main restricted universe multiverse #Added by software-properties
+deb http://archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse
+deb-src http://archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse #Added by software-properties
+
+Use apt-file to search for files in packages not installed
+sudo apt-file update
+apt-file search filename
+
+
+SYNOPSIS
+apt-get [-sqdyfmubV] [-o= config_string ] [-c= config_file ] [-t= target_release] {update | upgrade | dselect-upgrade | dist-upgrade |
+        install pkg [ { =pkg_version_number | /target_release } ] ... |
+        remove pkg...  | purge pkg...  |
+        source pkg [ { =pkg_version_number | /target_release } ] ...  |
+        build-dep pkg...  | check | clean | autoclean | autoremove |
+        {-v | --version} | {-h | --help}}
+
+DESCRIPTION
+
+update
+    update is used to resynchronize the package index files from their sources location(s) specified in /etc/apt/sources.list.
+
+install
+    install is followed by one or more packages desired for installation or upgrading.
+    The /etc/apt/sources.list file is used to locate the desired packages.
+
+    A specific version of a package can be selected for installation by following the package name with an equals and the version of the
+    package to select.
+
+    If no package matches the given expression and the expression contains one of '.', '?' or '*' then it is assumed to be a POSIX
+    regular expression, and it is applied to all package names in the
+    database. Any matches are then installed (or removed). Note that
+    matching is done by substring so 'lo.*' matches 'how-lo' and
+    'lowest'. If this is undesired, anchor the regular expression with
+    a '^' or '$' character, or create a more specific regular
+    expression.
+
+remove
+    remove packages but leaves its configuration files in system.
+
+purge
+    remove packages (configuration files too).
+
+source
+    APT will examine the available packages to decide which source package to fetch.
+    download into the current directory the newest available version of that source package
+
+    Source packages are tracked from deb-src lines in the sources.list file.
+
+    If --compile option is specified then the package will be compiled to a binary .deb using dpkg-buildpackage
+    if --download-only is specified then the source package will not be unpacked.
+
+    A specific source version can be retrieved by postfixing the source name with an equals and then the version to fetch
+
+check
+    check is a diagnostic tool; it updates the package cache and checks for broken dependencies.
+
+clean
+    clean clears out the local repository of retrieved package files.
+    It removes everything in /var/cache/apt/archives/
+
+
+OPTIONS
+-d, --download-only
+    Download only; package files are only retrieved, not unpacked or installed.
+
+-f, --fix-broken
+    attempt to correct a system with broken dependencies.
+
+-s, --simulate, --just-print, --dry-run, --recon, --no-act
+    No action; perform a simulation of events that would occur but do not actually change the system.
+
+-b, --compile, --build
+    Compile source packages after downloading them.
+
+--print-uris
+    Instead of fetching the files to install their URIs are printed.
+
+
+
+FILES
+
+/etc/apt/apt.conf.d/
+    APT configuration file fragments. Configuration Item:
+    Dir::Etc::Parts.
+
+
+SEE ALSO
+apt-cache(8), apt-cdrom(8), dpkg(1), dselect(1), sources.list(5),
+apt.conf(5), apt-config(8), apt-secure(8), apt_preferences(5)
+
+apt-get returns zero on normal operation, decimal 100 on error.
+
+http://packages.qa.debian.org/a/apt.html
+08 November 2008
+

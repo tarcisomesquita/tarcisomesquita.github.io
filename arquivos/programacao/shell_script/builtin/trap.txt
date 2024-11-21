@@ -1,0 +1,31 @@
+
+trap [action signal ...]
+
+Cause the shell to parse and execute action when any of the speci-
+fied signals are received.  The signals are specified by signal
+number or as the name of the signal.  If signal is 0, the action
+is executed when the shell exits.  action may be null, which cause
+the specified signals to be ignored.  With action omitted or set
+to '-' the specified signals are set to their default action.
+When the shell forks off a subshell, it resets trapped (but not
+ignored) signals to the default action.  The trap command has no
+effect on signals that were ignored on entry to the shell.  trap
+without any arguments cause it to write a list of signals and
+their associated action to the standard output in a format that is
+suitable as an input to the shell that achieves the same trapping
+results.
+
+Examples:
+
+      trap
+
+List trapped signals and their corresponding action
+
+      trap '' INT QUIT tstp 30
+
+Ignore signals INT QUIT TSTP USR1
+
+      trap date INT
+
+Print date upon receiving signal INT
+

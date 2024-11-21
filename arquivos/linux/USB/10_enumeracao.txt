@@ -1,0 +1,3 @@
+
+Whenever a USB device is attached to the bus it will be enumerated by the USB subsystem - i.e an unique device number (1-127) is assigned and then the device descriptor is read. Such a desciptor is a data structure which contains information about the device and its properties.
+

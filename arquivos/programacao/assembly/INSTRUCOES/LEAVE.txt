@@ -1,0 +1,32 @@
+
+LEAVE – High Level Procedure Exit 1100 1001
+
+
+Procedure entry and exit:
+pushl %ebp
+movl %esp, %ebp
+
+movl %ebp, %esp
+popl %ebp
+or by executing the single instruction
+leave
+which is equivalent to the above two.
+
+              .text
+              .globl _main
+_string:     .ascii "This is a string\0"
+_main:
+               pushl $_string
+               call _printString
+               addl $4, %esp
+               ret
+_printString:
+               pushl %ebp
+               movl %esp, %ebp
+               pushl 8(%ebp)
+               call _printf
+               addl $4, %esp
+               leave
+               ret
+
+

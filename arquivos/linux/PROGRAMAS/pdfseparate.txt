@@ -1,0 +1,5 @@
+pdfseparate -f   1 -l   9 FIS_V1.pdf FIS_V1_00%d.pdf
+pdfseparate -f  10 -l  99 FIS_V1.pdf FIS_V1_0%d.pdf
+pdfseparate -f 100 -l 999 FIS_V1.pdf FIS_V1_%d.pdf
+
+pdftoppm FIS_V1_075.pdf | pnmtojpeg > 0.jpeg

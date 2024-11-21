@@ -1,0 +1,19 @@
+gsettings set org.gnome.settings-daemon.plugins.power lid-close-ac-action 'nothing'
+gsettings set org.gnome.desktop.session idle-delay uint32 0
+
+gsettings set org.gnome.desktop.media-handling autorun-never true
+gsettings set org.gnome.desktop.media-handling autorun-x-content-start-app "[]"
+gsettings set org.gnome.desktop.media-handling automount-open false
+gsettings set org.gnome.desktop.media-handling automount false
+gsettings set com.canonical.indicator.sound global-mute true
+gsettings set com.canonical.indicator.sound preferred-media-players "[]"
+
+gsettings set com.canonical.unity.webapps preauthorized-domains "[]"
+gsettings set org.gnome.desktop.background picture-options 'none'
+gsettings set org.gnome.desktop.background color-shading-type 'solid'
+gsettings set org.gnome.desktop.background primary-color '#6666bbbbffff'
+gsettings set org.gnome.libgnomekbd.keyboard layouts "['pt', 'br', 'br\tdvorak', 'br\tnativo']"
+gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'br')]"
+gsettings set com.canonical.Unity.Launcher favorites "['unity://running-apps', 'unity://expo-icon', 'unity://devices']"
+gsettings set com.canonical.Unity integrated-menus true
+

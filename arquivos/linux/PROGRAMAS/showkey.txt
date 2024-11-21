@@ -1,0 +1,8 @@
+showkey [-h|--help] [-a|--ascii] [-s|--scancodes] [-k|--keycodes]
+
+assign keycodes with setkeycodes(8).
+
+
+SEE ALSO
+       loadkeys(1), dumpkeys(1), keymaps(5), setkeycodes(8)
+

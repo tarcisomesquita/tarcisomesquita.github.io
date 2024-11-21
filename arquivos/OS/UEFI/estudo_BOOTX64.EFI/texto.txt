@@ -1,0 +1,206 @@
+./prog_PE.elf BOOTX64.EFI
+ImageBase:                   .quad 0x0000000068180000     # 0x00B0 posição no espaço relativo da memória que o Windows carregará o aplicativo.
+SectionAlignment:            .long 0x00001000     # 0x00B8 alinhamento de cada uma das seções (4kB)
+FileAlignment:               .long 0x00000200     # 0x00BC alinhamento das seções no arquivo em disco (512 B)
+MajorOperatingSystemVersion: .word 0x0004         # 0x00C0 
+MinorOperatingSystemVersion: .word 0x0000         # 0x00C2 
+MajorImageVersion:           .word 0x0000         # 0x00C4 
+MinorImageVersion:           .word 0x0000         # 0x00C6 
+MajorSubsystemVersion:       .word 0x0005         # 0x00C8 
+MinorSubsystemVersion:       .word 0x0002         # 0x00CA 
+Win32VersionValue:           .long 0x00000000     # 0x00CC 
+SizeOfImage:                 .long 0x0000A000     # 0x00D0 Tamanho carregado na memória. Incluindo todos os cabeçalhos.
+SizeOfHeaders:               .long 0x00000400     # 0x00D4 Sum of size of the DOS Header, PE Header and Object Table
+CheckSum:                    .long 0x0000E7B1     # 0x00D8 only for trusted services
+Subsystem:                   .word 0x000A         # 0x00DC EFI
+DllCharacteristics:          .word 0x0000         # 0x00DE 
+SizeOfStackReserve:          .quad 0x0000000000200000     # 0x00E0 defaults to 0x100000 (1MB). Tamanho máximo que a pilha poderá ter.
+SizeOfStackCommit:           .quad 0x0000000000001000     # 0x00E8 defaults to 0x1000 bytes (1 page)
+SizeOfHeapReserve:           .quad 0x0000000000100000     # 0x00F0 Parece que isso aqui é para as outras thread criados por este processo.
+SizeOfHeapCommit:            .quad 0x0000000000001000     # 0x00F8 
+LoaderFlags:                 .long 0x00000000     # 0x0100 
+NumberOfRvaAndSizes:         .long 0x00000010     # 0x0104 especifica o número de diretório de dados
+
+DATA_DIRECTORY:
+ExportVirtualAddress:        .long 0x00007000     # 0x0108 
+ExportSize:                  .long 0x00000A89     # 0x010C 
+
+ImportVirtualAddress:        .long 0x00008000     # 0x0110 
+ImportSize:                  .long 0x00000014     # 0x0114 
+
+ResourceVirtualAddress:      .long 0x00000000     # 0x0118 
+ResourceSize:                .long 0x00000000     # 0x011C 
+
+ExceptionVirtualAddress:     .long 0x00004000     # 0x0120 
+ExceptionSize:               .long 0x0000000C     # 0x0124 
+
+CertificateVirtualAddress:   .long 0x00000000     # 0x0128 
+CertificateSize:             .long 0x00000000     # 0x012C 
+
+RelocationVirtualAddress:    .long 0x00009000     # 0x0130 
+RelocationSize:              .long 0x00000018     # 0x0134 
+
+DebugVirtualAddress:         .long 0x00000000     # 0x0138 
+DebugSize:                   .long 0x00000000     # 0x013C 
+
+ArchitectureVirtualAddress:  .long 0x00000000     # 0x0140 
+ArchitectureSize:            .long 0x00000000     # 0x0144 
+
+GlobalVirtualAddress:        .long 0x00000000     # 0x0148 
+GlobalSize:                  .long 0x00000000     # 0x014C 
+
+TLSVirtualAddress:           .long 0x00000000     # 0x0150 
+TLSSize:                     .long 0x00000000     # 0x0154 
+
+ConfigVirtualAddress:        .long 0x00000000     # 0x0158 
+ConfigSize:                  .long 0x00000000     # 0x015C 
+
+BoundVirtualAddress:         .long 0x00000000     # 0x0160 
+BoundSize:                   .long 0x00000000     # 0x0164 
+
+IATVirtualAddress:           .long 0x00000000     # 0x0168 
+IATSize:                     .long 0x00000000     # 0x016C 
+
+DelayVirtualAddress:         .long 0x00000000     # 0x0170 
+DelaySize:                   .long 0x00000000     # 0x0174 
+
+CLRVirtualAddress:           .long 0x00000000     # 0x0178 
+CLRSize:                     .long 0x00000000     # 0x017C 
+
+ReservedVirtualAddress:      .long 0x00000000     # 0x0180 
+ReservedSize:                .long 0x00000000     # 0x0184 
+
+
+section_header:
+Name_0:                      .byte '.', 't', 'e', 'x', 't', 0x00, 0x00, 0x00     # 0x0188 
+VirtualSize_0:               .long 0x00000110     # 0x0190 Tamanho da sessão no arquivo.
+VirtualAddress_0:            .long 0x00001000     # 0x0194 Posição da seção na memória a partir da base
+SizeOfRawData_0:             .long 0x00000200     # 0x0198 Tamanho da sessão no arquivo incluindo alinhamento.
+PointerToRawData_0:          .long 0x00000400     # 0x019C Posição da seção dentro do arquivo
+PointerToRelocations_0:      .long 0x00000000     # 0x01A0 
+PointerToLinenumbers_0:      .long 0x00000000     # 0x01A4 
+NumberOfRelocations_0:       .word 0x0000         # 0x01A8 
+NumberOfLinenumbers_0:       .word 0x0000         # 0x01AA 
+Characteristics_0:           .long 0x60500020     # 0x01AC 
+                                                           # 0x00000020   Code section.
+                                                           # 0x20000000   Executable section.
+                                                           # 0x40000000   Readable section.
+
+Name_1:                      .byte '.', 'd', 'a', 't', 'a', 0x00, 0x00, 0x00     # 0x01B0 
+VirtualSize_1:               .long 0x00000450     # 0x01B8 Tamanho da sessão no arquivo.
+VirtualAddress_1:            .long 0x00002000     # 0x01BC Posição da seção na memória a partir da base
+SizeOfRawData_1:             .long 0x00000600     # 0x01C0 Tamanho da sessão no arquivo incluindo alinhamento.
+PointerToRawData_1:          .long 0x00000600     # 0x01C4 Posição da seção dentro do arquivo
+PointerToRelocations_1:      .long 0x00000000     # 0x01C8 
+PointerToLinenumbers_1:      .long 0x00000000     # 0x01CC 
+NumberOfRelocations_1:       .word 0x0000         # 0x01D0 
+NumberOfLinenumbers_1:       .word 0x0000         # 0x01D2 
+Characteristics_1:           .long 0xC0500040     # 0x01D4 
+                                                           # 0x00000040   Initialized data section.
+                                                           # 0x40000000   Readable section.
+                                                           # 0x80000000   Writeable section.
+
+Name_2:                      .byte '.', 'r', 'd', 'a', 't', 'a', 0x00, 0x00     # 0x01D8 
+VirtualSize_2:               .long 0x00000070     # 0x01E0 Tamanho da sessão no arquivo.
+VirtualAddress_2:            .long 0x00003000     # 0x01E4 Posição da seção na memória a partir da base
+SizeOfRawData_2:             .long 0x00000200     # 0x01E8 Tamanho da sessão no arquivo incluindo alinhamento.
+PointerToRawData_2:          .long 0x00000C00     # 0x01EC Posição da seção dentro do arquivo
+PointerToRelocations_2:      .long 0x00000000     # 0x01F0 
+PointerToLinenumbers_2:      .long 0x00000000     # 0x01F4 
+NumberOfRelocations_2:       .word 0x0000         # 0x01F8 
+NumberOfLinenumbers_2:       .word 0x0000         # 0x01FA 
+Characteristics_2:           .long 0x40500040     # 0x01FC 
+                                                           # 0x00000040   Initialized data section.
+                                                           # 0x40000000   Readable section.
+
+Name_3:                      .byte '.', 'p', 'd', 'a', 't', 'a', 0x00, 0x00     # 0x0200 
+VirtualSize_3:               .long 0x0000000C     # 0x0208 Tamanho da sessão no arquivo.
+VirtualAddress_3:            .long 0x00004000     # 0x020C Posição da seção na memória a partir da base
+SizeOfRawData_3:             .long 0x00000200     # 0x0210 Tamanho da sessão no arquivo incluindo alinhamento.
+PointerToRawData_3:          .long 0x00000E00     # 0x0214 Posição da seção dentro do arquivo
+PointerToRelocations_3:      .long 0x00000000     # 0x0218 
+PointerToLinenumbers_3:      .long 0x00000000     # 0x021C 
+NumberOfRelocations_3:       .word 0x0000         # 0x0220 
+NumberOfLinenumbers_3:       .word 0x0000         # 0x0222 
+Characteristics_3:           .long 0x40300040     # 0x0224 
+                                                           # 0x00000040   Initialized data section.
+                                                           # 0x40000000   Readable section.
+
+Name_4:                      .byte '.', 'x', 'd', 'a', 't', 'a', 0x00, 0x00     # 0x0228 
+VirtualSize_4:               .long 0x0000000C     # 0x0230 Tamanho da sessão no arquivo.
+VirtualAddress_4:            .long 0x00005000     # 0x0234 Posição da seção na memória a partir da base
+SizeOfRawData_4:             .long 0x00000200     # 0x0238 Tamanho da sessão no arquivo incluindo alinhamento.
+PointerToRawData_4:          .long 0x00001000     # 0x023C Posição da seção dentro do arquivo
+PointerToRelocations_4:      .long 0x00000000     # 0x0240 
+PointerToLinenumbers_4:      .long 0x00000000     # 0x0244 
+NumberOfRelocations_4:       .word 0x0000         # 0x0248 
+NumberOfLinenumbers_4:       .word 0x0000         # 0x024A 
+Characteristics_4:           .long 0x40300040     # 0x024C 
+                                                           # 0x00000040   Initialized data section.
+                                                           # 0x40000000   Readable section.
+
+Name_5:                      .byte '.', 'b', 's', 's', 0x00, 0x00, 0x00, 0x00     # 0x0250 
+VirtualSize_5:               .long 0x00000098     # 0x0258 Tamanho da sessão no arquivo.
+VirtualAddress_5:            .long 0x00006000     # 0x025C Posição da seção na memória a partir da base
+SizeOfRawData_5:             .long 0x00000000     # 0x0260 Tamanho da sessão no arquivo incluindo alinhamento.
+PointerToRawData_5:          .long 0x00000000     # 0x0264 Posição da seção dentro do arquivo
+PointerToRelocations_5:      .long 0x00000000     # 0x0268 
+PointerToLinenumbers_5:      .long 0x00000000     # 0x026C 
+NumberOfRelocations_5:       .word 0x0000         # 0x0270 
+NumberOfLinenumbers_5:       .word 0x0000         # 0x0272 
+Characteristics_5:           .long 0xC0600080     # 0x0274 
+                                                           # 0x00000080   Uninitialized data section.
+                                                           # 0x40000000   Readable section.
+                                                           # 0x80000000   Writeable section.
+
+Name_6:                      .byte '.', 'e', 'd', 'a', 't', 'a', 0x00, 0x00     # 0x0278 
+VirtualSize_6:               .long 0x00000A89     # 0x0280 Tamanho da sessão no arquivo.
+VirtualAddress_6:            .long 0x00007000     # 0x0284 Posição da seção na memória a partir da base
+SizeOfRawData_6:             .long 0x00000C00     # 0x0288 Tamanho da sessão no arquivo incluindo alinhamento.
+PointerToRawData_6:          .long 0x00001200     # 0x028C Posição da seção dentro do arquivo
+PointerToRelocations_6:      .long 0x00000000     # 0x0290 
+PointerToLinenumbers_6:      .long 0x00000000     # 0x0294 
+NumberOfRelocations_6:       .word 0x0000         # 0x0298 
+NumberOfLinenumbers_6:       .word 0x0000         # 0x029A 
+Characteristics_6:           .long 0x40300040     # 0x029C 
+                                                           # 0x00000040   Initialized data section.
+                                                           # 0x40000000   Readable section.
+
+Name_7:                      .byte '.', 'i', 'd', 'a', 't', 'a', 0x00, 0x00     # 0x02A0 
+VirtualSize_7:               .long 0x00000014     # 0x02A8 Tamanho da sessão no arquivo.
+VirtualAddress_7:            .long 0x00008000     # 0x02AC Posição da seção na memória a partir da base
+SizeOfRawData_7:             .long 0x00000200     # 0x02B0 Tamanho da sessão no arquivo incluindo alinhamento.
+PointerToRawData_7:          .long 0x00001E00     # 0x02B4 Posição da seção dentro do arquivo
+PointerToRelocations_7:      .long 0x00000000     # 0x02B8 
+PointerToLinenumbers_7:      .long 0x00000000     # 0x02BC 
+NumberOfRelocations_7:       .word 0x0000         # 0x02C0 
+NumberOfLinenumbers_7:       .word 0x0000         # 0x02C2 
+Characteristics_7:           .long 0xC0300040     # 0x02C4 
+                                                           # 0x00000040   Initialized data section.
+                                                           # 0x40000000   Readable section.
+                                                           # 0x80000000   Writeable section.
+
+Name_8:                      .byte '.', 'r', 'e', 'l', 'o', 'c', 0x00, 0x00     # 0x02C8 
+VirtualSize_8:               .long 0x00000018     # 0x02D0 Tamanho da sessão no arquivo.
+VirtualAddress_8:            .long 0x00009000     # 0x02D4 Posição da seção na memória a partir da base
+SizeOfRawData_8:             .long 0x00000200     # 0x02D8 Tamanho da sessão no arquivo incluindo alinhamento.
+PointerToRawData_8:          .long 0x00002000     # 0x02DC Posição da seção dentro do arquivo
+PointerToRelocations_8:      .long 0x00000000     # 0x02E0 
+PointerToLinenumbers_8:      .long 0x00000000     # 0x02E4 
+NumberOfRelocations_8:       .word 0x0000         # 0x02E8 
+NumberOfLinenumbers_8:       .word 0x0000         # 0x02EA 
+Characteristics_8:           .long 0x42300040     # 0x02EC 
+                                                           # 0x00000040   Initialized data section.
+                                                           # 0x02000000   Section can be discarded.
+                                                           # 0x40000000   Readable section.
+
+ImportTable:
+OFT_null:                           .long 0x00000000     # 0x1E00 
+Date_null:                          .long 0x00000000     # 0x1E04 
+Chain_null:                         .long 0x00000000     # 0x1E08 
+Name_null:                          .long 0x00000000     # 0x1E0C 
+FT_null:                            .long 0x00000000     # 0x1E10 
+
+# Nome das bibliotecas
+
+

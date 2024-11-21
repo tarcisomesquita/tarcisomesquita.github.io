@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Webcam</title>
+</head>
+ 
+<body>
+
+<video autoplay="true" id="video"></video>
+
+<script>
+if (navigator.mediaDevices.getUserMedia) {
+  navigator.mediaDevices.getUserMedia({ video: true }).then(stream => document.getElementById('video').srcObject = stream);
+}
+
+// right click and whatch picture-in-picture
+
+</script>
+</body>
+</html>

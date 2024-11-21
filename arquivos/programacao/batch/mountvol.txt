@@ -1,0 +1,40 @@
+Cria, exclui ou lista um ponto de montagem de volume.
+
+MOUNTVOL [unidade:]caminho NomeVolume
+MOUNTVOL [unidade:]caminho /D
+MOUNTVOL [unidade:]caminho /L
+MOUNTVOL [unidade:]caminho /P
+MOUNTVOL /R
+MOUNTVOL /N
+MOUNTVOL /E
+
+    caminho     Especifica a pasta NTFS existente onde residir† o ponto de
+                montagem.
+    NomeVolume  Especifica o nome de volume que Ç o destino do ponto de
+                montagem.
+    /D          Remove o ponto de montagem do volume da pasta especificada.
+    /L          Lista o nome do volume montado para a pasta especificada.
+    /P          Remove o ponto de montagem do volume da pasta especificada,
+                desmonta o volume e o transforma em volume que n∆o pode ser
+                montado. Vocà pode tornar o volume mont†vel novamente criando
+                um ponto de montagem do volume.
+    /R          Remove pastas e configuraá‰es do Registro de pontos de
+                montagem de volume que n∆o est∆o mais no sistema.
+    /N          Desativa a montagem autom†tica de novos volumes.
+    /E          Reativa a montagem autom†tica de novos volumes.
+
+Os poss°veis valores para VolumeName, juntamente com os pontos de montagem
+atuais, s∆o:
+
+    \\?\Volume{726da5c3-62b2-11e9-bc60-806e6f6e6963}\
+        *** SEM PONTOS DE MONTAGEM ***
+
+    \\?\Volume{726da5c4-62b2-11e9-bc60-806e6f6e6963}\
+        C:\
+
+    \\?\Volume{a519a1d7-62b6-11e9-8b12-24f5aa59ec97}\
+        F:\
+
+    \\?\Volume{726da5c7-62b2-11e9-bc60-806e6f6e6963}\
+        D:\
+

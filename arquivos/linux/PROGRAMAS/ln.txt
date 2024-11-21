@@ -1,0 +1,8 @@
+
+ln -s /home/ubuntu/Desktop/teste.txt /home/ubuntu/test
+
+cria o link:
+/home/ubuntu/test -> /home/ubuntu/Desktop/teste.txt
+
+
+If you use ln with no options, you create a hard link, which is essentially a linked copy of the same file instead of a path to the original, the permissions would be those of a normal file.

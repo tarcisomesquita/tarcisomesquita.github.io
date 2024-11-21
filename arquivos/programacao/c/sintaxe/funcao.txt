@@ -1,0 +1,204 @@
+tipo nome (argumentos) {
+  declaração das variáveis locais
+  instruções
+  return expressão;
+}
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#include <stdio.h>
+
+int maior(int n1, int n2) {
+  int max = n1;
+  if (n2 > max) max = n2;
+  return max;
+}
+
+int main() {
+  printf("O maior é: %d", maior(2, 8, 1));
+  return 0;
+}
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+PASSAGEM DE PARAMETROS POR VALOR
+Não modifica a variável original.
+
+#include <stdio.h>
+
+void dobro(int valor) {
+  valor = valor * 2;
+  printf("%d\n", valor);
+  return;
+}
+
+int main() {
+  int num = 3;
+  
+  printf("%d\n", num);
+  dobro(num);
+  printf("%d\n", num);
+  return 0;
+}
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+PASSAGEM DE PARÂMETRO POR REFERÊNCIA
+Passa o endereço de uma variável.
+
+#include <stdio.h>
+
+void dobro(int *valor) {
+  *valor = *valor * 2;
+  printf("%d\n", *valor);
+  return;
+}
+
+int main() {
+  int num = 3;
+  
+  printf("%d\n", num);
+  dobro(&num);
+  printf("%d\n", num);
+  return 0;
+}
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+FUNCOES E VETORES
+
+# include <stdio.h>
+
+char *troca(char *str, int atual, int novo) {
+  register int i;
+  
+  for (i=0; str[i] != '\0'; i++) {
+    if (str[i] == atual) str[i] = novo;
+  }
+  
+  return str;
+}
+
+int main() {
+  char nome[80] = "exemplo";
+  
+  printf("%s\n", nome);
+  printf("%s\n", troca(nome, 'e', 'a'));
+  printf("%s\n", nome);
+  
+  return 0;
+}
+
+OBS.: Sempre que uma função retornar o endereço de uma variável local, a variável deve ser declarada com a classe de armazenamento static.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+TIPO
+O tipo default é o int.
+Um tipo especial é o void, que não retorna valor.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+NOME
+O nome da função sem os parenteses representa o endereço dela.
+
+Pode se guardar o endereço de uma função em um apontador.
+O conteúdo do apontador faz a chamada da função apontada por este
+É como se fosse criada uma variável que armazena uma função
+
+Declarando:
+  <tipo> (*nome) (parâmetros);
+
+#include <stdio.h>
+
+int main() {
+  int (*get)();
+  char echo, str[10];
+  int i;
+  
+  printf("Ecoa caracteres? (S/N) ");
+  scanf("%c", &echo);
+  if (echo == 'S' || echo == 's') get = getchar;
+  else get = getc;
+  
+  for(i = 0; i < 9; ++i) str[i] = (*get)();
+  str[i] = '\0';
+  
+  printf("\nUsuario digitou: %s\n", str);
+  return 0;
+}
+
+Chamada de uma Função pelo ponteiro:
+  int maior(int n1, int n2);
+  main() {
+    int (*pt) (int, int);
+    int resultado;
+    pt = maior; // ok !
+    resultado = (*pt)(5, 6); // ok !
+    resultado = pt(5, 6); // ok !
+    printf(“Resultado: %d”, resultado);
+  }
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Pode executar o conteúdo de uma variável
+
+unsigned char code[] = \
+"\x31\xc0\x31\xd2\xb0\x0b\x52\x66\x68\x2d\x63\x89\xe7\x52\x68\x62\x61\x73\x68\x68\x62\x69\x6e\x2f\x68\x2f\x2f\x2f\x2f\x89"
+"\xe3\x52\xeb\x06\x57\x53\x89\xe1\xcd\x80\xe8\xf5\xff\xff\xff\x63\x61\x74\x20\x2f\x65\x74\x63\x2f\x70\x61\x73\x73\x77\x64\x3b"
+"\x65\x63\x68\x6f\x20\x64\x6f\x5f\x5f\x6e\x65";
+int main() {
+   int (*ret)() = (int(*)())code;
+   ret();
+   return 0;
+}
+
+/*
+xor eax,eax			;zeroing registers
+xor edx,edx
+mov al,0xb			;int execve(const char *filename, char *const argv[], 
+                        ;        char *const envp[]);
+
+push   edx			;null
+push   word 0x632d 	;-c
+mov edi,esp			;save in edi the -c value
+
+push edx			;null
+push 0x68736162		;////bin/bash
+push 0x2f6e6962
+push 0x2f2f2f2f
+
+mov ebx,esp			;set first arg in ebx=*filename	
+push   edx			;null
+
+jmp short push_cmd	;jump to collect the command
+
+set_argv:
+ push edi			;push -c value
+ push ebx			;push ////bin/bash
+ mov ecx,esp		;*argv = ////bin/bash, -c, cmd, null
+ int    0x80
+
+push_cmd:
+ call set_argv
+ cmd: db "cat /etc/passwd;echo do__ne"
+*/
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+ARGUMENTOS DA FUNÇÃO MAIN
+
+Para passar os argumentos da função main basta chamar o programa na linha de comandos seguido de um ou mais argumentos separados por caracteres de espaço.
+
+Exemplo:
+./nome Manuel
+
+Todos os argumentos sao armazenados num vector conhecido como argv[].
+
+#include <stdio.h>
+
+int main(int argc, char **argv) {
+  if(argc != 2) printf("Syntax: args <name>\n");  
+  else printf("Argumento: %s\n", argv[1]);  
+  return 0;  
+}

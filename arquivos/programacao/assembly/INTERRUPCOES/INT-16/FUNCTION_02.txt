@@ -1,0 +1,17 @@
+
+Return Shift Flag Status (02h)
+
+Input Parameters:
+       AH - 02h, indicating the Return Shift Flag Status.
+
+Output Parameters:
+       AL - Current shift status, in the form of a bit mask, one bit per shift key.
+              10000000b - INS key is active.
+              01000000b - CAPS LOCK key is active.
+              00100000b - NUM LOCK key is active.
+              00010000b - SCROLL LOCK key is active.
+              00001000b - ALT key is pressed down.
+              00000100b - CTRL key is pressed down.
+              00000010b - LEFT SHIFT key is pressed down.
+              00000001b - RIGHT SHIFT key is pressed down.
+

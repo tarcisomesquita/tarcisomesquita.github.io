@@ -1,0 +1,56 @@
+
+ 
+5.1.4.3.Interrupcao 16H
+
+Veremos duas funcoes da interrupcao 16H. a exemplo das demais interrupcoes,
+usa-se o registrador aH para chama-las.
+
+ 
+
+Funcoes da interrupcao 16h
+
+Funcao 00H, le um caracter do teclado.
+Funcao 01H, le o estado atual do teclado.
+
+Funcao 00H uso:
+
+Ler um caracter do teclado.
+
+Registradores de chamada:
+
+aH = 00H
+
+Registradores de retorno:
+
+aH = Codigo da tecla pressionada
+
+aL = Valor aSCII do caracter
+
+Quando se usa esta interrupcao, os programas executam ate que uma tecla seja
+pressionada. Se e um valor aSCII, e armazenado no registrador aH. Caso
+contrario, o codigo e armazenado no registrador aL e aH=0.
+
+este valor de aL pode ser utilizado quando queremos detectar teclas que não
+estão diretamente representadas pelo seu valor aSCII, tais como
+[aLT][CoNTRoL].
+
+ 
+
+Funcao 01h
+
+uso:
+
+Ler o estado do teclado
+
+Registradores de chamada:
+
+aH = 01H
+
+Registradores de retorno:
+
+Se o registrador de flag e zero, significa que ha informacao no buffer de
+teclado na memoria. Caso contrario, o buffer esta vazio. Portanto o valor do
+registrador aH sera o valor da tecla armazenada no buffer.
+ 
+
+

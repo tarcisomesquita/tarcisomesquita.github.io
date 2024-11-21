@@ -1,0 +1,18 @@
+write programs send message to other user terminals (ttys).
+
+$ who
+ubuntu   tty1         2014-07-24 18:32
+...
+ubuntu   pts/0        2014-07-24 18:33 (:0.0)
+ubuntu   pts/1        2014-07-24 18:33 (:0.0)
+ubuntu   pts/2        2014-07-24 22:10 (:0.0)
+$ write ubuntu pts/2
+Isso é um teste
+Ctr+D
+
+To receive messages
+$ mesg yes
+$ mesg no
+
+To see which connected users accept messages from others use who -w.
+

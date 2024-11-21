@@ -1,0 +1,35 @@
+The MapInfo interchange format consists of a pair of files with the extensions .MIF and .MID. Both of these files are text files (and can be viewed in a text editor).
+
+MIF File
+The .MIF file contains information on the projection, data attributes and types as well as the geographic information contained in the table. An example .MIF file is given below. Lines 1 to 3 are header information, line 4 defines the projection of the table. Line 5 specifies the number of associated data attributes. A separate line follows for each attribute column (in this case 1), this defines the type and length of this field (in this case we have an attribute named "Comment" which is a character field of length 250. The 7th line ("Data") signals the start of the GIS data.
+
+Following this are any number of "Point", "Line", "Polyline" and "Region" objects (there are other types of objects such as "Ellipses") but these four are the most common. In the example below the only object is a Polyline ("PLine") with two vertices, the coordinates of these are listed on lines 10 and 11. An object style is associated with each object "Pen (1,2,0)".
+Example .MIF file:
+
+Version   600
+Charset "WindowsLatin1"
+Delimiter ","
+CoordSys Earth Projection 8, 116, "m", 147, 0, 0.9996, 500000, 10000000 Bounds (-7745844.29605, 2035.05684549) (8745844.29605, 19997964.9432)
+Columns 1
+  Comment Char(250)
+Data
+
+Pline 2
+333788.63 5815865.7
+338831.12 5815865.7
+    Pen (1,2,0)
+
+MID File
+The .MID file contains the attribute data associated with the GIS objects. These are stored in a comma separated variable (csv) format with no columns titles (as this is stored in the .MIF file).
+In the example above, the .MID file contains only one line (as there was only one object in the .MIF file). The data attributed with this is a "Comment" with a length of up to 250 characters. The .MID file below is associated with the .MIF file example above.
+Example .MID file:
+
+"This line defines the X-axis of the TUFLOW model"
+
+A more complex .MID file is presented below, this is from a 2d_zpt layer, where the fields are "N", "M" "Type" and elevation. This example contains five GIS objects.
+
+15,943,"H",115.491
+15,944,"H",115.379
+15,944,"V",115.412
+15,945,"H",115.357
+15,945,"V",115.341

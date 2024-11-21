@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" width="300px" height="500px" viewBox="0 0 300 500" zoomAndPan="disable">
+<defs>
+  <g id="thickTic">
+    <line x1="-6" y1="0" x2="0" y2="0" style="fill: none; stroke: black; stroke-width: 2px;"/> 
+  </g>
+  <g id="thinTic">
+    <line x1="-4" y1="0" x2="0" y2="0" style="fill: none; stroke: black; stroke-width: 1px;"/> 
+  </g>
+  <g id="compass">
+    <circle cx="0" cy="-40" r="6" style="stroke: gold; stroke-width: 3px; fill: black;"/>
+    <circle cx="0" cy="0" r="30" style="stroke: gold; stroke-width: 4px; fill: none;"/>
+    <use x="30" y="0" xlink:href="#thickTic"/> 
+    <use x="30" y="0" xlink:href="#thickTic" transform="rotate(90)"/> 
+    <use x="30" y="0" xlink:href="#thickTic" transform="rotate(180)"/> 
+    <use x="30" y="0" xlink:href="#thickTic" transform="rotate(270)"/> 
+    <use x="30" y="0" xlink:href="#thinTic" transform="rotate(45)"/> 
+    <use x="30" y="0" xlink:href="#thinTic" transform="rotate(135)"/> 
+    <use x="30" y="0" xlink:href="#thinTic" transform="rotate(-45)"/> 
+    <use x="30" y="0" xlink:href="#thinTic" transform="rotate(-135)"/> 
+  </g>
+  <g id="compassPt">
+    <polyline points="-5,0 0,-22 5,0" style="fill: white; stroke-width: 1px; stroke: black;"/>
+    <polyline points="-5,0 0,22 5,0" style="fill: red; stroke-width: 1px; stroke: black;"/>
+    <text style="font-size: 8px; font-family: Verdana, Bitstream Vera Sans, Sans;" x="-3" y="10">N</text>
+  </g>
+<style type="text/css">
+    path{
+      stroke: black;
+      fill: none;
+      stroke-width: 2px;
+    }
+    *[vector="yes"]{
+      marker-end: url("#arrow"); 
+      marker-mid: url("#arrow");
+    }
+</style>
+</defs>
+<use x="75" y="110" xlink:href="#compass"/>
+<use x="75" y="110" xlink:href="#compassPt" transform="rotate(-60, 75, 110)"/>
+<use x="150" y="50" xlink:href="#compass"/>
+<use x="150" y="50" xlink:href="#compassPt"/>
+<use x="225" y="110" xlink:href="#compass"/>
+<use x="225" y="110" xlink:href="#compassPt" transform="rotate(60, 225, 110)"/>
+<use x="75" y="390" xlink:href="#compass"/>
+<use x="75" y="390" xlink:href="#compassPt" transform="rotate(60, 75, 390)"/>
+<use x="150" y="450" xlink:href="#compass"/>
+<use x="150" y="450" xlink:href="#compassPt"/>
+<use x="225" y="390" xlink:href="#compass"/>
+<use x="225" y="390" xlink:href="#compassPt" transform="rotate(-60, 225, 390)"/>
+<rect x="120" y="130" width="60" height="120" style="stroke: black; stroke-width: 1px; fill: none;"/>
+<rect x="120" y="250" width="60" height="120" style="stroke: black; stroke-width: 1px; fill: red;"/>
+<text x="138" y="160" style="font-size: 32px; font-family: Verdana, Bitstream Vera Sans, Sans;">S</text>
+<text x="138" y="364" style="font-size: 32px; font-family: Verdana, Bitstream Vera Sans, Sans;">N</text>
+</svg>

@@ -1,0 +1,38 @@
+A classe Object é a superclasse de todas as classes.
+
+Métodos: toString(), getClass()
+
+String linha[] = {"T é uma ação","2 linha"};
+System.out.println(linha.getClass().getTypeName());
+System.out.println(linha.getClass().getFields().length);
+System.out.println(linha.getClass().getMethods().length);
+System.out.println(linha.getClass().getMethods()[0].getName());
+System.out.println(linha.getClass().getMethods()[3].getName());
+System.out.println(linha.getClass().getMethods()[3].getParameterTypes()[0]);
+System.out.println(linha.getClass().getSuperclass().getName());
+System.out.println("linha.length = " + linha.length);
+System.out.println("linha[0].length() = " + linha[0].length());
+System.out.println();
+
+System.out.println(Object.class.getFields().length);
+System.out.println();
+
+System.out.println(Object.class.getMethods().length);
+System.out.println(Object.class.getMethods()[0].getName());
+System.out.println(Object.class.getMethods()[1].getName());
+System.out.println(Object.class.getMethods()[2].getName());
+System.out.println(Object.class.getMethods()[3].getName());
+System.out.println(Object.class.getMethods()[4].getName());
+System.out.println(Object.class.getMethods()[5].getName());
+System.out.println(Object.class.getMethods()[6].getName());
+System.out.println(Object.class.getMethods()[7].getName());
+System.out.println(Object.class.getMethods()[8].getName());
+System.out.println();
+
+System.out.println(Object.class.getMethods()[0].getParameterTypes().length);
+System.out.println(Object.class.getMethods()[1].getParameterTypes().length);
+System.out.println(Object.class.getMethods()[2].getParameterTypes().length);
+System.out.println();
+
+System.out.println(Object.class.getMethods()[0].getParameterTypes()[0].getName());
+System.out.println(Object.class.getMethods()[0].getParameterTypes()[1].getName());

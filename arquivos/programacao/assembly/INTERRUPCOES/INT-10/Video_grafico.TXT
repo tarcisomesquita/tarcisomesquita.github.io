@@ -1,0 +1,234 @@
+
+MODO GRÁFICO VGA: 320x200
+
+Ex.:
+
+MOV AH, 00h
+MOV AL, 13h
+INT 10h ;muda para modo VGA 320x200
+
+MOV AL, 00h
+INT 10h ;muda para modo texto
+
+
+Podemos simplesmente escrever:
+MOV AX, 13h
+INT 10h
+
+Já que MOV AX, 13h vai mover 00 para AH e 13h para AL.
+
+ 
+
+Vamos plotar um pixel.
+
+O modo VGA permite utilizar 256 cores de uma vez (0 - 255), ou seja, utilizaremos apenas 8bits de um registrador para colocar a cor.
+
+Poderíamos simplesmente utilizar-se de funções do INT 10h para isso, mas isso deixaria o programa realmente muito lento se tivéssemos que pintar a tela inteira (precisaríamos repetir 64000 vezes).
+
+Existe um jeito mais fácil de faze-lo: acessando a memória de vídeo diretamente.
+
+O segmento de memória do VGA está no endereço 0A000h, mas e daí? E daí que assim nós podemos escrever um pixel na tela apenas usando comando MOV, isso torna o programa muito mais rápido, no final deste texto eu colocarei todas as instruções do assembler com seus respectivos "ticks" (cada período do clock).
+
+Para plotar um pixel faremos assim:
+
+MOV AX, 0A000h ; o segmento do VGA vai para um registrador
+
+MOV ES, AX ; de segmento (ES)
+
+MOV BX, 32160 ; plota na posição (159,99)
+
+MOV DI, BX
+
+MOV AL, 54 ;cor a ser plotada
+
+MOV ES:[DI], AL ;[ ] significa que estamos movendo para o
+
+;local de memória indicado por DI, e não
+
+;para o registrador DI.
+
+Mas como eu sei que 32160 é a posição (159,99)?
+
+A memória VGA é tratada linearmente (veja a figura abaixo), portanto o offset 0 representa (0,0) o 1 (1,0) o 319 (319,0) e o 320 (0,1), lembrando que se começa a contar do 0,0.
+
+Como então calcular onde plotar? Basta usar esta simples fórmula: x + (320 * y), fácil não?
+
+ 
+
+ 
+
+Então façamos a nossa função PlotPixel:
+
+PlotPixel PROC
+
+ARG x:WORD, y:WORD, cor:BYTE
+
+MOV AX, 0A000h
+
+MOV ES, AX
+
+MOV BX, [x]
+
+MOV DI, BX
+
+MOV AX, [y]
+
+MUL 320
+
+ADD DI, AX
+
+MOV AL, [cor]
+
+MOV ES:[DI], AL
+
+RET
+
+PlotPixel ENDP
+
+Basicamente, é isso, como PlotPixel é um procedimento e não a função principal ela é definida por:
+
+<nome-da-função> PROC
+
+ARG argumento1:tipo, argumento2:tipo, ...
+
+...
+
+RET
+
+<nome-da-função> ENDP
+
+ARG é usado para declarar os argumentos, RET diz para voltar à função principal, tipo pode ser DBYTE, DWORD, DDOUBLE (8 bits, 16 bits, 32 bits).
+
+ 
+
+Antes de prosseguir vamos dar uma palavra sobre otimização. Bem essa função é bastante rápida, e se você tem um computador acima de um 486 você vai achar isso realmente muito rápido, mas quando você está trabalhando com animações, ou atualização de tela constante, isso se tornará excessivamente lento, então o que devemos fazer?
+
+Em primeiro lugar, vamos lembrar que o processador trata tudo como número binário, ou seja 0s e 1s, nesse caso o processo de multiplicação se torna realmente lento, mas existe duas funções que podem nos ajudar no processo de multiplicação e divisão, os chamados ‘shifts’. Os shifts simplesmente arrastam os bits de um registrador para direita ou para a esquerda. Esse processo é realmente rápido para o computador, uma vez que ele apenas move os bits. Mas mover os bits de um número binário para a esquerda é a mesma coisa que multiplicar por uma potência de dois, e para a direita é dividir por um potência de dois:
+
+SHL reg, num
+
+Move os bits para a esquerda num casas.
+
+SHR reg, num
+
+Move os bits para a direita num casas.
+
+Ex.: SHR AX, 1 (move os bits uma casa à direita = dividir por 2)
+
+SHL AX, 3 (move os bits 3 casas à esquerda = multiplicar por 23 = 8)
+
+Você irá notar que 320 não é uma potência de 2, certo, mas 256 e 64 são. Sim, e daí? E daí que 256 + 64 = 320....ou seja, 256 * y + 64 * y = 320 * y.
+
+Agora o código ficará assim:
+
+PlotPixel PROC
+
+ARG x:WORD, y:WORD, cor:BYTE
+
+MOV AX, 0A000h
+
+MOV ES, AX
+
+MOV BX, [y]
+
+MOV DI, BX
+
+SHL BX, 8
+
+SHL DI, 6
+
+ADD DI, BX
+
+MOV DX, [x]
+
+ADD DI, DX
+
+MOV AL, [cor]
+
+MOV ES:[DI], AL
+
+RET
+
+PlotPixel ENDP
+
+Assim ele já está bom o suficiente, existe outros métodos para deixá-lo ainda mais rápido, mas isso eu deixarei para vocês, por enquanto...
+
+Retas Horizontais, Verticais e Diagonais
+
+Para desenhar um reta horizontal é bem simples, basta repetirmos um plot varias vezes sempre indo para a próxima coluna até o final da linha.
+
+PlotHorizontal PROC
+
+ARG x1:WORD, x2:WORD, y:WORD, cor:BYTE
+
+MOV AX, 0A000h
+
+MOV ES, AX
+
+MOV AX, [x1]
+
+MOV CX, [x2]
+
+CMP AX, CX
+
+JNA Desenha
+
+MOV BX, CX
+
+MOV CX, AX
+
+MOV AX, BX
+
+Desenha:
+
+SUB CX, AX
+
+MOV BX, [y]
+
+MOV DI, BX
+
+SHL BX, 8
+
+SHL DI, 6
+
+ADD DI, BX
+
+ADD DI, AX
+
+MOV AX, [cor]
+
+REP STOSB
+
+RET
+
+PlotHorizontal ENDP
+
+Oba! Mais duas funções novas à serem consideradas...
+
+REP função
+
+Repete a função o número de vezes indicado no registrador CX, no caso da nossa função ele vai repetir a diferença x2-x1, que é o comprimento da linha.
+
+STOSB
+
+Copia o conteúdo de AL para o segmento de memória apontado por ES:DI.
+
+STOSW
+
+Copia o conteúdo de AX para o segmento de memória apontado por ES:DI
+
+MOVSB
+
+Move um byte do conteúdo apontado por DS:SI para o conteúdo apontado em ES:DI.
+
+MOVSW
+
+Move uma word do conteúdo apontado por DS:SI para o conteúdo apontado em ES:DI.
+
+ 
+
+Para desenhar um linha vertical, é fácil, mas tem-se que considerar certas coisas, tente fazer este por si só e também uma função geral para as linhas. Eu deixarei as respostas com os devidos comentários nas mesmas páginas que se encontra este tutorial. A resposta não é tão diferente do procedimento descrito acima, apenas lembre-se de que a cada STOSB o registrador DI é acrescido de mais 1.
+
+Eu também deixarei um pequeno programa de demonstração, que mostra todas estas funções em uso.
+
+Esta parte de VGA irá se encerrar aqui, existem bons materiais espalhados pela net sobre o assunto, eu também escreverei um tutorial mais específico sobre o assunto.

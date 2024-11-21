@@ -1,0 +1,51 @@
+
+wget -qO - https://qgis.org/downloads/qgis-2021.gpg.key | sudo gpg --no-default-keyring --keyring gnupg-ring:/etc/apt/trusted.gpg.d/qgis-archive.gpg --import
+sudo chmod a+r /etc/apt/trusted.gpg.d/qgis-archive.gpg
+
+sudo add-apt-repository "deb https://qgis.org/ubuntu $(lsb_release -c -s) main"
+
+sudo apt-get update
+
+sudo apt-get install qgis qgis-plugin-grass
+
+Opening mapinfo files
+open QGIS Desktop and navigate to Layer | Add layer | Add vector layer. Select File and set the source.
+
+
+Adding Basemaps
+
+Layers > Data Source Management > XYZ Connections
+Add a New XYZ Connection
+fill the name
+URL from either one of the following
+
+Google Earth Base Map : https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}
+Bing Aerial: http://ecn.t3.tiles.virtualearth.net/tiles/a{q}.jpeg?g=1
+Esri Base Map : https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
+Google Satellite Street Map Hybrid : https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}
+Open Topological Map : https://tile.opentopomap.org/{z}/{x}/{y}.png
+Open Street Map : http://tile.openstreetmap.org/{z}/{x}/{y}.png
+Google Street Map : https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}
+Google Terrain Map : http://mt0.google.com/vt/lyrs=t&hl=en&x={x}&y={y}&z={z}
+Google Terrain Street Hybrid : http://mt0.google.com/vt/lyrs=p&hl=en&x={x}&y={y}&z={z}
+Google Alternative Street Map : http://mt0.google.com/vt/lyrs=r&hl=en&x={x}&y={y}&z={z}
+
+Select the preferred satellite base map from the drop down list and Add
+
+
+Layer > Create Layer > New temporary scratch layer
+layer name:
+geometry type: polygon
+
+button Add polygon
+cada clique desenha o caminho
+clique direito termina o poligono
+
+botão direito na layer
+exportar como tab
+
+botão direito na layer
+propriedades
+simbologia
+single simbol
+choice color

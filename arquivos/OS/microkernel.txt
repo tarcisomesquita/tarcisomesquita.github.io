@@ -1,0 +1,5 @@
+microkernel
+É um núcleo minusculo que trabalha somente com o mínimo de processos possíveis, essenciais para manter o sistema em funcionamento, executando-os no kernel space. Todos os demais processos são executados  por daemons conhecidas como servidores de forma isolada e protegidos no user space.
+
+O sistema fica dividido mais ou menos assim: Servidor I/O , servidor de memória, servidor de gerenciamento de processos, servidor de sistema de arquivos, servidor de device drivers e etc. Esses servidores se comunicam com o microkernel; o sistema monitora continuamente cada um destes processos e se uma falha for detectada, ele substitui automaticamente este processo defeituoso sem reiniciar a máquina (reboot), sem perturbar os outros processos em execução e, principalmente, sem que o usuário perceba.
+

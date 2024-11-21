@@ -1,0 +1,31 @@
+strace -f -i -X verbose nc -l -p 9090
+
+[00007f3b22e7990b] socket(0x2 /* AF_INET */, 0x1 /* SOCK_STREAM */, 0x6 /* IPPROTO_TCP */) = 3
+[00007f3b22e798ae] setsockopt(3, 0x1 /* SOL_SOCKET */, 0x2 /* SO_REUSEADDR */, [1], 4) = 0
+[00007f3b22e798ae] setsockopt(3, 0x1 /* SOL_SOCKET */, 0xf /* SO_REUSEPORT */, [1], 4) = 0
+[00007f3b22e792cb] bind(3, {sa_family=0x2 /* AF_INET */, sin_port="\x23\x82" /* htons(9090) */, sin_addr="\x00\x00\x00\x00" /* inet_addr("0.0.0.0") */}, 16) = 0
+[00007f3b22e7942b] listen(3, 1)         = 0
+
+[00007fddb7c4dc4a] accept4(3, {sa_family=0x2 /* AF_INET */, sin_port="\xc3\x0e" /* htons(49934) */, sin_addr="\x7f\x00\x00\x01" /* inet_addr("127.0.0.1") */}, [128->16], 0x800 /* SOCK_NONBLOCK */) = 4
+[00007fddb7c3fac7] poll([{fd=0, events=0x1 /* POLLIN */}, {fd=4, events=0}, {fd=4, events=0x1 /* POLLIN */}, {fd=1, events=0}], 4, -1) = 1 ([{fd=4, revents=0x1 /* POLLIN */}])
+[00007fddb7c3b142] read(4, "TESTANDO\n", 16384) = 9
+[00007fddb7c3fac7] poll([{fd=0, events=0x1 /* POLLIN */}, {fd=4, events=0}, {fd=4, events=0x1 /* POLLIN */}, {fd=1, events=0x4 /* POLLOUT */}], 4, -1) = 1 ([{fd=1, revents=0x4 /* POLLOUT */}])
+[00007fddb7c3b1e7] write(1, "TESTANDO\n", 9TESTANDO
+) = 9
+[00007fddb7c3fac7] poll([{fd=0, events=0x1 /* POLLIN */}, {fd=4, events=0}, {fd=4, events=0x1 /* POLLIN */}, {fd=1, events=0}], 4, -1
+
+
+[00007fddb7c3fac7] poll([{fd=0, events=0x1 /* POLLIN */}, {fd=4, events=0}, {fd=4, events=0x1 /* POLLIN */}, {fd=1, events=0}], 4, -1TESTE
+) = 1 ([{fd=0, revents=0x1 /* POLLIN */}])
+[00007fddb7c3b142] read(0, "TESTE\n", 16384) = 6
+[00007fddb7c3fac7] poll([{fd=0, events=0x1 /* POLLIN */}, {fd=4, events=0x4 /* POLLOUT */}, {fd=4, events=0x1 /* POLLIN */}, {fd=1, events=0}], 4, -1) = 1 ([{fd=4, revents=0x4 /* POLLOUT */}])
+[00007fddb7c3b1e7] write(4, "TESTE\n", 6) = 6
+[00007fddb7c3fac7] poll([{fd=0, events=0x1 /* POLLIN */}, {fd=4, events=0}, {fd=4, events=0x1 /* POLLIN */}, {fd=1, events=0}], 4, -1) = 1 ([{fd=4, revents=0x1 /* POLLIN */}])
+[00007fddb7c3b142] read(4, "", 16384)   = 0
+[00007fddb7c4d8db] shutdown(4, 0 /* SHUT_RD */) = 0
+[00007fddb7c3b987] close(4)             = 0
+[00007fddb7c3b987] close(3)             = 0
+[00007fddb7c3b987] close(3)             = -1 EBADF (Bad file descriptor)
+[00007fddb7c102c6] exit_group(0)        = ?
+[????????????????] +++ exited with 0 +++
+

@@ -1,0 +1,9 @@
+
+parseInt(string, base)
+
+let a = parseInt("11", 16);
+let b = parseInt("0x11", 16);
+let c = parseInt("11", 10);
+let d = parseInt("11", 8);
+let e = parseInt("11", 2);
+console.log('%d, %d, %d, %d, %d', a, b, c, d, e);

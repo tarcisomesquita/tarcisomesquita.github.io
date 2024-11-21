@@ -1,0 +1,14 @@
+segui o tutorial:
+https://developers.google.com/sheets/api/quickstart/js
+
+Client ID
+763847062506-2h0rvddut1mocvbgpo9jrrh24c5h90er.apps.googleusercontent.com
+
+Client Secret
+GDTFrmyIxAvwyqbqKOa4Owh4
+
+YOUR API KEY
+AIzaSyDXmhsOOtZOpvP1-rVeGHSQZWEpnol7kIg
+
+python -m http.server 8000
+

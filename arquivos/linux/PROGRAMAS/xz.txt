@@ -1,0 +1,78 @@
+
+/bin/tar --create --same-permissions --same-owner 2015-08-30/ | \
+/usr/bin/xz --extreme -9 --compress --format=xz --to-stdout  - > 2015-08-30.tar.xz
+
+cat 2015-08-30.tar.xz | \
+/usr/bin/xz --decompress --to-stdout | \
+/bin/tar --extract 
+
+/usr/bin/xz --decompress --keep file.xz
+
+Preset   DictSize   CompCPU   CompMem   DecMem
+-9       64 MiB     6         674 MiB   65 MiB
+
+maximum text compression
+xz 5.2.1--lzma2=preset=9e,dict=1GiB,lc=4,pb=0
+
+/usr/bin/xz -vv --keep --compress --format=xz --ia64 '--lzma2=preset=9e,dict=256MiB,lc=4,lp=0,pb=0,mf=bt4,mode=normal,nice=20,depth=1000' facebook-names-unique.txt
+O arquivo ficou 1 MiB menor e demorou ~2 h.
+
+Custom compressor filter chains
+   A  custom filter chain allows specifying the compression settings in detail instead of relying on the settings associated to the preset levels. When a custom filter chain is specified, the compression preset level options (-0 ... -9  and  --extreme) are silently ignored.
+
+When compressing, the uncompressed input goes to the first filter, whose output goes to the next filter (if any). The maximum number of filters in the chain is four, but typically a filter chain has only one or two filters.
+
+   A custom filter chain is specified by using one or more filter options in the order they are wanted in the filter chain. The order of filter options is significant!
+
+   --lzma2[=options]
+      Add LZMA2 filter to the filter chain. These filters can be used only as the last filter in the chain.
+      preset=preset
+         Reset all LZMA2 options to preset. Preset consist of an integer, which may be followed by single-letter preset  modifiers.
+         The integer can be from 0 to 9, matching the command line options -0 ... -9. The only supported modifier is currently e.
+      
+      dict=size
+         Dictionary (history buffer) size indicates how many bytes of the recently processed uncompressed data is kept in memory. The algorithm tries to find repeating byte sequences (matches) in the uncompressed data, and replace them with references to the data currently in the dictionary. The bigger the dictionary, the higher is the chance to find a match. Thus, increasing dictionary size usually improves compression ratio, but a dictionary bigger than the uncompressed file is waste of memory. The maximum for compression is currently 1.5 GiB (1536 MiB). The decompressor already supports dictionaries up to one byte less than 4 GiB, which is the  maximum for the LZMA2 stream formats.
+         The same (or bigger) dictionary size is required for decompressing that was used when compressing, thus the memory usage of the decoder is determined by the dictionary size used when compressing. The .xz headers store the dictionary size either as 2^n or 2^n + 2^(n-1), so these sizes are somewhat preferred for compression.
+      
+      lc=lc
+         Specify the number of literal context bits. The minimum is 0 and the maximum is 4; the default is 3. In addition, the sum of lc and lp must not exceed 4.
+         All bytes that cannot be encoded as matches are encoded as literals.  That is, literals are simply 8-bit bytes that are encoded one at a time.
+         The literal coding makes an assumption that the highest lc bits of the previous uncompressed byte correlate with the next byte. E.g. in typical English text, an upper-case letter is often followed by a lower-case letter, and  a  lowercase  letter  is  usually followed by another lower-case letter.  In the US-ASCII character set, the highest three bits are 010 for upper-case letters and 011 for lower-case letters.  When lc is at least 3, the literal coding can take advantage of this property in the uncompressed data.
+         The  default  value (3) is usually good.  If you want maximum compression, test lc=4.  Sometimes it helps a little, and sometimes it makes compression worse.  If it makes it worse, test e.g. lc=2 too.
+      
+      lp=lp
+         Specify the number of literal position bits. The minimum is 0 and the maximum is 4; the default is 0.
+         Lp affects what kind of alignment in the uncompressed data is assumed when encoding literals. See pb below for more information about alignment.
+      
+      pb=pb
+         Specify the number of position bits. The minimum is 0 and the maximum is 4; the default is 2.
+         Pb  affects  what kind of alignment in the uncompressed data is assumed in general. The default means four-byte alignment (2^pb=2^2=4), which is often a good choice when there's no better guess.
+         When the aligment is known, setting pb accordingly may reduce the file size a little. E.g. with text files having one-byte alignment (US-ASCII, ISO-8859-*, UTF-8), setting pb=0 can improve compression slightly.
+         Even though the assumed alignment can be adjusted with pb and lp, LZMA1 and LZMA2 still slightly favor 16-byte alignment. It might be worth taking into account when designing file formats that are likely to be often compressed with LZMA1 or LZMA2.
+      
+      mf=mf
+         bt4
+            Binary Tree with 2-, 3-, and 4-byte hashing
+            Minimum value for nice: 4
+            Memory usage: dict * 10.5 (if dict > 32 MiB)
+      
+      mode=mode
+         Compression mode specifies the method to analyze the data produced by the match finder. Supported modes are fast and normal.
+      
+      nice=nice
+         Specify what is considered to be a nice length for a match. Once a match of at least nice bytes is found, the algorithm stops looking for possibly better matches.
+         Nice can be 2-273 bytes. Higher values tend to give better compression ratio at the expense of speed. The  default depends on the preset.
+      
+      depth=depth
+         Specify the maximum search depth in the match finder. The default is the special value of 0, which makes the compressor determine a reasonable depth from mf and nice.
+         Reasonable depth is 16-1000 for Binary Trees. Using very high values for depth can make the encoder extremely slow with some files.  Avoid setting the depth over 1000 unless you are prepared to interrupt the compression in case it is taking far too long.
+
+
+xz --lzma2=preset=1,dict=32MiB foo.tar
+xz -vv --lzma2=dict=192MiB big_foo.tar
+Sometimes  the  compression  time  doesn't  matter,  but the decompressor memory usage has to be kept low e.g. to make it possible to decompress the file on an embedded system.  The following command uses -6e (-6 --extreme) as a base and sets the dictionary  to  only 64 KiB.  The resulting file can be decompressed with XZ Embedded (that's why there is --check=crc32) using about 100 KiB of memory.
+    xz --check=crc32 --lzma2=preset=6e,dict=64KiB foo
+
+If  you  want to squeeze out as many bytes as possible, adjusting the number of literal context bits (lc) and number of position bits (pb) can sometimes help.  Adjusting the number of literal position bits (lp) might help too, but usually lc and pb  are  more  impor‐ tant.   E.g.  a  source  code archive contains mostly US-ASCII text, so something like the following might give slightly (like 0.1 %) smaller file than xz -6e (try also without lc=4):
+    xz --lzma2=preset=6e,pb=0,lc=4 source_code.tar
+

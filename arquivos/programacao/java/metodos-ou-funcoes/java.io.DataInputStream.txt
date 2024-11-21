@@ -1,0 +1,26 @@
+// deprecated API, use java.io.InputStreamReader
+
+// clear ; javac teste.java && java teste
+
+//import java.io.*;
+import java.io.DataInputStream; //classe DataInputStream para a entrada de dados
+import java.lang.*;
+
+public class teste {
+   public static void main(String args[]) {
+      String linha="";
+      
+      DataInputStream meuDataInputStream;
+      meuDataInputStream = new DataInputStream(System.in);
+      
+      try {
+         linha = meuDataInputStream.readLine();
+      }
+      catch (Exception erro) {
+         System.out.println("Erro de leitura");
+      }
+      
+      System.out.println(linha);
+   }
+}
+

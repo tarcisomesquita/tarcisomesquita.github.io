@@ -1,0 +1,73 @@
+echo -e "echo 'hello T';" | php -a
+
+
+file php.ini
+
+[Session]
+session.save_path = /home/storage/6/54/8b/t7m81/tmp
+
+[mail function]
+sendmail_path = /usr/sbin/sendmail -t -i
+
+[MySQLi]
+mysqli.reconnect = Off
+
+[PHP]
+log_errors = On
+default_socket_timeout = 60
+memory_limit = 512M
+file_uploads = On
+post_max_size = 50M
+upload_max_filesize = 50M
+upload_tmp_dir = /home/storage/6/54/8b/t7m81/tmp
+max_execution_time = 60
+max_input_time = 60
+
+
+
+echo '
+upload_max_filesize = 100M
+post_max_size = 105M
+memory_limit = 150M
+session.gc_maxlifetime = 300000
+default_socket_timeout = 18000
+max_execution_time = 18000
+' > php.ini
+
+
+
+<form action="action.php" method="post">
+ <p>Your name: <input type="text" name="name" /></p>
+ <p>Your age: <input type="text" name="age" /></p>
+ <p><input type="submit" /></p>
+</form>
+
+<p>
+Hi <?php echo htmlspecialchars($_POST['name']); ?>.
+You are <?php echo (int)$_POST['age']; ?> years old.
+</p>
+
+
+<form enctype="multipart/form-data" action="t.php" method="POST">
+    <input type="hidden" name="MAX_FILE_SIZE" value="30000" />
+    Enviar esse arquivo: <input name="userfile" type="file" />
+    <input type="submit" value="Enviar arquivo" />
+</form>
+
+
+$_FILES['userfile']['name']
+O nome original do arquivo na máquina do cliente.
+
+$_FILES['userfile']['type']
+O tipo mime do arquivo, se o navegador fornecer essa informação. Um exemplo poderia ser "image/gif". O tipo mime no entanto não é verificado pelo PHP portanto não considere que esse valor será concedido.
+
+$_FILES['userfile']['size']
+O tamanho, em bytes, do arquivo enviado.
+
+$_FILES['userfile']['tmp_name']
+O nome temporário com o qual o arquivo enviado foi armazenado no servidor.
+
+$_FILES['userfile']['error']
+O código de erro associado a esse upload de arquivo.
+
+

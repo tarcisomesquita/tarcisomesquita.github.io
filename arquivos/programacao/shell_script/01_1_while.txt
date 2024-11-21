@@ -1,0 +1,13 @@
+
+while COMANDO ; do
+   comandos
+done
+
+loop infinito:
+
+while echo > /dev/null ; do echo > /dev/null ; done
+
+
+VAR=10; while [ $VAR -ne 0 ] ; do echo $VAR; VAR=$(($VAR -1)); done
+
+

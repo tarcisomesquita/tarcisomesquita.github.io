@@ -1,0 +1,16 @@
+https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Headers
+
+https://httpbin.org
+
+echo -n -e "OPTIONS / HTTP/1.1\nHost: httpbin.org\n\n" | ncat -C --ssl httpbin.org 443
+HTTP/1.1 200 OK
+Date: Fri, 17 Jun 2022 12:45:55 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 0
+Connection: keep-alive
+Server: gunicorn/19.9.0
+Allow: OPTIONS, HEAD, GET
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS
+Access-Control-Max-Age: 3600

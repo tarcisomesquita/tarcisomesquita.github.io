@@ -1,0 +1,28 @@
+
+INT 1E
+
+IVT entry 1Eh points to the current DPT (Diskette Parameter Table), being used by the floppy disk BIOS.
+
+DOS copies the DPT established by the BIOS into its own RAM buffer, and re-points the 1eh vector to the RAM location.
+
+
+DPT structure format
+
+dpt_specify1        db        ?                    ; specify command 1.
+dpt_specify2        db        ?                    ; specify command 2.
+dpt_motoroff        db        ?                    ; motor off time.
+dpt_bps             db        ?                    ; bytes per sector (coded, above).
+dpt_spt             db        ?                    ; sectors per track.
+dpt_gap             db        ?                    ; gap length between sectors.
+dpt_dtl             db        ?                    ; data length (always ffh).
+dpt_gap3            db        ?                    ; gap length for FORMAT.
+dpt_fill            db        ?                    ; fill byte for FORMAT.
+dpt_headsettle      db        ?                    ; head settle time.
+dpt_motoron         db        ?                    ; motor-on start time.
+dpt_maxtrack        db        ?                    ; max track number for this drive.
+dpt_drr             db        ?                    ; data transfer rate.
+dpt_unused1         db        ?                    ; unused byte.
+dpt_unused2         db        ?                    ; unused byte.
+
+Manipulating these fields, the application program can cause the BIOS to read, write, format, and verify nonstandard media.
+

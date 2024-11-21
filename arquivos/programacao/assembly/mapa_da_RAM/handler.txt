@@ -1,0 +1,2 @@
+
+When the IVT is activated by an IRQ, it will call a BIOS routine to handle the IRQ.

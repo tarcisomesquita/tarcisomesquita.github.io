@@ -1,0 +1,102 @@
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Field name: w
+Number of bits: 1
+
+w Bit    Operand-Size Attribute is 16 Bits    Operand-Size Attribute is 32 Bits
+ 0                 8 Bits                            8 Bits
+ 1                16 Bits                           32 Bits
+
+Operand-size attribute determines whether the processor is performing
+16-bit, 32-bit or 64-bit operations
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Field name: reg
+Number of bits: 3
+
+
+For Non-64-Bit Modes When w Field is Not Present in Instruction
+
+             Register Selected during     Register Selected during
+reg Field    16-Bit Data Operations       32-Bit Data Operations
+  000                AX                      EAX
+  001                CX                      ECX
+  010                DX                      EDX
+  011                BX                      EBX
+  100                SP                      ESP
+  101                BP                      EBP
+  110                SI                      ESI
+  111                DI                      EDI
+
+
+When w Field is Present in Instruction
+    
+During 16-Bit Data Operations          During 32-Bit Data Operations
+reg      When w = 0      When w = 1    reg      When w = 0     When w = 1
+000           AL             AX        000           AL            EAX
+001           CL             CX        001           CL            ECX
+010           DL             DX        010           DL            EDX
+011           BL             BX        011           BL            EBX
+100           AH             SP        100           AH            ESP
+101           CH             BP        101           CH            EBP
+110           DH             SI        110           DH            ESI
+111           BH             DI        111           BH            EDI
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Field name: sreg2 e sreg3
+Number of bits: 2 e 3
+
+                     Segment Register                         Segment Register
+2-Bit sreg2 Field    Selected            3-Bit sreg3 Field    Selected
+      00               ES                       000              ES
+      01               CS                       001              CS
+      10               SS                       010              SS
+      11               DS                       011              DS
+                                                100              FS
+                                                101              GS
+                                                110              Reserved1
+                                                111              Reserved
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Field name: s
+Number of bits: 1
+
+
+Sign-Extend (s) Bit
+The sign-extend (s) bit occurs in instructions with immediate data fields that
+are being extended from 8 bits to 16 or 32 bits.
+
+    s     Effect on 8-Bit                          Effect on 16- or 32-Bit
+    0     None                                     None
+    1     Sign-extend to fill 16-bit or 32-bit     None
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Field name: tttn
+Number of bits: 4
+
+tttn    Mnemonic      Condition
+0000    O             Overflow
+0001    NO            No overflow
+0010    B, NAE        Below, Not above or equal
+0011    NB, AE        Not below, Above or equal
+0100    E, Z          Equal, Zero
+0101    NE, NZ        Not equal, Not zero
+0110    BE, NA        Below or equal, Not above
+0111    NBE, A        Not below or equal, Above
+1000    S             Sign
+1001    NS            Not sign
+1010    P, PE         Parity, Parity Even
+1011    NP, PO        Not parity, Parity Odd
+1100    L, NGE        Less than, Not greater than or equal to
+1101    NL, GE        Not less than, Greater than or equal to
+1110    LE, NG        Less than or equal to, Not greater than
+1111    NLE, G        Not less than or equal to, Greater than
+

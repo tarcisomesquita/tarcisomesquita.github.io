@@ -1,0 +1,108 @@
+
+
+5.1.4.2.Interrupcao 10h
+
+Proposito: Chamar uma diversidade de funcoes do BIOS
+
+Sintaxe:
+
+INT 10H
+
+Esta interrupcao tem varias funcoes, todas para entrada e saída de vídeo.
+Para acessar cada uma delas e necessario colocar o numero da funcao correspondente no registrador AH.
+
+Veremos apenas as funcoes mais comuns da interrupcao 10H.
+
+Funcao 00H, seta modo de vídeo
+Funcao 02H, seleciona a posicao do cursor
+Funcao 06H, rola a tela pra cima
+Funcao 09H, exibe um caracter e o atributo na posicao do cursor
+Funcao 0aH, exibe um caracter na posicao do cursor
+
+
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  
+
+Função 00h
+
+Uso:
+
+altera o modo de vídeo
+
+mov     ah, 00h         ;subfucao para setar modo de vídeo
+mov     al, 03h         ;03h = 80x25, 16 cores
+int     10h             ;interrupt de vídeo
+
+Veja o arquivo 10_INT 10_BIOS_Video_grafico.TXT
+
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  
+
+Funcao 02h
+
+uso:
+
+Move o cursor na tela do computador usando o modo texto.
+
+Registradores de chamada:
+
+aH = 02H
+
+BH = Pagina de vídeo onde o cursor esta posicionado.
+
+DH = linha
+
+DL = coluna
+
+Registradores de retorno:
+
+Nenhum.
+
+a posicao do cursor e definida pelas suas coordenadas, iniciando-se na
+posicao 0,0 ate a posicao 79,24. Logo os valores possíveis para os
+registradores DH e DL são: de 0 a 24 para linhas e de 0 a 79 para colunas.
+
+
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =  
+
+Funcao 06h
+
+uso:
+
+rolar a tela pra cima
+
+mov ah, 06h        ;subfuncao de rolar a tela pra cima
+mov al, 0          ;limpa a tela
+mov bh, 0000_1111b ;seta as cores ( fundo_texto )
+mov ch, 0          ;linha do canto sup. esq.
+mov cl, 0          ;coluna do canto sup. esq.
+mov dh, 19h        ;linha do canto inf. dir. ( 25 )
+mov dl, 50h        ;coluna do canto inf. dir. ( 80 )
+int 10h            ;interrupção de vídeo
+
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+
+Funcao 0ah
+
+uso:
+
+exibe um caracter na posicao atual do cursor.
+
+Registradores de chamada:
+
+aH = 0aH
+aL = Caracter a exibir
+BH = Pagina de vídeo onde o caracter sera exibido
+BL = Cor do caracter (apenas em modo grafico)
+CX = Numero de repeticoes
+
+Registradores de retorno:
+
+Nenhum.
+
+a principal diferenca entre esta funcao e a anterior e permitir mudanca nos
+atributos, bem como mudar a posicao do cursor.
+
+ 
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+

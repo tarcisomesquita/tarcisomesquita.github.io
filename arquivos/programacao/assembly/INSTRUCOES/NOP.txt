@@ -1,0 +1,25 @@
+
+NOP – No Operation          1001 0000
+
+NOP – Multi-byte No Operation
+ register                   0000 1111 0001 1111 : 11 000 reg
+ memory                     0000 1111 0001 1111 : mod 000 r/m
+
+1001 0000 b = 90 h
+0000 1111 0001 1111 b = 0F 1F h
+
+
+The one-byte NOP instruction is an alias mnemonic for the XCHG (E)AX, (E)AX
+instruction.
+The multi-byte NOP instruction performs no operation on supported processors
+and generates undefined opcode exception on processors that do not support the
+multi-byte NOP instruction.
+
+The multi-byte NOP instruction does not alter the content of a register and 
+will not issue a memory operation. 
+
+Flags Affected
+None.
+Exceptions (All Operating Modes)
+#UD                 If the LOCK prefix is used.
+

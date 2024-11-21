@@ -1,0 +1,7 @@
+
+O superbloco possui 1.024 bytes e inicia 1.024 bytes após o início da partição.
+
+The information in the superblock is used to access the rest of the data on the disk.
+
+There are also backup superblocks stored in the first datablock of blockgroups. The groups chosen are 0, 1 and powers of 3, 5 and 7. 
+

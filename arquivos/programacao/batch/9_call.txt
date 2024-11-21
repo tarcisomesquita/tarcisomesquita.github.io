@@ -1,0 +1,63 @@
+Chama um programa em lotes de outro.
+
+CALL [unidade:][caminho]arquivo [parÉmetros]
+
+  parÉmetros     Especifica qualquer informaá∆o de linha de comando
+                 necess†ria ao programa em lotes.
+
+Se as extens‰es de comando estiverem ativadas, CALL ser† alterado como
+a seguir:
+
+O comando CALL agora aceita r¢tulos como destino. A sintaxe Ç:
+
+    CALL :r¢tulo argumentos
+
+Um novo contexto de arquivo em lotes Ç criado com os argumentos especificados
+e o controle Ç transferido para a instruá∆o ap¢s o r¢tulo especificado. Vocà
+deve "sair" duas vezes ao alcanáar o final do arquivo de script em lotes duas
+vezes. Na primeira vez em que vocà ler o final, o controle retornar† para logo
+ap¢s a instruá∆o CALL. Na segunda vez, sair† do script em lotes. Digite
+GOTO /? para obter uma descriá∆o da extens∆o GOTO :EOF que lhe permitir†
+"retornar" de um script em lotes.
+
+AlÇm disso, a expans∆o de referàncias de argumento de script em lotes (%0,
+%1, etc.) foram alteradas como a seguir:
+
+
+    %* em um script em lotes refere-se a todos os argumentos (ex.: %1 %2
+        %3 %4 %5 ...)
+
+    A substituiá∆o de parÉmetros em lotes (%n) foi aprimorada. Agora Ç
+    poss°vel usar a seguinte sintaxe opcional:
+
+        %~1         - expande %1 removendo quaisquer aspas (")
+        %~f1        - expande %1 para um nome de caminho totalmente
+                       qualificado
+        %~d1        - expande %1 para somente uma letra de unidade
+        %~p1        - expande %1 para somente um caminho
+        %~n1        - expande %1 para somente um nome de arquivo
+        %~x1        - expande %1 para somente uma extens∆o de arquivo
+        %~s1        - o caminho expandido contÇm somente nomes curtos
+        %~a1        - expande %1 para atributos de arquivo
+        %~t1        - expande %1 para data/hora do arquivo
+        %~z1        - expande %1 para o tamanho do arquivo
+        %~$PATH:1   - pesquisa as pastas listadas na vari†vel
+                       de ambiente PATH e expande %1 para o nome
+                       totalmente qualificado da primeira encontrada. Se o
+                       nome da vari†vel de ambiente n∆o estiver definido ou o
+                       arquivo n∆o for encontrado pela pesquisa, esse
+                       modificador ser† expandido para a cadeia de
+                       caracteres vazia
+
+    Os modificadores podem ser combinados para obter resultados compostos:
+
+        %~dp1       - expande %1 somente para uma letra da unidade e caminho
+        %~nx1       - expande %1 somente para uma extens∆o e nome de arquivo
+        %~dp$PATH:1 - pesquisa as pastas listadas na vari†vel de ambiente
+                       PATH para %1 e expande para a
+                       letra da unidade e caminho da primeira encontrada.
+        %~ftza1     - expande %1 para uma linha de sa°da do tipo DIR
+
+    Nos exemplos acima %1 e PATH podem ser substitu°dos por outros
+    valores v†lidos. A sintaxe %~ Ç finalizada por um n£mero de argumento
+    v†lido. Os modificadores %~ n∆o podem ser usados com %*

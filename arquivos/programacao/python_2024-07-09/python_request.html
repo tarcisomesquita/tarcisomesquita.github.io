@@ -1,0 +1,762 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+>
+
+<html>
+  <head><meta charset="UTF-8" />
+    <meta>
+    <meta>
+    <title>Quickstart &#8212; Requests 2.19.1 documentation</title>
+    <link>
+    <link>
+    <link>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <link>
+    <link>
+    <link>
+    <link>
+   
+  <link>
+  
+  
+  <meta>
+
+  
+<!-->
+
+<!-- 
+baixei de 
+http://docs.python-requests.org/en/master/user/quickstart/
+
+Always link to the latest version, as canonical.
+http://docs.readthedocs.org/en/latest/canonical.html
+-->
+<link>
+
+<link>
+
+<script></script>
+
+<!-->
+<script>
+READTHEDOCS_DATA['page'] = 'user/quickstart'
+READTHEDOCS_DATA['source_suffix'] = '.rst'
+</script>
+
+<script></script>
+
+<!-- end RTD <extrahead>>
+</head><body>
+  
+
+    <div>
+      <div>
+        <div>
+          
+
+          <div>
+            
+  <div>
+<span></span><h1>Quickstart<a>¶</a></h1>
+<img>
+<span></span><p>Eager to get started? This page gives a good introduction in how to get started
+with Requests.</p>
+<p>First, make sure that:</p>
+<ul>
+<li>Requests is <a><span>installed</span></a></li>
+<li>Requests is <a><span>up-to-date</span></a></li>
+</ul>
+<p>Let’s get started with some simple examples.</p>
+<div>
+<h2>Make a Request<a>¶</a></h2>
+<p>Making a request with Requests is very simple.</p>
+<p>Begin by importing the Requests module:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>requests</span>
+</pre></div>
+</div>
+<p>Now, let’s try to get a webpage. For this example, let’s get GitHub’s public
+timeline:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>get</span><span>(</span><span>&#39;https://api.github.com/events&#39;</span><span>)</span>
+</pre></div>
+</div>
+<p>Now, we have a <a><code><span>Response</span></code></a> object called <code><span>r</span></code>. We can
+get all the information we need from this object.</p>
+<p>Requests’ simple API means that all forms of HTTP request are as obvious. For
+example, this is how you make an HTTP POST request:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>post</span><span>(</span><span>&#39;http://httpbin.org/post&#39;</span><span>,</span> <span>data</span> <span>=</span> <span>{</span><span>&#39;key&#39;</span><span>:</span><span>&#39;value&#39;</span><span>})</span>
+</pre></div>
+</div>
+<p>Nice, right? What about the other HTTP request types: PUT, DELETE, HEAD and
+OPTIONS? These are all just as simple:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>put</span><span>(</span><span>&#39;http://httpbin.org/put&#39;</span><span>,</span> <span>data</span> <span>=</span> <span>{</span><span>&#39;key&#39;</span><span>:</span><span>&#39;value&#39;</span><span>})</span>
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>delete</span><span>(</span><span>&#39;http://httpbin.org/delete&#39;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>head</span><span>(</span><span>&#39;http://httpbin.org/get&#39;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>options</span><span>(</span><span>&#39;http://httpbin.org/get&#39;</span><span>)</span>
+</pre></div>
+</div>
+<p>That’s all well and good, but it’s also only the start of what Requests can
+do.</p>
+</div>
+<div>
+<h2>Passing Parameters In URLs<a>¶</a></h2>
+<p>You often want to send some sort of data in the URL’s query string. If
+you were constructing the URL by hand, this data would be given as key/value
+pairs in the URL after a question mark, e.g. <code><span>httpbin.org/get?key=val</span></code>.
+Requests allows you to provide these arguments as a dictionary of strings,
+using the <code><span>params</span></code> keyword argument. As an example, if you wanted to pass
+<code><span>key1=value1</span></code> and <code><span>key2=value2</span></code> to <code><span>httpbin.org/get</span></code>, you would use the
+following code:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>payload</span> <span>=</span> <span>{</span><span>&#39;key1&#39;</span><span>:</span> <span>&#39;value1&#39;</span><span>,</span> <span>&#39;key2&#39;</span><span>:</span> <span>&#39;value2&#39;</span><span>}</span>
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>get</span><span>(</span><span>&#39;http://httpbin.org/get&#39;</span><span>,</span> <span>params</span><span>=</span><span>payload</span><span>)</span>
+</pre></div>
+</div>
+<p>You can see that the URL has been correctly encoded by printing the URL:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>r</span><span>.</span><span>url</span><span>)</span>
+<span>http://httpbin.org/get?key2=value2&amp;key1=value1</span>
+</pre></div>
+</div>
+<p>Note that any dictionary key whose value is <code><span>None</span></code> will not be added to the
+URL’s query string.</p>
+<p>You can also pass a list of items as a value:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>payload</span> <span>=</span> <span>{</span><span>&#39;key1&#39;</span><span>:</span> <span>&#39;value1&#39;</span><span>,</span> <span>&#39;key2&#39;</span><span>:</span> <span>[</span><span>&#39;value2&#39;</span><span>,</span> <span>&#39;value3&#39;</span><span>]}</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>get</span><span>(</span><span>&#39;http://httpbin.org/get&#39;</span><span>,</span> <span>params</span><span>=</span><span>payload</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>r</span><span>.</span><span>url</span><span>)</span>
+<span>http://httpbin.org/get?key1=value1&amp;key2=value2&amp;key2=value3</span>
+</pre></div>
+</div>
+</div>
+<div>
+<h2>Response Content<a>¶</a></h2>
+<p>We can read the content of the server’s response. Consider the GitHub timeline
+again:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>requests</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>get</span><span>(</span><span>&#39;https://api.github.com/events&#39;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>text</span>
+<span>u&#39;[{&quot;repository&quot;:{&quot;open_issues&quot;:0,&quot;url&quot;:&quot;https://github.com/...</span>
+</pre></div>
+</div>
+<p>Requests will automatically decode content from the server. Most unicode
+charsets are seamlessly decoded.</p>
+<p>When you make a request, Requests makes educated guesses about the encoding of
+the response based on the HTTP headers. The text encoding guessed by Requests
+is used when you access <code><span>r.text</span></code>. You can find out what encoding Requests is
+using, and change it, using the <code><span>r.encoding</span></code> property:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>encoding</span>
+<span>&#39;utf-8&#39;</span>
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>encoding</span> <span>=</span> <span>&#39;ISO-8859-1&#39;</span>
+</pre></div>
+</div>
+<p>If you change the encoding, Requests will use the new value of <code><span>r.encoding</span></code>
+whenever you call <code><span>r.text</span></code>. You might want to do this in any situation where
+you can apply special logic to work out what the encoding of the content will
+be. For example, HTML and XML have the ability to specify their encoding in
+their body. In situations like this, you should use <code><span>r.content</span></code> to find the
+encoding, and then set <code><span>r.encoding</span></code>. This will let you use <code><span>r.text</span></code> with
+the correct encoding.</p>
+<p>Requests will also use custom encodings in the event that you need them. If
+you have created your own encoding and registered it with the <code><span>codecs</span></code>
+module, you can simply use the codec name as the value of <code><span>r.encoding</span></code> and
+Requests will handle the decoding for you.</p>
+</div>
+<div>
+<h2>Binary Response Content<a>¶</a></h2>
+<p>You can also access the response body as bytes, for non-text requests:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>content</span>
+<span>b&#39;[{&quot;repository&quot;:{&quot;open_issues&quot;:0,&quot;url&quot;:&quot;https://github.com/...</span>
+</pre></div>
+</div>
+<p>The <code><span>gzip</span></code> and <code><span>deflate</span></code> transfer-encodings are automatically decoded for you.</p>
+<p>For example, to create an image from binary data returned by a request, you can
+use the following code:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>from</span> <span>PIL</span> <span>import</span> <span>Image</span>
+<span>&gt;&gt;&gt; </span><span>from</span> <span>io</span> <span>import</span> <span>BytesIO</span>
+
+<span>&gt;&gt;&gt; </span><span>i</span> <span>=</span> <span>Image</span><span>.</span><span>open</span><span>(</span><span>BytesIO</span><span>(</span><span>r</span><span>.</span><span>content</span><span>))</span>
+</pre></div>
+</div>
+</div>
+<div>
+<h2>JSON Response Content<a>¶</a></h2>
+<p>There’s also a builtin JSON decoder, in case you’re dealing with JSON data:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>requests</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>get</span><span>(</span><span>&#39;https://api.github.com/events&#39;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>json</span><span>()</span>
+<span>[{u&#39;repository&#39;: {u&#39;open_issues&#39;: 0, u&#39;url&#39;: &#39;https://github.com/...</span>
+</pre></div>
+</div>
+<p>In case the JSON decoding fails, <code><span>r.json()</span></code> raises an exception. For example, if
+the response gets a 204 (No Content), or if the response contains invalid JSON,
+attempting <code><span>r.json()</span></code> raises <code><span>ValueError:</span> <span>No</span> <span>JSON</span> <span>object</span> <span>could</span> <span>be</span> <span>decoded</span></code>.</p>
+<p>It should be noted that the success of the call to <code><span>r.json()</span></code> does <strong>not</strong>
+indicate the success of the response. Some servers may return a JSON object in a
+failed response (e.g. error details with HTTP 500). Such JSON will be decoded
+and returned. To check that a request is successful, use
+<code><span>r.raise_for_status()</span></code> or check <code><span>r.status_code</span></code> is what you expect.</p>
+</div>
+<div>
+<h2>Raw Response Content<a>¶</a></h2>
+<p>In the rare case that you’d like to get the raw socket response from the
+server, you can access <code><span>r.raw</span></code>. If you want to do this, make sure you set
+<code><span>stream=True</span></code> in your initial request. Once you do, you can do this:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>get</span><span>(</span><span>&#39;https://api.github.com/events&#39;</span><span>,</span> <span>stream</span><span>=</span><span>True</span><span>)</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>raw</span>
+<span>&lt;urllib3.response.HTTPResponse object at 0x101194810&gt;</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>raw</span><span>.</span><span>read</span><span>(</span><span>10</span><span>)</span>
+<span>&#39;\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\x03&#39;</span>
+</pre></div>
+</div>
+<p>In general, however, you should use a pattern like this to save what is being
+streamed to a file:</p>
+<div><div><pre><span></span><span>with</span> <span>open</span><span>(</span><span>filename</span><span>,</span> <span>&#39;wb&#39;</span><span>)</span> <span>as</span> <span>fd</span><span>:</span>
+    <span>for</span> <span>chunk</span> <span>in</span> <span>r</span><span>.</span><span>iter_content</span><span>(</span><span>chunk_size</span><span>=</span><span>128</span><span>):</span>
+        <span>fd</span><span>.</span><span>write</span><span>(</span><span>chunk</span><span>)</span>
+</pre></div>
+</div>
+<p>Using <code><span>Response.iter_content</span></code> will handle a lot of what you would otherwise
+have to handle when using <code><span>Response.raw</span></code> directly. When streaming a
+download, the above is the preferred and recommended way to retrieve the
+content. Note that <code><span>chunk_size</span></code> can be freely adjusted to a number that
+may better fit your use cases.</p>
+<div>
+<p>Note</p>
+<p>An important note about using <code><span>Response.iter_content</span></code> versus <code><span>Response.raw</span></code>.
+<code><span>Response.iter_content</span></code> will automatically decode the <code><span>gzip</span></code> and <code><span>deflate</span></code>
+transfer-encodings.  <code><span>Response.raw</span></code> is a raw stream of bytes – it does not
+transform the response content.  If you really need access to the bytes as they
+were returned, use <code><span>Response.raw</span></code>.</p>
+</div>
+</div>
+<div>
+<h2>Custom Headers<a>¶</a></h2>
+<p>If you’d like to add HTTP headers to a request, simply pass in a <code><span>dict</span></code> to the
+<code><span>headers</span></code> parameter.</p>
+<p>For example, we didn’t specify our user-agent in the previous example:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>url</span> <span>=</span> <span>&#39;https://api.github.com/some/endpoint&#39;</span>
+<span>&gt;&gt;&gt; </span><span>headers</span> <span>=</span> <span>{</span><span>&#39;user-agent&#39;</span><span>:</span> <span>&#39;my-app/0.0.1&#39;</span><span>}</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>get</span><span>(</span><span>url</span><span>,</span> <span>headers</span><span>=</span><span>headers</span><span>)</span>
+</pre></div>
+</div>
+<p>Note: Custom headers are given less precedence than more specific sources of information. For instance:</p>
+<ul>
+<li>Authorization headers set with <cite>headers=</cite> will be overridden if credentials
+are specified in <code><span>.netrc</span></code>, which in turn will be overridden by the  <code><span>auth=</span></code>
+parameter.</li>
+<li>Authorization headers will be removed if you get redirected off-host.</li>
+<li>Proxy-Authorization headers will be overridden by proxy credentials provided in the URL.</li>
+<li>Content-Length headers will be overridden when we can determine the length of the content.</li>
+</ul>
+<p>Furthermore, Requests does not change its behavior at all based on which custom headers are specified. The headers are simply passed on into the final request.</p>
+<p>Note: All header values must be a <code><span>string</span></code>, bytestring, or unicode. While permitted, it’s advised to avoid passing unicode header values.</p>
+</div>
+<div>
+<h2>More complicated POST requests<a>¶</a></h2>
+<p>Typically, you want to send some form-encoded data — much like an HTML form.
+To do this, simply pass a dictionary to the <code><span>data</span></code> argument. Your
+dictionary of data will automatically be form-encoded when the request is made:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>payload</span> <span>=</span> <span>{</span><span>&#39;key1&#39;</span><span>:</span> <span>&#39;value1&#39;</span><span>,</span> <span>&#39;key2&#39;</span><span>:</span> <span>&#39;value2&#39;</span><span>}</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>post</span><span>(</span><span>&quot;http://httpbin.org/post&quot;</span><span>,</span> <span>data</span><span>=</span><span>payload</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>r</span><span>.</span><span>text</span><span>)</span>
+<span>{</span>
+<span>  ...</span>
+<span>  &quot;form&quot;: {</span>
+<span>    &quot;key2&quot;: &quot;value2&quot;,</span>
+<span>    &quot;key1&quot;: &quot;value1&quot;</span>
+<span>  },</span>
+<span>  ...</span>
+<span>}</span>
+</pre></div>
+</div>
+<p>The <code><span>data</span></code> argument can also have multiple values for each key. This can be
+done by making <code><span>data</span></code> either a list of tuples or a dictionary with lists
+as values. This is particularly useful when the form has multiple elements that
+use the same key:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>payload_tuples</span> <span>=</span> <span>[(</span><span>&#39;key1&#39;</span><span>,</span> <span>&#39;value1&#39;</span><span>),</span> <span>(</span><span>&#39;key1&#39;</span><span>,</span> <span>&#39;value2&#39;</span><span>)]</span>
+<span>&gt;&gt;&gt; </span><span>r1</span> <span>=</span> <span>requests</span><span>.</span><span>post</span><span>(</span><span>&#39;http://httpbin.org/post&#39;</span><span>,</span> <span>data</span><span>=</span><span>payload_tuples</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>payload_dict</span> <span>=</span> <span>{</span><span>&#39;key1&#39;</span><span>:</span> <span>[</span><span>&#39;value1&#39;</span><span>,</span> <span>&#39;value2&#39;</span><span>]}</span>
+<span>&gt;&gt;&gt; </span><span>r2</span> <span>=</span> <span>requests</span><span>.</span><span>post</span><span>(</span><span>&#39;http://httpbin.org/post&#39;</span><span>,</span> <span>data</span><span>=</span><span>payload_dict</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>r1</span><span>.</span><span>text</span><span>)</span>
+<span>{</span>
+<span>  ...</span>
+<span>  &quot;form&quot;: {</span>
+<span>    &quot;key1&quot;: [</span>
+<span>      &quot;value1&quot;,</span>
+<span>      &quot;value2&quot;</span>
+<span>    ]</span>
+<span>  },</span>
+<span>  ...</span>
+<span>}</span>
+<span>&gt;&gt;&gt; </span><span>r1</span><span>.</span><span>text</span> <span>==</span> <span>r2</span><span>.</span><span>text</span>
+<span>True</span>
+</pre></div>
+</div>
+<p>There are times that you may want to send data that is not form-encoded. If
+you pass in a <code><span>string</span></code> instead of a <code><span>dict</span></code>, that data will be posted directly.</p>
+<p>For example, the GitHub API v3 accepts JSON-Encoded POST/PATCH data:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>json</span>
+
+<span>&gt;&gt;&gt; </span><span>url</span> <span>=</span> <span>&#39;https://api.github.com/some/endpoint&#39;</span>
+<span>&gt;&gt;&gt; </span><span>payload</span> <span>=</span> <span>{</span><span>&#39;some&#39;</span><span>:</span> <span>&#39;data&#39;</span><span>}</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>post</span><span>(</span><span>url</span><span>,</span> <span>data</span><span>=</span><span>json</span><span>.</span><span>dumps</span><span>(</span><span>payload</span><span>))</span>
+</pre></div>
+</div>
+<p>Instead of encoding the <code><span>dict</span></code> yourself, you can also pass it directly using
+the <code><span>json</span></code> parameter (added in version 2.4.2) and it will be encoded automatically:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>url</span> <span>=</span> <span>&#39;https://api.github.com/some/endpoint&#39;</span>
+<span>&gt;&gt;&gt; </span><span>payload</span> <span>=</span> <span>{</span><span>&#39;some&#39;</span><span>:</span> <span>&#39;data&#39;</span><span>}</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>post</span><span>(</span><span>url</span><span>,</span> <span>json</span><span>=</span><span>payload</span><span>)</span>
+</pre></div>
+</div>
+<p>Note, the <code><span>json</span></code> parameter is ignored if either <code><span>data</span></code> or <code><span>files</span></code> is passed.</p>
+<p>Using the <code><span>json</span></code> parameter in the request will change the <code><span>Content-Type</span></code> in the header to <code><span>application/json</span></code>.</p>
+</div>
+<div>
+<h2>POST a Multipart-Encoded File<a>¶</a></h2>
+<p>Requests makes it simple to upload Multipart-encoded files:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>url</span> <span>=</span> <span>&#39;http://httpbin.org/post&#39;</span>
+<span>&gt;&gt;&gt; </span><span>files</span> <span>=</span> <span>{</span><span>&#39;file&#39;</span><span>:</span> <span>open</span><span>(</span><span>&#39;report.xls&#39;</span><span>,</span> <span>&#39;rb&#39;</span><span>)}</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>post</span><span>(</span><span>url</span><span>,</span> <span>files</span><span>=</span><span>files</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>text</span>
+<span>{</span>
+<span>  ...</span>
+<span>  &quot;files&quot;: {</span>
+<span>    &quot;file&quot;: &quot;&lt;censored...binary...data&gt;&quot;</span>
+<span>  },</span>
+<span>  ...</span>
+<span>}</span>
+</pre></div>
+</div>
+<p>You can set the filename, content_type and headers explicitly:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>url</span> <span>=</span> <span>&#39;http://httpbin.org/post&#39;</span>
+<span>&gt;&gt;&gt; </span><span>files</span> <span>=</span> <span>{</span><span>&#39;file&#39;</span><span>:</span> <span>(</span><span>&#39;report.xls&#39;</span><span>,</span> <span>open</span><span>(</span><span>&#39;report.xls&#39;</span><span>,</span> <span>&#39;rb&#39;</span><span>),</span> <span>&#39;application/vnd.ms-excel&#39;</span><span>,</span> <span>{</span><span>&#39;Expires&#39;</span><span>:</span> <span>&#39;0&#39;</span><span>})}</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>post</span><span>(</span><span>url</span><span>,</span> <span>files</span><span>=</span><span>files</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>text</span>
+<span>{</span>
+<span>  ...</span>
+<span>  &quot;files&quot;: {</span>
+<span>    &quot;file&quot;: &quot;&lt;censored...binary...data&gt;&quot;</span>
+<span>  },</span>
+<span>  ...</span>
+<span>}</span>
+</pre></div>
+</div>
+<p>If you want, you can send strings to be received as files:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>url</span> <span>=</span> <span>&#39;http://httpbin.org/post&#39;</span>
+<span>&gt;&gt;&gt; </span><span>files</span> <span>=</span> <span>{</span><span>&#39;file&#39;</span><span>:</span> <span>(</span><span>&#39;report.csv&#39;</span><span>,</span> <span>&#39;some,data,to,send</span><span>\n</span><span>another,row,to,send</span><span>\n</span><span>&#39;</span><span>)}</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>post</span><span>(</span><span>url</span><span>,</span> <span>files</span><span>=</span><span>files</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>text</span>
+<span>{</span>
+<span>  ...</span>
+<span>  &quot;files&quot;: {</span>
+<span>    &quot;file&quot;: &quot;some,data,to,send\\nanother,row,to,send\\n&quot;</span>
+<span>  },</span>
+<span>  ...</span>
+<span>}</span>
+</pre></div>
+</div>
+<p>In the event you are posting a very large file as a <code><span>multipart/form-data</span></code>
+request, you may want to stream the request. By default, <code><span>requests</span></code> does not
+support this, but there is a separate package which does -
+<code><span>requests-toolbelt</span></code>. You should read <a>the toolbelt’s documentation</a> for more details about how to use it.</p>
+<p>For sending multiple files in one request refer to the <a><span>advanced</span></a>
+section.</p>
+<div>
+<p>Warning</p>
+<p>It is strongly recommended that you open files in <a><span>binary
+mode</span></a>. This is because Requests may attempt to provide
+the <code><span>Content-Length</span></code> header for you, and if it does this value
+will be set to the number of <em>bytes</em> in the file. Errors may occur
+if you open the file in <em>text mode</em>.</p>
+</div>
+</div>
+<div>
+<h2>Response Status Codes<a>¶</a></h2>
+<p>We can check the response status code:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>get</span><span>(</span><span>&#39;http://httpbin.org/get&#39;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>status_code</span>
+<span>200</span>
+</pre></div>
+</div>
+<p>Requests also comes with a built-in status code lookup object for easy
+reference:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>status_code</span> <span>==</span> <span>requests</span><span>.</span><span>codes</span><span>.</span><span>ok</span>
+<span>True</span>
+</pre></div>
+</div>
+<p>If we made a bad request (a 4XX client error or 5XX server error response), we
+can raise it with
+<a><code><span>Response.raise_for_status()</span></code></a>:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>bad_r</span> <span>=</span> <span>requests</span><span>.</span><span>get</span><span>(</span><span>&#39;http://httpbin.org/status/404&#39;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>bad_r</span><span>.</span><span>status_code</span>
+<span>404</span>
+
+<span>&gt;&gt;&gt; </span><span>bad_r</span><span>.</span><span>raise_for_status</span><span>()</span>
+<span>Traceback (most recent call last):</span>
+  File <span>&quot;requests/models.py&quot;</span>, line <span>832</span>, in <span>raise_for_status</span>
+    <span>raise</span> <span>http_error</span>
+<span>requests.exceptions.HTTPError</span>: <span>404 Client Error</span>
+</pre></div>
+</div>
+<p>But, since our <code><span>status_code</span></code> for <code><span>r</span></code> was <code><span>200</span></code>, when we call
+<code><span>raise_for_status()</span></code> we get:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>raise_for_status</span><span>()</span>
+<span>None</span>
+</pre></div>
+</div>
+<p>All is well.</p>
+</div>
+<div>
+<h2>Response Headers<a>¶</a></h2>
+<p>We can view the server’s response headers using a Python dictionary:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>headers</span>
+<span>{</span>
+<span>    &#39;content-encoding&#39;: &#39;gzip&#39;,</span>
+<span>    &#39;transfer-encoding&#39;: &#39;chunked&#39;,</span>
+<span>    &#39;connection&#39;: &#39;close&#39;,</span>
+<span>    &#39;server&#39;: &#39;nginx/1.0.4&#39;,</span>
+<span>    &#39;x-runtime&#39;: &#39;148ms&#39;,</span>
+<span>    &#39;etag&#39;: &#39;&quot;e1ca502697e5c9317743dc078f67693f&quot;&#39;,</span>
+<span>    &#39;content-type&#39;: &#39;application/json&#39;</span>
+<span>}</span>
+</pre></div>
+</div>
+<p>The dictionary is special, though: it’s made just for HTTP headers. According to
+<a>RFC 7230</a>, HTTP Header names
+are case-insensitive.</p>
+<p>So, we can access the headers using any capitalization we want:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>headers</span><span>[</span><span>&#39;Content-Type&#39;</span><span>]</span>
+<span>&#39;application/json&#39;</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>headers</span><span>.</span><span>get</span><span>(</span><span>&#39;content-type&#39;</span><span>)</span>
+<span>&#39;application/json&#39;</span>
+</pre></div>
+</div>
+<p>It is also special in that the server could have sent the same header multiple
+times with different values, but requests combines them so they can be
+represented in the dictionary within a single mapping, as per
+<a>RFC 7230</a>:</p>
+<blockquote>
+<div>A recipient MAY combine multiple header fields with the same field name
+into one “field-name: field-value” pair, without changing the semantics
+of the message, by appending each subsequent field value to the combined
+field value in order, separated by a comma.</div></blockquote>
+</div>
+<div>
+<h2>Cookies<a>¶</a></h2>
+<p>If a response contains some Cookies, you can quickly access them:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>url</span> <span>=</span> <span>&#39;http://example.com/some/cookie/setting/url&#39;</span>
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>get</span><span>(</span><span>url</span><span>)</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>cookies</span><span>[</span><span>&#39;example_cookie_name&#39;</span><span>]</span>
+<span>&#39;example_cookie_value&#39;</span>
+</pre></div>
+</div>
+<p>To send your own cookies to the server, you can use the <code><span>cookies</span></code>
+parameter:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>url</span> <span>=</span> <span>&#39;http://httpbin.org/cookies&#39;</span>
+<span>&gt;&gt;&gt; </span><span>cookies</span> <span>=</span> <span>dict</span><span>(</span><span>cookies_are</span><span>=</span><span>&#39;working&#39;</span><span>)</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>get</span><span>(</span><span>url</span><span>,</span> <span>cookies</span><span>=</span><span>cookies</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>text</span>
+<span>&#39;{&quot;cookies&quot;: {&quot;cookies_are&quot;: &quot;working&quot;}}&#39;</span>
+</pre></div>
+</div>
+<p>Cookies are returned in a <a><code><span>RequestsCookieJar</span></code></a>,
+which acts like a <code><span>dict</span></code> but also offers a more complete interface,
+suitable for use over multiple domains or paths.  Cookie jars can
+also be passed in to requests:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>jar</span> <span>=</span> <span>requests</span><span>.</span><span>cookies</span><span>.</span><span>RequestsCookieJar</span><span>()</span>
+<span>&gt;&gt;&gt; </span><span>jar</span><span>.</span><span>set</span><span>(</span><span>&#39;tasty_cookie&#39;</span><span>,</span> <span>&#39;yum&#39;</span><span>,</span> <span>domain</span><span>=</span><span>&#39;httpbin.org&#39;</span><span>,</span> <span>path</span><span>=</span><span>&#39;/cookies&#39;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>jar</span><span>.</span><span>set</span><span>(</span><span>&#39;gross_cookie&#39;</span><span>,</span> <span>&#39;blech&#39;</span><span>,</span> <span>domain</span><span>=</span><span>&#39;httpbin.org&#39;</span><span>,</span> <span>path</span><span>=</span><span>&#39;/elsewhere&#39;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>url</span> <span>=</span> <span>&#39;http://httpbin.org/cookies&#39;</span>
+<span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>get</span><span>(</span><span>url</span><span>,</span> <span>cookies</span><span>=</span><span>jar</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>text</span>
+<span>&#39;{&quot;cookies&quot;: {&quot;tasty_cookie&quot;: &quot;yum&quot;}}&#39;</span>
+</pre></div>
+</div>
+</div>
+<div>
+<h2>Redirection and History<a>¶</a></h2>
+<p>By default Requests will perform location redirection for all verbs except
+HEAD.</p>
+<p>We can use the <code><span>history</span></code> property of the Response object to track redirection.</p>
+<p>The <a><code><span>Response.history</span></code></a> list contains the
+<a><code><span>Response</span></code></a> objects that were created in order to
+complete the request. The list is sorted from the oldest to the most recent
+response.</p>
+<p>For example, GitHub redirects all HTTP requests to HTTPS:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>get</span><span>(</span><span>&#39;http://github.com&#39;</span><span>)</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>url</span>
+<span>&#39;https://github.com/&#39;</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>status_code</span>
+<span>200</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>history</span>
+<span>[&lt;Response [301]&gt;]</span>
+</pre></div>
+</div>
+<p>If you’re using GET, OPTIONS, POST, PUT, PATCH or DELETE, you can disable
+redirection handling with the <code><span>allow_redirects</span></code> parameter:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>get</span><span>(</span><span>&#39;http://github.com&#39;</span><span>,</span> <span>allow_redirects</span><span>=</span><span>False</span><span>)</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>status_code</span>
+<span>301</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>history</span>
+<span>[]</span>
+</pre></div>
+</div>
+<p>If you’re using HEAD, you can enable redirection as well:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>r</span> <span>=</span> <span>requests</span><span>.</span><span>head</span><span>(</span><span>&#39;http://github.com&#39;</span><span>,</span> <span>allow_redirects</span><span>=</span><span>True</span><span>)</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>url</span>
+<span>&#39;https://github.com/&#39;</span>
+
+<span>&gt;&gt;&gt; </span><span>r</span><span>.</span><span>history</span>
+<span>[&lt;Response [301]&gt;]</span>
+</pre></div>
+</div>
+</div>
+<div>
+<h2>Timeouts<a>¶</a></h2>
+<p>You can tell Requests to stop waiting for a response after a given number of
+seconds with the <code><span>timeout</span></code> parameter. Nearly all production code should use
+this parameter in nearly all requests. Failure to do so can cause your program
+to hang indefinitely:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>requests</span><span>.</span><span>get</span><span>(</span><span>&#39;http://github.com&#39;</span><span>,</span> <span>timeout</span><span>=</span><span>0.001</span><span>)</span>
+<span>Traceback (most recent call last):</span>
+  File <span>&quot;&lt;stdin&gt;&quot;</span>, line <span>1</span>, in <span>&lt;module&gt;</span>
+<span>requests.exceptions.Timeout</span>: <span>HTTPConnectionPool(host=&#39;github.com&#39;, port=80): Request timed out. (timeout=0.001)</span>
+</pre></div>
+</div>
+<div>
+<p>Note</p>
+<p><code><span>timeout</span></code> is not a time limit on the entire response download;
+rather, an exception is raised if the server has not issued a
+response for <code><span>timeout</span></code> seconds (more precisely, if no bytes have been
+received on the underlying socket for <code><span>timeout</span></code> seconds). If no timeout is specified explicitly, requests do
+not time out.</p>
+</div>
+</div>
+<div>
+<h2>Errors and Exceptions<a>¶</a></h2>
+<p>In the event of a network problem (e.g. DNS failure, refused connection, etc),
+Requests will raise a <code><span>ConnectionError</span></code> exception.</p>
+<p><a><code><span>Response.raise_for_status()</span></code></a> will
+raise an <code><span>HTTPError</span></code> if the HTTP request
+returned an unsuccessful status code.</p>
+<p>If a request times out, a <code><span>Timeout</span></code> exception is
+raised.</p>
+<p>If a request exceeds the configured number of maximum redirections, a
+<code><span>TooManyRedirects</span></code> exception is raised.</p>
+<p>All exceptions that Requests explicitly raises inherit from
+<code><span>requests.exceptions.RequestException</span></code>.</p>
+<hr>
+<p>Ready for more? Check out the <a><span>advanced</span></a> section.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div>
+        <div><p>
+  <a>
+    <img>
+  </a>
+</p>
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=requests&repo=requests&type=watch&count=true&size=large"
+></iframe>
+</p>
+
+
+<p>
+  Requests is an elegant and simple HTTP library for Python, built for
+  human beings. You are currently looking at the documentation of the
+  development release.
+</p>
+
+<p>Sponsored by <strong><a>Linode</a></strong> and <a>other wonderful organizations</a>.</p>
+
+<h3>Stay Informed</h3>
+<p>Receive updates on new releases and upcoming projects.</p>
+
+<p><a>Requests Stickers!</a></p>
+
+<p><a>Join Mailing List</a>.</p>
+
+<hr/>
+
+<script></script>
+
+<p><iframe src="https://ghbtns.com/github-btn.html?user=kennethreitz&type=follow&count=false"
+></iframe></p>
+
+<p><a>Follow @kennethreitz</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script></p>
+
+
+<h3>Other Projects</h3>
+
+<p>More <a>Kenneth Reitz</a> projects:</p>
+<ul>
+    <li><a>Requests-HTML</a></li>
+    <li><a>howtopython.org</a></li>
+    <li><a>pipenv</a></li>
+    <li><a>pep8.org</a></li>
+    <li><a>httpbin.org</a></li>
+    <li><a>The Python Guide</a></li>
+    <li><a>Maya: Datetimes for Humans</a></li>
+    <li><a>Records: SQL for Humans</a></li>
+    <li><a>Legit: Git for Humans</a></li>
+    <li><a>Tablib: Tabular Datasets</a></li>
+</ul>
+
+
+<h3>Translations</h3>
+
+<ul>
+  <li><a>English</a></li>
+  <li><a>French</a></li>
+  <li><a>German</a></li>
+  <li><a>Japanese</a></li>
+  <li><a>Chinese</a></li>
+  <li><a>Portuguese</a></li>
+  <li><a>Italian</a></li>
+  <li><a>Spanish</a></li>
+</ul>
+  <h3><a>Table Of Contents</a></h3>
+  <ul>
+<li><a>Quickstart</a><ul>
+<li><a>Make a Request</a></li>
+<li><a>Passing Parameters In URLs</a></li>
+<li><a>Response Content</a></li>
+<li><a>Binary Response Content</a></li>
+<li><a>JSON Response Content</a></li>
+<li><a>Raw Response Content</a></li>
+<li><a>Custom Headers</a></li>
+<li><a>More complicated POST requests</a></li>
+<li><a>POST a Multipart-Encoded File</a></li>
+<li><a>Response Status Codes</a></li>
+<li><a>Response Headers</a></li>
+<li><a>Cookies</a></li>
+<li><a>Redirection and History</a></li>
+<li><a>Timeouts</a></li>
+<li><a>Errors and Exceptions</a></li>
+</ul>
+</li>
+</ul>
+<div>
+<h3>Related Topics</h3>
+<ul>
+  <li><a>Documentation overview</a><ul>
+      <li>Previous: <a>Installation of Requests</a></li>
+      <li>Next: <a>Advanced Usage</a></li>
+  </ul></li>
+</ul>
+</div>
+<div>
+  <h3>Quick search</h3>
+    <div>
+    <form>
+      <input>
+      <input>
+      <input>
+      <input>
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script><!-->
+
+<!-->
+<style>
+
+  /* Rezzy requires precise alignment. */
+  img.logo {margin-left: -20px!important;}
+
+  /* "Quick Search" should be capitalized. */
+  div#searchbox h3 {text-transform: capitalize;}
+
+  /* Make the document a little wider, less code is cut-off. */
+  div.document {width: 1008px;}
+
+  /* Much-improved spacing around code blocks. */
+  div.highlight pre {padding: 11px 14px;}
+
+  /* Remain Responsive! */
+  @media screen and (max-width: 1008px) {
+    div.sphinxsidebar {display: none;}
+    div.document {width: 100%!important;}
+
+    /* Have code blocks escape the document right-margin. */
+    div.highlight pre {margin-right: -30px;}
+  }
+
+</style>
+
+
+<!-->
+<script>
+  var _gauges = _gauges || [];
+  (function() {
+    var t   = document.createElement('script');
+    t.type  = 'text/javascript';
+    t.async = true;
+    t.id    = 'gauges-tracker';
+    t.setAttribute('data-site-id', '56ca7a57c88d9011080024dd');
+    t.setAttribute('data-track-path', 'https://track.gaug.es/track.gif');
+    t.src = 'https://d36ee2fcip1434.cloudfront.net/track.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(t, s);
+  })();
+</script>
+
+
+<!-->
+<!--    >
+<!-->
+
+<script></script>
+<script>
+  var easter_egg = new Konami('http://fortunes.herokuapp.com/random/raw');
+</script>
+
+<!-->
+        </div>
+      </div>
+      <div></div>
+    </div>
+    <div>
+      &copy;MMXVIII. A <a>Kenneth Reitz</a> Project.
+      
+    </div>
+
+    
+    <a>
+        <img style="position:>
+    </a>
+    
+
+    
+  </body>
+</html>

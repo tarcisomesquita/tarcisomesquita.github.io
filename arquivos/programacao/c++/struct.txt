@@ -1,0 +1,16 @@
+struct movies_t {
+  string title;
+  int year;
+};
+
+movies_t amovie;
+movies_t *pmovie;
+pmovie = &amovie;
+
+pmovie->title
+is equivalent to
+(*pmovie).title
+
+*pmovie.title
+is equivalent to
+*(pmovie.title)

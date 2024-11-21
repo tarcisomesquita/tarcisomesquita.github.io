@@ -1,0 +1,136 @@
+also called IDT
+default address of IDT is 0x0000. This address can be changed by using the LIDT instruction to change the base address value in the IDTR.
+
+Interrupt Vector Table is situated at 0000:0000 which extends for 1024 bytes.
+All vector have four bytes in length. This gives us room for the 256 Interrupt Vectors.
+
+Cada vetor está localizado num endereço 0000:(int #) * 4.
+Exemplo: o vetor para int 24 h (erro crítico) está localizado no endereço 0000:0090.
+
+um dump hexadecimal mostra:
+
+   0000:0090    22 03 A1 2A .. .. .. .. .. .. .. .. .. .. .. ..
+int 24 h => 2AA1:0322 = 2AD32
+
+   0000:0040    3E 00 00 C0 4D F8
+int 10 h => C000:003E = C003E
+
+Alguns vetores não apontam para código executável, mas para uma estrutura de dados. Por exemplo, o vetor de interrupção 1Eh aponta para uma tabela base byte 11 disco que contém informações sobre unidades de disquete.
+
+Você pode criar seus interrupt handlers substituindo o vetor apropriado com o endereço de sua rotina.
+
+
+Interrupt   Address                   Type        Description
+                                                             
+00h         0000:0000h                Processor   Divide by zero
+01h         0000:0004h                Processor   Single step
+02h         0000:0008h                Processor   Non maskable interrupt (NMI)
+03h         0000:000Ch                Processor   Breakpoint
+04h         0000:0010h                Processor   Arithmetic overflow
+05h         0000:0014h                Software    Print screen
+06h         0000:0018h                Processor   Invalid opcode
+07h         0000:001Ch                Processor   Coprocessor not available
+08h         0000:0020h                Hardware    System timer service routine
+09h         0000:0024h                Hardware    Keyboard device service routine
+0Ah         0000:0028h                Hardware    Cascade from 2nd programmable interrupt controller
+0Bh         0000:002Ch                Hardware    Serial port service - COM post 2
+0Ch         0000:0030h                Hardware    Serial port service - COM port 1
+0Dh         0000:0034h                Hardware    Parallel printer service - LPT 2
+0Eh         0000:0038h                Hardware    Floppy disk service
+0Fh         0000:003Ch                Hardware    Parallel printer service - LPT 1
+10h         0000:0040h                Software    Video service routine
+11h         0000:0044h                Software    Equipment list service routine
+12h         0000:0048h                Software    Memory size service routine
+13h         0000:004Ch                Software    Hard disk drive service
+14h         0000:0050h                Software    Serial communications service routines
+15h         0000:0054h                Software    System services support routines
+16h         0000:0058h                Software    Keyboard support service routines
+17h         0000:005Ch                Software    Parallel printer support services
+18h         0000:0060h                Software    Load and run ROM BASIC
+19h         0000:0064h                Software    DOS loading routine
+1Ah         0000:0068h                Software    Real time clock service routines
+1Bh         0000:006Ch                Software    CRTL - BREAK service routines
+1Ch         0000:0070h                Software    User timer service routine
+1Dh         0000:0074h                Software    Video control parameter table
+1Eh         0000:0078h                Software    Floppy disk parameter routine
+1Fh         0000:007Ch                Software    Video graphics character routine
+20h-3Fh     0000:0080f - 0000:00FCh   Software    DOS interrupt points
+40h         0000:0100h                Software    Floppy disk revector routine
+41h         0000:0104h                Software    hard disk drive C: parameter table
+42h         0000:0108h                Software    EGA default video driver
+43h         0000:010Ch                Software    Video graphics characters
+44h         0000:0110h                Software    Novel Netware API
+45h         0000:0114h                Software    Not used
+46h         0000:0118h                Software    Hard disk drive D: parameter table
+47h         0000:011Ch -              Software    Not used
+48h                                   Software    Not used
+49h         0000:0124h                Software    Not used
+4Ah         0000:0128h                Software    User alarm
+4Bh-63h     0000:012Ch -              Software    Not used
+64h                                   Software    Novel Netware IPX
+65h-66h                               Software    Not used
+67h                                   Software    EMS support routines
+68h-6Fh     0000:01BCh                Software    Not used
+70h         0000:01c0h                Hardware    Real time clock
+71h         0000:01C4h                Hardware    Redirect interrupt cascade
+72h-74h     0000:01C8h - 0000:01D0h   Hardware    Reserved - Do not use
+75h         0000:01D4h                Hardware    Math coprocessor exception
+76h         0000:01D8h                Hardware    Hard disk support
+77h         0000:01DCh                Hardware    Suspend request
+78h-79h     0000:01E0h - 0000:01E2h   Hardware    Not used
+80h         0000:01E?                 Software   Linux interrupt points
+8Ah-FFh     0000:01E2h - 0000:03FCh   Software    Not used
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+Interrupções de hardware
+
+INT (Hex)   IRQ                     Priority   Common Uses
+08          Hardware IRQ0           2          System Timer
+09          Hardware IRQ1           3          Keyboard
+0A          Hardware IRQ2           4          Redirected (PIC Slave or EGA/VGA Vert. Retrace)
+0B          Hardware IRQ3           13         Serial Port 2. (COM 2: 2F8h-2FFh and COM 4: 2E8h-2EFh)
+0C          Hardware IRQ4           14         Serial Port 1. (COM 1: 3F8h-3FFh and COM 3: 3E8h-3EFh)
+0D          Hardware IRQ5           15         Reserved/Sound Card, Fixed Disk or (LPT 2: 378h or 278h)
+0E          Hardware IRQ6           16         Floppy Disk Controller
+0F          Hardware IRQ7           17         Parallel Comms. (LPT 1: 3BCh [mono] or 378h [color])
+70          Hardware IRQ8           5          CMOS Real Time Clock
+71          Hardware IRQ9           6          Redirected IRQ2
+72          Hardware IRQ10          7          USB on systems so equipped
+73          Hardware IRQ11          8          Windows sound system on systems so equipped
+74          Hardware IRQ12          9          PS/2 Mouse
+75          Hardware IRQ13          10         Math's Co-Processor
+76          Hardware IRQ14          11         Primary AT/IDE hard disk controller
+77          Hardware IRQ15          12         Secondary AT/IDE hard disk controller
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Mnemonic das interrupções (útil na leitura dos manuais da Intel)
+Table 6-1. Exceptions and Interrupts
+
+Vector No.  Mnemonic    Description                   Source
+     0      #DE         Divide Error                  DIV and IDIV instructions.
+     1      #DB         Debug                         Any code or data reference.
+     2                  NMI Interrupt                 Non-maskable external interrupt.
+     3      #BP         Breakpoint                    INT 3 instruction.
+     4      #OF         Overflow                      INTO instruction.
+     5      #BR         BOUND Range Exceeded          BOUND instruction. UD2 instruction or reserved opcode.
+     6      #UD         Invalid Opcode (UnDefined Opcode)
+     7      #NM         Device Not Available          (No Math Coprocessor) Floating-point or WAIT/FWAIT instruction.
+     8      #DF         Double Fault                  Any instruction that can generate an exception, an NMI, or an INTR.
+     9      #MF         CoProcessor Segment Overrun   (reserved)
+     A      #TS         Invalid TSS                   Task switch or TSS access.
+     B      #NP         Segment Not Present           Loading segment registers or accessing system segments.
+     C      #SS         Stack Segment Fault           Stack operations and SS register loads.
+     D      #GP         General Protection            Any memory reference and other protection checks.
+     E      #PF         Page Fault                    Any memory reference.
+     F                  Reserved
+    10      #MF         Floating-Point Error          (No Math Coprocessor) Floating-point or WAIT/FWAIT instruction.
+    11      #AC         Alignment Check
+    12      #MC         Machine Check                 Error codes (if any) and source are model dependent.
+    13      #XM         SIMD Floating-Point Exception
+    20-31               Reserved
+    32-255              Maskable Interrupts           External interrupt from INTR pin or INT n instruction.
+

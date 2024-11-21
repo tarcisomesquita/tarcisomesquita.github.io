@@ -1,0 +1,6 @@
+built-in time command that displays how long a command takes to execute.
+$ time ls
+real	0m0.005s
+user	0m0.004s
+sys	0m0.000s
+

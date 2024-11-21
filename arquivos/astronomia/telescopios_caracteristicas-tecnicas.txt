@@ -1,0 +1,49 @@
+A abertura é o diâmetro D da lente objetiva ou do espelho.
+A abertura determina a luminosidade do telescópio, que determina o limite da magnitude observável.
+Limite de magnitude
+Diâmetro (mm)  Refrator (m)  Refletor (m)
+50             11,0            -
+100            12,5          12,7
+150            13,5          13,7
+200            14,0          14,2
+
+magnitude 12 visualiza.
+
+A distância focal F é a distância do centro óptico da objetiva até o foco.
+Razão focal é F/D. Se escreve F/(Razão focal).
+Quanto menor a razão focal maior será a luminosidade do telescópio.
+
+Telescópios com razão focal (f/10 ou mais) são ideais para a observação de objetos luminosos como a Lua e planetas;
+Telescópios com razão focal (f/6 ou menos) são indicados para a observação de objetos tênues, como galáxias e nebulosas.
+
+Para um telescópio com abertura 150 mm e comprimento focal F = 750 mm.
+Razão focal é de 750 / 150 = F/5
+
+Luneta buscadora 6x30
+6x aumento
+30mm abertura da objetiva
+CDV 10°  mag. max. 2,85  Ctrl+Alt+6
+
+ocular   aumento
+25 mm    750 / 25 =  30 vezes  CDV 2°    mag. max.  6,95  Ctrl+Alt+8
+10 mm    750 / 10 =  75 vezes  CDV 0,5°  mag. max. 10,05  Ctrl+Alt+0
+ 6 mm    750 /  6 = 125 vezes  CDV 0,3°  mag. max. 
+ 4 mm    750 /  4 = 187 vezes
+
+Barlow 2.5X permite a você multiplicar o fator de ampliação de sua ocular por 2.5X
+
+Limite máximo de ampliação de qualquer telescópio é de 2 vezes sua abertura em milimetros.
+
+O aumento a do telescópio, ou seja, a ampliação da imagem pela ocular pode ser calculado dividindo a distância focal da objetiva F pela distância focal da ocular f:
+a = F/f
+
+A rotação da Terra é de 1° a cada 4 min. Isso influencia no tempo que o objeto permanece visível no campo da ocular.
+
+
+Field of View (FOV) : 52°
+Lens Design : 4-element Plossl
+
+
+6mm   FOV 66°
+
+

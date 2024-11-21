@@ -1,0 +1,306 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="generator" content="MediaWiki 1.13.2" />
+		<meta name="keywords" content="EFI LOAD FILE PROTOCOL,EFI DEVICE PATH PROTOCOL" />
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<link rel="search" type="application/opensearchdescription+xml" href="/wiki/opensearch_desc.php" title="PhoenixWiki (en)" />
+		<link rel="alternate" type="application/rss+xml" title="PhoenixWiki RSS Feed" href="http://wiki.phoenix.com/wiki/index.php?title=Special:RecentChanges&amp;feed=rss" />
+		<link rel="alternate" type="application/atom+xml" title="PhoenixWiki Atom Feed" href="http://wiki.phoenix.com/wiki/index.php?title=Special:RecentChanges&amp;feed=atom" />
+		<title>EFI LOAD FILE PROTOCOL - PhoenixWiki</title>
+		<style type="text/css" media="screen, projection">/*<![CDATA[*/
+			@import "/wiki/skins/common/shared.css?164";
+			@import "/wiki/skins/phoenixskin_green/main.css?164";
+		/*]]>*/</style>
+		<link rel="stylesheet" type="text/css" media="print" href="/wiki/skins/common/commonPrint.css?164" />
+		<!--[if lt IE 5.5000]><style type="text/css">@import "/wiki/skins/phoenixskin_green/IE50Fixes.css?164";</style><![endif]-->
+		<!--[if IE 5.5000]><style type="text/css">@import "/wiki/skins/phoenixskin_green/IE55Fixes.css?164";</style><![endif]-->
+		<!--[if IE 6]><style type="text/css">@import "/wiki/skins/phoenixskin_green/IE60Fixes.css?164";</style><![endif]-->
+		<!--[if IE 7]><style type="text/css">@import "/wiki/skins/phoenixskin_green/IE70Fixes.css?164";</style><![endif]-->
+		<!--[if lt IE 7]><script type="text/javascript" src="/wiki/skins/common/IEFixes.js?164"></script>
+		<meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+		
+		<script type= "text/javascript">/*<![CDATA[*/
+var skin = "phoenixskin_green";
+var stylepath = "/wiki/skins";
+var wgArticlePath = "/wiki/index.php/$1";
+var wgScriptPath = "/wiki";
+var wgScript = "/wiki/index.php";
+var wgVariantArticlePath = false;
+var wgActionPaths = [];
+var wgServer = "http://wiki.phoenix.com";
+var wgCanonicalNamespace = "";
+var wgCanonicalSpecialPageName = false;
+var wgNamespaceNumber = 0;
+var wgPageName = "EFI_LOAD_FILE_PROTOCOL";
+var wgTitle = "EFI LOAD FILE PROTOCOL";
+var wgAction = "view";
+var wgArticleId = "156";
+var wgIsArticle = true;
+var wgUserName = null;
+var wgUserGroups = null;
+var wgUserLanguage = "en";
+var wgContentLanguage = "en";
+var wgBreakFrames = false;
+var wgCurRevisionId = "302";
+var wgVersion = "1.13.2";
+var wgEnableAPI = true;
+var wgEnableWriteAPI = false;
+var wgRestrictionEdit = [];
+var wgRestrictionMove = [];
+/*]]>*/</script>
+                
+		<script type="text/javascript" src="/wiki/skins/common/wikibits.js?164"><!-- wikibits js --></script>
+		<!-- Head Scripts -->
+		<script type="text/javascript" src="/wiki/skins/common/ajax.js?164"></script>
+		<script type="text/javascript" src="/wiki/index.php?title=-&amp;action=raw&amp;gen=js&amp;useskin=phoenixskin_green"><!-- site js --></script>
+		<style type="text/css">/*<![CDATA[*/
+@import "/wiki/index.php?title=MediaWiki:Common.css&usemsgcache=yes&action=raw&ctype=text/css&smaxage=18000";
+@import "/wiki/index.php?title=MediaWiki:Phoenixskin_green.css&usemsgcache=yes&action=raw&ctype=text/css&smaxage=18000";
+@import "/wiki/index.php?title=-&action=raw&gen=css&maxage=18000&useskin=phoenixskin_green";
+/*]]>*/</style>
+	</head>
+<body class="mediawiki ns-0 ltr page-EFI_LOAD_FILE_PROTOCOL">
+	<div id="globalWrapper">
+		<div id="column-content">
+	<div id="content">
+		<a name="top" id="top"></a>
+				<h1 class="firstHeading">EFI LOAD FILE PROTOCOL</h1>
+		<div id="bodyContent">
+			<h3 id="siteSub">From PhoenixWiki</h3>
+			<div id="contentSub"></div>
+									<div id="jump-to-nav">Jump to: <a href="#column-one">navigation</a>, <a href="#searchInput">search</a></div>			<!-- start content -->
+			<p>Is used to obtain files from arbitrary devices.
+</p>
+<table id="toc" class="toc" summary="Contents"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1"><a href="#GUID"><span class="tocnumber">1</span> <span class="toctext">GUID</span></a></li>
+<li class="toclevel-1"><a href="#Protocol_Interface_Structure"><span class="tocnumber">2</span> <span class="toctext">Protocol Interface Structure</span></a></li>
+<li class="toclevel-1"><a href="#Parameters"><span class="tocnumber">3</span> <span class="toctext">Parameters</span></a></li>
+<li class="toclevel-1"><a href="#Description"><span class="tocnumber">4</span> <span class="toctext">Description</span></a>
+<ul>
+<li class="toclevel-2"><a href="#LoadFile.28.29"><span class="tocnumber">4.1</span> <span class="toctext">LoadFile()</span></a></li>
+</ul>
+</li>
+</ul>
+</td></tr></table><script type="text/javascript"> if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } </script>
+<a name="GUID"></a><h1> <span class="mw-headline">GUID</span></h1>
+<pre>#define EFI_LOAD_FILE_PROTOCOL_GUID \
+  {0x56EC3091,0x954C,0x11d2,0x8E,0x3F,0x00,0xA0,0xC9,0x69,0x72,0x3B}
+</pre>
+<a name="Protocol_Interface_Structure"></a><h1> <span class="mw-headline">Protocol Interface Structure</span></h1>
+<pre>#include EFI_PROTOCOL_CONSUMER(LoadFile)
+
+extern EFI_GUID gEfiLoadFileProtocolGuid;
+</pre>
+<pre>typedef struct {
+  EFI_LOAD_FILE <a href="#LoadFile.28.29" title="">LoadFile</a>;
+} EFI_LOAD_FILE_PROTOCOL;
+</pre>
+<a name="Parameters"></a><h1> <span class="mw-headline">Parameters</span></h1>
+<p>LoadFile
+Causes the driver to load the requested file. 
+</p>
+<a name="Description"></a><h1> <span class="mw-headline">Description</span></h1>
+<p>The <strong class="selflink">EFI_LOAD_FILE_PROTOCOL</strong> is a simple protocol used to obtain files from arbitrary devices.
+</p><p>When the firmware is attempting to load a file, it first attempts to use the device’s Simple File System protocol to read the file. If the file system protocol is found, the firmware implements the policy of interpreting the File Path value of the file being loaded. If the device does not support the file system protocol, the firmware then attempts to read the file via the <strong class="selflink">EFI_LOAD_FILE_PROTOCOL</strong> and the <a href="#LoadFile.28.29" title="">LoadFile()</a> function. In this case the LoadFile() function implements the policy of interpreting the File Path value.
+</p>
+<a name="LoadFile.28.29"></a><h2> <span class="mw-headline">LoadFile()</span></h2>
+<p>Causes the driver to load a specified file.
+</p><p><b>Prototype</b><br />
+</p>
+<pre>typedef
+EFI_STATUS
+(EFIAPI *EFI_LOAD_FILE) (
+  IN     <strong class="selflink">EFI_LOAD_FILE_PROTOCOL</strong>   *This,
+  IN     <a href="/wiki/index.php/EFI_DEVICE_PATH_PROTOCOL" title="EFI DEVICE PATH PROTOCOL">EFI_DEVICE_PATH_PROTOCOL</a> *FilePath,
+  IN     BOOLEAN                  BootPolicy,
+  IN OUT UINTN                    *BufferSize,
+  IN     VOID                     *Buffer OPTIONAL
+  );
+</pre>
+<p><b>Parameters</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Parameter
+</th><th> Member
+</th></tr>
+<tr>
+<td> This
+</td><td> Indicates a pointer to the calling context.
+</td></tr>
+<tr>
+<td> FilePath
+</td><td> The device specific path of the file to load.
+</td></tr>
+<tr>
+<td> BootPolicy
+</td><td> If TRUE, indicates that the request originates from the boot manager, and that the boot manager is attempting to load FilePath as a boot selection. If FALSE, then FilePath must match an exact file to be loaded.
+</td></tr>
+<tr>
+<td> BufferSize
+</td><td> On input the size of Buffer in bytes. On output with a return code of EFI_SUCCESS, the amount of data transferred to Buffer. On output with a return code of EFI_BUFFER_TOO_SMALL, the size of Buffer required to retrieve the requested file.
+</td></tr>
+<tr>
+<td> Buffer
+</td><td> The memory buffer to transfer the file to. If Buffer is NULL, then no the size of the requested file is returned in BufferSize.
+</td></tr></table>
+<p><b>Description</b><br />
+The LoadFile() function interprets the device-specific FilePath parameter, returns the entire file into Buffer, and sets BufferSize to the amount of data returned. If Buffer is NULL, then the size of the file is returned in BufferSize. If Buffer is not NULL, and BufferSize is not large enough to hold the entire file, then EFI_BUFFER_TOO_SMALL is returned, and BufferSize is updated to indicate the size of the buffer needed to obtain the file. In this case, no data is returned in Buffer.
+</p><p>If BootPolicy is FALSE the FilePath must match an exact file to be loaded. If no such file exists, EFI_NOT_FOUND is returned. 
+</p><p>If BootPolicy is FALSE, and an attempt is being made to perform a network boot through the PXE Base Code protocol, EFI_UNSUPPORTED is returned.
+</p><p>If BootPolicy is TRUE the firmware’s boot manager is attempting to load an EFI image that is a boot selection. In this case, FilePath contains the file path value in the boot selection option. Normally the firmware would implement the policy on how to handle an inexact boot file path; however, since in this case the firmware cannot interpret the file path, the LoadFile() function is responsible for implementing the policy. For example, in the case of a network boot through the PXE Base Code protocol, FilePath merely points to the root of the device, and the firmware interprets this as wanting to boot from the first valid loader. 
+</p><p>The following is a list of events that LoadFile() will implement for a PXE boot:
+</p>
+<ul><li> Perform DHCP.
+</li><li> Optionally prompt the user with a menu of boot selections.
+</li><li> Discover the boot server and the boot file.
+</li><li> Download the boot file into Buffer and update BufferSize with the size of the boot file.
+</li></ul>
+<p><b>Status Codes Returned</b><br />
+</p>
+<table class="wikitable">
+<tr>
+<th> Status Code
+</th><th> Description
+</th></tr>
+<tr>
+<td> EFI_SUCCESS
+</td><td> The file was loaded.
+</td></tr>
+<tr>
+<td> EFI_UNSUPPORTED
+</td><td> The device does not support the provided BootPolicy.
+</td></tr>
+<tr>
+<td> EFI_INVALID_PARAMETER
+</td><td> FilePath is not a valid device path, or BufferSize is NULL.
+</td></tr>
+<tr>
+<td> EFI_NO_MEDIA
+</td><td> No medium was present to load the file.
+</td></tr>
+<tr>
+<td> EFI_DEVICE_ERROR
+</td><td> The file was not loaded due to a device error.
+</td></tr>
+<tr>
+<td> EFI_NO_RESPONSE
+</td><td> The remote system did not respond.
+</td></tr>
+<tr>
+<td> EFI_NOT_FOUND
+</td><td> The file was not found.
+</td></tr>
+<tr>
+<td> EFI_ABORTED
+</td><td> The file load process was manually cancelled.
+</td></tr>
+<tr>
+<td> EFI_BUFFER_TOO_SMALL
+</td><td> The BufferSize is too small to read the current directory entry. BufferSize has been updated with the size needed to complete
+<p>the request.
+</p>
+</td></tr></table> 
+<hr />
+<p>Copyright (C) 2008 Phoenix Technologies Ltd. All Rights Reserved. Portions copyright (C) 2008 UEFI Forum, Inc. Used with permission.
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 10/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key wikidb:pcache:idhash:156-0!1!0!!en!2!edit=0 and timestamp 20181119200023 -->
+<div class="printfooter">
+Retrieved from "<a href="http://wiki.phoenix.com/wiki/index.php/EFI_LOAD_FILE_PROTOCOL">http://wiki.phoenix.com/wiki/index.php/EFI_LOAD_FILE_PROTOCOL</a>"</div>
+			<div id='catlinks' class='catlinks'><div id="mw-normal-catlinks"><a href="/wiki/index.php/Special:Categories" title="Special:Categories">Categories</a>:&#32;<span dir='ltr'><a href="/wiki/index.php/Category:UEFI_2.0" title="Category:UEFI 2.0">UEFI 2.0</a></span> | <span dir='ltr'><a href="/wiki/index.php/Category:SecureCore-Tiano_1.4.0" title="Category:SecureCore-Tiano 1.4.0">SecureCore-Tiano 1.4.0</a></span> | <span dir='ltr'><a href="/wiki/index.php/Category:AwardCore-Tiano_1.4.0" title="Category:AwardCore-Tiano 1.4.0">AwardCore-Tiano 1.4.0</a></span></div></div>			<!-- end content -->
+			<div class="visualClear"></div>
+		</div>
+	</div>
+		</div>
+		<div id="column-one">
+	<div id="p-cactions" class="portlet">
+		<h5>Views</h5>
+		<div class="pBody">
+			<ul>
+	
+				 <li id="ca-nstab-main" class="selected"><a href="/wiki/index.php/EFI_LOAD_FILE_PROTOCOL" title="View the content page [c]" accesskey="c">Page</a></li>
+				 <li id="ca-talk" class="new"><a href="/wiki/index.php?title=Talk:EFI_LOAD_FILE_PROTOCOL&amp;action=edit" title="Discussion about the content page [t]" accesskey="t">Discussion</a></li>
+				 <li id="ca-viewsource"><a href="/wiki/index.php?title=EFI_LOAD_FILE_PROTOCOL&amp;action=edit" title="This page is protected.&#10;You can view its source. [e]" accesskey="e">View source</a></li>
+				 <li id="ca-history"><a href="/wiki/index.php?title=EFI_LOAD_FILE_PROTOCOL&amp;action=history" title="Past versions of this page. [h]" accesskey="h">History</a></li>			</ul>
+		</div>
+	</div>
+	<div class="portlet" id="p-personal">
+		<h5>Personal tools</h5>
+		<div class="pBody">
+			<ul>
+				<li id="pt-login"><a href="/wiki/index.php?title=Special:UserLogin&amp;returnto=EFI_LOAD_FILE_PROTOCOL" title="You are encouraged to log in, it is not mandatory however. [o]" accesskey="o">Log in</a></li>
+			</ul>
+		</div>
+	</div>
+	<div class="portlet" id="p-logo">
+		<a style="background-image: url(http://colo-www2/wiki/logo/phoenixlogo.png);" href="/wiki/index.php/Main_Page" title="Visit the Main Page [z]" accesskey="z"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+	<div class='generated-sidebar portlet' id='p-navigation'>
+		<h5>Navigation</h5>
+		<div class='pBody'>
+			<ul>
+				<li id="n-mainpage-description"><a href="/wiki/index.php/Main_Page">Main Page</a></li>
+				<li id="n-portal"><a href="/wiki/index.php/PhoenixWiki:Community_Portal" title="About the project, what you can do, where to find things">Community portal</a></li>
+				<li id="n-currentevents"><a href="/wiki/index.php/PhoenixWiki:Current_events" title="Find background information on current events">Current events</a></li>
+				<li id="n-recentchanges"><a href="/wiki/index.php/Special:RecentChanges" title="The list of recent changes in the wiki. [r]" accesskey="r">Recent changes</a></li>
+				<li id="n-randompage"><a href="/wiki/index.php/Special:Random" title="Load a random page [x]" accesskey="x">Random page</a></li>
+				<li id="n-help"><a href="/wiki/index.php/Help:Contents" title="The place to find out.">Help</a></li>
+			</ul>
+		</div>
+	</div>
+	<div id="p-search" class="portlet">
+		<h5><label for="searchInput">Search</label></h5>
+		<div id="searchBody" class="pBody">
+			<form action="/wiki/index.php/Special:Search" id="searchform"><div>
+				<input id="searchInput" name="search" type="text" title="Search PhoenixWiki [f]" accesskey="f" value="" />
+				<input type='submit' name="go" class="searchButton" id="searchGoButton"	value="Go" title="Go to a page with this exact name if exists" />&nbsp;
+				<input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="Search" title="Search the pages for this text" />
+			</div></form>
+		</div>
+	</div>
+	<div class="portlet" id="p-tb">
+		<h5>Toolbox</h5>
+		<div class="pBody">
+			<ul>
+				<li id="t-whatlinkshere"><a href="/wiki/index.php/Special:WhatLinksHere/EFI_LOAD_FILE_PROTOCOL" title="List of all wiki pages that link here [j]" accesskey="j">What links here</a></li>
+				<li id="t-recentchangeslinked"><a href="/wiki/index.php/Special:RecentChangesLinked/EFI_LOAD_FILE_PROTOCOL" title="Recent changes in pages linked from this page [k]" accesskey="k">Related changes</a></li>
+<li id="t-upload"><a href="/wiki/index.php/Special:Upload" title="Upload files [u]" accesskey="u">Upload file</a></li>
+<li id="t-specialpages"><a href="/wiki/index.php/Special:SpecialPages" title="List of all special pages [q]" accesskey="q">Special pages</a></li>
+				<li id="t-print"><a href="/wiki/index.php?title=EFI_LOAD_FILE_PROTOCOL&amp;printable=yes" title="Printable version of this page [p]" accesskey="p">Printable version</a></li>				<li id="t-permalink"><a href="/wiki/index.php?title=EFI_LOAD_FILE_PROTOCOL&amp;oldid=302" title="Permanent link to this version of the page">Permanent link</a></li>			</ul>
+		</div>
+	</div>
+		</div><!-- end of the left (by default at least) column -->
+			<div class="visualClear"></div>
+			<div id="footer">
+				<div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="/wiki/skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>
+			<ul id="f-list">
+				<li id="lastmod"> This page was last modified on 30 October 2008, at 05:11.</li>
+
+				<li id="viewcount">This page has been accessed 10,187 times.</li>
+
+				<li id="privacy"><a href="/wiki/index.php/PhoenixWiki:Privacy_policy" title="PhoenixWiki:Privacy policy">Privacy policy</a></li>
+
+				<li id="about"><a href="/wiki/index.php/PhoenixWiki:About" title="PhoenixWiki:About">About PhoenixWiki</a></li>
+
+				<li id="disclaimer"><a href="/wiki/index.php/PhoenixWiki:General_disclaimer" title="PhoenixWiki:General disclaimer">Disclaimers</a></li>
+
+				<li id="support"><a href='mailto:devsupport@phoenix.com'>Support</a></li>
+
+			</ul>
+		</div>
+</div>
+
+		<script type="text/javascript">if (window.runOnloadHook) runOnloadHook();</script>
+<!-- Served in 0.324 secs. --></body></html>

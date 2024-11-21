@@ -1,0 +1,7 @@
+
+Block Group Descriptor Table
+
+provides an overview of how the volume is split into block groups and where to find the inode bitmap, the block bitmap, and the inode table for each block group.
+
+For each block group in the file system, such a group_desc is created.
+

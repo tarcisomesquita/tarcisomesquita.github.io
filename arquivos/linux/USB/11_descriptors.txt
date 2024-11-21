@@ -1,0 +1,14 @@
+
+Standard Descriptors
+
+    * A Device Descriptor describes general information about a USB device. It includes information that applies globally to the device and all of the device's configurations. A USB device has only one device descriptor.
+    * The Configuration Descriptor gives information about a specific device configuration. A USB device has one or more configuration descriptors. Each configuration has one or more interfaces and each interface has zero or more endpoints. An endpoint is not shared among interfaces within a single configuration unless the endpoint is used by alternate settings of the same interface. Endpoints may be shared among interfaces that are part of different configurations without this restriction. Configurations can be activated exclusively by the standard control transfer set_configuration. Different configurations can be used to change global device settings like power consumption.
+    * An Interface Descriptor describes a specific interface within a configuration. A configuration provides one or more interfaces, each with zero or more endpoint descriptors describing a unique set of endpoints within the configuration. An interface may include alternate settings that allow the endpoints and/or their characteristics to be varied after the device has been configured. The default setting for an interface is always alternate setting zero. Alternate settings can be selected exclusively by the standard control transfer set_interface. For example a multifunctional device like a video camera with internal microphone could have three alternate settings to change the bandwidth allocation on the bus.
+
+         1. Camera activated
+         2. Microphone activated
+         3. Camera and microphone activated
+
+    * An Endpoint Descriptor contains information required by the host to determine the bandwidth requirements of each endpoint. An endpoint represents a logical data source or sink of a USB device. Endpoint zero is used for all standard control transfers and there is never a descriptor for this endpoint. The USB specification [4] uses the term pipe for an endpoint too.
+
+    * String Descriptors are optional and provide additional information in human readable Unicode format. They can be used for vendor and device names or serial numbers. 

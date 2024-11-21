@@ -1,0 +1,88 @@
+http://e2fsprogs.sourceforge.net
+
+exemplo:
+
+$ sudo mke2fs -b 4096 -L casper-rw /dev/sdb2
+A partição será formata como ext2 e terá o Label casper-rw.
+
+
+NAME
+mke2fs - create an ext2/ext3 filesystem
+
+SYNOPSIS
+mke2fs [ -b block-size ] [ -g blocks-per-group ] [ -G number-of-groups ] [ -i bytes-per-inode ] [ -I inode-size ] [ -j ] [ -J journal-options ] 
+[ -m reserved-blocks-percentage ] [ -O feature[,...] ] [ -L volume-label ] [ -t fs-type ] device [ blocks-count ]
+
+OPTIONS
+-b block-size
+   Specify the size of blocks in bytes. Valid block-size  values are 1024, 2048 and 4096 bytes per block.
+
+-g blocks-per-group
+   Specify the number of blocks in a block group.
+
+-G number-of-groups
+   Specify the number of block groups.
+   The number of groups must be a power of 2 and may only be specified  if  the  flex_bg  filesystem  feature  is enabled.
+
+-i bytes-per-inode
+   Specify  the  bytes/inode  ratio.
+   This value shouldn’t be smaller than the blocksize  of the  filesystem.
+
+-I inode-size
+   Specify the  size  of  each  inode  in  bytes.
+   mke2fs  creates 256-byte  inodes  by  default.
+   The inode-size value must be a  power  of  2  larger  or equal  to  128.
+   The  larger  the inode-size the more space the inode table will consume, and this reduces the usable space and performance.
+
+-j
+   Create the filesystem with an ext3 journal.
+
+-J journal-options
+   Create the ext3 journal using options specified on the  commandline.
+   Journal  options  are  comma  separated, and may take an argument using the equals (’=’)  sign.
+   options:
+      size=journal-size
+         Create  an internal journal (i.e., stored inside the
+         filesystem) of  size  journal-size  megabytes.   The
+         size of the journal must be at least 1024 filesystem
+         blocks (i.e., 1MB if using 1k blocks, 4MB  if  using
+         4k  blocks,  etc.)   and may be no more than 102,400
+         filesystem blocks.
+
+-L new-volume-label
+   Set  the  volume  label.
+   The maximum length of the volume label is 16 bytes.
+
+-m reserved-blocks-percentage
+   Specify the percentage of the filesystem blocks reserved for the super-user.
+   This  allows root-owned daemons, such as syslogd(8), to continue to  function  correctly after non-privileged processes are prevented from writing to the
+   filesystem.  The default percentage is 5%.
+
+-O feature[,...]
+   feature is a list of features, separated by commas.
+   To disable feature, simply prefix the feature name with a caret (’^’) character.
+   The  pseudo-filesystem  feature  "none"  will  clear  all filesystem features.
+
+      large_file
+         Filesystem  can  contain files that are greater than 2GB.
+
+      dir_index
+         Use  hashed  b-trees  to  speed  up lookups in large directories.
+
+      flex_bg
+         Allow bitmaps and inode tables for a block group to be placed anywhere on the storage media (use with -G
+         option to group meta-data in order to create a large virtual block group).
+
+      has_journal
+         Create an ext3 journal (as if using the -j option).
+
+      extent
+         Instead of using the indirect block scheme for storing the location of data blocks in an inode, use extents instead.   
+         This speeds up filesystem access, especially for large files.
+
+      sparse_super
+         Create  a  filesystem  with  fewer superblock backup copies (saves space on large filesystems).
+
+-t fs-type
+   Specify  the filesystem type (i.e., ext2, ext3, ext4, etc.) that is to be created.
+

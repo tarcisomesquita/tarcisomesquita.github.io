@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ASCIIMathML Exemplos</title>
+</head>
+<body>
+
+<pre>
+<b>Example:</b> Solving the quadratic equation.
+Suppose a x^2+b x+c=0 and a!=0. We first divide by \a to get x^2+b/a x+c/a=0. 
+
+Then we complete the square and obtain x^2+b/a x+(b/(2a))^2-(b/(2a))^2+c/a=0. 
+The first three terms factor to give (x+b/(2a))^2=(b^2)/(4a^2)-c/a.
+Now we take square roots on both sides and get x+b/(2a)=+-sqrt((b^2)/(4a^2)-c/a).
+
+Finally we move the b/(2a) to the right and simplify to get 
+the two solutions: x_(1,2)=(-b+-sqrt(b^2-4a c))/(2a)
+</pre>
+
+<hr>
+
+<center>
+<b>
+If you don't believe this, copy the text and paste it on the 
+<a href="http://www1.chapman.edu/%7Ejipsen/mathml/asciimathdemo.html">ASCIIMathML.js: Try it yourself</a> demo page.
+</b>
+
+</center>
+
+<hr>
+
+<h4>
+Here are a few more examples:
+</h4>
+
+<table id="examples" cellpadding="10" border="5">
+<tbody><tr>
+<th>Type this</th>
+<th>See that</th>
+<th>Comment</th>
+</tr>
+
+<tr>
+<td>`x^2+y_1+z_12^34`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="x^2+y_1+z_12^34"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><msub><mi>y</mi><mn>1</mn></msub><mo>+</mo><mrow><msubsup><mi>z</mi><mn>12</mn><mn>34</mn></msubsup></mrow></mstyle></math></span></td>
+<td>subscripts as in TeX, but numbers are treated as a unit</td>
+</tr>
+<tr>
+<td>`sin^-1(x)`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="sin^-1(x)"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><msup><mo>sin</mo><mrow><mo>-</mo><mn>1</mn></mrow></msup><mrow><mo>(</mo><mi>x</mi><mo>)</mo></mrow></mstyle></math></span></td>
+<td>function names are treated as constants</td>
+</tr>
+<tr>
+
+<td>`d/dxf(x)=lim_(h-&gt;0)(f(x+h)-f(x))/h`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="d/dxf(x)=lim_(h-&gt;0)(f(x+h)-f(x))/h"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mfrac><mi>d</mi><mrow><mi>d</mi><mi>x</mi></mrow></mfrac><mrow><mi>f</mi><mrow><mo>(</mo><mi>x</mi><mo>)</mo></mrow></mrow><mo>=</mo><munder><mo>lim</mo><mrow><mi>h</mi><mo>→</mo><mn>0</mn></mrow></munder><mfrac><mrow><mrow><mi>f</mi><mrow><mo>(</mo><mi>x</mi><mo>+</mo><mi>h</mi><mo>)</mo></mrow></mrow><mo>-</mo><mrow><mi>f</mi><mrow><mo>(</mo><mi>x</mi><mo>)</mo></mrow></mrow></mrow><mi>h</mi></mfrac></mstyle></math></span></td>
+<td>complex subscripts are bracketed, displayed under lim</td>
+</tr>
+<tr>
+<td>$\frac{d}{dx}f(x)=\lim_{h\to 0}\frac{f(x+h)-f(x)}{h}$</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="\frac{d}{dx}f(x)=\lim_{h\to 0}\frac{f(x+h)-f(x)}{h}"><mstyle fontfamily="serif"><mfrac><mrow><mi>d</mi></mrow><mrow><mi>d</mi><mi>x</mi></mrow></mfrac><mi>f</mi><mo maxsize="1">(</mo><mi>x</mi><mo maxsize="1">)</mo><mo>=</mo><mrow><munder><mo>lim</mo><mrow><mi>h</mi><mo>→</mo><mn>0</mn></mrow></munder></mrow><mfrac><mrow><mi>f</mi><mo maxsize="1">(</mo><mi>x</mi><mo>+</mo><mi>h</mi><mo maxsize="1">)</mo><mo>-</mo><mi>f</mi><mo maxsize="1">(</mo><mi>x</mi><mo maxsize="1">)</mo></mrow><mrow><mi>h</mi></mrow></mfrac></mstyle></math></span></td>
+<td>standard LaTeX notation is an alternative</td>
+</tr>
+<tr>
+<td>`f(x)=sum_(n=0)^oo(f^((n))(a))/(n!)(x-a)^n`</td>
+
+<td><span style="font-size: 1em; font-family: serif;"><math title="f(x)=sum_(n=0)^oo(f^((n))(a))/(n!)(x-a)^n"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mi>f</mi><mrow><mo>(</mo><mi>x</mi><mo>)</mo></mrow></mrow><mo>=</mo><mrow><munderover><mo>∑</mo><mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow><mo>∞</mo></munderover></mrow><mfrac><mrow><msup><mi>f</mi><mrow><mrow><mo>(</mo><mi>n</mi><mo>)</mo></mrow></mrow></msup><mrow><mo>(</mo><mi>a</mi><mo>)</mo></mrow></mrow><mrow><mi>n</mi><mo>!</mo></mrow></mfrac><msup><mrow><mo>(</mo><mi>x</mi><mo>-</mo><mi>a</mi><mo>)</mo></mrow><mi>n</mi></msup></mstyle></math></span></td>
+<td>f^((n))(a) must be bracketed, else the numerator is only <span style="font-size: 1em; font-family: serif;"><math title="a"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>a</mi></mstyle></math></span></td>
+</tr>
+<tr>
+<td>$f(x)=\sum_{n=0}^\infty\frac{f^{(n)}(a)}{n!}(x-a)^n$</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="f(x)=\sum_{n=0}^\infty\frac{f^{(n)}(a)}{n!}(x-a)^n"><mstyle fontfamily="serif"><mi>f</mi><mo maxsize="1">(</mo><mi>x</mi><mo maxsize="1">)</mo><mo>=</mo><mrow><munderover><mo>∑</mo><mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow><mo>∞</mo></munderover></mrow><mfrac><mrow><mrow><msup><mi>f</mi><mrow><mo maxsize="1">(</mo><mi>n</mi><mo maxsize="1">)</mo></mrow></msup></mrow><mo maxsize="1">(</mo><mi>a</mi><mo maxsize="1">)</mo></mrow><mrow><mi>n</mi><mo>!</mo></mrow></mfrac><mo maxsize="1">(</mo><mi>x</mi><mo>-</mo><mi>a</mi><mrow><msup><mo maxsize="1">)</mo><mi>n</mi></msup></mrow></mstyle></math></span></td>
+<td>standard LaTeX produces the same result</td>
+</tr>
+<tr>
+<td>`int_0^1f(x)dx`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="int_0^1f(x)dx"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><msubsup><mo>∫</mo><mn>0</mn><mn>1</mn></msubsup></mrow><mrow><mi>f</mi><mrow><mo>(</mo><mi>x</mi><mo>)</mo></mrow></mrow><mrow><mi>d</mi><mi>x</mi></mrow></mstyle></math></span></td>
+
+<td>subscripts must come before superscripts</td>
+</tr>
+
+<tr>
+<td>`[[a,b],[c,d]]((n),(k))`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="[[a,b],[c,d]]((n),(k))"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>[</mo><mtable><mtr><mtd><mi>a</mi></mtd><mtd><mi>b</mi></mtd></mtr><mtr><mtd><mi>c</mi></mtd><mtd><mi>d</mi></mtd></mtr></mtable><mo>]</mo></mrow><mrow><mo>(</mo><mtable><mtr><mtd><mi>n</mi></mtd></mtr><mtr><mtd><mi>k</mi></mtd></mtr></mtable><mo>)</mo></mrow></mstyle></math></span></td>
+<td>matrices and column vectors are simple to type</td>
+</tr>
+
+<tr>
+<td>`{(S_(11),...,S_(1n)),(vdots,ddots,vdots),(S_(m1),...,S_(mn))]`</td>
+<td><span style="font-size: 1em; font-family: serif;">
+<math title="{(S_(11),...,S_(1n)),(vdots,ddots,vdots),(S_(m1),...,S_(mn))]"><mstyle mathsize="1em" mathcolor="blue" fontfamily="serif" displaystyle="true"><mrow><mo>{</mo><mtable><mtr><mtd><msub><mi>S</mi><mrow><mn>11</mn></mrow></msub></mtd><mtd><mo>...</mo></mtd><mtd><msub><mi>S</mi><mrow><mn>1</mn><mi>n</mi></mrow></msub></mtd></mtr><mtr><mtd><mo>⋮</mo></mtd><mtd><mo>⋱</mo></mtd><mtd><mo>⋮</mo></mtd></mtr><mtr><mtd><msub><mi>S</mi><mrow><mi>m</mi><mn>1</mn></mrow></msub></mtd><mtd><mo>...</mo></mtd><mtd><msub><mi>S</mi><mrow><mi>m</mi><mi>n</mi></mrow></msub></mtd></mtr></mtable><mo>]</mo></mrow></mstyle></math>
+</span></td>
+<td>matrices</td>
+</tr>
+
+<tr>
+<td>`x/x={(1,if x!=0),(text{undefined},if x=0):}`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="x/x={(1,if x!=0),(text{undefined},if x=0):}"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mfrac><mi>x</mi><mi>x</mi></mfrac><mo>=</mo><mrow><mo>{</mo><mtable columnalign="left"><mtr><mtd><mn>1</mn></mtd><mtd><mrow><mspace width="1ex"></mspace><mo>if</mo><mspace width="1ex"></mspace></mrow><mi>x</mi><mo>≠</mo><mn>0</mn></mtd></mtr><mtr><mtd><mrow><mtext>undefined</mtext></mrow></mtd><mtd><mrow><mspace width="1ex"></mspace><mo>if</mo><mspace width="1ex"></mspace></mrow><mi>x</mi><mo>=</mo><mn>0</mn></mtd></mtr></mtable></mrow></mstyle></math></span></td>
+<td>piecewise defined functions are based on matrix notation</td>
+
+</tr>
+<tr>
+<td>`a//b`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="a//b"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>a</mi><mo>/</mo><mi>b</mi></mstyle></math></span></td>
+<td>use // for inline fractions</td>
+</tr>
+<tr>
+<td>`(a/b)/(c/d)`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="(a/b)/(c/d)"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mfrac><mrow><mfrac><mi>a</mi><mi>b</mi></mfrac></mrow><mrow><mfrac><mi>c</mi><mi>d</mi></mfrac></mrow></mfrac></mstyle></math></span></td>
+<td>with brackets, multiple fraction work as expected</td>
+</tr>
+
+<tr>
+<td>`a/b/c/d`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="a/b/c/d"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mfrac><mi>a</mi><mi>b</mi></mfrac><mo>/</mo><mfrac><mi>c</mi><mi>d</mi></mfrac></mstyle></math></span></td>
+<td>without brackets the parser chooses this particular expression</td>
+</tr>
+<tr>
+<td>`((a*b))/c`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="((a*b))/c"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mfrac><mrow><mrow><mo>(</mo><mi>a</mi><mo>⋅</mo><mi>b</mi><mo>)</mo></mrow></mrow><mi>c</mi></mfrac></mstyle></math></span></td>
+<td>only one level of brackets is removed; * gives standard product</td>
+</tr>
+<tr>
+
+<td>`sqrt sqrt root3x`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="sqrt sqrt root3x"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><msqrt><msqrt><mroot><mi>x</mi><mn>3</mn></mroot></msqrt></msqrt></mstyle></math></span></td>
+<td>spaces are optional, only serve to split strings that should not match</td>
+</tr>
+<tr>
+<td>`&lt;&lt; a,b &gt;&gt; and {:(x,y),(u,v):}`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="&lt;&lt; a,b &gt;&gt; and {:(x,y),(u,v):}"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>〈</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo>〉</mo></mrow><mrow><mspace width="1ex"></mspace><mtext>and</mtext><mspace width="1ex"></mspace></mrow><mrow><mtable columnalign="left"><mtr><mtd><mi>x</mi></mtd><mtd><mi>y</mi></mtd></mtr><mtr><mtd><mi>u</mi></mtd><mtd><mi>v</mi></mtd></mtr></mtable></mrow></mstyle></math></span></td>
+<td>angle brackets and invisible brackets</td>
+</tr>
+<tr>
+<td>`(a,b]={x in RR | a &lt; x &lt;= b}`</td>
+
+<td><span style="font-size: 1em; font-family: serif;"><math title="(a,b]={x in RR | a &lt; x &lt;= b}"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo>]</mo></mrow><mo>=</mo><mrow><mo>{</mo><mi>x</mi><mo>∈</mo><mo>ℝ</mo><mrow><mo>|</mo></mrow><mi>a</mi><mo>&lt;</mo><mi>x</mi><mo>≤</mo><mi>b</mi><mo>}</mo></mrow></mstyle></math></span></td>
+<td>grouping brackets don't have to match</td>
+</tr>
+<tr>
+<td>`abc-123.45^-1.1`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="abc-123.45^-1.1"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>a</mi><mi>b</mi><mi>c</mi><mo>-</mo><msup><mn>123.45</mn><mrow><mo>-</mo><mn>1.1</mn></mrow></msup></mstyle></math></span></td>
+<td>non-tokens are split into single characters,<br>
+but decimal numbers are parsed with possible sign</td>
+</tr>
+
+<tr>
+<td>`hat(ab) bar(xy) ulA vec v dotx ddot y`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="hat(ab) bar(xy) ulA vec v dotx ddot y"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mover><mrow><mi>a</mi><mi>b</mi></mrow><mo>^</mo></mover><mover><mrow><mi>x</mi><mi>y</mi></mrow><mo>¯</mo></mover><munder><mi>A</mi><mo>̲</mo></munder><mover><mi>v</mi><mo>→</mo></mover><mover><mi>x</mi><mo>.</mo></mover><mover><mi>y</mi><mo>..</mo></mover></mstyle></math></span></td>
+<td>accents can be used on any expression (work well in IE)</td>
+</tr>
+<tr>
+<td>`bb{AB3}.bbb(AB].cc(AB).fr{AB}.tt[AB].sf(AB)`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="bb{AB3}.bbb(AB].cc(AB).fr{AB}.tt[AB].sf(AB)"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mstyle fontweight="bold"><mrow><mi>A</mi><mi>B</mi><mn>3</mn></mrow></mstyle><mo>.</mo><mstyle mathvariant="double-struck"><mrow></mrow></mstyle><mo>.</mo><mstyle mathvariant="script"><mrow>ℬ</mrow></mstyle><mo>.</mo><mstyle mathvariant="fraktur"><mrow></mrow></mstyle><mo>.</mo><mstyle fontfamily="monospace"><mrow><mi>A</mi><mi>B</mi></mrow></mstyle><mo>.</mo><mstyle fontfamily="sans-serif"><mrow><mi>A</mi><mi>B</mi></mrow></mstyle></mstyle></math></span></td>
+<td>font commands; can use any brackets around argument</td>
+</tr>
+<tr>
+
+<td>`stackrel"def"= or \stackrel{\Delta}{=}" "("or ":=)`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="stackrel&quot;def&quot;= or \stackrel{\Delta}{=}&quot; &quot;(&quot;or &quot;:=)"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mover><mo>=</mo><mrow><mtext>def</mtext></mrow></mover><mrow><mspace width="1ex"></mspace><mtext>or</mtext><mspace width="1ex"></mspace></mrow><mover><mrow><mo>=</mo></mrow><mrow><mo>Δ</mo></mrow></mover><mrow><mspace width="1ex"></mspace><mtext></mtext><mspace width="1ex"></mspace></mrow><mrow><mo>(</mo><mrow><mtext>or</mtext><mspace width="1ex"></mspace></mrow><mo>:=</mo><mo>)</mo></mrow></mstyle></math></span></td>
+<td>symbols can be stacked</td>
+</tr>
+<tr>
+<td>`{::}_(\ 92)^238U`</td>
+<td><span style="font-size: 1em; font-family: serif;"><math title="{::}_(\ 92)^238U"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><msubsup><mrow></mrow><mrow><mo>&nbsp;</mo><mn>92</mn></mrow><mn>238</mn></msubsup></mrow><mi>U</mi></mstyle></math></span></td>
+<td>prescripts simulated by subsuperscripts</td>
+</tr>
+<tr>
+<td>`a=3 \ \ \ b=-3`</td>
+<td><span style="font-size: 1em; font-family: serif;">
+<math title="a=3 \ \ \ b=-4"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue" mathsize="1em"><mi>a</mi><mo>=</mo><mn>3</mn><mo>&nbsp;</mo><mo>&nbsp;</mo><mo>&nbsp;</mo><mi>b</mi><mo>=</mo><mo>-</mo><mn>4</mn></mstyle></math>
+</span></td>
+<td>spaces</td>
+</tr>
+</tbody></table>
+<p>
+Greek letters:
+alpha <span style="font-size: 1em; font-family: serif;"><math title="alpha"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>α</mi></mstyle></math></span>
+beta <span style="font-size: 1em; font-family: serif;"><math title="beta"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>β</mi></mstyle></math></span>
+chi <span style="font-size: 1em; font-family: serif;"><math title="chi"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>χ</mi></mstyle></math></span>
+delta <span style="font-size: 1em; font-family: serif;"><math title="delta"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>δ</mi></mstyle></math></span>
+Delta <span style="font-size: 1em; font-family: serif;"><math title="Delta"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>Δ</mo></mstyle></math></span>
+epsilon <span style="font-size: 1em; font-family: serif;"><math title="epsilon"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>ε</mi></mstyle></math></span>
+varepsilon <span style="font-size: 1em; font-family: serif;"><math title="varepsilon"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>ɛ</mi></mstyle></math></span>
+eta <span style="font-size: 1em; font-family: serif;"><math title="eta"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>η</mi></mstyle></math></span>
+gamma <span style="font-size: 1em; font-family: serif;"><math title="gamma"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>γ</mi></mstyle></math></span>
+Gamma <span style="font-size: 1em; font-family: serif;"><math title="Gamma"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>Γ</mo></mstyle></math></span>
+iota <span style="font-size: 1em; font-family: serif;"><math title="iota"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>ι</mi></mstyle></math></span>
+kappa <span style="font-size: 1em; font-family: serif;"><math title="kappa"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>κ</mi></mstyle></math></span>
+lambda <span style="font-size: 1em; font-family: serif;"><math title="lambda"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>λ</mi></mstyle></math></span>
+Lambda <span style="font-size: 1em; font-family: serif;"><math title="Lambda"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>Λ</mo></mstyle></math></span>
+mu <span style="font-size: 1em; font-family: serif;"><math title="mu"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>μ</mi></mstyle></math></span>
+nu <span style="font-size: 1em; font-family: serif;"><math title="nu"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>ν</mi></mstyle></math></span>
+omega <span style="font-size: 1em; font-family: serif;"><math title="omega"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>ω</mi></mstyle></math></span>
+Omega <span style="font-size: 1em; font-family: serif;"><math title="Omega"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>Ω</mo></mstyle></math></span>
+phi <span style="font-size: 1em; font-family: serif;"><math title="phi"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>φ</mi></mstyle></math></span>
+varphi <span style="font-size: 1em; font-family: serif;"><math title="varphi"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>ϕ</mi></mstyle></math></span>
+Phi <span style="font-size: 1em; font-family: serif;"><math title="Phi"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>Φ</mo></mstyle></math></span>
+pi <span style="font-size: 1em; font-family: serif;"><math title="pi"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>π</mi></mstyle></math></span>
+Pi <span style="font-size: 1em; font-family: serif;"><math title="Pi"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>Π</mo></mstyle></math></span>
+psi <span style="font-size: 1em; font-family: serif;"><math title="psi"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>ψ</mi></mstyle></math></span>
+Psi <span style="font-size: 1em; font-family: serif;"><math title="Psi"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>Ψ</mi></mstyle></math></span>
+rho <span style="font-size: 1em; font-family: serif;"><math title="rho"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>ρ</mi></mstyle></math></span>
+sigma <span style="font-size: 1em; font-family: serif;"><math title="sigma"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>σ</mi></mstyle></math></span>
+Sigma <span style="font-size: 1em; font-family: serif;"><math title="Sigma"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>Σ</mo></mstyle></math></span>
+tau <span style="font-size: 1em; font-family: serif;"><math title="tau"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>τ</mi></mstyle></math></span>
+theta <span style="font-size: 1em; font-family: serif;"><math title="theta"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>θ</mi></mstyle></math></span>
+vartheta <span style="font-size: 1em; font-family: serif;"><math title="vartheta"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>ϑ</mi></mstyle></math></span>
+Theta <span style="font-size: 1em; font-family: serif;"><math title="Theta"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>Θ</mo></mstyle></math></span>
+upsilon <span style="font-size: 1em; font-family: serif;"><math title="upsilon"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>υ</mi></mstyle></math></span>
+xi <span style="font-size: 1em; font-family: serif;"><math title="xi"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>ξ</mi></mstyle></math></span>
+Xi <span style="font-size: 1em; font-family: serif;"><math title="Xi"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>Ξ</mo></mstyle></math></span>
+zeta <span style="font-size: 1em; font-family: serif;"><math title="zeta"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mi>ζ</mi></mstyle></math></span>
+</p>
+<table border="5" cellpadding="10">
+<tbody><tr valign="top"><td>
+Operation symbols
+<table border="5" cellpadding="10">
+<tbody><tr><th>Type</th><th>See</th></tr>
+<tr><td>+</td><td><span style="font-size: 1em; font-family: serif;"><math title="+"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>+</mo></mstyle></math></span></td></tr>
+<tr><td>-</td><td><span style="font-size: 1em; font-family: serif;"><math title="-"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>-</mo></mstyle></math></span></td></tr>
+
+<tr><td>*</td><td><span style="font-size: 1em; font-family: serif;"><math title="*"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⋅</mo></mstyle></math></span></td></tr>
+<tr><td>**</td><td><span style="font-size: 1em; font-family: serif;"><math title="**"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⋆</mo></mstyle></math></span></td></tr>
+<tr><td>//</td><td><span style="font-size: 1em; font-family: serif;"><math title="//"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>/</mo></mstyle></math></span></td></tr>
+<tr><td>\\</td><td><span style="font-size: 1em; font-family: serif;"><math title="\\ "><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>\</mo></mstyle></math></span></td></tr>
+<tr><td>xx</td><td><span style="font-size: 1em; font-family: serif;"><math title="xx"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>×</mo></mstyle></math></span></td></tr>
+<tr><td>-:</td><td><span style="font-size: 1em; font-family: serif;"><math title="-:"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>÷</mo></mstyle></math></span></td></tr>
+
+<tr><td>@</td><td><span style="font-size: 1em; font-family: serif;"><math title="@"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∘</mo></mstyle></math></span></td></tr>
+<tr><td>o+</td><td><span style="font-size: 1em; font-family: serif;"><math title="o+"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⊕</mo></mstyle></math></span></td></tr>
+<tr><td>ox</td><td><span style="font-size: 1em; font-family: serif;"><math title="ox"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⊗</mo></mstyle></math></span></td></tr>
+<tr><td>o.</td><td><span style="font-size: 1em; font-family: serif;"><math title="o."><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⊙</mo></mstyle></math></span></td></tr>
+<tr><td>sum</td><td><span style="font-size: 1em; font-family: serif;"><math title="sum"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∑</mo></mstyle></math></span></td></tr>
+<tr><td>prod</td><td><span style="font-size: 1em; font-family: serif;"><math title="prod"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∏</mo></mstyle></math></span></td></tr>
+
+<tr><td>^^</td><td><span style="font-size: 1em; font-family: serif;"><math title="^^"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∧</mo></mstyle></math></span></td></tr>
+<tr><td>^^^</td><td><span style="font-size: 1em; font-family: serif;"><math title="^^^"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⋀</mo></mstyle></math></span></td></tr>
+<tr><td>vv</td><td><span style="font-size: 1em; font-family: serif;"><math title="vv"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∨</mo></mstyle></math></span></td></tr>
+<tr><td>vvv</td><td><span style="font-size: 1em; font-family: serif;"><math title="vvv"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⋁</mo></mstyle></math></span></td></tr>
+<tr><td>nn</td><td><span style="font-size: 1em; font-family: serif;"><math title="nn"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∩</mo></mstyle></math></span></td></tr>
+<tr><td>nnn</td><td><span style="font-size: 1em; font-family: serif;"><math title="nnn"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⋂</mo></mstyle></math></span></td></tr>
+
+<tr><td>uu</td><td><span style="font-size: 1em; font-family: serif;"><math title="uu"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∪</mo></mstyle></math></span></td></tr>
+<tr><td>uuu</td><td><span style="font-size: 1em; font-family: serif;"><math title="uuu"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⋃</mo></mstyle></math></span></td></tr>
+</tbody></table>
+</td><td>
+Relation symbols
+<table border="5" cellpadding="10">
+<tbody><tr><th>Type</th><th>See</th></tr>
+<tr><td>=</td><td><span style="font-size: 1em; font-family: serif;"><math title="="><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>=</mo></mstyle></math></span></td></tr>
+<tr><td>!=</td><td><span style="font-size: 1em; font-family: serif;"><math title="!="><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>≠</mo></mstyle></math></span></td></tr>
+
+<tr><td>&lt; </td><td><span style="font-size: 1em; font-family: serif;"><math title="<"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>&lt;</mo></mstyle></math></span></td></tr>
+<tr><td>&gt;</td><td><span style="font-size: 1em; font-family: serif;"><math title=">"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>&gt;</mo></mstyle></math></span></td></tr>
+<tr><td>&lt;=</td><td><span style="font-size: 1em; font-family: serif;"><math title="<="><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>≤</mo></mstyle></math></span></td></tr>
+<tr><td>&gt;=</td><td><span style="font-size: 1em; font-family: serif;"><math title=">="><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>≥</mo></mstyle></math></span></td></tr>
+<tr><td>-&lt;</td><td><span style="font-size: 1em; font-family: serif;"><math title="-<"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>≺</mo></mstyle></math></span></td></tr>
+
+<tr><td>&gt;-</td><td><span style="font-size: 1em; font-family: serif;"><math title=">-"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>≻</mo></mstyle></math></span></td></tr>
+<tr><td>in</td><td><span style="font-size: 1em; font-family: serif;"><math title="in"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∈</mo></mstyle></math></span></td></tr>
+<tr><td>!in</td><td><span style="font-size: 1em; font-family: serif;"><math title="notin"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∉</mo></mstyle></math></span></td></tr>
+<tr><td>sub</td><td><span style="font-size: 1em; font-family: serif;"><math title="sub"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⊂</mo></mstyle></math></span></td></tr>
+<tr><td>sup</td><td><span style="font-size: 1em; font-family: serif;"><math title="sup"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⊃</mo></mstyle></math></span></td></tr>
+<tr><td>sube</td><td><span style="font-size: 1em; font-family: serif;"><math title="sube"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⊆</mo></mstyle></math></span></td></tr>
+
+<tr><td>supe</td><td><span style="font-size: 1em; font-family: serif;"><math title="supe"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⊇</mo></mstyle></math></span></td></tr>
+<tr><td>-=</td><td><span style="font-size: 1em; font-family: serif;"><math title="-="><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>≡</mo></mstyle></math></span></td></tr>
+<tr><td>~=</td><td><span style="font-size: 1em; font-family: serif;"><math title="~="><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>≅</mo></mstyle></math></span></td></tr>
+<tr><td>~~</td><td><span style="font-size: 1em; font-family: serif;"><math title="~~"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>≈</mo></mstyle></math></span></td></tr>
+<tr><td>prop</td><td><span style="font-size: 1em; font-family: serif;"><math title="prop"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∝</mo></mstyle></math></span></td></tr>
+</tbody></table>
+</td><td>
+
+Logical symbols
+<table border="5" cellpadding="10">
+<tbody><tr><th>Type</th><th>See</th></tr>
+<tr><td>and</td><td><span style="font-size: 1em; font-family: serif;"><math title="and"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mspace width="1ex"></mspace><mtext>and</mtext><mspace width="1ex"></mspace></mrow></mstyle></math></span></td></tr>
+<tr><td>or</td><td><span style="font-size: 1em; font-family: serif;"><math title="or"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mspace width="1ex"></mspace><mtext>or</mtext><mspace width="1ex"></mspace></mrow></mstyle></math></span></td></tr>
+<tr><td>not</td><td><span style="font-size: 1em; font-family: serif;"><math title="not"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>¬</mo></mstyle></math></span></td></tr>
+<tr><td>=&gt;</td><td><span style="font-size: 1em; font-family: serif;"><math title="=>"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⇒</mo></mstyle></math></span></td></tr>
+
+<tr><td>if</td><td><span style="font-size: 1em; font-family: serif;"><math title="if"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mspace width="1ex"></mspace><mo>if</mo><mspace width="1ex"></mspace></mrow></mstyle></math></span></td></tr>
+<tr><td>iff</td><td><span style="font-size: 1em; font-family: serif;"><math title="iff"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⇔</mo></mstyle></math></span></td></tr>
+<tr><td>AA</td><td><span style="font-size: 1em; font-family: serif;"><math title="AA"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∀</mo></mstyle></math></span></td></tr>
+<tr><td>EE</td><td><span style="font-size: 1em; font-family: serif;"><math title="EE"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∃</mo></mstyle></math></span></td></tr>
+<tr><td>_|_</td><td><span style="font-size: 1em; font-family: serif;"><math title="_|_"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⊥</mo></mstyle></math></span></td></tr>
+<tr><td>TT</td><td><span style="font-size: 1em; font-family: serif;"><math title="TT"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⊤</mo></mstyle></math></span></td></tr>
+
+<tr><td>|--</td><td><span style="font-size: 1em; font-family: serif;"><math title="|--"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⊢</mo></mstyle></math></span></td></tr>
+<tr><td>|==</td><td><span style="font-size: 1em; font-family: serif;"><math title="|=="><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⊨</mo></mstyle></math></span></td></tr>
+</tbody></table>
+<p>
+Grouping brackets
+</p><table border="5" cellpadding="10">
+<tbody><tr><th>Type</th><th>See</th></tr>
+<tr><td>(</td><td><span style="font-size: 1em; font-family: serif;"><math title="("><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>(</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>)</td><td><span style="font-size: 1em; font-family: serif;"><math title=")"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>)</mo></mstyle></math></span></td></tr>
+
+<tr><td>[</td><td><span style="font-size: 1em; font-family: serif;"><math title="["><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>[</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>]</td><td><span style="font-size: 1em; font-family: serif;"><math title="]"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>]</mo></mstyle></math></span></td></tr>
+<tr><td>{</td><td><span style="font-size: 1em; font-family: serif;"><math title="{"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>{</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>}</td><td><span style="font-size: 1em; font-family: serif;"><math title="}"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>}</mo></mstyle></math></span></td></tr>
+<tr><td>(:</td><td><span style="font-size: 1em; font-family: serif;"><math title="(:"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>〈</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>:)</td><td><span style="font-size: 1em; font-family: serif;"><math title=":)"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>〉</mo></mstyle></math></span></td></tr>
+
+<tr><td>{:</td><td><span style="font-size: 1em; font-family: serif;"><math title="{:"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>:}</td><td><span style="font-size: 1em; font-family: serif;"><math title="{::}"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow></mrow></mstyle></math></span></td></tr>
+</tbody></table>
+
+</td><td>
+Miscellaneous symbols
+<table border="5" cellpadding="10">
+<tbody><tr><th>Type</th><th>See</th></tr>
+<tr><td>int</td><td><span style="font-size: 1em; font-family: serif;"><math title="int"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∫</mo></mstyle></math></span></td></tr>
+
+<tr><td>oint</td><td><span style="font-size: 1em; font-family: serif;"><math title="oint"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∮</mo></mstyle></math></span></td></tr>
+<tr><td>del</td><td><span style="font-size: 1em; font-family: serif;"><math title="del"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∂</mo></mstyle></math></span></td></tr>
+<tr><td>grad</td><td><span style="font-size: 1em; font-family: serif;"><math title="grad"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∇</mo></mstyle></math></span></td></tr>
+<tr><td>+-</td><td><span style="font-size: 1em; font-family: serif;"><math title="+-"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>±</mo></mstyle></math></span></td></tr>
+<tr><td>O/</td><td><span style="font-size: 1em; font-family: serif;"><math title="O/"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∅</mo></mstyle></math></span></td></tr>
+<tr><td>oo</td><td><span style="font-size: 1em; font-family: serif;"><math title="oo"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∞</mo></mstyle></math></span></td></tr>
+
+<tr><td>aleph</td><td><span style="font-size: 1em; font-family: serif;"><math title="aleph"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>ℵ</mo></mstyle></math></span></td></tr>
+<tr><td>/_</td><td><span style="font-size: 1em; font-family: serif;"><math title="/_"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∠</mo></mstyle></math></span></td></tr>
+<tr><td>:.</td><td><span style="font-size: 1em; font-family: serif;"><math title=":."><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>∴</mo></mstyle></math></span></td></tr>
+<tr><td>|...|</td><td>|<span style="font-size: 1em; font-family: serif;"><math title="..."><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>...</mo></mstyle></math></span>|</td></tr>
+<tr><td>|cdots|</td><td>|<span style="font-size: 1em; font-family: serif;"><math title="cdots"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⋯</mo></mstyle></math></span>|</td></tr>
+<tr><td>vdots</td><td><span style="font-size: 1em; font-family: serif;"><math title="vdots"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⋮</mo></mstyle></math></span></td></tr>
+
+<tr><td>ddots</td><td><span style="font-size: 1em; font-family: serif;"><math title="ddots"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⋱</mo></mstyle></math></span></td></tr>
+<tr><td>|\ |</td><td>|<span style="font-size: 1em; font-family: serif;"><math title="\ "><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>&nbsp;</mo></mstyle></math></span>|</td></tr>
+<tr><td>|quad|</td><td>|<span style="font-size: 1em; font-family: serif;"><math title="quad"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>&nbsp;&nbsp;</mo></mstyle></math></span>|</td></tr>
+<tr><td>diamond</td><td><span style="font-size: 1em; font-family: serif;"><math title="diamond"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⋄</mo></mstyle></math></span></td></tr>
+<tr><td>square</td><td><span style="font-size: 1em; font-family: serif;"><math title="square"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>□</mo></mstyle></math></span></td></tr>
+<tr><td>|__</td><td><span style="font-size: 1em; font-family: serif;"><math title="|__"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⌊</mo></mstyle></math></span></td></tr>
+
+<tr><td>__|</td><td><span style="font-size: 1em; font-family: serif;"><math title="__|"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⌋</mo></mstyle></math></span></td></tr>
+<tr><td>|~</td><td><span style="font-size: 1em; font-family: serif;"><math title="|~"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⌈</mo></mstyle></math></span></td></tr>
+<tr><td>~|</td><td><span style="font-size: 1em; font-family: serif;"><math title="~|"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⌉</mo></mstyle></math></span></td></tr>
+<tr><td>CC</td><td><span style="font-size: 1em; font-family: serif;"><math title="CC"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>ℂ</mo></mstyle></math></span></td></tr>
+<tr><td>NN</td><td><span style="font-size: 1em; font-family: serif;"><math title="NN"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>ℕ</mo></mstyle></math></span></td></tr>
+<tr><td>QQ</td><td><span style="font-size: 1em; font-family: serif;"><math title="QQ"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>ℚ</mo></mstyle></math></span></td></tr>
+
+<tr><td>RR</td><td><span style="font-size: 1em; font-family: serif;"><math title="RR"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>ℝ</mo></mstyle></math></span></td></tr>
+<tr><td>ZZ</td><td><span style="font-size: 1em; font-family: serif;"><math title="ZZ"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>ℤ</mo></mstyle></math></span></td></tr>
+</tbody></table>
+</td><td>
+Standard functions
+<table border="5" cellpadding="10">
+<tbody><tr><th>Type</th><th>See</th></tr>
+<tr><td>sin</td><td><span style="font-size: 1em; font-family: serif;"><math title="sin"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>sin</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>cos</td><td><span style="font-size: 1em; font-family: serif;"><math title="cos"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>cos</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+
+<tr><td>tan</td><td><span style="font-size: 1em; font-family: serif;"><math title="tan"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>tan</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>csc</td><td><span style="font-size: 1em; font-family: serif;"><math title="csc"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>csc</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>sec</td><td><span style="font-size: 1em; font-family: serif;"><math title="sec"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>sec</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>cot</td><td><span style="font-size: 1em; font-family: serif;"><math title="cot"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>cot</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>sinh</td><td><span style="font-size: 1em; font-family: serif;"><math title="sinh"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>sinh</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>cosh</td><td><span style="font-size: 1em; font-family: serif;"><math title="cosh"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>cosh</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+
+<tr><td>tanh</td><td><span style="font-size: 1em; font-family: serif;"><math title="tanh"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>tanh</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>log</td><td><span style="font-size: 1em; font-family: serif;"><math title="log"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>log</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>ln</td><td><span style="font-size: 1em; font-family: serif;"><math title="ln"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>ln</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>det</td><td><span style="font-size: 1em; font-family: serif;"><math title="det"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>det</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>dim</td><td><span style="font-size: 1em; font-family: serif;"><math title="dim"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>dim</mo></mstyle></math></span></td></tr>
+<tr><td>lim</td><td><span style="font-size: 1em; font-family: serif;"><math title="lim"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>lim</mo></mstyle></math></span></td></tr>
+
+<tr><td>mod</td><td><span style="font-size: 1em; font-family: serif;"><math title="mod"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>mod</mo></mstyle></math></span></td></tr>
+<tr><td>gcd</td><td><span style="font-size: 1em; font-family: serif;"><math title="gcd"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>gcd</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>lcm</td><td><span style="font-size: 1em; font-family: serif;"><math title="lcm"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mrow><mo>lcm</mo><mo></mo></mrow></mstyle></math></span></td></tr>
+<tr><td>min</td><td><span style="font-size: 1em; font-family: serif;"><math title="min"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>min</mo></mstyle></math></span></td></tr>
+<tr><td>max</td><td><span style="font-size: 1em; font-family: serif;"><math title="max"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>max</mo></mstyle></math></span></td></tr>
+</tbody></table>
+<p>
+
+Accents
+</p><table border="5" cellpadding="10">
+<tbody><tr><th>Type</th><th>See</th></tr>
+<tr><td>hat x</td><td><span style="font-size: 1em; font-family: serif;"><math title="hat x"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mover><mi>x</mi><mo>^</mo></mover></mstyle></math></span></td></tr>
+<tr><td>bar x</td><td><span style="font-size: 1em; font-family: serif;"><math title="bar x"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mover><mi>x</mi><mo>¯</mo></mover></mstyle></math></span></td></tr>
+<tr><td>ul x</td><td><span style="font-size: 1em; font-family: serif;"><math title="ul x"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><munder><mi>x</mi><mo>̲</mo></munder></mstyle></math></span></td></tr>
+<tr><td>vec x</td><td><span style="font-size: 1em; font-family: serif;"><math title="vec x"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mover><mi>x</mi><mo>→</mo></mover></mstyle></math></span></td></tr>
+
+<tr><td>dot x</td><td><span style="font-size: 1em; font-family: serif;"><math title="dot x"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mover><mi>x</mi><mo>.</mo></mover></mstyle></math></span></td></tr>
+<tr><td>ddot x</td><td><span style="font-size: 1em; font-family: serif;"><math title="ddot x"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mover><mi>x</mi><mo>..</mo></mover></mstyle></math></span></td></tr>
+</tbody></table>
+
+</td><td>
+Arrows
+<table border="5" cellpadding="10">
+<tbody><tr><th>Type</th><th>See</th></tr>
+<tr><td>uarr</td><td><span style="font-size: 1em; font-family: serif;"><math title="uarr"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>↑</mo></mstyle></math></span></td></tr>
+
+<tr><td>darr</td><td><span style="font-size: 1em; font-family: serif;"><math title="darr"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>↓</mo></mstyle></math></span></td></tr>
+<tr><td>rarr</td><td><span style="font-size: 1em; font-family: serif;"><math title="rarr"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>→</mo></mstyle></math></span></td></tr>
+<tr><td>-&gt;</td><td><span style="font-size: 1em; font-family: serif;"><math title="->"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>→</mo></mstyle></math></span></td></tr>
+<tr><td>|-&gt;</td><td><span style="font-size: 1em; font-family: serif;"><math title="|->"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>↦</mo></mstyle></math></span></td></tr>
+<tr><td>larr</td><td><span style="font-size: 1em; font-family: serif;"><math title="larr"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>←</mo></mstyle></math></span></td></tr>
+<tr><td>harr</td><td><span style="font-size: 1em; font-family: serif;"><math title="harr"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>↔</mo></mstyle></math></span></td></tr>
+
+<tr><td>rArr</td><td><span style="font-size: 1em; font-family: serif;"><math title="rArr"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⇒</mo></mstyle></math></span></td></tr>
+<tr><td>lArr</td><td><span style="font-size: 1em; font-family: serif;"><math title="lArr"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⇐</mo></mstyle></math></span></td></tr>
+<tr><td>hArr</td><td><span style="font-size: 1em; font-family: serif;"><math title="hArr"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mo>⇔</mo></mstyle></math></span></td></tr>
+</tbody></table>
+<p>
+Font commands
+</p><table border="5" cellpadding="10">
+<tbody><tr><th>Type</th><th>See</th></tr>
+<tr><td>bb A</td><td><span style="font-size: 1em; font-family: serif;"><math title="bb A"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mstyle fontweight="bold"><mi>A</mi></mstyle></mstyle></math></span></td></tr>
+
+<tr><td>bbb A</td><td><span style="font-size: 1em; font-family: serif;"><math title="bbb A"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mstyle mathvariant="double-struck"></mstyle></mstyle></math></span></td></tr>
+<tr><td>cc A</td><td><span style="font-size: 1em; font-family: serif;"><math title="cc A"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mstyle mathvariant="script"></mstyle></mstyle></math></span></td></tr>
+<tr><td>tt A</td><td><span style="font-size: 1em; font-family: serif;"><math title="tt A"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mstyle fontfamily="monospace"><mi>A</mi></mstyle></mstyle></math></span></td></tr>
+<tr><td>fr A</td><td><span style="font-size: 1em; font-family: serif;"><math title="fr A"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mstyle mathvariant="fraktur"></mstyle></mstyle></math></span></td></tr>
+<tr><td>sf A</td><td><span style="font-size: 1em; font-family: serif;"><math title="sf A"><mstyle displaystyle="true" fontfamily="serif" mathcolor="blue"><mstyle fontfamily="sans-serif"><mi>A</mi></mstyle></mstyle></math></span></td></tr>
+</tbody></table>
+
+</td></tr>
+</tbody></table>
+</body></html>

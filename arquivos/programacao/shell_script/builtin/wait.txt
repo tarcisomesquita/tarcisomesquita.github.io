@@ -1,0 +1,8 @@
+
+wait [job]
+
+Wait for the specified job to complete and return the exit status of the last process in the job.  If the argument is omitted, wait for all jobs to complete and the return an exit status of zero.
+
+tcpdump -i lo > /dev/null &
+wait $!
+

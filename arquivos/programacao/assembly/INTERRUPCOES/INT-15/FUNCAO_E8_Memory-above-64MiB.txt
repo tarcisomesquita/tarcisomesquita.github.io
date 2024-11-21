@@ -1,0 +1,9 @@
+
+INT 15h BIOS
+
+AH=E8h, AL=01h
+Get Extended Memory Size
+Gives results for memory size above 64 Mb.
+
+0000000100000000
+00000000

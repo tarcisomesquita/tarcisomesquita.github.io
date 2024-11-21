@@ -1,0 +1,152 @@
+Executa um comando especificado para cada arquivo em um conjunto de arquivos.
+
+FOR %variável IN (conjunto) DO comando [parâmetros]
+
+  %variável   Especifica um parâmetro substituível formado por uma só letra.
+  (conjunto)  Especifica um conjunto de um ou mais arquivos. Podem-se usar curingas.
+  comando     Especifica o comando a ser executado em cada arquivo.
+  parâmetros  Especifica os parâmetros ou opções do comando especificado.
+
+
+Para usar o comando FOR em um programa em lotes, especifique %%variável em vez de %variável.
+
+Diferenciam-se maiúsculas de minúsculas nos nomes das variáveis, de forma que, por exemplo, %i é diferente de %I.
+
+Se as extensões de comando estiverem ativadas, haverá suporte para os formatos adicionais do comando FOR
+
+FOR /D %variável IN (conjunto) DO comando [parâmetros]
+Se o conjunto contiver curingas, ele corresponderá aos nomes de pasta em vez de nomes de arquivo.
+
+FOR /R [[unidade:]caminho] %variável IN (conjunto) DO comando [comando-parâmetros]
+
+    Orienta a árvore de diretórios com raiz na [unidade:]caminho, executando a instrução FOR em cada diretório da árvore. Se não houver
+    especificação de diretório após /R, o diretório atual ser  pressuposto.
+    Se o conjunto for apenas um único caractere de ponto (.), ele enumerará apenas a árvore de diretórios.
+
+
+FOR /L %variável IN (início,incremento,fim) DO comando [comando-parâmetros]
+
+    O conjunto é uma sequência de números de início ao fim, por quantidade de
+    incremento. Portanto, (1,1,5) geraria a sequência 1 2 3 4 5 e (5,-1,1)
+    geraria a sequência (5 4 3 2 1)
+
+FOR /F ["opções"] %variável IN (conjunto_de_arquivos) DO comando [comando-parâmetros]
+FOR /F ["opções"] %variável IN ("cadeia_de_caracteres") DO comando [comando-parâmetros]
+FOR /F ["opções"] %variável IN ('comando') DO comando [comando-parâmetros]
+
+conjunto de nomes de arquivo é um ou mais nomes de arquivos.
+ Cada
+    arquivo é aberto, lido e processado antes de se passar para o próximo
+    arquivo em conjunto de nomes de arquivo. O processamento consiste em ler
+    o arquivo, quebr -lo em linhas individuais de texto e analisar cada linha
+    para zero ou mais tokens. O corpo de for loop é chamado em seguida com o
+    conjunto de valores de variável para a(s) cadeia(s) de caracteres de
+    token encontrada(s). Por padrão, /F transfere o primeiro token separado
+    por espaço de cada linha de cada arquivo. As linhas em branco são
+    ignoradas.  possível substituir o comportamento de an lise padrão
+    especificando os parâmetros "opções" opcionais. Essa é uma cadeia de
+    caracteres entre aspas que contém uma ou mais palavras-chave para
+    especificar diferentes opções de an lise. As palavras-chave são:
+
+        eol=c           - especifica caractere de coment rio de fim de linha
+                          (somente um)
+        skip=n          - especifica o número de linhas a serem ignorados no
+                          início do arquivo.
+        delims=xxx      - especifica um conjunto de delimitadores. Substitui
+                          o conjunto de delimitadores padrão de espaço e
+                          tabulação.
+        tokens=x,y,m-n  - especifica quais tokens de cada linha serão
+                          transferidos para para o corpo de cada iteração.
+                          Isso alocar  nomes de variáveis adicionais. O
+                          formato m-n é um intervalo, especificando do
+                          emésimo até o enésimo tokens.  Se o último
+                          caractere na cadeia de caracteres tokens= for um
+                          asterisco, uma variável adicional ser  alocada
+                          e receber  o texto restante na linha após o último
+                          token analisado.
+        usebackq        - especifica que a nova semântica est  em vigor,
+                          onde uma cadeia de caracteres entre aspas
+                          é executada como um comando e uma cadeia de
+                          caracteres entre aspas simples é uma comando de
+                          cadeia de caracteres literal e permite o uso de
+                          aspas para citar nomes de arquivos em um conjunto
+                          de nomes de arquivo.
+
+    Alguns exemplos podem ajudar:
+
+FOR /F "eol=; tokens=2,3* delims=, " %i in (meu_arquivo.txt) do @echo %i
+%j %k
+
+    analisaria cada linha em meu_arquivo.txt, ignorando linhas que começassem
+    com um ponto-e-vírgula, passando o segundo e terceiro token de cada
+    linha para o corpo do comando for, com tokens delimitados por vírgulas
+    e/ou espaços.  Observe que comandos dentro do corpo do for fazem
+    referência a %i para obter o segundo token, %j para obter o terceiro
+    token e %k para obter todos os tokens restantes após o terceiro. No caso
+    de nomes de arquivos contendo espaços, é necess rio coloc -los entre
+    aspas. Para usar aspas dessa forma, também é necess rio usar a opção
+    usebackq ou as aspas serão interpretadas como se estivessem definindo uma
+    cadeia de caracteres literal a ser analisada.
+
+    %i é declarado explicitamente na instrução for e %j e %k
+    são declarados implicitamente através da opção tokens=.  possível
+    especificar até 26 tokens através da linha tokens=, contanto que  isso
+    não origine uma tentativa de declarar uma variável mais alta do que a
+    letra 'z' ou 'Z'. Lembre-se de que as variáveis FOR são formadas por uma
+    só letra, diferenciam maiúsculas e minúsculas, são globais e não é
+    possível haver mais de 52 ativas no total em momento algum.
+
+    Também é possível usar a lógica de an lise de FOR /F em uma cadeia de
+    caracteres imediata, ao transformar o conjunto de arquivo dentro de
+    parênteses em uma cadeia de caracteres entre aspas simples. A cadeia de
+    caracteres ser  tratada como uma única linha de entrada de um arquivo e
+    ser  analisada.
+
+    Finalmente, é possível usar o comando FOR /F para analisar a saída de um
+    comando. Para isso, transforme o conjunto de arquivo dentro dos
+    parênteses em uma cadeia de caracteres entre aspas simples. A cadeia de
+    caracteres ser  tratada como uma linha de comando, que ser  transferida
+    para um CMD.EXE filho e a saída ser  capturada na memória e analisada
+    como se fosse um arquivo.  Assim, o seguinte exemplo:
+
+      FOR /F "usebackq delims==" %i IN (`conjunto`) DO @echo %i
+
+    enumeraria os nomes de variáveis de ambiente no
+    ambiente atual.
+
+Além disso, a substituição das referências da variável FOR foi aprimorada.
+Agora é possível usar a seguinte sintaxe opcional:
+
+    %~I         - expande %I removendo quaisquer aspas em volta (")
+    %~fI        - expande %I para um nome de caminho totalmente qualificado
+    %~dI        - expande %I para somente uma letra de unidade
+    %~pI        - expande %I para somente um caminho
+    %~nI        - expande %I para somente um nome de arquivo
+    %~xI        - expande %I para somente uma extensão de arquivo
+    %~sI        - o caminho expandido contém somente nomes curtos
+    %~aI        - expande %I para atributos de arquivo do arquivo
+    %~tI        - expande %I para data/hora do arquivo
+    %~zI        - expande %I para o tamanho do arquivo
+    %~$PATH:I   - pesquisa as pastas listadas na variável
+                   de ambiente PATH e expande %I para o
+                   nome totalmente qualificado da primeira pasta encontrada.
+                   Se o nome da variável de ambiente não estiver definido
+                   ou o arquivo não for encontrado pela pesquisa, esse
+                   modificador expandir  para a cadeia de caracteres vazia
+
+Os modificadores podem ser combinados para obter resultados compostos:
+
+    %~dpI       - expande %I para somente uma letra de unidade e caminho
+    %~nxI       - expande %I para somente um nome de arquivo e extensão
+    %~fsI       - expande %I para somente um nome de caminho completo com
+                   nomes curtos
+    %~dp$PATH:I - pesquisa as pastas listadas na variável de ambiente PATH
+                   para %I e expande para a letra de unidade e caminho da
+                   primeira encontrada.
+    %~ftzaI     - expande %I para uma linha de saída parecida com DIR
+
+Nos exemplos acima, %I e PATH podem ser substituídos por outros valores
+v lidos. A sintaxe %~ é terminada por um nome de variável FOR v lido.
+O uso de nomes de variáveis em maiúsculas como %I facilita a leitura e
+evita confusão com os modificadores, que não fazem diferenciação entre
+maiúsculas e minúsculas.

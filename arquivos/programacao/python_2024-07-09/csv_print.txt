@@ -1,0 +1,38 @@
+import csv
+scoresList=[]
+with open ("playerScores_v2.txt") as csvfile:
+           scores=csv.reader(csvfile, delimiter= ",")
+           for row in scores:
+              scoresList.append(row)
+
+
+playername=input("Enter the player name you would like the score for:")
+print("{0:40} {1:10} {2:10}".format("Name","Level","Score"))
+
+for i in range(0,len(scoresList)):
+   print("{0:40} {1:10} {2:10}".format(scoresList[i] [0],scoresList[i] [1], scoresList[i] [2]))
+
+
+
+echo '
+for i in range(0, 10, 1):
+  for j in range(0, 10, 1):
+    print(i, j, sep="", end="")
+    if (j < 9):
+      print("", end=",")
+  print("",end="\n")
+' | python3 > teste.csv
+
+python3 << EOF
+import csv
+scoresList=[]
+
+csvfile = open("teste.csv", mode="r")
+
+scores=csv.reader(csvfile, delimiter= ",")
+for row in scores:
+  scoresList.append(row)
+for i in range(0,len(scoresList)):
+  print(scoresList[i])
+print(scoresList[5][6])
+EOF

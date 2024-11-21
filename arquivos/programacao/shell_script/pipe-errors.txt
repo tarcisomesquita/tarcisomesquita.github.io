@@ -1,0 +1,6 @@
+# how work with pipe errors
+eval `exec 4>&1 ; { ls ./ 4>&-; echo "ec1=$?" >&4 ; } | { grep "teste" 4>&-; echo "ec2=$?" >&4 ; } | sort 4>&- ; echo "ec3=$?" >&4 `
+if [ "$ec1" -ne 0 ]; then exit "$ec1"; fi
+if [ "$ec2" -ne 0 ]; then exit "$ec2"; fi
+if [ "$ec3" -ne 0 ]; then exit "$ec3"; fi
+

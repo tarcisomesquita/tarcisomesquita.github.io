@@ -1,0 +1,27 @@
+Mostra um determinado caracter varias vezes na tela do computador com um atributo definido, iniciando pela posicao atual do cursor.
+
+AH = 09H
+AL = Caracter a exibir
+BH = Pagina de vídeo, onde o caracter sera mostrado
+BL = atributo do caracter
+CX = Numero de repeticoes.
+
+Não há registradores de retorno:
+
+
+0 preta
+1 amarelo
+2 verde
+3 anil
+4 vermelho
+5 violeta
+6 laranja
+7 cinza claro   <- parece melhor
+
+
+   movw   $0x0001, %cx  // numero de vezes
+   movw   $0x0007, %bx  // cor
+   movb   $0x54, %al    // Letra
+   movb   $0x09, %ah
+   int    $0x10
+

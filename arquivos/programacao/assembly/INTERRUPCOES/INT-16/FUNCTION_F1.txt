@@ -1,0 +1,14 @@
+
+Get CPU Speed (F1h)
+
+read the CPU's speed as set with the Set CPU Speed function.
+
+Input Parameters:
+        AH - F1h, indicating the Get CPU Speed Function.
+
+Output Parameters:
+        AL - current CPU speed, as follows:
+               00h - slow.
+               01h - medium.
+               02h - fast.
+

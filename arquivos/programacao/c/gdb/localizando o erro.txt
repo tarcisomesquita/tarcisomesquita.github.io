@@ -1,0 +1,30 @@
+
+$ gcc -g -Wall teste.c -o teste
+teste.c: In function ‘main’:
+teste.c:9: warning: format ‘%2s’ expects type ‘char *’, but argument 2 has type ‘int’
+teste.c:11: warning: implicit declaration of function ‘sleep’
+
+$ ./teste
+
+Falha de segmentação (core dumped)
+
+$ gdb teste
+(gdb) run
+Starting program: /media/pen_FNAC/programacao/linguagem_c/GCC/GDB/teste 
+
+
+Program received signal SIGSEGV, Segmentation fault.
+0xb7fb45eb in strlen () from /lib/tls/i686/cmov/libc.so.6
+
+(gdb) backtrace
+#0  0xb7fb45eb in strlen () from /lib/tls/i686/cmov/libc.so.6
+#1  0xb7f806d8 in vfprintf () from /lib/tls/i686/cmov/libc.so.6
+#2  0xb7f86b60 in printf () from /lib/tls/i686/cmov/libc.so.6
+#3  0x0804849d in main () at teste.c:9
+(gdb) frame 3
+#3  0x0804849d in main () at teste.c:9
+9	                printf("%2s! ",a);
+(gdb) 
+
+coloquei um s no lugar de um d.
+

@@ -1,0 +1,3681 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+"http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+<title>i386 Linux 2.2+ Syscalls -4-</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-2">
+    <link href="http://www.lxhp.in-berlin.de/">
+    <link rev="made" href="lxhp@china.com?subject=w3lxa">
+    <meta name="author" content="h-peter recktenwald">
+    <meta name="copyright" content="2003 by h-peter recktenwald berlin">
+    <meta name="publisher" content="h-peter recktenwald">
+<style type="text/css">
+<!--
+ a:hover   { color:#2929c9; text-decoration:none; background-color:#c7a7c7; font-weight:bold; }
+-->
+</style>
+</head>
+
+<body text="#ffffda" bgcolor="#330033" link="ffcc00" vlink="#cccccc"
+alink="#ff99ff" lang="en" face="lucida" style="font-family:lucida,arial,helvetica">
+<a href="mailto:news.admin.net-abuse.email@myriad.alias.net"></a>
+<pre>|<tab id=" i0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i4">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i7">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i9">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i10">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i11">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i13">|</pre>
+<p><small><a href="index-lx.shtml#nospam">Copyright &copy; h-peter recktenwald, berlin, 2000</a> 
+- free for any related work and, non-commercial distribution.<br>
+text mode (Lynx, Printer) tables arranged to 132 chars/line.</small></p>
+<hr>
+<p>&nbsp;</p>
+<a name="top"></a>
+<a href="lhpsyscal.html">[intro]</a> 
+<a href="lhpsysc0a.html">[a:index]</a> 
+<a href="lhpsysc0s.html">[s:index]</a> 
+<a href="lhpsysc0.html">[#:index]</a> 
+<a href="lhpsysc1.html#fcntl">[sys_fcntl]</a> 
+<br>
+<a href="lhpsysc1.html">[1..64]</a> 
+<a href="lhpsysc2.html">[65..128]</a> 
+<a href="lhpsysc3.html">[129..192]</a>
+<a name="lhpsysc4.html">[193..256]</a> 
+<a href="lhpsysc5.html">[257..]</a>
+<a href="lhpsysref.html">[ref]</a>
+<a href="lhpstruc.html">[struc]</a>
+<a href="lhpfcntl.html">[fcntl]</a>
+<a href="lhpioctl.html">[ioctl]</a>
+<a href="lhpsyscc.html">[pguide]</a>
+<a href="file://localhost/usr/man/html/man2/all2.2.html">[man2]</a>
+<br>
+<a href="lhplinks.html">[next]</a> 
+<a href="lhpsyscal.html">[back]</a> 
+<a href="index-lx.shtml">[linux]</a> 
+<a href="index.html">[main]</a>
+<a href="#bot">[bot]</a> 
+<a href="#top">[top]</a> 
+<br>
+<a href="lhpsysc0.html#top">Syscalls pages</a> archive (110K->1M), 
+<a href="lhpsysc0.html#man">updated (2.3.0, ver. 1.66) man 2 pages</a> (170K->1,2M)
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<ul><li><b>
+    <a href="index.html#ffii">Fight Patents abuse</a> by EC authorities - 
+    <a href="index.html#ffii">Gegen Patentmi&szlig;brauch</a> durch die EU-Beh&ouml;rden.
+</b></li></ul>
+
+<hr>
+<hr>
+
+<ul>
+<li>No. 191+ supplied w. <b>K2.4</b>, do not expect working variants of 238+; 253+ introduced w. K2.5.<br>
+    Pse, <b>note</b> that several lower numbered system calls were renamed and, arguments conventions <b>modified</b>!
+</li>
+<li>syscall-no. in <b>eax</b>; args left to right <b>ebx</b>,<b>ecx</b>,<b>edx</b>,<b>esi</b>,<b>edi</b>,<b>ebp</b>, all preserved.<br>
+</li>
+<li>returned 0xfffff000 &lt; eax &lt;= 0xffffffff may be an error code (-4096 &lt; eax &lt; 0).<br>
+</li>
+<li><b>Common reference</b>:
+    <ul>
+    <li>&lt;<a href="file:///usr/src/linux/include/asm/unistd.h">unistd.h</a>&gt;, 
+	&lt;<a href="file:///usr/src/linux/include/linux/types.h">linux/types.h</a>&gt;, 
+	&lt;<a href="file:///usr/src/linux/include/asm/types.h">asm/types.h</a>&gt;, 
+	&lt;<a href="file:///usr/src/linux/include/asm/posix_types.h">asm/posix_types.h</a>&gt;, and 
+	&lt;<a href="file:///usr/src/linux/include/linux/kernel.h">linux/kernel.h</a>&gt; for 
+	    <a href="lhpstruc.html">data structures</a>.
+    </li>
+    <li>The syscall interface is defined in <a href="file:///usr/src/linux/arch/i386/kernel/entry.S">arch/i386/kernel/entry.S</a>,
+	symbols for loadable modules <a href="file:///usr/src/linux/kernel/ksyms.c">kernel/ksyms.c</a>.
+    </li>
+    <li>Error numbers and messages in <a href="file:///usr/src/linux/include/asm/errno.h">include/asm/errno.h</a>.
+    </li>
+    <li>Basic <a href="lhpstruc.html#types">data types</a><br>
+	<b>short</b>: word (16bit), <b>int</b>: dword (32bit), <b>long</b>: dword (32bit), <b>pointer</b>: dword (32bit).
+    </li>
+    </ul>
+</li>
+</ul>
+
+<hr>
+<hr>
+
+<blockquote>
+<ol start="191">
+<li><a name="ugetrlimit" href="file://localhost/usr/man/html/man2/ugetgrlimit.2.html"><b>K6</b>&nbsp;ugetrlimit</a>, <a name="getrlimit" href="file://localhost/usr/man/html/man2/ugetgrlimit.2.html"><b>K4</b>&nbsp;getrlimit</a>
+
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">191</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">unsigned int <a href="lhpstruc.html#resource">resource</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#rlimit">rlimit</a> *rlim</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">limits in supplied rlimit struct</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">inval, fault</td>
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/kernel/sys.c">arch/i386/kernel/sys.c</a>; <b>K6</b>:&nbsp;"SuS compliant getrlimit".<br>
+</td>
+
+</tr>
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">note</td>
+<td colspan="8"><tab to="i4"><b>K2</b>&nbsp;<a href="lhpsysc2.html#getrlimit">sys_getrlimit</a> renamed to sys_old_getrlimit in <b>K4</b>,<br>
+                <tab to="i4"><b>K4</b>&nbsp;<a href="lhpsysc2.html#getrlimit">sys_old_getrlimit</a> renamed to sys_getrlimit in <b>K6</b>.
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="mmap2" href="file://localhost/usr/man/html/man2/mmap2.2.html">mmap2</a>&nbsp;<tab to="i3">map&nbsp;files&nbsp;or&nbsp;devices&nbsp;into&nbsp;memory
+
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">192</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">ul&nbsp;page&nbsp;aligned&nbsp;address</td>
+</tr>
+
+<tr>
+<td colspan="3"><tab to="i1">&nbsp;</td>
+<td><tab to="i3">ecx</td>
+<td><tab to="i4">ul&nbsp;page&nbsp;aligned&nbsp;len&nbsp;(file&nbsp;size)</td>
+<td colspan="6">&nbsp;</td>
+</tr>
+
+<tr>
+<td colspan="3"><tab to="i1">&nbsp;</td>
+<td><tab to="i3">edx</td>
+<td><tab to="i4">ul&nbsp;prot</td>
+<td colspan="6">&nbsp;</td>
+</tr>
+
+<tr>
+<td colspan="3"><tab to="i1">&nbsp;</td>
+<td><tab to="i3">edi</td>
+<td><tab to="i4">l&nbsp;flags</td>
+<td colspan="6">&nbsp;</td>
+</tr>
+
+<tr>
+<td colspan="3"><tab to="i1">&nbsp;</td>
+<td><tab to="i3">edi</td>
+<td><tab to="i4">l&nbsp;file descriptor</td>
+<td colspan="6">&nbsp;</td>
+</tr>
+
+<tr>
+<td colspan="3"><tab to="i1">&nbsp;</td>
+<td><tab to="i3">ebp</td>
+<td><tab to="i4">ul&nbsp;pgoff</td>
+<td colspan="6">&nbsp;disp&nbsp;to&nbsp;file&nbsp;ptr&nbsp;to&nbsp;begin&nbsp;mapping&nbsp;by&nbsp;units&nbsp;of&nbsp;<b>PAGE_SIZE</b>&nbsp;(4K)</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">badf, fault, inval</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/arch/i386/kernel/sys_i386.c">arch/i386/kernel/sys_i386.c</a>, 
+			    <a href="file:///usr/src/linux/include/linux/mm.h">linux/mm.h</a>, 
+		<a href="/usr/src/linux/include/asm-i386/mman.h">asm/mman.h</a>, syscall '<a href="lhpsysc2.html#mmap">mmap</a>'.
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">note</td>
+<td colspan="8"><tab to="i4">memory "protection" may not become effective as expected!<br>
+		<tab to="i4">re <a href="lhpsysc2.html#mprotect">mprotect</a> and <a href="lhpstruc.html#mmap">mmap</a> flags
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="truncate64" href="file://localhost/usr/man/html/man2/truncate64.2.html">truncate64</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">193</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">const char * path</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#loff_t">loff_t</a> (lo) length&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#loff_t">loff_t</a> (hi) length&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/open.c">linux/fs/open.c</a>
+		- re lx 2.2. '<a href="lhpsysc2.html#truncate">truncate</a>'.<br>
+		<tab to="i4">"loff_t" by ecx/edx according to kernel (dis)assembly but, not verified.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="ftruncate64" href="file://localhost/usr/man/html/man2/ftruncate64.2.html">ftruncate64</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">194</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">unsigned int fd</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#loff_t">loff_t</a> (lo) length&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#loff_t">loff_t</a> (hi) length&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/open.c">linux/fs/open.c</a>
+		- re lx 2.2. '<a href="lhpsysc2.html#ftruncate">ftruncate</a>'.<br>
+		<tab to="i4">"loff_t" by ecx/edx according to kernel (dis)assembly but, not verified.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="stat64" href="file://localhost/usr/man/html/man2/stat64.2.html">stat64</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">195</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">char * filename&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#stat64">stat64</a> * statbuf&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">long flags - note: no flags actually defined</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/open.c">linux/fs/open.c</a>
+		- re lx 2.2. '<a href="lhpsysc2.html#stat">stat</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="lstat64" href="file://localhost/usr/man/html/man2/lstat64.2.html">lstat64</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">196</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">char * filename</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#stat64">stat64</a> * statbuf&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">long flags&nbsp;- note: no flags actually defined</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/stat.c">linux/fs/stat.c</a>
+		- re lx 2.2. '<a href="lhpsysc2.html#lstat">lstat</a>'.
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="fstat64" href="file://localhost/usr/man/html/man2/fstat64.2.html">fstat64</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">197</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">unsigned long fd</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#stat64">stat64</a> * statbuf&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">long flags&nbsp; - note: no flags actually defined</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/stat.c">linux/fs/stat.c</a>
+		- re lx 2.2. '<a href="lhpsysc2.html#fstat">fstat</a>', <a href="lhpstruc.html#ostat">oldstat</a>.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/lchown.2.html" name="lchown">lchown, lchown32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">198</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">const char * filename</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">uid_t user</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">gid_t group</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/open.c">linux/fs/open.c</a>
+		- re lx 2.2. '<a href="lhpsysc1.html#lchown">lchown</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/getuid.2.html" name="getuid">getuid, getuid32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">199</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">user&nbsp;ID</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/kernel/timer.c">kernel/timer.c</a>,<br>
+		<tab to="i4">sys_getuid16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc1.html#getuid">getuid</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/getgid.2.html" name="getgid">getgid, getgid32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">200</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">group&nbsp;ID</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_getgid16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc1.html#getgid">getgid</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/geteuid.2.html" name="geteuid">geteuid, geteuid32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">201</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">effective user&nbsp;ID</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_geteuid16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc1.html#geteuid">geteuid</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/getegid.2.html" name="getegid">getegid, getegid32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">202</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">effective group&nbsp;ID</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_getegid16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc1.html#getegid">getegid</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/setreuid.2.html" name="setreuid">setreuid, setreuid32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">203</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">uid_t&nbsp;ruid&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">uid_t&nbsp;euid</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_setreuid16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc2.html#setreuid">setreuid</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li>
+<a	href="file://localhost/usr/man/html/man2/setregid.2.html" name="setregid">setregid, setregid32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">204</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_setregid16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc2.html#setregid">setregid</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/getgroups.2.html" name="getgroups">getgroups, getgroups32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">		
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">205</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_getgroups16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc2.html#getgroups">getgroups</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/setgroups.2.html" name="setgroups">setgroups, setgroups32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">206</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_setgroups16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc2.html#setgroups">setgroups</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/fchown.2.html" name="fchown">fchown, fchown32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">207</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">- re lx 2.2. '<a href="lhpsysc2.html#fchown">fchown</a>' 
+		<a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a>.
+		
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/setresuid.2.html" name="setresuid">setresuid, setresuid32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">208</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_setresuid16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc3.html#setresuid">setresuid</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/getresuid.2.html" name="getresuid">getresuid, getresuid32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">209</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_getresuid16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc3.html#getresuid">getresuid</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/setresgid.2.html" name="setresgid">setresgid, setresgid32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">210</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_setresgid16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc3.html#setresgid">setresgid</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/getresgid.2.html" name="getresgid">getresgid, getresgid32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">211</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_getresgid16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc3.html#getresgid">getresgid</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/chown.2.html" name="chown">chown, chown32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">212</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">- re lx 2.2. '<a href="lhpsysc3.html#chown">chown</a>', 
+		<a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a>.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/setuid.2.html" name="setuid">setuid, setuid32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">213</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_setuid16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc1.html#setuid">setuid</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/setgid.2.html" name="setgid">setgid, setgid32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">214</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_setgid16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc1.html#setgid">setgid</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/setfsuid.2.html" name="setfsuid">setfsuid, setfsuid32</a>&nbsp;<tab to="i3">set uid for filesystem checks
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">215</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">uid_t&nbsp;uid</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_setfsuid16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc3.html#setfsuid">setfsuid</a>'.
+</td>
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td>
+<td colspan="10"><tab to="i2">used for "access" and, for the NFS daemon letting nfsd stay at any selected uid.<br>
+		<tab to="i2">normally shadows "euid", except when explicitly set by setfsuid or, for access.
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/setfsgid.2.html" name="setfsgid">setfsgid, setfsgid32</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+<tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">216</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+		<tab to="i4">sys_setfsgid16 <a href="file:///usr/src/linux/kernel/uid16.c">kernel/uid16.c</a> 
+		- re lx 2.2. '<a href="lhpsysc3.html#setfsgid">setfsgid</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="pivot_root" href="file://localhost/usr/man/html/man2/pivot_root.2.html">pivot_root</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+<tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">217</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">const char *new_root&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4">const char *put_old)&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/fs/namespace.c">fs/namespace.c</a> 
+</td>
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td>
+<td colspan="10"><tab to="i2">Moves the current root to put_root, and sets root/cwd of all processes which had them <br>
+		<tab to="i2">on the old root to new_root.<br>
+		<tab to="i2">Note:<br>
+		<tab to="i2">we don't move root/cwd if they are not at the root (if something cared enough to change <br>
+		<tab to="i2">them, it's probably wrong to force them elsewhere) - the 'root' isn't required to be <br>
+		<tab to="i2">the root of a file system, e.g. /nfs/my_root where /nfs, but, got to be a mountpoint, <br>
+		<tab to="i2">though, so you may need to do &lt;mount --bind /nfs/my_root /nfs/my_root> first.
+</td>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a	href="file://localhost/usr/man/html/man2/mincore.2.html" name="mincore">mincore</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">218</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">unsigned long start&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4">size_t len&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx</td>
+<td colspan="7"><tab to="i4">unsigned char * vec&nbsp;</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">return</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">errors</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">FAULT&nbsp;<tab to="i5">vec points to an illegal address.<br>
+		<tab to="i4">INVAL&nbsp;<tab to="i5">addr is not a multiple of PAGE_CACHE_SIZE, or len non-positive.<br>
+		<tab to="i4">NOMEM&nbsp;<tab to="i5">addr in range [addr, addr + len] invalid for the address space <br>
+			    &nbsp;<tab to="i5">of this process or, any pages which are not currently mapped.<br>
+		<tab to="i4">AGAIN&nbsp;<tab to="i5">A kernel resource was temporarily unavailable.
+</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/mm/filemap.c">mm/filemap.c</a>&nbsp;</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="10"><tab to="i2">returns memory residency status of the pages in the current process's address space in <br>
+		<tab to="i2">range [addr, addr + len]. Status returned in a vector of bytes; l.s. bit of each byte <br>
+		<tab to="i2">is 1 if the referenced page is in memory, otherwise it is zero. Because the state of a <br>
+		<tab to="i2">page can change after testing but, before "mincore" returns, the vector may contain stale <br>
+		<tab to="i2">information. Only locked pages are guaranteed to remaining in memory.
+</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="1"><tab to="i2">&nbsp;</td>
+<td colspan="9">&nbsp;</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="1"><tab to="i2">L4:&nbsp;</td>
+<td colspan="9">{&nbsp;f8&nbsp;also&nbsp;linux&nbsp;pad&nbsp;'4th>abs&nbsp;0&nbsp;@&nbsp;0&nbsp;4th>abs&nbsp;paligned&nbsp;sp@&nbsp;sys&nbsp;mincore&nbsp;.&nbsp;pad&nbsp;0&nbsp;@&nbsp;$1000'&nbsp;/&nbsp;dump&nbsp;bye&nbsp;}</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="madvise" href="file://localhost/usr/man/html/man2/madvise.2.html">madvise, madvise1</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">219</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">unsigned long start&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4">size_t len&nbsp;</td>
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx</td>
+<td colspan="7"><tab to="i4">int <a href="/usr/src/linux/include/asm-i386/mman.h">behaviour</a>&nbsp;<br>
+		<tab to="i4">MADV_NORMAL&nbsp;<tab to="i5">read by clusters, results in some read-ahead/-behind.<br>
+		<tab to="i4">MADV_RANDOM&nbsp;<tab to="i5">read the minimum amount of data on any access.<br>
+		<tab to="i4">MADV_SEQUENTIAL&nbsp;<tab to="i5">aggressively read ahead.<br>
+		<tab to="i4">MADV_WILLNEED&nbsp;<tab to="i5">notifying the system to read some pages ahead.<br>
+		<tab to="i4">MADV_DONTNEED&nbsp;<tab to="i5">kernel can free resources associated with the given range.<br>
+</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;
+</td>
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">INVAL&nbsp;<tab to="i5">start+len &lt; 0, start not page-aligned, "behavior" not valid or, <br>
+		&nbsp;<tab to="i5">application attempting to release locked or shared pages.<br>
+		<tab to="i4">NOMEM&nbsp;<tab to="i5">specified addr range not currently mapped or,<br>
+		<tab to="i4">outside address range of the process.<br>
+		<tab to="i4">IO&nbsp;<tab to="i5">I/O error while paging in data.<br>
+		<tab to="i4">EBADF&nbsp;<tab to="i5">map exists, but area maps not a file.<br>
+		<tab to="i4">EAGAIN&nbsp;<tab to="i5">a kernel resource was temporarily unavailable.
+&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/mm/filemap.c">mm/filemap.c</a>, 
+		<a href="/usr/src/linux/include/asm-i386/mman.h">include/asm-i386/mman.h</a></td>
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td>
+<td colspan="10"><tab to="i2">Applications can advise how the kernel how should handle paging I/O in given VM area, <br>
+		<tab to="i2">to help the kernel useing appropriate read-ahead and caching techniques. The information <br>
+		<tab to="i2">provided is advisory and, can be safely disregarded by the kernel without affecting the <br>
+		<tab to="i2">correct operation of the application.
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="getdents64" href="file://localhost/usr/man/html/man2/getdents64.2.html">getdents64</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">220</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">unsigned int fd</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">void * <a href="lhpstruc.html#dirent">dirent</a>&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">unsigned int count&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/readdir.c">fs/readdir.c</a>&nbsp;
+		- re lx 2.2. '<a href="lhpsysc3.html#getdents">getdents</a>'.
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="fcntl64" href="file://localhost/usr/man/html/man2/fcntl64.2.html" name="fcntl64">fcntl64</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">221</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">unsigned int fd</td>
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">unsigned int cmd:&nbsp;F_GETLK64, F_SETLK64, F_SETLKW64
+</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">unsigned long arg&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/include/asm/fcntl.h">include/asm/fcntl.h</a>, <a href="file:///usr/src/linux/include/linux/fcntl.h">include/linux/fcntl.h</a> 
+		<a href="file:///usr/src/linux/fs/fcntl.c">fs/fcntl.c</a> - K2.2 '<a href="lhpsysc1.html#fcntl">fcntl</a>'. 
+
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+
+<li> n.n.
+<table border="0" width="95%">
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;n.i.</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+
+<li><a name="security">security</a>&nbsp;<tab to="i3">
+
+<table border="0" width="95%">
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;n.i.</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="gettid" href="file://localhost/usr/man/html/man2/gettid.2.html">gettid</a>&nbsp;<tab to="i3">
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="8">&nbsp;<tab to="i2">get&nbsp;thread&nbsp;ID,&nbsp;the&nbsp;internal&nbsp;kernel&nbsp;"pid"</td>
+<td colspan="1"><tab to="i10">&nbsp;</td>
+<td colspan="1"><tab to="i11">&nbsp;</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">224</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">thread identifier</td>
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;-?-</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:////usr/src/linux/kernel/timer.c">kernel/timer.c</a></td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="readahead" href="file://localhost/usr/man/html/man2/readahead.2.html">readahead</a>&nbsp;<tab to="i3">Read in advance one or more pages of a file within a page cache
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">225</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">int fd</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#loff_t">loff_t</a> offset&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">size_t count&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/mm/filemap.c">mm/filemap.c</a>&nbsp;</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="setxattr" href="file://localhost/usr/man/html/man2/setxattr.2.html">setxattr</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;set an extended attribute value
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">226</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *path</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *name</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">void *value</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">esi&nbsp;</td>
+<td colspan="7"><tab to="i4">size_t size</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edi&nbsp;</td>
+<td colspan="7"><tab to="i4">int flags</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum&nbsp;or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">dquot, exist, noattr, nospc, notsup and, error codes of <a href="lhpsysc2.html#stat">stat</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><b>K6</b>, "extended attributes handling"...
+<br><tab to="i4"><a href="file:///usr/local/src-linux/linux/fs/ext3/xattr.h">fs/ext3/xattr.h</a>
+<a href="file:///usr/local/src-linux/linux/fs/ext2/xattr.h">fs/ext2/xattr.h</a>
+<a href="file:///usr/local/src-linux/linux/fs/devpts/xattr.h">fs/devpts/xattr.h</a>
+</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/xattr.c">xattr.c</a>&nbsp;<a href="file:///usr/src/linux/include/linux/xattr.h">xattr.h</a></td>
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td>
+<td colspan="10"><tab to="i2">'explanation' from the kernel source:<br>
+		<tab to="i3">"Extended attribute memory allocation wrappers, originally based on the <br>
+		<tab to="i3">"Intermezzo PRESTO_ALLOC/PRESTO_FREE macros. The vmalloc use here is very <br>
+		<tab to="i3">"uncommon - extended attributes are supposed to be small chunks of metadata,<br>
+		<tab to="i3">"and it is quite unusual to have very many extended attributes, so lists <br>
+		<tab to="i3">"tend to be quite short as well. The 64K upper limit is derived from<br>
+		<tab to="i3">"the extended attribute size limit used by XFS. Intentionally allow <br>
+		<tab to="i3">"zero @size for value/list size requests.<br>
+	<tab to="i2">And now, since you know that it is very unusual, indeed, <br>
+		<tab to="i3">you might as well know what it is all about...
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="lsetxattr" href="file://localhost/usr/man/html/man2/lsetxattr.2.html">lsetxattr</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;set an extended attribute value
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">227</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *path</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *name</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">void *value</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">esi&nbsp;</td>
+<td colspan="7"><tab to="i4">size_t size</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edi&nbsp;</td>
+<td colspan="7"><tab to="i4">int flags</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><b>K6</b> 'extended attributes handling' - re <a href="#setxattr">setxattr</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/xattr.c">xattr.c</a>&nbsp;<a href="file:///usr/src/linux/include/linux/xattr.h">xattr.h</a></td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="fsetxattr" href="file://localhost/usr/man/html/man2/fsetxattr.2.html">fsetxattr</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;set an extended attribute value
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">228</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">int fd</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *name</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">void *value</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">esi&nbsp;</td>
+<td colspan="7"><tab to="i4">size_t size</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edi&nbsp;</td>
+<td colspan="7"><tab to="i4">int flags</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><b>K6</b> 'extended attributes handling' - re <a href="#setxattr">setxattr</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/xattr.c">xattr.c</a>&nbsp;<a href="file:///usr/src/linux/include/linux/xattr.h">xattr.h</a></td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="getxattr" href="file://localhost/usr/man/html/man2/getxattr.2.html">getxattr</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;retrieve an extended attribute value
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">229</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *path</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *name</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">void *value</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">esi&nbsp;</td>
+<td colspan="7"><tab to="i4">size_t size</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><b>K6</b> 'extended attributes handling' - re <a href="#getxattr">setxattr</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/xattr.c">xattr.c</a>&nbsp;<a href="file:///usr/src/linux/include/linux/xattr.h">xattr.h</a></td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="lgetxattr" href="file://localhost/usr/man/html/man2/lgetxattr.2.html">lgetxattr</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;retrieve an extended attribute value
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">230</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *path</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *name</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">void *value</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">esi&nbsp;</td>
+<td colspan="7"><tab to="i4">size_t size</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><b>K6</b> 'extended attributes handling' - re <a href="#getxattr">getxattr</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/xattr.c">xattr.c</a>&nbsp;<a href="file:///usr/src/linux/include/linux/xattr.h">xattr.h</a></td>
+</tr>
+</table>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="fgetxattr" href="file://localhost/usr/man/html/man2/fgetxattr.2.html">fgetxattr</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;retrieve an extended attribute value
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">231</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">int fd</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *name</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">void *value</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">esi&nbsp;</td>
+<td colspan="7"><tab to="i4">size_t size</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><b>K6</b> 'extended attributes handling' - re <a href="#getxattr">getxattr</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/xattr.c">xattr.c</a>&nbsp;<a href="file:///usr/src/linux/include/linux/xattr.h">xattr.h</a></td>
+</tr>
+
+</table>
+</li>
+
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="listxattr" href="file://localhost/usr/man/html/man2/listxattr.2.html">listxattr</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;list extended attribute names
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">232</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *path</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *list</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">size_t size</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><b>K6</b> 'extended attributes handling' - re <a href="#getxattr">getxattr</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/xattr.c">xattr.c</a>&nbsp;<a href="file:///usr/src/linux/include/linux/xattr.h">xattr.h</a></td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="llistxattr" href="file://localhost/usr/man/html/man2/llistxattr.2.html">llistxattr</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;list extended attribute names
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">233</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *path</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *list</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">size_t size</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><b>K6</b> 'extended attributes handling' - re <a href="#listxattr">listxattr</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/xattr.c">xattr.c</a>&nbsp;<a href="file:///usr/src/linux/include/linux/xattr.h">xattr.h</a></td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="flistxattr" href="file://localhost/usr/man/html/man2/flistxattr.2.html">flistxattr</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;list extended attribute names
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">234</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">int fd</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *list</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">size_t size</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><b>K6</b> 'extended attributes handling' - re <a href="#listxattr">listxattr</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/xattr.c">xattr.c</a>&nbsp;<a href="file:///usr/src/linux/include/linux/xattr.h">xattr.h</a></td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="removexattr" href="file://localhost/usr/man/html/man2/removexattr.2.html">removexattr</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;remove an extended attribute
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">235</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *path</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *name</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><b>K6</b> 'extended attributes handling' - re <a href="#setxattr">setxattr</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/xattr.c">xattr.c</a>&nbsp;<a href="file:///usr/src/linux/include/linux/xattr.h">xattr.h</a></td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="lremovexattr" href="file://localhost/usr/man/html/man2/lremovexattr.2.html">lremovexattr</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;remove an extended attribute
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">236</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *path</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *name</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><b>K6</b> 'extended attributes handling' - re <a href="#removexattr">removexattr</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/xattr.c">xattr.c</a>&nbsp;<a href="file:///usr/src/linux/include/linux/xattr.h">xattr.h</a></td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="fremovexattr" href="file://localhost/usr/man/html/man2/fremovexattr.2.html">fremovexattr</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;remove an extended attribute
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">237</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">int fd</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">char *name</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><b>K6</b> 'extended attributes handling' - re <a href="#removexattr">removexattr</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file:///usr/src/linux/fs/xattr.c">xattr.c</a>&nbsp;<a href="file:///usr/src/linux/include/linux/xattr.h">xattr.h</a></td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="tkill" href="file://localhost/usr/man/html/man2/tkill.2.html">tkill</a>&nbsp;<tab to="i3">kill&nbsp;a&nbsp;single&nbsp;task
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">238</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">&nbsp;pid</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4">&nbsp;signal&nbsp;number</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">&nbsp;inval,&nbsp;srch</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;<a href="file://localhost//usr/src/linux/kernel/signal.c">kernel/signal.c</a>, </td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;<a href="file://localhost//usr/src/linux/arch/i386/kernel/signal.c">i386/kernel/signal.c</a>, 
+		<a href="lhpsysc3.html#sigref">[more] about signals</a>, syscall <a href="lhpsysc5.html#tgkill">tgkill</a>.
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--asmlinkage ssize_t sys_sendfile64(int out_fd, int in_fd, loff_t __user *offset, size_t count)-->
+<li><a name="sendfile64" href="file://localhost/usr/man/html/man2/sendfile64.2.html">sendfile64</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;transfer data between file descriptors
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">239</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">out_fd</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">in_fd</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#loff_t">loff_t</a> __user *offset, ptr to 64bit offset figure in memory</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edi&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#size_t">size_t</a> count of bytes to send</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#ssize_t">ssize_t</a> count of bytes sent</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">inval,&nbsp;srch</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost//usr/src/linux/fs/read_write.c">fs/read_write.c</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpsysc3.html#sendfile">sendfile</a> variant of the undocumented <b>sendfile64</b> syscall, internally restricted to 2G;<br> 
+		<tab to="i4"><a href="file://localhost/usr/src/linux/mm/filemap.c">mm/filemap.c</a>
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--int sys_futex (void *futex, int op, int val, const struct timespec *timeout);-->
+<li><a name="futex" href="file://localhost/usr/man/html/man2/futex.2.html">futex</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;fast&nbsp;userspace&nbsp;locking&nbsp;system&nbsp;call&nbsp;(a&nbsp;'watchpoint'&nbsp;implementation)
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">240</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">void *futex</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">int val</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">r/o ptr to timeout <a href="lhpstruc.html#timespec">timespec</a> array</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#ssize_t">ssize_t</a> count of bytes sent</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">inval,&nbsp;srch</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost//usr/src/linux/fs/read_write.c">fs/read_write.c</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="ftp://ftp.nl.kernel.org/pub/linux/kernel/people/rusty/">futex example library</a>, 
+		<a href="file://localhost/usr/man/html/man4/futex.4.html">man 4 futex</a>
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--int sched_setaffinity(pid_t pid, unsigned int len, unsigned long *mask);-->
+<li><a name="sched_setaffinity" href="file://localhost/usr/man/html/man2/sched_setaffinity.2.html" name="sched_setaffinity">sched_setaffinity</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;sets&nbsp;CPU&nbsp;affinity&nbsp;mask&nbsp;of&nbsp;a&nbsp;process&nbsp;by&nbsp;pid
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">241</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#pid_t">pid_t</a> pid of the process the mask of which should be set</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">bytes <a href="lhpstruc.html#uint">uint</a> length of affinity bitmask &#064;edx</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#ulong">ulong</a>, ptr to affinity bitmask; bit-numbers correspond to the rsp. scheduleable CPU</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault,&nbsp;srch,&nbsp;perm</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/sched.h">include/sched.h</a>, 
+		<a href="file://localhost/usr/src/linux/kernel/sched.c">kernel/sched.c</a><br>
+		<tab to="i4"><b>K4</b>&nbsp;man 2 <a href="lhpsysc3.html#sched_setscheduler">sched_setscheduler</a>
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--int sched_getaffinity(pid_t pid, unsigned int len, unsigned long *mask);-->
+<li><a name="sched_getaffinity" href="file://localhost/usr/man/html/man2/sched_getaffinity.2.html">sched_getaffinity</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;reads&nbsp;CPU&nbsp;affinity&nbsp;mask&nbsp;of&nbsp;a&nbsp;process&nbsp;by&nbsp;pid
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">242</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#pid_t">pid_t</a> pid of the process the mask of which should be read</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">bytes <a href="lhpstruc.html#uint">uint</a> length of affinity bitmask &#064;edx</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#ulong">ulong</a>, r/o ptr to affinity bitmask; bit-numbers correspond to the rsp. scheduleable CPU</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault,&nbsp;srch,&nbsp;perm</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/sched.h">include/sched.h</a>, 
+		<a href="file://localhost/usr/src/linux/kernel/sched.c">kernel/sched.c</a><br>
+		<tab to="i4"><b>K4</b>&nbsp;man 2 <a href="lhpsysc3.html#sched_setscheduler">sched_setscheduler</a>
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--int set_thread_area (struct user_desc *u_info);-->
+<li><a name="set_thread_area" href="file://localhost/usr/man/html/man2/set_thread_area.2.html">set_thread_area</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;Set a Thread Local Storage (TLS) area
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">243</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">ptr to array <a href="lhpstruc.html#user_desc">user_desc</a> u_info</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault,&nbsp;inval,&nbsp;srch</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/arch/i386/kernel/process.c">arch/i386/kernel/process.c</a> 
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/asm/ldt.h">include/asm/ldt.h</a>, 
+			    <a href="file://localhost/usr/src/linux/include/linux/sched.h">include/sched.h</a>
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a name="get_thread_area" href="file://localhost/usr/man/html/man2/get_thread_area.2.html" name="get_thread_area">get_thread_area</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;Get a Thread Local Storage (TLS) area
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">244</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">ptr to r/w array <a href="lhpstruc.html#user_desc">user_desc</a> u_info</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault,&nbsp;inval</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/arch/i386/kernel/process.c">arch/i386/kernel/process.c</a> 
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/asm/ldt.h">include/asm/ldt.h</a>, 
+			    <a href="file://localhost/usr/src/linux/include/linux/sched.h">include/sched.h</a>
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--long io_setup (unsigned nr_events, aio_context_t *ctxp)-->
+<li><a href="file://localhost/usr/man/html/man2/io_setup.2.html" name="io_setup">io_setup</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;Create an asynchronous ('realtime') I/O context
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">245</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">unsigned <b>nr_events</b>, no. of events an async i/o context can receive</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#aio_context_t">aio_context_t</a> *ctxp, ptr to received context handle</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">again, fault, inval, nomem, nosys</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/fs/aio.c">fs/aio.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/aio.h">include/linux/aio.h</a>, 
+			    <a href="file://localhost/usr/src/linux/include/linux/aio_abi.h">include/linux/aio_abi.h</a> 
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--long io_destroy (aio_context_t ctx);-->
+<li><a href="file://localhost/usr/man/html/man2/io_destroy.2.html" name="io_destroy">io_destroy</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;Destroy an asynchronous I/O context
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">246</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">ptr to data array <a href="lhpstruc.html#aio_context_t">aio_context_t</a> *ctxp</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault,&nbsp;inval,&nbsp;nosys</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/fs/aio.c">fs/aio.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/aio.h">include/linux/aio.h</a>, 
+			    <a href="file://localhost/usr/src/linux/include/linux/aio_abi.h">include/linux/aio_abi.h</a> 
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--long io_getevents (aio_context_t ctx_id, long min_nr, long nr, struct io_event *events, struct timespec *timeout);-->
+<li><a href="file://localhost/usr/man/html/man2/io_getevents.2.html" name="io_getevents">io_getevents</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;Read asynchronuous I/O events from the completion queue
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">247</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">data array <a href="lhpstruc.html#aio_context_t">aio_context_t</a> ctx_id</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">long <b>min_nr</b></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">long <b>nr</b></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">esi&nbsp;</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#io_event">io_event</a> *events</td>
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edi&nbsp;</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#timespec">timespec</a> *timeout; max time to wait for <b>nr</b> events,<br>
+		<tab to="i4">zero timout to waiting for at least <b>min_nr</b> events</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">+ve no. of events read, no. &lt; min_nr after time-out or, -ve ernum</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault,&nbsp;inval,&nbsp;nosys</td>
+</tr>
+
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/fs/aio.c">fs/aio.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/aio.h">include/linux/aio.h</a>, 
+			    <a href="file://localhost/usr/src/linux/include/linux/aio_abi.h">include/linux/aio_abi.h</a> 
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+<!--long io_submit (aio_context_t ctx_id, long nr, struct iocb **iocbpp);-->
+<li><a href="file://localhost/usr/man/html/man2/io_submit.2.html" name="io_submit">io_submit</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;Submit asynchronous I/O blocks for processing
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">248</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">data array <a href="lhpstruc.html#aio_context_t">aio_context_t</a> ctx_id, context for <b>nr</b> queued request blocks</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">long <b>nr</b></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#iocb">iocb</a> **iocbpp, array of <b>nr</b> ai/o request blocks</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">number of <b>iocb</b>s submitted and 0 if <b>nr</b> is zero or, -ve ernum</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">again, badf, fault, inval, nosys</td>
+</tr>
+
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/fs/aio.c">fs/aio.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/aio.h">include/linux/aio.h</a>, 
+			    <a href="file://localhost/usr/src/linux/include/linux/aio_abi.h">include/linux/aio_abi.h</a> 
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+<!--long io_cancel (aio_context_t ctx_id, struct iocb *iocb, struct io_event *result);-->
+<li><a href="file://localhost/usr/man/html/man2/io_cancel.2.html" name="io_cancel">io_cancel</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;Cancel an outstanding asynchronous I/O operation
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">249</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">data array <a href="lhpstruc.html#aio_context_t">aio_context_t</a> ctx_id, 
+			    context of previously submitted by <a href="io_submit">io_submit</a> opr to cancel</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#iocb">iocb</a> *iocbp, aio request block data array</td>
+</tr>
+
+<tr valign="top">
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#io_event">io_event</a> *result; receives the cancelled event data</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">again, fault, inval, nosys</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/fs/aio.c">fs/aio.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/aio.h">include/linux/aio.h</a>, 
+			    <a href="file://localhost/usr/src/linux/include/linux/aio_abi.h">include/linux/aio_abi.h</a> 
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a href="file://localhost/usr/man/html/man2/alloc_hugepages.2.html" name="alloc_hugepages">alloc_hugepages</a>&nbsp;<tab to="i3"><b>k5</b>&nbsp;
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">250</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">n.i;&nbsp;man 2:<br>
+		<tab to="i4">"The system calls <b>alloc_hugepages</b> and <b>free_hugepages</b> were <b>introduced in</b> Linux <br>
+		<tab to="i4">"<b>2.5.36</b> and <b>removed</b> again <b>in 2.5.54</b>. They existed only on i386 and ia64 [...] <br>
+		<tab to="i4">"In Linux 2.4.20 the syscall numbers exist, but the calls return ENOSYS.<br>
+</td>
+
+
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a href="file://localhost/usr/man/html/man2/free_hugepages.2.html" name="free_hugepages">free_hugepages</a>&nbsp;<tab to="i3"><b>k5</b>&nbsp;
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">251</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">re <a href="#alloc_hugepages">alloc_hugepages</a>,&nbsp;n.i. (the 'hugepages' were an experiment which failed)</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<li><a href="file://localhost/usr/man/html/man2/exit_group.2.html" name="exit_group">exit_group</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">252</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;n.i.</td>
+</tr>
+</table>
+</li>
+
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+<!--int lookup_dcookie(u64 cookie, char * buffer, size_t len)-->
+<li><a name="lookup_dcookie" href="file://localhost/usr/man/html/man2/lookup_dcookie.2.html">lookup_dcookie</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;return a directory entry's path
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">253</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#u64">u64</a> cookie; l.s.dword -?-</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#u64">u64</a> cookie; m.s.dword -?-</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">char * buffer</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">esi&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#size_t">size_t</a> len</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault, inval, nomem, perm, range</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/fs/dcookies.c">fs/dcookies.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/dcookies.h">include/linux/dcookies.h</a>
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--int epoll_create(int size)-->
+<li><a name="epoll_create" href="file://localhost/usr/man/html/man2/epoll_create.2.html">epoll_create</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;open an epoll file descriptor
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">254</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">int size</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">-ve ernum or, +ve epoll file descriptor, 'epfd'</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">nomem</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/fs/eventpoll.c">fs/eventpoll.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/eventpoll.h">include/linux/eventpoll.h</a>, 
+			    <a href="file://localhost/usr/include/sys/epoll.h">/usr/include/sys/epoll.h</a> (glibc-2.3)
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+<!--epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)-->
+<li><a name="epoll_ctl" href="file://localhost/usr/man/html/man2/epoll_ctl.2.html">epoll_ctl</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;control interface for an epoll descriptor
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">255</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">int epfd</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#epoll_op">int op</a></td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">int fd</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">esi&nbsp;</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#epoll_event">epoll_event</a> *event</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">-ve ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">badf, fault, inval, nomem, perm</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/fs/eventpoll.c">fs/eventpoll.c</a>
+
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/eventpoll.h">include/linux/eventpoll.h</a>
+	    <br><tab to="i4">glibc 2.3: sysdeps/unix/sysv/linux/sys/epoll.h <a href="file://localhost/usr/include/sys/epoll.h">/usr/include/sys/epoll.h</a>
+
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--epoll_wait(int epfd, struct epoll_event * events, int maxevents, int timeout)-->
+<li><a name="epoll_wait" href="file://localhost/usr/man/html/man2/epoll_wait.2.html">epoll_wait</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;wait for an I/O event on an epoll file descriptor
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">256</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ebx&nbsp;</td>
+<td colspan="7"><tab to="i4">int epfd</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">ecx&nbsp;</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#epoll_event">epoll_event</a> *events</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">int maxevents</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td><tab to="i3">edx&nbsp;</td>
+<td colspan="7"><tab to="i4">int timeout</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">> 0 : no. of filedescriptors ready for requested i/o<br>
+		<tab to="i4">= 0 : none received, time-out elapsed<br>
+		<tab to="i4">&lt; 0 : error code
+</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">badf, fault</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/fs/eventpoll.c">fs/eventpoll.c</a>,
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/eventpoll.h">include/linux/eventpoll.h</a>,
+			    <a href="file://localhost/usr/include/sys/epoll.h">/usr/include/sys/epoll.h</a> (glibc-2.3)
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+
+</ol>
+
+</blockquote>
+
+<hr>
+<hr>
+<a name="bot"></a>
+<a href="lhpsysc0.html">[1st]</a>
+<a href="lhpsysc3.html">[back]</a>
+<a href="#bot">[bot]</a>
+<a href="#top">[top]</a>
+<br>
+<a href="lhpsyscal.html">[intro]</a>
+<a href="lhpsysc0a.html">[a:index]</a> 
+<a href="lhpsysc0.html">[#:index]</a> 
+<a href="lhpsysc1.html">[1..64]</a>
+<a href="lhpsysc2.html">[65..128]</a>
+<a href="lhpsysc3.html">[129..192]</a>
+<a name="lhpsysc4.html">[193..256]</a>
+<a href="lhpsysc5.html">[257..]</a> 
+<a href="lhpsysref.html">[ref]</a>
+<a href="lhpstruc.html">[struc]</a>
+<a href="lhpfcntl.html">[fcntl]</a>
+<a href="lhpioctl.html">[ioctl]</a>
+<a href="lhpsyscc.html">[pguide]</a>
+<p>&nbsp;</p>
+<hr>
+
+<center>
+<font size="-2">
+<a href="index-lx.shtml#nospam">H.-Peter Recktenwald, Berlin</a>, 1.Mar.2001 = .hpr.l0 =
+</font>
+<script language="JavaScript"> document.write(document.lastModified)</script>
+<noscript>updt:10.Apr.04+</noscript> : 
+<img src="http://me.in-berlin.de/cgi-bin/wwwcount.cgi?df=lxhp.sysc4" alt="1178" border="0" height="16">
+<a href="mailto:news.admin.net-abuse.email@myriad.alias.net"></a>
+</center>
+
+<p>&nbsp;</p>
+</body>
+</html>

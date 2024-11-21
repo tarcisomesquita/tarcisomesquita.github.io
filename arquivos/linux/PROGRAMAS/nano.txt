@@ -1,0 +1,39 @@
+nano [options] [[+line[,column]] file]...
+
+If instead of a filename a dash (-) is given, nano will read data from standard input.
+
+Commands are entered by using the Control (^) and the Alt or Meta (M-) keys.
+
+^K deletes the current line and puts it in the cutbuffer.
+^U will paste the current contents of the cutbuffer at the current cursor position.
+
+piece of text: mark its start with ^6, move the cursor to its end, use:
+  ^K to cut it
+  M-6 to copy it to the cutbuffer
+  ^O to save to a file
+  ^T^T to spell check
+
+text can be selected also by holding down Shift while using the arrow keys
+Holding down the Ctrl key increase the stride.
+
+-Y name, --syntax=name
+              Specify the name of the syntax highlighting to use from among the ones defined in the nanorc files.
+
+
+M-S toggles soft-wrapping
+M-N toggles line numbers
+M-M toggles the mouse
+M-I auto-indentation
+M-X the help lines
+
+~/.nanorc
+~/.config/nano/nanorc
+see nanorc(5)
+
+syntax-coloring: /usr/share/nano/
+
+If no alternative spell checker command is specified on the command line nor in one of the nanorc files, nano will check the SPELL environment variable for one.
+
+https://nano-editor.org/
+git clone https://git.savannah.gnu.org/git/nano.git
+

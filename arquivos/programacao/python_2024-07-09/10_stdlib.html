@@ -1,0 +1,475 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+>
+
+<html>
+  <head><meta charset="UTF-8" />
+    <meta>
+    <meta>
+    <title>10. Brief Tour of the Standard Library &#8212; Python 3.6.5 documentation</title>
+    <link>
+    <link>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Python 3.6.5 documentation"
+>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    
+    <script></script>
+    <script></script>
+    
+    
+ 
+
+  </head><body>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="stdlib2.html" title="11. Brief Tour of the Standard Library — Part II"
+>next</a> |</li>
+        <li>
+          <a href="classes.html" title="9. Classes"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>The Python Tutorial</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>    
+
+    <div>
+      <div>
+        <div>
+          <div>
+            
+  <div>
+<span></span><h1>10. Brief Tour of the Standard Library<a>¶</a></h1>
+<div>
+<span></span><h2>10.1. Operating System Interface<a>¶</a></h2>
+<p>The <a><code><span>os</span></code></a> module provides dozens of functions for interacting with the
+operating system:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>os</span>
+<span>&gt;&gt;&gt; </span><span>os</span><span>.</span><span>getcwd</span><span>()</span>      <span># Return the current working directory</span>
+<span>&#39;C:\\Python36&#39;</span>
+<span>&gt;&gt;&gt; </span><span>os</span><span>.</span><span>chdir</span><span>(</span><span>&#39;/server/accesslogs&#39;</span><span>)</span>   <span># Change current working directory</span>
+<span>&gt;&gt;&gt; </span><span>os</span><span>.</span><span>system</span><span>(</span><span>&#39;mkdir today&#39;</span><span>)</span>   <span># Run the command mkdir in the system shell</span>
+<span>0</span>
+</pre></div>
+</div>
+<p>Be sure to use the <code><span>import</span> <span>os</span></code> style instead of <code><span>from</span> <span>os</span> <span>import</span> <span>*</span></code>.  This
+will keep <a><code><span>os.open()</span></code></a> from shadowing the built-in <a><code><span>open()</span></code></a> function which
+operates much differently.</p>
+<p>The built-in <a><code><span>dir()</span></code></a> and <a><code><span>help()</span></code></a> functions are useful as interactive
+aids for working with large modules like <a><code><span>os</span></code></a>:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>os</span>
+<span>&gt;&gt;&gt; </span><span>dir</span><span>(</span><span>os</span><span>)</span>
+<span>&lt;returns a list of all module functions&gt;</span>
+<span>&gt;&gt;&gt; </span><span>help</span><span>(</span><span>os</span><span>)</span>
+<span>&lt;returns an extensive manual page created from the module&#39;s docstrings&gt;</span>
+</pre></div>
+</div>
+<p>For daily file and directory management tasks, the <a><code><span>shutil</span></code></a> module provides
+a higher level interface that is easier to use:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>shutil</span>
+<span>&gt;&gt;&gt; </span><span>shutil</span><span>.</span><span>copyfile</span><span>(</span><span>&#39;data.db&#39;</span><span>,</span> <span>&#39;archive.db&#39;</span><span>)</span>
+<span>&#39;archive.db&#39;</span>
+<span>&gt;&gt;&gt; </span><span>shutil</span><span>.</span><span>move</span><span>(</span><span>&#39;/build/executables&#39;</span><span>,</span> <span>&#39;installdir&#39;</span><span>)</span>
+<span>&#39;installdir&#39;</span>
+</pre></div>
+</div>
+</div>
+<div>
+<span></span><h2>10.2. File Wildcards<a>¶</a></h2>
+<p>The <a><code><span>glob</span></code></a> module provides a function for making file lists from directory
+wildcard searches:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>glob</span>
+<span>&gt;&gt;&gt; </span><span>glob</span><span>.</span><span>glob</span><span>(</span><span>&#39;*.py&#39;</span><span>)</span>
+<span>[&#39;primes.py&#39;, &#39;random.py&#39;, &#39;quote.py&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div>
+<span></span><h2>10.3. Command Line Arguments<a>¶</a></h2>
+<p>Common utility scripts often need to process command line arguments. These
+arguments are stored in the <a><code><span>sys</span></code></a> module’s <em>argv</em> attribute as a list.  For
+instance the following output results from running <code><span>python</span> <span>demo.py</span> <span>one</span> <span>two</span>
+<span>three</span></code> at the command line:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>sys</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>sys</span><span>.</span><span>argv</span><span>)</span>
+<span>[&#39;demo.py&#39;, &#39;one&#39;, &#39;two&#39;, &#39;three&#39;]</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../library/getopt.html#module-getopt"><code><span>getopt</span></code></a> module processes <em>sys.argv</em> using the conventions of the Unix
+<a class="reference internal" href="../library/getopt.html#module-getopt"><code><span>getopt()</span></code></a> function.  More powerful and flexible command line processing is
+provided by the <a><code><span>argparse</span></code></a> module.</p>
+</div>
+<div>
+<span></span><h2>10.4. Error Output Redirection and Program Termination<a>¶</a></h2>
+<p>The <a><code><span>sys</span></code></a> module also has attributes for <em>stdin</em>, <em>stdout</em>, and <em>stderr</em>.
+The latter is useful for emitting warnings and error messages to make them
+visible even when <em>stdout</em> has been redirected:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>sys</span><span>.</span><span>stderr</span><span>.</span><span>write</span><span>(</span><span>&#39;Warning, log file not found starting a new one</span><span>\n</span><span>&#39;</span><span>)</span>
+<span>Warning, log file not found starting a new one</span>
+</pre></div>
+</div>
+<p>The most direct way to terminate a script is to use <code><span>sys.exit()</span></code>.</p>
+</div>
+<div>
+<span></span><h2>10.5. String Pattern Matching<a>¶</a></h2>
+<p>The <a><code><span>re</span></code></a> module provides regular expression tools for advanced string
+processing. For complex matching and manipulation, regular expressions offer
+succinct, optimized solutions:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>re</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>findall</span><span>(</span><span>r</span><span>&#39;\bf[a-z]*&#39;</span><span>,</span> <span>&#39;which foot or hand fell fastest&#39;</span><span>)</span>
+<span>[&#39;foot&#39;, &#39;fell&#39;, &#39;fastest&#39;]</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>sub</span><span>(</span><span>r</span><span>&#39;(\b[a-z]+) \1&#39;</span><span>,</span> <span>r</span><span>&#39;\1&#39;</span><span>,</span> <span>&#39;cat in the the hat&#39;</span><span>)</span>
+<span>&#39;cat in the hat&#39;</span>
+</pre></div>
+</div>
+<p>When only simple capabilities are needed, string methods are preferred because
+they are easier to read and debug:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>&#39;tea for too&#39;</span><span>.</span><span>replace</span><span>(</span><span>&#39;too&#39;</span><span>,</span> <span>&#39;two&#39;</span><span>)</span>
+<span>&#39;tea for two&#39;</span>
+</pre></div>
+</div>
+</div>
+<div>
+<span></span><h2>10.6. Mathematics<a>¶</a></h2>
+<p>The <a><code><span>math</span></code></a> module gives access to the underlying C library functions for
+floating point math:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>math</span>
+<span>&gt;&gt;&gt; </span><span>math</span><span>.</span><span>cos</span><span>(</span><span>math</span><span>.</span><span>pi</span> <span>/</span> <span>4</span><span>)</span>
+<span>0.70710678118654757</span>
+<span>&gt;&gt;&gt; </span><span>math</span><span>.</span><span>log</span><span>(</span><span>1024</span><span>,</span> <span>2</span><span>)</span>
+<span>10.0</span>
+</pre></div>
+</div>
+<p>The <a><code><span>random</span></code></a> module provides tools for making random selections:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>random</span>
+<span>&gt;&gt;&gt; </span><span>random</span><span>.</span><span>choice</span><span>([</span><span>&#39;apple&#39;</span><span>,</span> <span>&#39;pear&#39;</span><span>,</span> <span>&#39;banana&#39;</span><span>])</span>
+<span>&#39;apple&#39;</span>
+<span>&gt;&gt;&gt; </span><span>random</span><span>.</span><span>sample</span><span>(</span><span>range</span><span>(</span><span>100</span><span>),</span> <span>10</span><span>)</span>   <span># sampling without replacement</span>
+<span>[30, 83, 16, 4, 8, 81, 41, 50, 18, 33]</span>
+<span>&gt;&gt;&gt; </span><span>random</span><span>.</span><span>random</span><span>()</span>    <span># random float</span>
+<span>0.17970987693706186</span>
+<span>&gt;&gt;&gt; </span><span>random</span><span>.</span><span>randrange</span><span>(</span><span>6</span><span>)</span>    <span># random integer chosen from range(6)</span>
+<span>4</span>
+</pre></div>
+</div>
+<p>The <a><code><span>statistics</span></code></a> module calculates basic statistical properties
+(the mean, median, variance, etc.) of numeric data:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>statistics</span>
+<span>&gt;&gt;&gt; </span><span>data</span> <span>=</span> <span>[</span><span>2.75</span><span>,</span> <span>1.75</span><span>,</span> <span>1.25</span><span>,</span> <span>0.25</span><span>,</span> <span>0.5</span><span>,</span> <span>1.25</span><span>,</span> <span>3.5</span><span>]</span>
+<span>&gt;&gt;&gt; </span><span>statistics</span><span>.</span><span>mean</span><span>(</span><span>data</span><span>)</span>
+<span>1.6071428571428572</span>
+<span>&gt;&gt;&gt; </span><span>statistics</span><span>.</span><span>median</span><span>(</span><span>data</span><span>)</span>
+<span>1.25</span>
+<span>&gt;&gt;&gt; </span><span>statistics</span><span>.</span><span>variance</span><span>(</span><span>data</span><span>)</span>
+<span>1.3720238095238095</span>
+</pre></div>
+</div>
+<p>The SciPy project &lt;<a>https://scipy.org</a>&gt; has many other modules for numerical
+computations.</p>
+</div>
+<div>
+<span></span><h2>10.7. Internet Access<a>¶</a></h2>
+<p>There are a number of modules for accessing the internet and processing internet
+protocols. Two of the simplest are <a><code><span>urllib.request</span></code></a> for retrieving data
+from URLs and <a><code><span>smtplib</span></code></a> for sending mail:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>from</span> <span>urllib.request</span> <span>import</span> <span>urlopen</span>
+<span>&gt;&gt;&gt; </span><span>with</span> <span>urlopen</span><span>(</span><span>&#39;http://tycho.usno.navy.mil/cgi-bin/timer.pl&#39;</span><span>)</span> <span>as</span> <span>response</span><span>:</span>
+<span>... </span>    <span>for</span> <span>line</span> <span>in</span> <span>response</span><span>:</span>
+<span>... </span>        <span>line</span> <span>=</span> <span>line</span><span>.</span><span>decode</span><span>(</span><span>&#39;utf-8&#39;</span><span>)</span>  <span># Decoding the binary data to text.</span>
+<span>... </span>        <span>if</span> <span>&#39;EST&#39;</span> <span>in</span> <span>line</span> <span>or</span> <span>&#39;EDT&#39;</span> <span>in</span> <span>line</span><span>:</span>  <span># look for Eastern Time</span>
+<span>... </span>            <span>print</span><span>(</span><span>line</span><span>)</span>
+
+<span>&lt;BR&gt;Nov. 25, 09:43:32 PM EST</span>
+
+<span>&gt;&gt;&gt; </span><span>import</span> <span>smtplib</span>
+<span>&gt;&gt;&gt; </span><span>server</span> <span>=</span> <span>smtplib</span><span>.</span><span>SMTP</span><span>(</span><span>&#39;localhost&#39;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>server</span><span>.</span><span>sendmail</span><span>(</span><span>&#39;soothsayer@example.org&#39;</span><span>,</span> <span>&#39;jcaesar@example.org&#39;</span><span>,</span>
+<span>... </span><span>&quot;&quot;&quot;To: jcaesar@example.org</span>
+<span>... </span><span>From: soothsayer@example.org</span>
+<span>...</span><span></span>
+<span>... </span><span>Beware the Ides of March.</span>
+<span>... </span><span>&quot;&quot;&quot;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>server</span><span>.</span><span>quit</span><span>()</span>
+</pre></div>
+</div>
+<p>(Note that the second example needs a mailserver running on localhost.)</p>
+</div>
+<div>
+<span></span><h2>10.8. Dates and Times<a>¶</a></h2>
+<p>The <a><code><span>datetime</span></code></a> module supplies classes for manipulating dates and times in
+both simple and complex ways. While date and time arithmetic is supported, the
+focus of the implementation is on efficient member extraction for output
+formatting and manipulation.  The module also supports objects that are timezone
+aware.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span># dates are easily constructed and formatted</span>
+<span>&gt;&gt;&gt; </span><span>from</span> <span>datetime</span> <span>import</span> <span>date</span>
+<span>&gt;&gt;&gt; </span><span>now</span> <span>=</span> <span>date</span><span>.</span><span>today</span><span>()</span>
+<span>&gt;&gt;&gt; </span><span>now</span>
+<span>datetime.date(2003, 12, 2)</span>
+<span>&gt;&gt;&gt; </span><span>now</span><span>.</span><span>strftime</span><span>(</span><span>&quot;%m-</span><span>%d</span><span>-%y. </span><span>%d</span><span> %b %Y is a %A on the </span><span>%d</span><span> day of %B.&quot;</span><span>)</span>
+<span>&#39;12-02-03. 02 Dec 2003 is a Tuesday on the 02 day of December.&#39;</span>
+
+<span>&gt;&gt;&gt; </span><span># dates support calendar arithmetic</span>
+<span>&gt;&gt;&gt; </span><span>birthday</span> <span>=</span> <span>date</span><span>(</span><span>1964</span><span>,</span> <span>7</span><span>,</span> <span>31</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>age</span> <span>=</span> <span>now</span> <span>-</span> <span>birthday</span>
+<span>&gt;&gt;&gt; </span><span>age</span><span>.</span><span>days</span>
+<span>14368</span>
+</pre></div>
+</div>
+</div>
+<div>
+<span></span><h2>10.9. Data Compression<a>¶</a></h2>
+<p>Common data archiving and compression formats are directly supported by modules
+including: <a><code><span>zlib</span></code></a>, <a><code><span>gzip</span></code></a>, <a><code><span>bz2</span></code></a>, <a><code><span>lzma</span></code></a>, <a><code><span>zipfile</span></code></a> and
+<a><code><span>tarfile</span></code></a>.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>zlib</span>
+<span>&gt;&gt;&gt; </span><span>s</span> <span>=</span> <span>b</span><span>&#39;witch which has which witches wrist watch&#39;</span>
+<span>&gt;&gt;&gt; </span><span>len</span><span>(</span><span>s</span><span>)</span>
+<span>41</span>
+<span>&gt;&gt;&gt; </span><span>t</span> <span>=</span> <span>zlib</span><span>.</span><span>compress</span><span>(</span><span>s</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>len</span><span>(</span><span>t</span><span>)</span>
+<span>37</span>
+<span>&gt;&gt;&gt; </span><span>zlib</span><span>.</span><span>decompress</span><span>(</span><span>t</span><span>)</span>
+<span>b&#39;witch which has which witches wrist watch&#39;</span>
+<span>&gt;&gt;&gt; </span><span>zlib</span><span>.</span><span>crc32</span><span>(</span><span>s</span><span>)</span>
+<span>226805979</span>
+</pre></div>
+</div>
+</div>
+<div>
+<span></span><h2>10.10. Performance Measurement<a>¶</a></h2>
+<p>Some Python users develop a deep interest in knowing the relative performance of
+different approaches to the same problem. Python provides a measurement tool
+that answers those questions immediately.</p>
+<p>For example, it may be tempting to use the tuple packing and unpacking feature
+instead of the traditional approach to swapping arguments. The <a><code><span>timeit</span></code></a>
+module quickly demonstrates a modest performance advantage:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>from</span> <span>timeit</span> <span>import</span> <span>Timer</span>
+<span>&gt;&gt;&gt; </span><span>Timer</span><span>(</span><span>&#39;t=a; a=b; b=t&#39;</span><span>,</span> <span>&#39;a=1; b=2&#39;</span><span>)</span><span>.</span><span>timeit</span><span>()</span>
+<span>0.57535828626024577</span>
+<span>&gt;&gt;&gt; </span><span>Timer</span><span>(</span><span>&#39;a,b = b,a&#39;</span><span>,</span> <span>&#39;a=1; b=2&#39;</span><span>)</span><span>.</span><span>timeit</span><span>()</span>
+<span>0.54962537085770791</span>
+</pre></div>
+</div>
+<p>In contrast to <a><code><span>timeit</span></code></a>’s fine level of granularity, the <a><code><span>profile</span></code></a> and
+<a><code><span>pstats</span></code></a> modules provide tools for identifying time critical sections in
+larger blocks of code.</p>
+</div>
+<div>
+<span></span><h2>10.11. Quality Control<a>¶</a></h2>
+<p>One approach for developing high quality software is to write tests for each
+function as it is developed and to run those tests frequently during the
+development process.</p>
+<p>The <a><code><span>doctest</span></code></a> module provides a tool for scanning a module and validating
+tests embedded in a program’s docstrings.  Test construction is as simple as
+cutting-and-pasting a typical call along with its results into the docstring.
+This improves the documentation by providing the user with an example and it
+allows the doctest module to make sure the code remains true to the
+documentation:</p>
+<div><div><pre><span></span><span>def</span> <span>average</span><span>(</span><span>values</span><span>):</span>
+    <span>&quot;&quot;&quot;Computes the arithmetic mean of a list of numbers.</span>
+
+<span>    &gt;&gt;&gt; print(average([20, 30, 70]))</span>
+<span>    40.0</span>
+<span>    &quot;&quot;&quot;</span>
+    <span>return</span> <span>sum</span><span>(</span><span>values</span><span>)</span> <span>/</span> <span>len</span><span>(</span><span>values</span><span>)</span>
+
+<span>import</span> <span>doctest</span>
+<span>doctest</span><span>.</span><span>testmod</span><span>()</span>   <span># automatically validate the embedded tests</span>
+</pre></div>
+</div>
+<p>The <a><code><span>unittest</span></code></a> module is not as effortless as the <a><code><span>doctest</span></code></a> module,
+but it allows a more comprehensive set of tests to be maintained in a separate
+file:</p>
+<div><div><pre><span></span><span>import</span> <span>unittest</span>
+
+<span>class</span> <span>TestStatisticalFunctions</span><span>(</span><span>unittest</span><span>.</span><span>TestCase</span><span>):</span>
+
+    <span>def</span> <span>test_average</span><span>(</span><span>self</span><span>):</span>
+        <span>self</span><span>.</span><span>assertEqual</span><span>(</span><span>average</span><span>([</span><span>20</span><span>,</span> <span>30</span><span>,</span> <span>70</span><span>]),</span> <span>40.0</span><span>)</span>
+        <span>self</span><span>.</span><span>assertEqual</span><span>(</span><span>round</span><span>(</span><span>average</span><span>([</span><span>1</span><span>,</span> <span>5</span><span>,</span> <span>7</span><span>]),</span> <span>1</span><span>),</span> <span>4.3</span><span>)</span>
+        <span>with</span> <span>self</span><span>.</span><span>assertRaises</span><span>(</span><span>ZeroDivisionError</span><span>):</span>
+            <span>average</span><span>([])</span>
+        <span>with</span> <span>self</span><span>.</span><span>assertRaises</span><span>(</span><span>TypeError</span><span>):</span>
+            <span>average</span><span>(</span><span>20</span><span>,</span> <span>30</span><span>,</span> <span>70</span><span>)</span>
+
+<span>unittest</span><span>.</span><span>main</span><span>()</span>  <span># Calling from the command line invokes all tests</span>
+</pre></div>
+</div>
+</div>
+<div>
+<span></span><h2>10.12. Batteries Included<a>¶</a></h2>
+<p>Python has a “batteries included” philosophy.  This is best seen through the
+sophisticated and robust capabilities of its larger packages. For example:</p>
+<ul>
+<li>The <a><code><span>xmlrpc.client</span></code></a> and <a><code><span>xmlrpc.server</span></code></a> modules make implementing
+remote procedure calls into an almost trivial task.  Despite the modules
+names, no direct knowledge or handling of XML is needed.</li>
+<li>The <a><code><span>email</span></code></a> package is a library for managing email messages, including
+MIME and other RFC 2822-based message documents. Unlike <a><code><span>smtplib</span></code></a> and
+<a><code><span>poplib</span></code></a> which actually send and receive messages, the email package has
+a complete toolset for building or decoding complex message structures
+(including attachments) and for implementing internet encoding and header
+protocols.</li>
+<li>The <a><code><span>json</span></code></a> package provides robust support for parsing this
+popular data interchange format.  The <a><code><span>csv</span></code></a> module supports
+direct reading and writing of files in Comma-Separated Value format,
+commonly supported by databases and spreadsheets.  XML processing is
+supported by the <a><code><span>xml.etree.ElementTree</span></code></a>, <a><code><span>xml.dom</span></code></a> and
+<a><code><span>xml.sax</span></code></a> packages. Together, these modules and packages
+greatly simplify data interchange between Python applications and
+other tools.</li>
+<li>The <a><code><span>sqlite3</span></code></a> module is a wrapper for the SQLite database
+library, providing a persistent database that can be updated and
+accessed using slightly nonstandard SQL syntax.</li>
+<li>Internationalization is supported by a number of modules including
+<a><code><span>gettext</span></code></a>, <a><code><span>locale</span></code></a>, and the <a><code><span>codecs</span></code></a> package.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+  <h3><a>Table Of Contents</a></h3>
+  <ul>
+<li><a>10. Brief Tour of the Standard Library</a><ul>
+<li><a>10.1. Operating System Interface</a></li>
+<li><a>10.2. File Wildcards</a></li>
+<li><a>10.3. Command Line Arguments</a></li>
+<li><a>10.4. Error Output Redirection and Program Termination</a></li>
+<li><a>10.5. String Pattern Matching</a></li>
+<li><a>10.6. Mathematics</a></li>
+<li><a>10.7. Internet Access</a></li>
+<li><a>10.8. Dates and Times</a></li>
+<li><a>10.9. Data Compression</a></li>
+<li><a>10.10. Performance Measurement</a></li>
+<li><a>10.11. Quality Control</a></li>
+<li><a>10.12. Batteries Included</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p><a href="classes.html"
+           >9. Classes</a></p>
+  <h4>Next topic</h4>
+  <p><a href="stdlib2.html"
+           >11. Brief Tour of the Standard Library — Part II</a></p>
+  <div>
+    <h3>This Page</h3>
+    <ul>
+      <li><a>Report a Bug</a></li>
+      <li>
+        <a href="https://github.com/python/cpython/blob/3.6/Doc/tutorial/stdlib.rst"
+>Show Source
+        </a>
+      </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+      <div></div>
+    </div>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="stdlib2.html" title="11. Brief Tour of the Standard Library — Part II"
+>next</a> |</li>
+        <li>
+          <a href="classes.html" title="9. Classes"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>The Python Tutorial</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>  
+    <div>
+    &copy; <a>Copyright</a> 2001-2018, Python Software Foundation.
+    <br>
+    The Python Software Foundation is a non-profit corporation.
+    <a>Please donate.</a>
+    <br>
+    Last updated on May 13, 2018.
+    <a>Found a bug</a>?
+    <br>
+    Created using <a>Sphinx</a> 1.7.4.
+    </div>
+
+  </body>
+</html>

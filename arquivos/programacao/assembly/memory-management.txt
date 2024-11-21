@@ -1,0 +1,182 @@
+LEIA /media/SD/linguas/Assembly/processador_Intel/253668_System Programing Guide Part 1.pdf
+
+In 64-bit mode, segmentation is disabled. The processor treats the segment base of CS, DS, ES, SS as zero, creating a linear address that is equal to the effective address.
+Note that the processor does not perform segment limit checks at runtime in 64-bit mode.
+
+
+In protected mode, the processor uses two stages of address translation to arrive at a physical address: logical-address translation and linear address space paging.
+
+A logical address consists of a 16-bit segment selector and a 32-bit offset
+The processor translates every logical address into a linear address.
+A linear address is a 32-bit address.
+
+To translate a logical address into a linear address, the processor does the following:
+1. Uses the offset in the segment selector to locate the segment descriptor for the segment in the GDT or LDT and reads it into the processor.
+(This step is needed only when a new segment selector is loaded into a segment register.)
+2. Examines the segment descriptor to check the access rights and range of the segment to insure that the segment is accessible and that the offset is within the limits of the segment.
+3. Adds the base address of the segment from the segment descriptor to the offset to form a linear address.
+
+If paging is not used, the processor maps the linear address directly to a physical address.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Basic Flat Model
+at least two segment descriptors must be created, one for referencing a code segment and one for referencing a data segment. Both of these segments, however, are mapped to the entire linear address space: that is, both segment descriptors have the same base address value of 0 and the same segment limit of 4 GBytes.
+
+Protected Flat Model
+similar to the basic flat model, except the segment limits are set to include only the range of addresses for which physical memory actually exists.
+
+paging mechanism provide isolation between user and supervisor code and data, four segments need to be defined: code and data segments at privilege level 3 for the user, and code and data segments at privilege level 0 for the supervisor. Usually these segments all overlay each other and start at address 0 in the linear address space. This flat segmentation model along with a simple paging structure can protect the operating system from applications, and by adding a separate paging structure for each task or process, it can also protect applications from each other. Similar designs are used by several popular multitasking operating systems.
+
+Paging (3.6 e 3.7)
+The processor’s paging mechanism divides the linear address space into pages.
+physical address space can be mapped to read-write memory, read-only memory, and memory mapped I/O.
+
+PAE
+IA-32 architecture also supports an extension of the physical address space to 236 bytes (64 GBytes); with a maximum physical address of FFFFFFFFFH. This extension is invoked using the physical address extension (PAE) flag, located in bit 5 of control register CR4.
+
+
+Global Descriptor Table Register in reverse order
+         ______________________________________________________
+        |                                 |                    |
+GDTR    | 32(64)-bit Linear Base Address  | 16-Bit Table Limit |
+        |_________________________________|____________________|
+       47(79)                           16 15                  0
+
+
+each entry in GDT is a "Segment Descriptor".
+When a segment selector is loaded into the visible part of a segment register, the processor also loads the hidden part of the segment register with the base address, segment limit, and access control information from the segment descriptor
+
+Global Descriptor Table in reverse order
+     3                   2                   1
+   1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  |               | |B| |A|       | | D | |0|E|W|A|               |
+  | BASE 31..24   |G|/|L|V|LIMIT  |P| P |S| TYPE  |  BASE 23..16  | 4
+  |               | |D| |L|19..16 | | L | |1|C|R|A|               |
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  |                               |                               |
+  |          BASE 15..0           |         LIMIT 15..0           | 0
+  |                               |                               |
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+             1
+   5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  |                               |
+  |         LIMIT 15..0           |
+  |                               |
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+             1
+   5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  |                               |
+  |          BASE 15..0           |
+  |                               |
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   7 6 5 4 3 2 1 0
+  +-+-+-+-+-+-+-+-+
+  |  BASE 23..16  |
+  +-+-+-+-+-+-+-+-+
+
+   7 6 5 4 3 2 1 0
+  +-+-+-+-+-+-+-+-+
+  | | D | |0|E|W|A|
+  |P| P |S| TYPE  |
+  | | L | |1|C|R|A|
+  +-+-+-+-+-+-+-+-+
+
+   7 6 5 4 3 2 1 0
+  +-+-+-+-+-+-+-+-+
+  | |B| |A|       |
+  |G|/|0|V|LIMIT  |
+  | |D| |L|19..16 |
+  +-+-+-+-+-+-+-+-+
+  
+   7 6 5 4 3 2 1 0
+  +-+-+-+-+-+-+-+-+
+  |  BASE 31..24  |
+  +-+-+-+-+-+-+-+-+
+
+
+G     — Granularity (set: 4 KBytes to 4 GBytes, in 4-KByte increments) (clear: 1 byte to 1 MByte, in byte increments)
+D/B   — Default operation size (0 = 16-bit segment; 1 = 32-bit segment)
+L     — A value of 1 indicates instructions in this code segment are executed in 64-bit mode. (D/B = 0)
+
+AVL   — Available for use by system software
+
+P     — Segment present (1-present  0-not present)
+DPL   — Descriptor privilege level (range from 0 to 3, with 0 being the most privileged leve)
+S     — Descriptor type (0 = system; 1 = code or data) (in type, bit 11 is clear for data segment and set for a code segment)
+TYPE  — Segment type
+BASE  — Segment base address (should be aligned to 16-byte boundaries)
+LIMIT — Segment Limit. The processor puts together the two segment limit fields to form a 20-bit value.
+
+E  Expand (1 is down, 0 is up) útil para um segmento de tamanho dinâmico para pilha
+W  1-Read/Write   0-Read-Only
+A  Accessed. Processor sets this bit whenever it loads a segment selector for the segment into a segment register. O.S. can clear this bit.
+C  Conforming (1 is set)
+R  1-Execute/Read 0-Execute-Only
+
+
+G (granularity)
+• If the granularity flag is clear, the segment size can range from 1 byte to 1 MByte, in byte increments.
+• If the granularity flag is set, the segment size can range from 4 KBytes to 4 GBytes, in 4-KByte increments.
+
+E (expand)
+For expand-up segments, the offset in a logical address can range from 0 to the segment limit. Offsets greater than the segment limit generate general-protection exceptions (#GP).
+For expand-down segments, the segment limit has the reverse function; the offset can range from the segment limit to FFFFFFFFH or FFFFH, depending on the setting of the B flag. Offsets less than the segment limit generate general-protection exceptions. Decreasing the value in the segment limit field for an expand-down segment allocates new memory at the bottom of the segment's address space, rather than at the top. IA-32 architecture stacks always grow downwards, making this mechanism convenient for expandable stacks.
+
+bit conforming
+A transfer of execution into a more-privileged conforming segment allows execution to continue at the current privilege level. A transfer into a nonconforming segment at a different privilege level results in a general-protection exception (#GP), unless a call gate or task gate is used (see Section 4.8.1, "Direct Calls or Jumps to Code Segments")
+Execution cannot be transferred by a call or a jump to a less privileged (numerically higher privilege level) code segment, regardless of whether the target segment is a conforming or nonconforming code segment. Attempting such an execution transfer will result in a general-protection exception.
+
+16 or 32 bits
+The instruction prefix 66H can be used to select an operand size other than the default, and the prefix 67H can be used select an address size other than the default.
+
+gdtr:
+	.word	0x0027  // limit (offset do ultimo byte da gdt)
+	.long	gdt     // addr
+
+gdt:
+	.word	0x0000  // LIMIT 15..0
+	.word	0x0000  // BASE  15..0
+	.byte	0x00    // 
+	.byte	0x00 | 0x00 | 0x00 | 0x00   |   0x00 | 0x00 | 0x00 | 0x00  // 0x00
+	.byte	0x00 | 0x00 | 0x00 | 0x00   |   0x00 | 0x00 | 0x00 | 0x00  // 0x00
+	.byte	0x00    // 
+
+	// code segment
+	.word	0xFFFF  // LIMIT 15..0
+	.word	0x0000  // BASE  15..0
+	.byte	0x00
+	.byte	0x80 | 0x00 | 0x00 | 0x10   |   0x08 | 0x00 | 0x02 | 0x00  // 0x9A  present, privilegio = 0, code, não conforme, execute/read, not acessed
+	.byte	0x80 | 0x40 | 0x00 | 0x00   |   0x08 | 0x04 | 0x02 | 0x01  // 0xCF  granular, 32-bit, 0, diponível
+	.byte	0x00
+
+	// data segment
+	.word	0xFFFF  // LIMIT 15..0
+	.word	0x0000  // BASE  15..0
+	.byte	0x00
+	.byte	0x80 | 0x00 | 0x00 | 0x10   |   0x00 | 0x00 | 0x02 | 0x00  // 0x92  present, privilegio=0, data, expand-up, read/write, not acessed
+	.byte	0x80 | 0x40 | 0x00 | 0x00   |   0x08 | 0x04 | 0x02 | 0x01  // 0xCF  granular, 32-bit, 0, disponível
+	.byte	0x00
+
+	// 16 bit real mode CS
+	.word	0xFFFF  // LIMIT 15..0
+	.word	0x0000  // BASE  15..0
+	.byte	0x00    // 
+	.byte	0x80 | 0x00 | 0x00 | 0x10   |   0x08 | 0x04 | 0x02 | 0x00  // 0x9E  present, privilegio=0, code, conforme, execute/read, not acessed
+	.byte	0x00 | 0x00 | 0x00 | 0x00   |   0x00 | 0x00 | 0x00 | 0x00  // 0x00  não granular, 16-bit, 0, disponível
+	.byte	0x00    // 
+
+	// 16 bit real mode DS
+	.word	0xFFFF  // LIMIT 15..0
+	.word	0x0000  // BASE  15..0
+	.byte	0x00    // 
+	.byte	0x80 | 0x00 | 0x00 | 0x10   |   0x00 | 0x00 | 0x02 | 0x00  // 0x92  present, privilegio=0, data, expand-up, read/write, not acessed
+	.byte	0x00 | 0x00 | 0x00 | 0x00   |   0x00 | 0x00 | 0x00 | 0x00  // 0x00  não granular, 16-bit, 0, disponível
+	.byte	0x00    // 
+

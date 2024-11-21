@@ -1,0 +1,10 @@
+dig +trace ejamundodotrabalho.sp.gov.br
+dig +nocmd dns3e.sp.gov.br any +multiline +noall +answer
+
+
+http://www.webdnstools.com/dnstools/dns-lookup-results
+https://hackertarget.com/find-shared-dns-servers/
+
+https://viewdns.info/
+
+https://tools.dnsstuff.com/#reverseDns|type=ipv4&&value=201.55.46.177

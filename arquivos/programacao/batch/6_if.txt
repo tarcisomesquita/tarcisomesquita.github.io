@@ -1,0 +1,106 @@
+Executa o processamento condicional nos programas em lotes.
+
+IF [NOT] ERRORLEVEL número comando
+IF [NOT] cadeia_de_caracteres1==cadeia_de_caracteres2 comando
+IF [NOT] EXIST nome_de_arquivo comando
+
+  NOT                     Especifica que o Windows só deve executar o comando se a condição for falsa.
+
+  ERRORLEVEL número       Especifica uma condição verdadeira se o último programa executado retornar um código de saída igual ou maior que o número especificado.
+
+  cadeia_de_caracteres1==cadeia_de_caracteres2  Especifica uma condição
+                          verdadeira se as cadeias de caracteres de texto
+                          especificadas
+                          forem correspondentes.
+
+  EXIST nome_de_arquivo   Especifica uma condição verdadeira se o nome de
+                          arquivo especificado existir.
+
+  comando                 Especifica o comando a ser executado se a condição
+                          for atendida. O comando pode ser seguido pelo
+                          comando ELSE, que executar  o comando após a
+                          palavra-chave ELSE se a condição especificada
+                          for FALSA
+
+A cl usula ELSE deve ocorrer na mesma linha que o comando após o IF. Por
+exemplo:
+
+    IF EXIST nome_de_arquivo. (
+        del nome_de_arquivo.
+    ) ELSE (
+        echo nome_de_arquivo. ausente.
+    )
+
+O exemplo a seguir NÇO funcionaria porque o comando del precisa ser terminado
+por uma nova linha:
+
+    IF EXIST nome_de_arquivo. del nome_de_arquivo. ELSE echo nome_de_arquivo.
+    ausente
+
+O exemplo a seguir também não funcionaria, j  que o comando ELSE deve estar
+na mesma linha que o final do comando IF:
+
+    IF EXIST nome_de_arquivo. del nome_de_arquivo.
+    ELSE echo nome_de_arquivo. ausente
+
+O exemplo a seguir funcionaria se vocˆ desejasse tudo isso em uma linha:
+
+    IF EXIST nome_de_arquivo. (del nome_de_arquivo.) ELSE echo
+    nome_de_arquivo. ausente
+
+Se as extensões de comando estiverem ativadas, o IF ser alterado como a seguir:
+
+    IF [/I] cadeia de caracteres1 op_comparação cadeia de caracteres2 comando
+    IF CMDEXTVERSION número comando
+    IF DEFINED vari vel comando
+
+onde op_comparação pode ser uma das seguintes:
+
+    EQU - igual
+    NEQ - diferente
+    LSS - menor que
+    LEQ - menor que ou igual
+    GTR - maior que
+    GEQ - maior que ou igual
+
+e a opção /I, se especificada, informa para fazer comparações de cadeias de caracteres sem diferenciação de maiúsculas e minúsculas.
+A opção /I também pode ser usada na fórmula cadeia de caracteres1==cadeia de caracteres2 de IF.
+
+Se cadeia de caracteres1 e cadeia de caracteres2 contiverem todos os dígitos numéricos, as cadeias de caracteres serão convertidas em números e será executada uma comparação numérica.
+
+A condicional CMDEXTVERSION funciona como ERRORLEVEL, exceto por
+comparar com um número de versão interno associado …s extensões de comandos
+. A primeira versão é 1. Ela ser  incrementada em um quando
+melhoras significativas forem adicionadas …s extensões de comandos.
+A condicional CMDEXTVERSION nunca é verdadeira quando as extensões de
+comandos estão desativadas.
+
+A condicional DEFINED funciona como EXISTS, exceto por usar um nome de
+vari vel de ambiente e ser verdadeira se a vari vel de ambiente estiver
+definida.
+
+%ERRORLEVEL% expandir  para uma representação de cadeia de caracteres do 
+valor atual de ERRORLEVEL, contanto que ainda não exista uma vari vel
+ambiente com o mesmo nome ERRORLEVEL, pois; nesse caso, ser  obtido o
+valor. Após executar um programa, o
+exemplo a seguir ilustra o uso ERRORLEVEL:
+
+    goto resposta%ERRORLEVEL%
+    :resposta0
+    echo O programa retornou o código 0
+    :resposta1
+    echo O programa retornou o código 1.
+
+Também é possível usar as comparações numéricas acima:
+
+    IF %ERRORLEVEL% LEQ 1 goto okay
+
+%CMDCMDLINE% expandir  para a linha de comando original transferida para
+CMD.EXE antes de qualquer processamento pelo CMD.EXE, contanto que ainda não
+haja uma vari vel de ambiente com o nome CMDCMDLINE, pois, nesse caso, ser 
+o seu valor.
+
+%CMDEXTVERSION% expandir  para uma representação da cadeia de
+caracteres do valor atual de CMDEXTVERSION, contanto que ainda não exista uma
+vari vel de ambiente com o nome CMDEXTVERSION, pois, neste caso, ser  obtido
+seu valor.

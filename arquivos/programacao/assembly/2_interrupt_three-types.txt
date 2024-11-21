@@ -1,0 +1,24 @@
+Three types of interrupts:
+      - Software Interrupts
+      - Hardware Interrupts
+      - Exceptions
+
+1) Software Interrupts
+   Software interrupts are initiated with an INT instruction.
+
+2) Hardware Interrupts
+   There are two basic types of hardware interrupts: Non Maskable Interrupts (NMI) and (maskable) Interrupt Requests (IRQ).
+
+   An NMI in the PC is, generally, not good news as it is often the result of a serious hardware problem, such as a memory parity error or a erroneous bus arbitration. An NMI cannot be suppressed (or masked as the name suggests). This is quite easy to understand since it normally indicates a serious failure and a computer with incorrectly functioning hardware must be prevented from destroying data.
+
+   Interrupt requests, on the other hand, can be masked with a CLI instruction that ignores all interrupt requests. The opposite STI instruction reactivates these interrupts. Interrupt requests are generally issued by a peripherical device.
+
+
+3) Exceptions
+   When the processor can't handle alone an internal error caused by system software it product a exception. For sample, when occur a division by zero.
+
+   Three main classes of exceptions:
+      - Fault : A fault issues an exception prior to completing the instruction. The saved EIP value then points to the same instruction that created the exception. Thus, it is possible to reload the EIP (with IRET for instance) and the processor will be able to re-execute the instruction, hopefully without another exception.
+      - Trap : A trap issues an exception after completing the instruction execution. The saved EIP points to the instruction immediately following the one that gave rise to the exception. The instruction is therefore not re-executed again. Traps are useful when program execution should be stopped as with the case of debugger breakpoints.
+      - Abort : Aborts usually translate very serious failures, such as hardware failures or invalid system tables. Because of this, it may happen that the address of the error cannot be found. Therefore, recovering program execution after an abort is not always possible.
+

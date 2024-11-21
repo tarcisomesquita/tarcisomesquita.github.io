@@ -1,0 +1,41 @@
+64-bit SYSCALL saves rip to rcx, clears rflags.RF, then saves rflags to r11, then loads new ss, cs, and rip from previously programmed MSRs.
+SYSCALL does not save anything on the stack and does not change rsp.
+
+Registers on entry:
+rax  system call number
+rcx  return address
+r11  saved rflags (note: r11 is callee-clobbered register in C ABI)
+rdi  arg0
+rsi  arg1
+rdx  arg2
+r10  arg3 (needs to be moved to rcx to conform to C ABI)
+r8   arg4
+r9   arg5
+
+return in rax, rdx
+
+note: r12-r15, rbp, rbx are callee-preserved in C ABI
+
+In general, a 0 return value indicates success.
+
+Every architecture has its own way of invoking and passing arguments to the kernel.
+
+       arch/ABI   instruction          syscall #   retval Notes
+       -----------------------------------------------------------------------------------
+       arm/OABI   swi NR               -           a1     NR is syscall #
+       arm/EABI   swi 0x0              r7          r1
+       i386       int $0x80            eax         eax
+       ia64       break 0x100000       r15         r10/r8
+       x86_64     syscall              rax         rax
+
+       The second table shows the registers used to pass the system call arguments.
+
+       arch/ABI   arg1   arg2   arg3   arg4   arg5   arg6   arg7
+       ----------------------------------------------------------
+       arm/OABI   a1     a2     a3     a4     v1     v2     v3
+       arm/EABI   r1     r2     r3     r4     r5     r6     r7
+       blackfin   R0     R1     R2     R3     R4     R5     -
+       i386       ebx    ecx    edx    esi    edi    ebp    -
+       ia64       r11    r9     r10    r14    r15    r13    -
+       x86_64     rdi    rsi    rdx    r10    r8     r9     -
+

@@ -1,0 +1,98 @@
+LGDT – Load Global Descriptor Table Register
+0000 1111 : 0000 0001 : mod A 010 r/m
+
+LIDT – Load Interrupt Descriptor Table Register
+0000 1111 : 0000 0001 : mod A 011 r/m
+
+
+LGDT/LIDT—Load Global/Interrupt Descriptor Table Register
+Opcode     Instruction   64-Bit Mode   Compat/Leg Mode   Description
+0F 01 /2   LGDT m16&32   N.E.          Valid             Load m into GDTR.
+0F 01 /3   LIDT m16&32   N.E.          Valid             Load m into IDTR.
+0F 01 /2   LGDT m16&64   Valid         N.E.              Load m into GDTR.
+0F 01 /3   LIDT m16&64   Valid         N.E.              Load m into IDTR.
+
+Leia o arquivo memory-management.txt
+
+Description
+GDTR: global descriptor table register.
+IDTR: interrupt descriptor table register.
+
+Source operand specifies a 6-byte memory location that contains the base address (a linear address) and the limit (size of table in bytes) of the global descriptor table (GDT) or the interrupt descriptor table (IDT).
+
+If operand-size attribute is 32 bits, a 16-bit limit (lower 2 bytes of the 6-byte data operand) and a 32-bit base address (upper 4 bytes of the data operand) are loaded into the register.
+
+If the operand-size attribute is 16 bits, a 16-bit limit (lower 2 bytes) and a 24-bit base address (third, fourth, and fifth byte) are loaded. Here, the high-order byte of the operand is not used and the high-order byte of the base address in the GDTR or IDTR is filled with zeros.
+
+In 64-bit mode, the instruction’s operand size is fixed at 8+2 bytes (an 8-byte base and a 2-byte limit).
+
+See “SGDT—Store Global Descriptor Table Register” in Chapter 4, Intel® 64 and IA-32 Architectures Software Developer’s Manual, Volume 2B, for information on storing the contents of the GDTR and IDTR.
+
+ Operation
+ IF Instruction is LIDT
+      THEN
+          IF OperandSize = 16
+               THEN
+                     IDTR(Limit) ←SRC[0:15];
+                     IDTR(Base) ←SRC[16:47] AND 00FFFFFFH;
+               ELSE IF 32-bit Operand Size
+                     THEN
+                        IDTR(Limit) ←SRC[0:15];
+                        IDTR(Base) ←SRC[16:47];
+                   FI;
+              ELSE IF 64-bit Operand Size (* In 64-Bit Mode *)
+                   THEN
+                        IDTR(Limit) ←SRC[0:15];
+                        IDTR(Base) ←SRC[16:79];
+                   FI;
+        FI;
+    ELSE (* Instruction is LGDT *)
+        IF OperandSize = 16
+              THEN
+                   GDTR(Limit) ←SRC[0:15];
+                   GDTR(Base) ←SRC[16:47] AND 00FFFFFFH;
+              ELSE IF 32-bit Operand Size
+                   THEN
+                        GDTR(Limit) ←SRC[0:15];
+                        GDTR(Base) ←SRC[16:47];
+                   FI;
+              ELSE IF 64-bit Operand Size (* In 64-Bit Mode *)
+                   THEN
+                        GDTR(Limit) ←SRC[0:15];
+                        GDTR(Base) ←SRC[16:79];
+                   FI;
+        FI;
+FI;
+
+Flags Affected
+None.
+
+Protected Mode Exceptions
+#UD                       If source operand is not a memory location.
+                          If the LOCK prefix is used.
+#GP(0)                    If the current privilege level is not 0.
+                          If a memory operand effective address is outside the CS, DS,
+                          ES, FS, or GS segment limit.
+                          If the DS, ES, FS, or GS register is used to access memory and it
+                          contains a NULL segment selector.
+
+#SS(0)                    If a memory operand effective address is outside the SS
+                          segment limit.
+#PF(fault-code)           If a page fault occurs.
+
+ Real-Address Mode Exceptions
+ #UD                     If source operand is not a memory location.
+                         If the LOCK prefix is used.
+ #GP                     If a memory operand effective address is outside the CS, DS,
+                         ES, FS, or GS segment limit.
+ #SS                     If a memory operand effective address is outside the SS
+                         segment limit.
+ 64-Bit Mode Exceptions
+ #SS(0)                  If a memory address referencing the SS segment is in a non-
+                         canonical form.
+ #GP(0)                  If the current privilege level is not 0.
+                         If the memory address is in a non-canonical form.
+ #UD                     If source operand is not a memory location.
+                         If the LOCK prefix is used.
+ #PF(fault-code)         If a page fault occurs.
+

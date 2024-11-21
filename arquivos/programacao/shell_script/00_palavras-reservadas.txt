@@ -1,0 +1,23 @@
+
+Reserved Words
+
+!
+
+if
+then
+elif
+else
+fi
+
+while
+until
+for
+do
+done
+
+case
+esac
+
+{
+}
+

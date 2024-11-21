@@ -1,0 +1,80 @@
+Aquivos .kml são abertos pelo google earth e podem ser usados no google maps.
+
+https://developers.google.com/maps/documentation/javascript/kml
+
+https://mygeodata.cloud/converter/
+
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+<Folder>
+<Placemark><Point><coordinates>-22.78874,-47.05997,0</coordinates></Point></Placemark>
+<Placemark><Point><coordinates>-22.81915,-47.09892,0</coordinates></Point></Placemark>
+<Placemark><Point><coordinates>-22.91037,-47.06204,0</coordinates></Point></Placemark>
+<Placemark><Point><coordinates>-22.92360,-46.94181,0</coordinates></Point></Placemark>
+</Folder>
+</Document>
+</kml>
+
+
+
+        <Placemark>
+          <name>Building 41</name>
+          <visibility>0</visibility>
+          <styleUrl>#transBluePoly</styleUrl>
+          <Polygon>
+            <extrude>1</extrude>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <outerBoundaryIs>
+              <LinearRing>
+                <coordinates> -122.0857412771483,37.42227033155257,17
+                  -122.0858169768481,37.42231408832346,17
+                  -122.085852582875,37.42230337469744,17
+                  -122.0857260327004,37.42229239604253,17
+                  -122.0857412771483,37.42227033155257,17 </coordinates>
+              </LinearRing>
+            </outerBoundaryIs>
+          </Polygon>
+        </Placemark>
+
+
+
+
+      <Folder>
+        <name>Extruded Polygon</name>
+        <description>A simple way to model a building</description>
+        <Placemark>
+          <name>The Pentagon</name>
+          <LookAt>
+            <longitude>-77.05580139178142</longitude>
+            <latitude>38.870832443487</latitude>
+            <heading>59.88865561738225</heading>
+            <tilt>48.09646074797388</tilt>
+            <range>742.0552506670548</range>
+          </LookAt>
+          <Polygon>
+            <extrude>1</extrude>
+            <altitudeMode>relativeToGround</altitudeMode>
+            <outerBoundaryIs>
+              <LinearRing>
+                <coordinates> -77.05788457660967,38.87253259892824,100
+                  -77.05465973756702,38.87291016281703,100
+                  -77.05315536854791,38.87053267794386,100
+                  -77.05552622493516,38.868757801256,100
+                  -77.05844056290393,38.86996206506943,100
+                  -77.05788457660967,38.87253259892824,100 </coordinates>
+              </LinearRing>
+            </outerBoundaryIs>
+            <innerBoundaryIs>
+              <LinearRing>
+                <coordinates> -77.05668055019126,38.87154239798456,100
+                  -77.05542625960818,38.87167890344077,100
+                  -77.05485125901024,38.87076535397792,100
+                  -77.05577677433152,38.87008686581446,100
+                  -77.05691162017543,38.87054446963351,100
+                  -77.05668055019126,38.87154239798456,100 </coordinates>
+              </LinearRing>
+            </innerBoundaryIs>
+          </Polygon>
+        </Placemark>
+      </Folder>

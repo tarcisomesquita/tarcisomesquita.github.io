@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><style>body {transition: opacity ease-in 0.2s; } 
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
+</style>
+    <meta name="google-signin-client-id" content="721724668570-nbkv1cfusk7kk4eni4pjvepaus73b13t.apps.googleusercontent.com">
+    <meta name="google-signin-scope" content="profile email https://www.googleapis.com/auth/developerprofiles https://www.googleapis.com/auth/developerprofiles.award">
+    <meta property="og:site_name" content="Google Developers">
+    <meta property="og:type" content="website"><meta name="theme-color" content="#1e8e3e"><meta charset="utf-8">
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="https://developers.google.com/_pwa/developers/manifest.json" crossorigin="use-credentials">
+    <link rel="preconnect" href="https://www.gstatic.com/" crossorigin="">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link rel="preconnect" href="https://fonts.googleapis.com/" crossorigin="">
+    <link rel="preconnect" href="https://apis.google.com/" crossorigin="">
+    <link rel="preconnect" href="https://www.google-analytics.com/" crossorigin=""><link rel="stylesheet" href="WebP%20Container%20Specification%20|%20Google%20Developers_files/css.css">
+      <link rel="stylesheet" href="WebP%20Container%20Specification%20|%20Google%20Developers_files/css_002.css"><link rel="stylesheet" href="WebP%20Container%20Specification%20|%20Google%20Developers_files/app.css">
+      <link rel="shortcut icon" href="https://www.gstatic.com/devrel-devsite/prod/v0a713fec70a4b4c54311265d5142e962747a0e45a24063467564a2765c008ac7/developers/images/favicon.png">
+    <link rel="apple-touch-icon" href="https://www.gstatic.com/devrel-devsite/prod/v0a713fec70a4b4c54311265d5142e962747a0e45a24063467564a2765c008ac7/developers/images/touchicon-180.png"><link rel="canonical" href="https://developers.google.com/speed/webp/docs/riff_container"><link rel="search" type="application/opensearchdescription+xml" title="Google Developers" href="https://developers.google.com/s/opensearch.xml">
+      
+
+<title>WebP Container Specification &nbsp;|&nbsp; Google Developers</title>
+
+<meta property="og:title" content="WebP Container Specification &nbsp;|&nbsp; Google Developers"><meta property="og:url" content="https://developers.google.com/speed/webp/docs/riff_container"><meta property="og:image" content="https://www.gstatic.com/devrel-devsite/prod/v0a713fec70a4b4c54311265d5142e962747a0e45a24063467564a2765c008ac7/developers/images/opengraph/google-green.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="675"><meta property="og:locale" content="en"><meta name="twitter:card" content="summary_large_image"><script type="text/javascript" async="" src="WebP%20Container%20Specification%20|%20Google%20Developers_files/linkid.js" nonce=""></script><script async="" src="WebP%20Container%20Specification%20|%20Google%20Developers_files/app_loader.js"></script><script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1,
+      "name": "WebP",
+      "item": "https://developers.google.com/speed/webp"
+    },{
+      "@type": "ListItem",
+      "position": 2,
+      "name": "WebP Container Specification",
+      "item": "https://developers.google.com/speed/webp/docs/riff_container"
+    }]
+  }
+  </script>
+  
+
+  
+
+  
+
+
+    <script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/webcomponents-lite.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_app_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_a11y_announce_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_analytics_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_badger_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_book_nav_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_bookmark_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_code_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_content_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_panel_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_expandable_nav_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_footer_linkboxes_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_footer_promos_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_footer_utility_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_header_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_heading_link_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_language_selector_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_progress_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_recommendations_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_recommendations_dropdown_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_recommendations_sidebar_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_search_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_select_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_sitemask_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_snackbar_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_tabs_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_thumb_rating_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_toc_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_tooltip_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_user_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/analytics.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_badge_awarded_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_dialog_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_spinner_module.js" nonce=""></script><script src="WebP%20Container%20Specification%20|%20Google%20Developers_files/devsite_devsite_feedback_module.js" nonce=""></script><style type="text/css"></style></head>
+  <body class="" template="page" theme="google-green" type="article" layout="docs" style="--devsite-js-header-top-row-height: 48px; --devsite-js-header-lower-section-height: 48px; --devsite-js-header-lower-tabs-height: 48px; --devsite-js-header-height: 48px; --devsite-js-header-lower-tabs-offset: 0px; --devsite-js-sidebar-max-height: 791px; --devsite-js-sidebar-max-width: 446px; --devsite-js-sidebar-offset: 0; --devsite-js-book-nav-scrollbar-width: 0px; --devsite-js-book-nav-y-offset: 0px;" ready="">
+    <devsite-progress id="app-progress"></devsite-progress>
+  
+    <section class="devsite-wrapper"><devsite-header top-row--height="48" bottom-row--height="48" bottom-tabs--height="48" fixed="" style="opacity: 1;" offset="0" bottom-row--hidden="">
+  
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="devsite-header--inner nocontent">
+  <div class="devsite-top-logo-row-wrapper-wrapper">
+    <div class="devsite-top-logo-row-wrapper">
+      <div class="devsite-top-logo-row">
+        <button type="button" id="devsite-hamburger-menu" class="devsite-header-icon-button button-flat material-icons gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Navigation menu button" aria-label="Open menu">
+        </button>
+        <div class="devsite-product-name-wrapper">
+
+  
+    
+  
+  <a href="https://developers.google.com/speed/webp">
+    
+  <div class="devsite-product-logo-container" size="medium">
+  
+    <img class="devsite-product-logo" alt="WebP" src="WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon.png" srcset="WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_36.png 36w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_48.png 48w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_72.png 72w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_96.png 96w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_480.png 480w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_720.png 720w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_856.png 856w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_960.png 960w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_1440.png 1440w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_1920.png 1920w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_2880.png 2880w" sizes="64px" loading="lazy">
+  
+  </div>
+  
+  </a>
+  
+
+  
+
+
+
+  
+  
+  <span class="devsite-product-name">
+    <ul class="devsite-breadcrumb-list">
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+    
+    
+      
+      
+        
+  <a href="https://developers.google.com/speed/webp" class="devsite-breadcrumb-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Upper Header" data-value="1" track-type="globalNav" track-name="breadcrumb" track-metadata-position="1" track-metadata-eventdetail="WebP">
+    
+          WebP
+        
+  </a>
+  
+      
+    
+  </li>
+  
+</ul>
+  </span>
+
+</div>
+        <div class="devsite-top-logo-row-middle">
+          <div class="devsite-header-upper-tabs">
+            
+           </div>
+          
+<devsite-search aria-expanded="false" aria-haspopup="listbox" enable-signin="" enable-search="" enable-suggestions="" enable-query-completion="" project-name="WebP" tenant-name="Google Developers" project-scope="/speed/webp" url-scoped="https://developers.google.com/s/results/speed/webp" role="combobox">
+  <form class="devsite-search-form" action="https://developers.google.com/s/results" method="GET">
+    <div class="devsite-search-container">
+      <div class="devsite-searchbox">
+        <input aria-activedescendant="" aria-autocomplete="list" aria-label="Search" aria-haspopup="false" aria-multiline="false" autocomplete="off" class="devsite-search-field devsite-search-query" name="q" placeholder="Search" role="searchbox" type="text" aria-controls="devsite-search-popout-container-id-1">
+        <div class="devsite-search-image material-icons" aria-hidden="true"></div>
+      </div>
+      <button type="button" search-open="" class="devsite-search-button devsite-header-icon-button button-flat material-icons" aria-label="Open search"></button>
+    </div>
+  <div class="devsite-popout" id="devsite-search-popout-container-id-1"><div class="devsite-popout-result devsite-suggest-results-container" devsite-hide=""></div></div></form>
+  <button type="button" search-close="" class="devsite-search-button devsite-header-icon-button button-flat material-icons" aria-label="Close search"></button>
+</devsite-search>
+
+        <div class="devsite-search-background" style="opacity: 1;"></div></div>
+
+        
+
+        
+
+        
+<devsite-language-selector>
+  <devsite-select class="devsite-language-selector-menu">
+    
+    <select aria-label="Select your language preference." class="devsite-language-selector-select" name="language" track-name="click" track-type="languageSelector">
+    
+    
+      <option value="en" selected="selected" lang="en">
+        English
+      </option>
+    
+      <option value="id" lang="id">
+        Bahasa Indonesia
+      </option>
+    
+      <option value="de" lang="de">
+        Deutsch
+      </option>
+    
+      <option value="es" lang="es">
+        Español
+      </option>
+    
+      <option value="fr" lang="fr">
+        Français
+      </option>
+    
+      <option value="pt_br" lang="pt_br">
+        Português – Brasil
+      </option>
+    
+      <option value="ru" lang="ru">
+        Русский
+      </option>
+    
+      <option value="zh_cn" lang="zh_cn">
+        中文 – 简体
+      </option>
+    
+      <option value="ja" lang="ja">
+        日本語
+      </option>
+    
+      <option value="ko" lang="ko">
+        한국어
+      </option>
+    
+    </select>
+  <div class="devsite-select"><label id="devsite-select-19066912003489949-label" style="display:none;" aria-label="Select your language preference.">Select an option</label><button type="button" class="devsite-select-toggle" id="devsite-select-19066912003489949-button" aria-haspopup="true" aria-labelledby="devsite-select-19066912003489949-label devsite-select-19066912003489949-button" aria-controls="devsite-select-19066912003489949-popup"><span class="devsite-select-toggle-label">English</span><span class="devsite-icon devsite-icon-arrow-drop-down devsite-select-toggle-icon" aria-hidden="true"></span></button><ul class="devsite-select-list" id="devsite-select-19066912003489949-popup" tabindex="-1" role="listbox" scrollbars="" aria-labelledby="devsite-select-19066912003489949-button"><li role="option" id="devsite-select-19066912003489949-0" class="devsite-select-item" data-index="0" data-selected="" aria-selected="true" aria-label="English, selected" value="en" lang="en">English</li><li role="option" id="devsite-select-19066912003489949-1" class="devsite-select-item" data-index="1" aria-selected="false" aria-label="Bahasa Indonesia" value="id" lang="id">Bahasa Indonesia</li><li role="option" id="devsite-select-19066912003489949-2" class="devsite-select-item" data-index="2" aria-selected="false" aria-label="Deutsch" value="de" lang="de">Deutsch</li><li role="option" id="devsite-select-19066912003489949-3" class="devsite-select-item" data-index="3" aria-selected="false" aria-label="Español" value="es" lang="es">Español</li><li role="option" id="devsite-select-19066912003489949-4" class="devsite-select-item" data-index="4" aria-selected="false" aria-label="Français" value="fr" lang="fr">Français</li><li role="option" id="devsite-select-19066912003489949-5" class="devsite-select-item" data-index="5" aria-selected="false" aria-label="Português – Brasil" value="pt_br" lang="pt_br">Português – Brasil</li><li role="option" id="devsite-select-19066912003489949-6" class="devsite-select-item" data-index="6" aria-selected="false" aria-label="Русский" value="ru" lang="ru">Русский</li><li role="option" id="devsite-select-19066912003489949-7" class="devsite-select-item" data-index="7" aria-selected="false" aria-label="中文 – 简体" value="zh_cn" lang="zh_cn">中文 – 简体</li><li role="option" id="devsite-select-19066912003489949-8" class="devsite-select-item" data-index="8" aria-selected="false" aria-label="日本語" value="ja" lang="ja">日本語</li><li role="option" id="devsite-select-19066912003489949-9" class="devsite-select-item" data-index="9" aria-selected="false" aria-label="한국어" value="ko" lang="ko">한국어</li></ul></div></devsite-select>
+</devsite-language-selector>
+
+
+        
+
+        
+          
+          
+          <devsite-user enable-profiles="" fp-auth="" id="devsite-user" sign-in-url="https://developers.google.com/_d/signin?continue=https%3A%2F%2Fdevelopers.google.com%2Fspeed%2Fwebp%2Fdocs%2Friff_container&amp;prompt=select_account" sign-out-url="https://developers.google.com/_d/signout?continue=https%3A%2F%2Fdevelopers.google.com%2Fspeed%2Fwebp%2Fdocs%2Friff_container" url="https://developers.google.com/_d/signout?continue=https%3A%2F%2Fdevelopers.google.com%2Fspeed%2Fwebp%2Fdocs%2Friff_container"><div class="ogb-wrapper ogb-si"><a href="https://developers.google.com/_d/signin?continue=https%3A%2F%2Fdevelopers.google.com%2Fspeed%2Fwebp%2Fdocs%2Friff_container&amp;prompt=select_account" class="devsite-user-signin button devsite-top-button" track-type="globalNav" track-name="signIn" track-metadata-eventdetail="nav" track-metadata-position="nav">
+  Sign in
+</a></div></devsite-user>
+           
+        
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="devsite-collapsible-section
+    " style="transform: translate3d(0px, 0px, 0px);">
+    <div class="devsite-header-background">
+      
+        
+      
+      
+        <div class="devsite-doc-set-nav-row">
+          
+          
+            
+            
+  <devsite-tabs class="lower-tabs" connected="">
+
+    
+
+  <nav class="devsite-tabs-wrapper" aria-label="Lower tabs">
+      
+        
+          <tab>
+            <a href="https://developers.google.com/speed/webp" class="gc-analytics-event " track-type="nav" track-name="home" track-metadata-eventdetail="https://developers.google.com/speed/webp" track-metadata-position="nav - home" track-metadata-module="primary nav" data-category="Site-Wide Custom Events" data-label="Tab: Home">
+  Home
+</a>
+
+          </tab>
+        
+      
+        
+          <tab>
+            <a href="https://developers.google.com/speed/webp/docs/using" class="gc-analytics-event " track-type="nav" track-name="guides" track-metadata-eventdetail="https://developers.google.com/speed/webp/docs/using" track-metadata-position="nav - guides" track-metadata-module="primary nav" data-category="Site-Wide Custom Events" data-label="Tab: Guides">
+  Guides
+</a>
+
+          </tab>
+        
+      
+        
+          <tab active="">
+            <a href="https://developers.google.com/speed/webp/faq" class="gc-analytics-event " track-type="nav" track-name="reference" track-metadata-eventdetail="https://developers.google.com/speed/webp/faq" track-metadata-position="nav - reference" track-metadata-module="primary nav" aria-label="Reference, selected" data-category="Site-Wide Custom Events" data-label="Tab: Reference">
+  Reference
+</a>
+
+          </tab>
+        
+      
+        
+          <tab>
+            <a href="https://developers.google.com/speed/webp/gallery" class="gc-analytics-event " track-type="nav" track-name="samples" track-metadata-eventdetail="https://developers.google.com/speed/webp/gallery" track-metadata-position="nav - samples" track-metadata-module="primary nav" data-category="Site-Wide Custom Events" data-label="Tab: Samples">
+  Samples
+</a>
+
+          </tab>
+        
+      
+        
+          <tab>
+            <a href="https://developers.google.com/speed/webp/community" class="gc-analytics-event " track-type="nav" track-name="support" track-metadata-eventdetail="https://developers.google.com/speed/webp/community" track-metadata-position="nav - support" track-metadata-module="primary nav" data-category="Site-Wide Custom Events" data-label="Tab: Support">
+  Support
+</a>
+
+          </tab>
+        
+      
+    <tab overflow-tab="" hidden=""><a href="#" class="devsite-icon devsite-icon-arrow-drop-down">More</a><div class="devsite-tabs-overflow-menu" scrollbars="" hidden=""></div></tab></nav></devsite-tabs>
+
+          
+          
+        </div>
+      
+    </div>
+  </div>
+
+</div>
+
+
+
+  
+</devsite-header>
+      <div class="devsite-book-nav-bg" fixed=""></div><devsite-book-nav scrollbars="" role="menu" fixed="" style="top: 96px; max-height: 839px;">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="devsite-book-nav devsite-nav nocontent" aria-label="Side menu">
+  <div class="devsite-mobile-header">
+    <button type="button" id="devsite-close-nav" class="devsite-header-icon-button button-flat material-icons gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Close navigation" aria-label="Close navigation">
+    </button>
+    <div class="devsite-product-name-wrapper">
+
+  
+    
+  
+  <a href="https://developers.google.com/speed/webp">
+    
+  <div class="devsite-product-logo-container" size="medium">
+  
+    <img class="devsite-product-logo" alt="WebP" src="WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon.png" srcset="WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_36.png 36w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_48.png 48w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_72.png 72w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_96.png 96w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_480.png 480w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_720.png 720w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_856.png 856w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_960.png 960w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_1440.png 1440w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_1920.png 1920w, WebP%20Container%20Specification%20|%20Google%20Developers_files/webp-devsite-icon_2880.png 2880w" sizes="64px" loading="lazy">
+  
+  </div>
+  
+  </a>
+  
+
+  
+
+
+  
+      <span class="devsite-product-name">
+        
+        
+        <ul class="devsite-breadcrumb-list">
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+    
+    
+      
+      
+        
+  <a href="https://developers.google.com/speed/webp" class="devsite-breadcrumb-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Upper Header" data-value="1" track-type="globalNav" track-name="breadcrumb" track-metadata-position="1" track-metadata-eventdetail="WebP">
+    
+          WebP
+        
+  </a>
+  
+      
+    
+  </li>
+  
+</ul>
+      </span>
+    
+
+</div>
+  </div>
+
+  <div class="devsite-book-nav-wrapper">
+    <div class="devsite-mobile-nav-top">
+      
+        <ul class="devsite-nav-list">
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="https://developers.google.com/speed/webp" class="devsite-nav-title gc-analytics-event
+              
+              " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Home" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="home">
+  
+    <span class="devsite-nav-text" tooltip="">
+      Home
+   </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="https://developers.google.com/speed/webp/docs/using" class="devsite-nav-title gc-analytics-event
+              devsite-nav-has-children
+              " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Guides" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="guides">
+  
+    <span class="devsite-nav-text" tooltip="">
+      Guides
+   </span>
+    
+    <span class="devsite-nav-icon material-icons" data-icon="forward">
+    </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="https://developers.google.com/speed/webp/faq" class="devsite-nav-title gc-analytics-event devsite-nav-has-children" data-category="Site-Wide Custom Events" data-label="Responsive Tab: Reference" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="reference">
+  
+    <span class="devsite-nav-text" tooltip="">
+      Reference
+   </span>
+    
+    <span class="devsite-nav-icon material-icons" data-icon="forward">
+    </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="https://developers.google.com/speed/webp/gallery" class="devsite-nav-title gc-analytics-event
+              devsite-nav-has-children
+              " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Samples" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="samples">
+  
+    <span class="devsite-nav-text" tooltip="">
+      Samples
+   </span>
+    
+    <span class="devsite-nav-icon material-icons" data-icon="forward">
+    </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+            
+<li class="devsite-nav-item">
+
+  
+  <a href="https://developers.google.com/speed/webp/community" class="devsite-nav-title gc-analytics-event
+              devsite-nav-has-children
+              " data-category="Site-Wide Custom Events" data-label="Responsive Tab: Support" track-type="navMenu" track-metadata-eventdetail="globalMenu" track-metadata-position="nav" track-name="support">
+  
+    <span class="devsite-nav-text" tooltip="">
+      Support
+   </span>
+    
+    <span class="devsite-nav-icon material-icons" data-icon="forward">
+    </span>
+    
+  
+  </a>
+  
+
+</li>
+
+          
+          
+          
+        </ul>
+      
+    </div>
+    
+      <div class="devsite-mobile-nav-bottom" role="navigation">
+        
+          
+          <ul class="devsite-nav-list" menu="_book">
+            <li class="devsite-nav-item"><a href="https://developers.google.com/speed/webp/faq" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">FAQ</span></a></li>
+
+  <li class="devsite-nav-item"><a href="https://developers.google.com/speed/webp/docs/compression" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Compression Techniques</span></a></li>
+
+  <li class="devsite-nav-item"><a href="https://developers.google.com/speed/webp/docs/riff_container" class="devsite-nav-title devsite-nav-active"><span class="devsite-nav-text" tooltip="">Container Specification</span></a></li>
+
+  <li class="devsite-nav-item"><a href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">Lossless Bitstream Specification</span></a></li>
+
+  <li class="devsite-nav-item
+           devsite-nav-expandable"><devsite-expandable-nav collapsed="" connected="" animatable="">
+    <a class="devsite-nav-toggle" aria-hidden="true"></a><div class="devsite-nav-title devsite-nav-title-no-path" tabindex="0" role="button" aria-expanded="false"><span class="devsite-nav-text" tooltip="">Studies</span></div><ul class="devsite-nav-section"><li class="devsite-nav-item"><a href="https://developers.google.com/speed/webp/docs/webp_lossless_alpha_study" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">WebP Lossless and Alpha Study</span></a></li><li class="devsite-nav-item"><a href="https://developers.google.com/speed/webp/docs/webp_study" class="devsite-nav-title"><span class="devsite-nav-text" tooltip="">WebP Lossy Study</span></a></li></ul></devsite-expandable-nav></li>
+          </ul>
+        
+        
+        
+          
+    
+  
+    
+  
+    
+  
+    
+  
+    
+  
+        
+      </div>
+    
+  </div>
+</nav>
+        
+      </devsite-book-nav><div class="devsite-book-nav-blur" fixed=""></div><button class="devsite-book-nav-toggle" aria-haspopup="menu" fixed="" aria-label="Hide side navigation" data-title="Hide side navigation" aria-expanded="true"><span class="material-icons devsite-book-nav-toggle-icon"></span></button>
+      <section id="gc-wrapper" style="margin-top: 96px;">
+        <main role="main" class="devsite-main-content" has-book-nav="" has-sidebar="">
+          
+          <div class="devsite-sidebar" fixed="">
+            <div class="sidebar-content">
+              <devsite-toc class="devsite-nav devsite-toc" role="navigation" aria-label="On this page" depth="2" scrollbars="" visible=""><ul class="devsite-nav-list"><li class="devsite-nav-item devsite-nav-heading devsite-toc-toggle" role="heading" aria-level="2"><span class="devsite-nav-title"><span class="devsite-nav-text">On this page</span></span></li><li class="devsite-nav-item"><a href="#introduction" class="devsite-nav-title gc-analytics-event devsite-nav-active" data-category="Site-Wide Custom Events" data-action="click" data-label="Right nav" data-value="0" track-type="navigation" track-name="rightNav" track-metadata-position="0" track-metadata-link-destination="#introduction"><span class="devsite-nav-text" tooltip="">Introduction</span></a></li><li class="devsite-nav-item"><a href="#naming" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Right nav" data-value="1" track-type="navigation" track-name="rightNav" track-metadata-position="1" track-metadata-link-destination="#naming"><span class="devsite-nav-text" tooltip="">Naming</span></a></li><li class="devsite-nav-item"><a href="#terminology_basics" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Right nav" data-value="2" track-type="navigation" track-name="rightNav" track-metadata-position="2" track-metadata-link-destination="#terminology_basics"><span class="devsite-nav-text" tooltip="">Terminology &amp; Basics</span></a></li><li class="devsite-nav-item"><a href="#riff_file_format" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Right nav" data-value="3" track-type="navigation" track-name="rightNav" track-metadata-position="3" track-metadata-link-destination="#riff_file_format"><span class="devsite-nav-text" tooltip="">RIFF File Format</span></a></li><li class="devsite-nav-item"><a href="#webp_file_header" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Right nav" data-value="4" track-type="navigation" track-name="rightNav" track-metadata-position="4" track-metadata-link-destination="#webp_file_header"><span class="devsite-nav-text" tooltip="">WebP File Header</span></a></li><li class="devsite-nav-item"><a href="#simple_file_format_lossy" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Right nav" data-value="5" track-type="navigation" track-name="rightNav" track-metadata-position="5" track-metadata-link-destination="#simple_file_format_lossy"><span class="devsite-nav-text" tooltip="">Simple File Format (Lossy)</span></a></li><li class="devsite-nav-item"><a href="#simple_file_format_lossless" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Right nav" data-value="6" track-type="navigation" track-name="rightNav" track-metadata-position="6" track-metadata-link-destination="#simple_file_format_lossless"><span class="devsite-nav-text" tooltip="">Simple File Format (Lossless)</span></a></li><li class="devsite-nav-item"><a href="#extended_file_format" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Right nav" data-value="7" track-type="navigation" track-name="rightNav" track-metadata-position="7" track-metadata-link-destination="#extended_file_format"><span class="devsite-nav-text" tooltip="">Extended File Format</span></a><ul class="devsite-nav-list"><li class="devsite-nav-item"><a href="#animation" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Right nav" data-value="7.0" track-type="navigation" track-name="rightNav" track-metadata-position="7.0" track-metadata-link-destination="#animation"><span class="devsite-nav-text" tooltip="">Animation</span></a></li><li class="devsite-nav-item"><a href="#alpha" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Right nav" data-value="7.1" track-type="navigation" track-name="rightNav" track-metadata-position="7.1" track-metadata-link-destination="#alpha"><span class="devsite-nav-text" tooltip="">Alpha</span></a></li><li class="devsite-nav-item"><a href="#bitstream_vp8vp8l" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Right nav" data-value="7.2" track-type="navigation" track-name="rightNav" track-metadata-position="7.2" track-metadata-link-destination="#bitstream_vp8vp8l"><span class="devsite-nav-text" tooltip="">Bitstream (VP8/VP8L)</span></a></li><li class="devsite-nav-item"><a href="#color_profile" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Right nav" data-value="7.3" track-type="navigation" track-name="rightNav" track-metadata-position="7.3" track-metadata-link-destination="#color_profile"><span class="devsite-nav-text" tooltip="">Color profile</span></a></li><li class="devsite-nav-item"><a href="#metadata" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Right nav" data-value="7.4" track-type="navigation" track-name="rightNav" track-metadata-position="7.4" track-metadata-link-destination="#metadata"><span class="devsite-nav-text" tooltip="">Metadata</span></a></li></ul></li><li class="devsite-nav-item"><a href="#example_file_layouts" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Right nav" data-value="8" track-type="navigation" track-name="rightNav" track-metadata-position="8" track-metadata-link-destination="#example_file_layouts"><span class="devsite-nav-text" tooltip="">Example File Layouts</span></a></li></ul></devsite-toc>
+              <devsite-recommendations-sidebar class="nocontent devsite-nav recommendations-rendered"><div class="devsite-recommendations-sidebar-heading" role="heading" aria-level="2"><a href="#recommendations-link" class="devsite-nav-title devsite-recommendations-sidebar-heading-link" data-category="Site-Wide Custom Events" data-label="devsite-recommendation side-nav title" data-action="click" data-tooltip="See content recommendations"><svg class="devsite-recommendations-sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.5,8.5L10,3L7.5,8.5L2,11l5.5,2.5L10,19l2.5-5.5L18,11L12.5,8.5z M18,13l-1.25,2.75L14,17l2.75,1.25L18,21l1.25-2.75 L22,17l-2.75-1.25L18,13z"></path></svg><span class="devsite-nav-text">Recommendations</span></a></div><ul class="devsite-nav-list"><li role="option" class="devsite-nav-item"><a href="https://developers.google.com/speed/webp/docs/webpshop?rec=CjxodHRwczovL2RldmVsb3BlcnMuZ29vZ2xlLmNvbS9zcGVlZC93ZWJwL2RvY3MvcmlmZl9jb250YWluZXIQARgNIAMoATAGOggzOTMwMDMxMA" class="devsite-nav-title devsite-recommendations-sidebar-title" data-category="Site-Wide Custom Events" data-label="devsite-recommendation side-nav link" data-action="click"><span class="devsite-nav-text" tooltip="">WebPShop</span></a><div class="significatio-card-meta">Updated <span class="significatio-date" date="1629102580">Aug 16, 2021</span></div></li><li role="option" class="devsite-nav-item"><a href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?rec=CjxodHRwczovL2RldmVsb3BlcnMuZ29vZ2xlLmNvbS9zcGVlZC93ZWJwL2RvY3MvcmlmZl9jb250YWluZXIQAhgNIAMoBDAGOggzOTMwMDMxMA" class="devsite-nav-title devsite-recommendations-sidebar-title" data-category="Site-Wide Custom Events" data-label="devsite-recommendation side-nav link" data-action="click"><span class="devsite-nav-text" tooltip="">WebP Lossless Bitstream Specification</span></a><div class="significatio-card-meta">Updated <span class="significatio-date" date="1629102580">Aug 16, 2021</span></div></li><li role="option" class="devsite-nav-item"><a href="https://developers.google.com/speed/webp/faq?rec=CjxodHRwczovL2RldmVsb3BlcnMuZ29vZ2xlLmNvbS9zcGVlZC93ZWJwL2RvY3MvcmlmZl9jb250YWluZXIQAxgNIAMoAzAGOggzOTMwMDMxMA" class="devsite-nav-title devsite-recommendations-sidebar-title" data-category="Site-Wide Custom Events" data-label="devsite-recommendation side-nav link" data-action="click"><span class="devsite-nav-text" tooltip="">Frequently Asked Questions</span></a><div class="significatio-card-meta">Updated <span class="significatio-date" date="1629102580">Aug 16, 2021</span></div></li></ul></devsite-recommendations-sidebar>
+            </div>
+          </div>
+          <devsite-content>
+            
+              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<article class="devsite-article" has-bookmark="">
+  
+  
+  
+
+  <div class="devsite-article-meta nocontent" role="navigation">
+    
+    
+    <ul class="devsite-breadcrumb-list" aria-label="Breadcrumb">
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+    
+    
+      
+  <a href="https://developers.google.com/" class="devsite-breadcrumb-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Breadcrumbs" data-value="1" track-type="globalNav" track-name="breadcrumb" track-metadata-position="1" track-metadata-eventdetail="">
+    
+        Home
+      
+  </a>
+  
+    
+  </li>
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+      
+      <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+    
+    
+    
+      
+  <a href="https://developers.google.com/products" class="devsite-breadcrumb-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Breadcrumbs" data-value="2" track-type="globalNav" track-name="breadcrumb" track-metadata-position="2" track-metadata-eventdetail="">
+    
+        Products
+      
+  </a>
+  
+    
+  </li>
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+      
+      <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+    
+    
+    
+      
+  <a href="https://developers.google.com/speed" class="devsite-breadcrumb-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Breadcrumbs" data-value="3" track-type="globalNav" track-name="breadcrumb" track-metadata-position="3" track-metadata-eventdetail="Make the Web Faster">
+    
+        Make the Web Faster
+      
+  </a>
+  
+    
+  </li>
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+      
+      <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+    
+    
+    
+      
+  <a href="https://developers.google.com/speed/webp" class="devsite-breadcrumb-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Breadcrumbs" data-value="4" track-type="globalNav" track-name="breadcrumb" track-metadata-position="4" track-metadata-eventdetail="WebP">
+    
+        WebP
+      
+  </a>
+  
+    
+  </li>
+  
+  <li class="devsite-breadcrumb-item
+             ">
+    
+      
+      <div class="devsite-breadcrumb-guillemet material-icons" aria-hidden="true"></div>
+    
+    
+    
+      
+  <a href="https://developers.google.com/speed/webp/faq" class="devsite-breadcrumb-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Breadcrumbs" data-value="5" track-type="globalNav" track-name="breadcrumb" track-metadata-position="5" track-metadata-eventdetail="">
+    
+        Reference
+      
+  </a>
+  
+    
+  </li>
+  
+</ul>
+    
+      
+    <devsite-thumb-rating position="header"><div class="devsite-thumb-rating" role="form" aria-labelledby="devsite-thumb-label-header" tabindex="0"><div class="devsite-thumb-label" id="devsite-thumb-label-header">Was this helpful?</div><div class="devsite-thumbs"><button class="devsite-thumb devsite-thumb-up" data-title="Helpful" aria-label="Helpful"><svg class="devsite-thumb-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21,7h-6.31l0.95-4.57l0.03-0.32c0-0.41-0.17-0.79-0.44-1.06L14.17,0c0,0-7.09,6.85-7.17,7H2v13h16 c0.83,0,1.54-0.5,1.84-1.22l3.02-7.05C22.95,11.5,23,11.26,23,11V9C23,7.9,22.1,7,21,7z M7,18H4V9h3V18z M21,11l-3,7H9V8l4.34-4.34 L12,9h9V11z"></path></svg></button><button class="devsite-thumb devsite-thumb-down" data-title="Not helpful" aria-label="Not helpful"><svg class="devsite-thumb-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3,17h6.31l-0.95,4.57l-0.03,0.32c0,0.41,0.17,0.79,0.44,1.06L9.83,24c0,0,7.09-6.85,7.17-7h5V4H6 C5.17,4,4.46,4.5,4.16,5.22l-3.02,7.05C1.05,12.5,1,12.74,1,13v2C1,16.1,1.9,17,3,17z M17,6h3v9h-3V6z M3,13l3-7h9v10l-4.34,4.34 L12,15H3V13z"></path></svg></button></div></div></devsite-thumb-rating>
+  
+    
+  </div>
+  
+  
+    <h1 class="devsite-page-title">WebP Container Specification</h1>
+  
+  <devsite-bookmark class="show" data-title="Add bookmark"><input type="checkbox" class="bookmark-checkbox" aria-label="Add bookmark"></devsite-bookmark>
+  <devsite-toc class="devsite-nav devsite-toc-embedded" depth="2" devsite-toc-embedded="" expandable="" visible=""><ul class="devsite-nav-list"><li class="devsite-nav-item devsite-nav-heading devsite-toc-toggle" role="heading" aria-level="2"><span class="devsite-nav-title"><span class="devsite-nav-text">On this page</span></span><button type="button" title="Expand/collapse contents" class="devsite-nav-show-all button-transparent material-icons"></button></li><li class="devsite-nav-item" visible=""><a href="#introduction" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Embedded nav" data-value="0" track-type="navigation" track-name="embeddedNav" track-metadata-position="0" track-metadata-link-destination="#introduction"><span class="devsite-nav-text" tooltip="">Introduction</span></a></li><li class="devsite-nav-item" visible=""><a href="#naming" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Embedded nav" data-value="1" track-type="navigation" track-name="embeddedNav" track-metadata-position="1" track-metadata-link-destination="#naming"><span class="devsite-nav-text" tooltip="">Naming</span></a></li><li class="devsite-nav-item" visible=""><a href="#terminology_basics" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Embedded nav" data-value="2" track-type="navigation" track-name="embeddedNav" track-metadata-position="2" track-metadata-link-destination="#terminology_basics"><span class="devsite-nav-text" tooltip="">Terminology &amp; Basics</span></a></li><li class="devsite-nav-item" visible=""><a href="#riff_file_format" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Embedded nav" data-value="3" track-type="navigation" track-name="embeddedNav" track-metadata-position="3" track-metadata-link-destination="#riff_file_format"><span class="devsite-nav-text" tooltip="">RIFF File Format</span></a></li><li class="devsite-nav-item" visible=""><a href="#webp_file_header" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Embedded nav" data-value="4" track-type="navigation" track-name="embeddedNav" track-metadata-position="4" track-metadata-link-destination="#webp_file_header"><span class="devsite-nav-text" tooltip="">WebP File Header</span></a></li><li class="devsite-nav-item"><a href="#simple_file_format_lossy" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Embedded nav" data-value="5" track-type="navigation" track-name="embeddedNav" track-metadata-position="5" track-metadata-link-destination="#simple_file_format_lossy"><span class="devsite-nav-text" tooltip="">Simple File Format (Lossy)</span></a></li><li class="devsite-nav-item"><a href="#simple_file_format_lossless" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Embedded nav" data-value="6" track-type="navigation" track-name="embeddedNav" track-metadata-position="6" track-metadata-link-destination="#simple_file_format_lossless"><span class="devsite-nav-text" tooltip="">Simple File Format (Lossless)</span></a></li><li class="devsite-nav-item"><a href="#extended_file_format" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Embedded nav" data-value="7" track-type="navigation" track-name="embeddedNav" track-metadata-position="7" track-metadata-link-destination="#extended_file_format"><span class="devsite-nav-text" tooltip="">Extended File Format</span></a><ul class="devsite-nav-list"><li class="devsite-nav-item"><a href="#animation" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Embedded nav" data-value="7.0" track-type="navigation" track-name="embeddedNav" track-metadata-position="7.0" track-metadata-link-destination="#animation"><span class="devsite-nav-text" tooltip="">Animation</span></a></li><li class="devsite-nav-item"><a href="#alpha" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Embedded nav" data-value="7.1" track-type="navigation" track-name="embeddedNav" track-metadata-position="7.1" track-metadata-link-destination="#alpha"><span class="devsite-nav-text" tooltip="">Alpha</span></a></li><li class="devsite-nav-item"><a href="#bitstream_vp8vp8l" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Embedded nav" data-value="7.2" track-type="navigation" track-name="embeddedNav" track-metadata-position="7.2" track-metadata-link-destination="#bitstream_vp8vp8l"><span class="devsite-nav-text" tooltip="">Bitstream (VP8/VP8L)</span></a></li><li class="devsite-nav-item"><a href="#color_profile" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Embedded nav" data-value="7.3" track-type="navigation" track-name="embeddedNav" track-metadata-position="7.3" track-metadata-link-destination="#color_profile"><span class="devsite-nav-text" tooltip="">Color profile</span></a></li><li class="devsite-nav-item"><a href="#metadata" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Embedded nav" data-value="7.4" track-type="navigation" track-name="embeddedNav" track-metadata-position="7.4" track-metadata-link-destination="#metadata"><span class="devsite-nav-text" tooltip="">Metadata</span></a></li></ul></li><li class="devsite-nav-item"><a href="#example_file_layouts" class="devsite-nav-title gc-analytics-event" data-category="Site-Wide Custom Events" data-action="click" data-label="Embedded nav" data-value="8" track-type="navigation" track-name="embeddedNav" track-metadata-position="8" track-metadata-link-destination="#example_file_layouts"><span class="devsite-nav-text" tooltip="">Example File Layouts</span></a></li><li class="devsite-toc-toggle"><button type="button" class="button-flat devsite-nav-more-items material-icons" track-type="navigation" track-name="embeddedNavExpand" title="Expand/collapse contents"></button></li></ul></devsite-toc>
+
+  
+  <devsite-recommendations-dropdown class="nocontent"></devsite-recommendations-dropdown>
+  
+
+  <div class="devsite-article-body clearfix
+    ">
+
+    
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 id="introduction" data-text="Introduction" role="presentation"><span class="devsite-heading" role="heading" aria-level="2">Introduction</span><button type="button" class="devsite-heading-link button-flat material-icons" aria-label="Copy link to this section: Introduction" data-title="Copy link to this section: Introduction" data-id="introduction"></button></h2>
+
+<p>WebP is an image format that uses either (i) the VP8 key frame encoding
+to compress image data in a lossy way, or (ii) the WebP lossless encoding
+(and possibly other encodings in the future). These encoding schemes should
+make it more efficient than currently used formats. It is optimized for fast
+image transfer over the network (e.g., for websites). The WebP format has
+feature parity (color profile, metadata, animation etc) with other formats as
+well. This document describes the structure of a WebP file.</p>
+
+<p>The WebP container (i.e., RIFF container for WebP) allows feature support over
+and above the basic use case of WebP (i.e., a file containing a single image
+encoded as a VP8 key frame). The WebP container provides additional support
+for:</p>
+
+<ul>
+<li><p><strong>Lossless compression.</strong> An image can be losslessly compressed, using the
+WebP Lossless Format.</p></li>
+<li><p><strong>Metadata.</strong> An image may have metadata stored in EXIF or XMP formats.</p></li>
+<li><p><strong>Transparency.</strong> An image may have transparency, i.e., an alpha channel.</p></li>
+<li><p><strong>Color Profile.</strong> An image may have an embedded ICC profile as described
+by the <a href="http://www.color.org/icc_specs2.xalter">International Color Consortium</a>.</p></li>
+<li><p><strong>Animation.</strong> An image may have multiple frames with pauses between them,
+making it an animation.</p></li>
+</ul>
+
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+document are to be interpreted as described in <a href="http://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
+
+<p>Bit numbering in chunk diagrams starts at <code translate="no" dir="ltr">0</code> for the most significant bit
+('MSB 0') as described in <a href="http://tools.ietf.org/html/rfc1166">RFC 1166</a>.</p>
+
+<h2 id="naming" data-text="Naming" role="presentation"><span class="devsite-heading" role="heading" aria-level="2">Naming</span><button type="button" class="devsite-heading-link button-flat material-icons" aria-label="Copy link to this section: Naming" data-title="Copy link to this section: Naming" data-id="naming"></button></h2>
+
+<p>It is RECOMMENDED to use the following types when referring to the WebP
+container:</p>
+
+<div class="devsite-table-wrapper"><table>
+<tbody><tr><td>Container Format Name</td><td>WebP</td></tr>
+<tr><td>Filename Extension</td><td>.webp</td></tr>
+<tr><td>MIME-type</td><td>image/webp</td></tr>
+<tr><td>Uniform Type Identifier</td><td>org.webmproject.webp</td></tr>
+</tbody></table></div>
+
+<h2 id="terminology_basics" data-text="Terminology &amp; Basics" role="presentation"><span class="devsite-heading" role="heading" aria-level="2">Terminology &amp; Basics</span><button type="button" class="devsite-heading-link button-flat material-icons" aria-label="Copy link to this section: Terminology &amp; Basics" data-title="Copy link to this section: Terminology &amp; Basics" data-id="terminology_basics"></button></h2>
+
+<p>A WebP file contains either a still image (i.e., an encoded matrix of pixels)
+or an <a href="#animation">animation</a>. Optionally, it can also contain transparency
+information, color profile and metadata. In case we need to refer only to the
+matrix of pixels, we will call it the <em>canvas</em> of the image.</p>
+
+<p>Below are additional terms used throughout this document:</p>
+
+<dl>
+<dt><em>Reader/Writer</em></dt>
+<dd>Code that reads WebP files is referred to as a <em>reader</em>, while code that
+writes them is referred to as a <em>writer</em>.</dd>
+<dt><em>uint16</em></dt>
+<dd>A 16-bit, little-endian, unsigned integer.</dd>
+<dt><em>uint24</em></dt>
+<dd>A 24-bit, little-endian, unsigned integer.</dd>
+<dt><em>uint32</em></dt>
+<dd>A 32-bit, little-endian, unsigned integer.</dd>
+<dt><em>FourCC</em></dt>
+<dd>A <em>FourCC</em> (four-character code) is a <em>uint32</em> created by concatenating four
+ASCII characters in little-endian order.</dd>
+<dt><em>1-based</em></dt>
+<dd>An unsigned integer field storing values offset by <code translate="no" dir="ltr">-1</code>. e.g., Such a field
+would store value <em>25</em> as <em>24</em>.</dd>
+</dl>
+
+<h2 id="riff_file_format" data-text="RIFF File Format" role="presentation"><span class="devsite-heading" role="heading" aria-level="2">RIFF File Format</span><button type="button" class="devsite-heading-link button-flat material-icons" aria-label="Copy link to this section: RIFF File Format" data-title="Copy link to this section: RIFF File Format" data-id="riff_file_format"></button></h2>
+
+<p>The WebP file format is based on the RIFF (resource interchange file format)
+document format.</p>
+
+<p>The basic element of a RIFF file is a <em>chunk</em>. It consists of:</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">1</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">2</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">3</span><span class="pln"><br>&nbsp;</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="typ">Chunk</span><span class="pln"> </span><span class="typ">FourCC</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">Chunk</span><span class="pln"> </span><span class="typ">Size</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="typ">Chunk</span><span class="pln"> </span><span class="typ">Payload</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span></code></pre></devsite-code>
+<dl>
+<dt>Chunk FourCC: 32 bits</dt>
+<dd>ASCII four-character code used for chunk identification.</dd>
+<dt>Chunk Size: 32 bits (<em>uint32</em>)</dt>
+<dd>The size of the chunk not including this field, the chunk identifier or
+padding.</dd>
+<dt>Chunk Payload: <em>Chunk Size</em> bytes</dt>
+<dd>The data payload. If <em>Chunk Size</em> is odd, a single padding byte -- that
+SHOULD be <code translate="no" dir="ltr">0</code> -- is added.</dd>
+<dt><em>ChunkHeader('ABCD')</em></dt>
+<dd>This is used to describe the <em>FourCC</em> and <em>Chunk Size</em> header of individual
+chunks, where 'ABCD' is the FourCC for the chunk. This element's
+size is 8 bytes.</dd>
+</dl>
+
+<p><strong>Note:</strong> RIFF has a convention that all-uppercase chunk FourCCs are standard
+chunks that apply to any RIFF file format, while FourCCs specific to a file
+format are all lowercase. WebP does not follow this convention.</p>
+
+<h2 id="webp_file_header" data-text="WebP File Header" role="presentation"><span class="devsite-heading" role="heading" aria-level="2">WebP File Header</span><button type="button" class="devsite-heading-link button-flat material-icons" aria-label="Copy link to this section: WebP File Header" data-title="Copy link to this section: WebP File Header" data-id="webp_file_header"></button></h2>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">1</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">2</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">3</span><span class="pln"><br>&nbsp;</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="str">'R'</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="str">'I'</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="str">'F'</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="str">'F'</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="typ">File</span><span class="pln"> </span><span class="typ">Size</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="str">'W'</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="str">'E'</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="str">'B'</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="str">'P'</span><span class="pln"> &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span></code></pre></devsite-code>
+<dl>
+<dt>'RIFF': 32 bits</dt>
+<dd>The ASCII characters 'R' 'I' 'F' 'F'.</dd>
+<dt>File Size: 32 bits (<em>uint32</em>)</dt>
+<dd>The size of the file in bytes starting at offset 8. The maximum value of
+this field is 2^32 minus 10 bytes and thus the size of the whole file is at
+most 4GiB minus 2 bytes.</dd>
+<dt>'WEBP': 32 bits</dt>
+<dd>The ASCII characters 'W' 'E' 'B' 'P'.</dd>
+</dl>
+
+<p>A WebP file MUST begin with a RIFF header with the FourCC 'WEBP'. The file size
+in the header is the total size of the chunks that follow plus <code translate="no" dir="ltr">4</code> bytes for
+the 'WEBP' FourCC. The file SHOULD NOT contain anything after it. As the size
+of any chunk is even, the size given by the RIFF header is also even. The
+contents of individual chunks will be described in the following sections.</p>
+
+<h2 id="simple_file_format_lossy" data-text="Simple File Format (Lossy)" role="presentation"><span class="devsite-heading" role="heading" aria-level="2">Simple File Format (Lossy)</span><button type="button" class="devsite-heading-link button-flat material-icons" aria-label="Copy link to this section: Simple File Format (Lossy)" data-title="Copy link to this section: Simple File Format (Lossy)" data-id="simple_file_format_lossy"></button></h2>
+
+<p>This layout SHOULD be used if the image requires <em>lossy</em> encoding and does not
+require transparency or other advanced features provided by the extended format.
+Files with this layout are smaller and supported by older software.</p>
+
+<p>Simple WebP (lossy) file format:</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">1</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">2</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">3</span><span class="pln"><br>&nbsp;</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">WebP</span><span class="pln"> file header </span><span class="pun">(</span><span class="lit">12</span><span class="pln"> bytes</span><span class="pun">)</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;VP8 chunk &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span></code></pre></devsite-code>
+<p>VP8 chunk:</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">1</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">2</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">3</span><span class="pln"><br>&nbsp;</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">ChunkHeader</span><span class="pun">(</span><span class="str">'VP8 '</span><span class="pun">)</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; VP8 data &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span></code></pre></devsite-code>
+<dl>
+<dt>VP8 data: <em>Chunk Size</em> bytes</dt>
+<dd>VP8 bitstream data.</dd>
+</dl>
+
+<p>The VP8 bitstream format specification can be found at <a href="http://tools.ietf.org/html/rfc6386">VP8 Data Format and
+Decoding Guide</a>. Note that the VP8 frame header contains the VP8 frame
+width and height. That is assumed to be the width and height of the canvas.</p>
+
+<p>The VP8 specification describes how to decode the image into Y'CbCr
+format. To convert to RGB, Rec. 601 SHOULD be used.</p>
+
+<h2 id="simple_file_format_lossless" data-text="Simple File Format (Lossless)" role="presentation"><span class="devsite-heading" role="heading" aria-level="2">Simple File Format (Lossless)</span><button type="button" class="devsite-heading-link button-flat material-icons" aria-label="Copy link to this section: Simple File Format (Lossless)" data-title="Copy link to this section: Simple File Format (Lossless)" data-id="simple_file_format_lossless"></button></h2>
+
+<p><strong>Note:</strong> Older readers may not support files using the lossless format.</p>
+
+<p>This layout SHOULD be used if the image requires <em>lossless</em> encoding (with an
+optional transparency channel) and does not require advanced features provided
+by the extended format.</p>
+
+<p>Simple WebP (lossless) file format:</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">1</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">2</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">3</span><span class="pln"><br>&nbsp;</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">WebP</span><span class="pln"> file header </span><span class="pun">(</span><span class="lit">12</span><span class="pln"> bytes</span><span class="pun">)</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;VP8L chunk &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span></code></pre></devsite-code>
+<p>VP8L chunk:</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">1</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">2</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">3</span><span class="pln"><br>&nbsp;</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">ChunkHeader</span><span class="pun">(</span><span class="str">'VP8L'</span><span class="pun">)</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; VP8L data &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span></code></pre></devsite-code>
+<dl>
+<dt>VP8L data: <em>Chunk Size</em> bytes</dt>
+<dd>VP8L bitstream data.</dd>
+</dl>
+
+<p>The current specification of the VP8L bitstream can be found at
+<a href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification">WebP Lossless Bitstream Format</a>. Note that the VP8L header
+contains the VP8L image width and height. That is assumed to be the width
+and height of the canvas.</p>
+
+<h2 id="extended_file_format" data-text="Extended File Format" role="presentation"><span class="devsite-heading" role="heading" aria-level="2">Extended File Format</span><button type="button" class="devsite-heading-link button-flat material-icons" aria-label="Copy link to this section: Extended File Format" data-title="Copy link to this section: Extended File Format" data-id="extended_file_format"></button></h2>
+
+<p><strong>Note:</strong> Older readers may not support files using the extended format.</p>
+
+<p>An extended format file consists of:</p>
+
+<ul>
+<li><p>A 'VP8X' chunk with information about features used in the file.</p></li>
+<li><p>An optional 'ICCP' chunk with color profile.</p></li>
+<li><p>An optional 'ANIM' chunk with animation control data.</p></li>
+<li><p>Image data.</p></li>
+<li><p>An optional 'EXIF' chunk with EXIF metadata.</p></li>
+<li><p>An optional 'XMP ' chunk with XMP metadata.</p></li>
+</ul>
+
+<p>For a <em>still image</em>, the <em>image data</em> consists of a single frame, which is made
+up of:</p>
+
+<ul>
+<li><p>An optional <a href="#alpha">alpha subchunk</a>.</p></li>
+<li><p>A <a href="#bitstream_vp8vp8l">bitstream subchunk</a>.</p></li>
+</ul>
+
+<p>For an <em>animated image</em>, the <em>image data</em> consists of multiple frames. More
+details about frames can be found in the <a href="#animation">Animation</a> section.</p>
+
+<p>All chunks SHOULD be placed in the same order as listed above. If a chunk
+appears in the wrong place, the file is invalid, but readers MAY parse the
+file, ignoring the chunks that come too late.</p>
+
+<p><strong>Rationale:</strong> Setting the order of chunks should allow quicker file
+parsing. For example, if an 'ALPH' chunk does not appear in its required
+position, a decoder can choose to stop searching for it. The rule of
+ignoring late chunks should make programs that need to do a full search
+give the same results as the ones stopping early.</p>
+
+<p id="extended_header">Extended WebP file header:
+</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">1</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">2</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">3</span><span class="pln"><br>&nbsp;</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="typ">WebP</span><span class="pln"> file header </span><span class="pun">(</span><span class="lit">12</span><span class="pln"> bytes</span><span class="pun">)</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">ChunkHeader</span><span class="pun">(</span><span class="str">'VP8X'</span><span class="pun">)</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="typ">Rsv</span><span class="pun">|</span><span class="pln">I</span><span class="pun">|</span><span class="pln">L</span><span class="pun">|</span><span class="pln">E</span><span class="pun">|</span><span class="pln">X</span><span class="pun">|</span><span class="pln">A</span><span class="pun">|</span><span class="pln">R</span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="typ">Reserved</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">Canvas</span><span class="pln"> </span><span class="typ">Width</span><span class="pln"> </span><span class="typ">Minus</span><span class="pln"> </span><span class="typ">One</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">...</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">...</span><span class="pln"> &nbsp;</span><span class="typ">Canvas</span><span class="pln"> </span><span class="typ">Height</span><span class="pln"> </span><span class="typ">Minus</span><span class="pln"> </span><span class="typ">One</span><span class="pln"> &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span></code></pre></devsite-code>
+<dl>
+<dt>Reserved (Rsv): 2 bits</dt>
+<dd>SHOULD be <code translate="no" dir="ltr">0</code>.</dd>
+<dt>ICC profile (I): 1 bit</dt>
+<dd>Set if the file contains an ICC profile.</dd>
+<dt>Alpha (L): 1 bit</dt>
+<dd>Set if any of the frames of the image contain transparency information
+("alpha").</dd>
+<dt>EXIF metadata (E): 1 bit</dt>
+<dd>Set if the file contains EXIF metadata.</dd>
+<dt>XMP metadata (X): 1 bit</dt>
+<dd>Set if the file contains XMP metadata.</dd>
+<dt>Animation (A): 1 bit</dt>
+<dd>Set if this is an animated image. Data in 'ANIM' and 'ANMF' chunks should be
+used to control the animation.</dd>
+<dt>Reserved (R): 1 bit</dt>
+<dd>SHOULD be <code translate="no" dir="ltr">0</code>.</dd>
+<dt>Reserved: 24 bits</dt>
+<dd>SHOULD be <code translate="no" dir="ltr">0</code>.</dd>
+<dt>Canvas Width Minus One: 24 bits</dt>
+<dd><em>1-based</em> width of the canvas in pixels.
+The actual canvas width is '1 + Canvas Width Minus One'</dd>
+<dt>Canvas Height Minus One: 24 bits</dt>
+<dd><em>1-based</em> height of the canvas in pixels.
+The actual canvas height is '1 + Canvas Height Minus One'</dd>
+</dl>
+
+<p>The product of <em>Canvas Width</em> and <em>Canvas Height</em> MUST be at most <code translate="no" dir="ltr">2^32 - 1</code>.</p>
+
+<p>Future specifications MAY add more fields.</p>
+
+<h3 id="animation" data-text="Animation" role="presentation"><span class="devsite-heading" role="heading" aria-level="3">Animation</span><button type="button" class="devsite-heading-link button-flat material-icons" aria-label="Copy link to this section: Animation" data-title="Copy link to this section: Animation" data-id="animation"></button></h3>
+
+<p>An animation is controlled by ANIM and ANMF chunks.</p>
+
+<p id="anim_chunk">ANIM Chunk:
+</p>
+
+<p>For an animated image, this chunk contains the <em>global parameters</em> of the
+animation.</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">1</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">2</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">3</span><span class="pln"><br>&nbsp;</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">ChunkHeader</span><span class="pun">(</span><span class="str">'ANIM'</span><span class="pun">)</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="typ">Background</span><span class="pln"> </span><span class="typ">Color</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">Loop</span><span class="pln"> </span><span class="typ">Count</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span></code></pre></devsite-code>
+<dl>
+<dt>Background Color: 32 bits (<em>uint32</em>)</dt>
+<dd>The default background color of the canvas in [Blue, Green, Red, Alpha]
+byte order. This color MAY be used to fill the unused space on the canvas
+around the frames, as well as the transparent pixels of the first frame.
+Background color is also used when disposal method is <code translate="no" dir="ltr">1</code>.</dd>
+</dl>
+
+<p><strong>Note</strong>:</p>
+
+<ul>
+<li><p>Background color MAY contain a transparency value (alpha), even if the
+<em>Alpha</em> flag in <a href="#extended_header">VP8X chunk</a> is unset.</p></li>
+<li><p>Viewer applications SHOULD treat the background color value as a hint, and
+are not required to use it.</p></li>
+<li><p>The canvas is cleared at the start of each loop. The background color MAY be
+used to achieve this.</p></li>
+</ul>
+
+<dl>
+<dt>Loop Count: 16 bits (<em>uint16</em>)</dt>
+<dd>The number of times to loop the animation. <code translate="no" dir="ltr">0</code> means infinitely.</dd>
+</dl>
+
+<p>This chunk MUST appear if the <em>Animation</em> flag in the VP8X chunk is set.
+If the <em>Animation</em> flag is not set and this chunk is present, it
+SHOULD be ignored.</p>
+
+<p>ANMF chunk:</p>
+
+<p>For animated images, this chunk contains information about a <em>single</em> frame.
+If the <em>Animation flag</em> is not set, then this chunk SHOULD NOT be present.</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">1</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">2</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">3</span><span class="pln"><br>&nbsp;</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">ChunkHeader</span><span class="pun">(</span><span class="str">'ANMF'</span><span class="pun">)</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">Frame</span><span class="pln"> X &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">...</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">...</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">Frame</span><span class="pln"> Y &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"> &nbsp; </span><span class="typ">Frame</span><span class="pln"> </span><span class="typ">Width</span><span class="pln"> </span><span class="typ">Minus</span><span class="pln"> </span><span class="typ">One</span><span class="pln"> &nbsp; &nbsp; </span><span class="pun">...</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">...</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="typ">Frame</span><span class="pln"> </span><span class="typ">Height</span><span class="pln"> </span><span class="typ">Minus</span><span class="pln"> </span><span class="typ">One</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="typ">Frame</span><span class="pln"> </span><span class="typ">Duration</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"> &nbsp;</span><span class="typ">Reserved</span><span class="pln"> </span><span class="pun">|</span><span class="pln">B</span><span class="pun">|</span><span class="pln">D</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="typ">Frame</span><span class="pln"> </span><span class="typ">Data</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span></code></pre></devsite-code>
+<dl>
+<dt>Frame X: 24 bits (<em>uint24</em>)</dt>
+<dd>The X coordinate of the upper left corner of the frame is <code translate="no" dir="ltr">Frame X * 2</code></dd>
+<dt>Frame Y: 24 bits (<em>uint24</em>)</dt>
+<dd>The Y coordinate of the upper left corner of the frame is <code translate="no" dir="ltr">Frame Y * 2</code></dd>
+<dt>Frame Width Minus One: 24 bits (<em>uint24</em>)</dt>
+<dd>The <em>1-based</em> width of the frame.
+The frame width is <code translate="no" dir="ltr">1 + Frame Width Minus One</code></dd>
+<dt>Frame Height Minus One: 24 bits (<em>uint24</em>)</dt>
+<dd>The <em>1-based</em> height of the frame.
+The frame height is <code translate="no" dir="ltr">1 + Frame Height Minus One</code></dd>
+<dt>Frame Duration: 24 bits (<em>uint24</em>)</dt>
+<dd>The time to wait before displaying the next frame, in 1 millisecond units.
+Note the interpretation of frame duration of 0 (and often &lt;= 10) is
+implementation defined. Many tools and browsers assign a minimum duration
+similar to GIF.</dd>
+<dt>Reserved: 6 bits</dt>
+<dd>SHOULD be 0.</dd>
+<dt>Blending method (B): 1 bit</dt>
+<dd><p>Indicates how transparent pixels of <em>the current frame</em> are to be blended
+with corresponding pixels of the previous canvas:</p>
+
+<ul>
+<li><p><code translate="no" dir="ltr">0</code>: Use alpha blending. After disposing of the previous frame, render
+the current frame on the canvas using alpha-blending (see below). If the
+current frame does not have an alpha channel, assume alpha value of 255,
+effectively replacing the rectangle.</p></li>
+<li><p><code translate="no" dir="ltr">1</code>: Do not blend. After disposing of the previous frame, render the
+current frame on the canvas by overwriting the rectangle covered by the
+current frame.</p></li>
+</ul></dd>
+<dt>Disposal method (D): 1 bit</dt>
+<dd><p>Indicates how <em>the current frame</em> is to be treated after it has been
+displayed (before rendering the next frame) on the canvas:</p>
+
+<ul>
+<li><p><code translate="no" dir="ltr">0</code>: Do not dispose. Leave the canvas as is.</p></li>
+<li><p><code translate="no" dir="ltr">1</code>: Dispose to background color. Fill the <em>rectangle</em> on the canvas
+covered by the <em>current frame</em> with background color specified in the
+<a href="#anim_chunk">ANIM chunk</a>.</p></li>
+</ul></dd>
+</dl>
+
+<p><strong>Notes</strong>:</p>
+
+<ul>
+<li><p>The frame disposal only applies to the <em>frame rectangle</em>, that is, the
+rectangle defined by <em>Frame X</em>, <em>Frame Y</em>, <em>frame width</em> and <em>frame height</em>.
+It may or may not cover the whole canvas.</p></li>
+<li><p><strong>Alpha-blending</strong>: Given that each of the R, G, B and A channels is
+8-bit, and the RGB channels are <em>not premultiplied</em> by alpha, the formula
+for blending 'dst' onto 'src' is:</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">blend</span><span class="pun">.</span><span class="pln">A </span><span class="pun">=</span><span class="pln"> src</span><span class="pun">.</span><span class="pln">A </span><span class="pun">+</span><span class="pln"> dst</span><span class="pun">.</span><span class="pln">A </span><span class="pun">*</span><span class="pln"> </span><span class="pun">(</span><span class="lit">1</span><span class="pln"> </span><span class="pun">-</span><span class="pln"> src</span><span class="pun">.</span><span class="pln">A </span><span class="pun">/</span><span class="pln"> </span><span class="lit">255</span><span class="pun">)</span><span class="pln"><br></span><span class="kwd">if</span><span class="pln"> blend</span><span class="pun">.</span><span class="pln">A </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="kwd">then</span><span class="pln"><br>&nbsp; blend</span><span class="pun">.</span><span class="pln">RGB </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pln"><br></span><span class="kwd">else</span><span class="pln"><br>&nbsp; blend</span><span class="pun">.</span><span class="pln">RGB </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="pln">src</span><span class="pun">.</span><span class="pln">RGB </span><span class="pun">*</span><span class="pln"> src</span><span class="pun">.</span><span class="pln">A </span><span class="pun">+</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;dst</span><span class="pun">.</span><span class="pln">RGB </span><span class="pun">*</span><span class="pln"> dst</span><span class="pun">.</span><span class="pln">A </span><span class="pun">*</span><span class="pln"> </span><span class="pun">(</span><span class="lit">1</span><span class="pln"> </span><span class="pun">-</span><span class="pln"> src</span><span class="pun">.</span><span class="pln">A </span><span class="pun">/</span><span class="pln"> </span><span class="lit">255</span><span class="pun">))</span><span class="pln"> </span><span class="pun">/</span><span class="pln"> blend</span><span class="pun">.</span><span class="pln">A<br></span></code></pre></devsite-code></li>
+<li><p>Alpha-blending SHOULD be done in linear color space, by taking into account
+the <a href="#color_profile">color profile</a> of the image. If the color profile is
+not present, sRGB is to be assumed. (Note that sRGB also needs to be
+linearized due to a gamma of ~2.2).</p></li>
+</ul>
+
+<dl>
+<dt>Frame Data: <em>Chunk Size</em> - <code translate="no" dir="ltr">16</code> bytes</dt>
+<dd>* An optional <a href="#alpha">alpha subchunk</a> for the frame.
+<ul>
+<li>A <a href="#bitstream_vp8vp8l">bitstream subchunk</a> for the frame.</li>
+</ul></dd>
+</dl>
+
+<p><strong>Note</strong>: The 'ANMF' payload, <em>Frame Data</em> above, consists of individual
+<em>padded</em> chunks as described by the <a href="#riff_file_format">RIFF file format</a>.</p>
+
+<h3 id="alpha" data-text="Alpha" role="presentation"><span class="devsite-heading" role="heading" aria-level="3">Alpha</span><button type="button" class="devsite-heading-link button-flat material-icons" aria-label="Copy link to this section: Alpha" data-title="Copy link to this section: Alpha" data-id="alpha"></button></h3>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">1</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">2</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">3</span><span class="pln"><br>&nbsp;</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">ChunkHeader</span><span class="pun">(</span><span class="str">'ALPH'</span><span class="pun">)</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="typ">Rsv</span><span class="pun">|</span><span class="pln"> P </span><span class="pun">|</span><span class="pln"> F </span><span class="pun">|</span><span class="pln"> C </span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; </span><span class="typ">Alpha</span><span class="pln"> </span><span class="typ">Bitstream</span><span class="pun">...</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span></code></pre></devsite-code>
+<dl>
+<dt>Reserved (Rsv): 2 bits</dt>
+<dd>SHOULD be <code translate="no" dir="ltr">0</code>.</dd>
+<dt>Pre-processing (P): 2 bits</dt>
+<dd><p>These INFORMATIVE bits are used to signal the pre-processing that has
+been performed during compression. The decoder can use this information to
+e.g. dither the values or smooth the gradients prior to display.</p>
+
+<ul>
+<li><code translate="no" dir="ltr">0</code>: no pre-processing</li>
+<li><code translate="no" dir="ltr">1</code>: level reduction</li>
+</ul></dd>
+<dt>Filtering method (F): 2 bits</dt>
+<dd><p>The filtering method used:</p>
+
+<ul>
+<li><code translate="no" dir="ltr">0</code>: None.</li>
+<li><code translate="no" dir="ltr">1</code>: Horizontal filter.</li>
+<li><code translate="no" dir="ltr">2</code>: Vertical filter.</li>
+<li><code translate="no" dir="ltr">3</code>: Gradient filter.</li>
+</ul></dd>
+</dl>
+
+<p>For each pixel, filtering is performed using the following calculations.
+Assume the alpha values surrounding the current <code translate="no" dir="ltr">X</code> position are labeled as:</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">&nbsp;C </span><span class="pun">|</span><span class="pln"> B </span><span class="pun">|</span><span class="pln"><br></span><span class="pun">---+---+</span><span class="pln"><br>&nbsp;A </span><span class="pun">|</span><span class="pln"> X </span><span class="pun">|</span><span class="pln"><br></span></code></pre></devsite-code>
+<p>We seek to compute the alpha value at position <code translate="no" dir="ltr">X</code>. First, a prediction is
+made depending on the filtering method:</p>
+
+<ul>
+<li>Method <code translate="no" dir="ltr">0</code>: predictor = 0</li>
+<li>Method <code translate="no" dir="ltr">1</code>: predictor = A</li>
+<li>Method <code translate="no" dir="ltr">2</code>: predictor = B</li>
+<li>Method <code translate="no" dir="ltr">3</code>: predictor = clip(A + B - C)</li>
+</ul>
+
+<p>where <code translate="no" dir="ltr">clip(v)</code> is equal to:</p>
+
+<ul>
+<li>0    if v &lt; 0</li>
+<li>255  if v &gt; 255</li>
+<li>v    otherwise</li>
+</ul>
+
+<p>The final value is derived by adding the decompressed value <code translate="no" dir="ltr">X</code> to the
+predictor and using modulo-256 arithmetic to wrap the [256-511] range
+into the [0-255] one:</p>
+
+<p><code translate="no" dir="ltr">alpha = (predictor + X) % 256</code></p>
+
+<p>There are special cases for left-most and top-most pixel positions:</p>
+
+<ul>
+<li>Top-left value at location (0,0) uses 0 as predictor value. Otherwise,</li>
+<li>For horizontal or gradient filtering methods, the left-most pixels at
+location (0, y) are predicted using the location (0, y-1) just above.</li>
+<li>For vertical or gradient filtering methods, the top-most pixels at
+location (x, 0) are predicted using the location (x-1, 0) on the left.</li>
+</ul>
+
+<p>Decoders are not required to use this information in any specified way.</p>
+
+<dl>
+<dt>Compression method (C): 2 bits</dt>
+<dd><p>The compression method used:</p>
+
+<ul>
+<li><code translate="no" dir="ltr">0</code>: No compression.</li>
+<li><code translate="no" dir="ltr">1</code>: Compressed using the WebP lossless format.</li>
+</ul></dd>
+<dt>Alpha bitstream: <em>Chunk Size</em> - <code translate="no" dir="ltr">1</code> bytes</dt>
+<dd><p>Encoded alpha bitstream.</p></dd>
+</dl>
+
+<p>This optional chunk contains encoded alpha data for this frame. A frame
+containing a 'VP8L' chunk SHOULD NOT contain this chunk.</p>
+
+<p><strong>Rationale</strong>: The transparency information is already part of the 'VP8L'
+chunk.</p>
+
+<p>The alpha channel data is stored as uncompressed raw data (when
+compression method is '0') or compressed using the lossless format
+(when the compression method is '1').</p>
+
+<ul>
+<li><p>Raw data: consists of a byte sequence of length width * height,
+containing all the 8-bit transparency values in scan order.</p></li>
+<li><p>Lossless format compression: the byte sequence is a compressed
+image-stream (as described in the
+<a href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification">WebP Lossless Bitstream Format</a>) of implicit dimension width
+x height. That is, this image-stream does NOT contain any headers
+describing the image dimension.</p></li>
+</ul>
+
+<p><strong>Rationale</strong>: the dimension is already known from other sources, so storing
+it again would be redundant and error-prone.</p>
+
+<p>Once the image-stream is decoded into ARGB color values, following the process
+described in the lossless format specification, the transparency information
+must be extracted from the <em>green</em> channel of the ARGB quadruplet.</p>
+
+<p><strong>Rationale</strong>: the green channel is allowed extra transformation steps in the
+specification -- unlike the other channels -- that can improve compression.</p>
+
+<h3 id="bitstream_vp8vp8l" data-text="Bitstream (VP8/VP8L)" role="presentation"><span class="devsite-heading" role="heading" aria-level="3">Bitstream (VP8/<wbr>VP8L)</span><button type="button" class="devsite-heading-link button-flat material-icons" aria-label="Copy link to this section: Bitstream (VP8/VP8L)" data-title="Copy link to this section: Bitstream (VP8/VP8L)" data-id="bitstream_vp8vp8l"></button></h3>
+
+<p>This chunk contains compressed bitstream data for a single frame.</p>
+
+<p>A bitstream chunk may be either (i) a VP8 chunk, using "VP8 " (note the
+significant fourth-character space) as its tag <em>or</em> (ii) a VP8L chunk, using
+"VP8L" as its tag.</p>
+
+<p>The formats of VP8 and VP8L chunks are as described in sections
+<a href="#simple_file_format_lossy">Simple File Format (Lossy)</a>
+and <a href="#simple_file_format_lossless">Simple File Format (Lossless)</a> respectively.</p>
+
+<h3 id="color_profile" data-text="Color profile" role="presentation"><span class="devsite-heading" role="heading" aria-level="3">Color profile</span><button type="button" class="devsite-heading-link button-flat material-icons" aria-label="Copy link to this section: Color profile" data-title="Copy link to this section: Color profile" data-id="color_profile"></button></h3>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">1</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">2</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">3</span><span class="pln"><br>&nbsp;</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">ChunkHeader</span><span class="pun">(</span><span class="str">'ICCP'</span><span class="pun">)</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="typ">Color</span><span class="pln"> </span><span class="typ">Profile</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span></code></pre></devsite-code>
+<dl>
+<dt>Color Profile: <em>Chunk Size</em> bytes</dt>
+<dd>ICC profile.</dd>
+</dl>
+
+<p>This chunk MUST appear before the image data.</p>
+
+<p>There SHOULD be at most one such chunk. If there are more such chunks, readers
+MAY ignore all except the first one.
+See the <a href="http://www.color.org/icc_specs2.xalter">ICC Specification</a> for details.</p>
+
+<p>If this chunk is not present, sRGB SHOULD be assumed.</p>
+
+<h3 id="metadata" data-text="Metadata" role="presentation"><span class="devsite-heading" role="heading" aria-level="3">Metadata</span><button type="button" class="devsite-heading-link button-flat material-icons" aria-label="Copy link to this section: Metadata" data-title="Copy link to this section: Metadata" data-id="metadata"></button></h3>
+
+<p>Metadata can be stored in 'EXIF' or 'XMP ' chunks.</p>
+
+<p>There SHOULD be at most one chunk of each type ('EXIF' and 'XMP '). If there
+are more such chunks, readers MAY ignore all except the first one. Also, a file
+may possibly contain both 'EXIF' and 'XMP ' chunks.</p>
+
+<p>The chunks are defined as follows:</p>
+
+<p>EXIF chunk:</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">1</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">2</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">3</span><span class="pln"><br>&nbsp;</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">ChunkHeader</span><span class="pun">(</span><span class="str">'EXIF'</span><span class="pun">)</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;EXIF </span><span class="typ">Metadata</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span></code></pre></devsite-code>
+<dl>
+<dt>EXIF Metadata: <em>Chunk Size</em> bytes</dt>
+<dd>image metadata in EXIF format.</dd>
+</dl>
+
+<p>XMP chunk:</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">&nbsp;</span><span class="lit">0</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">1</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">2</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="lit">3</span><span class="pln"><br>&nbsp;</span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="pln"> </span><span class="lit">5</span><span class="pln"> </span><span class="lit">6</span><span class="pln"> </span><span class="lit">7</span><span class="pln"> </span><span class="lit">8</span><span class="pln"> </span><span class="lit">9</span><span class="pln"> </span><span class="lit">0</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="typ">ChunkHeader</span><span class="pun">(</span><span class="str">'XMP '</span><span class="pun">)</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span><span class="pun">|</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;XMP </span><span class="typ">Metadata</span><span class="pln"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="pun">|</span><span class="pln"><br></span><span class="pun">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span><span class="pln"><br></span></code></pre></devsite-code>
+<dl>
+<dt>XMP Metadata: <em>Chunk Size</em> bytes</dt>
+<dd>image metadata in XMP format.</dd>
+</dl>
+
+<p>Additional guidance about handling metadata can be found in the
+Metadata Working Group's <a href="http://www.metadataworkinggroup.org/pdf/mwg_guidance.pdf">Guidelines for Handling Metadata</a>.</p>
+
+<p>Displaying an <em>animated image</em> canvas MUST be equivalent to the following
+pseudocode:</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="kwd">assert</span><span class="pln"> VP8X</span><span class="pun">.</span><span class="pln">flags</span><span class="pun">.</span><span class="pln">hasAnimation<br>canvas </span><span class="pun">←</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> image of size VP8X</span><span class="pun">.</span><span class="pln">canvasWidth x VP8X</span><span class="pun">.</span><span class="pln">canvasHeight </span><span class="kwd">with</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;background color ANIM</span><span class="pun">.</span><span class="pln">background_color</span><span class="pun">.</span><span class="pln"><br>loop_count </span><span class="pun">←</span><span class="pln"> ANIM</span><span class="pun">.</span><span class="pln">loopCount<br>dispose_method </span><span class="pun">←</span><span class="pln"> ANIM</span><span class="pun">.</span><span class="pln">disposeMethod<br></span><span class="kwd">if</span><span class="pln"> loop_count </span><span class="pun">==</span><span class="pln"> </span><span class="lit">0</span><span class="pun">:</span><span class="pln"><br>&nbsp; &nbsp; loop_count </span><span class="pun">=</span><span class="pln"> </span><span class="pun">∞</span><span class="pln"><br>frame_params </span><span class="pun">←</span><span class="pln"> </span><span class="kwd">nil</span><span class="pln"><br></span><span class="kwd">assert</span><span class="pln"> </span><span class="kwd">next</span><span class="pln"> chunk </span><span class="kwd">in</span><span class="pln"> image_data </span><span class="kwd">is</span><span class="pln"> ANMF<br></span><span class="kwd">for</span><span class="pln"> loop </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0.</span><span class="pun">.</span><span class="pln">loop_count </span><span class="pun">-</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br>&nbsp; &nbsp; clear canvas to ANIM</span><span class="pun">.</span><span class="pln">background_color </span><span class="kwd">or</span><span class="pln"> application </span><span class="kwd">defined</span><span class="pln"> color<br>&nbsp; &nbsp; </span><span class="kwd">until</span><span class="pln"> eof </span><span class="kwd">or</span><span class="pln"> non</span><span class="pun">-</span><span class="pln">ANMF chunk<br>&nbsp; &nbsp; &nbsp; &nbsp; frame_params</span><span class="pun">.</span><span class="pln">frameX </span><span class="pun">=</span><span class="pln"> </span><span class="typ">Frame</span><span class="pln"> X<br>&nbsp; &nbsp; &nbsp; &nbsp; frame_params</span><span class="pun">.</span><span class="pln">frameY </span><span class="pun">=</span><span class="pln"> </span><span class="typ">Frame</span><span class="pln"> Y<br>&nbsp; &nbsp; &nbsp; &nbsp; frame_params</span><span class="pun">.</span><span class="pln">frameWidth </span><span class="pun">=</span><span class="pln"> </span><span class="typ">Frame</span><span class="pln"> </span><span class="typ">Width</span><span class="pln"> </span><span class="typ">Minus</span><span class="pln"> </span><span class="typ">One</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; frame_params</span><span class="pun">.</span><span class="pln">frameHeight </span><span class="pun">=</span><span class="pln"> </span><span class="typ">Frame</span><span class="pln"> </span><span class="typ">Height</span><span class="pln"> </span><span class="typ">Minus</span><span class="pln"> </span><span class="typ">One</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; frame_params</span><span class="pun">.</span><span class="pln">frameDuration </span><span class="pun">=</span><span class="pln"> </span><span class="typ">Frame</span><span class="pln"> </span><span class="typ">Duration</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; frame_right </span><span class="pun">=</span><span class="pln"> frame_params</span><span class="pun">.</span><span class="pln">frameX </span><span class="pun">+</span><span class="pln"> frame_params</span><span class="pun">.</span><span class="pln">frameWidth<br>&nbsp; &nbsp; &nbsp; &nbsp; frame_bottom </span><span class="pun">=</span><span class="pln"> frame_params</span><span class="pun">.</span><span class="pln">frameY </span><span class="pun">+</span><span class="pln"> frame_params</span><span class="pun">.</span><span class="pln">frameHeight<br>&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="kwd">assert</span><span class="pln"> VP8X</span><span class="pun">.</span><span class="pln">canvasWidth </span><span class="pun">&gt;=</span><span class="pln"> frame_right<br>&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="kwd">assert</span><span class="pln"> VP8X</span><span class="pun">.</span><span class="pln">canvasHeight </span><span class="pun">&gt;=</span><span class="pln"> frame_bottom<br>&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="kwd">for</span><span class="pln"> subchunk </span><span class="kwd">in</span><span class="pln"> </span><span class="str">'Frame Data'</span><span class="pun">:</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="kwd">if</span><span class="pln"> subchunk</span><span class="pun">.</span><span class="pln">tag </span><span class="pun">==</span><span class="pln"> </span><span class="str">"ALPH"</span><span class="pun">:</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="kwd">assert</span><span class="pln"> alpha subchunks </span><span class="kwd">not</span><span class="pln"> found </span><span class="kwd">in</span><span class="pln"> </span><span class="str">'Frame Data'</span><span class="pln"> earlier<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; frame_params</span><span class="pun">.</span><span class="pln">alpha </span><span class="pun">=</span><span class="pln"> alpha_data<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="kwd">else</span><span class="pln"> </span><span class="kwd">if</span><span class="pln"> subchunk</span><span class="pun">.</span><span class="pln">tag </span><span class="pun">==</span><span class="pln"> </span><span class="str">"VP8 "</span><span class="pln"> OR subchunk</span><span class="pun">.</span><span class="pln">tag </span><span class="pun">==</span><span class="pln"> </span><span class="str">"VP8L"</span><span class="pun">:</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span><span class="kwd">assert</span><span class="pln"> bitstream subchunks </span><span class="kwd">not</span><span class="pln"> found </span><span class="kwd">in</span><span class="pln"> </span><span class="str">'Frame Data'</span><span class="pln"> earlier<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; frame_params</span><span class="pun">.</span><span class="pln">bitstream </span><span class="pun">=</span><span class="pln"> bitstream_data<br>&nbsp; &nbsp; &nbsp; &nbsp; render frame </span><span class="kwd">with</span><span class="pln"> frame_params</span><span class="pun">.</span><span class="pln">alpha </span><span class="kwd">and</span><span class="pln"> frame_params</span><span class="pun">.</span><span class="pln">bitstream on<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; canvas </span><span class="kwd">with</span><span class="pln"> top</span><span class="pun">-</span><span class="pln">left corner at </span><span class="pun">(</span><span class="pln">frame_params</span><span class="pun">.</span><span class="pln">frameX</span><span class="pun">,</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; frame_params</span><span class="pun">.</span><span class="pln">frameY</span><span class="pun">),</span><span class="pln"> </span><span class="kwd">using</span><span class="pln"> dispose method dispose_method</span><span class="pun">.</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; canvas contains the decoded image</span><span class="pun">.</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; </span><span class="typ">Show</span><span class="pln"> the contents of the canvas </span><span class="kwd">for</span><span class="pln"><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; frame_params</span><span class="pun">.</span><span class="pln">frameDuration </span><span class="pun">*</span><span class="pln"> </span><span class="lit">1ms</span><span class="pun">.</span><span class="pln"><br></span></code></pre></devsite-code>
+<h2 id="example_file_layouts" data-text="Example File Layouts" role="presentation"><span class="devsite-heading" role="heading" aria-level="2">Example File Layouts</span><button type="button" class="devsite-heading-link button-flat material-icons" aria-label="Copy link to this section: Example File Layouts" data-title="Copy link to this section: Example File Layouts" data-id="example_file_layouts"></button></h2>
+
+<p>A lossy encoded image with alpha may look as follows:</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">RIFF</span><span class="pun">/</span><span class="pln">WEBP<br></span><span class="pun">+-</span><span class="pln"> VP8X </span><span class="pun">(</span><span class="pln">descriptions of features used</span><span class="pun">)</span><span class="pln"><br></span><span class="pun">+-</span><span class="pln"> ALPH </span><span class="pun">(</span><span class="pln">alpha bitstream</span><span class="pun">)</span><span class="pln"><br></span><span class="pun">+-</span><span class="pln"> VP8 </span><span class="pun">(</span><span class="pln">bitstream</span><span class="pun">)</span><span class="pln"><br></span></code></pre></devsite-code>
+<p>A losslessly encoded image may look as follows:</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">RIFF</span><span class="pun">/</span><span class="pln">WEBP<br></span><span class="pun">+-</span><span class="pln"> VP8X </span><span class="pun">(</span><span class="pln">descriptions of features used</span><span class="pun">)</span><span class="pln"><br></span><span class="pun">+-</span><span class="pln"> VP8L </span><span class="pun">(</span><span class="pln">lossless bitstream</span><span class="pun">)</span><span class="pln"><br></span></code></pre></devsite-code>
+<p>A lossless image with ICC profile and XMP metadata may
+look as follows:</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">RIFF</span><span class="pun">/</span><span class="pln">WEBP<br></span><span class="pun">+-</span><span class="pln"> VP8X </span><span class="pun">(</span><span class="pln">descriptions of features used</span><span class="pun">)</span><span class="pln"><br></span><span class="pun">+-</span><span class="pln"> ICCP </span><span class="pun">(</span><span class="pln">color profile</span><span class="pun">)</span><span class="pln"><br></span><span class="pun">+-</span><span class="pln"> VP8L </span><span class="pun">(</span><span class="pln">lossless bitstream</span><span class="pun">)</span><span class="pln"><br></span><span class="pun">+-</span><span class="pln"> XMP &nbsp;</span><span class="pun">(</span><span class="pln">metadata</span><span class="pun">)</span><span class="pln"><br></span></code></pre></devsite-code>
+<p>An animated image with EXIF metadata may look as follows:</p>
+<devsite-code data-copy-event-label=""><div class="devsite-code-buttons-container" role="group" aria-label="Action buttons"><button type="button" class="gc-analytics-event material-icons devsite-icon-code-dark devsite-toggle-dark" data-category="Site-Wide Custom Events" data-label="Dark Code Toggle" track-type="exampleCode" track-name="darkCodeToggle" aria-label="Dark code theme" data-title="Dark code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-code-light devsite-toggle-light" data-category="Site-Wide Custom Events" data-label="Light Code Toggle" track-type="exampleCode" track-name="lightCodeToggle" aria-label="Light code theme" data-title="Light code theme"></button><button type="button" class="gc-analytics-event material-icons devsite-icon-copy" data-category="Site-Wide Custom Events" data-label="Click To Copy" track-type="exampleCode" track-name="clickToCopy" aria-label="Copy code sample" data-title="Copy code sample"></button></div><pre class="" translate="no" dir="ltr" is-upgraded=""><code dir="ltr"><span class="pln">RIFF</span><span class="pun">/</span><span class="pln">WEBP<br></span><span class="pun">+-</span><span class="pln"> VP8X </span><span class="pun">(</span><span class="pln">descriptions of features used</span><span class="pun">)</span><span class="pln"><br></span><span class="pun">+-</span><span class="pln"> ANIM </span><span class="pun">(</span><span class="kwd">global</span><span class="pln"> animation parameters</span><span class="pun">)</span><span class="pln"><br></span><span class="pun">+-</span><span class="pln"> ANMF </span><span class="pun">(</span><span class="pln">frame1 parameters </span><span class="pun">+</span><span class="pln"> data</span><span class="pun">)</span><span class="pln"><br></span><span class="pun">+-</span><span class="pln"> ANMF </span><span class="pun">(</span><span class="pln">frame2 parameters </span><span class="pun">+</span><span class="pln"> data</span><span class="pun">)</span><span class="pln"><br></span><span class="pun">+-</span><span class="pln"> ANMF </span><span class="pun">(</span><span class="pln">frame3 parameters </span><span class="pun">+</span><span class="pln"> data</span><span class="pun">)</span><span class="pln"><br></span><span class="pun">+-</span><span class="pln"> ANMF </span><span class="pun">(</span><span class="pln">frame4 parameters </span><span class="pun">+</span><span class="pln"> data</span><span class="pun">)</span><span class="pln"><br></span><span class="pun">+-</span><span class="pln"> EXIF </span><span class="pun">(</span><span class="pln">metadata</span><span class="pun">)</span><span class="pln"><br></span></code></pre></devsite-code>
+
+    
+
+    
+  </div>
+
+  
+
+  
+    
+      <devsite-recommendations display="in-page" yield="" hidden="">
+      </devsite-recommendations>
+    
+    
+      
+    <devsite-thumb-rating position="footer" rating="up"><div class="devsite-thumb-rating" role="form" aria-labelledby="devsite-thumb-label-footer" tabindex="0"><div class="devsite-thumb-label" id="devsite-thumb-label-footer">Was this helpful?</div><div class="devsite-thumbs"><button class="devsite-thumb devsite-thumb-up" data-title="Helpful" aria-label="Helpful"><svg class="devsite-thumb-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21,7h-6.31l0.95-4.57l0.03-0.32c0-0.41-0.17-0.79-0.44-1.06L14.17,0c0,0-7.09,6.85-7.17,7v13h11c0.83,0,1.54-0.5,1.84-1.22 l3.02-7.05C22.95,11.5,23,11.26,23,11V9C23,7.9,22.1,7,21,7z"></path><path d="M5,7H1v13h4V7L5,7z"></path></svg></button><button class="devsite-thumb devsite-thumb-down" data-title="Not helpful" aria-label="Not helpful"><svg class="devsite-thumb-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3,17h6.31l-0.95,4.57l-0.03,0.32c0,0.41,0.17,0.79,0.44,1.06L9.83,24c0,0,7.09-6.85,7.17-7h5V4H6 C5.17,4,4.46,4.5,4.16,5.22l-3.02,7.05C1.05,12.5,1,12.74,1,13v2C1,16.1,1.9,17,3,17z M17,6h3v9h-3V6z M3,13l3-7h9v10l-4.34,4.34 L12,15H3V13z"></path></svg></button></div></div></devsite-thumb-rating>
+  
+       
+    
+    
+      <devsite-recommendations id="recommendations-link" yield=""><div class="significatio-overview"><h2 class="significatio-heading no-link">Recommended for you</h2><div class="info-container"><button type="button" class="button-flat info-button significatio-info-container" id="significatio-info-button" aria-label="About recommendations" data-title="About recommendations"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="significatio-icon-info"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path></svg></button></div><div class="significatio-buttons"></div></div><div class="significatio-body"><div class="significatio-recommendations"><div class="significatio-card" show=""><h3 class="significatio-card-heading no-link"><a href="https://developers.google.com/speed/webp/docs/webpshop?rec=CjxodHRwczovL2RldmVsb3BlcnMuZ29vZ2xlLmNvbS9zcGVlZC93ZWJwL2RvY3MvcmlmZl9jb250YWluZXIQARgNIAMoATAGOggzOTMwMDMxMA" data-category="Site-Wide Custom Events" data-label="devsite-recommendation card link" data-action="click" track-type="recommendations" track-name="cardClick" track-metadata-eventdetail="https://developers.google.com/speed/webp/docs/webpshop">WebPShop</a></h3><p class="significatio-card-description">An image format for the Web.</p><div class="significatio-card-meta">Updated <span class="significatio-date" date="1629102580">Aug 16, 2021</span></div></div><div class="significatio-card" show=""><h3 class="significatio-card-heading no-link"><a href="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification?rec=CjxodHRwczovL2RldmVsb3BlcnMuZ29vZ2xlLmNvbS9zcGVlZC93ZWJwL2RvY3MvcmlmZl9jb250YWluZXIQAhgNIAMoBDAGOggzOTMwMDMxMA" data-category="Site-Wide Custom Events" data-label="devsite-recommendation card link" data-action="click" track-type="recommendations" track-name="cardClick" track-metadata-eventdetail="https://developers.google.com/speed/webp/docs/webp_lossless_bitstream_specification">WebP Lossless Bitstream Specification</a></h3><p class="significatio-card-description">An image format for the Web.</p><div class="significatio-card-meta">Updated <span class="significatio-date" date="1629102580">Aug 16, 2021</span></div></div><div class="significatio-card" show=""><h3 class="significatio-card-heading no-link"><a href="https://developers.google.com/speed/webp/faq?rec=CjxodHRwczovL2RldmVsb3BlcnMuZ29vZ2xlLmNvbS9zcGVlZC93ZWJwL2RvY3MvcmlmZl9jb250YWluZXIQAxgNIAMoAzAGOggzOTMwMDMxMA" data-category="Site-Wide Custom Events" data-label="devsite-recommendation card link" data-action="click" track-type="recommendations" track-name="cardClick" track-metadata-eventdetail="https://developers.google.com/speed/webp/faq">Frequently Asked Questions</a></h3><p class="significatio-card-description">An image format for the Web.</p><div class="significatio-card-meta">Updated <span class="significatio-date" date="1629102580">Aug 16, 2021</span></div></div></div><div class="significatio-loading"><devsite-spinner size="64" style="width: 64px; height: 64px;"><div class="devsite-spinner__layer devsite-spinner__layer-1"><div class="devsite-spinner__circle-clipper devsite-spinner__left"><div class="devsite-spinner__circle"></div></div><div class="devsite-spinner__gap-patch"><div class="devsite-spinner__circle"></div></div><div class="devsite-spinner__circle-clipper devsite-spinner__right"><div class="devsite-spinner__circle"></div></div></div><div class="devsite-spinner__layer devsite-spinner__layer-2"><div class="devsite-spinner__circle-clipper devsite-spinner__left"><div class="devsite-spinner__circle"></div></div><div class="devsite-spinner__gap-patch"><div class="devsite-spinner__circle"></div></div><div class="devsite-spinner__circle-clipper devsite-spinner__right"><div class="devsite-spinner__circle"></div></div></div><div class="devsite-spinner__layer devsite-spinner__layer-3"><div class="devsite-spinner__circle-clipper devsite-spinner__left"><div class="devsite-spinner__circle"></div></div><div class="devsite-spinner__gap-patch"><div class="devsite-spinner__circle"></div></div><div class="devsite-spinner__circle-clipper devsite-spinner__right"><div class="devsite-spinner__circle"></div></div></div><div class="devsite-spinner__layer devsite-spinner__layer-4"><div class="devsite-spinner__circle-clipper devsite-spinner__left"><div class="devsite-spinner__circle"></div></div><div class="devsite-spinner__gap-patch"><div class="devsite-spinner__circle"></div></div><div class="devsite-spinner__circle-clipper devsite-spinner__right"><div class="devsite-spinner__circle"></div></div></div></devsite-spinner></div></div></devsite-recommendations>
+    
+  
+
+  
+  
+</article>
+
+
+<devsite-content-footer class="nocontent">
+  <p>Except as otherwise noted, the content of this page is licensed under the <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 License</a>, and code samples are licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>. For details, see the <a href="https://developers.google.com/site-policies">Google Developers Site Policies</a>. Java is a registered trademark of Oracle and/or its affiliates.</p>
+  <p>Last updated 2021-08-16 UTC.</p>
+</devsite-content-footer>
+
+
+
+
+
+  
+<div class="devsite-content-data">
+  <template class="devsite-thumb-rating-down-categories">
+  [{
+      "type": "thumb-down",
+      "id": "missingTheInformationINeed",
+      "label":"Missing the information I need"
+    },{
+      "type": "thumb-down",
+      "id": "tooComplicatedTooManySteps",
+      "label":"Too complicated / too many steps"
+    },{
+      "type": "thumb-down",
+      "id": "outOfDate",
+      "label":"Out of date"
+    },{
+      "type": "thumb-down",
+      "id": "samplesCodeIssue",
+      "label":"Samples / code issue"
+    },{
+      "type": "thumb-down",
+      "id": "otherDown",
+      "label":"Other"
+    }]
+  </template>
+  <template class="devsite-thumb-rating-up-categories">
+  [{
+      "type": "thumb-up",
+      "id": "easyToUnderstand",
+      "label":"Easy to understand"
+    },{
+      "type": "thumb-up",
+      "id": "solvedMyProblem",
+      "label":"Solved my problem"
+    },{
+      "type": "thumb-up",
+      "id": "otherUp",
+      "label":"Other"
+    }]
+  </template>
+  
+</div>
+            
+          </devsite-content>
+        </main>
+        <devsite-footer-promos class="devsite-footer">
+          
+            
+          
+        </devsite-footer-promos>
+        <devsite-footer-linkboxes class="devsite-footer">
+          
+            
+<nav class="devsite-footer-linkboxes nocontent" aria-label="Footer links">
+  
+  <ul class="devsite-footer-linkboxes-list">
+    
+    <li class="devsite-footer-linkbox ">
+    <h3 class="devsite-footer-linkbox-heading no-link">Learn</h3>
+      <ul class="devsite-footer-linkbox-list">
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="http://www.webmproject.org/code/#webp-repositories" class="devsite-footer-linkbox-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Link (index 1)">
+          
+            Code Repositories
+          
+          </a>
+          
+        </li>
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="http://www.webmproject.org/code/contribute/submitting-patches/" class="devsite-footer-linkbox-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Link (index 2)">
+          
+            Submitting Patches
+          
+          </a>
+          
+        </li>
+        
+      </ul>
+    </li>
+    
+    <li class="devsite-footer-linkbox ">
+    <h3 class="devsite-footer-linkbox-heading no-link">Connect</h3>
+      <ul class="devsite-footer-linkbox-list">
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="https://groups.google.com/a/webmproject.org/group/webp-discuss" class="devsite-footer-linkbox-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Link (index 1)">
+          
+            Mailing List
+          
+          </a>
+          
+        </li>
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="https://bugs.chromium.org/p/webp" class="devsite-footer-linkbox-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Link (index 2)">
+          
+            Issue Tracker
+          
+          </a>
+          
+        </li>
+        
+      </ul>
+    </li>
+    
+    <li class="devsite-footer-linkbox ">
+    <h3 class="devsite-footer-linkbox-heading no-link">Downloads</h3>
+      <ul class="devsite-footer-linkbox-list">
+        
+        <li class="devsite-footer-linkbox-item">
+          
+          <a href="https://developers.google.com/speed/webp/download" class="devsite-footer-linkbox-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Link (index 1)">
+          
+            Source and Binaries
+          
+          </a>
+          
+        </li>
+        
+      </ul>
+    </li>
+    
+  </ul>
+  
+</nav>
+          
+        </devsite-footer-linkboxes>
+        <devsite-footer-utility class="devsite-footer">
+          
+            
+
+<div class="devsite-footer-utility nocontent">
+  
+  
+  <nav class="devsite-footer-sites" aria-label="Other Google Developers websites">
+    <a href="https://developers.google.com/" class="devsite-footer-sites-logo-link gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Google Developers Link">
+      <img class="devsite-footer-sites-logo" src="WebP%20Container%20Specification%20|%20Google%20Developers_files/lockup-developers.svg" loading="lazy" alt="Google Developers">
+    </a>
+    <ul class="devsite-footer-sites-list">
+      
+      <li class="devsite-footer-sites-item">
+        <a href="https://developer.android.com/" class="devsite-footer-sites-link
+                  gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Android Link">
+          Android
+        </a>
+      </li>
+      
+      <li class="devsite-footer-sites-item">
+        <a href="https://developer.chrome.com/home" class="devsite-footer-sites-link
+                  gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Chrome Link">
+          Chrome
+        </a>
+      </li>
+      
+      <li class="devsite-footer-sites-item">
+        <a href="https://firebase.google.com/" class="devsite-footer-sites-link
+                  gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Firebase Link">
+          Firebase
+        </a>
+      </li>
+      
+      <li class="devsite-footer-sites-item">
+        <a href="https://cloud.google.com/" class="devsite-footer-sites-link
+                  gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer Google Cloud Platform Link">
+          Google Cloud Platform
+        </a>
+      </li>
+      
+      <li class="devsite-footer-sites-item">
+        <a href="https://developers.google.com/products" class="devsite-footer-sites-link
+                  gc-analytics-event" data-category="Site-Wide Custom Events" data-label="Footer All products Link">
+          All products
+        </a>
+      </li>
+      
+    </ul>
+  </nav>
+  
+
+  
+  <nav class="devsite-footer-utility-links" aria-label="Utility links">
+    
+    <ul class="devsite-footer-utility-list">
+      
+      <li class="devsite-footer-utility-item
+                 ">
+        
+        
+        <a class="devsite-footer-utility-link gc-analytics-event" href="https://developers.google.com/terms/site-terms" data-category="Site-Wide Custom Events" data-label="Footer Terms link">
+          Terms
+        </a>
+        
+      </li>
+      
+      <li class="devsite-footer-utility-item
+                 ">
+        
+        
+        <a class="devsite-footer-utility-link gc-analytics-event" href="https://policies.google.com/privacy" data-category="Site-Wide Custom Events" data-label="Footer Privacy link">
+          Privacy
+        </a>
+        
+      </li>
+      
+      <li class="devsite-footer-utility-item
+                 devsite-footer-utility-button">
+        
+        <span class="devsite-footer-utility-description">Sign up for the Google Developers newsletter</span>
+        
+        
+        <a class="devsite-footer-utility-link gc-analytics-event" href="https://services.google.com/fb/forms/googledevelopersnewsletter/?utm_medium=referral&amp;utm_source=google-products&amp;utm_team=googledevs&amp;utm_campaign=201611-newsletter-launch" data-category="Site-Wide Custom Events" data-label="Footer Subscribe link">
+          Subscribe
+        </a>
+        
+      </li>
+      
+    </ul>
+    
+    
+    
+<devsite-language-selector>
+  <devsite-select class="devsite-language-selector-menu">
+    
+    <select aria-label="Select your language preference." class="devsite-language-selector-select" name="language" track-name="click" track-type="languageSelector">
+    
+    
+      <option value="en" selected="selected" lang="en">
+        English
+      </option>
+    
+      <option value="id" lang="id">
+        Bahasa Indonesia
+      </option>
+    
+      <option value="de" lang="de">
+        Deutsch
+      </option>
+    
+      <option value="es" lang="es">
+        Español
+      </option>
+    
+      <option value="fr" lang="fr">
+        Français
+      </option>
+    
+      <option value="pt_br" lang="pt_br">
+        Português – Brasil
+      </option>
+    
+      <option value="ru" lang="ru">
+        Русский
+      </option>
+    
+      <option value="zh_cn" lang="zh_cn">
+        中文 – 简体
+      </option>
+    
+      <option value="ja" lang="ja">
+        日本語
+      </option>
+    
+      <option value="ko" lang="ko">
+        한국어
+      </option>
+    
+    </select>
+  <div class="devsite-select"><label id="devsite-select-203009362406377669-label" style="display:none;" aria-label="Select your language preference.">Select an option</label><button type="button" class="devsite-select-toggle" id="devsite-select-203009362406377669-button" aria-haspopup="true" aria-labelledby="devsite-select-203009362406377669-label devsite-select-203009362406377669-button" aria-controls="devsite-select-203009362406377669-popup"><span class="devsite-select-toggle-label">English</span><span class="devsite-icon devsite-icon-arrow-drop-down devsite-select-toggle-icon" aria-hidden="true"></span></button><ul class="devsite-select-list" id="devsite-select-203009362406377669-popup" tabindex="-1" role="listbox" scrollbars="" aria-labelledby="devsite-select-203009362406377669-button"><li role="option" id="devsite-select-203009362406377669-0" class="devsite-select-item" data-index="0" data-selected="" aria-selected="true" aria-label="English, selected" value="en" lang="en">English</li><li role="option" id="devsite-select-203009362406377669-1" class="devsite-select-item" data-index="1" aria-selected="false" aria-label="Bahasa Indonesia" value="id" lang="id">Bahasa Indonesia</li><li role="option" id="devsite-select-203009362406377669-2" class="devsite-select-item" data-index="2" aria-selected="false" aria-label="Deutsch" value="de" lang="de">Deutsch</li><li role="option" id="devsite-select-203009362406377669-3" class="devsite-select-item" data-index="3" aria-selected="false" aria-label="Español" value="es" lang="es">Español</li><li role="option" id="devsite-select-203009362406377669-4" class="devsite-select-item" data-index="4" aria-selected="false" aria-label="Français" value="fr" lang="fr">Français</li><li role="option" id="devsite-select-203009362406377669-5" class="devsite-select-item" data-index="5" aria-selected="false" aria-label="Português – Brasil" value="pt_br" lang="pt_br">Português – Brasil</li><li role="option" id="devsite-select-203009362406377669-6" class="devsite-select-item" data-index="6" aria-selected="false" aria-label="Русский" value="ru" lang="ru">Русский</li><li role="option" id="devsite-select-203009362406377669-7" class="devsite-select-item" data-index="7" aria-selected="false" aria-label="中文 – 简体" value="zh_cn" lang="zh_cn">中文 – 简体</li><li role="option" id="devsite-select-203009362406377669-8" class="devsite-select-item" data-index="8" aria-selected="false" aria-label="日本語" value="ja" lang="ja">日本語</li><li role="option" id="devsite-select-203009362406377669-9" class="devsite-select-item" data-index="9" aria-selected="false" aria-label="한국어" value="ko" lang="ko">한국어</li></ul></div></devsite-select>
+</devsite-language-selector>
+
+  </nav>
+</div>
+          
+        </devsite-footer-utility>
+        <devsite-panel style="height: auto;"></devsite-panel>
+      </section></section>
+    <devsite-sitemask></devsite-sitemask>
+    <devsite-snackbar style="bottom: 0px;">
+</devsite-snackbar>
+    <devsite-tooltip></devsite-tooltip>
+    <devsite-heading-link></devsite-heading-link>
+    <devsite-analytics enable-analytics-iframe="">
+      
+        <script type="application/json" analytics="">[{"gaid": "UA-24532603-1", "dimensions": {"dimension5": "en", "dimension6": "en", "dimension4": "WebP", "dimension3": false, "dimension1": "Signed out", "dimension11": false}, "metrics": {"ratings_count": "metric2", "ratings_value": "metric1"}}]</script>
+<script type="application/json" gtm="">{"parameters": {"freeTrialEligibleUser": "False", "internalUser": "False", "language": {"machineTranslated": "False", "requested": "en", "served": "en"}, "pageType": "article", "projectName": "WebP", "signedIn": "False", "tenant": "developers", "recommendations": {"sourcePage": "", "sourceType": 0, "sourceRank": 0, "sourceIdenticalDescriptions": 0, "sourceTitleWords": 0, "sourceDescriptionWords": 0, "experiment": ""}}}</script>
+      
+    <iframe src="WebP%20Container%20Specification%20|%20Google%20Developers_files/analytics-iframe.html"></iframe></devsite-analytics>
+    
+      <devsite-badger></devsite-badger>
+    
+    
+    <script nonce="">
+  
+  (function(d,e,v,s,i,t,E){d['GoogleDevelopersObject']=i;
+    t=e.createElement(v);t.async=1;t.src=s;E=e.getElementsByTagName(v)[0];
+    E.parentNode.insertBefore(t,E);})(window, document, 'script',
+    'https://www.gstatic.com/devrel-devsite/prod/v0a713fec70a4b4c54311265d5142e962747a0e45a24063467564a2765c008ac7/developers/js/app_loader.js', '[1,"en",null,"/js/devsite_app_module.js","https://www.gstatic.com/devrel-devsite/prod/v0a713fec70a4b4c54311265d5142e962747a0e45a24063467564a2765c008ac7","https://www.gstatic.com/devrel-devsite/prod/v0a713fec70a4b4c54311265d5142e962747a0e45a24063467564a2765c008ac7/developers","https://developers-dot-devsite-v2-prod.appspot.com",null,null,["/_pwa/developers/manifest.json","https://www.gstatic.com/devrel-devsite/prod/v0a713fec70a4b4c54311265d5142e962747a0e45a24063467564a2765c008ac7/images/video-placeholder.svg","https://www.gstatic.com/devrel-devsite/prod/v0a713fec70a4b4c54311265d5142e962747a0e45a24063467564a2765c008ac7/developers/images/favicon.png","https://fonts.googleapis.com/css?family=Google+Sans:400,500|Roboto:400,400italic,500,500italic,700,700italic|Roboto+Mono:400,500,700&display=swap"],1,null,[1,6,8,12,14,17,18,21,25,40,45,50,63,70,75,76,80,87,91,92,93,97,98,100,101,102,103,104,105,107,108,109,110,111,112,113,115,116,117,118,120,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,138,141,142,144,147,148,149,150,151,152,154,157,159,161,165],"AIzaSyAP-jjEJBzmIyKR4F-3XITp8yM9T1gEEI8","AIzaSyB6xiKGDR5O3Ak2okS4rLkauxGUG7XP0hg","developers.google.com"]')
+  
+</script>
+    <devsite-a11y-announce aria-live="assertive" aria-atomic="true"></devsite-a11y-announce>
+  
+<devsite-dialog class="devsite-thumb-rating-dialog" id="devsite-thumb-up-dialog" aria-label="What is the reason for your feedback?"><div class="devsite-dialog-contents"><h3 class="no-link">What is the reason for your feedback?</h3><form class="devsite-thumb-rating-categories"><div class="devsite-thumb-rating-category"><input type="radio" name="thumb-up" id="easyToUnderstand"><label for="easyToUnderstand">Easy to understand</label></div><div class="devsite-thumb-rating-category"><input type="radio" name="thumb-up" id="solvedMyProblem" checked="checked"><label for="solvedMyProblem">Solved my problem</label></div><div class="devsite-thumb-rating-category"><input type="radio" name="thumb-up" id="otherUp"><label for="otherUp">Other</label></div></form></div><div class="devsite-dialog-buttons"><button type="submit" class="button button-primary devsite-thumb-rating-submit">Submit</button><button type="button" class="button devsite-dialog-close">Cancel</button></div></devsite-dialog><devsite-dialog class="devsite-thumb-rating-dialog" id="devsite-thumb-thank-you-dialog" aria-label="Thank you for your feedback."><div class="devsite-dialog-contents"><h3 class="no-link">Thank you for your feedback.</h3><p class="sign-in-prompt">You need to be signed in to save your frequently visited pages with a Google Developer Profile.</p></div><div class="devsite-dialog-buttons"><button class="button button-primary sign-in-button">Sign in</button></div></devsite-dialog></body></html>

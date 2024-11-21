@@ -1,0 +1,7 @@
+for (( ; ; )) ; do 
+  LINE=$(cat /proc/net/dev | grep wlp2s0 | sed 's/[ ]\{1,\}/\t/g' | cut -f1-3,9- | cut -f1-3,5-6);
+  RECEIVE=$(echo "$LINE" | cut -f2 | sed 's/^/scale=2; /; s|$|/1048576|' | bc -l);
+  TRANSMIT=$(echo "$LINE" | cut -f4 | sed 's/^/scale=2; /; s|$|/1048576|' | bc -l);
+  echo "Receive: $RECEIVE MiB    Transmit: $TRANSMIT MiB";
+  sleep 10;
+done

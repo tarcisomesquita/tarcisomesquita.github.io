@@ -1,0 +1,17 @@
+       +------------+   |
+       | arg 2      |   \
+       +------------+    >- previous function's stack frame
+       | arg 1      |   /
+       +------------+   |
+       | ret %eip   |   /
+       +============+   
+       | saved %ebp |   \
+%ebp-> +------------+   |
+       |            |   |
+       |   local    |   \
+       | variables, |    >- current function's stack frame
+       |    etc.    |   /
+       |            |   |
+       |            |   |
+%esp-> +------------+   /
+

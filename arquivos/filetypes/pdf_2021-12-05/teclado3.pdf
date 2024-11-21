@@ -1,0 +1,90 @@
+%PDF-1.4
+%¸¸¸¸
+
+1 0 obj
+<<
+  /Type /Catalog
+  /Pages 2 0 R
+>>
+endobj
+          
+2 0 obj
+<<
+  /Type /Pages
+  /Kids [3 0 R]
+  /Count 1
+>>
+endobj
+
+3 0 obj
+<<
+  /Type /Page
+  /MediaBox [0 0 595.28 841.86]
+  /Parent 2 0 R
+  /Resources
+  <<
+    /Font
+    <<
+      /F0 4 0 R
+    >>
+  >>
+  /Contents 5 0 R
+>>
+endobj
+           
+4 0 obj
+<<
+  /Type /Font
+  /Subtype /Type1
+  /BaseFont /Helvetica
+  /Encoding /WinAnsiEncoding
+>> endobj
+      
+5 0 obj
+<<
+  /Length 506
+>>
+% iconv -t ISO-8859-15 -f UTF-8 < utf8.pdf > iso-8859-15.pdf
+stream
+BT
+  /F0 14 Tf
+  100 780 Td
+  (Á«„√‚¬·¡‡¿Í È…ÌÕı’Ù‘Û”˙⁄™∫∞) Tj
+  0 -20 Td
+  ( ) Tj
+  0 -20 Td
+  <272231213240B233233424352536382A392830292D5F3D2BA7> Tj
+  0 -20 Td
+  <7151775765457252745479597555694992216F4FF8705060B45B7BAA> Tj
+  0 -20 Td
+  <61417353DF6444F0664667474B01684827016A4A6B4B38016C4CE7C77E5E5D7DBA> Tj
+  0 -20 Td
+  <5C7C7A5AAB7858BB6343765662426E4E6D4DB52C3C2E3EB73B3A2F3FB0> Tj
+  0 -20 Td
+  <200A> Tj
+  0 -20 Td
+  <E3C3E2C2E1C1E0C0EACAE9C9EDCDF5D5F4D4F3D3FADA> Tj
+ET
+BT
+  100 480 Td
+  (\003\273) Tj
+ET
+endstream
+endobj
+             
+xref
+0 5
+0000000000 65535 f
+0000000016 00000 n
+0000000080 00000 n
+0000000144 00000 n
+0000000320 00000 n
+0000000432 00000 n
+trailer <<
+  /Root 1 0 R
+  /Size 5
+>>
+startxref
+464
+%%EOF
+

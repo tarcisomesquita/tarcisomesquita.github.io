@@ -1,0 +1,139 @@
+
+MSDOS:
+
+43 6d 00 65 00 2e 00 65  00 78 00 0f 00 f3 74 00  |Cm.e...e.x....t.|
+00 00 ff ff ff ff ff ff  ff ff 00 00 ff ff ff ff  |................|
+46 49 4c 45 57 49 7e 31  45 58 54 20 00 64 fc a5  |FILEWI~1EXT .d..|
+32 3e 32 3e 00 00 fc a5  32 3e 00 00 00 00 00 00  |2>2>....2>......|
+
+
+Bytes   Content
+0-A    File name (8 bytes) with extension (3 bytes)
+B      Attribute:
+           Bit 0: read only.
+           Bit 1: hidden.
+           Bit 2: system file.
+           Bit 3: volume label.
+           Bit 4: subdirectory.
+           Bit 5: archive. (cleared by backup programs)
+           Bits 6-7: unused.
+C      Reserved
+D      Create time, fine resolution: 10ms units, values from 0 to 199.
+E-F    Create Time 
+10-11  Create Date
+12-13  Last access date
+14-15  EA-Index (used by OS/2 and NT) in FAT12 and FAT16, High 2 bytes of first cluster number in FAT32
+16-17  Last modified Time (5/6/5 bits, for hour/minutes/ seconds/2)
+18-19  Last modified Date (7/4/5 bits, for year-since-1980/month/day). 31 3e = 3e31h = 31/01/17 = 17/01/2011
+1A-1B  Starting cluster (0 for an empty file)
+1C-1F  Filesize in bytes
+
+Foo.bar => "FOO     BAR"
+
+First byte:
+0x00 directory ends here
+0x05 real name starts with 0xe5.
+0xe5 "deleted"
+0x2e Subdirectories start with entries for . and .., but the root directory does not have those. 
+
+Prohibided bytes:
+The first byte of a name must not be 0x20 (space). Short names or extensions are padded with spaces.
+Characters 0x22 ("), 0x2a (*), 0x2b (+), 0x2c (,), 0x2e (.), 0x2f (/), 0x3a (:), 0x3b (;), 0x3c (<), 0x3d (=), 0x3e (>), 0x3f (?), 0x5b ([), 0x5c (\), 0x5d (]), 0x7c (|) are not allowed.
+
+• DIR_FileSize is a 32-bit field. For FAT32 volumes, your FAT file system driver must not allow a
+cluster chain to be created that is longer than 0x100000000 bytes, and the last byte of the last
+cluster in a chain that long cannot be allocated to the file. This must be done so that no file has a
+file size > 0xFFFFFFFF bytes. This is a fundamental limit of all FAT file systems. The maximum
+allowed file size on a FAT volume is 0xFFFFFFFF (4,294,967,295) bytes.
+• Similarly, a FAT file system driver must not allow a directory (a file that is actually a container for
+other files) to be larger than 65,536 * 32 (2,097,152) bytes
+There are many FAT file system drivers and disk utilities, including Microsoft’s, that expect to
+be able to count the entries in a directory using a 16-bit WORD variable. For this reason,
+directories cannot have more than 16-bits worth of entries.
+
+
+VFAT (Virtual FAT)
+filenames can be up to 255 bytes long.
+
+These long filenames are stored in special directory entries:
+
+Bytes   Content
+0       Sequence number
+           Bits 0-4: sequence number;
+           Bit 6: final part of name
+1-A     Characters 1-5
+B       Attribute: 0x0f
+C       Type: 0
+D       Checksum of short name
+E-19    Characters 6-11
+1A-1B   Starting cluster: 0
+1C-1F   Characters 12-13
+
+
+If we have filename "File with very long filename.ext" it would be formatted like this:
+Sequence number   Entry data
+0x43              "me.ext"
+0x02              "y long filena"
+0x01              "File with ver"
+Normal entry
+
+43 6d 00 65 00 2e 00 65  00 78 00 0f 00 f3 74 00  |Cm.e...e.x....t.|
+00 00 ff ff ff ff ff ff  ff ff 00 00 ff ff ff ff  |................|
+02 79 00 20 00 6c 00 6f  00 6e 00 0f 00 f3 67 00  |.y. .l.o.n....g.|
+20 00 66 00 69 00 6c 00  65 00 00 00 6e 00 61 00  | .f.i.l.e...n.a.|
+01 46 00 69 00 6c 00 65  00 20 00 0f 00 f3 77 00  |.F.i.l.e. ....w.|
+69 00 74 00 68 00 20 00  76 00 00 00 65 00 72 00  |i.t.h. .v...e.r.|
+46 49 4c 45 57 49 7e 31  45 58 54 20 00 64 fc a5  |FILEWI~1EXT .d..|
+32 3e 32 3e 00 00 fc a5  32 3e 00 00 00 00 00 00  |2>2>....2>......|
+
+
+The attribute 0x0f (read only / hidden / system / volume label) is for old programs ignore the entry.
+
+
+Short name
+The extension is the extension of the long name, truncated to length at most three.
+The first six bytes of the short name equal the first six nonspace bytes of the long name.
+Bytes +,;=[] are replaced by underscore.
+Lower case is converted to upper case.
+The final two (or more, up to seven, if necessary) bytes become ~1, or, if that exists already, ~2, etc.
+
+
+Checksum of the short name:
+
+int i;
+unsigned char sum = 0;
+unsigned char name[]="FILEWI~1EXT";
+
+for (i = 0; i < 11; i++)
+{
+   sum = ((sum & 1) << 7) + (sum >> 1);  /* rotate */
+   sum = sum + name[i];                  /* add next name byte */
+}
+
+
+If a filename contains only lowercase letters, or is a combination of a lowercase basename with an uppercase extension, or vice-versa; and has no special characters, and fits within the MSDOS limits, a VFAT entry is not created on Windows NT and later versions such as XP. Instead, two bits in byte 0x0c of the directory entry are used to indicate that the filename should be considered as entirely or partially lowercase. Specifically, bit 4 means lowercase extension and bit 3 lowercase basename, which allows for combinations such as "example.TXT" or "HELLO.txt" but not "Mixed.txt". Few other operating systems support this. 
+
+
+file "My Big File.Extension which is long":
+
+                <proceeding files...>
+                <slot #3, id = 0x43, characters = "h is long">
+                <slot #2, id = 0x02, characters = "xtension whic">
+                <slot #1, id = 0x01, characters = "My Big File.E">
+                <directory entry, name = "MYBIGFIL.EXT">
+
+The Nth slot is or'ed with 0x40 to mark it as the last one.
+
+        2) Checksum.  Each slot has an "alias_checksum" value.  The
+           checksum is calculated from the 8.3 name using the
+           following algorithm:
+
+                for (sum = i = 0; i < 11; i++) {
+                        sum = (((sum&1)<<7)|((sum&0xfe)>>1)) + name[i]
+                }
+
+	3) If there is free space in the final slot, a Unicode NULL (0x0000) 
+	   is stored after the final character.  After that, all unused 
+	   characters in the final slot are set to Unicode 0xFFFF.
+
+Finally, note that the extended name is stored in Unicode. Each Unicode character takes two bytes.

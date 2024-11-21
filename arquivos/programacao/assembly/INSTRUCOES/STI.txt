@@ -1,0 +1,5 @@
+
+STI – Set Interrupt Flag 1111 1011
+
+FB            STI
+

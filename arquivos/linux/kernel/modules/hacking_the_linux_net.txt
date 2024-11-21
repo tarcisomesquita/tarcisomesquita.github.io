@@ -1,0 +1,825 @@
+
+linux-2.6.33.4/net/ipv4/netfilter/iptable_filter.c    |
+
+Figure 2: Initialization of the NIC driver
+
+    +---------------------------+
+    | Loading the driver module |
+    +---------------------------+
+                |
+                |
+               \*/                                                *------*
+       +-----------------------+                                  | exit |
+       | rtl8169_init_module() |                                  *------*
+       +-----------------------+                                     /|\
+                |                                                     |
+                |                                                     | N
+               \*/                                                    |
+         +-----------------------+    +-------------------+    $=============$
+         | pci_register_driver() |--->| driver_register() |--->$ driver_find $
+         +-----------------------+    +-------------------+    $=============$
+                                                                      |
+                                                                      |
+                                                                     \|/
+                                                            +------------------+
+                                                            | bus_add_driver() |
+                                                            +------------------+
+                                                                      |
+                                                                     \|/
+                                                             +-----------------+
+                                                             | driver_attach() |
+                                                             +-----------------+
+                                      Iteration                        |
+                                  +--------------------+               |
+                                  |  __driver_attach() |               |
+                                  +--------------------+               |
+                                      |           /|\                 \|/
+                                      |            |         $====================$
+                                      |            +---------$ bus_for_each_dev() $
+                                     \|/                     $====================$
+                              +--------------------+                                   
+                              | driver_probe_dev() |
+                              +--------------------+
+                                      |
+                                      |
+                                     \|/
+                              +--------------------+                                   
+                              | pci_device_probe() |
+                              +--------------------+
+                                      |
+                                      |
+                                     \|/
+                             +----------------------+    +------------------+    +-------------------+
+                             | __pci_device_probe() |--->| pci_call_probe() |--->| local_pci_probe() |
+                             +----------------------+    +------------------+    +-------------------+
+                                                                                          |
+                                                                                          |
+                                                                                         \|/
+                                                                                  *--------------------*
+                                                                                  | rtl8169_init_one() |
+                                                                                  *--------------------*
+
+I suggest that you should read the kernel's Documentation[7], while
+looking into the source code. The entry point and exit point of the
+implementation in rtl8169 dirver are rtl8169_init_module() and
+rtl8169_cleanup_module() defined in the source code:
+
+module_init(rtl8169_init_module);
+module_exit(rtl8169_cleanup_module);
+
+The rtl8169_init_module() function will be invoked after "insmod" your
+driver module. And you can see the function is only doing one thing:
+
+static int __init rtl8169_init_module(void)
+{
+	return pci_register_driver(&rtl8169_pci_driver);
+}
+
+The argument "rtl8169_pci_driver" is a structure of the pci_driver
+which can be found in src/include/linux/pci.h
+
+struct pci_driver {
+	struct list_head node;
+	char *name;
+	const struct pci_device_id *id_table;	/* must be non-NULL for probe to be called */
+	int  (*probe)  (struct pci_dev *dev, const struct pci_device_id *id);	/* New device inserted */
+	void (*remove) (struct pci_dev *dev);	/* Device removed (NULL if not a hot-plug capable driver) */
+	int  (*suspend) (struct pci_dev *dev, pm_message_t state);	/* Device suspended */
+	int  (*suspend_late) (struct pci_dev *dev, pm_message_t state);
+	int  (*resume_early) (struct pci_dev *dev);
+	int  (*resume) (struct pci_dev *dev);	                /* Device woken up */
+	void (*shutdown) (struct pci_dev *dev);
+	struct pci_error_handlers *err_handler;
+	struct device_driver	driver;
+	struct pci_dynids dynids;
+};
+
+As you see the above structure contains some function pointers to your
+own implementations for the NIC drivers. Let's see the rtl8169
+driver's initialization for the structure:
+
+static struct pci_driver rtl8169_pci_driver = {
+	.name		= MODULENAME,
+	.id_table	= rtl8169_pci_tbl,
+	.probe		= rtl8169_init_one,
+	.remove		= __devexit_p(rtl8169_remove_one),
+	.shutdown	= rtl_shutdown,
+	.driver.pm	= RTL8169_PM_OPS,
+};
+
+The information of the id table "rtl8169_pci_tbl" is related with the
+implemenation of PCI architecture in linux kernel. And the prototype
+of the rtl8169_init_one() function is displayed below:
+
+static int __devinit
+rtl8169_init_one(struct pci_dev *pdev, const struct pci_device_id *ent);
+
+Where did you get these 2 parameters? Don't forget which function is
+the caller: As you can see in above figure, it's
+local_pci_probe(). These 2 parameters are created in PCI bus
+enumerations.
+
+static long local_pci_probe(void *_ddi)
+{
+        struct drv_dev_and_id *ddi = _ddi;
+
+        return ddi->drv->probe(ddi->dev, ddi->id);
+}
+
+The declaration of the _ddi's structure can be found in
+src/drivers/pci/pci-driver.c
+
+struct drv_dev_and_id {
+	struct pci_driver *drv;
+	struct pci_dev *dev;
+	const struct pci_device_id *id;
+};
+
+The driver will do a lot of things in rtl8169_init_one(), such as
+memory mapping, allocation for network device, setting up DMA,
+etc. But We have to care about one line of source in
+rtl8160_init_one():
+
+	netif_napi_add(dev, &tp->napi, rtl8169_poll, R8169_NAPI_WEIGHT);
+
+This one is about the softirq we will talk about it later.
+
+
+----[ 2.2 RX packets
+
+While you are trying to turn on (eg: ifconfig eth0 up) a Ethernet
+interface, it will try to register a interrupt number by invoking
+request_irq() in the rtl8169_open() funcion:
+
+retval = request_irq(dev->irq, rtl8169_interrupt, (tp->features &
+			     RTL_FEATURE_MSI) ? 0 : IRQF_SHARED,
+			     dev->name, dev);
+
+The NIC hardware will rise a interrupt to CPU when the NIC recieves
+packets from network and then linux kernel start to execute the
+interrupt handler (we use rtl8169_interrupt() in case) for processing
+packets. In this article, we need to know a little concepts of
+hardware interrupt. The other work flow of hardware interrupt is a
+tough topic that beyond the range of this article. There is another
+great paper[8] from phrack, which is worth reading.
+
+After initializing the IDT (Interrupt Descriptor Table) in the kernel
+booting stage. When a hardware device raises an interrupt to CPU, the
+assembly code will execute at first, then it will jump to the familiar
+C code function do_IRQ() which can be found in
+src/arch/x86/kernel/entry_32.S:
+
+/*
+ * Build the entry stubs and pointer table with some assembler magic.
+ * We pack 7 stubs into a single 32-byte chunk, which will fit in a
+ * single cache line on all modern x86 implementations.
+ */
+.section .init.rodata,"a"
+ENTRY(interrupt)
+.text
+	.p2align 5
+	.p2align CONFIG_X86_L1_CACHE_SHIFT
+ENTRY(irq_entries_start)
+	RING0_INT_FRAME
+vector=FIRST_EXTERNAL_VECTOR
+.rept (NR_VECTORS-FIRST_EXTERNAL_VECTOR+6)/7
+	.balign 32
+  .rept	7
+    .if vector < NR_VECTORS
+      .if vector <> FIRST_EXTERNAL_VECTOR
+	CFI_ADJUST_CFA_OFFSET -4
+      .endif
+1:	pushl $(~vector+0x80)	/* Note: always in signed byte range */
+	CFI_ADJUST_CFA_OFFSET 4
+      .if ((vector-FIRST_EXTERNAL_VECTOR)%7) <> 6
+	jmp 2f
+      .endif
+      .previous
+	.long 1b
+      .text
+vector=vector+1
+    .endif
+  .endr
+2:	jmp common_interrupt
+.endr
+END(irq_entries_start)
+
+See, the common code starts at label common_interrupt and consists of
+the following assembly language macros and instructions:
+
+/*
+ * the CPU automatically disables interrupts when executing an IRQ vector,
+ * so IRQ-flags tracing has to follow that:
+ */
+	.p2align CONFIG_X86_L1_CACHE_SHIFT
+common_interrupt:
+	addl $-0x80,(%esp)	/* Adjust vector into the [-256,-1] range */
+	SAVE_ALL
+	TRACE_IRQS_OFF
+	movl %esp,%eax
+	call do_IRQ
+	jmp ret_from_intr
+ENDPROC(common_interrupt)
+	CFI_ENDPROC
+
+Then, we get to the C code do_IRQ() function after executing "call
+do_IRQ". By invoking the fuc handle_irq() in do_IRQ() which can be
+found in src/arch/x86/kernel/irq.c:
+
+/*
+ * do_IRQ handles all normal device IRQ's (the special
+ * SMP cross-CPU interrupts have their own specific
+ * handlers).
+ */
+unsigned int __irq_entry do_IRQ(struct pt_regs *regs)
+{
+	struct pt_regs *old_regs = set_irq_regs(regs);
+
+	/* high bit used in ret_from_ code  */
+	unsigned vector = ~regs->orig_ax;
+	unsigned irq;
+
+	exit_idle();
+	irq_enter();
+
+	irq = __get_cpu_var(vector_irq)[vector];
+
+	if (!handle_irq(irq, regs)) {
+		ack_APIC_irq();
+
+		if (printk_ratelimit())
+			pr_emerg("%s: %d.%d No irq handler for vector (irq %d)\n",
+				__func__, smp_processor_id(), vector, irq);
+	}
+
+	irq_exit();
+
+	set_irq_regs(old_regs);
+	return 1;
+}
+
+Finally, the handle_irq() function calls the rtl8169_interrupt()
+function by a function pointer "desc->handle_irq(irq, desc)", which
+can be found in src/arch/x86/kernel/irq_32.c. Now the packet got into
+the interrupt implementation of the NIC driver:
+
+bool handle_irq(unsigned irq, struct pt_regs *regs)
+{
+	struct irq_desc *desc;
+	int overflow;
+
+	overflow = check_stack_overflow();
+
+	desc = irq_to_desc(irq);
+	if (unlikely(!desc))
+		return false;
+
+	if (!execute_on_irq_stack(overflow, desc, irq)) {
+		if (unlikely(overflow))
+			print_stack_overflow();
+		desc->handle_irq(irq, desc);
+	}
+
+	return true;
+}
+
+
+Many NIC drivers now are using NAPI's strategy that uses polling mode
+while many hardware interrupts are rarising in period of time, and
+then turn back to interrupt mode when not many packets need
+processing. This is the best solution to avoid the large number of
+hardware interrupts which might exhaust the CPU. There's a few steps
+to go through with it:
+
+1, In interrupt mode, the interrupt handler rtl8169_interrupt() posts
+receive packets to protocol layers by scheduling NET_RX_SOFTIRQ:
+
+	if (likely(napi_schedule_prep(&tp->napi)))
+		__napi_schedule(&tp->napi);
+
+It then disables NIC intetrrupts and switches to polling mode by
+invoking __napi_schedule() to add the devices to a poll list:
+
+/**
+ * __napi_schedule - schedule for receive
+ * @n: entry to schedule
+ *
+ * The entry's receive function will be scheduled to run
+ */
+void __napi_schedule(struct napi_struct *n)
+{
+	unsigned long flags;
+
+	local_irq_save(flags);
+	list_add_tail(&n->poll_list, &__get_cpu_var(softnet_data).poll_list);
+	__raise_softirq_irqoff(NET_RX_SOFTIRQ);
+	local_irq_restore(flags);
+}
+
+Both receipt and transmission methods of softirqs are registered in
+net_dev_init() which can be found in src/net/core/dev.c:
+
+        open_softirq(NET_TX_SOFTIRQ, net_tx_action);
+        open_softirq(NET_RX_SOFTIRQ, net_rx_action);
+
+2, By invoking rtl8169_poll() in the net_rx_action() function which
+can be found in src/net/core/dev.c:
+
+	if (test_bit(NAPI_STATE_SCHED, &n->state)) {
+		work = n->poll(n, weight);
+		trace_napi_poll(n);
+	}
+
+3, In the polling mode, the rtl8169_poll() processes packets in the
+ingress queue. When the queue becomes empty, the driver re-enables
+interrupts and switches back to interrupt mode by calling
+napi_complete():
+
+	if (unlikely(work == weight)) {
+		if (unlikely(napi_disable_pending(n))) {
+			local_irq_enable();
+			napi_complete(n);
+			local_irq_disable();
+		} else
+			list_move_tail(&n->poll_list, list);
+	}
+
+
+Figure 3: The process of RX packets
+
+---------------------------------------------------------------------------------------------------------------------------
+       +-----+                                              |
+       | NIC |                                              |
+       +-----+                                              |
+          |                                                 |
+          | Raise a interrupt                               |
+         \|/                                                |
+    *-----------------------*                               |
+    | CPU-1 | CPU-2 | CPU-N |                               |
+    *-----------------------*                               |
+                        |                                   |
+                        | Interrupt[n]                      |
+                       \|/                                  |    *---------------------*
+                  +-----------+                             |    | softnet_data[CPU-n] |-----------+
+                  | do_IRQ(n) |                             |    *---------------------*           |
+                  +-----------+                             |            /*\                       |
+                        |                                   |             | add to poll list       |
+                       \|/                                  |             |                        | raise softirq
+                +--------------+    +---------------------+ |    +-------------------+             |
+                | handle_irq() |--->| rtl8169_interrupt() |----> | __napi_schedule() |             |
+                +--------------+    +---------------------+ |    +-------------------+             |
+                                                            |                                     \|/
+                                                            |                             +-----------------+
+                                                            |                             | net_rx_action() |          
+                                                            |                             +-----------------+
+                         $================$                 |  $==============$                    |
+                         $ Interrupt mode $                 |  $ Polling mode $                    |
+                         $================$                 |  $==============$                   \|/
+                                /*\                         |                            +----------------+
+                                 |                          |                            | rtl8169_poll() |          
+                                 |                          |                            +----------------+
+                                 |                          |                                     |
+                                 |                          |                          Work of RX |
+                                 |                          |                                    \|/  
+                                 |                          |                            +------------------+
+                                 |                          |            +---------------| eth_type_trans() |
+                                 |                          |            |               +------------------+
+                                 |                          |           \|/
+                                 |                          |      $===========$   Y   +-----------------------+            
+                                 |                          |      $  IS_VLAN  $------>| rtl8169_rx_vlan_skb() |
+                                 |                          |      $===========$       +-----------------------+
+                                 |                          |            |                        |
+                                 |                          |          N |                        |
+                                 |                          |           \|/                       |
+                                 |                          |   +---------------------+           |
+                                 |                          |   | netif_receive_skb() |---------->|
+                                 |                          |   +---------------------+           |
+                                 |                                                                |
+                                 |                                                               \|/
+                                 |              Yes, done the packet processing         $-----------------$
+                                 +------------------------------------------------------| napi_complete() |
+                                                                                        $-----------------$
+
+
+There will be 5 steps to start running when the packet travels to
+rtl8169_rx_interrupt:
+
+1, netdev_alloc_skb() in rtl8169_alloc_rx_skb(), allocate a
+receive buffer
+
+2, skb_reserve(), add a 2-byte padding between the start of the packet
+buffer and the beginning of the payload for align with IP header which
+is 16-byte.
+
+3, NIC hardware maps a memory space from DMA to memory. Copy the data
+in DMA into a preallocated sk_buff when the data arrives.
+
+4, skb_put(), extend the used data area of the buffer.
+
+5, netif_receive_skb(), enqueue the packet for upper protocols/levels
+to process.
+
+
+----[ 2.3 TX packets
+
+This part is not going to discuss the whole protocol stacks in linux
+kernel. We intend to focus on how the driver layer works in the
+process of transmitting packets when it crosses the POSTROUTING.
+
+Each NIC has its own buffer for packets (ring buffer). Kernel will
+write packets into the buffer and send TX instructions to control
+register. The NIC takes packets from the buffer and hits the wire. The
+linux kernel will copy the packets to kernel space by invoking the
+memcpy_fromiovec() function which is invoked by packet_snd() function,
+which invoked is by the packet_sendmsg() function, which the source
+code can be found in src/net/packet/af_packet.c, when upper-level
+protocols have already prepared the packet:
+
+	err = memcpy_fromiovec(skb_put(skb, len), msg->msg_iov, len);
+
+The initialization of the structure proto_ops is in
+src/net/packet/af_packet.c. This structure includes function pointer
+to kernel implementations:
+
+static const struct proto_ops packet_ops = {
+	.family =	PF_PACKET,
+	.owner =	THIS_MODULE,
+	.release =	packet_release,
+	.bind =		packet_bind,
+	.connect =	sock_no_connect,
+	.socketpair =	sock_no_socketpair,
+	.accept =	sock_no_accept,
+	.getname =	packet_getname,
+	.poll =		packet_poll,
+	.ioctl =	packet_ioctl,
+	.listen =	sock_no_listen,
+	.shutdown =	sock_no_shutdown,
+	.setsockopt =	packet_setsockopt,
+	.getsockopt =	packet_getsockopt,
+	.sendmsg =	packet_sendmsg,
+	.recvmsg =	packet_recvmsg,
+	.mmap =		packet_mmap,
+	.sendpage =	sock_no_sendpage,
+};
+
+Linearize the buffer and do the checksum by invoking dev_queue_xmit(),
+which can be found in src/net/core/dev.c:
+
+	/* GSO will handle the following emulations directly. */
+	if (netif_needs_gso(dev, skb))
+		goto gso;
+
+	if (skb_has_frags(skb) &&
+	    !(dev->features & NETIF_F_FRAGLIST) &&
+	    __skb_linearize(skb))
+		goto out_kfree_skb;
+
+	/* Fragmented skb is linearized if device does not support SG,
+	 * or if at least one of fragments is in highmem and device
+	 * does not support DMA from it.
+	 */
+	if (skb_shinfo(skb)->nr_frags &&
+	    (!(dev->features & NETIF_F_SG) || illegal_highdma(dev, skb)) &&
+	    __skb_linearize(skb))
+		goto out_kfree_skb;
+
+	/* If packet is not checksummed and device does not support
+	 * checksumming for this protocol, complete checksumming here.
+	 */
+	if (skb->ip_summed == CHECKSUM_PARTIAL) {
+		skb_set_transport_header(skb, skb->csum_start -
+					      skb_headroom(skb));
+		if (!dev_can_checksum(dev, skb) && skb_checksum_help(skb))
+			goto out_kfree_skb;
+	}
+
+And queue a buffer for transmission to a network device by invoking
+the __dev_xmit_skb() function, as you can see below code snippet:
+
+		/*
+		 * This is a work-conserving queue; there are no old skbs
+		 * waiting to be sent out; and the qdisc is not running -
+		 * xmit the skb directly.
+		 */
+		__qdisc_update_bstats(q, skb->len);
+		if (sch_direct_xmit(skb, q, dev, txq, root_lock))
+			__qdisc_run(q);
+
+Finnaly, raise a softirq of TX by invoking the __netif_schedule()
+function in __qdisc_run():
+
+	while (qdisc_restart(q)) {
+		/*
+		 * Postpone processing if
+		 * 1. another process needs the CPU;
+		 * 2. we've been doing it for too long.
+		 */
+		if (need_resched() || jiffies != start_time) {
+			__netif_schedule(q);
+			break;
+		}
+	}
+
+In the func __netif_reschedule(), the softirq has been raised:
+
+	raise_softirq_irqoff(NET_TX_SOFTIRQ);
+
+The softirq handler is registered, while kernel is booting, which can
+be found in the func net_dev_init() in src/net/core/dev.c:
+
+	open_softirq(NET_TX_SOFTIRQ, net_tx_action);
+
+net_tx_action() calls qdisc_restart() which has:
+
+	HARD_TX_LOCK(dev, txq, smp_processor_id());
+	if (!netif_tx_queue_stopped(txq) && !netif_tx_queue_frozen(txq))
+		ret = dev_hard_start_xmit(skb, dev, txq);
+
+	HARD_TX_UNLOCK(dev, txq);
+
+dev_hard_start_xmit() will call the func rtl8169_start_xmit() by
+invoking *->ndo_start_xmit():
+
+		rc = ops->ndo_start_xmit(skb, dev);
+
+Then your dirver's implementation of transmission
+function(rtl8169_start_xmit()) will be invoked. The process of the
+figure is displayed below:
+
+
+Figure 4: The process of TX packets
+
+
+                       $=======================$
+-----------------------$ Upper-level protocols $-------------------------------------------
+                       $=======================$
+                                   |
+                                   |
+                                  \|/
+                         +------------------+
+                         | packet_sendmsg() |
+                         +------------------+
+                                   |
+                                  \|/
+                         +--------------+
+                         | packet_snd() |
+                         +--------------+
+                                   |
+                                  \|/
+                         +--------------------+      +------------------+      No queue
+                         | memcpy_fromiovec() |----->| dev_queue_xmit() |----------------+
+                         +--------------------+      +------------------+                | 
+                                                             |                           |
+                                                             | Y                         |
+                                                            \|/                          |
+                                                     +------------------+                |
+                                                     | __dev_xmit_skb() |                |
+                                                     +------------------+                |
+                                                             |                           |
+                                                            \|/                          |
+                           +-----------------+          +---------------+                |
+                +--------> | qdisc_restart() |<---------| __qdisc_run() |                |
+                |          +-----------------+          +---------------+                |
+                |                  |                                                     |
+                |                  |                                                     |
+                |                 \|/                                                    |
+                |      +--------------------+                                            |
+                |      | __netif_schedule() |                                            |
+                |      +--------------------+                                            |
+                |                  |                                                    \|/
+                |                  |           +-----------------+     +-----------------------+
+                |                  +---------->| net_tx_action() |---->| dev_hard_start_xmit() |
+                |              Raise a softirq +-----------------+     +-----------------------+
+                |                                      |                           |
+                |                                      |                          \|/
+                |                                      |                 +----------------------+
+                |              If Queue is not empty   |                 | rtl8169_start_xmit() |
+                +--------------------------------------+                 +----------------------+
+
+
+
+----[ 2.4 Three ways of packet's traveling
+
+Linux kernel supports many network protocols which have different
+implementations. We will only use IPv4 to descrbe 3 ways of packet
+flows which bypass the netfilter.
+
+
+------[ 2.4.1 Network to Host
+
+Firstly, register the handlers for different protocols by using the
+dev_add_pack() function while kernel is booting, such as IPv4's
+handlers registration in the inet_init() function which can be found
+in src/net/ipv4/af_inet.c:
+
+	dev_add_pack(&ip_packet_type);
+
+Which the structure has defined in the same source file:
+
+/*
+ *	IP protocol layer initialiser
+ */
+
+static struct packet_type ip_packet_type __read_mostly = {
+	.type = cpu_to_be16(ETH_P_IP),
+	.func = ip_rcv,
+	.gso_send_check = inet_gso_send_check,
+	.gso_segment = inet_gso_segment,
+	.gro_receive = inet_gro_receive,
+	.gro_complete = inet_gro_complete,
+};
+
+After registering the protocol handlers, the .func function pointer
+will be invoked by netif_receive_skb() in driver's softirq handler (we
+use rtl8169_rx_interrupt() in case):
+
+	if (pt_prev) {
+		ret = pt_prev->func(skb, skb->dev, pt_prev, orig_dev);
+
+After packet's sanity checking, the packet goes to the
+NF_IP_PRE_ROUTING hook for filtering rules. Then it will enter into
+the ip_rcv_finish() function, which looks up the route depending on
+destination IP address. If the destination IP address is matches with
+local NIC's IP address, the dst_input() function will brings the packets
+into the ip_local_deliver(), which will defrag the packet and pass it
+to the NF_IP_LOCAL_IN hook:
+
+/* Input packet from network to transport.  */
+static inline int dst_input(struct sk_buff *skb)
+{
+	return skb_dst(skb)->input(skb);
+}
+
+In the end, invoke the protocol handler in the
+ip_local_deliver_finish() function:
+
+			ret = ipprot->handler(skb);
+
+Then, the upper-level protocol will continue to process the packet.
+ 
+
+------[ 2.4.2 Network to Network
+
+After the filtering of the NF_IP_PRE_ROUTING hook, look up the route
+by invoking the ip_rcv_finish() function, and through the
+skb_dst(skb)->input() enter into the ip_forward() function which does
+validate checks including checking the packet type:
+
+	if (skb->pkt_type != PACKET_HOST)
+		goto drop;
+
+Decrease the TTL, check whether the packet is allowed to defragment,
+check the length of the packet which should not be bigger than MTU,
+etc:
+
+	/*
+	 *	According to the RFC, we must first decrease the TTL field. If
+	 *	that reaches zero, we must reply an ICMP control message telling
+	 *	that the packet's lifetime expired.
+	 */
+	if (ip_hdr(skb)->ttl <= 1)
+		goto too_many_hops;
+
+	if (!xfrm4_route_forward(skb))
+		goto drop;
+
+	rt = skb_rtable(skb);
+
+	if (opt->is_strictroute && rt->rt_dst != rt->rt_gateway)
+		goto sr_failed;
+
+	if (unlikely(skb->len > dst_mtu(&rt->u.dst) && !skb_is_gso(skb) &&
+		     (ip_hdr(skb)->frag_off & htons(IP_DF))) && !skb->local_df) {
+		IP_INC_STATS(dev_net(rt->u.dst.dev), IPSTATS_MIB_FRAGFAILS);
+		icmp_send(skb, ICMP_DEST_UNREACH, ICMP_FRAG_NEEDED,
+			  htonl(dst_mtu(&rt->u.dst)));
+		goto drop;
+	}
+
+Then, by invoking the ip_forward_finish() call the skb_dst(skb)->ouput
+entering into the ip_output() after the NF_IP_FORWARD hook. Finally,
+it will arrive the NF_IP_POST_ROUTING hook.
+
+
+------[ 2.4.3 Host to Network
+
+This is the last type of the direction of packet's traveling. When
+userspace program uses socket to send the packet, the packet will
+traverse a lot of functions into the NIC driver in the end.
+
+The ip_queue_xmit() function is the key function in network layer
+which is provided by linux kernel. The packet looks up the route in the
+ip_queue_xmit() and sets some segments, such as defragment flag,
+then passes it to the NF_IP_LOCAL_OUT hook for filtering:
+
+	/* OK, we know where to send it, allocate and build IP header. */
+	skb_push(skb, sizeof(struct iphdr) + (opt ? opt->optlen : 0));
+	skb_reset_network_header(skb);
+	iph = ip_hdr(skb);
+	*((__be16 *)iph) = htons((4 << 12) | (5 << 8) | (inet->tos & 0xff));
+	if (ip_dont_fragment(sk, &rt->u.dst) && !ipfragok)
+		iph->frag_off = htons(IP_DF);
+	else
+		iph->frag_off = 0;
+	iph->ttl      = ip_select_ttl(inet, &rt->u.dst);
+	iph->protocol = sk->sk_protocol;
+	iph->saddr    = rt->rt_src;
+	iph->daddr    = rt->rt_dst;
+
+Then, invoke the ip_output() function by dst_output() function which
+can be found in src/include/net/dst.h:
+
+/* Output packet to network from transport.  */
+static inline int dst_output(struct sk_buff *skb)
+{
+	return skb_dst(skb)->output(skb);
+}
+
+After filtering in the NF_IP_POST_ROUTING hook, the packet will
+deliver to the lower layer handlers.
+
+
+----[ 2.5 A bigger picture
+
+Now, hope the last figure can help you understand the complete process
+of a packet's rx/tx:
+
+
++-------------------------------------------------------------------------------------------------------------+
+|                       A P P L I C A T I O N                L A Y E R                                        |  
++-------------------------------------------------------------------------------------------------------------+
+                        /*\                                                                      \|/
+                         |                                                               +-----------------+
+                         |                                                               | ip_queue_xmit() |
+                         |                                                               +-----------------+
+                         |                                                                        |
+   ipprot->handler(skb)  |                                                                       \|/
+          +---------------------------+                                                  +----------------+             
+          | ip_local_deliver_finish() |                                                  | ip_local_out() |
+          +---------------------------+                                                  +----------------+
+                      /*\                         +---------------------+                         |
+                       |                          | ip_forward_finish() |------+                 \|/
+               $================$                 +---------------------+      |          $=================$
+               $ NF_IP_LOCAL_IN $    +-------------+     /*\                   |          $ NF_IP_LOCAL_OUT $
+               $================$<---| ip_defrag() |      |                    |          $=================$
+                       /*\           +-------------+      |                    |                   |
+                        |               /*\          $===============$         |                  \|/
+               +--------------------+    |           $ NF_IP_FORWARD $         |            +--------------+
+               | ip_local_deliver() |----+           $===============$         |            | dst_output() |
+               +--------------------+                   /*\                    |            +--------------+
+                       /*\                               |                     |                   |
+        dst_input(skb)  |                      +--------------+                |                  \|/
+                +-----------------+            | ip_forward() |                +---------> +-------------+
+                | ip_rcv_finish() |-------+    +--------------+                            | ip_output() |
+                +-----------------+       |        /*\                                     +-------------+
+                       /*\               \|/        |                                             |
+                        |            +------------------+                                        \|/
+               $===================$ | ip_route_input() |                               $====================$
+               $ NF_IP_PRE_ROUTING $ +------------------+               +---------------$ NF_IP_POST_ROUTING $
+               $===================$                                    |               $====================$
+                         /*\                                           \|/
+                          |                                    +--------------------+     
++-----------+          +----------+                            | ip_finish_output() |
+| arp_rcv() |          | ip_rcv() |                            +--------------------+
++-----------+          +----------+                                     |
+  /*\                     /*\                                          \|/
+   |                       |                                   +---------------------+
+   +----+             +----+                                   | ip_finish_output2() |
+        |             |                                        +---------------------+
+        |             |         L A Y E R  III                          |
+        |             |                                                 |
+--------|-------------|-------------------------------------------------|-----------------------------------------------
+        |             |                                                 |
+     +-----------------+                                       +------------------+
+     | net_rx_action() |                                       | dev_queue_xmit() |
+     +-----------------+                                       +------------------+
+             /|\                                                        |
+              |                                                        \|/
+              |                                                +------------------+
+     +-----------------+                                       | __dev_xmit_skb() |
+     | __napi_schedule |                                       +------------------+
+     +-----------------+                                                |
+              /|\                                                      \|/              
+               |                                              +---------------+       +--------------------+
+      +---------------------+                                 | __qdisc_run() |------>| __netif_schedule() |
+      | netif_receive_skb() |                                 +---------------+       +--------------------+
+      +---------------------+                                                                  |
+              /|\                                                                             \|/
+               | Got a packet(s)                                                  +-----------------------+
+      +----------------------+                                       +------------| dev_hard_start_xmit() | 
+      | rtl8169__interrupt() |                                       |            +-----------------------+
+      +----------------------+                                      \|/
+             /|\                                              +----------------------+
+              |                                               | rtl8169_start_xmit() |
+              |               L A Y E R  II                   +----------------------+      
+              |                                                      |
+--------------|------------------------------------------------------|----------------------------------------
+              |                                                      |
+              |                                                      |
+              |                                                     \|/
+$------------------------------------------------------------------------------------------------------------$
+|           H A R D W A R E                  L E V E L                                                       |
+$------------------------------------------------------------------------------------------------------------$
+
+
+

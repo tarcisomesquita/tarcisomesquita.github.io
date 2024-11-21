@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+<name>Aprendendo KML</name>
+<description>Aqui vai a descrição a ser mostrada ao clicar no elemento</description>
+
+<Style id="style_blue_dot">
+   <IconStyle>
+      <Icon><href>http://maps.google.com/mapfiles/ms/micons/blue-dot.png</href></Icon>
+   </IconStyle>
+</Style>
+
+<Style id="style_red_dot">
+   <IconStyle>
+      <Icon><href>http://maps.google.com/mapfiles/ms/micons/red-dot.png</href></Icon>
+   </IconStyle>
+</Style>
+
+<Style id="style_line">
+   <LineStyle>
+   <color>73FF0000</color><width>5</width>
+   </LineStyle>
+</Style>
+
+<Placemark>
+   <name>Path</name>
+   <description><![CDATA[]]></description>
+   <styleUrl>#style_line</styleUrl>
+   <LineString>
+      <tessellate>1</tessellate>
+      <coordinates>
+-47.080200,-22.829600,0.000000
+-47.080167,-22.829550,0.000000
+-47.080267,-22.829483,0.000000
+-47.080317,-22.829483,0.000000
+-47.080283,-22.829500,0.000000
+-47.080283,-22.829500,0.000000
+      </coordinates>
+   </LineString>
+</Placemark>
+
+<Placemark>
+<name>Start 2013/09/27 19:05:16-0300</name>
+<description>Comentário comum.</description>
+
+<styleUrl>#style_blue_dot</styleUrl>
+
+<Point>
+   <coordinates>-47.0802,-22.8296,0.000000</coordinates>
+</Point>
+</Placemark>
+
+<Placemark>
+<name>End 19:05:21-0300</name>
+<description>
+  <![CDATA[
+  Aqui vai o código em HTML.<BR>
+  Você pode colocar links, <a href="http://earth.google.com/">Google Earth!</a>, e tudo mais que colocaria dentro de uma tag body. 
+  ]]>
+</description>
+<styleUrl>#style_red_dot</styleUrl>
+
+<Point>
+   <coordinates>-47.0802833333,-22.8295,0.000000</coordinates>
+</Point>
+</Placemark>
+
+</Document>
+</kml>

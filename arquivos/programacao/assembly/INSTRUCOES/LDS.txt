@@ -1,0 +1,46 @@
+
+Instrução LDS
+
+Proposito: Carregar o registrador de segmento de dados.
+
+Sintaxe:
+LDS destino,fonte
+
+O operador fonte deve ser uma double word na memoria. A palavra associada com o maior endereco é transferida para DS, em outras palavras isto é tomado como o endereco de segmento. A palavra associada com o menor endereço é o endereço de deslocamento e e depositada no registrador indicado como destino.
+
+Exemplo
+Se 0x7C00 = FC 31
+BD7800            mov bp,0x7c00
+C57600            lds si,[bp+0x0]
+Faz SI = 31 FC
+
+
+LDS – Load Pointer to DS      1100 0101 : modA,B reg r/m
+1100 0101 b = C5 h
+
+Opcode   Instruction      64-Bit   Compat/    Description
+                          Mode     Leg Mode
+C5 /r    LDS r16,m16:16   Invalid  Valid      Load DS:r16 with far pointer from memory.
+C5 /r    LDS r32,m16:32   Invalid  Valid      Load DS:r32 with far pointer from memory.
+
+
+Description
+
+Loads a far pointer (segment selector and offset) from the second operand (source operand) into a segment register and the first operand (destination operand).
+
+The instruction opcode and the destination operand specify a segment register/general-purpose register pair. The 16-bit segment selector from the source operand is loaded into the segment register specified with the opcode (DS, SS, ES, FS, or GS). The 32-bit or 16-bit offset is loaded into the register specified with the destination operand.
+
+If one of these instructions is executed in protected mode, additional information
+from the segment descriptor pointed to by the segment selector in the source
+operand is loaded in the hidden part of the selected segment register.
+Also in protected mode, a NULL selector (values 0000 through 0003) can be loaded
+into DS, ES, FS, or GS registers without causing a protection exception. (Any subse-
+quent reference to a segment whose corresponding segment register is loaded with
+a NULL selector, causes a general-protection exception (#GP) and no memory refer-
+ence to the segment occurs.)
+In 64-bit mode, the instruction’s default operation size is 32 bits. Using a REX prefix
+in the form of REX.W promotes operation to specify a source operand referencing an
+80-bit pointer (16-bit selector, 64-bit offset) in memory. Using a REX prefix in the
+form of REX.R permits access to additional registers (R8-R15). See the summary
+chart at the beginning of this section for encoding data and limits.
+

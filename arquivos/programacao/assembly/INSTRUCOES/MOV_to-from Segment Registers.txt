@@ -1,0 +1,47 @@
+
+Field name: sreg2 e sreg3
+Number of bits: 2 e 3
+
+                     Segment Register                         Segment Register
+2-Bit sreg2 Field    Selected            3-Bit sreg3 Field    Selected
+      00               ES                       000              ES
+      01               CS                       001              CS
+      10               SS                       010              SS
+      11               DS                       011              DS
+                                                100              FS
+                                                101              GS
+                                                110              Reserved1
+                                                111              Reserved
+
+The MOV instruction cannot be used to load the CS register. Attempting to do so
+results in an invalid opcode exception (#UD). To load the CS register, use the far JMP,
+CALL, or RET instruction.
+
+
+register to segment register 1000 1110 : 11 sreg3 reg
+register to SS               1000 1110 : 11 sreg3 reg
+
+1000 1110 b = 8E h
+
+Offset   Opcode      Instrucao
+7D33     8EC3        MOV     ES,BX
+7C54     8ED0        MOV     SS,AX
+7D49     8EDB        MOV     DS,BX
+7C52     8ED8        MOV     DS,AX
+
+
+memory to segment reg        1000 1110 : mod sreg3 r/m
+memory to SS                 1000 1110 : mod sreg3 r/m
+
+Offset   Opcode      Instrucao
+7D40     8E06487C    MOV     ES,[7C48]
+
+
+segment register to register 1000 1100 : 11 sreg3 reg
+segment register to memory   1000 1100 : mod sreg3 r/m
+
+1000 1100 b = 8C h
+
+Offset   Opcode      Instrucao
+7D3E     8CC3        MOV     BX,ES
+

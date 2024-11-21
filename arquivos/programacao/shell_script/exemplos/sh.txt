@@ -1,0 +1,432 @@
+
+echo "hello" > /dev/tcp/192.168.0.1/80
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+At times, you may find it necessary to temporarily suspend a process, and then resume its execution at a later time. The following two commands will suspend a process, and the resume it, respectively:
+
+# kill -STOP 945
+# kill -CONT 945
+
+./teste.sh &\
+sudo kill -STOP $(ps aux | grep ./teste.sh | grep -v grep | cut -c10-14)
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+comment out the block of code
+#!/bin/bash
+
+echo "statement before comment."
+: <<'COMMENT'
+echo "This is inside the comment block and will not get printed"
+a=0
+b=20
+echo $((b/a))
+echo "No error"
+COMMENT
+
+echo "This is after the comment block."
+exit
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+caller displays the line number and source filename of the current subroutine call. 
+#!/bin/bash
+
+foo() {
+        caller 0
+        echo "In function: foo"
+}
+
+echo "Outside of the function"
+
+goo() {
+        echo "In function: goo"
+        foo
+}
+
+goo
+
+Output: ./caller.sh
+Outside of the function
+In function: goo
+13 goo ./caller.sh
+In function: foo
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Bash Script: Write debugging information to /var/log/messages
+Posted by Nikesh Jauhari
+logger is a shell command interface to the syslog system log module, it appends a user-generated message to the system log (/var/log/messages). You do not have to be root to invoke logger.
+
+Below is the simple bash script to log the debugging information to /var/log/message
+Feel free to copy and use the below code
+
+Source: cat logger.sh
+#!/bin/bash
+
+echo -n "Enter your username: "
+read username
+
+logger -i "Username $username started the script"
+
+echo -n "Enter your Password: "
+read password
+
+# This is just an sample for comparing the password
+if [ "$password" = "linuxpoison" ]; then
+        echo "welcome $username"
+        logger -i "Authentication successful for $username."
+else
+        echo "your Username or password does not match"
+        logger -i "Authentication failed for $username."
+fi
+
+ Output:
+./logger.sh
+Enter your username: nikesh
+Enter your Password: nikesh
+your Username or password does not match
+
+./logger.sh
+Enter your username: nik
+Enter your Password: linuxpoison
+welcome nik
+
+And, here is what we can see in the /var/log/message log file ....
+
+$ tail -f /var/log/message
+......
+Sep 13 13:56:53 poison poison[18790]: Username nikesh started the script
+Sep 13 13:56:55 poison poison[18792]: Authentication failed for nikesh.
+Sep 13 13:57:12 poison poison[18801]: Username nik started the script
+Sep 13 13:57:15 poison poison[18802]: Authentication successful for nik.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+var="Linuxpoison.Linuxpoison.Linuxpoison"
+echo
+echo -e "Value of var is: $var"
+echo "--------------------------------------------"
+echo 'Find all *nux from the start of the string and cut ${var##*nux} :'
+echo ${var##*nux}
+
+echo "-------------------------------------------"
+echo 'Find the first *nux from the start of the string and cut ${var#*nux} :'
+echo ${var#*nux}
+
+echo "-------------------------------------------"
+echo 'Find all .* from the back of the string and cut ${var%%.*} :'
+echo ${var%%.*}
+
+echo "------------------------------------------"
+echo 'Find first .* from the back of the string and cut ${var%.*} :'
+echo ${var%.*}
+
+Output: ./string_cut.sh
+
+Value of var is: Linuxpoison.Linuxpoison.Linuxpoison
+--------------------------------------------
+Find all *nux from the start of the string and cut ${var##*nux} :
+poison
+-------------------------------------------
+Find the first *nux from the start of the string and cut ${var#*nux} :
+poison.Linuxpoison.Linuxpoison
+-------------------------------------------
+Find all .* from the back of the string and cut ${var%%.*} :
+Linuxpoison
+------------------------------------------
+Find first .* from the back of the string and cut ${var%.*} :
+Linuxpoison.Linuxpoison
+
+Using above concept you can rename all the files withing the directory having a particular ext (eg *.foo) to any other ext (eg *.boo), using something like ....
+
+    mv ${file} "${file%.foo}.boo"
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Bash Script: Find and replace string within string
+Posted by Nikesh Jauhari
+Below is a simple bash script which will find and replace the substring withing the string. Feel free to use or modify this script.
+
+Source: cat stringreplace.sh
+#!/bin/bash
+
+echo -n "Enter main string: "
+read string
+
+echo -n "Enter the sub-string that you want to replace: "
+read old
+
+echo -n "Enter new sub-string that you want to replace with: "
+read new
+
+echo "The new string is now: ${string/$old/$new}"
+
+Result: ./stringreplace.sh 
+Enter main string: linuxpoison
+Enter the sub-string that you want to replace: poison
+Enter new sub-string that you want to replace with: os
+The new string is now: linuxos
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+Bash Script: Convert String Toupper and Tolower
+Posted by Nikesh Jauhari
+Here is a simple bash script which converts the given string to upper or to lower case.
+feel free to copy and use this script:
+
+
+Source:
+cat toupper_tolower.sh
+#!/bin/bash
+
+echo -n "Enter the String: "
+read String
+
+echo -n "Only First characters to uppercase: "
+echo ${String^}
+
+echo -n "All characters to uppercase: "
+echo ${String^^}
+
+echo -n "Only First characters to Lowercase: "
+echo ${String,}
+
+echo -n "All characters to lowercase: "
+echo ${String,,}
+
+
+Output:
+./toupper_tolower.sh
+Enter the String: linuXPoisoN
+Only First characters to uppercase: LinuXPoisoN
+All characters to uppercase: LINUXPOISON
+Only First characters to Lowercase: linuXPoisoN
+All characters to lowercase: linuxpoison
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Below is a simple script to get the length of any string.
+
+#!/bin/bash
+echo "enter the sting: "
+read str;
+
+countStringLength() {
+        echo `echo -n $1 | wc -c`
+
+        # Or can use the below trick to get the string length
+        # I prefer to use the first one - easy to use and easy to remember
+        echo ${#1}
+}
+countStringLength $str
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+Bash Script: How read file line by line (best and worst way)
+
+Input: $ cat sample.txt
+This is sample file
+This is normal text file
+
+Source: $ cat readfile.sh
+#!/bin/bash
+
+i=1;
+FILE=sample.txt
+
+# Wrong way to read the file.
+# This may cause problem, check the value of 'i' at the end of the loop
+echo "###############################"
+cat $FILE | while read line; do
+        echo "Line # $i: $line"
+        ((i++))
+done
+echo "Total number of lines in file: $i"
+
+# The worst way to read file.
+echo "###############################"
+for fileline in $(cat $FILE);do
+        echo $fileline
+done
+
+# This is correct way to read file.
+echo "################################"
+k=1
+while read line;do
+        echo "Line # $k: $line"
+        ((k++))
+done < $FILE
+echo "Total number of lines in file: $k"
+
+Output: $ ./readfile.sh
+###############################
+Line # 1: This is sample file
+Line # 2: This is normal text file
+Total number of lines in file: 1
+###############################
+This
+is
+sample
+file
+This
+is
+normal
+text
+file
+################################
+Line # 1: This is sample file
+Line # 2: This is normal text file
+Total number of lines in file: 3 
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Bash Script: Read the passwod without showing on the screen
+
+$ cat readpass.sh 
+
+#!/bin/bash
+echo -n "Enter your username: ";
+read username
+echo -n "Enter your passwd: "
+read -s passwd
+echo
+echo "$username, your passwd is $passwd";
+
+Output:  
+$ ./readpass.sh
+Enter your username: nikesh
+Enter your passwd:
+nikesh, your passwd is linuxpoison
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Bash Script: How to read password without dispalying on the terminal
+
+#!/bin/bash
+
+# Here the input passwd string will get display on the terminal
+echo -n "Enter your passwd: "
+read passwd
+echo
+echo "Ok, your passwd is: $passwd"
+echo
+
+# Now, lets turn off the display of the input field.
+stty -echo
+echo -n "Again, please enter your passwd: "
+read passwd
+echo
+echo "Ok, your passwd is: $passwd"
+echo
+stty echo
+
+Output: ./passwd.sh
+Enter your passwd: linuxpoison
+
+Ok, your passwd is: linuxpoison
+
+Again, please enter your passwd:
+Ok, your passwd is: linuxpoison.blog@gmail.com
+
+As you can see above in the scrip, with the use of stty we can enable or disable the screen echo.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Bash Script: Set the timeout for reading the user input
+
+Source: cat timeout.sh
+#!/bin/bash
+
+TMOUT=5
+echo -n "Enter you username: "
+read username
+
+if [[ -z $username ]]; then
+        # No username provide
+        username="Not Set"
+        echo "Timeout, Run this script again and set your valid username..."
+fi
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Bash Script: Execute loop in background withing a script
+
+Source: cat background-loop.sh
+#!/bin/bash
+
+for i in 1 2 3 4 5 6 7 8 9 10; do
+  echo -n $i
+done &
+
+for i in a b c d e f g h i j k; do
+  echo -n $i
+done
+echo
+
+Output: ./background-loop.sh
+abcdef1gh23ij4k5
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#!/bin/bash
+for i in {1..10..2}
+do
+    echo $i
+done
+
+=== Output ====
+1
+3
+5
+7
+9
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Source: cat time_taken.sh
+#!/bin/bash
+
+for i in {1..10}; do
+        sleep 1
+        echo $i
+done
+
+echo "Total time taken by this script: $SECONDS"
+
+Output: ./time_taken.sh
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+Total time taken by this script: 10
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#!/bin/bash
+checkInteger(){
+        if [ $1 -eq $1 2> /dev/null ]; then
+                echo "$1 is a integer"
+        else
+                echo "$1 is not a integer"
+        fi
+}
+
+echo "Enter the value: ";
+read num;
+checkInteger $num
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+

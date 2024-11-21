@@ -1,0 +1,36 @@
+; escreve uma string diretamente na memória de vídeo
+
+.model small
+.stack
+.code
+
+start:
+
+mov ax,@data
+mov ds,ax
+
+mov ax,0B800h 		; segmento do buffer de vídeo
+mov es,ax 		; coloca em es
+mov ah,3 		; atributo - ciano
+mov cx,17 		; comprimento da string a escrever
+mov si,OFFSET Text 	; DX:SI aponta para a string
+xor di,di
+
+Wr_Char:
+
+lodsb 			; coloca próximo caracter em al 
+mov es:[di],al 		; escreve caracter na memória de video
+inc di 			; move para a próxima coluna
+mov es:[di],ah 		; escreve atributo na memória de video
+inc di
+
+loop Wr_Char 		; repetir até terminar
+
+mov ax,4C00h 		; retornar para o DOS
+int 21h
+
+.data
+
+Text DB "This is some text" 
+
+end start

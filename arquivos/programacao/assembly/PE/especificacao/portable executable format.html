@@ -1,0 +1,2065 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+
+
+<title>PORTABLE EXECUTABLE FORMAT</title>
+
+<style type="text/css">
+
+<!-- A:HOVER {font-weight:bold;color:#3399FF} -->
+
+</style>
+
+</head><body leftmargin="50" text="#e0e0e0" vlink="#ffd0d0" bgcolor="#000000" link="#d0d0ff">
+
+<br>
+
+<center><h2>THE<br>PORTABLE EXECUTABLE FORMAT</h2></center>
+
+
+<big><a name="EXPORTS">5. Exports</a></big><br>
+
+<br>
+
+<br>
+
+A typical file layout for the export information follows:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">DIRECTORY TABLE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">ADDRESS TABLE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">NAME PTR TABLE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">ORDINAL TABLE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">NAME STRINGS</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<br>
+
+<br>    
+
+Figure 4.  Export File Layout<br>
+
+<br>
+
+5.1 Export Directory Table<br>
+
+<br>
+
+The export information begins with the Export Directory Table which
+
+describes the remainder of the export information.  The Export
+
+Directory Table contains address information that is used to resolve
+
+fixup references to the entry points within this image.<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td colspan="2" align="center">EXPORT FLAGS</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center">TIME/DATA STAMP</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="150" align="center">MAJOR VERSION</td>
+
+    <td width="150" align="center">MINOR VERSION</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center">NAME RVA</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center">ORDINAL BASE</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center"># EAT ENTRIES</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center"># NAME PTRS</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center">ADDRESS TABLE RVA</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center">NAME PTR TABLE RVA</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center">ORDINAL TABLE RVA</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<br>
+
+<br>    
+
+Figure 5.  Export Directory Table Entry<br>
+
+<br>
+
+EXPORT FLAGS = DD Currently set to zero.<br>
+
+<br>
+
+TIME/DATE STAMP = DD Time/Date the export data was created.<br>
+
+<br>
+
+MAJOR/MINOR VERSION = DW  A user settable major/minor version number.<br>
+
+<br>
+
+NAME RVA = DD Relative Virtual Address of the Dll asciiz Name.
+
+This is the address relative to the Image Base.<br>
+
+<br>
+
+ORDINAL BASE = DD First valid exported ordinal.
+
+This field specifies the starting ordinal number for the export
+
+address table for this image.  Normally set to 1.<br>
+
+<br>
+
+# EAT ENTRIES = DD Indicates number of entries in the Export Address
+
+Table.<br>
+
+<br>
+
+# NAME PTRS = DD This indicates the number of entries in the
+
+ Name Ptr Table (and parallel Ordinal Table).<br>
+
+<br>
+
+ADDRESS TABLE RVA = DD Relative Virtual Address of the Export Address
+
+Table.<br>
+
+This address is relative to the Image Base.<br>
+
+<br>
+
+NAME TABLE RVA = DD Relative Virtual Address of the Export Name Table
+
+Pointers.<br>
+
+This address is relative to the beginning of the Image Base.  This
+
+table is an array of RVA's with # NAMES entries.<br>
+
+<br>
+
+ORDINAL TABLE RVA = DD Relative Virtual Address of Export Ordinals
+
+Table Entry.<br>
+
+This address is relative to the beginning of the Image Base.<br>
+
+<br>
+
+5.2 Export Address Table<br>
+
+<br>
+
+The Export Address Table contains the address of exported entrypoints
+
+and exported data and absolutes.  An ordinal number is used to index
+
+the Export Address Table. The ORDINAL BASE must be subracted from the
+
+ordinal number before indexing into this table.<br>
+
+<br>
+
+Export Address Table entry formats are described below:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">EXPORTED RVA</td>
+
+  </tr>
+
+</tbody></table>
+
+<br>    
+
+Figure 6.  Export Address Table Entry<br>
+
+<br>
+
+EXPORTED RVA = DD Export address.<br>
+
+This field contains the relative virtual address of the exported
+
+entry (relative to the Image Base).<br>
+
+<br>
+
+5.3 Export Name Table Pointers<br>
+
+<br>
+
+The export name table pointers array contains address into the Export
+
+Name Table.  The pointers are 32-bits each, and are relative to the
+
+Image Base.  The pointers are ordered lexically to allow binary
+
+searches.<br>
+
+<br>
+
+5.4 Export Ordinal Table<br>
+
+<br>
+
+The Export Name Table Pointers and the Export Ordinal Table form two
+
+parallel arrays, separated to allow natural field alignment.  The
+
+export ordinal table array contains the Export Address Table ordinal
+
+numbers associated with the named export referenced by corresponding
+
+Export Name Table Pointers.<br>
+
+<br>
+
+The ordinals are 16-bits each, and already include the Ordinal Base
+
+stored in the Export Directory Table.<br>
+
+<br>
+
+5.5 Export Name Table<br>
+
+<br>
+
+The export name table contains optional ASCII names for exported
+
+entries in the image.  These tables are used with the array of Export
+
+
+
+Name Table Pointers and the array of Export Ordinals to translate a
+
+procedure name string into an ordinal number by searching for a
+
+matching name string.  The ordinal number is used to locate the entry
+
+point information in the export address table.<br>
+
+<br>
+
+Import references by name require the Export Name Table Pointers
+
+table to be binary searched to find the matching name, then the
+
+corresponding Export Ordinal Table is known to contain the entry
+
+point ordinal number.  Import references by ordinal number provide
+
+the fastest lookup since searching the name table is not required.<br>
+
+<br>
+
+Each name table entry has the following format:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="300" align="center">ASCII STRING ::: ::::::::   '\0'</td>
+
+  </tr>
+
+</tbody></table>
+
+<br>    
+
+Figure 7.  Export Name Table Entry<br>
+
+<br>
+
+ASCII STRING = DB ASCII String.<br>
+
+The string is case sensitive and is terminated by a null byte.<br>
+
+<br>
+
+<br>
+
+<hr>
+
+<br>
+
+<br>
+
+
+
+<big><a name="IMPORTS">6. Imports</a></big><br>
+
+
+
+<br>
+
+A typical file layout for the import information follows:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">DIRECTORY TABLE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">NULL DIR ENTRY</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">DLL1 LOOKUP TABLE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">NULL</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">DLL2 LOOKUP TABLE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">NULL</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">DLL3 LOOKUP TABLE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">NULL</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">HINT-NAME TABLE</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">DLL1 ADDRESS TABLE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">NULL</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">DLL2 ADDRESS TABLE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">NULL</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">DLL3 ADDRESS TABLE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">NULL</td>
+
+  </tr>
+
+</tbody></table><br>   
+
+<br>
+
+Figure 8.  Import File Layout<br>
+
+<br>
+
+<br>
+
+6.1 Import Directory Table<br>
+
+<br>
+
+The import information begins with the Import Directory Table which
+
+describes the remainder of the import information.  The Import
+
+Directory Table contains address information that is used to resolve
+
+fixup references to the entry points within a DLL image.  The import
+
+directory table consists of an array of Import Directory Entries, one
+
+entry for each DLL this image references. The last directory entry is
+
+empty (NULL) which indicates the end of the directory table.<br>
+
+<br>
+
+An Import Directory Entry has the following format:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="25" align="center">0</td>
+
+    <td colspan="2" align="center">IMPORT FLAGS</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="25" align="center">4</td>
+
+    <td colspan="2" align="center">TIME/DATA STAMP</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="25" align="center">8</td>
+
+    <td width="150" align="center">MAJOR VERSION</td>
+
+    <td width="150" align="center">MINOR VERSION</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="25" align="center">12</td>
+
+    <td colspan="2" align="center">NAME RVA</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="25" align="center">16</td>
+
+    <td colspan="2" align="center">IMPORT LOOKUP TABLE RVA</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="25" align="center">20</td>
+
+    <td colspan="2" align="center">IMPORT ADDRESS TABLE RVA</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<br>
+
+Figure 9.  Import Directory Entry<br>
+
+<br>
+
+<br>
+
+IMPORT FLAGS = DD Currently set to zero.<br>
+
+<br>
+
+TIME/DATE STAMP = DD Time/Date the import data was pre-snapped or
+
+zero if not pre-snapped.<br>
+
+<br>
+
+MAJOR/MINOR VERSION = DW  The major/minor version number of the dll
+
+being referenced.<br>
+
+<br>
+
+NAME RVA = DD Relative Virtual Address of the Dll asciiz Name.
+
+This is the address relative to the Image Base.<br>
+
+<br>
+
+IMPORT LOOKUP TABLE RVA<br>
+
+ = DD This field contains the address of the
+
+start of the import lookup table for this image.  The address is
+
+relative to the beginning of the Image Base.<br>
+
+<br>
+
+IMPORT ADDRESS TABLE RVA = DD This field contains the address of the
+
+start of the import addresses for this image.  The address is
+
+relative to the beginning of the Image Base.<br>
+
+<br>
+
+6.2 Import Lookup Table<br>
+
+<br>
+
+The Import Lookup Table is an array of ordinal or hint/name RVA's for
+
+each DLL. The last entry is empty (NULL) which indicates the end of
+
+the table.<br>
+
+<br>
+
+The last element is empty.<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">ORDINAL#/HINT-NAME TABLE RVA</td>
+
+  </tr>
+
+</tbody></table>
+
+<br>
+
+Figure 10.  Import Address Table Format<br>
+
+<br>
+
+ORDINAL/HINT-NAME TABLE RVA = 31-bits (mask = 7fffffffh) Ordinal
+
+Number or Name Table RVA.
+
+If the import is by ordinal, this field contains a 31 bit ordinal
+
+number.  If the import is by name, this field contains a 31 bit
+
+address relative to the Image Base to the Hint-Name Table.<br>
+
+<br>
+
+O = 1-bit (mask = 80000000h) Import by ordinal flag.
+
+
+
+<li>00000000h __Import by name.</li><br>
+
+<li>80000000h __Import by ordinal.</li><br>
+
+<br> 
+
+6.3 Hint-Name Table<br>
+
+<br>
+
+The Hint-Name Table format follows:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="150" align="center">HINT</td>
+
+    <td width="150" align="center">ASCII STRING</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="150" align="center">xxxxx</td>
+
+    <td width="150" align="center">'\0' PAD</td>
+
+  </tr>
+
+</tbody></table>
+
+<br>
+
+    The PAD field is optional.<br>
+
+<br>
+
+Figure 11.  Import Hint-Name Table<br>
+
+<br>
+
+HINT = DW Hint into Export Name Table Pointers.
+
+The hint value is used to index the Export Name Table Pointers array,
+
+allowing faster by-name imports.  If the hint is incorrect, then a
+
+binary search is performed on the Export Name Ptr Table.<br>
+
+<br>
+
+ASCII STRING = DB ASCII String.
+
+The string is case sensitive and is terminated by a null byte.<br>
+
+<br>
+
+PAD = DB Zero pad byte.
+
+A trailing zero pad byte appears after the trailing null byte if
+
+necessary to align the next entry on an even boundary.<br>
+
+<br>
+
+The loader overwrites the import address table when loading the image
+
+with the 32-bit address of the import.<br>
+
+<br>
+
+<br>
+
+<br>
+
+6.4 Import Address Table<br>
+
+<br>
+
+The Import Address Table is an array of addresses of the imported
+
+routines for each DLL. The last entry is empty (NULL) which indicates
+
+the end of the table.<br>
+
+<br>
+
+<hr>
+
+<br>
+
+<br>
+
+<big><a name="THREADLOCALSTORAGE">7. Thread Local Storage</a></big><br>
+
+<br>
+
+<br>
+
+Thread local storage is a special contiguous block of data. Each
+
+thread will gets its own block upon creation of the thread.<br>
+
+<br>
+
+The file layout for thread local storage follows:<br>
+
+
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">DIRECTORY TABLE</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">TLS DATA</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">INDEX VARIABLE</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">CALLBACK ADDRESSES</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<br>
+
+Figure 12.  Thread Local Storage Layout<br>
+
+<br>
+
+7.1 Thread Local Storage Directory Table<br>
+
+<br>
+
+The Thread Local Storage Directory Table contains address information
+
+that is used to describe the rest of TLS.<br>
+
+<br>
+
+The Thread Local Storage Directory Table has the following format:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">START DATA BLOCK VA</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">END DATA BLOCK VA</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">INDEX VA</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">CALLBACK TABLE VA</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<br>    
+
+Figure 13.  Thread Local Storage Directory Table<br>
+
+<br>
+
+START DATA BLOCK VA = DD Virtual Address of the start of the thread
+
+local storage data block.<br>
+
+<br>
+
+END DATA BLOCK VA = DD Virtual Address of the end of the thread local
+
+storage data block.<br>
+
+<br>
+
+INDEX VA = DD  Virtual Address of the index variable used to access
+
+the thread local storage data block.<br>
+
+<br>
+
+CALLBACK TABLE VA = DD Virtual Address of the callback table.<br>
+
+<br>
+
+7.2 Thread Local Storage CallBack Table<br>
+
+<br>
+
+The Thread <br>
+
+Local Storage Callbacks is an array of Virtual Address of
+
+functions to be called by the loader after thread creation and thread
+
+termination. The last entry is empty (NULL) which indicates the end
+
+of the table.<br>
+
+<br>
+
+The Thread Local Storage CallBack Table has the following format:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">FUNCTION1 VA</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">FUNCTION2 VA</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">&nbsp;</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">NULL</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<br>    
+
+Figure 14.  Thread Local Storage CallBack Table<br>
+
+<br>
+
+<big><a name="RESOURCES">8. Resources</a></big><br>
+
+<br>
+
+Resources are indexed by a multiple level binary-sorted tree
+
+structure.  The overall design can incorporate 2**31 levels, however,
+
+NT uses only three:  the highest is TYPE, then NAME, then LANGUAGE.<br>
+
+<br>
+
+A typical file layout for the resource information follows:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">RESOURCE DIRECTORY</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">RESOURCE DATA</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<br>
+
+Figure 15.  Resource File Layout<br>
+
+<br>
+
+<br>
+
+The Resource directory is made up of the following tables:<br>
+
+<br>
+
+<br>
+
+8.1 Resource Directory Table<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td colspan="2" align="center">RESOURCE FLAGS</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center">TIME/DATE STAMP</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="150" align="center">MAJOR VERSION</td>
+
+    <td width="150" align="center">MINOR VERSION</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="150" align="center">#NAME ENTRY</td>
+
+    <td width="150" align="center">#ID ENTRY</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center">RESOURCE DIR ENTRIES</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<br>
+
+Figure 16.  Resource Table Entry<br>
+
+<br>
+
+<br>
+
+<br>
+
+RESOURCE FLAGS = DD Currently set to zero.<br>
+
+<br>
+
+TIME/DATE  STAMP = DD Time/Date the resource data was created by the
+
+resource compiler.<br>
+
+<br>
+
+MAJOR/MINOR VERSION = DW  A user settable major/minor version number.<br>
+
+<br>
+
+# NAME ENTRY = DW The number of name entries.<br>
+
+This field contains the number of entries at the beginning of the
+
+array of directory entries which have actual string names associated
+
+with them.<br>
+
+<br>
+
+# ID ENTRY = DW The number of ID integer entries.<br>
+
+This field contains the number of 32-bit integer IDs as their names
+
+in the array of directory entries.<br>
+
+<br>
+
+The resource directory is followed by a variable length array of
+
+directory entries.  # NAME ENTRY is the number of entries at the
+
+beginning of the array that have actual names associated with each
+
+entry.  The entires are in ascending order, case insensitive strings.
+
+# ID ENTRY identifies the number of entries that have 32-bit integer
+
+IDs as their name.  These entries are also sorted in ascending order.<br>
+
+<br>
+
+This structure allows fast lookup by either name or number, but for 
+
+any given resource entry only one form of lookup is supported, not
+
+both. This is consistent with the syntax of the .RC file and the .RES
+
+file.<br>
+
+<br>
+
+<br>
+
+<br>
+
+The array of directory entries have the following format:<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">NAME RVA/INTEGER ID</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">DATA ENTRY RVA/SUBDIR RVA</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<br>
+
+Figure 17.  Resource Directory Entry<br>
+
+<br>
+
+<br>
+
+INTERGER ID = DD ID.<br>
+
+This field contains a integer ID field to identify a resource.<br>
+
+<br>
+
+NAME RVA = DD Name RVA address.<br>
+
+This field contains a 31-bit address relative to the beginning of the
+
+Image Base to a Resource Directory String Entry.<br>
+
+<br>
+
+E = 1-bit (mask 80000000h) Unescape bit.<br>
+
+This bit is zero for unescaped Resource Data Entries.<br>
+
+<br>
+
+DATA RVA = 31-bits (mask 7fffffffh) Data entry address.<br>
+
+This field contains a 31-bit address relative to the beginning of the
+
+Image Base to a Resource Data Entry.<br>
+
+<br>
+
+E = 1-bit (mask 80000000h) Escape bit.<br>
+
+This bit is 1 for escaped Subdirectory Entry.<br>
+
+<br>
+
+DATA RVA = 31-bits (mask 7fffffffh) Directory entries.<br>
+
+This field contains a 31-bit address relative to the beginning of the
+
+Image Base to Subdirectory Entry.<br>
+
+<br>
+
+<br>
+
+<br>
+
+Each resource directory string entry has the following format:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">LENGTH</td>
+
+    <td width="200" align="center">UNICODE STRING</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<br>
+
+Figure 18.  Resource Directory String Entry<br>
+
+<br>
+
+<br>
+
+LENGTH = DW Length of string.<br>
+
+<br>
+
+UNICODE STRING = DW UNICODE String.<br>
+
+<br>
+
+All of these string sections are stored together after the last
+
+resource directory entry and before the first resource data section.
+
+This minimizes the impact of these variable length sections on the
+
+alignment of the fixed size directory entry sections. The length needs
+
+to be word aligned.<br>
+
+<br>
+
+<br>
+
+<br>
+
+Each Resource Data Entry has the following format:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="center">DATA RVA</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">SIZE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">CODEPAGE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="200" align="center">RESERVED</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<br>    
+
+Figure 19.  Resource Data Entry<br>
+
+<br>
+
+<br>
+
+<br>
+
+DATA RVA = DD Address of Resource Data.<br>
+
+This field contains 32-bit virtaul address of the resource data 
+
+(relative to the Image Base).<br>
+
+<br>
+
+SIZE = DD Size of Resource Data.<br>
+
+This field contains the size of the resource data for this resource.<br>
+
+<br>
+
+CODEPAGE = DD Codepage.<br>
+
+<br>
+
+RESERVED = DD Reserved - must be zero.<br>
+
+<br>
+
+Each resource data entry describes a leaf node in the resource
+
+directory tree.  It contains an address which is  relative to the
+
+beginning of Image Base, a size field that gives the number of bytes
+
+of data at that address, a CodePage that should be used when decoding
+
+code point values within the resource data.  Typically for new
+
+applications the code page would be the unicode code page.<br>
+
+<br>
+
+<br>
+
+<br>
+
+8.2 Resource Example<br>
+
+<br>
+
+The following is an example for an app. which wants to use the following data
+
+as resources:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <th width="100" align="center">TypeId#</th>
+
+    <th width="100" align="center">NameId#</th>
+
+    <th width="100" align="center">Language Id</th>
+
+    <th width="100" align="center">Resource Data</th>
+
+  </tr>
+
+  <tr>
+
+    <td width="100" align="center">00000001</td>
+
+    <td width="100" align="center">00000001</td>
+
+    <td width="100" align="center">0</td>
+
+    <td width="100" align="center">00010001</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="100" align="center">00000001</td>
+
+    <td width="100" align="center">00000001</td>
+
+    <td width="100" align="center">1</td>
+
+    <td width="100" align="center">10010001</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="100" align="center">00000001</td>
+
+    <td width="100" align="center">00000002</td>
+
+    <td width="100" align="center">0</td>
+
+    <td width="100" align="center">00010002</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="100" align="center">00000001</td>
+
+    <td width="100" align="center">00000003</td>
+
+    <td width="100" align="center">0</td>
+
+    <td width="100" align="center">00010003</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="100" align="center">00000002</td>
+
+    <td width="100" align="center">00000001</td>
+
+    <td width="100" align="center">0</td>
+
+    <td width="100" align="center">00020001</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="100" align="center">00000002</td>
+
+    <td width="100" align="center">00000002</td>
+
+    <td width="100" align="center">0</td>
+
+    <td width="100" align="center">00020002</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="100" align="center">00000002</td>
+
+    <td width="100" align="center">00000003</td>
+
+    <td width="100" align="center">0</td>
+
+    <td width="100" align="center">00020003</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="100" align="center">00000002</td>
+
+    <td width="100" align="center">00000004</td>
+
+    <td width="100" align="center">0</td>
+
+    <td width="100" align="center">00020004</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="100" align="center">00000009</td>
+
+    <td width="100" align="center">00000001</td>
+
+    <td width="100" align="center">0</td>
+
+    <td width="100" align="center">00090009</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="100" align="center">00000009</td>
+
+    <td width="100" align="center">00000001</td>
+
+    <td width="100" align="center">0</td>
+
+    <td width="100" align="center">00090009</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="100" align="center">00000009</td>
+
+    <td width="100" align="center">00000001</td>
+
+    <td width="100" align="center">1</td>
+
+    <td width="100" align="center">10090009</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="100" align="center">00000009</td>
+
+    <td width="100" align="center">00000001</td>
+
+    <td width="100" align="center">2</td>
+
+    <td width="100" align="center">20090009</td>
+
+  </tr>
+
+</tbody></table><br>
+
+<br>
+
+Then the Resource Directory in the Portable format looks like:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="600" align="left">
+
+    <pre>
+Offset         Data
+
+0000:   00000000 00000000 00000000 00030000  (3 entries in this directory)
+
+0010:   00000001 80000028 
+
+    (TypeId #1, Subdirectory at offset 0x28)
+
+0018:   00000002 80000050     (TypeId #2, Subdirectory at offset 0x50)
+
+0020:   00000009 80000080     (TypeId #9, Subdirectory at offset 0x80)
+
+0028:   00000000 00000000 00000000 00030000  (3 entries in this directory)
+
+0038:   00000001 800000A0     (NameId #1, Subdirectory at offset 0xA0)
+
+0040:   00000002 00000108     (NameId #2, data desc at offset 0x108)
+
+0048:   00000003 00000118     (NameId #3, data desc at offset 0x118)
+
+0050:   00000000 00000000 0000000000040000  (4 entries in this directory)
+
+0060:   00000001 00000128     (NameId #1, data desc at offset 0x128)
+
+0068:   00000002 00000138     (NameId #2, data desc at offset 0x138)
+
+0070:   00000003 00000148     (NameId #3, data desc at offset 0x148)
+
+0078:   00000004 00000158     (NameId #4, data desc at offset 0x158)
+
+0080:   00000000 00000000 00000000 00020000  (2 entries in this directory)
+
+0090:   00000001 00000168     (NameId #1, data desc at offset 0x168)
+
+0098:   00000009 800000C0     (NameId #9, Subdirectory at offset 0xC0)
+
+00A0:   00000000 00000000 00000000 00020000  (2 entries in this directory)
+
+00B0:   00000000 000000E8     (Language ID 0, data desc at offset 0xE8
+
+00B8:   00000001 000000F8     (Language ID 1, data desc at offset 0xF8
+
+00C0:   00000000 00000000 00000000 00030000  (3 entries in this directory)
+
+00D0:   00000001 00000178     (Language ID 0, data desc at offset 0x178
+
+00D8:   00000001 00000188     (Language ID 1, data desc at offset 0x188
+
+00E0:   00000001 00000198     (Language ID 2, data desc at offset 0x198
+
+
+
+00E8:   000001A8  (At offset 0x1A8, for TypeId #1, NameId #1, Language id #0
+
+        00000004  (4 bytes of data)
+
+        00000000  (codepage)
+
+        00000000  (reserved)
+
+00F8:   000001AC  (At offset 0x1AC, for TypeId #1, NameId #1, Language id #1
+
+        00000004  (4 bytes of data)
+
+        00000000  (codepage)
+
+        00000000  (reserved)
+
+0108:   000001B0  (At offset 0x1B0, for TypeId #1, NameId #2,
+
+        00000004  (4 bytes of data)
+
+        00000000  (codepage)
+
+
+
+        00000000  (reserved)
+
+0118:   000001B4  (At offset 0x1B4, for TypeId #1, NameId #3,
+
+        00000004  (4 bytes of data)
+
+        00000000  (codepage)
+
+        00000000  (reserved)
+
+0128:   000001B8  (At offset 0x1B8, for TypeId #2, NameId #1,
+
+        00000004  (4 bytes of data)
+
+        00000000  (codepage)
+
+        00000000  (reserved)
+
+0138:   000001BC  (At offset 0x1BC, for TypeId #2, NameId #2,
+
+        00000004  (4 bytes of data)
+
+        00000000  (codepage)
+
+        00000000  (reserved) 0
+
+148:    000001C0  (At offset 0x1C0, for TypeId #2, NameId #3,
+
+        00000004  (4 bytes of data)
+
+        00000000  (codepage)
+
+        00000000  (reserved)
+
+0158:   000001C4  (At offset 0x1C4, for TypeId #2, NameId #4,
+
+        00000004  (4 bytes of data)
+
+        00000000  (codepage)
+
+        00000000  (reserved)
+
+0168:   000001C8  (At offset 0x1C8, for TypeId #9, NameId #1,
+
+        00000004  (4 bytes of data)
+
+        00000000  (codepage)
+
+        00000000  (reserved)
+
+0178:   000001CC  (At offset 0x1CC, for TypeId #9, NameId #9, Language id #0
+
+        00000004  (4 bytes of data)
+
+        00000000  (codepage)
+
+        00000000  (reserved)
+
+0188:   000001D0  (At offset 0x1D0, for TypeId #9, NameId #9, Language id #1
+
+        00000004  (4 bytes of data)
+
+        00000000  (codepage)
+
+        00000000  (reserved)
+
+0198:   000001D4  (At offset 0x1D4, for TypeId #9, NameId #9, Language id #2
+
+        00000004  (4 bytes of data)
+
+        00000000  (codepage)
+
+        00000000  (reserved)</pre>
+
+    </td>
+
+  </tr>
+
+</tbody></table><br>
+
+<br>
+
+And the data for the resources will look like:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="200" align="left">
+
+    <pre>
+01A8:          00010001
+
+01AC:          10010001
+
+01B0:          00010002
+
+01B4:          00010003
+
+01B8:          00020001
+
+01BC:          00020002
+
+01C0:          00020003
+
+01C4:          00020004
+
+01C8:          00090001
+
+01CC:          00090009
+
+01D0:          10090009
+
+01D4:          20090009</pre>
+
+  </td>
+
+ </tr>
+
+</tbody></table>
+
+<br>
+
+<big><a name="FIXUPTABLE">9. Fixup Table</a></big><br>
+
+<br>
+
+The Fixup Table contains entries for all fixups in the image. The
+
+Total Fixup Data Size in the PE Header is the number of bytes in the
+
+fixup table. The fixup table is broken into blocks of fixups. Each
+
+block represents the fixups for a 4K page.<br>
+
+<br>
+
+Fixups that are resolved by the linker do not need to be processed by
+
+the loader, unless the load image can't be loaded at the Image Base
+
+specified in the PE Header.<br>
+
+<br>
+
+9.1 Fixup Block<br>
+
+<br>
+
+Fixup blocks have the following format:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td colspan="2" align="center">PAGE RVA</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center">BLOCK SIZE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="150" align="center">TYPE/OFFSET</td>
+
+    <td width="150" align="center">TYPE/OFFSET</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="150" align="center">TYPE/OFFSET</td>
+
+    <td width="150" align="center">...</td>
+
+  </tr>
+
+</tbody></table>
+
+<br>    
+
+Figure 20.  Fixup Block Format<br>
+
+<br>
+
+To apply a fixup, a delta needs to be calculated.  The 32-bit delta
+
+is the difference between the preferred base, and the base where the
+
+image is actually loaded.  If the image is loaded at its preferred
+
+base, the delta would be zero, and thus the fixups would not have 
+
+to be applied. Each block must start on a DWORD boundary. The ABSOLUTE
+
+fixup type can be used to pad a block.<br>
+
+<br>
+
+PAGE RVA = DD Page RVA. The image base plus the page rva is added to
+
+each offset to create the virtual address of where the fixup needs to
+
+be applied.<br>
+
+<br>
+
+BLOCK SIZE = DD Number of bytes in the fixup block. This includes the
+
+PAGE RVA and SIZE fields.<br>
+
+<br>
+
+TYPE/OFFSET is defined as:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td width="150" align="center">TYPE</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="150" align="center">OFFSET</td>
+
+  </tr>
+
+</tbody></table>
+
+<br>
+
+Figure 21.  Fixup Record Format<br>
+
+<br>
+
+TYPE = 4-bit fixup type. This value has the following definitions:<br>
+
+<br>
+
+  o  0h __ABSOLUTE. This is a NOP. The fixup is skipped.
+
+<br>     
+
+  o  1h __HIGH. Add the high 16-bits of the delta to the 16-bit field
+
+     at Offset.  The 16-bit field represents the high value of a 32-
+
+     bit word.
+
+<br>     
+
+  o  2h __LOW. Add the low 16-bits of the delta to the 16-bit field
+
+     at Offset.  The 16-bit field represents the low half value of a
+
+     32-bit word.  This fixup will only be emitted for a RISC machine
+
+     when the image Section Align isn't the default of 64K.
+
+<br>     
+
+  o  3h __HIGHLOW. Apply the 32-bit delta to the 32-bit field at
+
+     Offset.
+
+<br>     
+
+  o  4h __HIGHADJUST. This fixup requires a full 32-bit value.  The
+
+     high 16-bits is located at Offset, and the low 16-bits is
+
+     located in the next Offset array element (this array element is
+
+     included in the SIZE field). The two need to be combined into a
+
+     signed variable.  Add the 32-bit delta.  Then a dd 0x8000 and
+
+     store the high 16-bits of the signed variable to the 16-bit
+
+     field at Offset.
+
+<br>     
+
+  o  5h __MIPSJMPADDR.
+
+<br>
+
+All other values are reserved.<br>
+
+<br>
+
+<br>
+
+<big><a name="DEBUGINFORMATION">10. Debug Information</a></big><br>
+
+<br>
+
+The debug information is defined by the debugger and is not
+
+controlled by the portable EXE format or linker.  The only data
+
+defined by the portable EXE format is the Debug Directory Table.<br>
+
+<br>
+
+10.1 Debug Directory<br>
+
+<br>
+
+The debug directory table consists of one or more entries that have
+
+the following format:<br>
+
+<br>
+
+<table bgcolor="#102030" border="1" bordercolor="#aaaaaa" cellpadding="2" cellspacing="0">
+
+  <tbody><tr>
+
+    <td colspan="2" align="center">DEBUG FLAGS</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center">TIME/DATA STAMP</td>
+
+  </tr>
+
+  <tr>
+
+    <td width="150" align="center">MAJOR VERSION</td>
+
+    <td width="150" align="center">MINOR VERSION</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center">DEBUG TYPE</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center">DATA SIZE</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center">DATA RVA</td>
+
+  </tr>
+
+  <tr>
+
+    <td colspan="2" align="center">DATA SEEK</td>
+
+  </tr>
+
+</tbody></table>
+
+<br>    
+
+Figure 22.  Debug Directory Entry<br>
+
+<br>
+
+DEBUG FLAGS = DD Set to zero for now.<br>
+
+<br>
+
+TIME/DATE STAMP = DD Time/Date the debug data was created.<br>
+
+<br>
+
+MAJOR/MINOR VERSION = DW Version stamp.
+
+This stamp can be used to determine the version of the debug data.<br>
+
+<br>
+
+DEBUG TYPE = DD Format type.
+
+To support multiple debuggers, this field determines the format of
+
+the debug information. This value has the following definitions:<br>
+
+<br>
+
+  o  0001h __Image contains COFF symbolics.<br>    
+
+  o  0001h __Image contains CodeView symbolics.<br>
+
+  o  0001h __Image contains FPO symbolics.<br>
+
+<br>
+
+DATA SIZE = DD The number of bytes in the debug data. This is the
+
+size of the actual debug data and does not include the debug
+
+directory.<br>
+
+<br>
+
+DATA RVA = DD The relative virtual address of the debug data. This
+
+address is relative to the beginning of the Image Base.<br>
+
+<br>
+
+DATA SEEK = DD The seek value from the beginning of the file to the
+
+debug data.<br>
+
+<br>
+
+If the image contains more than one type of debug information, then
+
+the next debug directory will immediately follow the first debug
+
+directory.<br>
+
+<br>
+
+<center>
+
+<hr>
+
+<br>
+
+<br>
+
+<big>
+
+<h2><a name="LINKS">Related topics</a></h2>
+
+<br>
+
+<br>
+
+<a href="http://msdn.microsoft.com/msdnmag/issues/02/02/PE/default.aspx" target="_parent">
+
+Peering Inside the PE: A Tour of the Win32 Portable Executable File Format </a><br>
+
+<small>By Matt Pietrek</small><br>
+
+<br>
+
+<a href="http://www.fortunecity.com/millenium/firemansam/962/html/procdump.html" target="_parent">
+
+ProcDump homepage</a><br>
+
+<small>Dumper/PE Editor</small><br>
+
+<br>
+
+<hr>
+
+<br>
+
+</big>
+
+</center>
+
+</body></html>

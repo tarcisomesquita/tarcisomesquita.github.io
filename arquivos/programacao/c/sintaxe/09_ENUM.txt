@@ -1,0 +1,11 @@
+
+ENUM
+
+É uma lista de variáveis do tipo int.
+
+enum {
+  fernanda = 6,
+  tarciso = 5
+};
+
+Se não for definido, é atribuido os valores 0, 1, 2, 3, ...

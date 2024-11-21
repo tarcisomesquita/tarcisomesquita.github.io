@@ -1,0 +1,3 @@
+
+PUSHF/PUSHFD – Push Flags Register onto the Stack    1001 1100
+

@@ -1,0 +1,13 @@
+
+
+Instrução JZ ou JE
+
+Proposito: Salto condicional.
+
+Sintaxe:
+JZ símbolo
+
+a instrucao salta se esta equal ou se esta zero.
+
+o salto e feito se ZF esta ativado (ZF=1).
+

@@ -1,0 +1,30 @@
+int MessageBox(
+    HWND hWnd,         // manipulador da janela proprietária
+    LPCTSTR lpText,    // endereço do texto da message box
+    LPCTSTR lpCaption, // endereço do título da message box
+    UINT uType         // estilo da message box
+);
+
+O valor de retorno da função é um inteiro e os parâmetros exigidos são:
+
+    hWnd: é o manipulador (handle) da janela-mãe. Você pode considerar o manipulador como um número que representa a janela. O valor deste número não é importante, apenas lembre-se de que representa uma janela. Quando você quiser fazer alguma coisa com a janela, refira-se a ela através do seu manipulador.
+    lpText: é um ponteiro para o texto que se quer mostrar na área cliente da janela. Um ponteiro, na realidade, é o endereço de alguma coisa. Um ponteiro para uma string de texto é igual ao endereço de memória onde está esta a string.
+    lpCaption: é um ponteiro para o título da janela.
+    uType: especifica o ícone e o número e tipo de botões na janela message box.
+
+
+
+TituloJanela db "Tutorial NumaBoa 3",0
+TextoJanela db "Message Box NumaBoa",0
+
+
+push MB_OK
+push offset TituloJanela
+push offset TextoJanela
+push NULL
+call MessageBox
+
+
+invoke MessageBox, NULL, addr TextoJanela, addr TituloJanela, MB_OK+MB_ICONEXCLAMATION
+
+

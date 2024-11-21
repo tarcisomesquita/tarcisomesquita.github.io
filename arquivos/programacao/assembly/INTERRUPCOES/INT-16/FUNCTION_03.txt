@@ -1,0 +1,34 @@
+
+Set Typematic Rate (03h)
+
+The Set Typematic Rate keyboard BIOS function is called to program the typematic delay and rate associated with holding down a key on the keyboard.
+
+Input Parameters:
+        AH - 03h, indicating the Set Typematic Rate Function.
+        AL - 05h
+        BH - typematic delay before repeat starts, as follows:
+                00h - 250 milliseconds.
+                01h - 500 milliseconds.
+                02h - 750 milliseconds.
+                03h - 1,000 milliseconds (1 second).
+        BL - typematic rate in characters per second, as follows:
+                00h - 30.0 CPS.       01h - 26.7 CPS.
+                02h - 24.0 CPS.       03h - 21.8 CPS.
+                04h - 20.0 CPS.       05h - 18.5 CPS.
+                06h - 17.1 CPS.       07h - 16.0 CPS.
+                08h - 23.1 CPS.       09h - 13.3 CPS.
+                0ah - 12.0 CPS.       0bh - 10.9 CPS.
+                0ch - 10.0 CPS.       0dh - 9.2 CPS.
+                0eh - 8.6 CPS.        0fh - 8.0 CPS.
+                10h - 7.5 CPS.        11h - 6.7 CPS.
+                12h - 6.0 CPS.        13h - 5.5 CPS.
+                14h - 5.0 CPS.        15h - 4.6 CPS.
+                16h - 4.3 CPS.        17h - 4.0 CPS.
+                18h - 3.7 CPS.        19h - 3.3 CPS.
+                1ah - 3.1 CPS.        1bh - 2.7 CPS.
+                1ch - 2.5 CPS.        1dh - 2.3 CPS.
+                1eh - 2.1 CPS.        1fh - 2.0 CPS.
+
+Output Parameters:
+       none.
+

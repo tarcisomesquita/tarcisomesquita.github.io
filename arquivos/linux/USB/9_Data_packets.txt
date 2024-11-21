@@ -1,0 +1,42 @@
+
+
+Handshake packets
+
+Handshake packets consist of nothing but a PID byte, and are generally sent in response to data packets. The three basic types are ACK, indicating that data was successfully received, NAK, indicating that the data cannot be received at this time and should be retried, and STALL, indicating that the device has an error and will never be able to successfully transfer data until some corrective action (such as device initialization) is performed.
+
+USB 2.0 added two additional handshake packets, NYET which indicates that a split transaction is not yet complete. A NYET packet is also used to tell the host that the receiver has accepted a data packet, but cannot accept any more due to buffers being full. The host will then send PING packets and will continue with data packets once the device ACK's the PING. The other packet added was the ERR handshake to indicate that a split transaction failed.
+
+The only handshake packet the USB host may generate is ACK; if it is not ready to receive data, it should not instruct a device to send any.
+[edit] Token packets
+
+Token packets consist of a PID byte followed by 2 payload bytes: 11 bits of address and a 5-bit CRC. Tokens are only sent by the host, never a device.
+
+IN and OUT tokens contain a 7-bit device number and 4-bit function number (for multifunction devices) and command the device to transmit DATAx packets, or receive the following DATAx packets, respectively.
+
+An IN token expects a response from a device. The response may be a NAK or STALL response, or a DATAx frame. In the latter case, the host issues an ACK handshake if appropriate.
+
+An OUT token is followed immediately by a DATAx frame. The device responds with ACK, NAK, NYET, or STALL, as appropriate.
+
+SETUP operates much like an OUT token, but is used for initial device setup. It is followed by an 8-byte DATA0 frame with a standardized format.
+
+Every millisecond (12000 full-bandwidth bit times), the USB host transmits a special SOF (start of frame) token, containing an 11-bit incrementing frame number in place of a device address. This is used to synchronize isochronous data flows. High-bandwidth USB 2.0 devices receive 7 additional duplicate SOF tokens per frame, each introducing a 125 µs "microframe" (60000 high-bandwidth bit times each).
+
+USB 2.0 added a PING token, which asks a device if it is ready to receive an OUT/DATA packet pair. The device responds with ACK, NAK, or STALL, as appropriate. This avoids the need to send the DATA packet if the device knows that it will just respond with NAK.
+
+USB 2.0 also added a larger 3-byte SPLIT token with a 7-bit hub number, 12 bits of control flags, and a 5-bit CRC. This is used to perform split transactions. Rather than tie up the high-bandwidth USB bus sending data to a slower USB device, the nearest high-bandwidth capable hub receives a SPLIT token followed by one or two USB packets at high bandwidth, performs the data transfer at full or low bandwidth, and provides the response at high bandwidth when prompted by a second SPLIT token. The details are complex; see the USB specification.
+[edit] Data packets
+
+A data packet consists of the PID followed by 0–1023 bytes of data payload (up to 1024 in high bandwidth, at most 8 at low bandwidth), and a 16-bit CRC.
+
+There are two basic data packets, DATA0 and DATA1. They must always be preceded by an address token, and are usually followed by a handshake token from the receiver back to the transmitter. The two packet types provide the 1-bit sequence number required by Stop-and-wait ARQ. If a USB host does not receive a response (such as an ACK) for data it has transmitted, it does not know if the data was received or not; the data might have been lost in transit, or it might have been received but the handshake response was lost.
+
+To solve this problem, the device keeps track of the type of DATAx packet it last accepted. If it receives another DATAx packet of the same type, it is acknowledged but ignored as a duplicate. Only a DATAx packet of the opposite type is actually received.
+
+When a device is reset with a SETUP packet, it expects an 8-byte DATA0 packet next.
+
+USB 2.0 added DATA2 and MDATA packet types as well. They are used only by high-bandwidth devices doing high-bandwidth isochronous transfers which need to transfer more than 1024 bytes per 125 µs "microframe" (8192 kB/s).
+[edit] PRE "packet"
+
+Low-bandwidth devices are supported with a special PID value, PRE. This marks the beginning of a low-bandwidth packet, and is used by hubs which normally do not send full-bandwidth packets to low-bandwidth devices. Since all PID bytes include four 0 bits, they leave the bus in the full-bandwidth K state, which is the same as the low-bandwidth J state. It is followed by a brief pause during which hubs enable their low-bandwidth outputs, already idling in the J state, then a low-bandwidth packet follows, beginning with a sync sequence and PID byte, and ending with a brief period of SE0. Full-bandwidth devices other than hubs can simply ignore the PRE packet and its low-bandwidth contents, until the final SE0 indicates that a new packet follows.
+
+

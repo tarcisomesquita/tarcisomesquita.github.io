@@ -1,0 +1,46 @@
+Sintaxe:
+for (exp1;exp2;exp3) {
+  comandos;
+}
+
+comandos que controlam o loop:
+continue
+   Salta o restante do loop e testa novamente a condição.
+
+break
+   Sai do loop.
+
+exp1 executada antes do loop. Ex.: i = 0
+exp2 inicia uma volta se exp2 for verdadeira. Ex.: i < 2
+exp3 executada no final de uma volta. Ex.: i = i + 1
+
+Para exp1 e exp3 pode-se usar mais de uma expressão separadas por vírgula.
+exp1, exp2 e exp3 são opcionais. Se exp2 for omitida, o loop é infinito.
+
+for ( ; ; ) {
+  scanf("%d",&c);
+  if (c == 'A') break; // interrompe o loop infinito
+}
+printf("Fim do Loop!\n");
+
+
+Loop Vazio
+for (i=0; i<10; i++);
+
+
+// Exibe o conteudo de um vetor, a soma e a media seus elementos
+#include <stdio.h>
+
+int main() {
+  int i, vetor[6] = {12,3,1,2,10,9};
+  long soma;
+  float media;
+  
+  for (soma=0,i=0; i < 6; i++){
+    printf("vetor[%d]: %d\n", i , vetor[i]);
+    soma += vetor[i];
+  }
+  
+  media = soma/6.0; // 6.0 por que divisão de inteiros retorna apenas a parte inteira
+  printf("Soma: %ld\nMedia: %f\n\n", soma, media);
+}

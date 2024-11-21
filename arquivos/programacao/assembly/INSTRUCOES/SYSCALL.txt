@@ -1,0 +1,35 @@
+0F 05 SYSCALL  Fast call to privilege level 0 system procedures.
+Only for 64.
+
+SYSCALL saves the RIP of the instruction following SYSCALL to RCX and loads a new RIP from the IA32_LSTAR (64-bit mode). Upon return, SYSRET copies the value saved in RCX to the RIP.
+
+SYSCALL saves RFLAGS (lower 32 bit only) in R11. It then masks RFLAGS with an OS-defined value using the IA32_FMASK (MSR C000_0084).
+None of the bits in RFLAGS are automatically cleared (except for RF). SYSRET restores RFLAGS from R11 (the lower 32 bits only).
+
+Software should not alter the CS or SS descriptors in a manner that violates the following assumptions made by SYSCALL/SYSRET:
+• The CS and SS base and limit remain the same for all processes, including the operating system (the base is 0H and the limit is 0FFFFFFFFH).
+• The CS of the SYSCALL target has a privilege level of 0.
+• The CS of the SYSRET target has a privilege level of 3.
+SYSCALL/SYSRET do not check for violations of these assumptions.
+
+IF (CS.L ≠ 1 ) or (IA32_EFER.LMA ≠ 1) or (IA32_EFER.SCE ≠ 1)
+(* Not in 64-Bit Mode or SYSCALL/SYSRET not enabled in IA32_EFER *)
+THEN #UD; FI;
+RCX ← RIP;
+RIP ← LSTAR_MSR;
+R11 ← EFLAGS;
+EFLAGS ← (EFLAGS MASKED BY IA32_FMASK);
+CPL ← 0;
+CS(SEL) ← IA32_STAR_MSR[47:32];
+CS(DPL) ← 0;
+CS(BASE) ← 0;
+CS(LIMIT) ← 0xFFFFF;
+CS(GRANULAR) ← 1;
+SS(SEL) ← IA32_STAR_MSR[47:32] + 8;
+SS(DPL) ← 0;
+
+SS(BASE) ← 0;
+SS(LIMIT) ← 0xFFFFF;
+SS(GRANULAR) ← 1;
+
+

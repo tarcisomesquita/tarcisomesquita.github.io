@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 99.1 release (March 30, 1999)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Error Codes returned by USB Core Functions</TITLE>
+<META NAME="description" CONTENT="Error Codes returned by USB Core Functions">
+<META NAME="keywords" CONTENT="usbdoc">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v99.1 release">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="usbdoc.css">
+
+<LINK REL="previous" HREF="node31.html">
+<LINK REL="up" HREF="node29.html">
+<LINK REL="next" HREF="node33.html">
+</HEAD>
+
+<BODY ><!doctype html public "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="de">
+<meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+<link REL="STYLESHEET" HREF="/zope/style.css" type="text/css">
+<script language="JavaScript"><!-- 
+  if(top.frames.length > 0) top.location.href=self.location; 
+  //--></script>
+</head>
+<body bgcolor="#FFFFFF" TOPMARGIN="1" LEFTMARGIN="3" MARGINWIDTH="3" MARGINHEIGHT="1">
+<a name=top></a>
+<!-- Kopfzeile mit Logos -->
+<center>
+<table width="100%" border="0" cellpadding="4" cellspacing="4">
+<tr>
+
+<td align="left" valign="middle">
+<a href="http://www.lrr.in.tum.de/"><img src="http://www.lrr.in.tum.de/zope/images/lrr_tum_logo_png" alt="LRR-TUM-Logo" height="74" width="67" border="0" />
+</a>
+</td>
+<td align="center" valign="middle">
+<a href="http://www.in.tum.de" target="_intum">
+<font COLOR="#A1A1A1" size=+2>Department of</font> <font COLOR="#0075CF" size=+2>Informatics</font></a><br>
+<a href="http://www.tum.de" taget="_blank">
+<font COLOR="#BFBFBF">Technische Universit&auml;t M&uuml;nchen</font></a><br>
+<font COLOR="#0075CF" size=+1> Informatik X: Rechnertechnik und Rechnerorganisation / Parallelrechnerarchitektur</font><br>
+
+<a href="http://www.lrr.in.tum.de/zope/people/bode"><font
+COLOR="#0075CF" size=-1>Prof. Dr. Arndt Bode</font></a>
+<font COLOR="#0075CF" size=-1>,</font>
+<a href="http://www.lrr.in.tum.de/zope/people/gerndt"><font
+COLOR="#0075CF" size=-1>Prof. Dr. Hans Michael Gerndt</font></a>
+</td>
+<td align="right" valign="middle">
+<a href="http://www.lrr.in.tum.de/zope/abacus"><img src="http://www.lrr.in.tum.de/zope/abakus50x50.gif" alt="abakus50x50.gif" height="51" width="50" border="0" /></a>
+</td>
+</tr>
+</table>
+</center>
+<!-- Ende Kopfzeile -->
+<!--Begin Horizontal Navigation-->
+<center>
+<table border="0" width="100%" cellpadding="2" cellspacing="2" bgcolor="FFFFFF">
+
+<tr>
+<td nowrap align="center" valign="middle"><font size="+1">
+&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope">Home</a>&nbsp;
+
+							|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/address">Addresses</a>&nbsp;
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/people">Staff</a>&nbsp;
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/research">Research</a>&nbsp;
+
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/lectures">Lectures</a>&nbsp;
+											</font></td></tr>
+<!--End Horizontal Navigation-->
+<tr><td bgcolor="#dddddd">
+<table width=100% border=0>
+<tr>
+<td align=left>
+
+                
+            
+</td>
+<td align=right>
+<a href="http://www.lrr.in.tum.de/zope/search">Search</a>&nbsp;
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</center>
+<!-- Ende Header -->
+
+<!--Navigation Panel-->
+<A NAME="tex2html539"
+ HREF="node33.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next_motif.gif"></A> 
+<A NAME="tex2html533"
+ HREF="node29.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_motif.gif"></A> 
+<A NAME="tex2html529"
+ HREF="node31.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="previous_motif.gif"></A> 
+<A NAME="tex2html535"
+ HREF="node2.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents_motif.gif"></A> 
+<A NAME="tex2html537"
+ HREF="node34.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html540"
+ HREF="node33.html">Bibliography</A>
+<B> Up:</B> <A NAME="tex2html534"
+ HREF="node29.html">Error Codes</A>
+<B> Previous:</B> <A NAME="tex2html530"
+ HREF="node31.html">URB Error Codes</A>
+ &nbsp <B>  <A NAME="tex2html536"
+ HREF="node2.html">Contents</A></B> 
+ &nbsp <B>  <A NAME="tex2html538"
+ HREF="node34.html">Index</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION10061300000000000000">
+Error Codes returned by USB Core Functions</A>
+</H3>
+
+<P>
+
+<UL>
+<LI><TT> usb_register()</TT>:
+
+<P>
+ 
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"><TT> -EINVAL</TT></TD>
+<TD ALIGN="LEFT">Error during registering new driver.</TD>
+</TR>
+</TABLE>
+
+<P>
+ </LI>
+<LI><TT> usb_terminate_bulk()</TT>:
+
+<P>
+ 
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"><TT> -ENODEV</TT></TD>
+<TD ALIGN="LEFT">URB already removed.</TD>
+</TR>
+</TABLE>
+
+<P>
+ </LI>
+<LI><TT> usb_get_*/usb_set_*()</TT>:
+
+<P>
+All USB errors (submit/status) can occur.</LI>
+</UL>
+
+<P>
+
+<BR><HR>
+<ADDRESS>
+<I>Detlef Fliegl</I>
+<BR><I>2001-01-08</I>
+</ADDRESS>
+  <table class="changed" align="right">
+    <tr>
+	<td>
+		(none)
+	</td>
+      <td>
+        <a href="javascript:{var a='arch',b='mailbode.in.tum.de';location='mailto:'+a+'@'+b}">Webmaster</a>
+      </td>
+    </tr>
+
+  </table>
+
+</body></html>
+</BODY>
+</HTML>

@@ -1,0 +1,6 @@
+cat /media/lubuntu/A/bol_2020-02-05/boletim_teste.pdf | nc  -N -n 192.168.0.45 9100
+teve problema com acentos
+
+pdftops /media/lubuntu/A/bol_2020-02-05/boletim_teste.pdf
+cat /media/lubuntu/A/bol_2020-02-05/boletim_teste.ps | nc  -N -n 192.168.0.45 9100
+

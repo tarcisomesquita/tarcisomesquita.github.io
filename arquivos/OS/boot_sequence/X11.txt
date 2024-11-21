@@ -1,0 +1,3 @@
+#programas iniciados pelo X11
+#ro_X11_AUTOSTART="/etc/xdg/autostart"
+

@@ -1,0 +1,49 @@
+
+SUB AX,BX equivale a:
+
+NOT BX
+ADD BX,1
+ADD AX,BX
+
+SUB – Integer Subtraction
+ register1 to register2      0010 100w : 11 reg1 reg2
+ register2 to register1      0010 101w : 11 reg1 reg2
+ memory to register          0010 101w : mod reg r/m
+ register to memory          0010 100w : mod reg r/m
+ immediate to register       1000 00sw : 11 101 reg : immediate data
+ immediate to AL, AX, or EAX 0010 110w : immediate data
+ immediate to memory         1000 00sw : mod 101 r/m : immediate data
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+SUB—Subtract
+
+Subtracts the second operand (source operand) from the first operand (destination operand) and stores the result in the destination operand. 
+
+Sets the OF and CF flags to indicate an overflow in the signed or unsigned result, respectively. The SF flag indicates the sign of the signed result.
+
+Flags Affected
+The OF, SF, ZF, AF, PF, and CF flags are set according to the result.
+
+Exemplos:
+   MOV   AL,0x55; tendo OF=0, SF=1, ZF=0, AF=0, PF=0, and CF=0
+se SUB   AL,0x02, temos OF=0, SF=0, ZF=0, AF=0, PF=1, and CF=0
+se SUB   AL,0x55, temos OF=0, SF=0, ZF=1, AF=0, PF=1, and CF=0
+se SUB   AL,0x57, temos OF=0, SF=1, ZF=0, AF=1, PF=0, and CF=1
+
+
+Com n bits podemos representar valores com sinal entre
+-2^(n-1) e 2^(n-1)-1
+
+para n = 8 temos:
+-128 d =  80 h   e    127 d =  7F h
+
+   MOV   AL,0x81; tendo OF=0, SF=1, ZF=0, AF=0, PF=0, and CF=0
+se SUB   AL,0xFF, temos OF=0, SF=1, ZF=0, AF=1, PF=1, and CF=1
+se SUB   AL,0x01, temos OF=0, SF=1, ZF=0, AF=0, PF=0, and CF=0
+se SUB   AL,0x02, temos OF=1, SF=0, ZF=0, AF=1, PF=0, and CF=0 e AL=7F
+se SUB   AL,0x03, temos OF=1, SF=0, ZF=0, AF=1, PF=1, and CF=0 e AL=7E
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+

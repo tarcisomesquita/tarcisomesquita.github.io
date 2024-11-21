@@ -1,0 +1,688 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 99.1 release (March 30, 1999)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Transfer Data Structures &amp; Macros</TITLE>
+<META NAME="description" CONTENT="Transfer Data Structures &amp; Macros">
+<META NAME="keywords" CONTENT="usbdoc">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v99.1 release">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="usbdoc.css">
+
+<LINK REL="next" HREF="node24.html">
+<LINK REL="previous" HREF="node22.html">
+<LINK REL="up" HREF="node22.html">
+<LINK REL="next" HREF="node24.html">
+</HEAD>
+
+<BODY ><!doctype html public "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="de">
+<meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+<link REL="STYLESHEET" HREF="/zope/style.css" type="text/css">
+<script language="JavaScript"><!-- 
+  if(top.frames.length > 0) top.location.href=self.location; 
+  //--></script>
+</head>
+<body bgcolor="#FFFFFF" TOPMARGIN="1" LEFTMARGIN="3" MARGINWIDTH="3" MARGINHEIGHT="1">
+<a name=top></a>
+<!-- Kopfzeile mit Logos -->
+<center>
+<table width="100%" border="0" cellpadding="4" cellspacing="4">
+<tr>
+
+<td align="left" valign="middle">
+<a href="http://www.lrr.in.tum.de/"><img src="http://www.lrr.in.tum.de/zope/images/lrr_tum_logo_png" alt="LRR-TUM-Logo" height="74" width="67" border="0" />
+</a>
+</td>
+<td align="center" valign="middle">
+<a href="http://www.in.tum.de" target="_intum">
+<font COLOR="#A1A1A1" size=+2>Department of</font> <font COLOR="#0075CF" size=+2>Informatics</font></a><br>
+<a href="http://www.tum.de" taget="_blank">
+<font COLOR="#BFBFBF">Technische Universit&auml;t M&uuml;nchen</font></a><br>
+<font COLOR="#0075CF" size=+1> Informatik X: Rechnertechnik und Rechnerorganisation / Parallelrechnerarchitektur</font><br>
+
+<a href="http://www.lrr.in.tum.de/zope/people/bode"><font
+COLOR="#0075CF" size=-1>Prof. Dr. Arndt Bode</font></a>
+<font COLOR="#0075CF" size=-1>,</font>
+<a href="http://www.lrr.in.tum.de/zope/people/gerndt"><font
+COLOR="#0075CF" size=-1>Prof. Dr. Hans Michael Gerndt</font></a>
+</td>
+<td align="right" valign="middle">
+<a href="http://www.lrr.in.tum.de/zope/abacus"><img src="http://www.lrr.in.tum.de/zope/abakus50x50.gif" alt="abakus50x50.gif" height="51" width="50" border="0" /></a>
+</td>
+</tr>
+</table>
+</center>
+<!-- Ende Kopfzeile -->
+<!--Begin Horizontal Navigation-->
+<center>
+<table border="0" width="100%" cellpadding="2" cellspacing="2" bgcolor="FFFFFF">
+
+<tr>
+<td nowrap align="center" valign="middle"><font size="+1">
+&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope">Home</a>&nbsp;
+
+							|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/address">Addresses</a>&nbsp;
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/people">Staff</a>&nbsp;
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/research">Research</a>&nbsp;
+
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/lectures">Lectures</a>&nbsp;
+											</font></td></tr>
+<!--End Horizontal Navigation-->
+<tr><td bgcolor="#dddddd">
+<table width=100% border=0>
+<tr>
+<td align=left>
+
+                
+            
+</td>
+<td align=right>
+<a href="http://www.lrr.in.tum.de/zope/search">Search</a>&nbsp;
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</center>
+<!-- Ende Header -->
+
+<!--Navigation Panel-->
+<A NAME="tex2html414"
+ HREF="node24.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next_motif.gif"></A> 
+<A NAME="tex2html408"
+ HREF="node22.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_motif.gif"></A> 
+<A NAME="tex2html402"
+ HREF="node22.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="previous_motif.gif"></A> 
+<A NAME="tex2html410"
+ HREF="node2.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents_motif.gif"></A> 
+<A NAME="tex2html412"
+ HREF="node34.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html415"
+ HREF="node24.html">URB Functions</A>
+<B> Up:</B> <A NAME="tex2html409"
+ HREF="node22.html">USB Transfers</A>
+<B> Previous:</B> <A NAME="tex2html403"
+ HREF="node22.html">USB Transfers</A>
+ &nbsp <B>  <A NAME="tex2html411"
+ HREF="node2.html">Contents</A></B> 
+ &nbsp <B>  <A NAME="tex2html413"
+ HREF="node34.html">Index</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION10053100000000000000">
+Transfer Data Structures &amp; Macros</A>
+</H3>
+
+<P>
+The Linux USB subsystem uses only one data transfer structure called USB Request Block
+(URB). This structure contains all parameters to setup any USB transfer type.
+All transfer requests are sent asynchronously to the USB core and the completion
+of the request is signalled via a callback function.
+
+<P>
+
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="urb"></A><A NAME="273"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 7:</STRONG>
+URB Structure</CAPTION>
+<TR><TD><IMG
+ WIDTH="696" HEIGHT="701" BORDER="0"
+ SRC="img7.gif"
+ ALT="\begin{figure}
+\centering\index{struct urb}
+\index{URB}
+\begin{verbatim}typede...
+...desc[0]; // optional iso descriptors
+} urb_t, *purb_t;\end{verbatim}\end{figure}"></TD></TR>
+</TABLE>
+</DIV><P></P>
+
+<P>
+As shown in figure&nbsp;<A HREF="node23.html#urb">7</A> the URB structure contains elements common to all
+transfer types (marked with C). Elements marked with <IMG
+ WIDTH="16" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img8.gif"
+ ALT="$&gt;$"> are input parameters, M
+means mandatory and O means optional. Elements marked with <IMG
+ WIDTH="16" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img9.gif"
+ ALT="$&lt;$"> are return
+values. Elements marked with T are transient parameters (input and output). All
+non common elements are marked on three columns which represent control,
+interrupt and isochronous transfers. A X marks this element to be used with the
+associated transfer type.
+
+<P>
+The URB structure might look confusing but this is just an overview of its
+versatility. There are several helping macros to setup the right parameters
+but first the common elements will be explained as they are very important.
+
+<P>
+
+<UL>
+<LI><TT> dev</TT> [mandatory input parameter]
+
+<P>
+ 
+<A NAME="279"></A>
+This element is a pointer to the usb_device structure (introduced in the
+framework function&nbsp;<TT> probe</TT> section&nbsp;<A HREF="node17.html#probe_function">2.1.2</A>).
+
+<P>
+ </LI>
+<LI><TT> pipe</TT> [mandatory input parameter]
+
+<P>
+ 
+<A NAME="283"></A>
+The pipe element is used to encode the endpoint number and properties. There
+exist several macros to create an appropriate pipe value:
+
+<P>
+
+<UL>
+<LI><TT> pipe=usb_sndctrlpipe(dev,endpoint)</TT>
+
+<P>
+ 
+<TT> pipe=usb_rcvctrlpipe(dev,endpoint)</TT>
+
+<P>
+ 
+<A NAME="287"></A>
+<A NAME="288"></A>
+Creates a pipe for downstream (snd) or upstream (rcv) control transfers to a
+given endpoint. The argument <TT> dev</TT> is a pointer to a usb_device
+structure. The argument <TT> endpoint</TT> is usually 0.
+
+<P>
+ </LI>
+<LI><TT> pipe=usb_sndbulkpipe(dev,endpoint)</TT>
+
+<P>
+ 
+<TT> pipe=usb_rcvbulkpipe(dev,endpoint)</TT>
+
+<P>
+ 
+<A NAME="293"></A>
+<A NAME="294"></A>
+Creates a pipe for downstream (snd) or upstream (rcv) bulk transfers to a given
+endpoint. The endpoint is of <TT> 1&nbsp;<IMG
+ WIDTH="29" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img10.gif"
+ ALT="$&lt;=$">&nbsp;endpoint&nbsp;<IMG
+ WIDTH="29" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img10.gif"
+ ALT="$&lt;=$">&nbsp;15</TT> (depending on
+active endpoint descriptors)
+
+<P>
+ </LI>
+<LI><TT> pipe=usb_sndintpipe(dev,endpoint)</TT>
+
+<P>
+ 
+<TT> pipe=usb_rcvintpipe(dev,endpoint)</TT>
+
+<P>
+ 
+<A NAME="298"></A>
+<A NAME="299"></A>
+Creates a pipe for downstream (snd) or upstream (rcv) interrupt transfers to a
+given endpoint. The endpoint is of <TT> 1&nbsp;<IMG
+ WIDTH="29" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img10.gif"
+ ALT="$&lt;=$">&nbsp;endpoint&nbsp;<IMG
+ WIDTH="29" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img10.gif"
+ ALT="$&lt;=$">&nbsp;15</TT> (depending on
+active endpoint descriptors)
+
+<P>
+ </LI>
+<LI><TT> pipe=usb_sndisopipe(dev,endpoint)</TT>
+
+<P>
+ 
+<TT> pipe=usb_rcvisopipe(dev,endpoint)</TT>
+
+<P>
+ 
+<A NAME="303"></A>
+<A NAME="304"></A>
+Creates a pipe for downstream (snd) or upstream (rcv)  isochronous transfers to
+a given endpoint. The endpoint is of 1 <IMG
+ WIDTH="29" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img10.gif"
+ ALT="$&lt;=$"> endpoint <IMG
+ WIDTH="29" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img10.gif"
+ ALT="$&lt;=$"> 15 (depending on
+active endpoint descriptors)
+
+<P></LI>
+</UL>
+
+<P>
+ </LI>
+<LI><TT> transfer_buffer</TT> [mandatory input parameter]
+
+<P>
+ 
+<A NAME="307"></A>
+This element is a pointer to the associated transfer buffer which
+contains data transferred from or to a device. This buffer has to be allocated
+as a non-pageable contiguous physical memory block (simply use
+<TT> void&nbsp;*kmalloc(size_t,&nbsp;GFP_KERNEL);</TT>).
+
+<P>
+ </LI>
+<LI><TT> transfer_buffer_length</TT> [mandatory input parameter]
+
+<P>
+ 
+<A NAME="310"></A>
+This element specifies the size of the transfer buffer in bytes. For
+interrupt and control transfers the value has to be less or equal the maximum
+packet size of the associated endpoint. The maximum packet size can be found as
+element <TT> wMaxPacketSize</TT> of an endpoint descriptor. Because there is no
+endpoint descriptor for the default endpoint 0 which is used for all control
+transfers the maximum packet size can be found as element <TT> maxpacketsize</TT> of
+the <TT> usb_device</TT> structure.
+
+<P>
+Bulk transfers which are bigger than <TT> wMaxPacketSize</TT> are automatically split 
+into smaller portions. 
+
+<P>
+ </LI>
+<LI><TT> complete</TT> [optional input parameter]
+
+<P>
+ 
+<A NAME="316"></A>
+As noted above the USB subsystem processes requests asynchronously. This element
+allows to specify a pointer to a caller supplied handler function which is
+called after the request is completed. The purpose of this handler is to finish
+the caller specific part of the request as fast as possible because it is called
+out of the host controller's hardware interrupt handler. This even implies all
+other restrictions that apply for code which is written for interrupt handlers.
+
+<P>
+ </LI>
+<LI><TT> context</TT> [optional input parameter]
+
+<P>
+ 
+<A NAME="318"></A>
+Optionally a pointer to a request related context structure can be given.
+Figure&nbsp;<A HREF="node23.html#complete">8</A> shows a simple completion handler.
+
+<P>
+
+<P></P>
+<DIV ALIGN="CENTER"><A NAME="complete"></A><A NAME="324"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 8:</STRONG>
+A simple completion handler</CAPTION>
+<TR><TD><IMG
+ WIDTH="366" HEIGHT="110" BORDER="0"
+ SRC="img11.gif"
+ ALT="\begin{figure}
+\centering\index{complete}
+\begin{verbatim}void complete( struc...
+...* wake up sleeping requester */
+wake_up (&amp;s-&gt;wait);
+}\end{verbatim}\end{figure}"></TD></TR>
+</TABLE>
+</DIV><P></P>
+
+<P>
+ </LI>
+<LI><TT> transfer_flags</TT> [optional input parameter and return value]
+
+<P>
+ 
+<A NAME="328"></A>
+A number of transfer flags may be specified to change the behaviour when
+processing the transfer request.
+
+<P>
+
+<UL>
+<LI><TT> USB_DISABLE_SPD</TT>
+
+<P>
+ 
+<A NAME="331"></A>
+This flag disables short packets. A short packet condition occures if an
+upstream request transfers less data than maximum packet size of the associated
+endpoint.
+
+<P>
+ </LI>
+<LI><TT> USB_NO_FSBR</TT>
+
+<P>
+ 
+<A NAME="333"></A>
+
+<P>
+ </LI>
+<LI><TT> USB_ISO_ASAP</TT>
+
+<P>
+ 
+<A NAME="335"></A>
+When scheduling isochronous requests this flag tells the host controller to
+start the transfer as soon as possible. If <TT> USB_ISO_ASAP</TT> is not specified
+a start frame has to be given. It is recommended to use this flag if isochronous
+transfers do not have to be synchronized with the current frame number. The
+current frame number is a 11 bit counter that increments every millisecond
+(which is the duration of 1 frame on the bus). Further documentation can be
+found in [<A
+ HREF="node33.html#usbspec11">4</A>] sections 5.10.6 and 5.10.8.
+
+<P>
+ </LI>
+<LI><TT> USB_ASYNC_UNLINK</TT>
+
+<P>
+ 
+<A NAME="339"></A>
+<A NAME="USB_ASYNC_UNLINK"></A>When a URB has to be cancelled (see <A HREF="node24.html#usb_unlink_urb">2.3.2</A>) it can be done synchronously or
+asynchronously. Use this flag to switch on asynchronous URB unlinking.
+
+<P>
+ </LI>
+<LI><TT> USB_TIMEOUT_KILLED</TT>
+
+<P>
+ 
+<A NAME="343"></A>
+<A NAME="USB_TIMEOUT_KILLED"></A>This flag is only set by the host controller to mark the URB as killed by
+timeout. The URB status carries the actual error which caused the timeout.
+
+<P>
+ </LI>
+<LI><TT> USB_QUEUE_BULK</TT>
+
+<P>
+ 
+<A NAME="346"></A>
+<A NAME="USB_QUEUE_BULK"></A>This flag is used to allow queueing for bulk transfers. Normally only one bulk 
+transfer can be queued for an endpoint of a particular device.
+
+<P></LI>
+</UL>
+
+<P>
+ </LI>
+<LI><TT> next</TT> [optional input parameter]
+
+<P>
+ 
+<A NAME="350"></A>
+It is possible to link several URBs in a chain by using the next pointer. This
+allows you to send a sequence of USB transfer requests to the USB core. The
+chain has to be terminated by a NULL pointer or the last URB has to be linked
+with the first. This allows to automatically reschedule a number of URBs to
+transfer a continous data stream.
+
+<P>
+ </LI>
+<LI><TT> status</TT> [return value]
+
+<P>
+ 
+<A NAME="352"></A>
+This element carries the status of an ongoing or already finished request. After
+successfully sending a request to the USB core the status is
+<TT> -EINPROGRESS</TT>. The successful completion of a request is indicated
+by 0. There exist a number of error conditions which are
+documented in section&nbsp;<A HREF="node29.html#errorcodes">3.1</A>.
+
+<P>
+ </LI>
+<LI><TT> actual_length</TT> [return value]
+
+<P>
+ 
+<A NAME="356"></A>
+After a request has completed this element counts the number of bytes
+transferred.</LI>
+</UL>
+
+<P>
+The remaining elements of the URB are specific to the transfer type.
+
+<P>
+
+<UL>
+<LI>Bulk Transfers
+
+<P>
+No additional parameters have to be specified.
+
+<P>
+ </LI>
+<LI>Control Transfers
+
+<UL>
+<LI><TT> setup_packet</TT> [mandatory input parameter]
+
+<P>
+ 
+<A NAME="361"></A>
+Control transfers consist of 2 or 3 stages (see [<A
+ HREF="node33.html#usbspec11">4</A>] sections 5.5,
+8.5.2). The first stage is the downstream transfer of the setup packet. This
+element takes the pointer to a buffer containing the setup data. This buffer has
+to be allocated as a non-pageable contiguous physical memory block (simply use
+<TT> void&nbsp;*kmalloc(size_t,&nbsp;GFP_KERNEL);</TT>).</LI>
+</UL>
+
+<P>
+ </LI>
+<LI>Interrupt Transfers
+
+<UL>
+<LI><TT> start_frame</TT> [return value]
+
+<P>
+ 
+<A NAME="367"></A>
+This element is returned to indicate the first frame number the interrupt is
+scheduled. 
+
+<P>
+ </LI>
+<LI><TT> interval</TT> [mandatory input parameter]
+<A NAME="interval"></A><A NAME="370"></A>
+This element specifies the interval in milliseconds for the interrupt transfer.
+Allowed values are <TT> 1&nbsp;<IMG
+ WIDTH="29" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img10.gif"
+ ALT="$&lt;=$">&nbsp;interval&nbsp;<IMG
+ WIDTH="29" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img10.gif"
+ ALT="$&lt;=$">&nbsp;255</TT>. Specifying an interval of
+0ms causes an one shot interrupt (no automatic rescheduling is done). You
+can find the interrupt interval as element <TT> bInterval</TT> of an endpoint
+descriptor for interrupt endpoints.
+
+<P></LI>
+</UL>
+
+<P>
+ </LI>
+<LI>Isochronous Transfers
+
+<UL>
+<LI><TT> start_frame</TT> [input parameter or return value]
+
+<P>
+ 
+<A NAME="376"></A>
+This element specifies the first frame number the isochronous transfer is
+scheduled. Setting the <TT> start_frame</TT> allows to synchronize transfers to or
+from a endpoint. If the <TT> USB_ISO_ASAP</TT> flag is specified this element is
+returned to indicate the first frame number the isochonous transfer is
+scheduled.
+
+<P>
+ </LI>
+<LI><TT> number_of_packets</TT> [mandatory input parameter]
+
+<P>
+ 
+<A NAME="380"></A>
+Isochronous transfer requests are sent to the USB core as a set of
+single requests. A single requests transfers a data packet up to the maximum
+packet size of the specified endpoint (pipe). This element sets the number of
+packets for the transfer.
+
+<P>
+ </LI>
+<LI><TT> error_count</TT> [return value]
+
+<P>
+ 
+<A NAME="382"></A>
+After the request is completed (URB status is != <TT> -EINPROGRESS</TT>) this
+element counts the number of errorneous packets. Detailed information about the
+single transfer requests can be found in the <TT> iso_frame_desc</TT> structure.
+
+<P>
+ </LI>
+<LI><TT> timeout</TT> [input parameter]
+<A NAME="386"></A>
+A timeout in jiffies can be specified to automatically remove a URB from the
+host controller schedule. If a timeout happens the transfer flag <TT> 
+USB_TIMEOUT_KILLED</TT> is set. The actual transfer status carries the USB
+status which caused the timeout.
+
+<P>
+ </LI>
+<LI><TT> iso_frame_desc</TT> [mandatory input parameter]
+
+<P>
+ 
+<A NAME="389"></A>
+This additional array of structures at the end of every isochronous URB
+sets up the transfer parameters for every single request packet.
+
+<P>
+
+<UL>
+<LI><TT> offset</TT> [mandatory input parameter]
+
+<P>
+Specifies the offsetaddress to the <TT> transfer_buffer</TT> for a single request.
+
+<P>
+ </LI>
+<LI><TT> length</TT> [mandatory input parameter]
+
+<P>
+Specifies the length of the data buffer for a single packet. If <TT> length</TT> is
+set to 0 for a single request the USB frame is skipped and no transfer
+will be initiated. This option can be used to synchronize isochronous data
+streams (specified in&nbsp;[<A
+ HREF="node33.html#usbspec11">4</A>]&nbsp;section&nbsp;5.6).
+
+<P>
+ </LI>
+<LI><TT> actual_length</TT> [return value]
+
+<P>
+ 
+<A NAME="397"></A>
+Returns the actual number of bytes transferred by this request.
+
+<P>
+ </LI>
+<LI><TT> status</TT> [return value]
+
+<P>
+Returns the status of this request. Further documentation can be found in
+section&nbsp;<A HREF="node29.html#errorcodes">3.1</A>.
+
+<P></LI>
+</UL></LI>
+</UL></LI>
+</UL>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html414"
+ HREF="node24.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next_motif.gif"></A> 
+<A NAME="tex2html408"
+ HREF="node22.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_motif.gif"></A> 
+<A NAME="tex2html402"
+ HREF="node22.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="previous_motif.gif"></A> 
+<A NAME="tex2html410"
+ HREF="node2.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents_motif.gif"></A> 
+<A NAME="tex2html412"
+ HREF="node34.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html415"
+ HREF="node24.html">URB Functions</A>
+<B> Up:</B> <A NAME="tex2html409"
+ HREF="node22.html">USB Transfers</A>
+<B> Previous:</B> <A NAME="tex2html403"
+ HREF="node22.html">USB Transfers</A>
+ &nbsp <B>  <A NAME="tex2html411"
+ HREF="node2.html">Contents</A></B> 
+ &nbsp <B>  <A NAME="tex2html413"
+ HREF="node34.html">Index</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Detlef Fliegl</I>
+<BR><I>2001-01-08</I>
+</ADDRESS>
+  <table class="changed" align="right">
+    <tr>
+	<td>
+		(none)
+	</td>
+      <td>
+        <a href="javascript:{var a='arch',b='mailbode.in.tum.de';location='mailto:'+a+'@'+b}">Webmaster</a>
+      </td>
+    </tr>
+
+  </table>
+
+</body></html>
+</BODY>
+</HTML>

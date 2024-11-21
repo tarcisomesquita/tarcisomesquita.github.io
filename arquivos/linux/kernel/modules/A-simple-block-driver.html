@@ -1,0 +1,649 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><head><title>A simple block driver [LWN.net]</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="icon" href="http://lwn.net/images/favicon.png" type="image/png">
+        <link rel="alternate" type="application/rss+xml" title="LWN.net headlines" href="http://lwn.net/headlines/newrss">
+<link rel="alternate" type="application/rss+xml" title="Comments posted to this article" href="http://lwn.net/headlines/58719/">
+        <link rel="stylesheet" href="A%20simple%20block%20driver_arquivos/lwn.css">
+<link rel="stylesheet" href="A%20simple%20block%20driver_arquivos/nosub.css">
+
+        </head>
+        <body alink="Green" bgcolor="#ffffff" link="Blue" vlink="Green">
+        <table class="Page">
+<tbody><tr>
+<td class="LeftColumn">
+
+        <center>
+        <a href="http://lwn.net/"><img src="A%20simple%20block%20driver_arquivos/lcorner.png" alt="LWN.net Logo" border="0" height="120" width="153"></a>
+        </center>
+        <p>
+<ins style="display:inline-table;border:none;height:240px;margin:0;padding:0;position:relative;visibility:visible;width:120px"><ins id="aswift_0_anchor" style="display:block;border:none;height:240px;margin:0;padding:0;position:relative;visibility:visible;width:120px"><iframe allowtransparency="true" hspace="0" marginwidth="0" marginheight="0" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){i+='.call';setTimeout(h,0)}else if(h.match){i+='.nav';w.location.replace(h)}s.log&amp;&amp;s.log.push(i)}" vspace="0" id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;" frameborder="0" height="240" scrolling="no" width="120"></iframe></ins></ins>
+</p><p>
+</p><div class="SideBox">
+<p class="Header">Not logged in</p>
+<p><a href="http://lwn.net/login">Log in now</a></p><p>
+                                 </p><p><a href="http://lwn.net/newaccount">Create an account</a></p><p>
+                                 </p><p><a href="http://lwn.net/subscribe/Info">Subscribe to LWN</a></p></div>
+
+<div class="SideBox">
+<p class="Header">Weekly Edition</p>
+Return to the <a href="http://lwn.net/Articles/58199/">Kernel page</a></div>
+
+<div class="SideBox">
+<p class="Header">Recent Features</p>
+<p><a href="http://lwn.net/Articles/509577/">Testing for kernel performance regressions</a></p>
+            	<p><a href="http://lwn.net/Articles/508215/">LWN.net Weekly Edition for August 2, 2012</a></p>
+            	<p><a href="http://lwn.net/Articles/508865/">TCP Fast Open: expediting web services</a></p>
+            	<p><a href="http://lwn.net/Articles/508841/">The Nexus 7: Google ships a tablet</a></p>
+            	<p><a href="http://lwn.net/Articles/507648/">LWN.net Weekly Edition for July 26, 2012</a></p>
+            	</div>
+
+<div class="SideBox">
+<a href="http://lwn.net/Articles/58719/?format=printable" rel="nofollow">Printable page</a>
+</div>
+
+</td><!-- LC -->
+
+<td><table><tbody><tr>
+<td class="MidColumn">
+           <table class="TopNavigation">
+
+<!-- First row - content links -->
+<tbody><tr>
+  <td class="NavLink"><a href="http://lwn.net/current/">Weekly edition</a></td>
+  <td class="NavLink">
+	<a href="http://lwn.net/Kernel/">Kernel</a></td>
+  <td class="NavLink"><a href="http://lwn.net/Security/">Security</a></td>
+  <td class="NavLink">
+	<a href="http://lwn.net/Distributions/">Distributions</a></td>
+  <td class="NavLink"><a href="http://lwn.net/op/FAQ.lwn#contact">Contact Us</a> </td>
+  <td class="NavLink"><a href="http://lwn.net/Search/">Search</a> </td>
+</tr>
+<!-- Second row: navigation links -->
+<tr>
+  <td class="NavLink"><a href="http://lwn.net/Archives/">Archives</a></td>
+  <td class="NavLink"><a href="http://lwn.net/Calendar/">Calendar</a></td>
+  <td class="NavLink"><a href="http://lwn.net/subscribe/Info">Subscribe</a></td>
+  <td class="NavLink"><a href="http://lwn.net/op/AuthorGuide.lwn">Write for LWN</a></td>
+  <td class="NavLink"><a href="http://lwn.net/op/FAQ.lwn">LWN.net FAQ</a></td>
+  <td class="NavLink"><a href="http://lwn.net/op/Sponsors.lwn">Sponsors</a></td>
+</tr>
+
+</tbody></table>
+</td><td></td></tr>
+<tr><td colspan="2" class="MCTopBanner">
+<div id="beacon_f446a63fd0" style="position: absolute; left: 0px; top: 0px; visibility: hidden;"><img src="A%20simple%20block%20driver_arquivos/lg_002.gif" alt="" style="width: 0px; height: 0px;" height="0" width="0"></div>
+</td></tr><tr><td class="MidColumn">
+<div class="PageHeadline">
+<h1>A simple block driver</h1>
+<div class="Byline">[Posted November 17, 2003 by corbet]
+               <p>
+               </p></div>
+</div>
+<div class="ArticleText">
+<table class="tlr">
+<tbody><tr><td>This article is part of the LWN <a href="http://lwn.net/Articles/driver-porting/">Porting Drivers to 2.6 series</a>.
+</td></tr></tbody></table>
+
+Given the large number of changes to the 2.6 block layer, it is hard to
+know where to start describing them.  We'll begin by examining the simplest
+possible block driver.  The sbd ("simple block device") driver simulates a
+block device with a region of kernel memory; it is, essentially, a naive
+ramdisk driver implemented in less than 200 lines of code.  It will allow
+the demonstration of some changes in how 
+block drivers work with the rest of the system without the need for all the
+complexity required when one is dealing with real hardware.  Code fragments
+will be shown below; the full driver source can be found <a href="http://lwn.net/Articles/58720/">on this page</a>. 
+<p>
+If you have not read <a href="http://lwn.net/Articles/24990/">the block layer
+overview</a>, you might want to head over there for a moment; this article
+will still be here when you get back.
+</p><p>
+</p><h3>Initialization</h3>
+
+In our simple driver, the module initialization function is called
+<tt>sbd_init()</tt>.  Its job, of course, is to get set up for block
+operations and to make its disk available to the system.  The first step is
+to set up our internal data structure; within the driver a disk (<i>the</i>
+disk, in this case) is represented by:
+<p>
+</p><pre>	static struct sbd_device {
+	    unsigned long size;
+	    spinlock_t lock;
+	    u8 *data;
+	    struct gendisk *gd;
+	} Device;
+</pre>
+<p>
+Here <tt>size</tt> is the size of the device (in bytes), <tt>data</tt> is
+the array where the "disk" stores its data, <tt>lock</tt> is a spinlock for
+mutual exclusion, and <tt>gd</tt> is the kernel
+representation of our device.  
+</p><p>
+The device initialization is pretty straightforward; it is just a matter of
+allocating the memory to actually store the data and initializing the
+spinlock:
+</p><p>
+</p><pre>    Device.size = nsectors*hardsect_size;
+    spin_lock_init(&amp;Device.lock);
+    Device.data = vmalloc(Device.size);
+    if (Device.data == NULL)
+	return -ENOMEM;
+</pre>
+<p>
+(<tt>nsectors</tt> and <tt>hardsect_size</tt> are load-time parameters that
+control how big the device should be).  
+</p><p>
+About now is where block drivers traditionally register themselves with the
+kernel, and <tt>sbd</tt> does that too:
+</p><p>
+</p><pre>    major_num = register_blkdev(major_num, "sbd");
+    if (major_num &lt;= 0) {
+	printk(KERN_WARNING "sbd: unable to get major number\n");
+	goto out;
+    }
+</pre>
+<p>
+Note that, in 2.6, no device operations structure is passed to
+<tt>register_blkdev()</tt>.  As it turns out, 
+a block driver can happily get by without calling
+<tt>register_blkdev()</tt> at all.  That function does little work, at this
+point, and will likely be removed sooner or later.  About
+the only remaining tasks performed by <tt>register_blkdev()</tt> are the
+assignment of a dynamic major number (if requested), and causing the block
+driver to show up in <tt>/proc/devices</tt>.
+</p><p>
+</p><h3>Generic disks</h3>
+
+If <tt>register_blkdev()</tt> no longer does anything, where does the real
+work get done?  The answer lies in the much improved 2.6 "generic disk" (or
+"gendisk") code.  The gendisk interface is covered in <a href="http://lwn.net/Articles/25711/">a separate article</a>, so we'll look only quickly
+at how <tt>sbd</tt> does its gendisk setup. 
+<p>
+The first step is to get a <tt>gendisk</tt> structure to represent the
+<tt>sbd</tt> device:
+</p><p>
+</p><pre>    Device.gd = alloc_disk(16);
+    if (! Device.gd)
+	goto out_unregister;
+</pre>
+<p>
+Note that a memory allocation is involved, so the return value should be
+checked.  The parameter to <tt>alloc_disk()</tt> indicates the number of
+minor numbers that should be dedicated to this device.  We have requested
+16 minor numbers, meaning that the device will support 15 partitions.
+</p><p>
+The gendisk must be initialized; the <tt>sbd</tt> driver starts that task
+as follows:
+</p><p>
+</p><pre>    Device.gd-&gt;major = major_num;
+    Device.gd-&gt;first_minor = 0;
+    Device.gd-&gt;fops = &amp;sbd_ops;
+    Device.gd-&gt;private_data = &amp;Device;
+    strcpy (Device.gd-&gt;disk_name, "sbd0");
+    set_capacity(Device.gd, nsectors*(hardsect_size/KERNEL_SECTOR_SIZE));
+</pre>
+<p>
+Most of the above should be relatively self-explanatory.  The <tt>fops</tt>
+field is a pointer to the <tt>block_device_operations</tt> structure for
+this device; we'll get to that shortly.  The <tt>private_data</tt> field
+can be used by the driver, so we stick a pointer to our <tt>sbd_device</tt>
+structure there.  The <tt>set_capacity()</tt> call tells the kernel how
+large the device is.  Note that the kernel can handle block devices which
+have sectors greater than 512 bytes, but it always deals with 512-byte
+sectors internally.  So we need to normalize the sector count before
+passing it to the kernel.
+</p><p>
+Another thing that (usually) goes into the gendisk is the request queue to
+use.  The <tt>BLK_DEFAULT_QUEUE</tt> macro from 2.4 is no more; a block
+driver must explicitly create and set up the request queue(s) it will use.
+Furthermore, request queues must be allocated dynamicly, at run time.  The
+<tt>sbd</tt> driver sets up its request queue as follows:
+</p><p>
+</p><pre>    static struct request_queue *Queue;
+    /* ... */
+    Queue = blk_init_queue(sbd_request, &amp;Device.lock);
+    if (Queue == NULL)
+	    goto out;
+    blk_queue_hardsect_size(Queue, hardsect_size);
+    Device.gd-&gt;queue = Queue;
+</pre>
+<p>
+Here, <tt>sbd_request</tt> is the request function, which we will get to
+soon.  
+Note that a spinlock must be passed into <tt>blk_init_queue()</tt>.  The
+global <tt>io_request_lock</tt> is gone forevermore, and each block driver
+must manage its own locking.  Typically, the lock used by the driver to
+serialize access to internal resources is the best choice for controlling
+access to the request queue as well.  For
+that reason, the block layer expects the driver to provide a lock of its
+own for the queue.  If a nonstandard hard sector size (i.e. not 512 bytes)
+is in use, the sector size should be stored into the request queue with
+<tt>blk_queue_hardsect_size()</tt>.  Finally, a pointer to the queue must
+be stored in the <tt>gendisk</tt> structure.
+</p><p>
+At this point, the gendisk setup is complete.  All that remains is to add
+the disk to the system:
+</p><p>
+</p><pre>    add_disk(Device.gd);
+</pre>
+<p>
+Note that <tt>add_disk()</tt> may well generate I/O to the device before it
+returns - the
+driver must be in a state where it can handle requests before adding
+disks.  The driver also should not fail initialization after it has
+successfully added a disk.
+</p><p>
+</p><h3>What you don't have to do</h3>
+
+That is the end of the initialization process for the <tt>sbd</tt> driver.
+What you don't have to do is as notable as what does need to be done.
+For example, there are no assignments to global arrays; the whole set of
+global variables that used to describe block devices is gone.  There is
+also nothing here for dealing with partition setup.  Partition handling is
+now done in the generic block layer, and there is almost nothing that
+individual drivers must do at this point.  "Almost" because the driver must
+handle one <tt>ioctl()</tt> call, as described below.
+
+<p>
+</p><h3>Open and release</h3>
+
+The <tt>open</tt> and <tt>release</tt> methods (which are kept in the
+<tt>block_device_operations</tt> structure) actually have not changed since
+2.4.  The <tt>sbd</tt> driver has nothing to do at open or release time, so
+it doesn't even bother to define these methods.  Drivers for real hardware
+may need to lock and unlock doors, check for media, etc. in these methods.
+
+<p>
+</p><h3>The request method</h3>
+
+The core of a block driver, of course, is its <tt>request</tt> method.  The
+<tt>sbd</tt> driver has the simplest possible <tt>request</tt> function; it
+does not concern itself with things like request clustering, barriers,
+etc.  It does not understand the new <tt>bio</tt> structure used to
+represent requests at all.  But it works.  Real drivers will almost
+certainly require a more serious <tt>request</tt> method; see the other <a href="http://lwn.net/Articles/driver-porting/">Driver Porting Series</a> articles for the
+gory details on how to do that.
+<p>
+Here is the whole thing:
+</p><p>
+</p><pre>    static void sbd_request(request_queue_t *q)
+    {
+        struct request *req;
+    
+        while ((req = elv_next_request(q)) != NULL) {
+            if (! blk_fs_request(req)) {
+                end_request(req, 0);
+                continue;
+            }
+            sbd_transfer(&amp;Device, req-&gt;sector, req-&gt;current_nr_sectors,
+                            req-&gt;buffer, rq_data_dir(req));
+            end_request(req, 1);
+        }
+    }
+</pre>
+<p>
+
+The first thing to notice is that all of the old
+<tt>&lt;linux/blk.h&gt;</tt> cruft has been removed.  Macros like
+<tt>INIT_REQUEST</tt> (with its hidden <tt>return</tt> statement),
+<tt>CURRENT</tt>, and <tt>QUEUE_EMPTY</tt> are gone.  It is now necessary
+to deal with the request queue functions directly, but, as can be seen,
+that is not particularly hard.
+</p><p>
+Note that the <tt>Device.lock</tt> will be held on entry to the
+<tt>request</tt> function, much like <tt>io_request_lock</tt> is in 2.4. 
+</p><p>
+The function for getting the first request in the queue is now
+<tt>elv_next_request()</tt>.  A <tt>NULL</tt> return means that there are
+no more requests on the queue that are ready to process.  
+A simple request loop like this one can simply run until the request queue
+is empty; drivers for real hardware will also have to take into account how
+many operations the device can handle, of course.
+Note that this function does <i>not</i>
+actually remove the request from the queue; it just returns a properly
+adjusted view of the top request.  
+</p><p>
+Note also that, in 2.6, there can be
+multiple types of requests.  Thus the test:
+</p><p>
+</p><pre>	if (! blk_fs_request(req)) {
+	    end_request(req, 0);
+	    continue;
+	}
+</pre>
+<p>
+A nonzero return value from the <tt>blk_fs_request()</tt> macro says  "this
+is a normal filesystem request." 
+Other types of requests (i.e. packet-mode or device-specific diagnostic
+operations)  are not something that <tt>sbd</tt> supports, so it
+simply fails any such requests.  
+</p><p>
+The function <tt>sbd_transfer()</tt> is really just a <tt>memcpy()</tt>
+with some checking; see the full source if you are interested.  The key is
+in the parameters: the various fields of the <tt>request</tt> structure
+(<tt>sector</tt>, <tt>current_nr_sectors</tt>, and <tt>buffer</tt>) look
+just like they did in 2.4.  They also have the same meaning: they are a
+window looking at the first part of a (possibly larger) request.  If you
+deal with block requests at this level, you need know nothing of the
+<tt>bio</tt> structures underlying the request.  This approach only works
+for the simplest of drivers, however.
+</p><p>
+Note that the direction of the request is now found in the <tt>flags</tt>
+field, and can be tested with <tt>rq_data_dir()</tt>.  A nonzero value
+(<tt>WRITE</tt>) indicates that this is a write request.  Note also the
+absence of any code adding partition offsets; all of that is handled in the
+higher layers.
+</p><p>
+Finally, <tt>end_request()</tt> is called to finish processing of this
+request.  This function has picked up a new parameter in 2.6, being the
+pointer to the <tt>request</tt> structure.
+
+
+
+</p><p>
+</p><h3>Other block operations</h3>
+
+The two other <tt>block_device_operations</tt> methods from 2.4 -
+<tt>check_media_change()</tt> and <tt>revalidate()</tt> - have seen prototype
+changes in 2.5.  They are now called <tt>media_changed()</tt> and
+<tt>revalidate_disk()</tt>, and both take a <tt>gendisk</tt> structure as
+their only argument.  The basic task performed by these methods remains
+unchanged, however.  
+<p>
+In 2.4, a block driver's <tt>ioctl()</tt> method would handle any commands
+it understood, and pass the rest on to <tt>blk_ioctl()</tt> for generic
+processing.  In 2.6, the generic code gets the first crack at any
+<tt>ioctl()</tt> calls, and only invokes the driver for those it can't
+implement itself.  As a result, <tt>ioctl()</tt> methods in drivers can
+often be pretty small.  The <tt>sbd</tt> driver includes an <tt>ioctl</tt>
+method which handles a single command:
+</p><p>
+</p><pre>    int sbd_ioctl (struct inode *inode, struct file *filp,
+                   unsigned int cmd, unsigned long arg)
+    {
+	long size;
+	struct hd_geometry geo;
+
+	switch(cmd) {
+	/*
+	 * The only command we need to interpret is HDIO_GETGEO, since
+	 * we can't partition the drive otherwise.  We have no real
+	 * geometry, of course, so make something up.
+	 */
+	    case HDIO_GETGEO:
+		size = Device.size*(hardsect_size/KERNEL_SECTOR_SIZE);
+		geo.cylinders = (size &amp; ~0x3f) &gt;&gt; 6;
+		geo.heads = 4;
+		geo.sectors = 16;
+		geo.start = 4;
+		if (copy_to_user((void *) arg, &amp;geo, sizeof(geo)))
+			return -EFAULT;
+		return 0;
+        }
+        return -ENOTTY; /* unknown command */
+    }
+</pre>
+<p>
+
+The notion of a regular geometry has been fiction for most devices for some
+years now.  Tools like <tt>fdisk</tt> still work with cylinders, however,
+so a driver must make up some sort of convincing geometry story.  The
+<tt>sbd</tt> implementation claims four heads and 16 sectors per cylinder,
+but anything else reasonable would have worked as well.
+
+
+
+</p><p>
+</p><h3>Shutting down</h3>
+
+The last thing to look at is what happens when the module is unloaded.  We
+must, of course, clean up our various data structures and free memory - the
+usual stuff.  The <tt>sbd</tt> cleanup function looks like this:
+<p>
+</p><pre>    static void __exit sbd_exit(void)
+    {
+        del_gendisk(Device.gd);
+        put_disk(Device.gd);
+        unregister_blkdev(major_num, "sbd");
+        blk_cleanup_queue(Queue);
+        vfree(Device.data);
+    }
+</pre>
+<p>
+<tt>del_gendisk()</tt> cleans up any partitioning information, and
+generally makes the system forget about the gendisk passed to it.  The call
+to <tt>put_disk()</tt> then releases our reference to the <tt>gendisk</tt>
+structure (obtained
+when we first called <tt>alloc_disk()</tt>) so that it can be freed.  Then, of
+course, we must free the memory used for the device itself (only after the
+gendisk has been cleaned up, so we know no more operations can be
+requested), release the request queue, and unregister the block device.
+
+</p><p>
+</p><h3>Conclusion</h3>
+
+That is about as simple as it gets; the above implements a true virtual
+block device that can support a filesystem.  Real drivers, of course, will
+tend to be more complicated.  For details on how to make them more
+complicated, continue with the <a href="http://lwn.net/Articles/driver-porting/">Driver
+Porting Series</a>; the next block driver article is <a href="http://lwn.net/Articles/25711/">The Gendisk Interface</a>.<hr align="left" width="60%">
+           (<a href="https://lwn.net/login?target=/Articles/58719/">Log in</a> to post comments)
+           <p>
+           
+</p></div> <!-- ArticleText -->
+<p><a name="Comments"></a>
+
+<a name="CommAnchor66514"></a>
+</p><div class="CommentBox">
+  <p class="CommentTitle">-ENOTTY ?</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Jan 15, 2004 22:54 UTC (Thu) by <b>xav</b> (subscriber, #18536)
+       [<a href="http://lwn.net/Articles/66514/">Link</a>]
+    </p>
+    I don't understand the -ENOTTY in the sbd_ioctl(). Why not simply a -EINVAL ?
+  </div>
+  <p>
+  </p><div class="CommentReplyButton">
+    <form action="/Articles/66514/comment" method="post">
+      <input value="Reply to this comment" type="submit">
+    </form>
+  </div>
+  
+</div>
+<div class="Comment">
+
+<a name="CommAnchor295353"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">-ENOTTY ?</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Aug 25, 2008 13:07 UTC (Mon) by <b>strcmp</b> (guest, #46006)
+       [<a href="http://lwn.net/Articles/295353/">Link</a>]
+    </p>
+    because it's the documented behaviour we have to implement here. the man page ioctl(2) says:
+
+<pre>ENOTTY The specified request does not apply to the kind of object  that
+       the descriptor d references.
+</pre>
+  </div>
+  <p>
+  </p><div class="CommentReplyButton">
+    <form action="/Articles/295353/comment" method="post">
+      <input value="Reply to this comment" type="submit">
+    </form>
+  </div>
+  
+</div>
+</div>
+
+<a name="CommAnchor180519"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">insmod sbd.ko error ??</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Apr 19, 2006 8:33 UTC (Wed) by <b>gg940231</b> (guest, #37222)
+       [<a href="http://lwn.net/Articles/180519/">Link</a>]
+    </p>
+    I make ok sbd.c &lt;<a rel="nofollow" href="http://lwn.net/Articles/58720/">http://lwn.net/Articles/58720/</a>&gt;<br>
+linux 2.6.9<br>
+but some error:<br>
+<p>
+<font class="QuotedText">&gt; insmod sbd.ko</font><br>
+devfs_mk_dir: invalid argument.&lt;6&gt; sbd0: unknown partition table<br>
+</p><p>
+&gt;<br>
+  </p></div>
+  <p>
+  </p><div class="CommentReplyButton">
+    <form action="/Articles/180519/comment" method="post">
+      <input value="Reply to this comment" type="submit">
+    </form>
+  </div>
+  
+</div>
+<div class="Comment">
+
+<a name="CommAnchor184701"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">insmod sbd.ko error ??</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted May 23, 2006 6:01 UTC (Tue) by <b>sahib</b> (guest, #37878)
+       [<a href="http://lwn.net/Articles/184701/">Link</a>]
+    </p>
+    HI<br>
+         ITS ALI, I ALSO ENCOUNTERED THE SAME ERROR WHILE LOADING THAT 
+SIMPLE BLOCK DEVICE DRIVER THAT SHOWS MSG LIKE "sbd0: unknown partition 
+table"  yet i came to know that it is due to the (add_disk)function call
+ in the init function add_disk is necessary as it provide a block disk 
+for block I/O's. now i am trying to solve it further if u have solved 
+it! let me know coz i am also trying to learn this.<br>
+                                                   ALI(SAHIB) <br>
+  </div>
+  <p>
+  </p><div class="CommentReplyButton">
+    <form action="/Articles/184701/comment" method="post">
+      <input value="Reply to this comment" type="submit">
+    </form>
+  </div>
+  
+</div>
+<div class="Comment">
+
+<a name="CommAnchor245305"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">insmod sbd.ko error ??</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Aug 13, 2007 8:48 UTC (Mon) by <b>midhun001</b> (guest, #46739)
+       [<a href="http://lwn.net/Articles/245305/">Link</a>]
+    </p>
+    Hi All,<br>
+<p>
+Even I got the same error. Please share it with me if you tion for this.<br>
+</p><p>
+-Midhun<br>
+  </p></div>
+  <p>
+  </p><div class="CommentReplyButton">
+    <form action="/Articles/245305/comment" method="post">
+      <input value="Reply to this comment" type="submit">
+    </form>
+  </div>
+  
+</div>
+<div class="Comment">
+
+<a name="CommAnchor256979"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">insmod sbd.ko error ??</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Nov 3, 2007 0:39 UTC (Sat) by <b>rbartlett</b> (guest, #48846)
+       [<a href="http://lwn.net/Articles/256979/">Link</a>]
+    </p>
+    <div class="FormattedComment"><pre>The "sbd0: unknown partition table" is normal.  The allocated memory is uninitialized when the
+module is first loaded so it can't contain a valid partition table.  You can either use sfdisk
+or mkfs to create a partition table or file system in the allocated memory.  If mkfs is used,
+the driver may subsequently be mounted.
+
+I had to make a few minor changes to the driver to get it to this point.  I had to add the
+following line to the sbd_ops structure:
+".getgeo = sbd_blk_getgeo"
+Then I had to create a function sbd_blk_getgeo with the code from the HDIO_GETGEO case from
+the sbd_ioctl function.  This was because sfdisk complained that "Disk /dev/sbd0: cannot get
+geometry".
+
+The last thing I had to do was change "geo.start = 4" to geo.start = 0".  This was because
+sfdisk complained that "Warning: start=4 - this looks like a partition rather than the entire
+disk. Using fdisk on it is probably meaningless."
+
+Once these changes were made, I was able to use sfdisk and mkfs on the device and mount it as
+well.
+</pre></div>
+
+  </div>
+  <p>
+  </p><div class="CommentReplyButton">
+    <form action="/Articles/256979/comment" method="post">
+      <input value="Reply to this comment" type="submit">
+    </form>
+  </div>
+  
+</div>
+</div>
+</div>
+</div>
+
+<a name="CommAnchor257391"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">sdb_init() - Queue removal on error</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted Nov 6, 2007 16:54 UTC (Tue) by <b>bigguiness</b> (guest, #48829)
+       [<a href="http://lwn.net/Articles/257391/">Link</a>]
+    </p>
+    <div class="FormattedComment"><pre>Just a minor comment/question.
+
+In the sbd_init() function, if the register_blkdev() call fails shouldn't the Queue be removed
+(blk_cleanup_queue(Queue);) before the function exits?
+</pre></div>
+
+  </div>
+  <p>
+  </p><div class="CommentReplyButton">
+    <form action="/Articles/257391/comment" method="post">
+      <input value="Reply to this comment" type="submit">
+    </form>
+  </div>
+  
+</div>
+
+<a name="CommAnchor386083"></a>
+<div class="CommentBox">
+  <p class="CommentTitle">A simple block driver</p>
+  <div class="CommentBody">
+    <p class="CommentPoster">Posted May 4, 2010 16:08 UTC (Tue) by <b>metadaddy</b> (guest, #65872)
+       [<a href="http://lwn.net/Articles/386083/">Link</a>]
+    </p>
+    I just ported the simple block driver to 2.6.31 - see <a rel="nofollow" href="http://blog.superpat.com/2010/05/04/a-simple-block-driver-for-linux-kernel-2-6-31/">A Simple Block Driver for Linux Kernel 2.6.31</a>
+  </div>
+  <p>
+  </p><div class="CommentReplyButton">
+    <form action="/Articles/386083/comment" method="post">
+      <input value="Reply to this comment" type="submit">
+    </form>
+  </div>
+  
+</div>
+</td> <!-- MC -->
+<td class="RightColumn">
+</td>
+</tr></tbody></table></td>
+</tr></tbody></table><!-- endpage -->
+
+        <center>
+        <p>
+        <font size="-2">
+        Copyright © 2003, Eklektix, Inc.<br>
+        Comments and public postings are copyrighted by their creators.<br>
+        Linux  is a registered trademark of Linus Torvalds<br>
+        </font>
+        </p></center>
+        
+        </body></html>

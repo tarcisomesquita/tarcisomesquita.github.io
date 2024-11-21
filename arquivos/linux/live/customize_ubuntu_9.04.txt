@@ -1,0 +1,51 @@
+
+Customize ubuntu 9.04 jaunty
+
+# mkdir /media/root
+# mount -t squashfs -o loop /cdrom/casper/filesystem.squashfs /media/root
+
+# mkdir /media/arq_preto/customized-9.04
+# rsync -a /media/root/ /media/arq_preto/customized-9.04/  (cerca de 2 GiB)
+
+# mount --bind /dev/    /media/arq_preto/customized-9.04/dev
+# mount --bind /dev/pts /media/arq_preto/customized-9.04/dev/pts
+# mount --bind /dev/shm /media/arq_preto/customized-9.04/dev/shm
+
+# chroot /media/arq_preto/customized-9.04
+
+# mount -t sysfs sysfs /sys
+# mount -t proc  proc  /proc
+
+install/remove packages
+# apt-get install vlc
+# apt-get remove gimp
+
+# cat /etc/default/locale
+LANG="pt_BR.UTF-8"
+
+# mkinitramfs -o /boot/initrd.gz
+
+Cleanup the unwanted files.
+# apt-get clean
+# rm -rf /tmp/*
+# rm /etc/resolv.conf
+
+# umount -l -f /proc
+# umount -l -f /sys
+# umount /dev/pts
+# exit
+
+# rm /media/disk/casper/filesystem.squashfs
+# mksquashfs /media/arq_preto/customized-9.04 /media/disk/casper/filesystem.squashfs -comp gzip -noappend -no-recovery -processors 2 -e /media/arq_preto/customized-9.04/boot
+
+# cp /media/arq_preto/customized-9.04/boot/initrd.gz /media/disk/boot/
+
+criar linux.vdi com 722 MiB
+# dd if=/dev/sdb of=/media/arq_preto/linux.vdi bs=512 seek=7 count=1477918 conv=notrunc
+
+mkdir /media/linux
+losetup -a
+losetup -o $((7*512 + 0x3f*512)) /dev/loop1 /media/arq_preto/linux.vdi 
+mount -t vfat /dev/loop1 /media/linux/
+
+

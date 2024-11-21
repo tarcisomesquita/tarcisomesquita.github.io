@@ -1,0 +1,16 @@
+
+Push Data to Keyboard (05h)
+
+The Push Data to Keyboard keyboard BIOS function is called to push data (a character and a scan code) into the keyboard typeahead buffer.
+
+Input Parameters:
+       AH - 05h, indicating the Push Data to Keyboard Function.
+       CH - scan code to be pushed.
+       CL - character to be pushed.
+
+Output Parameters:
+       CY - set if failure, else clear if success.
+       AL - error code, as follows:
+               00h - no error.
+               01h - keyboard buffer full.
+

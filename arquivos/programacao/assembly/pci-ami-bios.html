@@ -1,0 +1,2554 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>Pinczakko's Guide to AMI BIOS Reverse Engineering - Pinczakko Official Website</title>
+</head>
+<body>
+
+
+<h3><a name="PCI_BUS">2.1. PCI Bus</a></h3>
+<p>We'll begin with the PCI bus. I've been working with this stuff for quite a while. The official 
+standard for the PCI bus system is maintained by a board named PCISIG (PCI Special Interest Group). This 
+board actually is some sort of cooperation between Intel and some other big corporation such as Microsoft. 
+Anyway, in the near future PCI bus will be fully replaced by a much more faster bus system such as Arapahoe 
+(PCI-Express a.k.a PCI-e) and Hypertransport. But PCI will still remain a standard for sometime I think. I've 
+read some of the specification of the Hypertansport bus, it's backward compatible with PCI. This means that 
+the addressing scheme will remains the same or at least only needs a minor modification. This also holds true 
+for the Arapahoe. One thing I hate about this PCI stuff is that the standard is not an open standard. Thus, you 
+gotta pay a lot to get the datasheets and whitepapers. This become my main reason providing you with this 
+sort of tute.</p>
+<p>First, PCI bus is a bus which is 32 bits wide. This imply that communicating using this bus should be in 
+32 bits <i>addressing mode</i>. Pretty logical isn't it? So, writing or reading to this bus will require 32 bits 
+addresses. Note that eventhough there is a 64-bit PCI bus, it's not <i>natively</i> supported, since PCI uses a <i>dual 
+address cycle</i> to implement it. So, we can say that PCI primarily a 32-bit bus system.
+</p>
+<p>Second, this bus system is defined in the port <b>CF8h - CFBh</b> which acts as the configuration address port 
+and port <b>CFCh - CFFh</b> which acts as the configuration data port. These ports are used to configure the 
+corresponding PCI chip, i.e. reading/writing the PCI chip configuration register values.</p>
+<p>Third, this bus system force us to communicate with PCI chips with the following algorithm 
+(from host CPU point of view): 
+</p>
+<ol>
+<li> Write the target bus number, device number, function number and offset/register number to the 
+		Configuration Address Port and set the Enable bit in it to one. In plain english, write the address 
+		of the register you're willing to read/write into the PCI address port.
+		</li>
+<li> Perform a one-byte, two-byte, or four-byte I/O read from or a write to the Configuration Data Port.
+		In plain english, write/read the data you're willing to read/write into the PCI data port.
+		</li>
+</ol>
+As a note, as far as I know every bus/communication protocol implemented in chip design today uses similar 
+algorithm to communicate with another chip which has a different bus protocol.
+<p>With the above definition, now I'll provide you with an x86 assembly code snippet that shows how to use 
+those configuration ports.</p>
+<table border="1" width="100%">
+<tbody><tr bgcolor="#cccccc"><td align="center" valign="middle" width="7%"><b>No.</b></td><td align="center" valign="middle" width="27%"><b>Mnemonic (masm syntax)</b></td><td align="center" valign="middle" width="66%"><b>Comment</b></td></tr><tr><td align="center" valign="middle" width="7%">1</td><td align="left" valign="middle" width="27%"><tt>pushad</tt></td><td align="left" valign="middle" width="66%">save all the contents of General Purpose 
+						Registers</td></tr><tr><td align="center" valign="middle" width="7%">2</td><td align="left" valign="middle" width="27%"><tt>mov eax,80000064h</tt></td><td align="left" valign="middle" width="66%">put the address of the PCI chip register to be 
+				accessed in eax (offset <b>64h</b> device 00:00:00 or hostbridge)</td></tr><tr><td align="center" valign="middle" width="7%">3</td><td align="left" valign="middle" width="27%"><tt>mov dx,0CF8h</tt></td><td align="left" valign="middle" width="66%">put the address port in dx. Since this is PCI, 
+				we use <b>CF8h</b> as the port to open an access to the device.</td></tr><tr><td align="center" valign="middle" width="7%">4</td><td align="left" valign="middle" width="27%"><tt>out dx,eax</tt></td><td align="left" valign="middle" width="66%">send the PCI address port to the I/O space of 
+				the processor</td></tr><tr><td align="center" valign="middle" width="7%">5</td><td align="left" valign="middle" width="27%"><tt>mov dx,0CFCh</tt></td><td align="left" valign="middle" width="66%">put the data port in dx. Since this is PCI, we 
+				use <b>CFCh</b> as the data port to communicate with the device.</td></tr><tr><td align="center" valign="middle" width="7%">6</td><td align="left" valign="middle" width="27%"><tt>in eax,dx</tt></td><td align="left" valign="middle" width="66%">put the data read from the device in eax</td></tr><tr><td align="center" valign="middle" width="7%">7</td><td align="left" valign="middle" width="27%"><tt>or eax, 00020202</tt></td><td align="left" valign="middle" width="66%">modify the data (this is only example, don't 
+						try this in your machine, it may hang or even destroy your machine)</td></tr><tr><td align="center" valign="middle" width="7%">8</td><td align="left" valign="middle" width="27%"><tt>out dx,eax</tt></td><td align="left" valign="middle" width="66%">send it back ....</td></tr><tr><td align="center" valign="middle" width="7%">9</td><td align="left" valign="middle" width="27%"><tt>............</tt></td><td align="left" valign="middle" width="66%">-</td></tr><tr><td align="center" valign="middle" width="7%">10</td><td align="left" valign="middle" width="27%"><tt>popad</tt></td><td align="left" valign="middle" width="66%">pop all the saved register</td></tr><tr><td align="center" valign="middle" width="7%">11</td><td align="left" valign="middle" width="27%"><tt>ret</tt></td><td align="left" valign="middle" width="66%">return...</td></tr></tbody>
+</table>
+<p>I think the code above clear enough. In line one the current data in the processors general purpose 
+registers were saved. Then comes the crucial part. As I said above, PCI is 32 bits bus system hence we have 
+to use 32 bits chunk of data to communicate with them. We do this by sending the PCI chip a 32 bits address 
+through eax register, and using port CF8h as the port to send this data. Here's an example of the PCI register 
+(sometimes called offset) address format. In the routine above you saw : 
+</p>
+<pre>....
+mov eax,80000064h
+....
+</pre>the <b><tt>80000064h</tt></b> is the address. The meaning of these bits are: 
+<table border="1" width="100%">
+<tbody><tr bgcolor="#cccccc"><td width="25%"><b>bit position</b></td><td align="center" valign="middle" width="4%"><tt>31</tt></td><td align="center" valign="middle" width="3%"><tt>30</tt></td><td align="center" valign="middle" width="3%"><tt>29</tt></td><td align="center" valign="middle" width="3%"><tt>28</tt></td><td align="center" valign="middle" width="3%"><tt>27</tt></td><td align="center" valign="middle" width="3%"><tt>26</tt></td><td align="center" valign="middle" width="3%"><tt>25</tt></td><td align="center" valign="middle" width="3%"><tt>24</tt></td><td align="center" valign="middle" width="4%"><tt>23</tt></td><td align="center" valign="middle" width="3%"><tt>22</tt></td><td align="center" valign="middle" width="3%"><tt>21</tt></td><td align="center" valign="middle" width="3%"><tt>20</tt></td><td align="center" valign="middle" width="3%"><tt>19</tt></td><td align="center" valign="middle" width="3%"><tt>18</tt></td><td align="center" valign="middle" width="3%"><tt>17</tt></td><td align="center" valign="middle" width="3%"><tt>16</tt></td><td align="center" valign="middle" width="4%"><tt>15</tt></td><td align="center" valign="middle" width="3%"><tt>14</tt></td><td align="center" valign="middle" width="3%"><tt>13</tt></td><td align="center" valign="middle" width="3%"><tt>12</tt></td><td align="center" valign="middle" width="3%"><tt>11</tt></td><td align="center" valign="middle" width="3%"><tt>10</tt></td><td align="center" valign="middle" width="3%"><tt>9</tt></td><td align="center" valign="middle" width="3%"><tt>8</tt></td><td align="center" valign="middle" width="4%"><tt>7</tt></td><td align="center" valign="middle" width="3%"><tt>6</tt></td><td align="center" valign="middle" width="3%"><tt>5</tt></td><td align="center" valign="middle" width="3%"><tt>4</tt></td><td align="center" valign="middle" width="3%"><tt>3</tt></td><td align="center" valign="middle" width="3%"><tt>2</tt></td><td align="center" valign="middle" width="3%"><tt>1</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td></tr><tr><td width="25%"><b>binary value</b></td><td align="center" valign="middle" width="4%"><tt>1</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="4%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="4%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="4%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>1</tt></td><td align="center" valign="middle" width="3%"><tt>1</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>1</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td><td align="center" valign="middle" width="3%"><tt>0</tt></td></tr><tr><td width="25%"><b>hexadecimal value</b></td><td align="center" colspan="4" valign="middle" width="13%"><tt>8</tt></td><td align="center" colspan="4" valign="middle" width="12%"><tt>0</tt></td><td align="center" colspan="4" valign="middle" width="13%"><tt>0</tt></td><td align="center" colspan="4" valign="middle" width="12%"><tt>0</tt></td><td align="center" colspan="4" valign="middle" width="13%"><tt>0</tt></td><td align="center" colspan="4" valign="middle" width="12%"><tt>0</tt></td><td align="center" colspan="4" valign="middle" width="13%"><tt>6</tt></td><td align="center" colspan="4" valign="middle" width="12%"><tt>4</tt></td></tr></tbody>
+</table>
+<ul>
+<li> The 31st bit is an enable bit. If this bit sets, it means that we are granted to do a write/read 
+		transaction through the PCI bus, otherwise we're prohibited to do so, that's why we need an 8 in the 
+		leftmost hexdigit. </li>
+<li> Bits 30 - 24 are reserved bits.</li>
+<li> Bits 23 - 16 is the <i>PCI Bus number</i>.</li>
+<li> Bits 15 - 11 is the <i>PCI Device number</i>. </li>
+<li> Bits 10 - 8 is the <i>PCI Function Number</i>. </li>
+<li> Bits 7 - 0 is the <i>offset</i> <i>address</i>. </li>
+</ul>
+<p>Now, we'll examine the previous value that was sent. If you're curious, you'll find out that 
+<tt><b>80000064h</b></tt> means we're communicating with the device in bus 0, device 0 , function 0 and at 
+offset 64. Actually this is the memory controller configuration register of VIA693A northbridge. In 
+most circumstances the PCI device that occupy bus 0, device 0, function 0 is the hostbridge, but you'll need 
+to consult your chipset datasheet to verify this. This stuff is pretty easy to be understood, isn't it ?
+The next routines are pretty easy to understand. But if you still feel confused you'd better learn 
+assembly language a bit, since I'm not here to teach you assembly :( . But, in general they do the following 
+jobs: reading the offset data then modifying it then writing it back to the device, if not better to say 
+tweaking it :) . 
+</p>
+<a name="HI_BUS">
+<h3><a name="TOC-2.3.-Hub-Interface-Bus"></a>2.3. Hub Interface Bus</h3>
+</a>
+<p>The mainboard that's dissected in this article uses Intel 865PE and Intel ICH5 chipset. The communication 
+between both of the chip occured through a propietary bus called Hub Interface Bus or HI for short. Eventhough 
+this bus protocol is propietary, it doesn't stop us from being able to know its impact in configuration 
+software such as the BIOS. Explanation about that issue is very clear in Intel 865PE datasheet as follows:
+</p>
+<hr />
+<i>
+<b>3.2 Overview of the Platform Configuration Structure</b>
+<p>In some previous chipsets, the "MCH" and the "I/O Controller Hub (ICHx)" were physically
+connected by PCI bus 0. From a configuration standpoint, both components appeared to be on PCI
+bus 0 which was also the system’s primary PCI expansion bus. The MCH contained two PCI
+devices while the ICHx was considered one PCI device with multiple functions.</p>
+<p>In the 865PE/865P chipset platform the configuration structure is significantly different. The MCH
+and the ICH5 are physically connected by the hub interface, so, from a configuration standpoint,
+the hub interface is logically PCI bus 0. As a result, all devices internal to the MCH and ICHx
+appear to be on PCI bus 0. The system's primary PCI expansion bus is physically attached to the
+ICH5 and, from a configuration perspective, appears to be a hierarchical PCI bus behind a PCI-to-
+PCI bridge; therefore, it has a programmable PCI Bus number. Note that the primary PCI bus is
+referred to as PCI_A in this document and is not PCI bus 0 from a configuration standpoint. The
+AGP appears to system software to be a real PCI bus behind PCI-to-PCI bridges resident as devices
+on PCI bus 0.</p>
+<p>The MCH contains four PCI devices within a single physical component. The configuration
+registers for the four devices are mapped as devices residing on PCI bus 0.
+</p>
+<ul>
+<li>Device 0: Host-HI Bridge/DRAM Controller. Logically this appears as a PCI device residing
+	on PCI bus 0. Physically Device 0 contains the standard PCI registers, DRAM registers, the
+	Graphics Aperture controller, configuration for HI, and other MCH specific registers.</li>
+<li>Device 1: Host-AGP Bridge. Logically this appears as a “virtual” PCI-to-PCI bridge residing
+	on PCI bus 0. Physically Device 1 contains the standard PCI-to-PCI bridge registers and the
+	standard AGP/PCI configuration registers (including the AGP I/O and memory address
+	mapping).</li>
+<li>Device 3: CSA Port. Appears as a virtual PCI-CSA (PCI-to-PCI) bridge device.</li>
+<li>Device 6: Function 0: Overflow Device. The purpose of this device is to provide additional
+	configuration register space for Device 0.</li>
+</ul>
+<p>Table 3 shows the Device # assignment for the various internal MCH devices.</p>
+<pre><b>Table 3. Internal MCH Device Assignment</b>
+
+<b>      MCH Function                         Bus 0, Device #</b>
+DRAM Controller/8-bit HI Controller             Device 0
+Host-to-AGP Bridge (virtual PCI-to-PCI)         Device 1
+Intergrated GBE (CSA)                           Device 3
+Overflow                                        Device 6
+</pre><p>Logically, the ICH5 appears as multiple PCI devices within a single physical component also
+residing on PCI bus 0. One of the ICH5 devices is a PCI-to-PCI bridge. Logically, the primary side
+of the bridge resides on PCI 0 while the secondary side is the standard PCI expansion bus.
+Note: A physical PCI bus 0 does not exist and the hub interface and the internal devices in the MCH and
+ICH5 logically constitute PCI Bus 0 to configuration software.</p>
+<b>3.3 Routing Configuration Accesses</b>
+<p>The MCH supports two bus interfaces: hub interface and AGP/PCI. PCI configuration cycles are
+selectively routed to one of these interfaces. The MCH is responsible for routing PCI configuration
+cycles to the proper interface. PCI configuration cycles to ICH5 internal devices and Primary PCI
+(including downstream devices) are routed to the ICH5 via HI. AGP/PCI_B configuration cycles
+are routed to AGP. The AGP/PCI_B interface is treated as a separate PCI bus from the
+configuration point of view. Routing of configuration AGP/PCI_B is controlled via the standard
+PCI-to-PCI bridge mechanism using information contained within the Primary Bus Number, the
+Secondary Bus Number, and the Subordinate Bus Number registers of the corresponding PCI-to-
+PCI bridge device.</p>
+</i>
+<hr />
+After reading the specification above, we know that the BIOS won't be affected by the existence of 
+HI. This is due to the fact that the mechanism used to configure the devices is still PCI configuration 
+mechanism as explained in the previous section. This fact leads me to believe that even 
+SiS' MuTIOL and VIA's V-LINK chipset interconnection technology also employs the same approach as this 
+Intel's HI bus.
+
+
+<a name="LPC_BUS">
+<h3><a name="TOC-2.3.-Low-Pin-Count-LPC-Bus"></a>2.3. Low Pin Count (LPC) Bus</h3>
+</a>
+<p> The LPC bus is a replacement for ISA Bus in modern systems. However, this bus doesn't affect the way 
+BIOS being developed. LPC will be transparent to BIOS routines as is it was an ISA bus. This is very clear from 
+LPC specification as follows:
+</p>
+<hr />
+<i>
+<b>Goals of the LPC I/F</b>
+....
+<ul>
+<li>Software transparency: do not require special drivers or configuration for this interface. The
+	motherboard BIOS should be able to configure all devices at boot.</li>
+</ul>
+</i>
+<hr />
+<a name="Hardware_Peculiarities">
+<h2 align="left"><a name="TOC-3.-Some-Hardware-Peculiarities"></a>3. Some Hardware Peculiarities</h2>
+</a>
+<p> Due to its history, the x86 platform contains lots of hacks, especially its BIOS. This is due to the 
+<i>backward compatiblity</i>  that should be maintained by any x86 system. In this section I'll try to 
+explain couple of stuff that I found during my BIOS disassembly journey that reveal these peculiarities. </p>
+<a name="Bios_Chip_Addressing">
+<h3 align="left"><a name="TOC-3.1.-BIOS-Chip-Addressing"></a>3.1. BIOS Chip Addressing</h3>
+</a>
+<p>The most important chips which responsible for the BIOS code handling are the southbridge and northbridge. 
+In this respect, the northbridge is responsible for the <i>system address space management</i>, i.e. BIOS 
+shadowing, handling accesses to RAM and forwarding <i>transaction</i> which uses BIOS ROM as its target to 
+the southbridge which then eventually forwarded to BIOS ROM by southbridge. 
+While the southbridge is responsible for enabling the ROM decode control, which will forward (or not) the 
+memory addresses to be accessed to the BIOS ROM chip. The addresses shown below can reside either 
+in the system DRAM or in BIOS ROM chip, depending on the southbridge and northbridge register setting <i>at the 
+time the BIOS code is executed</i>.
+</p>
+<table align="center" border="1" width="100%">
+<tbody><tr align="center" bgcolor="#cccccc"><td><b>Physical Address</b></td><td><b>Also Known As</b></td><td><b>Used by</b></td><td><b>Address Aliasing Note</b></td></tr><tr><td> 000F_0000h - 000F_FFFFh </td><td> F_seg / F_segment </td><td> 1 Mbit, 2 MBit, and 4 MBit BIOS </td><td> alias to FFFF_0000h - FFFF_FFFFh in <i>all</i> chipset just after power-up </td></tr><tr><td> 000E_0000h - 000E_FFFFh</td><td> E_seg / E_segment</td><td> 1 Mbit, 2 MBit, and 4 MBit BIOS</td><td> alias to FFFE_0000h - FFFE_FFFFh in <i>some</i> chipset just after power-up </td></tr></tbody>
+</table>
+<p>The address ranges shown above contain the BIOS code and pretty much system specific. So, you have to consult your 
+chipset datasheets to understand it. Also, note that the address above which will be occupied by the BIOS code during 
+runtime (after BIOS code executes) is only <b>F_seg</b> i.e. <b>F_0000h - F_FFFFh</b>. However, certain operating system might "trash" this address and use it for their own purposes. The addresses written above only reflect the addressing of the BIOS ROM chip to the system address space when it's set to be accessed 
+by the BIOS code or another code that accesses the BIOS ROM chip directly. The mainboard chipsets 
+are responsible for the mapping of certain BIOS ROM chip area to the system address space. As we will see later, 
+this mapping can be changed by programming certain chipset registers. </p>
+<p>BIOS chip with capacity bigger than 1 Mbit, i.e. 2 Mbit and 4 Mbit chips has a quite different addressing for their 
+<i>lower bios area</i>, i.e. C_seg, D_seg and other lower "segment(s)". In most cases, this area is mapped to 
+<i>near-4GB address range</i>. This address range is handled by the norhtbridge analogous to the PCI address range. 
+In this scheme the chipset behaves as follows: 
+</p>
+<ul>
+<li>The northbridge acts as the <i>address forwarder</i>, meaning: <i>it responds to this "special" memory address in 
+    different fashion compared to "normal" memory address which is forwarded directly to RAM. On the contrary, 
+	this "special" memory address is forwarded by the northbridge to the southbridge to be decoded</i>. 
+	
+	</li>
+<li>The southbridge acts as the <i>address decoder</i>, meaning: <i>it decodes this "special" memory addresses into the
+	right chip "beneath" it, such as the BIOS chip</i>. In this respect, the southbridge will return "void" 
+	(bus address cycle termination) if the address range is <b>not</b> being enabled to be decoded in the southbridge  
+	configuration registers. </li>
+</ul>
+
+Below is an example:
+
+<table align="center" border="1" width="100%">
+<tbody><tr align="center" bgcolor="#cccccc"><td><b>Physical Address</b></td><td><b>Also Known As</b></td><td><b>Used by</b></td><td><b>Address Aliasing Note</b></td></tr><tr><td> 000F_0000h - 000F_FFFFh </td><td> F_seg / F_segment </td><td> 1 Mbit, 2 MBit, and 4 Mbit BIOS </td><td> alias to FFFF_0000h - FFFF_FFFFh in <i>all</i> chipset just after power-up </td></tr><tr><td> 000E_0000h - 000E_FFFFh</td><td> E_seg / E_segment</td><td> 1 Mbit, 2 Mbit, and 4 Mbit BIOS</td><td> alias to FFFE_0000h - FFFE_FFFFh in <i>some</i> chipset just after power-up </td></tr><tr><td> FFFD_0000h - FFFD_FFFFh</td><td> D_seg / D_segment</td><td> 2 Mbit, and 4 Mbit BIOS</td><td> - </td></tr><tr><td> FFFC_0000h - FFFC_FFFFh</td><td> C_seg / C_segment</td><td> 2 Mbit, and 4 Mbit BIOS</td><td> - </td></tr><tr><td> FFF8_0000h - FFFB_FFFFh</td><td> - </td><td> 4 Mbit BIOS</td><td> - </td></tr></tbody>
+</table>
+<p>The conclusion is: <i>modern day chipsets performs an "<b>emulation</b>" for F_seg and E_seg handling</i>. This is 
+a proof that modern day x86 systems maintains <i>backward compatibility</i>. However, this "kludge" sometimes referred 
+to as the thing of the past that vendors should've been removed from x86 systems.</p>
+<p>Below is the Intel 865PE (northbridge) and ICH5 addressing status just after system power-up as written in 
+its datasheet.
+</p>
+<ul>
+<li>Intel 865PE (MCH/northbridge). Power-up status for BIOS related registers: 
+	
+<table border="1" width="90%">
+<tbody><tr align="center" bgcolor="#cccccc"><td><b>Register Name</b></td><td><b>Address Range</b></td><td><b>Default Value</b></td><td><b>Meaning</b></td><td><b>Description</b></td></tr><tr><td>PAM[0:6]—Programmable Attribute Map Registers</td><td>C_0000h - F_FFFFh</td><td>00h</td><td>Disabled</td><td>DRAM is disabled and all accesses are directed to the hub interface. 
+			The MCH does not respond as a PCI target for any read or write access to this area.</td></tr></tbody>
+</table>
+<b>Note:</b> Address range in the table above is the address range which is controlled by the corresponding register, 
+	meaning: read and write access to address within that address range is controlled by the corresponding register value.
+	</li>
+<li>Intel ICH5 (southbridge). Power-up status for BIOS related registers:
+		
+<table border="1" width="90%">
+<tbody><tr align="center" bgcolor="#cccccc"><td><b>Register Name</b></td><td><b>Address Range</b></td><td><b>Default Value</b></td><td><b>Meaning</b></td><td><b>Description</b></td></tr><tr><td>FB_DEC_EN1—Flash BIOS Decode Enable 1 Register</td><td>E_0000h - F_FFFFh and FF80_0000h - FFFF_FFFFh</td><td>FFh</td><td>Enabled</td><td>Enable the corresponding ranges for the flash BIOS</td></tr><tr><td>FB_DEC_EN2—Flash BIOS Decode Enable 2 Register</td><td>FF00_0000h - FF7F_FFFFh</td><td>0Fh</td><td>Enabled</td><td>Enable the corresponding ranges for the flash BIOS</td></tr></tbody>
+</table>
+<b>Note:</b> Address range in the table above is the address range which is decoded by the corresponding register, 
+	meaning: the address range that will be decoded (or not) when memory read/write request from the hub interface reaches 
+	ICH5.
+	</li>
+</ul>
+
+The most important thing to take into account here is the address aliasing, as you can see the <b>FFFE_0000h - 
+FFFF_FFFFh</b> address range is an alias into <b>E_0000 - F_FFFFh</b> address range. This is where the BIOS ROM 
+chip address mapped. But, we also have to consider that this only applies at the very beginning of boot stage 
+(just after reset). After the chipset reprogrammed by the BIOS, this address range will be mapped into system 
+DRAM chips. We can consider this as the Power-On default values. As a note, the majority of x86 chipsets use 
+this address aliasing scheme, at least for the F_seg address range.
+
+<p>Another fact that we have to take into account: <i>most chipset only provides default addressing scheme 
+for <b>F_seg</b> just after power-up in its configuration registers, other "BIOS ROM segment(s)" 
+remains inaccessible. The addressing scheme for these segments will be configured later by the bootblock 
+code by altering the related chipset registers (in most cases the southbridge registers)</i>.
+</p>
+<a name="Obscure_Hardware_Port">
+<h3 align="left"><a name="TOC-3.2.-Obscure-Hardware-Port"></a>3.2. Obscure Hardware Port</h3>
+</a>
+<p>
+Some "obscure" hardware port which sometimes not documented in the chipset datasheets described below. 
+Note that these info's were found from Intel ICH5, VIA 586B and VIA596B datasheet.
+</p>
+<pre><b>I/O Port address     Purpose</b>
+92h                  Fast A20 and Init Register
+4D0h                 Master PIC Edge/Level Triggered (R/W)
+4D1h                 Slave PIC Edge/Level Triggered (R/W)
+
+
+<b>Table 146. RTC I/O Registers (LPC I/F—D31:F0)
+I/O Port Locations    If U128E bit = 0            Function</b>
+70h and 74h           Also alias to 72h and 76h   Real-Time Clock (Standard RAM) Index Register
+71h and 75h           Also alias to 73h and 77h   Real-Time Clock (Standard RAM) Target Register
+72h and 76h                                       Extended RAM Index Register (if enabled)
+73h and 77h                                       Extended RAM Target Register (if enabled)
+
+<b>NOTES:</b>
+1. I/O locations 70h and 71h are the standard ISA location for the real-time clock. The map for this bank is
+   shown in Table 147. Locations 72h and 73h are for accessing the extended RAM. The extended RAM bank is
+   also accessed using an indexed scheme. I/O address 72h is used as the address pointer and I/O address
+   73h is used as the data register. Index addresses above 127h are not valid. If the extended RAM is not
+   needed, it may be disabled.
+2. Software must preserve the value of bit 7 at I/O addresses 70h. When writing to this address, software 
+   must first read the value, and then write the same value for bit 7 during the sequential address write. 
+   Note that port 70h is not directly readable. The only way to read this register is through Alt Access 
+   mode. If the NMI# enable is not changed during normal operation, software can alternatively read this bit 
+   once and then retain the value for all subsequent writes to port 70h.
+
+The RTC contains two sets of indexed registers that are accessed using the two separate Index and
+Target registers (70/71h or 72/73h), as shown in Table 147.
+
+<b>Table 147. RTC (Standard) RAM Bank (LPC I/F—D31:F0)
+Index   Name</b>
+00h     Seconds
+01h     Seconds Alarm
+02h     Minutes
+03h     Minutes Alarm
+04h     Hours
+05h     Hours Alarm
+06h     Day of Week
+07h     Day of Month
+08h     Month
+09h     Year
+0Ah     Register A
+0Bh     Register B
+0Ch     Register C
+0Dh     Register D
+0Eh–7Fh 114 Bytes of User RAM
+</pre><a name="Relocatable_Hardware_Port">
+<h3 align="left"><a name="TOC-3.3.-Relocatable-Hardware-Port"></a>3.3. "Relocatable" Hardware Port</h3>
+</a>
+<p>There are several kinds of hardware port that is relocatable in the system I/O address space. In this BIOS, 
+those ports include SMBus-related ports and Power-Management-Related ports. These ports has certain 
+<b>base address</b>. This so called <b>base address</b> is controlled via programmable <b>base address 
+register</b>. SMBus has SMBus base address register and Power-Management has Power-Management I/O base address 
+register. Since these ports are programmable, the bootblock routine initializes the value of the base address 
+registers in the very beginning of BIOS routine execution. Due to the programmable nature of these ports, one 
+must start reverse engineering of BIOS in the bootblock to find out which port address(es) used by these 
+programmable hardware ports. Otherwise one will be confused by the occurence of "weird" ports later during 
+the reverse engineering process.</p>
+<p>Certainly, there are more relocatable hardware ports than those described here, but at least you've been given the 
+hints about it. So that, once you found code in the BIOS that seems to be accessing "weird" ports, 
+you'll know where to go.</p>
+<h3 align="left"><a name="Expansion_ROM_Handling">3.4. Expansion ROM Handling</a></h3>
+<p>
+There are couples of more things to take into account, such as the Video BIOS and other expansion ROM 
+handling. I'll try to cover that stuff later when I've done dissecting BIOS code that handle it. But here's 
+the basic run-down of PCI Expansion ROM handling in BIOS:
+</p>
+<ol>
+<li>System BIOS detect all PCI chip in the system and initialize its BARs(Base Address Registers). 
+	Once initialization completes, the system will have a usable system-wide addressing scheme.</li>
+<li>By using the system-wide addressing scheme, system BIOS then copies the implemented 
+	PCI Expansion ROM into RAM one by one in the expansion ROM area (C000:0000h - D000:FFFFh) and execute it there 
+	until all of the PCI expansion ROM have been executed/initialized.</li>
+</ol>
+<h2 align="left"><a name="Bootblock_Reversing">4. Bootblock Reverse Engineering</a></h2>
+<p>AMI BIOS bootblock is more complicated compared to Award BIOS bootblock. However, as with other x86 BIOS, this 
+BIOS also starts execution at address <code>0xFFFF_FFF0</code> ( <code>0xF000:0xFFF0</code> in real-mode). 
+We will start to disassemble Soltek SL865PE BIOS in that address. I won't go in detail on how to setup the 
+disassembling environment in IDA Pro as it's a trivial task. OK, let's get busy ;-).
+</p>
+<h3 align="left"><a name="_4_1">4.1. The Bootblock Jump-Table</a></h3>
+<p> AMI BIOS bootblock contains a jump to execute a jump-table in the very beginning of its execution.
+</p>
+<pre>F000:FFF0   jmp   far ptr <font color="#cc0000">bootblock_start</font>
+.........
+F000:FFAA <font color="#cc0000">bootblock_start</font>:                ; CODE XREF: _F0000:FFF0
+F000:FFAA   jmp   <font color="#cc0000">exec_jmp_table</font>
+.........
+F000:A040 <font color="#cc0000">exec_jmp_table</font>:                 ; 
+F000:A040   jmp   _CPU_early_init
+F000:A043 ; ---------------------------------------------------------------------------
+F000:A043
+F000:A043 _j2:                            ; 
+F000:A043   jmp   _goto_j3
+.........
+.........  ; other jump table entries
+.........  
+F000:A08B _j26:                           ; CODE XREF: _F0000:goto__j26
+F000:A08B   jmp   <font color="#cc0000">setup_stack</font>
+F000:A08E ; ---------------------------------------------------------------------------
+F000:A08E
+F000:A08E _j27:                           ; CODE XREF: _F0000:A218
+F000:A08E   call  near ptr <font color="#cc0000">copy_decomp_block</font>
+F000:A091   call  sub_F000_A440
+F000:A094   call  sub_F000_A273
+F000:A097   call  sub_F000_A2EE
+F000:A09A   retn
+</pre>As shown above, the jump-table contains many entries. We won't delve into them one by one, 
+we will only take a peek into entries that affect the execution flow of the bootblock code.
+The entries in the jump-table above prepares the system (CPU, motherboard, RAM) 
+to execute the code in RAM. To accomplish that, it tests the RAM subsystem and carry out 
+preliminary DRAM initialization as needed. The interesting entry of the jump-table is the 
+stack space initialization with a call to <code>setup_stack</code> function. <code>setup_stack</code>
+is defined as follows:
+<pre>F000:A1E7 setup_stack:                    ; _F0000:_j26
+F000:A1E7   mov   al, 0D4h ; 'L'
+F000:A1E9   out   80h, al                 ; manufacture's diagnostic checkpoint
+F000:A1EB   mov   si, 0A1F1h
+F000:A1EE   jmp   near ptr Init_Descriptor_Cache
+F000:A1F1 ; ---------------------------------------------------------------------------
+F000:A1F1   mov   ax, cs
+F000:A1F3   mov   ss, ax
+F000:A1F5   mov   si, 0A1FBh
+F000:A1F8   jmp   zero_init_low_mem
+F000:A1FB ; ---------------------------------------------------------------------------
+F000:A1FB   nop
+F000:A1FC   mov   sp, 0A202h
+F000:A1FF   jmp   j_j_nullsub_1
+F000:A202 ; ---------------------------------------------------------------------------
+F000:A202   add   al, 0A2h ; 'a'
+F000:A204   mov   di, 0A20Ah
+F000:A207   jmp   init_cache
+F000:A20A ; ---------------------------------------------------------------------------
+F000:A20A   xor   ax, ax
+F000:A20C   mov   es, ax
+F000:A20E   mov   ds, ax
+F000:A210   mov   ax, 53h ; 'S'           ; stack segment
+F000:A213   mov   ss, ax
+F000:A215   assume ss:nothing
+F000:A215   mov   sp, 4000h               ; setup 16KB stack
+F000:A218   jmp   <font color="#cc0000">_j27</font>
+</pre><code>setup_stack</code> function initializes the space to be used as stack at segment 53h. 
+This function also initializes the ds and es segment register to enter flat-real-mode/voodoo mode.
+In the end of of the function, execution is directed to the decompression block handler. 
+
+
+<h3 align="left"><a name="_4_2">4.2. Decompression Block Relocation</a></h3>
+<p>
+The decompression block handler copies the decompression block from BIOS ROM to RAM and continue 
+the execution in RAM as shown below.
+</p>
+<pre>F000:A08E <font color="#cc0000">_j27</font>:                           ; _F0000:A218
+F000:A08E   call  near ptr <font color="#cc0000">copy_decomp_block</font>
+F000:A091   call  sub_F000_A440
+.........
+F000:A21B <font color="#cc0000">copy_decomp_block</font> proc far      ; _F0000:_j27
+F000:A21B   mov   al, 0D5h ; '-'          ; Bootblock code is copied from ROM to lower system memory and control is
+F000:A21B                                 ; given to it. BIOS now executes out of RAM. Copies compressed boot block
+F000:A21B                                 ; code to memory in right segments. Copies BIOS from ROM to RAM for faster
+F000:A21B                                 ; access. Performs main BIOS checksum and updates recovery status
+F000:A21B                                 ; accordingly.
+F000:A21D   out   80h, al                 ; send POST code D5h to diagnostic port
+F000:A21F   push  es
+F000:A220   call  <font color="#cc0000">get_decomp_block_size</font>   ; on ret: ecx = decomp_block_size, esi = decomp_block_phy_addr
+F000:A220                                 ; at this point, ecx = 0x6000 and esi = 0xFFFFA000
+F000:A223   mov   ebx, esi
+F000:A226   push  ebx
+F000:A228   shr   ecx, 2                  ; decomp_block_size / 4 -- 6000h/4
+F000:A22C   push  8000h
+F000:A22F   pop   es
+F000:A230   assume es:decomp_block
+F000:A230   movzx edi, si
+F000:A234   cld
+F000:A235   rep movs dword ptr es:[edi], dword ptr [esi]
+<font color="#cc0000">F000:A239   push  es
+F000:A23A   push  offset decomp_block_start ; jmp to 8000:A23Eh
+F000:A23D   retf</font>
+F000:A23D copy_decomp_block endp ; sp = -0Ah
+.........
+F000:A492 <font color="#cc0000">get_decomp_block_size</font> proc near ; 
+F000:A492   mov   ecx, cs:<font color="#cc0000">decomp_block_size</font>
+F000:A498   mov   esi, ecx
+F000:A49B   neg   esi
+F000:A49E   retn
+F000:A49E get_decomp_block_size endp
+.........
+F000:FFD7 <font color="#cc0000">decomp_block_size</font> dd 6000h      ; get_decomp_block_size
+.........
+</pre><code>copy_decomp_block</code> above copies 24KB of bootblock code (<code>0xFFFF_A000</code> - <code>0xFFFF_FFFF</code>) 
+to RAM at segment <code>0x8000</code> and continue the code execution there. <u>From the code snippet above, 
+we realize that the mapping of the offsets in the <code>F000h</code> segment and the copy of the last 24KB 
+of <code>F000h</code> segment in RAM at segment <code>8000h</code> are identical.</u>
+<p>Now, we will delve into the code execution in RAM.
+</p>
+<pre>8000:A23E decomp_block_start proc near    ; copy_decomp_block+1
+8000:A23E   push  51h ; 'Q'
+8000:A241   pop   fs                      ; fs = 51h
+8000:A243   assume fs:nothing
+8000:A243   mov   dword ptr fs:0, 0
+8000:A24D   pop   eax                     ; eax = ebx (back in Fseg)
+8000:A24F   mov   cs:src_addr?, eax
+8000:A254   pop   es                      ; es = es_back_in_Fseg
+<font color="#cc0000">8000:A255   retn                          ; jmp to offset A091</font>
+8000:A255 decomp_block_start endp ; sp = -2
+</pre>The execution of code highlighted in red at address <code>0x8000:0xA255</code> above 
+is rather enigmatic. Thus, I will explain it in detail. We will start with the stack values 
+right before the <code>retf</code> instruction takes place in <code>copy_decomp_block</code>.
+Mind you that before <code>copy_decomp_block</code> being executed at address <code>0xF000:0xA08E</code>, 
+the address of the next instruction (the return address), i.e. <code>0xA091</code> is pushed to stack. 
+Thus, we have the following stack right before the <code>retf</code> instruction takes place 
+in <code>copy_decomp_block</code>.
+
+<p>
+</p>
+<pre>---------------------------
+         0xA091             --&gt; BOTTOM OF STACK (HIGHER ADDRESS)
+---------------------------
+       value of es
+---------------------------
+       0xFFFFA000
+---------------------------
+         0x8000
+---------------------------
+ decomp_block_start offset  --&gt; TOP OF STACK (LOWER ADDRESS)
+---------------------------
+</pre>Now, as we arrive in the <code>decomp_block_start</code> function, right before the <code>ret</code> instruction, 
+the stack values shown above already popped, except the first value, i.e. <code>0xA091</code>. Thus, when the 
+<code>ret</code> instruction executes, the code will jump to offset <code>0xA091</code>. This offset contains the 
+code shown below.
+
+<pre>8000:<font color="#cc0000">A091</font> decomp_block_entry proc near
+8000:A091   call  init_decomp_ngine       ; on ret, ds = 0
+8000:A094   call  copy_decomp_result
+8000:A097   call  call_F000_0000
+8000:A09A   retn
+8000:A09A decomp_block_entry endp
+</pre><h3 align="left"><a name="_4_3">4.3. Decompression Engine Initialization</a></h3>
+<p>
+The decompression engine initialization is rather complex. We will pay attention to its execution.
+</p>
+<pre>8000:A440 init_decomp_ngine proc near     ; decomp_block_entry
+8000:A440   xor   ax, ax
+8000:A442   mov   es, ax
+8000:A444   assume es:_12000
+8000:A444   mov   si, <font color="#cc0000">0F349h</font>
+8000:A447   mov   ax, cs
+8000:A449   mov   ds, ax                  ; ds = cs
+8000:A44B   assume ds:decomp_block
+8000:A44B   mov   ax, [si+2]              ; ax = header length
+8000:A44E   mov   edi, [si+4]             ; edi = destination addr
+8000:A452   mov   ecx, [si+8]             ; ecx = decompression engine byte count
+8000:A456   add   si, ax                  ; point to decompression engine
+8000:A458   movzx esi, si
+8000:A45C   rep movs byte ptr es:[edi], byte ptr [esi] ; copy decompression engine
+8000:A45C                                 ; to segment 1352h
+8000:A45F   xor   eax, eax
+8000:A462   mov   ds, ax
+8000:A464   assume ds:_12000
+8000:A464   mov   ax, cs
+8000:A466   shl   eax, 4                  ; eax = cs &lt;&lt; 4
+8000:A46A   mov   si, 0F98Ch
+8000:A46D   movzx esi, si
+8000:A471   add   esi, eax                ; esi = src_addr
+8000:A474   mov   edi, 120000h            ; edi = dest_addr
+8000:A47A   mov   cs:decomp_dest_addr, edi
+8000:A480   call  decomp_ngine_start
+8000:A485   retn
+8000:A485 init_decomp_ngine endp
+.........
+8000:<font color="#cc0000">F349</font>   db    1
+8000:F34A   db    0
+8000:F34B   dw 0Ch                        ; header length
+8000:F34D   dd 13520h                     ; decompression engine destination addr (physical)
+8000:F351   dd 637h                       ; decompression engine size in bytes
+8000:F355   db  66h ; f                   ; 1st byte of decompression engine
+8000:F356   db  57h ; W
+.........
+1352:0000 decomp_ngine_start proc far     ; sub_F000_A440+40
+1352:0000   push  edi                     ; dest_addr
+1352:0002   push  esi                     ; src_addr
+1352:0004   call  expand
+1352:0007   add   sp, 8                   ; trash parameters in stack
+1352:000A   retf
+1352:000A decomp_ngine_start endp
+</pre>The decompression engine used in AMIBIOS8 is LHA decompressor. It's similar to the one used in AR archiver 
+in the DOS era and the one used in AWARD BIOS. However, the header of the compressed code has been modified. 
+Thus the code that handles the header of the compressed components is different from the ordinary LHA/LZH code. 
+The decompression engine code is pretty long, as shown below.
+
+<p>
+</p>
+<pre>1352:000B expand proc near                ; ...
+1352:000B
+1352:000B src_addr= dword ptr  4
+1352:000B dest_addr= dword ptr  8
+1352:000B
+1352:000B   push  bp
+1352:000C   mov   bp, sp
+1352:000E   pushad
+1352:0010   mov   eax, [bp+src_addr]
+1352:0014   mov   ebx, [bp+dest_addr]
+1352:0018   mov   cx, sp
+1352:001A   mov   dx, ss
+1352:001C   mov   sp, 453h
+1352:001F   mov   ss, sp                  ; ss = 453h
+1352:0021   mov   sp, 0EFF0h              ; ss:sp = 453:EFF0h
+1352:0024   push  ebx
+1352:0026   push  eax
+1352:0028   push  cx
+1352:0029   push  dx
+1352:002A   mov   bp, sp
+1352:002C   pusha
+1352:002D   push  ds
+1352:002E   push  453h
+1352:0031   pop   ds                      ; ds = 453h -- scratch_pad segment
+1352:0032   push  es
+1352:0033   xor   cx, cx
+1352:0035   mov   match_length, cx
+1352:0039   mov   bit_position, cx
+1352:003D   mov   bit_buf, cx
+1352:0041   mov   _byte_buf, cx
+1352:0045   mov   word_453_8, cx
+1352:0049   mov   blocksize, cx
+1352:004D   mov   match_pos, cx
+1352:0051   mov   esi, [bp+src_addr]
+1352:0055   push  0
+1352:0057   pop   es                      ; es = 0
+1352:0058   assume es:_12000
+1352:0058   mov   ecx, es:[esi]
+1352:005D   mov   hdr_len?, ecx
+1352:0062   mov   ecx, es:[esi+4]
+1352:0068   mov   cmprssd_src_size, ecx
+1352:006D   add   esi, 8
+1352:0071   mov   src_byte_ptr, esi
+1352:0076   sub   hdr_len?, 8
+1352:007C   mov   cl, 10h                 ; read 16 bits
+1352:007E   call  fill_bit_buf
+1352:0081   cmp   cmprssd_src_size, 0
+1352:0087   jz    short exit
+1352:0089
+1352:0089 next_window:                    ; ...
+1352:0089   mov   edi, cmprssd_src_size
+1352:008E   cmp   edi, 8192               ; 8KB window size
+1352:0095   jbe   short cmprssd_size_lte_wndow_size
+1352:0097   mov   di, 8192
+1352:009A
+1352:009A cmprssd_size_lte_wndow_size:    ; ...
+1352:009A   push  di                      ; sliding window size
+1352:009B   call  decode
+1352:009E   add   sp, 2                   ; discard pushed-di above
+1352:00A1   movzx ecx, di                 ; ecx = number of decoded bytes
+1352:00A5   mov   ebx, ecx
+1352:00A8   jcxz  short no_decoded_byte
+1352:00AA   mov   edi, [bp+dest_addr]
+1352:00AE   add   [bp+dest_addr], ecx
+1352:00B2   mov   esi, offset window      ; ds:16 = window_buffer_start
+1352:00B8   rep movs byte ptr es:[edi], byte ptr [esi] ; copy window
+1352:00BB
+1352:00BB no_decoded_byte:                ; ...
+1352:00BB   sub   cmprssd_src_size, ebx
+1352:00C0   ja    short next_window
+1352:00C2
+1352:00C2 exit:                           ; ...
+1352:00C2   pop   es
+1352:00C3   assume es:nothing
+1352:00C3   pop   ds
+1352:00C4   popa
+1352:00C5   pop   dx
+1352:00C6   pop   cx
+1352:00C7   mov   ss, dx
+1352:00C9   mov   sp, cx
+1352:00CB   popad
+1352:00CD   pop   bp
+1352:00CE   retn
+1352:00CE expand endp ; sp = -8
+1352:00CE
+1352:00CF
+1352:00CF ; --------------- S U B R O U T I N E ---------------------------------------
+1352:00CF
+1352:00CF ; Attributes: bp-based frame
+1352:00CF
+1352:00CF decode proc near                ; ...
+1352:00CF
+1352:00CF window_size= word ptr  4
+1352:00CF
+1352:00CF   push  bp
+1352:00D0   mov   bp, sp
+1352:00D2   push  di
+1352:00D3   push  si
+1352:00D4   xor   si, si
+1352:00D6   mov   dx, [bp+window_size]
+1352:00D9
+1352:00D9 copy_match_byte:                ; ...
+1352:00D9   dec   match_length
+1352:00DD   js    short no_match_byte
+1352:00DF   mov   bx, match_pos
+1352:00E3   mov   al, window[bx]          ; copy matched dictionary entries
+1352:00E7   mov   window[si], al          ; window at ds:[16h] - ds:[2016h]
+1352:00EB   lea   ax, [bx+1]
+1352:00EE   and   ah, 1Fh                 ; byte_match_pos % window_size (mod 8KB)
+1352:00F1   mov   match_pos, ax
+1352:00F4   inc   si                      ; point to next byte in window
+1352:00F5   cmp   si, dx                  ; window size reached?
+1352:00F7   jnz   short copy_match_byte
+1352:00F9   pop   si
+1352:00FA   pop   di
+1352:00FB   leave
+1352:00FC   retn
+1352:00FD ; ---------------------------------------------------------------------------
+1352:00FD
+1352:00FD no_match_byte:                  ; ...
+1352:00FD   cmp   blocksize, 0
+1352:0102   jnz   short no_tables_init
+1352:0104   mov   dx, bit_buf
+1352:0108   mov   cl, 10h                 ; fetch 16-bit from src
+1352:010A   call  fill_bit_buf
+1352:010D   mov   ax, dx
+1352:010F   mov   blocksize, ax
+1352:0112   push  3                       ; treshold?
+1352:0114   push  5                       ; TBIT
+1352:0116   push  13h                     ; NT
+1352:0118   call  read_match_pos_len
+1352:011B   call  read_code_len
+1352:011E   push  0FFFFh                  ; -1 -- threshold?
+1352:0120   push  4                       ; PBIT
+1352:0122   push  0Eh                     ; NP (min_intrnl_node in match_byte_ptr_tbl index)
+1352:0124   call  read_match_pos_len
+1352:0127   add   sp, 0Ch                 ; discard pushed parameters above
+1352:012A
+1352:012A no_tables_init:                 ; ...
+1352:012A   mov   bx, bit_buf
+1352:012E   shr   bx, 3                   ; bx /= 8 (index_to_internal_node_in_tree).
+1352:012E                                 ; max(bx) = 1FFFh/8191d (8KB)
+1352:0131   and   bl, 0FEh                ; round to even
+1352:0134   dec   blocksize
+1352:0138   mov   bx, leaf_tbl[bx]
+1352:013C   mov   ax, 8                   ; ax = bitmask
+1352:013F
+1352:013F next_bit:                       ; ...
+1352:013F   cmp   bx, 1FEh                ; internal/parent node?
+1352:0143   jb    short is_leaf_node
+1352:0145   add   bx, bx                  ; bx *= 2 (internal node index)
+1352:0147   test  bit_buf, ax
+1352:014B   jz    short go_left           ; (assuming 0 is left)
+1352:014D   mov   bx, child_1[bx]         ; move right in tree table
+1352:0151   shr   ax, 1
+1352:0153   jmp   short next_bit
+1352:0155 ; ---------------------------------------------------------------------------
+1352:0155
+1352:0155 go_left:                        ; ...
+1352:0155   mov   bx, child_0[bx]         ; move left in tree table
+1352:0159   shr   ax, 1
+1352:015B   jmp   short next_bit
+1352:015D ; ---------------------------------------------------------------------------
+1352:015D
+1352:015D is_leaf_node:                   ; ...
+1352:015D   mov   cl, leaf_bitlen_tbl[bx] ; cl = bitlen
+1352:0161   mov   dx, bx                  ; dx = leaf_index
+1352:0163   call  fill_bit_buf
+1352:0166   cmp   dx, 0FFh                ; true_byte_val or match?
+1352:016A   ja    short is_match_length
+1352:016C   mov   window[si], dl          ; buffer[si] = dl --&gt; leaf_idx(dl_val) = code
+1352:0170   inc   si
+1352:0171   cmp   si, [bp+window_size]
+1352:0174   jnz   short no_match_byte
+1352:0176   pop   si
+1352:0177   pop   di
+1352:0178   leave
+1352:0179   retn
+1352:017A ; ---------------------------------------------------------------------------
+1352:017A
+1352:017A is_match_length:                ; ...
+1352:017A   sub   dx, 0FDh ; '¤'
+1352:017E   mov   match_length, dx
+1352:0182   call  decode_match_pos        ; ret_val in ax (ax = curr_idx - match_pos)
+1352:0185   mov   bx, si                  ; bx = current_pos_in_window
+1352:0187   sub   bx, ax
+1352:0189   dec   bx                      ; bx = match_pos
+1352:018A   and   bh, 1Fh                 ; bx %= window_size (mod 8KB)
+1352:018D   mov   dx, [bp+window_size]
+1352:0190
+1352:0190 copy_next_match_byte:           ; ...
+1352:0190   dec   match_length
+1352:0194   js    no_match_byte
+1352:0198   mov   al, window[bx]
+1352:019C   inc   bx
+1352:019D   mov   window[si], al
+1352:01A1   inc   si
+1352:01A2   and   bh, 1Fh                 ; bx %= window_size (mod 8KB)
+1352:01A5   cmp   si, dx                  ; end of window reached?
+1352:01A7   jnz   short copy_next_match_byte
+1352:01A9   mov   match_pos, bx
+1352:01AD   pop   si
+1352:01AE   pop   di
+1352:01AF   leave
+1352:01B0   retn
+1352:01B0 decode endp
+1352:01B0
+1352:01B1
+1352:01B1 ; --------------- S U B R O U T I N E ---------------------------------------
+1352:01B1
+1352:01B1 ; out: ax = (current_position - match_position)
+1352:01B1
+1352:01B1 decode_match_pos proc near      ; ...
+1352:01B1   push  si
+1352:01B2   movzx bx, byte ptr bit_buf+1  ; bx = hi_byte(bit_buf)
+1352:01B7   add   bx, bx                  ; bx *= 2 (bx = position in symbol table)
+1352:01B9   mov   si, match_pos_tbl[bx]
+1352:01BD   mov   ax, 80h ; 'A'           ; ax = bit_mask
+1352:01C0
+1352:01C0 next_bit:                       ; ...
+1352:01C0   cmp   si, 0Eh
+1352:01C3   jb    short leaf_pos_found    ; leaf index (bit_len) is in si
+1352:01C5   add   si, si                  ; si *= 2
+1352:01C7   test  bit_buf, ax
+1352:01CB   jz    short bit_is_0
+1352:01CD   mov   si, child_1[si]         ; si = right[si]
+1352:01D1   shr   ax, 1
+1352:01D3   jmp   short next_bit
+1352:01D5 ; ---------------------------------------------------------------------------
+1352:01D5
+1352:01D5 bit_is_0:                       ; ...
+1352:01D5   mov   si, child_0[si]         ; si = left[si]
+1352:01D9   shr   ax, 1
+1352:01DB   jmp   short next_bit
+1352:01DD ; ---------------------------------------------------------------------------
+1352:01DD
+1352:01DD leaf_pos_found:                 ; ...
+1352:01DD   mov   cl, match_pos_len_tbl[si]
+1352:01E1   call  fill_bit_buf
+1352:01E4   or    si, si
+1352:01E6   mov   ax, si
+1352:01E8   jz    short exit
+1352:01EA   lea   cx, [si-1]
+1352:01ED   mov   si, 1
+1352:01F0   shl   si, cl
+1352:01F2   mov   al, cl
+1352:01F4   mov   cl, 10h
+1352:01F6   sub   cl, al
+1352:01F8   mov   dx, bit_buf
+1352:01FC   shr   dx, cl
+1352:01FE   mov   cl, al                  ; cl = code_bit_len
+1352:0200   call  fill_bit_buf
+1352:0203   mov   ax, dx
+1352:0205   add   ax, si
+1352:0207
+1352:0207 exit:                           ; ...
+1352:0207   pop   si
+1352:0208   retn
+1352:0208 decode_match_pos endp
+1352:0208
+1352:0209
+1352:0209 ; --------------- S U B R O U T I N E ---------------------------------------
+1352:0209
+1352:0209 ; Attributes: bp-based frame
+1352:0209
+1352:0209 read_match_pos_len proc near    ; ...
+1352:0209
+1352:0209 table_size= word ptr -8
+1352:0209 matchpos_len_idx= word ptr -6
+1352:0209 dfault_symbol_ptr_len= word ptr -2
+1352:0209 symbol_bitlen= word ptr  4
+1352:0209 symbol_ptr_len= byte ptr  6
+1352:0209 threshold= word ptr  8
+1352:0209
+1352:0209   enter 8, 0                    ; 8 bytes local variables
+1352:020D   push  di
+1352:020E   push  si
+1352:020F   mov   al, [bp+symbol_ptr_len] ; al = amount of bits to read
+1352:0212   call  get_bits
+1352:0215   mov   [bp+table_size], ax
+1352:0218   or    ax, ax
+1352:021A   jnz   short table_size_not_0
+1352:021C   mov   al, [bp+symbol_ptr_len]
+1352:021F   call  get_bits
+1352:0222   mov   [bp+dfault_symbol_ptr_len], ax
+1352:0225   push  ds
+1352:0226   pop   es                      ; es = ds
+1352:0227   assume es:scratch_pad_seg
+1352:0227   mov   cx, [bp+symbol_bitlen]
+1352:022A   jcxz  short min_intrnl_node_idx_is_0
+1352:022C   mov   di, offset match_pos_len_tbl ; match_pos_len[symbol_bitlen]
+1352:022F   xor   ax, ax
+1352:0231   shr   cx, 1
+1352:0233   rep stosw                     ; zero init the table (bitlens = 0)
+1352:0235   jnb   short min_intrnl_node_idx_is_0
+1352:0237   stosb
+1352:0238
+1352:0238 min_intrnl_node_idx_is_0:       ; ...
+1352:0238   mov   ax, [bp+dfault_symbol_ptr_len]
+1352:023B   mov   cx, 256                 ; 256 words table size (for all bytes)
+1352:023E   mov   di, offset match_pos_tbl ; bytes symbol table
+1352:0241   rep stosw
+1352:0243   pop   si
+1352:0244   pop   di
+1352:0245   leave
+1352:0246   retn
+1352:0247 ; ---------------------------------------------------------------------------
+1352:0247
+1352:0247 table_size_not_0:               ; ...
+1352:0247   mov   [bp+matchpos_len_idx], 0
+1352:024C
+1352:024C nxt_matchpos_len_idx:           ; ...
+1352:024C   mov   ax, [bp+matchpos_len_idx]
+1352:024F   cmp   [bp+table_size], ax
+1352:0252   jle   short matchpos_bitlen_tbl_done
+1352:0254   mov   si, bit_buf
+1352:0258   shr   si, 13                  ; c = bitbuf &gt;&gt; (BITBUFSIZ - 3)
+1352:025B   cmp   si, 7
+1352:025E   jnz   short not_max_index
+1352:0260   mov   di, 1000h               ; mask = 1U &lt;&lt; (BITBUFSIZ - 1 - 3)
+1352:0263   test  byte ptr bit_buf+1, 10h ; hi_byte(bit_buf) &amp; 0x10
+1352:0268   jz    short not_max_index
+1352:026A
+1352:026A inc_index:                      ; ...
+1352:026A   inc   si
+1352:026B   shr   di, 1
+1352:026D   test  bit_buf, di
+1352:0271   jnz   short inc_index
+1352:0273
+1352:0273 not_max_index:                  ; ...
+1352:0273   mov   cl, 3
+1352:0275   cmp   si, 7
+1352:0278   jl    short get_src_bits
+1352:027A   lea   cx, [si-3]              ; cl = bitlen (bit count to be read)
+1352:027D
+1352:027D get_src_bits:                   ; ...
+1352:027D   call  fill_bit_buf
+1352:0280   mov   bx, [bp+matchpos_len_idx]
+1352:0283   inc   [bp+matchpos_len_idx]
+1352:0286   mov   ax, si
+1352:0288   mov   match_pos_len_tbl[bx], al
+1352:028C   mov   ax, [bp+threshold]
+1352:028F   cmp   [bp+matchpos_len_idx], ax
+1352:0292   jnz   short nxt_matchpos_len_idx
+1352:0294   mov   al, 2
+1352:0296   call  get_bits
+1352:0299   mov   bx, [bp+matchpos_len_idx]
+1352:029C   mov   di, ax
+1352:029E
+1352:029E nxt_matchpos_len_tbl_idx:       ; ...
+1352:029E   dec   di
+1352:029F   jns   short index_is_positive
+1352:02A1   mov   [bp+matchpos_len_idx], bx
+1352:02A4   jmp   short nxt_matchpos_len_idx
+1352:02A6 ; ---------------------------------------------------------------------------
+1352:02A6
+1352:02A6 index_is_positive:              ; ...
+1352:02A6   mov   match_pos_len_tbl[bx], 0
+1352:02AB   inc   bx
+1352:02AC   jmp   short nxt_matchpos_len_tbl_idx
+1352:02AE ; ---------------------------------------------------------------------------
+1352:02AE
+1352:02AE matchpos_bitlen_tbl_done:       ; ...
+1352:02AE   mov   bx, ax
+1352:02B0   cmp   [bp+symbol_bitlen], ax
+1352:02B3   jle   short init_tree
+1352:02B5   xor   ax, ax
+1352:02B7   mov   cx, [bp+symbol_bitlen]
+1352:02BA   sub   cx, bx
+1352:02BC   lea   di, match_pos_len_tbl[bx] ; lea di, [match_pos_len_tbl + bx]
+1352:02C0   push  ds
+1352:02C1   pop   es                      ; es = ds
+1352:02C2   shr   cx, 1                   ; cx/2
+1352:02C4   rep stosw                     ; zero init matchpos_bitlen_tbl[]
+1352:02C6   jnb   short init_tree
+1352:02C8   stosb
+1352:02C9
+1352:02C9 init_tree:                      ; ...
+1352:02C9   push  ds
+1352:02CA   push  offset match_pos_tbl
+1352:02CD   push  8                       ; tablebits
+1352:02CF   push  ds
+1352:02D0   push  offset match_pos_len_tbl
+1352:02D3   push  [bp+symbol_bitlen]
+1352:02D6   call  make_table
+1352:02D9   add   sp, 12                  ; trash the pushed parameters above
+1352:02DC   pop   si
+1352:02DD   pop   di
+1352:02DE   leave
+1352:02DF   retn
+1352:02DF read_match_pos_len endp
+1352:02DF
+1352:02E0
+1352:02E0 ; --------------- S U B R O U T I N E ---------------------------------------
+1352:02E0
+1352:02E0 ; Attributes: bp-based frame
+1352:02E0
+1352:02E0 read_code_len proc near         ; ...
+1352:02E0
+1352:02E0 min_intrnl_node_idx= word ptr -6
+1352:02E0 tbl_index= word ptr -4
+1352:02E0
+1352:02E0   enter 6, 0
+1352:02E4   push  di
+1352:02E5   push  si
+1352:02E6   mov   al, 9                   ; al = CODE_BITS
+1352:02E8   call  get_bits                ; get 9 bits
+1352:02EB   mov   [bp+min_intrnl_node_idx], ax
+1352:02EE   or    ax, ax
+1352:02F0   jnz   short code_len_not_zero
+1352:02F2   push  ds
+1352:02F3   pop   es                      ; es = scratchpad_seg
+1352:02F4   xor   ax, ax
+1352:02F6   mov   cx, 1FEh
+1352:02F9   mov   di, offset leaf_bitlen_tbl
+1352:02FC   rep stosw                     ; zero init leaf_bitlen_table[] (@scpad_seg:3006h)
+1352:02FE   mov   al, 9
+1352:0300   call  get_bits
+1352:0303   push  ds
+1352:0304   pop   es
+1352:0305   mov   cx, 4096
+1352:0308   mov   di, offset leaf_tbl
+1352:030B   rep stosw                     ; zero init internal_node_tbl (8KB @ scpad_seg:3A0Dh)
+1352:030D   pop   si
+1352:030E   pop   di
+1352:030F   leave
+1352:0310   retn
+1352:0311 ; ---------------------------------------------------------------------------
+1352:0311
+1352:0311 code_len_not_zero:              ; ...
+1352:0311   xor   bx, bx
+1352:0313
+1352:0313 next_table_index:               ; ...
+1352:0313   mov   [bp+tbl_index], bx
+1352:0316   cmp   [bp+min_intrnl_node_idx], bx
+1352:0319   jle   short init_leaf_bitlen_tbl
+1352:031B   movzx si, byte ptr bit_buf+1
+1352:0320   add   si, si                  ; si *= 2
+1352:0322   mov   si, match_pos_tbl[si]   ; mov si, [match_pos_tbl+si]
+1352:0326   mov   ax, 80h ; 'A'           ; ax = bit_mask
+1352:0329
+1352:0329 next_bit:                       ; ...
+1352:0329   cmp   si, 13h
+1352:032C   jl    short bit_exhausted
+1352:032E   shl   si, 1                   ; si *= 2
+1352:0330   test  bit_buf, ax
+1352:0334   jz    short go_left
+1352:0336   mov   si, child_1[si]         ; mov si, [child_1 + si]
+1352:033A   shr   ax, 1
+1352:033C   jmp   short next_bit
+1352:033E ; ---------------------------------------------------------------------------
+1352:033E
+1352:033E go_left:                        ; ...
+1352:033E   mov   si, child_0[si]         ; mov si, [child_0 + si]
+1352:0342   shr   ax, 1
+1352:0344   jmp   short next_bit
+1352:0346 ; ---------------------------------------------------------------------------
+1352:0346
+1352:0346 bit_exhausted:                  ; ...
+1352:0346   mov   cl, match_pos_len_tbl[si]
+1352:034A   call  fill_bit_buf
+1352:034D   cmp   si, 2
+1352:0350   jg    short node_idx_gt_2
+1352:0352   mov   ax, 1
+1352:0355   or    si, si
+1352:0357   jz    short node_idx_is_0
+1352:0359   cmp   si, 1
+1352:035C   jnz   short node_idx_is_1
+1352:035E   mov   al, 4
+1352:0360   call  get_bits
+1352:0363   add   ax, 3
+1352:0366   jmp   short node_idx_is_0
+1352:0368 ; ---------------------------------------------------------------------------
+1352:0368
+1352:0368 node_idx_is_1:                  ; ...
+1352:0368   mov   al, 9
+1352:036A   call  get_bits
+1352:036D   add   ax, 14h
+1352:0370
+1352:0370 node_idx_is_0:                  ; ...
+1352:0370   mov   bx, [bp+tbl_index]
+1352:0373
+1352:0373 next_leaf:                      ; ...
+1352:0373   dec   ax
+1352:0374   js    short next_table_index
+1352:0376   mov   leaf_bitlen_tbl[bx], 0
+1352:037B   inc   bx
+1352:037C   jmp   short next_leaf
+1352:037E ; ---------------------------------------------------------------------------
+1352:037E
+1352:037E node_idx_gt_2:                  ; ...
+1352:037E   mov   bx, [bp+tbl_index]
+1352:0381   mov   ax, si
+1352:0383   sub   ax, 2
+1352:0386   mov   leaf_bitlen_tbl[bx], al
+1352:038A   inc   bx
+1352:038B   jmp   short next_table_index
+1352:038D ; ---------------------------------------------------------------------------
+1352:038D
+1352:038D init_leaf_bitlen_tbl:           ; ...
+1352:038D   mov   cx, 1FEh
+1352:0390   sub   cx, bx
+1352:0392   jle   short init_tree
+1352:0394   lea   di, leaf_bitlen_tbl[bx]
+1352:0398   push  ds
+1352:0399   pop   es
+1352:039A   xor   ax, ax
+1352:039C   shr   cx, 1
+1352:039E   rep stosw
+1352:03A0   jnb   short init_tree
+1352:03A2   stosb
+1352:03A3
+1352:03A3 init_tree:                      ; ...
+1352:03A3   push  ds
+1352:03A4   push  offset leaf_tbl
+1352:03A7   push  0Ch
+1352:03A9   push  ds
+1352:03AA   push  offset leaf_bitlen_tbl
+1352:03AD   push  1FEh
+1352:03B0   call  make_table
+1352:03B3   add   sp, 0Ch
+1352:03B6   pop   si
+1352:03B7   pop   di
+1352:03B8   leave
+1352:03B9   retn
+1352:03B9 read_code_len endp
+1352:03B9
+1352:03BA
+1352:03BA ; --------------- S U B R O U T I N E ---------------------------------------
+1352:03BA
+1352:03BA ; Attributes: bp-based frame
+1352:03BA
+1352:03BA make_table proc near            ; ...
+1352:03BA
+1352:03BA __start_0= word ptr -80h
+1352:03BA __start_1= word ptr -7Eh
+1352:03BA __start_2= word ptr -7Ch
+1352:03BA __weight_0= word ptr -5Ch
+1352:03BA __weight_1= word ptr -5Ah
+1352:03BA __end_of_weight?= word ptr -3Ch
+1352:03BA __count_0= word ptr -3Ah
+1352:03BA __count_1= word ptr -38h
+1352:03BA __end_of_count= word ptr -1Ah
+1352:03BA __jutbits= word ptr -18h
+1352:03BA __mask= word ptr -16h
+1352:03BA __p= word ptr -14h
+1352:03BA __ch= word ptr -10h
+1352:03BA __current_pos= word ptr -0Eh
+1352:03BA __i= word ptr -0Ch
+1352:03BA __k= word ptr -0Ah
+1352:03BA __child_0_idx= word ptr -8
+1352:03BA __child_1_idx= word ptr -6
+1352:03BA tbl_idx= dword ptr -4
+1352:03BA leaf_count= word ptr  4
+1352:03BA leaf_bitlen_tbl= dword ptr  6
+1352:03BA tbl_bitcount= word ptr  0Ah
+1352:03BA table= dword ptr  0Ch
+1352:03BA
+1352:03BA   enter 128, 0
+1352:03BE   push  di
+1352:03BF   push  si
+1352:03C0   xor   ax, ax                  ; zero init 16 words ([bp-38h] - [bp-18h])
+1352:03C2   mov   cx, 16
+1352:03C5   lea   di, [bp+__count_1]      ; count @ scratch_pad segment
+1352:03C5                                 ; note: scratch_pad_seg equ stack_seg
+1352:03C8   push  ds
+1352:03C9   pop   es                      ; es = ds
+1352:03CA   rep stosw
+1352:03CC   xor   si, si
+1352:03CE   mov   cx, [bp+leaf_count]
+1352:03D1   or    cx, cx
+1352:03D3   jz    short leaf_count_is_0
+1352:03D5   mov   di, word ptr [bp+leaf_bitlen_tbl]
+1352:03D8   mov   ds, word ptr [bp+leaf_bitlen_tbl+2]
+1352:03DB
+1352:03DB nxt_leaf_bitlen_tbl_entry:      ; ...
+1352:03DB   mov   bx, di
+1352:03DD   add   bx, si
+1352:03DF   mov   bl, [bx]                ; bl = [si+di]
+1352:03E1   sub   bh, bh                  ; bh = 0
+1352:03E3   add   bx, bx                  ; bx = bl*2
+1352:03E5   lea   ax, [bp+__count_0]
+1352:03E8   add   bx, ax
+1352:03EA   inc   word ptr ss:[bx]        ; count[bx]++ ;count in stack segment
+1352:03EA                                 ; is the same as the count in the data_seg
+1352:03EA                                 ; coz ds and ss points to the same seg
+1352:03ED   inc   si
+1352:03EE   cmp   si, cx
+1352:03F0   jb    short nxt_leaf_bitlen_tbl_entry
+1352:03F2   push  es
+1352:03F3   pop   ds                      ; restore ds to point to scratchpad_seg
+1352:03F4
+1352:03F4 leaf_count_is_0:                ; ...
+1352:03F4   mov   [bp+__start_1], 0
+1352:03F9   mov   dx, 1                   ; dx = bit_length
+1352:03FC   lea   bx, [bp+__start_2]
+1352:03FF   lea   di, [bp+__count_1]
+1352:0402
+1352:0402 next_start_tbl_entry:           ; ...
+1352:0402   mov   cl, 16
+1352:0404   sub   cl, dl
+1352:0406   mov   ax, [di]
+1352:0408   shl   ax, cl
+1352:040A   add   ax, [bx-2]
+1352:040D   mov   [bx], ax
+1352:040F   add   bx, 2                   ; point to next word in start_tbl[]
+1352:0412   inc   dx
+1352:0413   add   di, 2                   ; point to next word in count[]
+1352:0416   lea   ax, [bp+__end_of_count]
+1352:0419   cmp   di, ax                  ; is count[] limit reached?
+1352:041B   jbe   short next_start_tbl_entry
+1352:041D   mov   dx, [bp+tbl_bitcount]
+1352:0420   mov   ax, 16
+1352:0423   sub   ax, dx                  ; jutbits, i.e. ax = 16 - tbl_bitcount
+1352:0425   mov   [bp+__jutbits], ax
+1352:0428   mov   si, 1
+1352:042B   cmp   dx, si                  ; tbl_bitcount == 1
+1352:042D   jb    short tbl_bitcount_lt_1
+1352:042F   lea   ax, [bp+__weight_1]
+1352:0432   mov   word ptr [bp+tbl_idx+2], ax
+1352:0435   lea   di, [bp+__start_1]
+1352:0438
+1352:0438 nxt_weight_entry:               ; ...
+1352:0438   mov   cl, byte ptr [bp+__jutbits]
+1352:043B   shr   word ptr [di], cl
+1352:043D   mov   cl, byte ptr [bp+tbl_bitcount]
+1352:0440   mov   ax, si
+1352:0442   sub   cl, al
+1352:0444   mov   ax, 1                   ; ax = 1U
+1352:0447   shl   ax, cl
+1352:0449   mov   bx, word ptr [bp+tbl_idx+2]
+1352:044C   add   word ptr [bp+tbl_idx+2], 2
+1352:0450   mov   [bx], ax
+1352:0452   add   di, 2                   ; point to next start_tbl[] entry
+1352:0455   inc   si
+1352:0456   cmp   si, [bp+tbl_bitcount]
+1352:0459   jbe   short nxt_weight_entry
+1352:045B
+1352:045B tbl_bitcount_lt_1:              ; ...
+1352:045B   cmp   si, 16
+1352:045E   ja    short dont_init_weight
+1352:0460   mov   di, si
+1352:0462   add   di, si
+1352:0464   lea   bx, [bp+di+__weight_0]
+1352:0467
+1352:0467 next_weight_entry:              ; ...
+1352:0467   mov   cl, 10h
+1352:0469   mov   ax, si
+1352:046B   sub   cl, al
+1352:046D   mov   ax, 1                   ; ax = 1U
+1352:0470   shl   ax, cl
+1352:0472   mov   [bx], ax                ; ds:[bx] = bitmask
+1352:0474   add   bx, 2                   ; move to next weight[] entry
+1352:0477   inc   si
+1352:0478   lea   ax, [bp+__end_of_weight?]
+1352:047B   cmp   bx, ax
+1352:047D   jbe   short next_weight_entry
+1352:047F
+1352:047F dont_init_weight:               ; ...
+1352:047F   mov   si, [bp+tbl_bitcount]
+1352:0482   add   si, si
+1352:0484   mov   bx, [bp+si+__start_1]
+1352:0487   mov   cl, byte ptr [bp+__jutbits]
+1352:048A   shr   bx, cl
+1352:048C   or    bx, bx
+1352:048E   jz    short not_zro_init
+1352:0490   mov   cl, byte ptr [bp+tbl_bitcount]
+1352:0493   mov   ax, 1                   ; ax = 1U
+1352:0496   shl   ax, cl
+1352:0498   mov   [bp+__k], ax
+1352:049B   cmp   ax, bx
+1352:049D   jz    short not_zro_init
+1352:049F   mov   cx, ax
+1352:04A1   sub   cx, bx
+1352:04A3   add   bx, bx                  ; bx *= 2
+1352:04A5   les   si, [bp+table]
+1352:04A8   assume es:nothing
+1352:04A8   xor   ax, ax
+1352:04AA   lea   di, [bx+si]
+1352:04AC   rep stosw                     ; zero init intrnl_node_tbl[]
+1352:04AE
+1352:04AE not_zro_init:                   ; ...
+1352:04AE   mov   ax, [bp+leaf_count]
+1352:04B1   mov   [bp+__current_pos], ax
+1352:04B4   mov   cl, 15
+1352:04B6   sub   cl, byte ptr [bp+tbl_bitcount]
+1352:04B9   mov   dx, 1
+1352:04BC   shl   dx, cl
+1352:04BE   mov   [bp+__mask], dx
+1352:04C1   mov   [bp+__ch], 0
+1352:04C6   or    ax, ax                  ; leaf_count == 0
+1352:04C8   jnz   short init_intrnal_nodes
+1352:04CA   jmp   exit
+1352:04CD ; ---------------------------------------------------------------------------
+1352:04CD
+1352:04CD init_intrnal_nodes:             ; ...
+1352:04CD   les   bx, [bp+leaf_bitlen_tbl]
+1352:04D0   add   bx, [bp+__ch]
+1352:04D3   mov   bl, es:[bx]             ; bl = leaf_bitlen_tbl[__ch]
+1352:04D6   sub   bh, bh                  ; bh = 0
+1352:04D8   or    bx, bx
+1352:04DA   jnz   short init_intrnl_node_code
+1352:04DC   jmp   next___ch
+1352:04DF ; ---------------------------------------------------------------------------
+1352:04DF
+1352:04DF init_intrnl_node_code:          ; ...
+1352:04DF   mov   si, bx
+1352:04E1   add   si, bx                  ; si *= 2
+1352:04E3   mov   dx, [bp+si+__start_0]
+1352:04E6   add   dx, [bp+si+__weight_0]  ; dx = nextcode
+1352:04E9   cmp   [bp+tbl_bitcount], bx
+1352:04EC   jb    short tbl_bitcount_lt_len
+1352:04EE   mov   si, bx
+1352:04F0   add   si, bx
+1352:04F2   mov   ax, [bp+si+__start_0]
+1352:04F5   mov   [bp+__i], ax
+1352:04F8   cmp   ax, dx
+1352:04FA   jb    short fill_intrnl_node_tbl
+1352:04FC   jmp   fetch_nextcode
+1352:04FF ; ---------------------------------------------------------------------------
+1352:04FF
+1352:04FF fill_intrnl_node_tbl:           ; ...
+1352:04FF   mov   di, ax
+1352:0501   add   di, di
+1352:0503   add   di, word ptr [bp+table]
+1352:0506   mov   es, word ptr [bp+table+2]
+1352:0509   mov   cx, dx
+1352:050B   sub   cx, ax
+1352:050D   mov   ax, [bp+__ch]
+1352:0510   rep stosw
+1352:0512   jmp   fetch_nextcode
+1352:0515 ; ---------------------------------------------------------------------------
+1352:0515
+1352:0515 tbl_bitcount_lt_len:            ; ...
+1352:0515   mov   si, bx
+1352:0517   add   si, bx
+1352:0519   mov   ax, [bp+si+__start_0]
+1352:051C   mov   [bp+__k], ax
+1352:051F   mov   cl, byte ptr [bp+__jutbits]
+1352:0522   shr   ax, cl
+1352:0524   add   ax, ax
+1352:0526   add   ax, word ptr [bp+table]
+1352:0529   mov   word ptr [bp+tbl_idx], ax
+1352:052C   mov   ax, word ptr [bp+table+2]
+1352:052F   mov   word ptr [bp+tbl_idx+2], ax
+1352:0532   mov   di, bx
+1352:0534   sub   di, [bp+tbl_bitcount]   ; di = i = len - tablebits
+1352:0537   jz    short __i_equ_0
+1352:0539   mov   [bp+__i], di
+1352:053C   mov   [bp+__p], bx
+1352:053F   mov   ax, [bp+__current_pos]
+1352:0542   add   ax, ax                  ; ax *= 2
+1352:0544   mov   cx, ax
+1352:0546   add   ax, offset child_1      ; ax += right[] table
+1352:0549   mov   [bp+__child_1_idx], ax
+1352:054C   add   cx, offset child_0      ; cx += left[] table
+1352:0550   mov   [bp+__child_0_idx], cx
+1352:0553   mov   si, word ptr [bp+tbl_idx]
+1352:0556   mov   di, [bp+__k]
+1352:0559   mov   es, word ptr [bp+table+2] ; es = seg(table[])
+1352:055C
+1352:055C next___i:                       ; ...
+1352:055C   cmp   word ptr es:[si], 0
+1352:0560   jnz   short move_in_tree
+1352:0562   mov   bx, [bp+__child_0_idx]
+1352:0565   xor   ax, ax
+1352:0567   mov   [bx], ax                ; left_child = 0
+1352:0569   mov   bx, [bp+__child_1_idx]
+1352:056C   mov   [bx], ax                ; right_child = 0
+1352:056E   mov   ax, [bp+__current_pos]
+1352:0571   inc   [bp+__current_pos]
+1352:0574   mov   es:[si], ax
+1352:0577   add   [bp+__child_1_idx], 2   ; move to higher node
+1352:057B   add   [bp+__child_0_idx], 2   ; move to higher node
+1352:057F
+1352:057F move_in_tree:                   ; ...
+1352:057F   test  [bp+__mask], di
+1352:0582   jz    short go_left
+1352:0584   mov   ax, es:[si]
+1352:0587   add   ax, ax
+1352:0589   add   ax, offset child_1      ; ax += right[] table
+1352:058C   jmp   short move_in_tree_done
+1352:058E ; ---------------------------------------------------------------------------
+1352:058E
+1352:058E go_left:                        ; ...
+1352:058E   mov   ax, es:[si]
+1352:0591   add   ax, ax
+1352:0593   add   ax, offset child_0      ; ax += left[] table
+1352:0596
+1352:0596 move_in_tree_done:              ; ...
+1352:0596   mov   cx, ds
+1352:0598   mov   si, ax
+1352:059A   mov   es, cx
+1352:059C   assume es:scratch_pad_seg
+1352:059C   add   di, di                  ; n &lt;&lt;= 1
+1352:059E   dec   [bp+__i]
+1352:05A1   jnz   short next___i
+1352:05A3   mov   word ptr [bp+tbl_idx+2], es
+1352:05A6   mov   word ptr [bp+tbl_idx], ax
+1352:05A9   mov   bx, [bp+__p]
+1352:05AC
+1352:05AC __i_equ_0:                      ; ...
+1352:05AC   mov   ax, [bp+__ch]
+1352:05AF   les   si, [bp+tbl_idx]
+1352:05B2   assume es:nothing
+1352:05B2   mov   es:[si], ax
+1352:05B5
+1352:05B5 fetch_nextcode:                 ; ...
+1352:05B5   mov   si, bx
+1352:05B7   add   si, bx
+1352:05B9   mov   [bp+si+__start_0], dx
+1352:05BC
+1352:05BC next___ch:                      ; ...
+1352:05BC   mov   ax, [bp+leaf_count]
+1352:05BF   inc   [bp+__ch]
+1352:05C2   cmp   [bp+__ch], ax
+1352:05C5   jnb   short exit
+1352:05C7   jmp   init_intrnal_nodes
+1352:05CA ; ---------------------------------------------------------------------------
+1352:05CA
+1352:05CA exit:                           ; ...
+1352:05CA   pop   si
+1352:05CB   pop   di
+1352:05CC   leave
+1352:05CD   retn
+1352:05CD make_table endp
+1352:05CD
+1352:05CE
+1352:05CE ; --------------- S U B R O U T I N E ---------------------------------------
+1352:05CE
+1352:05CE ; in:  al = amount of bit to read
+1352:05CE ; out: ax = bits read
+1352:05CE
+1352:05CE get_bits proc near              ; ...
+1352:05CE   mov   cl, 10h
+1352:05D0   sub   cl, al
+1352:05D2   mov   dx, bit_buf
+1352:05D6   shr   dx, cl
+1352:05D8   mov   cl, al
+1352:05DA   call  fill_bit_buf
+1352:05DD   mov   ax, dx
+1352:05DF   retn
+1352:05DF get_bits endp
+1352:05DF
+1352:05E0
+1352:05E0 ; --------------- S U B R O U T I N E ---------------------------------------
+1352:05E0
+1352:05E0 ; in: cl = amount of bit to read
+1352:05E0
+1352:05E0 fill_bit_buf proc near          ; ...
+1352:05E0   shl   bit_buf, cl
+1352:05E4   mov   ch, byte ptr bit_position
+1352:05E8   cmp   ch, cl
+1352:05EA   jge   short bitpos_gt_req_bitcount
+1352:05EC   mov   ebx, src_byte_ptr
+1352:05F1   push  0
+1352:05F3   pop   es
+1352:05F4   assume es:_12000
+1352:05F4   mov   ax, _byte_buf
+1352:05F7   sub   cl, ch                  ; cl = number of bit to read
+1352:05F9   cmp   cl, 8
+1352:05FC   jle   short bit2read_lte_8
+1352:05FE   shl   ax, cl
+1352:0600   or    bit_buf, ax
+1352:0604   movzx ax, byte ptr es:[ebx]   ; fetch one byte from compressed src
+1352:0609   inc   ebx                     ; point to next src byte
+1352:060B   sub   cl, 8
+1352:060E
+1352:060E bit2read_lte_8:                 ; ...
+1352:060E   shl   ax, cl
+1352:0610   or    bit_buf, ax
+1352:0614   movzx ax, byte ptr es:[ebx]   ; fetch one byte from compressed src
+1352:0619   inc   ebx
+1352:061B   mov   src_byte_ptr, ebx       ; point to next src byte
+1352:0620   mov   _byte_buf, ax
+1352:0623   mov   ch, 8                   ; set bit position to 8
+1352:0625
+1352:0625 bitpos_gt_req_bitcount:         ; ...
+1352:0625   sub   ch, cl                  ; ch = number of bit read
+1352:0627   mov   byte ptr bit_position, ch
+1352:062B   xchg  ch, cl
+1352:062D   mov   ax, _byte_buf
+1352:0630   shr   ax, cl
+1352:0632   or    bit_buf, ax
+1352:0636   retn
+1352:0636 fill_bit_buf endp
+</pre><p>The first call to this decompression engine passes <code>8F98Ch</code> as the source-address 
+parameter and <code>120000h</code> as the destination-address parameter for the decompression. 
+I made an IDA Pro plugin to simulate the decompression process. It's a quite trivial but time 
+consuming process. After the compressed part decompressed to memory at <code>120000h</code>, the 
+execution then continues to <code>copy_decomp_result</code>.
+</p>
+<h3 align="left"><a name="_4_4">4.4. BIOS Binary Relocation into RAM </a></h3>
+<p>
+</p>
+<pre>8000:A091 decomp_block_entry proc near
+8000:A091   call  init_decomp_ngine       ; on ret, ds = 0
+<font color="#cc0000">8000:A094   call  copy_decomp_result</font>
+8000:A097   call  call_F000_0000
+8000:A09A   retn
+8000:A09A decomp_block_entry endp
+.........
+8000:A273 copy_decomp_result proc near    ; ...
+8000:A273   pushad
+8000:A275   call  _init_regs
+8000:A278   mov   esi, cs:decomp_dest_addr
+8000:A27E   push  es
+8000:A27F   push  ds
+8000:A280   mov   bp, sp
+8000:A282   movzx ecx, word ptr [esi+2]   ; ecx = hdr_length
+8000:A288   mov   edx, ecx                ; edx = hdr_length
+8000:A28B   sub   sp, cx                  ; provide big stack section
+8000:A28D   mov   bx, sp
+8000:A28F   push  ss
+8000:A290   pop   es
+8000:A291   movzx edi, sp
+8000:A295   push  esi
+8000:A297   cld
+8000:A298   rep movs byte ptr es:[edi], byte ptr [esi] ; fill stack with decompressed bootblock part
+8000:A29B   pop   esi
+8000:A29D   push  ds
+8000:A29E   pop   es                      ; es = ds ( 0000h ? )
+8000:A29F   movzx ecx, word ptr ss:[bx+0] ; ecx number of components to copy
+8000:A2A4   add   esi, edx                ; esi points to right after header
+8000:A2A7
+8000:A2A7 next_dword:                     ; ...
+8000:A2A7   add   bx, 4
+8000:A2AA   push  ecx
+8000:A2AC   mov   edi, ss:[bx+0]          ; edi = destination addr
+8000:A2B0   add   bx, 4
+8000:A2B3   mov   ecx, ss:[bx+0]
+8000:A2B7   mov   edx, ecx                ; edx = byte count
+8000:A2BA   shr   ecx, 2                  ; ecx / 4
+8000:A2BE   jz    short copy_remaining_bytes
+8000:A2C0   rep movs dword ptr es:[edi], dword ptr [esi]
+8000:A2C4
+8000:A2C4 copy_remaining_bytes:           ; ...
+8000:A2C4   mov   ecx, edx
+8000:A2C7   and   ecx, 3
+8000:A2CB   jz    short no_more_bytes2copy
+8000:A2CD   rep movs byte ptr es:[edi], byte ptr [esi]
+8000:A2D0
+8000:A2D0 no_more_bytes2copy:             ; ...
+8000:A2D0   pop   ecx
+8000:A2D2   loop  next_dword
+8000:A2D4   mov   edi, 120000h            ; decompression destination addr
+8000:A2DA   call  far ptr esi_equ_FFFC_0000h ; decompression source address
+8000:A2DF   push  0F000h
+8000:A2E2   pop   ds
+8000:A2E3   assume ds:_F0000
+8000:A2E3   mov   word_F000_B1, cx
+8000:A2E7   mov   sp, bp
+8000:A2E9   pop   ds
+8000:A2EA   assume ds:nothing
+8000:A2EA   pop   es
+8000:A2EB   popad
+8000:A2ED   retn
+8000:A2ED copy_decomp_result endp ; sp = -4
+.........
+</pre><code>copy_decomp_result</code> copies the decompression result from address <code>120000h</code> to 
+segment <code>F000h</code>. The destination and the source of the this operation are provided in the 
+header portion of the decompressed code at address <code>120000h</code>. This header format is 
+somehow very similar to the header format used by the decompression engine module that we encounter 
+previously.
+
+<p>
+</p>
+<pre>0000:120000   dw 1                          ; number of components
+0000:120002   dw 0Ch                        ; header length of this component
+0000:120004   dd 0F0000h                    ; destination addr
+0000:120008   dd 485h                       ; byte count
+</pre>Then, the execution continues with a call to the procedure at the overwritten part of segment <code>F000h</code>.
+<pre>8000:A094   call  copy_decomp_result
+8000:A097   <font color="#cc0000">call  call_F000_0000</font>
+.........
+8000:A2EE call_F000_0000 proc near        ; ...
+8000:A2EE   call  prepare_sys_BIOS        ; jump table in system BIOS?
+8000:A2F3
+8000:A2F3 halt:                           ; ...
+8000:A2F3   cli
+8000:A2F4   hlt
+8000:A2F5   jmp   short halt
+8000:A2F5 call_F000_0000 endp
+.........
+F000:0000 prepare_sys_BIOS proc far       ; ...
+F000:0000   call  Relocate_BIOS_Binary
+F000:0005   call  Calc_Module_Sum
+F000:000A   call  far ptr Bootblock_POST_D7h
+F000:000F   retf
+F000:000F prepare_sys_BIOS endp
+</pre><p><code>prepare_sys_BIOS</code> function accomplishes several tasks. </p>
+<p>First, <code>prepare_sys_BIOS</code> copies the BIOS binary from high BIOS 
+address (near 4GB address range) to to RAM at segment 
+<code>16_0000h</code> - <code>19_FFFFh</code> by calling 
+<code>Relocate_BIOS_Binary</code> function. <code>Relocate_BIOS_Binary</code> function 
+also also copies the pure code of the BIOS binary (non-padding bytes) to 
+segment <code>12_0000h - 15_FFFFh</code>.
+</p>
+<hr />
+<pre>F000:00EA Relocate_BIOS_Binary proc far   ; ...
+F000:00EA   push  es
+F000:00EB   push  ds
+F000:00EC   pushad
+F000:00EE   mov   edi, 120000h
+F000:00F4   call  _get_sysbios_param      ; on-ret: cx = 4 ; esi = FFFC_0000h
+F000:00F4                                 ;         carry_flag = 0
+F000:00F9   jnb   short no_carry          ; jmp taken
+F000:00FB   mov   esi, 0FE000h
+F000:0101   mov   cx, 2
+F000:0104
+F000:0104 no_carry:                       ; ...
+F000:0104   movzx eax, cx                 ; eax = 4
+F000:0108   shl   eax, 0Eh                ; eax = 1_0000h
+F000:010C   mov   cs:BIOS_size_in_dword?, eax
+F000:0111   mov   ecx, eax                ; ecx = 1_0000h
+F000:0114   shl   eax, 2                  ; eax = 4_0000h
+F000:0118   mov   cs:BIOS_size_in_byte?, eax
+F000:011D   xor   eax, eax                ; eax = 0
+F000:0120   mov   ds, ax                  ; ds = 0
+F000:0122   assume ds:sys_bios
+F000:0122   mov   es, ax                  ; es = 0
+F000:0124   push  ecx                     ; ecx is 1_0000h at this point
+F000:0126   dec   eax                     ; eax = -1 = 0xFFFF_FFFF
+F000:0128   rep stos dword ptr es:[edi]   ; init 120000h-15FFFFh with FFh
+F000:012C   push  ds
+F000:012D   push  51h
+F000:0130   pop   ds
+F000:0131   assume ds:_51h
+F000:0131   mov   BIOS_bin_start_addr, edi
+F000:0136   pop   ds
+F000:0137   assume ds:nothing
+F000:0137   pop   ecx
+F000:0139   push  edi
+F000:013B   rep movs dword ptr es:[edi], dword ptr [esi] ; copy 256KB from FFFC_0000h-FFFF_FFFFh to
+F000:013B                                 ; 16_0000h-19_FFFFh
+F000:013F   pop   esi                     ; esi = edi = 16_0000h
+F000:0141   mov   cx, cs:BIOS_seg_count?  ; cx = 4
+F000:0146   call  get_sysbios_start_addr  ; 1st pass: edi = 19_8000h
+F000:0149   jz    short chk_sysbios_hdr   ; 1st pass jmp taken
+F000:014B   push  ds
+F000:014C   push  8000h
+F000:014F   pop   ds
+F000:0150   assume ds:decomp_block
+F000:0150   or    byte_8000_FFCE, 40h
+F000:0155   pop   ds
+F000:0156   assume ds:nothing
+F000:0156   jmp   exit
+F000:0159 ; ---------------------------------------------------------------------------
+F000:0159
+F000:0159 chk_sysbios_hdr:                ; ...
+F000:0159   mov   esi, edi                ; 1st pass: edi = 19_8000h
+F000:015C   sub   edi, cs:BIOS_size_in_byte?
+F000:0162   mov   ebx, 20h ; ' '
+F000:0168   sub   edi, ebx
+F000:016B   sub   esi, ebx
+F000:016E   mov   ecx, ebx
+F000:0171   rep movs byte ptr es:[edi], byte ptr [esi] ; copy last 20 bytes (header) of sys_bios
+F000:0171                                 ; (19_7FE0h-19_8000h) to (15_7FE0h - 15_8000h)
+F000:0174   xor   ebx, ebx                ; ebx = 0
+F000:0177
+F000:0177 next_compressed_component?:     ; ...
+F000:0177   mov   esi, edx
+F000:017A   mov   ax, [esi+2]
+F000:017E   shl   eax, 10h
+F000:0182   mov   ax, [esi]
+F000:0185   sub   esi, 8
+F000:0189   mov   edi, esi
+F000:018C   sub   edi, cs:BIOS_size_in_byte?
+F000:0192   mov   ecx, [esi]
+F000:0196   test  byte ptr [esi+0Fh], 20h
+F000:019B   jz    short bit_not_set
+F000:019D   add   ebx, ecx
+F000:01A0   jmp   short test_lower_bit
+F000:01A2 ; ---------------------------------------------------------------------------
+F000:01A2
+F000:01A2 bit_not_set:                    ; ...
+F000:01A2   sub   ecx, ebx
+F000:01A5   xor   ebx, ebx
+F000:01A8
+F000:01A8 test_lower_bit:                 ; ...
+F000:01A8   test  byte ptr [esi+0Fh], 40h
+F000:01AD   jz    short copy_bytes
+F000:01AF   xor   ecx, ecx
+F000:01B2
+F000:01B2 copy_bytes:                     ; ...
+F000:01B2   add   ecx, 14h
+F000:01B6   cmp   ecx, cs:BIOS_size_in_byte?
+F000:01BC   ja    short padding_bytes_reached?
+F000:01BE   rep movs byte ptr es:[edi], byte ptr [esi] ; copy compressed component bytes?
+F000:01C1   cmp   eax, 0FFFFFFFFh
+F000:01C5   jz    short padding_bytes_reached?
+F000:01C7   push  ds
+F000:01C8   push  51h ; 'Q'
+F000:01CB   pop   ds
+F000:01CC   assume ds:_51h
+F000:01CC   mov   esi, BIOS_bin_start_addr
+F000:01D1   pop   ds
+F000:01D2   assume ds:nothing
+F000:01D2   mov   cx, cs:BIOS_seg_count?
+F000:01D7   call  get_component_start_addr
+F000:01DA   jmp   short next_compressed_component?
+F000:01DC ; ---------------------------------------------------------------------------
+F000:01DC
+F000:01DC padding_bytes_reached?:         ; ...
+F000:01DC   mov   esi, 120000h
+F000:01E2   push  esi
+F000:01E4   mov   ecx, cs:BIOS_size_in_dword?
+F000:01EA   xor   ebx, ebx
+F000:01ED
+F000:01ED next_dword:                     ; ...
+F000:01ED   lods  dword ptr [esi]
+F000:01F0   add   ebx, eax
+F000:01F3   loopd next_dword
+F000:01F6   pop   edi
+F000:01F8   mov   [edi-4], ebx
+F000:01FD
+F000:01FD exit:                           ; ...
+F000:01FD   push  8000h
+F000:0200   pop   es
+F000:0201   assume es:decomp_block
+F000:0201   mov   al, es:byte_8000_FFCE
+F000:0205   push  51h ; 'Q'
+F000:0208   pop   ds
+F000:0209   assume ds:_51h
+F000:0209   mov   byte ptr unk_51_4, al
+F000:020C   mov   eax, es:decompression_block_size
+F000:0211   mov   dword ptr _decompression_block_size, eax
+F000:0215   mov   eax, es:padding_byte_size
+F000:021A   mov   dword ptr _padding_byte_size, eax
+F000:021E   popad
+F000:0220   pop   ds
+F000:0221   assume es:nothing, ds:nothing
+F000:0221   pop   es
+F000:0222   retf
+F000:0222 Relocate_BIOS_Binary endp
+</pre><hr />
+<p>Second, <code>prepare_sys_BIOS</code> checks the checksum of the BIOS binary 
+that's copied to segment <code>12_0000h - 15_FFFFh</code> by calling 
+<code>Calc_Module_Sum</code> function. This is actually an 8-bit checksum 
+calculation for the whole BIOS image. Note that the aforementioned address range 
+is previously initialized with <code>FFh</code> values in 
+<code>Relocate_BIOS_Binary</code> function prior to being filled by the 
+copy of the BIOS binary.
+</p>
+<hr />
+<pre>F000:02CA Calc_Module_Sum proc far        ; ...
+F000:02CA   push  ds
+F000:02CB   pushad
+F000:02CD   push  0
+F000:02CF   pop   ds
+F000:02D0   assume ds:sys_bios
+F000:02D0   mov   esi, 120000h
+F000:02D6   mov   cx, cs:BIOS_seg_count?
+F000:02DB   call  get_sysbios_start_addr
+F000:02DE   jnz   short AMIBIOSC_not_found
+F000:02E0   mov   cx, [edi-0Ah]
+F000:02E4   xor   eax, eax
+F000:02E7
+F000:02E7 next_lower_dword:               ; ...
+F000:02E7   add   eax, [edi-4]
+F000:02EC   sub   edi, 8
+F000:02F0   add   eax, [edi]
+F000:02F4   loop  next_lower_dword
+F000:02F6   jz    short exit
+F000:02F8
+F000:02F8 AMIBIOSC_not_found:             ; ...
+F000:02F8   mov   ax, 8000h
+F000:02FB   mov   ds, ax
+F000:02FD   assume ds:decomp_block
+F000:02FD   or    byte_8000_FFCE, 40h
+F000:0302
+F000:0302 exit:                           ; ...
+F000:0302   popad
+F000:0304   pop   ds
+F000:0305   assume ds:nothing
+F000:0305   retf
+F000:0305 Calc_Module_Sum endp
+</pre><hr />
+<p>Third, <code>prepare_sys_BIOS</code> validates the compressed 
+AMI System BIOS at <code>12_0000h -xx_xxxxh </code> and then 
+decompresses the compressed AMI System BIOS into RAM at segment 
+<code>1A_0000h - xx_xxxxh</code> by calling <code>Bootblock_POST_D7h</code>.
+
+</p>
+<hr />
+<pre>F000:0010 Bootblock_POST_D7h proc near    ; ...
+F000:0010   mov   al, 0D7h ; '+'
+F000:0012   out   80h, al                 ; Restore CPUID value back into register.
+F000:0012                                 ; The Bootblock-Runtime interface
+F000:0012                                 ; module is moved to system memory
+F000:0012                                 ; and control is given to it. Determine
+F000:0012                                 ; whether to execute serial flash.
+F000:0014   mov   esi, 120000h
+F000:001A   mov   cx, cs:BIOS_seg_count?
+F000:001F   mov   bl, 8
+F000:0021   call  Chk_SysBIOS_CRC
+F000:0024   jz    short chk_sum_ok
+F000:0026   jmp   far ptr halt_@_PostCode_D7h
+F000:002B ; ---------------------------------------------------------------------------
+F000:002B
+F000:002B chk_sum_ok:                     ; ...
+F000:002B   mov   esi, ebx
+F000:002E   xor   edi, edi
+F000:0031   xor   ax, ax
+F000:0033   mov   ds, ax
+F000:0035   assume ds:sys_bios
+F000:0035   mov   es, ax
+F000:0037   assume es:sys_bios
+F000:0037   mov   edi, esi
+F000:003A   cld
+F000:003B   lods  word ptr [esi]
+F000:003D   lods  word ptr [esi]
+F000:003F   movzx eax, ax
+F000:0043   add   edi, eax
+F000:0046   push  edi
+F000:0048   lods  dword ptr [esi]
+F000:004B   mov   edi, eax
+F000:004E   lods  dword ptr [esi]
+F000:0051   mov   ecx, eax
+F000:0054   pop   esi
+F000:0056   push  edi
+F000:0058   shr   ecx, 2
+F000:005C   inc   ecx
+F000:005E   rep movs dword ptr es:[edi], dword ptr [esi]
+F000:0062   pop   edi
+F000:0064   shr   edi, 4                  ; edi = segment addr
+F000:0068   mov   cs:interface_seg, di
+F000:006D   mov   bl, 1Bh
+F000:006F   call  Chk_sysbios_CRC_indirect
+F000:0072   jz    short dont_halt_2
+F000:0074   jmp   far ptr halt_@_PostCode_D7h
+F000:0079 ; ---------------------------------------------------------------------------
+F000:0079
+F000:0079 dont_halt_2:                    ; ...
+F000:0079   mov   esi, ebx                ; esi = compressed bios modules start address
+F000:007C   mov   edi, 120000h            
+F000:0082   push  ds
+F000:0083   push  0F000h
+F000:0086   pop   ds
+F000:0087   assume ds:_F0000
+F000:0087   movzx ecx, BIOS_seg_count?
+F000:008D   pop   ds
+F000:008E   assume ds:nothing
+F000:008E   shl   ecx, 11h
+F000:0092   add   edi, ecx                ; edi = bios modules decompression destination start address
+F000:0092                                 ; edi = 120000h + (4 &lt;&lt; 11h) = 1A0000h 
+F000:0095   push  ax
+F000:0096   call  Read_CMOS_B5_B6h
+F000:0099   pop   ax
+F000:009A   mov   bx, cs
+F000:009C   call  dword ptr cs:interface_module
+F000:00A1   jmp   far ptr halt_@_PostCode_D7h
+F000:00A6 ; ---------------------------------------------------------------------------
+F000:00A6   retf
+F000:00A6 ; ---------------------------------------------------------------------------
+F000:00A7 interface_module:                  ; ...
+F000:00A7   dw 0
+F000:00A9 interface_seg dw 1352h           ; ...
+F000:00A9                                 ; goto 1352:0000h -- POST preparation module (contains LHA decompression engine)
+F000:00AB ; ---------------------------------------------------------------------------
+F000:00AB
+F000:00AB halt_@_PostCode_D7h:            ; ...
+F000:00AB   mov   al, 0D7h ; '+'
+F000:00AD   out   80h, al                 ; manufacture's diagnostic checkpoint
+F000:00AF
+F000:00AF halt:                           ; ...
+F000:00AF   jmp   short halt
+F000:00AF Bootblock_POST_D7h endp
+</pre><hr />
+In normal condition, <code>Bootblock_POST_D7h</code> function shouldn't return. 
+It will continue its execution in the <i>Bootblock Runtime Interface
+        (BBRI)</i> module at segment <code>1352h</code>.  
+The code in BBRI will decompress the system BIOS and other compressed component 
+and then jump into the decompressed system BIOS to execute POST. I made a custom IDA Pro 
+plugin in order to find the value of the BBRI segment. The BBRI segment, 
+among all contains the decompression engine. Mind you that the "new" decompression engine is 
+just the same as the old decompression engine which was over written during 
+<code>Bootblock_POST_D7h</code> execution. However, this new decompression engine is 
+located in higher address in the same segment as the old one to accommodate space for the POST 
+preparation functions.
+
+
+<h3 align="left"><a name="_4_5">4.5. POST (Power-On Self-Test) Preparation </a></h3>
+<p>
+The BBRI module is placed at segment <code>1352h</code>. The preparation for POST is carried out 
+as follows:
+<hr />
+<pre>1352:0000 prepare_for_POST:               ; ...
+1352:0000   jmp   short <font color="#CC0000">decompress_sys_bios</font>
+.........
+1352:0011 <font color="#CC0000">decompress_sys_bios:</font>            ; ...
+1352:0011   push  edx
+1352:0013   push  ax
+1352:0014   mov   al, 0D8h ; '+'
+1352:0016   out   80h, al                 ; POST D8h:
+1352:0016                                 ; The Runtime module is uncompressed
+1352:0016                                 ; into memory. CPUID information is
+1352:0016                                 ; stored in memory.
+1352:0018   pop   ax
+1352:0019   call  <font color="#CC0000">decompress_component</font>    ; decompress system BIOS
+1352:0019                                 ; 1st pass @in: edi(dest) = 1A_0000h
+1352:0019                                 ;               esi(src)  = 12_F690h
+1352:0019                                 ;
+1352:0019                                 ; 1st pass @out: esi = 1A_0000h
+1352:0019                                 ;                ZF  = 1
+1352:001C   pop   edx
+1352:001E   jnz   short <font color="#CC0000">exit_error</font>
+1352:0020   push  edx
+1352:0022   mov   al, 0D9h ; '-'
+1352:0024   out   80h, al                 ; POST D9h:
+1352:0024                                 ; Store the Uncompressed pointer
+1352:0024                                 ; for future use in PMM.
+1352:0024                                 ; Copying Main BIOS into memory.
+1352:0024                                 ; Leaves all RAM below
+1352:0024                                 ; 1MB Read-Write including
+1352:0024                                 ; E000 and F000 shadow areas
+1352:0024                                 ; but closing SMRAM.
+1352:0026   mov   cs:ea_sys_bios_start, esi ; 1st pass: 1A_0000h
+1352:002C   call  FFh_init_Aseg_Bseg_Eseg
+1352:002F   call  <font color="#CC0000">relocate_bios_modules</font>
+1352:0032   call  init_PCI_config_regs    ; prepare some PCI config regs
+1352:0037   mov   al, 0DAh ; '-'
+1352:0039   out   80h, al                 ; POST DAh:
+1352:0039                                 ; Restore CPUID value back into register.
+1352:0039                                 ; Give control to BIOS POST
+1352:0039                                 ; (ExecutePOSTKernel).
+1352:0039                                 ; See POST Code Checkpoints
+1352:0039                                 ; section of document for
+1352:0039                                 ; more information.
+1352:003B   pop   edx
+1352:003D   mov   ax, 0F000h
+1352:0040   mov   ds, ax
+1352:0042   assume ds:_F0000
+1352:0042   mov   gs, ax
+1352:0044   assume gs:_F0000
+1352:0044   mov   sp, 4000h
+1352:0047   jmp   far ptr <font color="#CC0000">Execute_POST</font>    ; exec POST
+1352:004C ; ---------------------------------------------------------------------------
+1352:004C <font color="#CC0000">exit_error</font>:                     ; ...
+1352:004C   retf
+.........
+1352:0084 ; in:   esi = src start addr
+1352:0084 ;       edi = dest start addr
+1352:0084 ;       al  = decompression 'flag'
+1352:0084 ;
+1352:0084 ; out:  esi = dest start addr
+1352:0084 ;       ZF  = set if success otherwise not
+1352:0084 ;       ds  = 0
+1352:0084
+1352:0084 <font color="#CC0000">decompress_component</font> proc near  ; ...
+1352:0084   test  al, 80h
+1352:0086   jz    short decompress
+1352:0088   push  0
+1352:008A   pop   ds
+1352:008B   assume ds:sys_bios
+1352:008B   jmp   short exit
+1352:008D ; ---------------------------------------------------------------------------
+1352:008D
+1352:008D decompress:                     ; ...
+1352:008D   push  edi                     ; save decompression dest addr
+1352:008F   push  edi                     ; dest addr
+1352:0091   push  esi                     ; src addr
+1352:0093   call  expand
+1352:0096   add   sp, 8
+1352:0099   pop   esi                     ; return decompression dest addr
+1352:009B   push  0
+1352:009D   pop   ds
+1352:009E
+1352:009E exit:                           ; ...
+1352:009E   cmp   al, al
+1352:00A0   retn
+1352:00A0 <font color="#CC0000">decompress_component</font> endp
+1352:00A1
+1352:00A1 ; relocates relevant decompressed BIOS components
+1352:00A1 <font color="#CC0000">relocate_bios_modules</font> proc near ; ...
+1352:00A1   pushad
+1352:00A3   push  es
+1352:00A4   push  ds
+1352:00A5   mov   bp, sp
+1352:00A7   mov   ax, ds
+1352:00A9   movzx eax, ax
+1352:00AD   shl   eax, 4
+1352:00B1   add   esi, eax                ; esi = 1A_0000h ;since ds = 0
+1352:00B4   push  0
+1352:00B6   pop   ds                      ; ds = 0
+1352:00B7   movzx ecx, word ptr [esi+2]   ; ecx = 2B4h
+1352:00BD   mov   edx, ecx
+1352:00C0   sub   sp, cx                  ; reserve stack for "header"
+1352:00C2   mov   bx, sp
+1352:00C4   push  ss
+1352:00C5   pop   es                      ; es = ss
+1352:00C6   movzx edi, sp
+1352:00CA   push  esi
+1352:00CC   cld
+1352:00CD   rep movs byte ptr es:[edi], byte ptr [esi] ; move "header" to stack
+1352:00D0   pop   esi
+1352:00D2   push  ds
+1352:00D3   pop   es                      ; es = 0
+1352:00D4   assume es:sys_bios
+1352:00D4   movzx ecx, word ptr ss:[bx+0] ; ecx = 1Eh
+1352:00D9   add   esi, edx                ; esi = 1A_02B4h
+1352:00DC
+1352:00DC next_module:                    ; ...
+1352:00DC   add   bx, 4
+1352:00DF   push  ecx
+1352:00E1   mov   edi, ss:[bx+0]          ; edi = ea_dest_seg --&gt; F_0000h
+1352:00E5   cmp   edi, 0E0000h
+1352:00EC   jb    short dest_below_Eseg   ; 1st pass: not taken
+1352:00EE   cmp   edi, cs:ea_dest_seg
+1352:00F4   jnb   short dest_below_Eseg   ; 1st pass: not taken
+1352:00F6   mov   cs:ea_dest_seg, edi     ; ea_dest_seg = F_0000h
+1352:00FC
+1352:00FC dest_below_Eseg:                ; ...
+1352:00FC   add   bx, 4
+1352:00FF   mov   ecx, ss:[bx+0]          ; ecx = 8001_0000h
+1352:0103   test  ecx, 80000000h
+1352:010A   jz    short no_relocation     ; 1st pass: not taken
+1352:010C   and   ecx, 7FFFFFFFh          ; 1st pass: ecx = 1_0000h
+1352:0113   mov   edx, ecx                ; 1st pass: edx = 1_0000h
+1352:0116   shr   ecx, 2                  ; ecx / 4
+1352:011A   jz    short size_is_zero      ; 1st pass: jmp not taken
+1352:011C   rep movs dword ptr es:[edi], dword ptr [esi] ; 1st pass copy 64KB
+1352:011C                                 ; from (1A_02B4h-1B_02B3h) to F_seg
+1352:0120
+1352:0120 size_is_zero:                   ; ...
+1352:0120   mov   ecx, edx
+1352:0123   and   ecx, 3
+1352:0127   jz    short no_relocation     ; 1st pass: jmp taken
+1352:0129   rep movs byte ptr es:[edi], byte ptr [esi]
+1352:012C
+1352:012C no_relocation:                  ; ...
+1352:012C   pop   ecx
+1352:012E   loop  next_module
+1352:0130   push  0F000h
+1352:0133   pop   ds
+1352:0134   assume ds:_F0000
+1352:0134   mov   eax, cs:ea_dest_seg
+1352:0139   mov   dword_F000_8020, eax
+1352:013D   push  2EF6h
+1352:0140   pop   ds                      ; ds = 2EF6h
+1352:0141   assume ds:nothing
+1352:0141   mov   ds:77Ch, eax
+1352:0145   sub   eax, 100000h
+1352:014B   neg   eax
+1352:014E   mov   ds:780h, eax
+1352:0152   mov   sp, bp
+1352:0154   pop   ds
+1352:0155   assume ds:scratch_pad_seg
+1352:0155   pop   es
+1352:0156   assume es:nothing
+1352:0156   popad
+1352:0158   retn
+1352:0158 <font color="#CC0000">relocate_bios_modules</font> endp 
+1352:0158
+1352:0158 ; ---------------------------------------------------------------------------
+1352:0159 ea_dest_seg dd 0F0000h          ; ...
+1352:0159                                 ; patched at relocate_bios_modules
+1352:0159                                 ; original value = F_FFFFh
+1352:015D <font color="#CC0000">expand</font> proc near                ; ...
+1352:015D
+1352:015D src_addr= dword ptr  4
+1352:015D dest_addr= dword ptr  8
+1352:015D
+1352:015D   push  bp
+.........
+1352:021D   popad
+1352:021F   pop   bp
+1352:0220   retn
+1352:0220 <font color="#CC0000">expand</font> endp ; sp = -8
+.........
+</pre><hr />
+<code>expand</code> function decompresses the compressed module within the BIOS. <code>relocate_bios_modules</code> 
+function relocates the decompressed module into their respective address ranges. These address ranges are 
+contained in the beginning of the decompressed BIOS modules and are used by <code>relocate_bios_modules</code> 
+to do the relocation. In this particular case, the starting address of the decompressed BIOS module at this point 
+is <code>1A_0000h</code>. Thus, the address ranges for the bios modules are provided there as shown in the code 
+snippet below.
+<hr />
+<pre>0000:001A0000   dw 1Eh                        ; number of "component info" present in this header
+0000:001A0002   dw 2B4h                       ; header size (The first component/RUN_CSEG immediately follows the header)
+0000:001A0004   dd 0F0000h                    ; dest seg = F000h; size = 10000h (present in this module [1B])
+0000:001A0008   dd 80010000h
+0000:001A000C   dd 27710h                     ; dest seg = 2771h; size = 7846h (present in this module [1B])
+0000:001A0010   dd 80007846h
+0000:001A0014   dd 13CB0h                     ; dest seg = 13CBh; size = 6C2Fh (present in this module [1B])
+0000:001A0018   dd 80006C2Fh
+0000:001A001C   dd 0E0000h                    ; dest seg = E000h; size = 5AC8h (present in this module [1B])
+0000:001A0020   dd 80005AC8h
+0000:001A0024   dd 223B0h                     ; dest seg = 223Bh; size = 3E10h (present in this module [1B])
+0000:001A0028   dd 80003E10h
+0000:001A002C   dd 0E5AD0h                    ; dest seg = E5ADh; size = Dh (present in this module [1B])
+0000:001A0030   dd 8000000Dh
+0000:001A0034   dd 13520h                     ; dest seg = 1352h; size = 789h (NOT present in this module [1B])
+0000:001A0038   dd 789h
+0000:001A003C   dd 261C0h                     ; dest seg = 261Ch; size = 528h (present in this module [1B])
+0000:001A0040   dd 80000528h
+0000:001A0044   dd 40000h                     ; dest seg = 4000h; size = 5D56h (present in this module [1B])
+0000:001A0048   dd 80005D56h
+0000:001A004C   dd 0A8530h                    ; dest seg = A853h; size = 82FCh (present in this module [1B])
+0000:001A0050   dd 800082FCh
+0000:001A0054   dd 49A90h                     ; dest seg = 49A9h; size = A29h (present in this module [1B])
+0000:001A0058   dd 80000A29h
+0000:001A005C   dd 45D60h                     ; dest seg = 45D6h; size = 3D28h (present in this module [1B])
+0000:001A0060   dd 80003D28h
+0000:001A0064   dd 0A0000h                    ; dest seg = A000h; size = 55h (present in this module [1B])
+0000:001A0068   dd 80000055h
+0000:001A006C   dd 0A0300h                    ; dest seg = A030h; size = 50h (present in this module [1B])
+0000:001A0070   dd 80000050h
+0000:001A0074   dd 400h                       ; dest seg = 40h; size = 110h (NOT present in this module [1B])
+0000:001A0078   dd 110h
+0000:001A007C   dd 510h                       ; dest seg = 51h; size = 13h (NOT present in this module [1B])
+0000:001A0080   dd 13h
+0000:001A0084   dd 1A8E0h                     ; dest seg = 1A8Eh; size = 7AD0h (present in this module [1B])
+0000:001A0088   dd 80007AD0h
+0000:001A008C   dd 0                          ; dest seg = 0h; size = 400h (NOT present in this module [1B])
+0000:001A0090   dd 400h
+0000:001A0094   dd 266F0h                     ; dest seg = 266Fh; size = 101Fh (present in this module [1B])
+0000:001A0098   dd 8000101Fh
+0000:001A009C   dd 2EF60h                     ; dest seg = 2EF6h; size = C18h (present in this module [1B])
+0000:001A00A0   dd 80000C18h
+0000:001A00A4   dd 30000h                     ; dest seg = 3000h; size = 10000h (NOT present in this module [1B])
+0000:001A00A8   dd 10000h
+0000:001A00AC   dd 4530h                      ; dest seg = 453h; size = EFF0h (NOT present in this module [1B])
+0000:001A00B0   dd 0EFF0h
+0000:001A00B4   dd 0A8300h                    ; dest seg = A830h; size = 230h (present in this module [1B])
+0000:001A00B8   dd 80000230h
+0000:001A00BC   dd 0E8000h                    ; dest seg = E800h; size = 8000h (NOT present in this module [1B])
+0000:001A00C0   dd 8000h
+0000:001A00C4   dd 0A7D00h                    ; dest seg = A7D0h; size = 200h (NOT present in this module [1B])
+0000:001A00C8   dd 200h
+0000:001A00CC   dd 0B0830h                    ; dest seg = B083h; size = F0h (present in this module [1B])
+0000:001A00D0   dd 800000F0h
+0000:001A00D4   dd 0A8000h                    ; dest seg = A800h; size = 200h (NOT present in this module [1B])
+0000:001A00D8   dd 200h
+0000:001A00DC   dd 530h                       ; dest seg = 53h; size = 4000h (NOT present in this module [1B])
+0000:001A00E0   dd 4000h
+0000:001A00E4   dd 0A7500h                    ; dest seg = A750h; size = 800h (NOT present in this module [1B])
+0000:001A00E8   dd 800h
+0000:001A00EC   dd 0C0000h                    ; dest seg = C000h; size = 20000h (NOT present in this module [1B])
+0000:001A00F0   dd 20000h
+</pre><hr />
+As shown in the code snippet above, the size of the address ranges that will be occupied by 
+the bios modules are encoded. The most significant bit in the size of the module (the 31st bit 
+in the second double-word of every entry) is the indicator wheter the respective 
+module <i>is present in the current system BIOS (1B module) or not</i>. 
+Note that the current segment where the code executes (<code>1352h</code>) 
+is also contained in the address ranges shown in the header above. However, that doesn't mean that the 
+current code that is being executed will be <i>prematurely</i> overwritten because this 
+component (interface module) is not present in the 1B module.
+
+<p>To carry out the BIOS modules relocation in this particular AMI BIOS binary, I'm using the 
+follwing IDA Pro script:
+<hr />
+<pre>/*
+  relocate_bios_modules.idc
+  
+  Simulation of relocate_bios_module procedure 
+  at 1352h:00A1h - 1352h:0158h
+
+*/
+#include &lt;idc.idc&gt;
+
+static main(void)
+{
+auto bin_base, hdr_size, src_ptr, hdr_ptr, ea_module;
+auto module_cnt, EA_DEST_SEG, module_size, dest_ptr;
+auto str, _eax;
+
+EA_DEST_SEG = [0x1352, 0x159];
+
+bin_base = 0x1A0000;
+hdr_size = Word(bin_base+2);
+hdr_ptr = bin_base; /* hdr_ptr = ss:[bx] */
+module_cnt = Word(hdr_ptr); /* ecx = ss:[bx]*/
+src_ptr  = bin_base + hdr_size; /* esi += edx */
+
+/* next_module */
+while( module_cnt &gt; 0)
+{
+  hdr_ptr = hdr_ptr + 4;
+  ea_module = Dword(hdr_ptr);
+  
+  if( ea_module &gt;= 0xE0000 )
+  {
+     if( ea_module &lt; Dword(EA_DEST_SEG))
+     {
+        PatchDword(EA_DEST_SEG, ea_module);
+     }
+  }
+  
+  /* dest_below_Eseg */
+  hdr_ptr = hdr_ptr + 4;
+  module_size = Dword(hdr_ptr);
+  
+  if(module_size &amp; 0x80000000)
+  {
+     module_size  = module_size &amp; 0x7FFFFFFF;
+     
+     str = form("relocating module: %Xh ; ", ea_module &gt;&gt; 4);
+     str = str + form("size = %Xh\n", module_size);
+     Message(str);
+     
+     SegCreate(ea_module, ea_module + module_size, 
+               ea_module &gt;&gt; 4, 0, 0, 0);
+     
+     dest_ptr = ea_module;
+     
+     while( module_size &gt; 0 )
+     {
+        PatchByte(dest_ptr, Byte(src_ptr));
+        
+        src_ptr = src_ptr + 1;
+        dest_ptr = dest_ptr + 1;
+        module_size = module_size - 1;
+     }
+  }
+  
+  /* no_relocation */
+  module_cnt = module_cnt - 1;
+}
+
+
+/* push 0F000h; pop ds */
+_eax = Dword(EA_DEST_SEG);
+PatchDword([0xF000, 0x8020], _eax);
+
+PatchDword([0x2EF6, 0x77C], _eax);
+str = form("2EF6h:77Ch = %Xh \n", Dword([0x2EF6, 0x77C]));
+Message(str);
+
+
+_eax = 0x100000 - _eax;
+PatchDword([0x2EF6, 0x780], _eax);
+str = form("2EF6h:780h = %Xh \n", Dword([0x2EF6, 0x780]));
+Message(str);
+
+return 0;
+}
+</pre><hr />
+The output in the message pane of IDA Pro as follows:
+<hr />
+<pre>relocating module: F000h ; size = 10000h
+Deleting segment (00000000000F0000-0000000000100000) ...
+ ... OK
+ 15. Creating a new segment  (00000000000F0000-0000000000100000) ... ... OK
+relocating module: 2771h ; size = 7846h
+Deleting segment (0000000000027710-000000000002EF56) ...
+ ... OK
+ 15. Creating a new segment  (0000000000027710-000000000002EF56) ... ... OK
+relocating module: 13CBh ; size = 6C2Fh
+ 16. Creating a new segment  (0000000000013CB0-000000000001A8DF) ... ... OK
+relocating module: E000h ; size = 5AC8h
+ 17. Creating a new segment  (00000000000E0000-00000000000E5AC8) ... ... OK
+relocating module: 223Bh ; size = 3E10h
+ 18. Creating a new segment  (00000000000223B0-00000000000261C0) ... ... OK
+relocating module: E5ADh ; size = Dh
+ 19. Creating a new segment  (00000000000E5AD0-00000000000E5ADD) ... ... OK
+relocating module: 261Ch ; size = 528h
+ 20. Creating a new segment  (00000000000261C0-00000000000266E8) ... ... OK
+relocating module: 4000h ; size = 5D56h
+ 21. Creating a new segment  (0000000000040000-0000000000045D56) ... ... OK
+relocating module: A853h ; size = 82FCh
+ 22. Creating a new segment  (00000000000A8530-00000000000B082C) ... ... OK
+relocating module: 49A9h ; size = A29h
+ 23. Creating a new segment  (0000000000049A90-000000000004A4B9) ... ... OK
+relocating module: 45D6h ; size = 3D28h
+ 24. Creating a new segment  (0000000000045D60-0000000000049A88) ... ... OK
+relocating module: A000h ; size = 55h
+ 25. Creating a new segment  (00000000000A0000-00000000000A0055) ... ... OK
+relocating module: A030h ; size = 50h
+ 26. Creating a new segment  (00000000000A0300-00000000000A0350) ... ... OK
+relocating module: 1A8Eh ; size = 7AD0h
+ 27. Creating a new segment  (000000000001A8E0-00000000000223B0) ... ... OK
+relocating module: 266Fh ; size = 101Fh
+ 28. Creating a new segment  (00000000000266F0-000000000002770F) ... ... OK
+relocating module: 2EF6h ; size = C18h
+ 29. Creating a new segment  (000000000002EF60-000000000002FB78) ... ... OK
+relocating module: A830h ; size = 230h
+ 30. Creating a new segment  (00000000000A8300-00000000000A8530) ... ... OK
+relocating module: B083h ; size = F0h
+ 31. Creating a new segment  (00000000000B0830-00000000000B0920) ... ... OK
+2EF6h:77Ch = E0000h 
+2EF6h:780h = 20000h 
+</pre><hr />
+<p>After the BIOS modules relocation takes place, the execution is then advance to some PCI 
+configuration register initialization. The routine initializes the chipset registers that 
+controls the BIOS shadowing matter to prepare for the POST execution. The bootblock execution ends 
+here and the system BIOS execution starts at the jump into the <code>Execute_POST</code>
+</p>
+<h2 align="left"><a name="_5">5. System BIOS Reverse Engineering</a></h2>
+<p>
+The system BIOS reverse engineering for this particular AMIBIOS is carried out by analysing its 
+POST Jump Table execution. The execution of the POST Jump Table starts with a far jump to segment <code>2771h</code>
+(a.k.a POST segment) from the BBRI module, as shown below:
+<pre>1352:0044   assume gs:seg021
+1352:0044   mov   sp, 4000h
+1352:0047   jmp   far ptr Execute_POST    ; exec POST
+.........
+2771:3731 Execute_POST:
+2771:3731   cli
+2771:3732   cld
+2771:3733   call  init_ds_es_fs_gs
+2771:3736   call  init_interrupt_vector
+2771:3739   mov   si, offset POST_jump_table
+2771:373C
+2771:373C next_POST_routine:              ; ...
+2771:373C   push  eax
+2771:373E   mov   eax, cs:[si+2]
+2771:3743   mov   fs:POST_routine_addr, eax
+2771:3748   mov   ax, cs:[si]
+2771:374B   mov   fs:_POST_code, ax
+2771:374F   cmp   ax, 0FFFFh
+2771:3752   jz    short no_POST_code_processing
+2771:3754   mov   fs:POST_code, ax
+2771:3758   call  process_POST_code
+2771:375D
+2771:375D no_POST_code_processing:        ; ...
+2771:375D   pop   eax
+2771:375F   xchg  si, cs:tmp
+2771:3764   call  _exec_POST_routine
+2771:3769   xchg  si, cs:tmp
+2771:376E   add   si, 6
+2771:3771   cmp   si, 342h                ; do we reach the end of POST jump table ?
+2771:3775   jb    short next_POST_routine
+2771:3777   hlt                           ; halt the machine in case of POST failure
+.........
+</pre>
+<p>Prior to POST jump table execution, the routine at segment <code>2771h</code> initializes 
+all of the segment registers that will be used and it also initializes the preliminary 
+interrupt routine.
+<hr />
+<pre>2771:293F init_ds_es_fs_gs proc near      ; ...
+2771:293F   push  40h ; '@'
+2771:2942   pop   ds
+2771:2943   push  0
+2771:2945   pop   es
+2771:2946   push  2EF6h
+2771:2949   pop   fs
+2771:294B   push  0F000h
+2771:294E   pop   gs
+2771:2950   retn
+2771:2950 init_ds_es_fs_gs endp
+</pre><hr />
+<p>The POST Jump Table is located in the very beginning of segment <code>2771h</code>, as shown below:
+<pre>2771:0000 POST_jump_table dw 3            ; ...
+2771:0000                                 ; POST code : 3h
+2771:0002   dd 2771377Eh                  ; POST routine at 2771:377Eh
+2771:0006   dw 4003h                      ; POST code : 4003h
+2771:0008   dd 27715513h                  ; POST routine at 2771:5513h (dummy)
+2771:000C   dw 4103h                      ; POST code : 4103h
+2771:000E   dd 27715B75h                  ; POST routine at 2771:5B75h (dummy)
+2771:0012   dw 4203h                      ; POST code : 4203h
+2771:0014   dd 2771551Ah                  ; POST routine at 2771:551Ah (dummy)
+2771:0018   dw 5003h                      ; POST code : 5003h
+2771:001A   dd 27716510h                  ; POST routine at 2771:6510h (dummy)
+2771:001E   dw 4                          ; POST code : 4h
+2771:0020   dd 27712A3Fh                  ; POST routine at 2771:2A3Fh
+2771:0024   dw ?                          ; POST code : FFFFh
+2771:0026   dd 27712AFEh                  ; POST routine at 2771:2AFEh
+2771:002A   dw ?                          ; POST code : FFFFh
+2771:002C   dd 27714530h                  ; POST routine at 2771:4530h
+2771:0030   dw 5                          ; POST code : 5h
+2771:0032   dd 277138B4h                  ; POST routine at 2771:38B4h
+2771:0036   dw 6                          ; POST code : 6h
+2771:0038   dd 27714540h                  ; POST routine at 2771:4540h
+2771:003C   dw ?                          ; POST code : FFFFh
+2771:003E   dd 277145D5h                  ; POST routine at 2771:45D5h
+2771:0042   dw 7                          ; POST code : 7h
+2771:0044   dd 27710A10h                  ; POST routine at 2771:0A10h
+2771:0048   dw 7                          ; POST code : 7h
+2771:004A   dd 27711CD6h                  ; POST routine at 2771:1CD6h
+.........
+</pre> 
+Note that I'm not showing the entire POST Jump Table above. In order to carry-out 
+semi-automatic analysis in the POST Jump Table entries, we can use the following 
+script.
+<hr />
+<pre>/*
+  parse_POST_jump_table.idc
+  
+  Simulation POST execution at 2771h:3731h - 2771h:3775h
+*/
+
+#include &lt;idc.idc&gt;
+
+static main(void) {
+  auto ea, func_addr, str, POST_JMP_TABLE_START, POST_JMP_TABLE_END;
+  
+  POST_JMP_TABLE_START = [0x2771, 0]; 
+  POST_JMP_TABLE_END = [0x2771, 0x342];
+    
+  ea = POST_JMP_TABLE_START;
+  
+  while(ea &lt; POST_JMP_TABLE_END)              
+  {
+    /*  Make some comments */
+    MakeWord(ea);
+    str = form("POST code : %Xh", Word(ea));
+    MakeComm(ea, str);
+    
+    MakeDword(ea+2);
+    str = form("POST routine at %04X:%04Xh", Word(ea+4), Word(ea+2));
+    MakeComm(ea+2, str);
+    
+    str = form("processing POST entry @ 2771:%04Xh\n", ea - 0x27710 );
+    Message(str);
+    
+    /* Parse POST entries */
+    func_addr = (Word(ea+4) &lt;&lt; 4) + Word(ea+2);
+    AutoMark(func_addr,AU_CODE);
+    AutoMark(func_addr,AU_PROC);
+    Wait();
+    
+    /* modify comment for dummy POST entries */
+    if( Byte(func_addr) == 0xCB)
+    {
+     str = form("POST routine at %04X:%04Xh (dummy)", 
+                 Word(ea+4), Word(ea+2));
+     MakeComm(ea+2, str);
+    }
+    
+    ea = ea + 6;
+  }
+}
+</pre><hr />
+Anyway, newer AMI BIOS binaries uses segment 4000h as the "POST segment";
+that is the segment which stores the POST jump table and starts the execution of POST routines. 
+
+
+
+<p>Now, let me show you the structure of the 
+AMI system BIOS (1B module) in pseudo C language. The structure of the 1B module (from beginning to end) as follows:
+<pre>+---------------------------------------------------------+
+| struct header {                                         |
+| u16   component_info_count;                             |
+| u16   header_size;                                      |
+| struct component_info components[component_info_count]; |
+|  char header_version[5];                                |
+|  ...(variable byte size)                                |
+|  char component_name[];                                 |
+| };                                                      |
++---------------------------------------------------------+
+| first component bytes                                   |
++---------------------------------------------------------+
+| second component bytes                                  |
++---------------------------------------------------------+
+| ...                                                     |
++---------------------------------------------------------+
+| n-th component bytes                                    |
++---------------------------------------------------------+
+</pre>with component_info is a structure as follows:
+<pre>struct component_info {
+u32 component_physical_address_start;
+u32 component_size;
+};
+</pre>These are some notes about the header: 
+<ul>
+<li>The size of the header may vary, depending on the AMI BIOS binary. However, the structure remains the same.</li>
+<li>The component_name are strings of characters which are the names of the components. The length of each string varies, 
+        but it always ends with a zero.</li>
+<li>In the BIOS sample that we dissect here, you can see the beginning of the header at address 1A_0000h above. 
+        In that disassembly, you can see the array of component_info structure parsed and commented. 
+        </li>
+<li>Immediately following the array in the 1B binary is header_version string (which also ends with zero in its fifth byte). 
+        The distance in bytes between the header_version string and the first component_name string varies among different AMI BIOS. 
+        However, the start of the component_name can be detected by checking for the "RUN_" string because the first component string 
+        is always "RUN_CSEG". 
+        </li>
+<li>
+</li>
+</ul>
+From this point on, carrying out the system BIOS reverse engineering is quite trivial since we have already 
+marked and done some preliminary analysis on those POST jump table entries. 
+
+
+<hr />
+<p align="center"><font size="-4">copyright © Darmawan M S a.k.a Pinczakko</font></p></p></p></p></p></p></p></div></td></tr></tbody></table>
+</div> 
+</div> 
+<div id="sites-canvas-bottom-panel">
+<div xmlns="http://www.w3.org/1999/xhtml" id="COMP_page-subpages"> </div>
+<div id="sites-attachments-container">
+</div>
+<a xmlns="http://www.w3.org/1999/xhtml" name="page-comments"></a>
+<div xmlns="http://www.w3.org/1999/xhtml" id="COMP_page-comments"><div class="sites-comment-docos-wrapper"><div class="sites-comment-docos"><div class="sites-comment-docos-background"></div><div class="sites-comment-docos-header"><div class="sites-comment-docos-header-title">Comments</div></div><div id="sites-comment-docos-pane" class="sites-comment-docos-pane"></div></div></div></div>
+</div>
+</div> 
+</td> 
+</tr>
+</table> 
+</div> 
+</div> 
+<div id="sites-chrome-footer-wrapper">
+<div id="sites-chrome-footer-wrapper-inside">
+<div id="sites-chrome-footer">
+</div>
+</div>
+</div>
+</div> 
+</div> 
+<div id="sites-chrome-adminfooter-container">
+<div xmlns="http://www.w3.org/1999/xhtml" class="sites-adminfooter" role="navigation"><p><a class="sites-system-link" href="https://accounts.google.com/ServiceLogin?continue=https://sites.google.com/site/pinczakko/pinczakko-s-guide-to-ami-bios-reverse-engineering-1&amp;service=jotspot">Sign in</a><span aria-hidden="true">|</span><a class="sites-system-link" href="/site/pinczakko/system/app/pages/recentChanges">Recent Site Activity</a><span aria-hidden="true">|</span><a class="sites-system-link" href="https://sites.google.com/site/pinczakko/system/app/pages/reportAbuse" target="_blank">Report Abuse</a><span aria-hidden="true">|</span><a class="sites-system-link" href="javascript:;" onclick="window.open(webspace.printUrl)">Print Page</a><span aria-hidden="true">|</span><span class="sites-system-link">Powered By</span> <b class="powered-by"><a href="http://sites.google.com">Google Sites</a></b></p></div>
+</div>
+</div> 
+</div> 
+<div id="sites-chrome-onebar-footer">
+</div>
+<script xmlns="http://www.w3.org/1999/xhtml" type="text/javascript">
+    window.jstiming.load.tick('sjl');
+  </script>
+<script xmlns="http://www.w3.org/1999/xhtml" src="https://ssl.gstatic.com/sites/p/d2d9a4/system/js/jot_min_view__en.js"></script>
+<script xmlns="http://www.w3.org/1999/xhtml" type="text/javascript">
+    window.jstiming.load.tick('jl');
+  </script>
+<script xmlns="http://www.w3.org/1999/xhtml" type="text/javascript">
+                    sites.Searchbox.initialize(
+                        'sites-searchbox-search-button',
+                        {"object":[]}['object'],
+                        'search-site',
+                        {"label":"Configure search options...","url":"/site/pinczakko/system/app/pages/admin/settings"});
+                  </script>
+<script xmlns="http://www.w3.org/1999/xhtml" type="text/javascript">
+      gsites.HoverPopupMenu.createSiteDropdownMenus('sites-header-nav-dropdown', false);
+    </script>
+<script xmlns="http://www.w3.org/1999/xhtml" type="text/javascript" defer="true">
+            JOT_setupNav("2bd", "Navigation", false);
+            JOT_addListener('titleChange', 'JOT_NAVIGATION_titleChange', 'COMP_2bd');
+          </script>
+<script xmlns="http://www.w3.org/1999/xhtml" type="text/javascript">
+              new sites.CommentPane('//docs.google.com/comments/d/AAHRpnXsPxZjbAZh3TEOF-thhM7zMEnU8-64wyiiWJIIzcrCQ0zICfaQWAGji0uNY8UNQsi_pQe1I1_ijuFDUz9JWIMQUDujK_qHLBAVPJD34P5CnalLQZ3ATYDU2TtHiVTWAKgrfcuBm/api/js?anon=true',
+                  false, false);
+            </script>
+<script xmlns="http://www.w3.org/1999/xhtml" type="text/javascript">
+  setTimeout(function() {
+    var fingerprint = gsites.date.TimeZone.getFingerprint([1109635200000, 1128902400000, 1130657000000, 1143333000000, 1143806400000, 1145000000000, 1146380000000, 1152489600000, 1159800000000, 1159500000000, 1162095000000, 1162075000000, 1162105500000]);
+    gsites.Xhr.send('https://sites.google.com/site/pinczakko/_/tz', null, null, 'GET', null, null, { afjstz: fingerprint });
+  }, 500);
+</script>
+<script xmlns="http://www.w3.org/1999/xhtml">
+                    window.onload = function() {
+                      if (false) {
+                        JOT_setMobilePreview();
+                      }
+                      var loadTimer = window.jstiming.load;
+                      loadTimer.tick("ol");
+                      loadTimer["name"] = "load," + webspace.page.type + ",user_page";
+                      window.jstiming.report(loadTimer, {}, 'https://gg.google.com/csi');
+                    }
+                  </script>
+<script xmlns="http://www.w3.org/1999/xhtml" type="text/javascript">
+        JOT_insertAnalyticsCode(false,
+            false);
+      </script>
+<script xmlns="http://www.w3.org/1999/xhtml" type="text/javascript">
+    var maestroRunner = new gsites.pages.view.SitesMaestroRunner(
+        webspace, "en");
+    maestroRunner.initListeners();
+    maestroRunner.installEditRender();
+  </script>
+<script xmlns="http://www.w3.org/1999/xhtml" type="text/javascript" defer="true">
+  //<![CDATA[
+    // Decorate any fastUI buttons on the page with a class of 'goog-button'.
+    if (webspace.user.hasWriteAccess) {
+      JOT_decorateButtons();
+    }
+
+    // Fires delayed events.
+    (function() {
+      JOT_fullyLoaded = true;
+      var delayedEvents = JOT_delayedEvents;
+      for (var x = 0; x < delayedEvents.length; x++) {
+        var event = delayedEvents[x];
+        JOT_postEvent(event.eventName, event.eventSrc, event.payload);
+      }
+      JOT_delayedEvents = null;
+      JOT_postEvent('pageLoaded');
+    })();
+  //]]>
+</script>
+<script xmlns="http://www.w3.org/1999/xhtml" type="text/javascript">
+    JOT_postEvent('decorateGvizCharts');
+  </script>
+<script type="text/javascript">
+          JOT_setupPostRenderingManager();
+        </script>
+<script type="text/javascript">
+          JOT_postEvent('renderPlus', null, 'sites-chrome-main');
+        </script>
+<div id="server-timer-div" style="display:none"> </div>
+<script type="text/javascript">
+          window.jstiming.load.tick('render');
+          JOT_postEvent('usercontentrendered', this);
+        </script>
+</body>
+</html>

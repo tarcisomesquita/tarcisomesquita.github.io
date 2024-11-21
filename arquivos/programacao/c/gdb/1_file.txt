@@ -1,0 +1,12 @@
+
+compilar
+$ gcc -g source.c -o output.elf
+
+$ gdb
+
+(gdb) file output.elf
+
+(gdb) run [PARAMETROS]
+PARAMETROS são repassados ao programa output.elf
+
+

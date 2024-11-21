@@ -1,0 +1,186 @@
+Exibe, define ou remove variáveis de ambiente do cmd.exe.
+
+SET [variável=[cadeia_de_caracteres]]
+
+  variável                   Especifica o nome da variável de ambiente.
+  cadeia_de_caracteres    Especifica uma série de caracteres a serem
+                             atribu¡dos à variável.
+
+Digite SET sem parƒmetros para exibir as variáveis de ambiente atuais.
+
+Se as extensões de comando estiverem ativadas, SET ser  alterado como a seguir:
+
+O comando SET chamado com apenas um nome de variável, nenhum sinal de igual
+ou valor exibir  o valor de todas as variáveis cujo prefixo corresponda ao nome
+fornecido ao comando SET. Por exemplo:
+
+    SET P
+
+exibiria todas as variáveis começando com a letra 'P'
+
+O comando SET definir  o ERRORLEVEL como 1 se o nome da variável não for
+encontrado no ambiente atual.
+
+O comando SET não permitir  que um sinal de igual seja parte do nome de
+uma variável.
+
+Duas novas opções foram adicionadas ao comando SET:
+
+    SET /A expressão
+    SET /P variável=[cadeia_do_prompt]
+
+echo digite algo && set /P entrada=
+
+set v1=1
+set v2=2
+set /a v3 = %v1% + %v2%
+echo %v3%
+
+A opção /A especifica que a cadeia de caracteres à direita do sinal de igual
+é uma expressão numérica que é avaliada. O avaliador da expressão
+é muito simples e d  suporte às seguintes operações, em ordem
+decrescente de precedˆncia:
+
+    ()                  - agrupamento
+    ! ~ -               - operadores un rios
+    * / %               - operadores aritméticos
+    + -                 - operadores aritméticos
+    << >>               - alternƒncia l¢gica
+    &                   - bit a bit E
+    ^                   - bit a bit exclusivo OU
+    |                   - bit a bit OU
+    = *= /= %= += -=    - atribuição
+      &= ^= |= <<= >>=
+    ,                   - separador de expressões
+
+Se vocˆ usar qualquer um dos operadores l¢gicos ou de m¢dulo, precisar 
+colocar a cadeia de caracteres da expressão entre aspas. Qualquer
+cadeia de caracteres não numérica na expressão é tratada como nomes
+de variável de ambiente cujos valores são convertidos para n£meros antes
+de serem usados. Se um nome de variável de ambiente for especificado,
+mas não estiver definido no ambiente atual, ser  usado um valor de zero.
+Isso permite fazer aritmética com valores de variáveis de ambiente, sem ter de
+digitar todos esses sinais de % para obter os valores. Se SET /A
+for executado a partir da linha de comando fora de um script de comando,
+ele exibir  o valor final da expressão. O operador de atribuição requer um
+nome de variável de ambiente à sua esquerda. Os valores numéricos
+são valores decimais, a menos que sejam antecedidos por 0x para n£meros
+hexadecimais e 0 para n£meros octais. Portanto, 0x12 é o mesmo que 18
+e o mesmo que 022. Observe que a notação octal pode causar confusão: 08 e 09
+não são n£meros v lidos porque 8 e
+9 não são d¡gitos octais v lidos.
+
+A opção /P permite definir o valor de uma variável para uma linha de entrada
+digitada pelo usu rio. Exibe a cadeia de caracteres do prompt especificada
+antes de ler a linha de entrada. A cadeia de caracteres do prompt pode estar
+vazia.
+
+A substituição da variável de ambiente foi aprimorada da seguinte forma:
+
+    %PATH:seq1=seq2%
+
+expandiria a variável de ambiente PATH, substituindo cada ocorrˆncia de
+"seq1" no resultado expandido por "seq2". "Seq2" pode ser a cadeia de
+caracteres vazia para excluir efetivamente todas as ocorrˆncias de "seq1" da
+sa¡da expandida. "seq1" pode começar com um asterisco e, neste caso,
+corresponderia a tudo desde o in¡cio da sa¡da expandida até a primeira
+ocorrˆncia da parte restante de seq1.
+
+Também pode especificar subcadeias de caracteres para uma expansão.
+
+    %PATH:~10,5%
+
+expandiria a variável de ambiente PATH e usaria apenas os 5 caracteres
+que começassem no caractere 11 (deslocamento 10) do resultado expandido.
+Se o comprimento não for especificado, ser  padronizado como o restante
+do valor da variável. Se qualquer um dos n£meros
+(deslocamento ou comprimento) for negativo, o n£mero usado ser  o comprimento
+do valor da variável de ambiente adicionado ao deslocamento ou comprimento
+especificado.
+
+    %PATH:~-10%
+
+extrairia os £ltimos 10 da variável PATH.
+
+    %PATH:~0,-2%
+
+extrairia todos os caracteres da variável PATH, com exceção dos 2 £ltimos.
+
+Finalmente, foi adicionado o suporte à expansão de variáveis de ambiente
+atrasada. Esse suporte est  sempre desativado por padrão, mas pode ser
+ativado/desativado através da opção da linha de comando /V do CMD.EXE.
+Consulte CMD /?
+
+A expansão de variáveis de ambiente atrasada é £til para contornar
+as limitações da expansão atual que ocorre quando uma linha
+de texto é lida, e não quando é executada. O exemplo a seguir
+demonstra o problema com a expansão de variável imediata:
+
+    set VAR=antes
+    if "%VAR%" == "antes" (
+        set VAR=depois
+        if "%VAR%" == "depois" @echo Se vocˆ ler isto, ter  funcionado
+    )
+
+nunca exibiria a mensagem, j  que %VAR% em AMBAS as instruções IF
+é substitu¡do quando a primeira instrução IF é lida, pois inclui
+logicamente o corpo do IF, que é uma instrução composta. Portanto, o
+IF dentro da instrução composta est  realmente comparando "antes" com
+"depois", que nunca ser  igual. Da mesma forma, o exemplo a seguir
+não funcionar  como esperado:
+
+    set LIST=
+    for %i in (*) do set LIST=%LIST% %i
+    echo %LIST%
+
+porque NÇO criar  uma lista de arquivos na pasta atual mas,
+em vez disso, apenas definir  a variável LIST como o £ltimo arquivo encontrado.
+Novamente, isso ocorre porque a %LIST% é expandida apenas uma vez
+quando a instrução FOR é lida, e nesse momento a variável LIST est  vazia.
+Portanto, o loop FOR que est  de fato sendo executado é:
+
+    for %i in (*) do set LIST= %i
+
+que apenas continua definindo LIST como o £ltimo arquivo encontrado.
+
+A expansão de variáveis de ambiente atrasada permite usar um caractere
+diferente (o ponto de exclamação) para expandir variáveis de ambiente no
+tempo de execução. Se a expansão de variáveis atrasada estiver ativada,
+os exemplos acima poderão ser escritos da seguinte forma para funcionar
+como o desejado:
+
+    set VAR=antes
+    if "%VAR%" == "antes" (
+        set VAR=depois
+        if "!VAR!" == "depois" @echo Se vocˆ ler isto, ter  funcionado
+    )
+
+    set LIST=
+    for %i in (*) do set LIST=!LIST! %i
+    echo %LIST%
+
+Se as extensões de comando estiverem ativadas, haver  diversas variáveis
+de ambiente dinƒmicas que poderão ser expandidas, mas que não aparecerão na
+lista de variáveis exibida pelo SET. Esses valores de variáveis são
+computados dinamicamente sempre que o valor da variável é expandido.
+Se o usu rio definir explicitamente uma variável com um desses nomes,
+essa definição substituir  a definição dinƒmica descrita abaixo:
+
+%CD% - expande para a cadeia de caracteres da pasta atual.
+
+%DATE% - expande para a data atual usando o mesmo formato que o comando DATE.
+
+%TIME% - expande para a hora atual usando o mesmo formato que o comando TIME.
+
+%RANDOM% - expande para um n£mero decimal aleat¢rio entre 0 e 32767.
+
+%ERRORLEVEL% - expande para o valor ERRORLEVEL atual
+
+%CMDEXTVERSION% - expande para o n£mero da versão das extensões do
+    processador de comandos atual.
+
+%CMDCMDLINE% - expande para a linha de comando original que chamou o
+    processador de comandos.
+
+%HIGHESTNUMANODENUMBER% - expande para o n£mero de n¢ NUMA mais alto
+    nesta m quina.

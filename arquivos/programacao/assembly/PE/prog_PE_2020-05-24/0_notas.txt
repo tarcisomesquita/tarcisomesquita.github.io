@@ -1,0 +1,6 @@
+screenshot.exe parece ser uma boa meta
+
+
+print_import não funciona bem para compiladores/FASM/fasm_win64/FASMW.EXE
+
+

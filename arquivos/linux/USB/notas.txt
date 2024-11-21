@@ -1,0 +1,13 @@
+
+Data Fields are Transmitted Least Significant Bit First
+
+A packet starts with a sync pattern to allow the receiver bit clock to synchronise with the data. It is followed, by the data bytes of the packet, and concluded with an End of Packet (EOP) signal.
+
+A Single Packet
+Idle > SYNC > DATA BYTES > EOP > Idle
+
+The first byte in every packet is a Packet Identifier (PID) byte. This byte needs to be recognised quickly by the SIE and so is not included in any CRC checks. It therefore has its own validity check. The PID itself is 4 bits long, and the 4 bits are repeated in an complemented form.
+
+USB uses two different CRCs, one 5 bits long (CRC5) and one 16 bits long (CRC16). See the USB specification for details of the algorithms used.
+
+

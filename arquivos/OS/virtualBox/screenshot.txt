@@ -1,0 +1,2 @@
+VBoxManage controlvm <uuid | vmname> screenshotpng <filename> [display]
+VBoxManage controlvm <uuid | vmname> screenshotpng <filename> [display]

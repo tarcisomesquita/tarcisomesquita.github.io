@@ -1,0 +1,1529 @@
+Encontrei uma solução com 138 passos.
+
+estado[00000000]
+00 12 12 00 
+11 12 12 11 
+11 12 12 11 
+21 44 44 21 
+21 44 44 21 
+
+           dir_esq               baixo_cima | esq_dir                          baixo_cima | anterior
+           00000001              00000002   | 00000003                         00000004   | FFFFFFFF
+
+
+estado[00000002]
+11 12 12 00 
+00 12 12 11 
+11 12 12 11 
+21 44 44 21 
+21 44 44 21 
+
+esq_dir                          baixo_cima |            dir_esq    cima_baixo baixo_cima | anterior
+00000006                         00000007   |            00000008   00000000   00000009   | 00000000
+
+
+estado[00000009]
+11 12 12 00 
+11 12 12 11 
+00 12 12 11 
+21 44 44 21 
+21 44 44 21 
+
+esq_dir                          baixo_cima |            dir_esq    cima_baixo baixo_cima | anterior
+00000011                         00000013   |            00000017   00000002   00000018   | 00000002
+
+
+estado[00000017]
+11 12 12 00 
+11 12 12 11 
+12 12 00 11 
+21 44 44 21 
+21 44 44 21 
+
+esq_dir                          baixo_cima | esq_dir    dir_esq                          | anterior
+00000024                         00000029   | 00000009   0000002E                         | 00000009
+
+
+estado[0000002E]
+11 12 12 00 
+11 12 12 11 
+12 12 11 00 
+21 44 44 21 
+21 44 44 21 
+
+esq_dir                          baixo_cima | esq_dir               cima_baixo baixo_cima | anterior
+0000003C                         00000047   | 00000017              0000004B   0000004C   | 00000017
+
+
+estado[0000004B]
+11 12 12 00 
+11 12 12 00 
+12 12 11 11 
+21 44 44 21 
+21 44 44 21 
+
+esq_dir                                     | esq_dir                          baixo_cima | anterior
+00000061                                    | 0000006F                         0000002E   | 0000002E
+
+
+estado[0000006F]
+11 12 12 00 
+11 00 12 12 
+12 12 11 11 
+21 44 44 21 
+21 44 44 21 
+
+esq_dir                                     | esq_dir    dir_esq                          | anterior
+00000087                                    | 00000091   0000004B                         | 0000004B
+
+
+estado[00000091]
+11 12 12 00 
+00 11 12 12 
+12 12 11 11 
+21 44 44 21 
+21 44 44 21 
+
+esq_dir                                     |            dir_esq    cima_baixo            | anterior
+000000A9                                    |            0000006F   000000B0              | 0000006F
+
+
+estado[000000B0]
+00 12 12 00 
+11 11 12 12 
+12 12 11 11 
+21 44 44 21 
+21 44 44 21 
+
+           dir_esq               baixo_cima | esq_dir                                     | anterior
+           000000CE              00000091   | 000000C9                                    | 00000091
+
+
+estado[000000CE]
+12 12 00 00 
+11 11 12 12 
+12 12 11 11 
+21 44 44 21 
+21 44 44 21 
+
+esq_dir                          baixo_cima |                                             | anterior
+000000B0                         000000E2   |                                             | 000000B0
+
+
+estado[000000E2]
+12 12 12 12 
+11 11 00 00 
+12 12 11 11 
+21 44 44 21 
+21 44 44 21 
+
+esq_dir               cima_baixo baixo_cima |                                  baixo_cima | anterior
+000000FC              000000CE   000000FD   |                                  000000FE   | 000000CE
+
+
+estado[000000FC]
+12 12 12 12 
+11 00 11 00 
+12 12 11 11 
+21 44 44 21 
+21 44 44 21 
+
+esq_dir    dir_esq                          | esq_dir                          baixo_cima | anterior
+00000126   000000E2                         | 00000127                         00000128   | 000000E2
+
+
+estado[00000126]
+12 12 12 12 
+00 11 11 00 
+12 12 11 11 
+21 44 44 21 
+21 44 44 21 
+
+           dir_esq                          | esq_dir                          baixo_cima | anterior
+           000000FC                         | 0000015C                         0000015D   | 000000FC
+
+
+estado[0000015C]
+12 12 12 12 
+00 11 00 11 
+12 12 11 11 
+21 44 44 21 
+21 44 44 21 
+
+           dir_esq                          | esq_dir    dir_esq               baixo_cima | anterior
+           00000127                         | 00000194   00000126              00000195   | 00000126
+
+
+estado[00000194]
+12 12 12 12 
+00 00 11 11 
+12 12 11 11 
+21 44 44 21 
+21 44 44 21 
+
+                      cima_baixo baixo_cima |            dir_esq                          | anterior
+                      000001CB   000001CC   |            0000015C                         | 0000015C
+
+
+estado[000001CC]
+12 12 12 12 
+12 12 11 11 
+00 00 11 11 
+21 44 44 21 
+21 44 44 21 
+
+                      cima_baixo baixo_cima |            dir_esq                          | anterior
+                      00000194   00000202   |            00000203                         | 00000194
+
+
+estado[00000202]
+12 12 12 12 
+12 12 11 11 
+21 00 11 11 
+21 44 44 21 
+00 44 44 21 
+
+           dir_esq                          |                       cima_baixo            | anterior
+           00000248                         |                       000001CC              | 000001CC
+
+
+estado[00000248]
+12 12 12 12 
+12 12 11 11 
+21 11 00 11 
+21 44 44 21 
+00 44 44 21 
+
+esq_dir    dir_esq    cima_baixo            |                       cima_baixo            | anterior
+00000202   000002A4   000002A5              |                       00000203              | 00000202
+
+
+estado[000002A5]
+12 12 12 12 
+12 12 00 11 
+21 11 11 11 
+21 44 44 21 
+00 44 44 21 
+
+esq_dir    dir_esq               baixo_cima |                       cima_baixo            | anterior
+00000315   00000313              00000248   |                       0000024B              | 00000248
+
+
+estado[00000315]
+12 12 12 12 
+00 12 12 11 
+21 11 11 11 
+21 44 44 21 
+00 44 44 21 
+
+           dir_esq               baixo_cima |                       cima_baixo            | anterior
+           000002A5              0000037F   |                       000002AB              | 000002A5
+
+
+estado[0000037F]
+12 12 12 12 
+21 12 12 11 
+21 11 11 11 
+00 44 44 21 
+00 44 44 21 
+
+           dir_esq    cima_baixo            |                                             | anterior
+           000003EB   00000315              |                                             | 00000315
+
+
+estado[000003EB]
+12 12 12 12 
+21 12 12 11 
+21 11 11 11 
+44 44 00 21 
+44 44 00 21 
+
+esq_dir    dir_esq    cima_baixo            |                                             | anterior
+0000037F   00000463   00000464              |                                             | 0000037F
+
+
+estado[00000464]
+12 12 12 12 
+21 12 12 11 
+21 11 00 11 
+44 44 11 21 
+44 44 00 21 
+
+esq_dir    dir_esq               baixo_cima |                       cima_baixo            | anterior
+000004E9   000004EA              000003EB   |                       000004EB              | 000003EB
+
+
+estado[000004E9]
+12 12 12 12 
+21 12 12 11 
+21 00 11 11 
+44 44 11 21 
+44 44 00 21 
+
+           dir_esq                          |                       cima_baixo            | anterior
+           00000464                         |                       00000576              | 00000464
+
+
+estado[00000576]
+12 12 12 12 
+21 12 12 11 
+21 00 11 11 
+44 44 00 21 
+44 44 11 21 
+
+           dir_esq                          |                       cima_baixo baixo_cima | anterior
+           000004EB                         |                       00000603   000004E9   | 000004E9
+
+
+estado[00000603]
+12 12 12 12 
+21 12 12 11 
+21 00 00 11 
+44 44 11 21 
+44 44 11 21 
+
+                      cima_baixo            |            dir_esq               baixo_cima | anterior
+                      0000069D              |            0000069E              00000576   | 00000576
+
+
+estado[0000069D]
+12 12 12 12 
+21 00 00 11 
+21 12 12 11 
+44 44 11 21 
+44 44 11 21 
+
+                      cima_baixo baixo_cima |            dir_esq                          | anterior
+                      0000073C   00000603   |            0000073D                         | 00000603
+
+
+estado[0000073D]
+12 12 12 12 
+21 00 11 00 
+21 12 12 11 
+44 44 11 21 
+44 44 11 21 
+
+           dir_esq                          | esq_dir                          baixo_cima | anterior
+           000007EF                         | 0000069D                         000007F0   | 0000069D
+
+
+estado[000007EF]
+12 12 12 12 
+21 11 00 00 
+21 12 12 11 
+44 44 11 21 
+44 44 11 21 
+
+esq_dir               cima_baixo            |                                  baixo_cima | anterior
+0000073D              000008A7              |                                  000008A8   | 0000073D
+
+
+estado[000008A8]
+12 12 12 12 
+21 11 00 11 
+21 12 12 00 
+44 44 11 21 
+44 44 11 21 
+
+esq_dir    dir_esq                          | esq_dir               cima_baixo baixo_cima | anterior
+000007F0   00000967                         | 00000968              000007EF   00000969   | 000007EF
+
+
+estado[00000967]
+12 12 12 12 
+21 11 11 00 
+21 12 12 00 
+44 44 11 21 
+44 44 11 21 
+
+esq_dir                                     | esq_dir                          baixo_cima | anterior
+000008A8                                    | 00000A28                         00000A29   | 000008A8
+
+
+estado[00000A29]
+12 12 12 12 
+21 11 11 00 
+21 12 12 21 
+44 44 11 21 
+44 44 11 00 
+
+esq_dir                          baixo_cima | esq_dir               cima_baixo            | anterior
+00000969                         00000AF7   | 00000AF8              00000967              | 00000967
+
+
+estado[00000AF7]
+12 12 12 12 
+21 11 11 21 
+21 12 12 21 
+44 44 11 00 
+44 44 11 00 
+
+esq_dir               cima_baixo            | esq_dir                                     | anterior
+00000BC2              00000A29              | 00000BC3                                    | 00000A29
+
+
+estado[00000BC2]
+12 12 12 12 
+21 11 11 21 
+21 12 12 21 
+44 44 00 11 
+44 44 11 00 
+
+           dir_esq               baixo_cima | esq_dir               cima_baixo            | anterior
+           00000AF7              00000C83   | 00000C84              00000C85              | 00000AF7
+
+
+estado[00000C84]
+12 12 12 12 
+21 11 11 21 
+21 12 12 21 
+44 44 00 11 
+44 44 00 11 
+
+esq_dir    dir_esq                          |            dir_esq                          | anterior
+00000D3D   00000BC3                         |            00000BC2                         | 00000BC2
+
+
+estado[00000D3D]
+12 12 12 12 
+21 11 11 21 
+21 12 12 21 
+00 44 44 11 
+00 44 44 11 
+
+           dir_esq    cima_baixo            |                                             | anterior
+           00000C84   00000E06              |                                             | 00000C84
+
+
+estado[00000E06]
+12 12 12 12 
+00 11 11 21 
+21 12 12 21 
+21 44 44 11 
+00 44 44 11 
+
+           dir_esq               baixo_cima |                       cima_baixo            | anterior
+           00000ED5              00000D3D   |                       00000ED6              | 00000D3D
+
+
+estado[00000ED5]
+12 12 12 12 
+11 00 11 21 
+21 12 12 21 
+21 44 44 11 
+00 44 44 11 
+
+esq_dir    dir_esq                          |                       cima_baixo            | anterior
+00000E06   00000F9B                         |                       00000F9C              | 00000E06
+
+
+estado[00000F9C]
+12 12 12 12 
+11 00 11 21 
+00 12 12 21 
+21 44 44 11 
+21 44 44 11 
+
+esq_dir    dir_esq                          |            dir_esq    cima_baixo baixo_cima | anterior
+00000ED6   0000106C                         |            0000106D   0000106E   00000ED5   | 00000ED5
+
+
+estado[0000106E]
+12 12 12 12 
+00 00 11 21 
+11 12 12 21 
+21 44 44 11 
+21 44 44 11 
+
+                      cima_baixo baixo_cima |            dir_esq                          | anterior
+                      00001158   00000F9C   |            00001109                         | 00000F9C
+
+
+estado[00001158]
+00 00 12 12 
+12 12 11 21 
+11 12 12 21 
+21 44 44 11 
+21 44 44 11 
+
+                                 baixo_cima |            dir_esq                          | anterior
+                                 0000106E   |            00001245                         | 0000106E
+
+
+estado[00001245]
+00 12 12 00 
+12 12 11 21 
+11 12 12 21 
+21 44 44 11 
+21 44 44 11 
+
+           dir_esq                          | esq_dir                          baixo_cima | anterior
+           00001336                         | 00001158                         00001337   | 00001158
+
+
+estado[00001336]
+12 12 00 00 
+12 12 11 21 
+11 12 12 21 
+21 44 44 11 
+21 44 44 11 
+
+esq_dir                          baixo_cima |                                  baixo_cima | anterior
+00001245                         0000140A   |                                  0000140B   | 00001245
+
+
+estado[0000140A]
+12 12 11 00 
+12 12 00 21 
+11 12 12 21 
+21 44 44 11 
+21 44 44 11 
+
+esq_dir                          baixo_cima | esq_dir               cima_baixo            | anterior
+000014EC                         000014ED   | 000014EE              00001336              | 00001336
+
+
+estado[000014ED]
+12 12 11 21 
+12 12 00 21 
+11 12 12 00 
+21 44 44 11 
+21 44 44 11 
+
+esq_dir               cima_baixo            | esq_dir               cima_baixo baixo_cima | anterior
+000015BC              0000140B              | 000015BD              0000140A   000015BE   | 0000140A
+
+
+estado[000015BC]
+12 12 11 21 
+00 12 12 21 
+11 12 12 00 
+21 44 44 11 
+21 44 44 11 
+
+           dir_esq               baixo_cima | esq_dir               cima_baixo baixo_cima | anterior
+           000014ED              00001659   | 0000165A              000014EE   0000165B   | 000014ED
+
+
+estado[0000165A]
+12 12 11 21 
+00 12 12 21 
+11 00 12 12 
+21 44 44 11 
+21 44 44 11 
+
+           dir_esq               baixo_cima | esq_dir    dir_esq                          | anterior
+           000015BD              000016EA   | 000016EC   000015BC                         | 000015BC
+
+
+estado[000016EC]
+12 12 11 21 
+00 12 12 21 
+00 11 12 12 
+21 44 44 11 
+21 44 44 11 
+
+           dir_esq                          |            dir_esq               baixo_cima | anterior
+           0000165C                         |            0000165A              00001769   | 0000165A
+
+
+estado[00001769]
+12 12 11 21 
+00 12 12 21 
+21 11 12 12 
+21 44 44 11 
+00 44 44 11 
+
+           dir_esq               baixo_cima |                       cima_baixo            | anterior
+           000016EE              000017EA   |                       000016EC              | 000016EC
+
+
+estado[000017EA]
+12 12 11 21 
+21 12 12 21 
+21 11 12 12 
+00 44 44 11 
+00 44 44 11 
+
+           dir_esq    cima_baixo            |                                             | anterior
+           00001878   00001769              |                                             | 00001769
+
+
+estado[00001878]
+12 12 11 21 
+21 12 12 21 
+21 11 12 12 
+44 44 00 11 
+44 44 00 11 
+
+esq_dir    dir_esq                          |            dir_esq                          | anterior
+000017EA   00001906                         |            00001907                         | 000017EA
+
+
+estado[00001906]
+12 12 11 21 
+21 12 12 21 
+21 11 12 12 
+44 44 11 00 
+44 44 00 11 
+
+esq_dir                          baixo_cima |            dir_esq    cima_baixo            | anterior
+00001878                         00001993   |            00001994   00001995              | 00001878
+
+
+estado[00001995]
+12 12 11 21 
+21 12 12 21 
+21 11 12 12 
+44 44 00 00 
+44 44 11 11 
+
+                      cima_baixo baixo_cima |                                  baixo_cima | anterior
+                      00001A0A   00001906   |                                  00001907   | 00001906
+
+
+estado[00001A0A]
+12 12 11 21 
+21 12 12 21 
+21 11 00 00 
+44 44 12 12 
+44 44 11 11 
+
+esq_dir                          baixo_cima |                       cima_baixo            | anterior
+00001A70                         00001995   |                       00001A71              | 00001995
+
+
+estado[00001A70]
+12 12 11 21 
+21 12 12 21 
+21 00 11 00 
+44 44 12 12 
+44 44 11 11 
+
+           dir_esq                          | esq_dir               cima_baixo            | anterior
+           00001A0A                         | 00001ACA              00001ACB              | 00001A0A
+
+
+estado[00001ACB]
+12 12 11 00 
+21 12 12 21 
+21 00 11 21 
+44 44 12 12 
+44 44 11 11 
+
+esq_dir                          baixo_cima |            dir_esq                          | anterior
+00001B1C                         00001A70   |            00001A71                         | 00001A70
+
+
+estado[00001B1C]
+12 12 00 11 
+21 12 12 21 
+21 00 11 21 
+44 44 12 12 
+44 44 11 11 
+
+esq_dir    dir_esq                          |            dir_esq                          | anterior
+00001B70   00001ACB                         |            00001ACC                         | 00001ACB
+
+
+estado[00001B70]
+00 12 12 11 
+21 12 12 21 
+21 00 11 21 
+44 44 12 12 
+44 44 11 11 
+
+           dir_esq               baixo_cima |            dir_esq                          | anterior
+           00001B1C              00001BC4   |            00001B1D                         | 00001B1C
+
+
+estado[00001BC4]
+21 12 12 11 
+21 12 12 21 
+00 00 11 21 
+44 44 12 12 
+44 44 11 11 
+
+                      cima_baixo baixo_cima |            dir_esq                          | anterior
+                      00001B70   00001C13   |            00001B71                         | 00001B70
+
+
+estado[00001C13]
+21 12 12 11 
+21 12 12 21 
+44 44 11 21 
+44 44 12 12 
+00 00 11 11 
+
+                      cima_baixo            |            dir_esq                          | anterior
+                      00001BC4              |            00001C55                         | 00001BC4
+
+
+estado[00001C55]
+21 12 12 11 
+21 12 12 21 
+44 44 11 21 
+44 44 12 12 
+00 11 00 11 
+
+           dir_esq                          | esq_dir    dir_esq                          | anterior
+           00001C95                         | 00001C13   00001C96                         | 00001C13
+
+
+estado[00001C95]
+21 12 12 11 
+21 12 12 21 
+44 44 11 21 
+44 44 12 12 
+11 00 00 11 
+
+esq_dir                                     |            dir_esq                          | anterior
+00001C55                                    |            00001CDF                         | 00001C55
+
+
+estado[00001CDF]
+21 12 12 11 
+21 12 12 21 
+44 44 11 21 
+44 44 12 12 
+11 00 11 00 
+
+esq_dir    dir_esq                          | esq_dir                                     | anterior
+00001C96   00001D2C                         | 00001C95                                    | 00001C95
+
+
+estado[00001D2C]
+21 12 12 11 
+21 12 12 21 
+44 44 11 21 
+44 44 12 12 
+11 11 00 00 
+
+esq_dir               cima_baixo            |                                             | anterior
+00001CDF              00001D78              |                                             | 00001CDF
+
+
+estado[00001D78]
+21 12 12 11 
+21 12 12 21 
+44 44 11 21 
+44 44 00 00 
+11 11 12 12 
+
+                      cima_baixo baixo_cima |                       cima_baixo            | anterior
+                      00001DB9   00001D2C   |                       00001DBA              | 00001D2C
+
+
+estado[00001DB9]
+21 12 12 11 
+21 12 12 21 
+44 44 00 21 
+44 44 11 00 
+11 11 12 12 
+
+                                 baixo_cima | esq_dir               cima_baixo            | anterior
+                                 00001D78   | 00001DFA              00001DFB              | 00001D78
+
+
+estado[00001DFA]
+21 12 12 11 
+21 12 12 21 
+44 44 00 21 
+44 44 00 11 
+11 11 12 12 
+
+esq_dir                                     |            dir_esq                          | anterior
+00001E3E                                    |            00001DB9                         | 00001DB9
+
+
+estado[00001E3E]
+21 12 12 11 
+21 12 12 21 
+00 44 44 21 
+00 44 44 11 
+11 11 12 12 
+
+           dir_esq    cima_baixo            |                                  baixo_cima | anterior
+           00001DFA   00001E81              |                                  00001E82   | 00001DFA
+
+
+estado[00001E82]
+21 12 12 11 
+21 12 12 21 
+00 44 44 21 
+11 44 44 11 
+00 11 12 12 
+
+                      cima_baixo baixo_cima |            dir_esq    cima_baixo            | anterior
+                      00001EB9   00001EBA   |            00001EBB   00001E3E              | 00001E3E
+
+
+estado[00001EBA]
+21 12 12 11 
+21 12 12 21 
+11 44 44 21 
+00 44 44 11 
+00 11 12 12 
+
+                      cima_baixo            |            dir_esq                          | anterior
+                      00001E82              |            00001EE8                         | 00001E82
+
+
+estado[00001EE8]
+21 12 12 11 
+21 12 12 21 
+11 44 44 21 
+00 44 44 11 
+11 00 12 12 
+
+                      cima_baixo baixo_cima | esq_dir    dir_esq                          | anterior
+                      00001EBB   00001F13   | 00001EBA   00001F14                         | 00001EBA
+
+
+estado[00001F13]
+21 12 12 11 
+21 12 12 21 
+11 44 44 21 
+11 44 44 11 
+00 00 12 12 
+
+                      cima_baixo            |            dir_esq                          | anterior
+                      00001EE8              |            00001F40                         | 00001EE8
+
+
+estado[00001F40]
+21 12 12 11 
+21 12 12 21 
+11 44 44 21 
+11 44 44 11 
+00 12 12 00 
+
+           dir_esq    cima_baixo            | esq_dir               cima_baixo            | anterior
+           00001F6F   00001F14              | 00001F13              00001F70              | 00001F13
+
+
+estado[00001F6F]
+21 12 12 11 
+21 12 12 21 
+11 44 44 21 
+11 44 44 11 
+12 12 00 00 
+
+esq_dir                                     |                       cima_baixo            | anterior
+00001F40                                    |                       00001F9C              | 00001F40
+
+
+estado[00001F9C]
+21 12 12 11 
+21 12 12 21 
+11 44 44 21 
+11 44 44 00 
+12 12 00 11 
+
+                      cima_baixo baixo_cima | esq_dir    dir_esq                          | anterior
+                      00001FCC   00001F6F   | 00001F70   00001FCD                         | 00001F6F
+
+
+estado[00001FCC]
+21 12 12 11 
+21 12 12 00 
+11 44 44 21 
+11 44 44 21 
+12 12 00 11 
+
+esq_dir               cima_baixo baixo_cima | esq_dir    dir_esq                          | anterior
+00002003              00002004   00001F9C   | 00001F9D   00002005                         | 00001F9C
+
+
+estado[00002004]
+21 12 12 00 
+21 12 12 11 
+11 44 44 21 
+11 44 44 21 
+12 12 00 11 
+
+esq_dir                          baixo_cima | esq_dir    dir_esq                          | anterior
+0000203B                         00001FCC   | 00001FCF   0000203C                         | 00001FCC
+
+
+estado[0000203B]
+21 00 12 12 
+21 12 12 11 
+11 44 44 21 
+11 44 44 21 
+12 12 00 11 
+
+           dir_esq                          | esq_dir    dir_esq                          | anterior
+           00002004                         | 00002006   00002073                         | 00002004
+
+
+estado[00002073]
+21 00 12 12 
+21 12 12 11 
+11 44 44 21 
+11 44 44 21 
+12 12 11 00 
+
+           dir_esq                          | esq_dir               cima_baixo            | anterior
+           0000203C                         | 0000203B              000020B1              | 0000203B
+
+
+estado[000020B1]
+21 00 12 12 
+21 12 12 11 
+11 44 44 00 
+11 44 44 21 
+12 12 11 21 
+
+           dir_esq                          |                       cima_baixo baixo_cima | anterior
+           00002074                         |                       000020EE   00002073   | 00002073
+
+
+estado[000020EE]
+21 00 12 12 
+21 12 12 00 
+11 44 44 11 
+11 44 44 21 
+12 12 11 21 
+
+           dir_esq                          | esq_dir                          baixo_cima | anterior
+           000020B2                         | 00002128                         000020B1   | 000020B1
+
+
+estado[00002128]
+21 00 12 12 
+21 00 12 12 
+11 44 44 11 
+11 44 44 21 
+12 12 11 21 
+
+esq_dir    dir_esq                          |            dir_esq                          | anterior
+00002160   000020EF                         |            000020EE                         | 000020EE
+
+
+estado[00002160]
+00 21 12 12 
+00 21 12 12 
+11 44 44 11 
+11 44 44 21 
+12 12 11 21 
+
+           dir_esq                          |                                  baixo_cima | anterior
+           00002128                         |                                  0000219C   | 00002128
+
+
+estado[0000219C]
+00 21 12 12 
+11 21 12 12 
+00 44 44 11 
+11 44 44 21 
+12 12 11 21 
+
+                                 baixo_cima |                       cima_baixo baixo_cima | anterior
+                                 000021DA   |                       00002160   000021DB   | 00002160
+
+
+estado[000021DA]
+11 21 12 12 
+00 21 12 12 
+00 44 44 11 
+11 44 44 21 
+12 12 11 21 
+
+                      cima_baixo            |                                  baixo_cima | anterior
+                      0000219C              |                                  00002222   | 0000219C
+
+
+estado[00002222]
+11 21 12 12 
+00 21 12 12 
+11 44 44 11 
+00 44 44 21 
+12 12 11 21 
+
+                      cima_baixo baixo_cima |                       cima_baixo            | anterior
+                      000021DB   00002275   |                       000021DA              | 000021DA
+
+
+estado[00002275]
+11 21 12 12 
+11 21 12 12 
+00 44 44 11 
+00 44 44 21 
+12 12 11 21 
+
+           dir_esq    cima_baixo            |                                             | anterior
+           000022CB   00002222              |                                             | 00002222
+
+
+estado[000022CB]
+11 21 12 12 
+11 21 12 12 
+44 44 00 11 
+44 44 00 21 
+12 12 11 21 
+
+esq_dir    dir_esq                          |                                  baixo_cima | anterior
+00002275   0000232C                         |                                  0000232D   | 00002275
+
+
+estado[0000232C]
+11 21 12 12 
+11 21 12 12 
+44 44 11 00 
+44 44 00 21 
+12 12 11 21 
+
+esq_dir                          baixo_cima |                       cima_baixo baixo_cima | anterior
+000022CB                         0000239E   |                       0000239F   000023A0   | 000022CB
+
+
+estado[0000239E]
+11 21 12 12 
+11 21 12 12 
+44 44 11 21 
+44 44 00 21 
+12 12 11 00 
+
+                      cima_baixo baixo_cima | esq_dir               cima_baixo            | anterior
+                      00002425   00002426   | 00002427              0000232C              | 0000232C
+
+
+estado[00002426]
+11 21 12 12 
+11 21 12 12 
+44 44 11 21 
+44 44 11 21 
+12 12 00 00 
+
+esq_dir               cima_baixo            |                       cima_baixo            | anterior
+000024BB              0000239E              |                       000023A0              | 0000239E
+
+
+estado[000024BB]
+11 21 12 12 
+11 21 12 12 
+44 44 11 21 
+44 44 11 21 
+00 12 12 00 
+
+           dir_esq                          | esq_dir               cima_baixo            | anterior
+           00002426                         | 0000254E              00002429              | 00002426
+
+
+estado[0000254E]
+11 21 12 12 
+11 21 12 12 
+44 44 11 21 
+44 44 11 21 
+00 00 12 12 
+
+                      cima_baixo            |            dir_esq                          | anterior
+                      000025EC              |            000024BB                         | 000024BB
+
+
+estado[000025EC]
+11 21 12 12 
+11 21 12 12 
+00 00 11 21 
+44 44 11 21 
+44 44 12 12 
+
+                      cima_baixo baixo_cima |            dir_esq    cima_baixo            | anterior
+                      000026AA   0000254E   |            000026AB   000026AC              | 0000254E
+
+
+estado[000026AA]
+11 21 12 12 
+00 21 12 12 
+11 00 11 21 
+44 44 11 21 
+44 44 12 12 
+
+                      cima_baixo baixo_cima | esq_dir    dir_esq    cima_baixo            | anterior
+                      00002776   000025EC   | 00002777   00002778   00002779              | 000025EC
+
+
+estado[00002776]
+00 21 12 12 
+11 21 12 12 
+11 00 11 21 
+44 44 11 21 
+44 44 12 12 
+
+                                 baixo_cima | esq_dir    dir_esq    cima_baixo            | anterior
+                                 000026AA   | 00002857   00002858   00002859              | 000026AA
+
+
+estado[00002859]
+00 00 12 12 
+11 21 12 12 
+11 21 11 21 
+44 44 11 21 
+44 44 12 12 
+
+                                 baixo_cima |            dir_esq               baixo_cima | anterior
+                                 00002779   |            00002942              00002776   | 00002776
+
+
+estado[00002942]
+00 12 12 00 
+11 21 12 12 
+11 21 11 21 
+44 44 11 21 
+44 44 12 12 
+
+           dir_esq               baixo_cima | esq_dir                                     | anterior
+           00002A22              0000285C   | 00002859                                    | 00002859
+
+
+estado[00002A22]
+12 12 00 00 
+11 21 12 12 
+11 21 11 21 
+44 44 11 21 
+44 44 12 12 
+
+esq_dir                          baixo_cima |                                             | anterior
+00002942                         00002B05   |                                             | 00002942
+
+
+estado[00002B05]
+12 12 12 12 
+11 21 00 00 
+11 21 11 21 
+44 44 11 21 
+44 44 12 12 
+
+                      cima_baixo baixo_cima |                                  baixo_cima | anterior
+                      00002A22   00002BF1   |                                  00002BF2   | 00002A22
+
+
+estado[00002BF2]
+12 12 12 12 
+11 21 00 21 
+11 21 11 21 
+44 44 11 00 
+44 44 12 12 
+
+                                 baixo_cima | esq_dir               cima_baixo            | anterior
+                                 00002CF8   | 00002CFA              00002B05              | 00002B05
+
+
+estado[00002CFA]
+12 12 12 12 
+11 21 00 21 
+11 21 11 21 
+44 44 00 11 
+44 44 12 12 
+
+                                 baixo_cima |            dir_esq    cima_baixo            | anterior
+                                 00002E1D   |            00002BF2   00002E1E              | 00002BF2
+
+
+estado[00002E1E]
+12 12 12 12 
+11 21 00 21 
+11 21 00 21 
+44 44 11 11 
+44 44 12 12 
+
+esq_dir    dir_esq                          |                                  baixo_cima | anterior
+00002F5A   00002F5B                         |                                  00002CFA   | 00002CFA
+
+
+estado[00002F5A]
+12 12 12 12 
+11 00 21 21 
+11 00 21 21 
+44 44 11 11 
+44 44 12 12 
+
+esq_dir    dir_esq                          | esq_dir                                     | anterior
+000030A7   00002E1E                         | 000030A8                                    | 00002E1E
+
+
+estado[000030A7]
+12 12 12 12 
+00 11 21 21 
+11 00 21 21 
+44 44 11 11 
+44 44 12 12 
+
+           dir_esq               baixo_cima | esq_dir               cima_baixo            | anterior
+           00002F5A              000031F1   | 000031F2              000031F3              | 00002F5A
+
+
+estado[000031F1]
+12 12 12 12 
+11 11 21 21 
+00 00 21 21 
+44 44 11 11 
+44 44 12 12 
+
+                      cima_baixo baixo_cima |                       cima_baixo            | anterior
+                      000030A7   0000333E   |                       000030A8              | 000030A7
+
+
+estado[0000333E]
+12 12 12 12 
+11 11 21 21 
+44 44 21 21 
+44 44 11 11 
+00 00 12 12 
+
+                      cima_baixo            |            dir_esq                          | anterior
+                      000031F1              |            00003495                         | 000031F1
+
+
+estado[00003495]
+12 12 12 12 
+11 11 21 21 
+44 44 21 21 
+44 44 11 11 
+00 12 12 00 
+
+           dir_esq                          | esq_dir               cima_baixo            | anterior
+           000035E2                         | 0000333E              000035E3              | 0000333E
+
+
+estado[000035E2]
+12 12 12 12 
+11 11 21 21 
+44 44 21 21 
+44 44 11 11 
+12 12 00 00 
+
+esq_dir               cima_baixo            |                       cima_baixo            | anterior
+00003495              00003744              |                       00003745              | 00003495
+
+
+estado[00003744]
+12 12 12 12 
+11 11 21 21 
+44 44 21 21 
+44 44 00 11 
+12 12 11 00 
+
+           dir_esq    cima_baixo baixo_cima | esq_dir               cima_baixo            | anterior
+           000038C5   000038C6   000035E2   | 000038C7              000038C8              | 000035E2
+
+
+estado[000038C6]
+12 12 12 12 
+11 11 00 21 
+44 44 21 21 
+44 44 21 11 
+12 12 11 00 
+
+esq_dir                          baixo_cima | esq_dir               cima_baixo            | anterior
+00003A70                         00003744   | 00003A71              00003A72              | 00003744
+
+
+estado[00003A72]
+12 12 12 12 
+11 11 00 21 
+44 44 21 21 
+44 44 21 00 
+12 12 11 11 
+
+esq_dir                          baixo_cima |                       cima_baixo baixo_cima | anterior
+00003C4B                         000038C8   |                       00003C4D   000038C6   | 000038C6
+
+
+estado[00003C4D]
+12 12 12 12 
+11 11 00 00 
+44 44 21 21 
+44 44 21 21 
+12 12 11 11 
+
+esq_dir               cima_baixo baixo_cima |                                  baixo_cima | anterior
+00003E4C              00003E4E   00003A73   |                                  00003A72   | 00003A72
+
+
+estado[00003E4E]
+12 12 00 00 
+11 11 12 12 
+44 44 21 21 
+44 44 21 21 
+12 12 11 11 
+
+esq_dir                          baixo_cima |                                             | anterior
+0000407A                         00003C4D   |                                             | 00003C4D
+
+
+estado[0000407A]
+00 12 12 00 
+11 11 12 12 
+44 44 21 21 
+44 44 21 21 
+12 12 11 11 
+
+           dir_esq               baixo_cima | esq_dir                                     | anterior
+           00003E4E              000042C5   | 000042C6                                    | 00003E4E
+
+
+estado[000042C5]
+11 12 12 00 
+00 11 12 12 
+44 44 21 21 
+44 44 21 21 
+12 12 11 11 
+
+esq_dir                                     |            dir_esq    cima_baixo            | anterior
+00004513                                    |            00004514   0000407A              | 0000407A
+
+
+estado[00004513]
+11 00 12 12 
+00 11 12 12 
+44 44 21 21 
+44 44 21 21 
+12 12 11 11 
+
+esq_dir    dir_esq               baixo_cima |            dir_esq    cima_baixo            | anterior
+0000474B   000042C5              0000474C   |            0000474D   000042C6              | 000042C5
+
+
+estado[0000474C]
+11 11 12 12 
+00 00 12 12 
+44 44 21 21 
+44 44 21 21 
+12 12 11 11 
+
+                      cima_baixo baixo_cima |            dir_esq    cima_baixo            | anterior
+                      00004515   00004982   |            00004983   00004513              | 00004513
+
+
+estado[00004982]
+11 11 12 12 
+44 44 12 12 
+44 44 21 21 
+00 00 21 21 
+12 12 11 11 
+
+                      cima_baixo baixo_cima |                                             | anterior
+                      0000474C   00004BD0   |                                             | 0000474C
+
+
+estado[00004BD0]
+11 11 12 12 
+44 44 12 12 
+44 44 21 21 
+12 12 21 21 
+00 00 11 11 
+
+                      cima_baixo            |            dir_esq                          | anterior
+                      00004982              |            00004E3E                         | 00004982
+
+
+estado[00004E3E]
+11 11 12 12 
+44 44 12 12 
+44 44 21 21 
+12 12 21 21 
+00 11 00 11 
+
+           dir_esq                          | esq_dir    dir_esq    cima_baixo            | anterior
+           000050D8                         | 00004BD0   000050D9   000050DA              | 00004BD0
+
+
+estado[000050D8]
+11 11 12 12 
+44 44 12 12 
+44 44 21 21 
+12 12 21 21 
+11 00 00 11 
+
+esq_dir                                     |            dir_esq    cima_baixo            | anterior
+00004E3E                                    |            00005379   0000537A              | 00004E3E
+
+
+estado[00005379]
+11 11 12 12 
+44 44 12 12 
+44 44 21 21 
+12 12 21 21 
+11 00 11 00 
+
+esq_dir    dir_esq                          | esq_dir               cima_baixo            | anterior
+000050D9   00005633                         | 000050D8              00005634              | 000050D8
+
+
+estado[00005633]
+11 11 12 12 
+44 44 12 12 
+44 44 21 21 
+12 12 21 21 
+11 11 00 00 
+
+esq_dir               cima_baixo            |                       cima_baixo            | anterior
+00005379              000058E6              |                       000058E7              | 00005379
+
+
+estado[000058E6]
+11 11 12 12 
+44 44 12 12 
+44 44 00 21 
+12 12 21 21 
+11 11 21 00 
+
+                                 baixo_cima |                       cima_baixo            | anterior
+                                 00005633   |                       00005B5C              | 00005633
+
+
+estado[00005B5C]
+11 11 12 12 
+44 44 12 12 
+44 44 00 00 
+12 12 21 21 
+11 11 21 21 
+
+                      cima_baixo baixo_cima |                                  baixo_cima | anterior
+                      00005D92   000058E7   |                                  000058E6   | 000058E6
+
+
+estado[00005D92]
+11 11 12 12 
+44 44 00 00 
+44 44 12 12 
+12 12 21 21 
+11 11 21 21 
+
+                      cima_baixo baixo_cima |                                             | anterior
+                      00005FB2   00005B5C   |                                             | 00005B5C
+
+
+estado[00005FB2]
+11 11 00 00 
+44 44 12 12 
+44 44 12 12 
+12 12 21 21 
+11 11 21 21 
+
+esq_dir                          baixo_cima |                                             | anterior
+000061C9                         00005D92   |                                             | 00005D92
+
+
+estado[000061C9]
+11 00 11 00 
+44 44 12 12 
+44 44 12 12 
+12 12 21 21 
+11 11 21 21 
+
+esq_dir    dir_esq                          | esq_dir                                     | anterior
+000063FC   00005FB2                         | 000063FD                                    | 00005FB2
+
+
+estado[000063FC]
+00 11 11 00 
+44 44 12 12 
+44 44 12 12 
+12 12 21 21 
+11 11 21 21 
+
+           dir_esq                          | esq_dir                                     | anterior
+           000061C9                         | 0000666F                                    | 000061C9
+
+
+estado[0000666F]
+00 11 00 11 
+44 44 12 12 
+44 44 12 12 
+12 12 21 21 
+11 11 21 21 
+
+           dir_esq                          | esq_dir    dir_esq                          | anterior
+           000063FD                         | 00006919   000063FC                         | 000063FC
+
+
+estado[00006919]
+00 00 11 11 
+44 44 12 12 
+44 44 12 12 
+12 12 21 21 
+11 11 21 21 
+
+                                 baixo_cima |            dir_esq                          | anterior
+                                 00006BAF   |            0000666F                         | 0000666F
+
+
+estado[00006BAF]
+44 44 11 11 
+44 44 12 12 
+00 00 12 12 
+12 12 21 21 
+11 11 21 21 
+
+                      cima_baixo baixo_cima |            dir_esq                          | anterior
+                      00006919   00006E2B   |            00006E2C                         | 00006919
+
+
+estado[00006E2C]
+44 44 11 11 
+44 44 12 12 
+00 12 12 00 
+12 12 21 21 
+11 11 21 21 
+
+           dir_esq                          | esq_dir                          baixo_cima | anterior
+           0000708C                         | 00006BAF                         0000708D   | 00006BAF
+
+
+estado[0000708C]
+44 44 11 11 
+44 44 12 12 
+12 12 00 00 
+12 12 21 21 
+11 11 21 21 
+
+esq_dir               cima_baixo baixo_cima |                                  baixo_cima | anterior
+00006E2C              00007301   00007302   |                                  00007303   | 00006E2C
+
+
+estado[00007301]
+44 44 11 11 
+44 44 00 00 
+12 12 12 12 
+12 12 21 21 
+11 11 21 21 
+
+                      cima_baixo baixo_cima |                       cima_baixo            | anterior
+                      00007574   0000708C   |                       00007575              | 0000708C
+
+
+estado[00007574]
+44 44 00 11 
+44 44 11 00 
+12 12 12 12 
+12 12 21 21 
+11 11 21 21 
+
+           dir_esq               baixo_cima | esq_dir               cima_baixo            | anterior
+           000077C7              00007301   | 000077C8              000077C9              | 00007301
+
+
+estado[000077C8]
+44 44 00 11 
+44 44 00 11 
+12 12 12 12 
+12 12 21 21 
+11 11 21 21 
+
+esq_dir    dir_esq                          |            dir_esq                          | anterior
+000079FB   FFFFFFFF                         |            FFFFFFFF                         | 00007574
+
+
+estado[000079FB]
+00 44 44 11 
+00 44 44 11 
+12 12 12 12 
+12 12 21 21 
+11 11 21 21 
+
+esq_dir    dir_esq    cima_baixo baixo_cima | esq_dir    dir_esq    cima_baixo baixo_cima | anterior
+FFFFFFFF   FFFFFFFF   FFFFFFFF   FFFFFFFF   | FFFFFFFF   FFFFFFFF   FFFFFFFF   FFFFFFFF   | 000077C8

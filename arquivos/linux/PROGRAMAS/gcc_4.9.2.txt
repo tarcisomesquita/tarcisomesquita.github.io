@@ -1,0 +1,1099 @@
+NAME
+       gcc - GNU project C and C++ compiler
+
+SYNOPSIS
+       gcc [-c|-S|-E] [-std=standard]
+           [-g] [-pg] [-Olevel]
+           [-Wwarn...] [-Wpedantic]
+           [-Idir...] [-Ldir...]
+           [-Dmacro[=defn]...] [-Umacro]
+           [-foption...] [-mmachine-option...]
+           [-o outfile] [@file] infile...
+
+DESCRIPTION
+-c option says not to run the linker.
+
+if you specify -L more than once, the directories are searched in the order specified.  Also, the placement of the -l option is significant.
+
+OPTIONS
+   Option Summary
+       Overall Options
+           -c  -S  -E  -o file -v
+
+       C Language Options
+           -ansi  -std=standard  filename -fno-asm  -fno-builtin -fno-builtin-function -fsigned-char -funsigned-bitfields  -funsigned-char
+
+       Preprocessor Options
+           -Aquestion=answer -A-question[=answer] -C  -dD  -dI  -dM  -dN -Dmacro[=defn]  -E  -H -idirafter dir -include file  -imacros file -iprefix file  -iwithprefix dir -iwithprefixbefore dir  -isystem dir -imultilib dir -isysroot dir -M  -MM  -MF  -MG  -MP  -MQ  -MT  -nostdinc -P  -fdebug-cpp -ftrack-macro-expansion -fworking-directory -remap -trigraphs  -undef  -Umacro -Wp,option -Xpreprocessor option -no-integrated-cpp
+
+       Assembler Option
+           -Wa,option  -Xassembler option
+
+       Linker Options
+           object-file-name  -llibrary -nostartfiles  -nodefaultlibs  -nostdlib -pie -rdynamic -s  -static -static-libgcc -static-libstdc++ -static-libasan -static-libtsan -static-liblsan -static-libubsan -shared -shared-libgcc  -symbolic -T script  -Wl,option  -Xlinker option -u symbol
+
+           i386 and x86-64 Options
+           -mtune=cpu-type  -march=cpu-type -mtune-ctrl=feature-list -mdump-tune-features -mno-default -masm=dialect  -mno-fancy-math-387 -mno-fp-ret-in-387  -msoft-float -mno-wide-multiply  -mrtd  -malign-double -mpreferred-stack-boundary=num -mincoming-stack-boundary=num -mcld -mcx16 -msahf -mmovbe -mcrc32 -mrecip -mrecip=opt -mvzeroupper -mprefer-avx128 -mmmx  -msse  -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -msse4 -mavx -mavx2 -mavx512f -mavx512pf -mavx512er -mavx512cd -msha -maes -mpclmul -mfsgsbase -mrdrnd -mf16c -mfma -mprefetchwt1 -msse4a -m3dnow -mpopcnt -mabm -mbmi -mtbm -mfma4 -mxop -mlzcnt -mbmi2 -mfxsr -mxsave -mxsaveopt -mrtm -mlwp -mthreads -mno-align-stringops  -minline-all-stringops -minline-stringops-dynamically -mstringop-strategy=alg -mmemcpy-strategy=strategy -mmemset-strategy=strategy -mpush-args  -maccumulate-outgoing-args  -m128bit-long-double -m96bit-long-double -mlong-double-64 -mlong-double-80 -mlong-double-128 -mregparm=num  -msseregparm -mveclibabi=type -mvect8-ret-in-mem -mpc32 -mpc64 -mpc80 -mstackrealign -momit-leaf-frame-pointer  -mno-red-zone -mno-tls-direct-seg-refs -mcmodel=code-model -mabi=name -maddress-mode=mode -m32 -m64 -mx32 -m16 -mlarge-data-threshold=num -msse2avx -mfentry -m8bit-idiv -mavx256-split-unaligned-load -mavx256-split-unaligned-store -mstack-protector-guard=guard
+
+   Options Controlling the Kind of Output
+       File name suffix determines what kind of compilation is done:
+
+       file.c
+           C source code that must be preprocessed.
+
+       file.i
+           C source code that should not be preprocessed.
+
+       file.h
+           Header file to be turned into a precompiled header (default).
+
+       file.s
+           Assembler code.
+
+       file.S
+           Assembler code that must be preprocessed.
+
+filename suffixes to tell gcc where to start
+the options -c, -S, or -E to say where gcc is to stop
+
+       -c  Compile or assemble the source files, but do not link.
+
+       -S  Stop after the stage of compilation proper; do not assemble. The output is in the form of an assembler code.
+
+       -E  Stop after the preprocessing stage; do not run the compiler proper.
+
+
+   Options to Request or Suppress Warnings
+       -w  Inhibit all warning messages.
+
+       -Wall
+           This enables all the warnings.
+
+
+       -g  Produce debugging information. GDB can work with this debugging information.
+
+
+           -dD Dump all macro definitions, at the end of preprocessing, in addition to normal output.
+
+           -dp Annotate the assembler output with a comment indicating which pattern and alternative is used.  The length of each instruction is also printed.
+
+           -dP Dump the RTL in the assembler output as a comment before each instruction.  Also turns on -dp annotation.
+
+
+       -print-libgcc-file-name
+           Same as -print-file-name=libgcc.a.
+
+           This is useful when you use -nostdlib or -nodefaultlibs but you do want to link with libgcc.a.  You can do:
+
+                   gcc -nostdlib <files>... `gcc -print-libgcc-file-name`
+
+
+
+       -print-search-dirs
+           Print the name of the configured installation directory and a list of program and library directories gcc searches---and don't do anything else.
+
+       -print-sysroot
+           Print the target sysroot directory that is used during compilation.  This is the target sysroot specified either at configure time or using the --sysroot option, possibly with an extra suffix that depends on compilation options.  If no target sysroot is specified, the option prints nothing.
+
+       -print-sysroot-headers-suffix
+           Print the suffix added to the target sysroot when searching for headers, or give an error if the compiler is not configured with such a suffix---and don't do anything else.
+
+       -dumpmachine
+           Print the compiler's target machine (for example, i686-pc-linux-gnu)---and don't do anything else.
+
+       -dumpversion
+           Print the compiler version (for example, 3.0)---and don't do anything else.
+
+       -dumpspecs
+           Print the compiler's built-in specs---and don't do anything else.  (This is used when GCC itself is being built.)
+
+
+
+   Options That Control Optimization
+       Most optimizations are only enabled if an -O level is set on the command line.  Otherwise they are disabled, even if individual optimization flags are specified.
+
+You can invoke GCC with -Q --help=optimizers to find out the exact set of optimizations that are enabled at each level.
+
+       -O3 Optimize yet more for performance.
+       -Os Optimize for size.
+       -Og Optimize debugging.
+
+       -falign-functions
+       -falign-functions=n
+           Align the start of functions to the next power-of-two greater than n, skipping up to n bytes.  For instance, -falign-functions=32 aligns functions to the next 32-byte boundary, but -falign-functions=24 aligns to the next 32-byte boundary only if this can be done by skipping 23 bytes or less.
+
+           -fno-align-functions and -falign-functions=1 are equivalent and mean that functions are not aligned.
+
+           Some assemblers only support this flag when n is a power of two; in that case, it is rounded up.
+
+           If n is not specified or is zero, use a machine-dependent default.
+
+           Enabled at levels -O2, -O3.
+
+       -falign-labels
+       -falign-labels=n
+           Align all branch targets to a power-of-two boundary, skipping up to n bytes like -falign-functions.  This option can easily make code slower, because it must insert dummy operations for when the branch target is reached in the usual flow of the code.
+
+           -fno-align-labels and -falign-labels=1 are equivalent and mean that labels are not aligned.
+
+           If -falign-loops or -falign-jumps are applicable and are greater than this value, then their values are used instead.
+
+           If n is not specified or is zero, use a machine-dependent default which is very likely to be 1, meaning no alignment.
+
+           Enabled at levels -O2, -O3.
+
+       -falign-loops
+       -falign-loops=n
+           Align loops to a power-of-two boundary, skipping up to n bytes like -falign-functions.  If the loops are executed many times, this makes up for any execution of the dummy operations.
+
+           -fno-align-loops and -falign-loops=1 are equivalent and mean that loops are not aligned.
+
+           If n is not specified or is zero, use a machine-dependent default.
+
+           Enabled at levels -O2, -O3.
+
+       -falign-jumps
+       -falign-jumps=n
+           Align branch targets to a power-of-two boundary, for branch targets where the targets can only be reached by jumping, skipping up to n bytes like -falign-functions.  In this case, no dummy operations need be executed.
+
+           -fno-align-jumps and -falign-jumps=1 are equivalent and mean that loops are not aligned.
+
+           If n is not specified or is zero, use a machine-dependent default.
+
+           Enabled at levels -O2, -O3.
+
+       -fwhole-program
+           Assume that the current compilation unit represents the whole program being compiled.  All public functions and variables with the exception of "main" and those merged by attribute "externally_visible" become static functions and in effect are optimized more aggressively by interprocedural optimizers.
+
+       -ffunction-sections
+       -fdata-sections
+           Place each function or data item into its own section in the output file if the target supports arbitrary sections.  The name of the function or the name of the data item determines the section's name in the output file.
+
+           Use these options on systems where the linker can perform optimizations to improve locality of reference in the instruction space.
+
+       -fstack-protector
+           Emit extra code to check for buffer overflows, such as stack smashing attacks.  This is done by adding a guard variable to functions with vulnerable objects.  This includes functions that call "alloca", and functions with buffers larger than 8 bytes.  The guards are initialized when a function is entered and then checked when the function exits.  If a guard check fails, an error message is printed and the program exits.
+
+       -fstack-protector-all
+           Like -fstack-protector except that all functions are protected.
+
+       -fstack-protector-strong
+           Like -fstack-protector but includes additional functions to be protected --- those that have local array definitions, or have references to local frame addresses.
+
+           NOTE: In Ubuntu 14.10 and later versions, -fstack-protector-strong is enabled by default for C, C++, ObjC, ObjC++, if none of -fno-stack-protector, -nostdlib are found.
+
+       --param name=value
+           In some places, GCC uses various constants to control the amount of optimization that is done.
+
+           l1-cache-line-size
+               The size of cache line in L1 cache, in bytes.
+
+           l1-cache-size
+               The size of L1 cache, in kilobytes.
+
+           l2-cache-size
+               The size of L2 cache, in kilobytes.
+
+
+   Options Controlling the Preprocessor
+       If you use the -E option, nothing is done except preprocessing.
+
+       -D name
+           Predefine name as a macro, with definition 1.
+
+       -D name=definition
+           The contents of definition are tokenized and processed as if they appeared during translation phase three in a #define directive.  In particular, the definition will be truncated by embedded newline characters.
+
+           -D and -U options are processed in the order they are given on the command line.  All -imacros file and -include file options are processed after all -D and -U options.
+
+       -U name
+           Cancel any previous definition of name, either built in or provided with a -D option.
+
+       -undef
+           Do not predefine any system-specific or GCC-specific macros.  The standard predefined macros remain defined.
+
+       -I dir
+           Add the directory dir to the list of directories to be searched for header files.  Directories named by -I are searched before the standard system include directories.  If the directory dir is a standard system include directory, the option is ignored to ensure that the default search order for system directories and the special treatment of system headers are not defeated .  If dir begins with "=", then the "=" will be replaced by the sysroot prefix; see --sysroot and -isysroot.
+
+       -o file
+           Write output to file.  This is the same as specifying file as the second non-option argument to cpp.  gcc has a different interpretation of a second non-option argument, so you must use -o to specify the output file.
+
+       -Wtraditional
+           Warn about certain constructs that behave differently in traditional and ISO C.  Also warn about ISO C constructs that have no traditional C equivalent, and problematic constructs which should be avoided.
+
+       -Wundef
+           Warn whenever an identifier which is not a macro is encountered in an #if directive, outside of defined.  Such identifiers are replaced with zero.
+
+       -Wunused-macros
+           Warn about macros defined in the main file that are unused.  A macro is used if it is expanded or tested for existence at least once.  The preprocessor will also warn if the macro has not been used at the time it is redefined or undefined.
+
+       -w  Suppress all warnings, including those which GNU CPP issues by default.
+
+       -pedantic
+           Issue all the mandatory diagnostics listed in the C standard.  Some of them are left out by default, since they trigger frequently on harmless code.
+
+       -M  Instead of outputting the result of preprocessing, output a rule suitable for make describing the dependencies of the main source file.
+
+       -MM Like -M but do not mention header files that are found in system header directories, nor header files that are included, directly or indirectly, from such a header.
+
+       -MF file
+           When used with -M or -MM, specifies a file to write the dependencies to.
+
+       -MG In conjunction with an option such as -M requesting dependency generation, -MG assumes missing header files are generated files and adds them to the dependency list without raising an error. 
+
+       -x c
+       -x c++
+       -x objective-c
+       -x assembler-with-cpp
+           Specify the source language: C, C++, Objective-C, or assembly. If you give none of these options, cpp will deduce the language from the extension of the source file: .c, .cc, .m, or .S.
+
+       -std=standard
+       -ansi
+           Specify the standard to which the code should conform.  Currently CPP knows about C and C++ standards.
+
+           standard may be one of:
+
+           "c90"
+           "iso9899:1990"
+               The ISO C standard from 1990.  c90 is the customary shorthand for this version of the standard.
+
+               The -ansi option is equivalent to -std=c90.
+
+           "iso9899:1999"
+           "c99"
+               The revised ISO C standard, published in December 1999.
+               
+           "iso9899:2024"
+           "c23"  
+https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3220.pdf
+
+           "iso9899:2011"
+           "c11"
+               The revised ISO C standard, published in December 2011.
+
+           "gnu11"
+               The 2011 C standard plus GNU extensions.
+
+           "c++98"
+               The 1998 ISO C++ standard plus amendments.
+
+       -nostdinc
+           Do not search the standard system directories for header files.  Only the directories you have specified with -I options (and the directory of the current file, if appropriate) are searched.
+
+       -nostdinc++
+           Do not search for header files in the C++-specific standard directories, but do still search the other standard directories.  (This option is used when building the C++ library.)
+
+       -include file
+           Process file as if "#include "file"" appeared as the first line of the primary source file.  However, the first directory searched for file is the preprocessor's working directory instead of the directory containing the main source file.  If not found there, it is searched for in the remainder of the "#include "..."" search chain as normal.
+
+       -isystem dir
+           Search dir for header files, after all directories specified by -I but before the standard system directories.  Mark it as a system directory, so that it gets the same special treatment as is applied to the standard system directories.  If dir begins with "=", then the "=" will be replaced by the sysroot prefix; see --sysroot and -isysroot.
+
+       -iquote dir
+           Search dir only for header files requested with "#include "file""; they are not searched for "#include <file>", before all directories specified by -I and before the standard system directories.  If dir begins with "=", then the "=" will be replaced by the sysroot prefix; see --sysroot and -isysroot.
+
+
+
+       -fexec-charset=charset
+           Set the execution character set, used for string and character constants.  The default is UTF-8.  charset can be any encoding supported by the system's "iconv" library routine.
+
+       -finput-charset=charset
+           Set the input character set, used for translation from the character set of the input file to the source character set used by GCC.  If the locale does not specify, or GCC cannot get this information from the locale, the default is UTF-8.  This can be overridden by either the locale or this command line option.  Currently the command line option takes precedence if there's a conflict.  charset can be any encoding supported by the system's "iconv" library routine.
+
+
+       -dCHARS
+           CHARS is a sequence of one or more of the following characters, and must not be preceded by a space.
+
+           M   Instead of the normal output, generate a list of #define directives for all the macros defined during the execution of the preprocessor, including predefined macros.  This gives you a way of finding out what is predefined in your version of the preprocessor.  Assuming you have no file foo.h, the command
+
+                       touch foo.h; gcc -E -dM foo.h
+
+               will show all the predefined macros.
+
+               If you use -dM without the -E option, -dM is interpreted as a synonym for -fdump-rtl-mach.
+
+           D   Like M except in two respects: it does not include the predefined macros, and it outputs both the #define directives and the result of preprocessing.  Both kinds of output go to the standard output file.
+
+           I   Output #include directives in addition to the result of preprocessing.
+
+
+       -P  Inhibit generation of linemarkers in the output from the preprocessor.
+       
+       -C  Do not discard comments.  All comments are passed through to the output file, except for comments in processed directives, which are deleted along with the directive.
+
+       -CC Do not discard comments, including during macro expansion.  This is like -C, except that comments contained within macros are also passed through to the output file where the macro is expanded.
+
+           In addition to the side-effects of the -C option, the -CC option causes all C++-style comments inside a macro to be converted to C-style comments.  This is to prevent later use of that macro from inadvertently commenting out the remainder of the source line.
+
+
+       -H  Print the name of each header file used, in addition to other normal activities.  Each name is indented to show how deep in the #include stack it is.  Precompiled header files are also printed, even if they are found to be invalid; an invalid precompiled header file is printed with ...x and a valid one with ...! .
+
+
+   Passing Options to the Assembler
+       You can pass options to the assembler.
+
+       -Wa,option
+           Pass option as an option to the assembler.  If option contains commas, it is split into multiple options at the commas.
+
+       -Xassembler option
+           Pass option as an option to the assembler.  You can use this to supply system-specific assembler options that GCC does not recognize.
+
+           If you want to pass an option that takes an argument, you must use -Xassembler twice, once for the option and once for the argument.
+
+
+   Options for Linking
+       These options come into play when the compiler links object files into an executable output file.  They are meaningless if the compiler is not doing a link step.
+
+       object-file-name
+           A file name that does not end in a special recognized suffix is considered to name an object file or library.  (Object files are distinguished from libraries by the linker according to the file contents.)  If linking is done, these object files are used as input to the linker.
+
+       -c
+       -S
+       -E  If any of these options is used, then the linker is not run, and object file names should not be used as arguments.
+
+       -llibrary
+       -l library
+           Search the library named library when linking.  (The second alternative with the library as a separate argument is only for POSIX compliance and is not recommended.)
+
+           It makes a difference where in the command you write this option; the linker searches and processes libraries and object files in the order they are specified.  Thus, foo.o -lz bar.o searches library z after file foo.o but before bar.o.  If bar.o refers to functions in z, those functions may not be loaded.
+
+           The linker searches a standard list of directories for the library, which is actually a file named liblibrary.a.  The linker then uses this file as if it had been specified precisely by name.
+
+           The directories searched include several standard system directories plus any that you specify with -L.
+
+           Normally the files found this way are library files---archive files whose members are object files.  The linker handles an archive file by scanning through it for members which define symbols that have so far been referenced but not defined.  But if the file that is found is an ordinary object file, it is linked in the usual fashion.  The only difference between using an -l option and specifying a file name is that -l surrounds library with lib and .a and searches several directories.
+
+       -lobjc
+           You need this special case of the -l option in order to link an Objective-C or Objective-C++ program.
+
+       -nostartfiles
+           Do not use the standard system startup files when linking.  The standard system libraries are used normally, unless -nostdlib or -nodefaultlibs is used.
+
+       -nodefaultlibs
+           Do not use the standard system libraries when linking.  Only the libraries you specify are passed to the linker, and options specifying linkage of the system libraries, such as "-static-libgcc" or "-shared-libgcc", are ignored.  The standard startup files are used normally, unless -nostartfiles is used.
+
+           The compiler may generate calls to "memcmp", "memset", "memcpy" and "memmove".  These entries are usually resolved by entries in libc.  These entry points should be supplied through some other mechanism when this option is specified.
+
+       -nostdlib
+           Do not use the standard system startup files or libraries when linking.  No startup files and only the libraries you specify are passed to the linker, and options specifying linkage of the system libraries, such as "-static-libgcc" or "-shared-libgcc", are ignored.
+
+           The compiler may generate calls to "memcmp", "memset", "memcpy" and "memmove".  These entries are usually resolved by entries in libc.  These entry points should be supplied through some other mechanism when this option is specified.
+
+           One of the standard libraries bypassed by -nostdlib and -nodefaultlibs is libgcc.a, a library of internal subroutines which GCC uses to overcome shortcomings of particular machines, or special needs for some languages.
+
+           In most cases, you need libgcc.a even when you want to avoid other standard libraries.  In other words, when you specify -nostdlib or -nodefaultlibs you should usually specify -lgcc as well.  This ensures that you have no unresolved references to internal GCC library subroutines.  (An example of such an internal subroutine is __main, used to ensure C++ constructors are called.)
+
+       -pie
+           Produce a position independent executable on targets that support it.  For predictable results, you must also specify the same set of options used for compilation (-fpie, -fPIE, or model suboptions) when you specify this linker option.
+
+       -rdynamic
+           Pass the flag -export-dynamic to the ELF linker, on targets that support it. This instructs the linker to add all symbols, not only used ones, to the dynamic symbol table. This option is needed for some uses of "dlopen" or to allow obtaining backtraces from within a program.
+
+       -s  Remove all symbol table and relocation information from the executable.
+
+       -static
+           On systems that support dynamic linking, this prevents linking with the shared libraries.  On other systems, this option has no effect.
+
+       -shared
+           Produce a shared object which can then be linked with other objects to form an executable.  Not all systems support this option.  For predictable results, you must also specify the same set of options used for compilation (-fpic, -fPIC, or model suboptions) when you specify this linker option.[1]
+
+       -shared-libgcc
+       -static-libgcc
+           On systems that provide libgcc as a shared library, these options force the use of either the shared or static version, respectively.  If no shared version of libgcc was built when the compiler was configured, these options have no effect.
+
+           There are several situations in which an application should use the shared libgcc instead of the static version.  The most common of these is when the application wishes to throw and catch exceptions across different shared libraries.  In that case, each of the libraries as well as the application itself should use the shared libgcc.
+
+           Therefore, the G++ and GCJ drivers automatically add -shared-libgcc whenever you build a shared library or a main executable, because C++ and Java programs typically use exceptions, so this is the right thing to do.
+
+           If, instead, you use the GCC driver to create shared libraries, you may find that they are not always linked with the shared libgcc.  If GCC finds, at its configuration time, that you have a non-GNU linker or a GNU linker that does not support option --eh-frame-hdr, it links the shared version of libgcc into shared libraries by default.  Otherwise, it takes advantage of the linker and optimizes away the linking with the shared version of libgcc, linking with the static version of libgcc by default.  This allows exceptions to propagate through such shared libraries, without incurring relocation costs at library load time.
+
+           However, if a library or main executable is supposed to throw or catch exceptions, you must link it using the G++ or GCJ driver, as appropriate for the languages used in the program, or using the option -shared-libgcc, such that it is linked with the shared libgcc.
+
+       -static-libasan
+           When the -fsanitize=address option is used to link a program, the GCC driver automatically links against libasan.  If libasan is available as a shared library, and the -static option is not used, then this links against the shared version of libasan.  The -static-libasan option directs the GCC driver to link libasan statically, without necessarily linking other libraries statically.
+
+       -static-libtsan
+           When the -fsanitize=thread option is used to link a program, the GCC driver automatically links against libtsan.  If libtsan is available as a shared library, and the -static option is not used, then this links against the shared version of libtsan.  The -static-libtsan option directs the GCC driver to link libtsan statically, without necessarily linking other libraries statically.
+
+       -static-liblsan
+           When the -fsanitize=leak option is used to link a program, the GCC driver automatically links against liblsan.  If liblsan is available as a shared library, and the -static option is not used, then this links against the shared version of liblsan.  The -static-liblsan option directs the GCC driver to link liblsan statically, without necessarily linking other libraries statically.
+
+       -static-libubsan
+           When the -fsanitize=undefined option is used to link a program, the GCC driver automatically links against libubsan.  If libubsan is available as a shared library, and the -static option is not used, then this links against the shared version of libubsan.  The -static-libubsan option directs the GCC driver to link libubsan statically, without necessarily linking other libraries statically.
+
+       -static-libstdc++
+           When the g++ program is used to link a C++ program, it normally automatically links against libstdc++.  If libstdc++ is available as a shared library, and the -static option is not used, then this links against the shared version of libstdc++.  That is normally fine.  However, it is sometimes useful to freeze the version of libstdc++ used by the program without going all the way to a fully static link.  The -static-libstdc++ option directs the g++ driver to link libstdc++ statically, without necessarily linking other libraries statically.
+
+       -symbolic
+           Bind references to global symbols when building a shared object.  Warn about any unresolved references (unless overridden by the link editor option -Xlinker -z -Xlinker defs).  Only a few systems support this option.
+
+       -T script
+           Use script as the linker script.  This option is supported by most systems using the GNU linker.  On some targets, such as bare-board targets without an operating system, the -T option may be required when linking to avoid references to undefined symbols.
+
+       -Xlinker option
+           Pass option as an option to the linker.  You can use this to supply system-specific linker options that GCC does not recognize.
+
+           If you want to pass an option that takes a separate argument, you must use -Xlinker twice, once for the option and once for the argument.  For example, to pass -assert definitions, you must write -Xlinker -assert -Xlinker definitions.  It does not work to write -Xlinker "-assert definitions", because this passes the entire string as a single argument, which is not what the linker expects.
+
+           When using the GNU linker, it is usually more convenient to pass arguments to linker options using the option=value syntax than as separate arguments.  For example, you can specify -Xlinker -Map=output.map rather than -Xlinker -Map -Xlinker output.map.  Other linkers may not support this syntax for command-line options.
+
+       -Wl,option
+           Pass option as an option to the linker.  If option contains commas, it is split into multiple options at the commas.  You can use this syntax to pass an argument to the option.  For example, -Wl,-Map,output.map passes -Map output.map to the linker.  When using the GNU linker, you can also get the same effect with -Wl,-Map=output.map.
+
+           NOTE: In Ubuntu 8.10 and later versions, for LDFLAGS, the option -Wl,-z,relro is used.  To disable, use -Wl,-z,norelro.
+
+       -u symbol
+           Pretend the symbol symbol is undefined, to force linking of library modules to define it.  You can use -u multiple times with different symbols to force loading of additional library modules.
+
+   Options for Directory Search
+       These options specify directories to search for header files, for libraries and for parts of the compiler:
+
+       -Idir
+           Add the directory dir to the head of the list of directories to be searched for header files.  This can be used to override a system header file, substituting your own version, since these directories are searched before the system header file directories.  However, you should not use this option to add directories that contain vendor-supplied system header files (use -isystem for that).  If you use more than one -I option, the directories are scanned in left-to-right order; the standard system directories come after.
+
+           If a standard system include directory, or a directory specified with -isystem, is also specified with -I, the -I option is ignored.  The directory is still searched but as a system directory at its normal position in the system include chain.  This is to ensure that GCC's procedure to fix buggy system headers and the ordering for the "include_next" directive are not inadvertently changed.  If you really need to change the search order for system directories, use the -nostdinc and/or -isystem options.
+
+       -iplugindir=dir
+           Set the directory to search for plugins that are passed by -fplugin=name instead of -fplugin=path/name.so.  This option is not meant to be used by the user, but only passed by the driver.
+
+       -iquotedir
+           Add the directory dir to the head of the list of directories to be searched for header files only for the case of #include "file"; they are not searched for #include <file>, otherwise just like -I.
+
+       -Ldir
+           Add directory dir to the list of directories to be searched for -l.
+
+       -Bprefix
+           This option specifies where to find the executables, libraries, include files, and data files of the compiler itself.
+
+           The compiler driver program runs one or more of the subprograms cpp, cc1, as and ld.  It tries prefix as a prefix for each program it tries to run, both with and without machine/version/.
+
+           For each subprogram to be run, the compiler driver first tries the -B prefix, if any.  If that name is not found, or if -B is not specified, the driver tries two standard prefixes, /usr/lib/gcc/ and /usr/local/lib/gcc/.  If neither of those results in a file name that is found, the unmodified program name is searched for using the directories specified in your PATH environment variable.
+
+           The compiler checks to see if the path provided by the -B refers to a directory, and if necessary it adds a directory separator character at the end of the path.
+
+           -B prefixes that effectively specify directory names also apply to libraries in the linker, because the compiler translates these options into -L options for the linker.  They also apply to include files in the preprocessor, because the compiler translates these options into -isystem options for the preprocessor.  In this case, the compiler appends include to the prefix.
+
+           The runtime support file libgcc.a can also be searched for using the -B prefix, if needed.  If it is not found there, the two standard prefixes above are tried, and that is all.  The file is left out of the link if it is not found by those means.
+
+           Another way to specify a prefix much like the -B prefix is to use the environment variable GCC_EXEC_PREFIX.
+
+           As a special kludge, if the path provided by -B is [dir/]stageN/, where N is a number in the range 0 to 9, then it is replaced by [dir/]include.  This is to help with boot-strapping the compiler.
+
+       -specs=file
+           Process file after the compiler reads in the standard specs file, in order to override the defaults which the gcc driver program uses when determining what switches to pass to cc1, cc1plus, as, ld, etc.  More than one -specs=file can be specified on the command line, and they are processed in order, from left to right.
+
+       --sysroot=dir
+           Use dir as the logical root directory for headers and libraries.  For example, if the compiler normally searches for headers in /usr/include and libraries in /usr/lib, it instead searches dir/usr/include and dir/usr/lib.
+
+           If you use both this option and the -isysroot option, then the --sysroot option applies to libraries, but the -isysroot option applies to header files.
+
+           The GNU linker (beginning with version 2.16) has the necessary support for this option.  If your linker does not support this option, the header file aspect of --sysroot still works, but the library aspect does not.
+
+       --no-sysroot-suffix
+           For some targets, a suffix is added to the root directory specified with --sysroot, depending on the other options used, so that headers may for example be found in dir/suffix/usr/include instead of dir/usr/include.  This option disables the addition of such a suffix.
+
+       -I- This option has been deprecated.  Please use -iquote instead for -I directories before the -I- and remove the -I-.  Any directories you specify with -I options before the -I- option are searched only for the case of #include "file"; they are not searched for #include <file>.
+
+           If additional directories are specified with -I options after the -I-, these directories are searched for all #include directives.  (Ordinarily all -I directories are used this way.)
+
+           In addition, the -I- option inhibits the use of the current directory (where the current input file came from) as the first search directory for #include "file".  There is no way to override this effect of -I-.  With -I. you can specify searching the directory that is current when the compiler is invoked.  That is not exactly the same as what the preprocessor does by default, but it is often satisfactory.
+
+           -I- does not inhibit the use of the standard system directories for header files.  Thus, -I- and -nostdinc are independent.
+
+   Specifying Target Machine and Compiler Version
+       The usual way to run GCC is to run the executable called gcc, or machine-gcc when cross-compiling, or machine-gcc-version to run a version other than the one that was installed last.
+
+   Hardware Models and Configurations
+       Each target machine types can have its own special options, starting with -m, to choose among various hardware models or configurations---for example, 68010 vs 68020, floating coprocessor or none.  A single installed version of the compiler can compile for any model or configuration, according to the options specified.
+
+       Some configurations of the compiler also support additional special options, usually for compatibility with other compilers on the same platform.
+
+
+       Intel 386 and AMD x86-64 Options
+
+       These -m options are defined for the i386 and x86-64 family of computers:
+
+       -march=cpu-type
+           Generate instructions for the machine type cpu-type.  In contrast to -mtune=cpu-type, which merely tunes the generated code for the specified cpu-type, -march=cpu-type allows GCC to generate code that may not run at all on processors other than the one indicated.  Specifying -march=cpu-type implies -mtune=cpu-type.
+
+           The choices for cpu-type are:
+
+           native
+               This selects the CPU to generate code for at compilation time by determining the processor type of the compiling machine.  Using -march=native enables all instruction subsets supported by the local machine (hence the result might not run on different machines).  Using -mtune=native produces code optimized for the local machine under the constraints of the selected instruction set.
+
+           i386
+               Original Intel i386 CPU.
+
+           i486
+               Intel i486 CPU.  (No scheduling is implemented for this chip.)
+
+           i586
+           pentium
+               Intel Pentium CPU with no MMX support.
+
+           pentium-mmx
+               Intel Pentium MMX CPU, based on Pentium core with MMX instruction set support.
+
+           pentiumpro
+               Intel Pentium Pro CPU.
+
+           i686
+               When used with -march, the Pentium Pro instruction set is used, so the code runs on all i686 family chips.  When used with -mtune, it has the same meaning as generic.
+
+           pentium2
+               Intel Pentium II CPU, based on Pentium Pro core with MMX instruction set support.
+
+           pentium3
+           pentium3m
+               Intel Pentium III CPU, based on Pentium Pro core with MMX and SSE instruction set support.
+
+           pentium-m
+               Intel Pentium M; low-power version of Intel Pentium III CPU with MMX, SSE and SSE2 instruction set support.  Used by Centrino notebooks.
+
+           pentium4
+           pentium4m
+               Intel Pentium 4 CPU with MMX, SSE and SSE2 instruction set support.
+
+           prescott
+               Improved version of Intel Pentium 4 CPU with MMX, SSE, SSE2 and SSE3 instruction set support.
+
+           nocona
+               Improved version of Intel Pentium 4 CPU with 64-bit extensions, MMX, SSE, SSE2 and SSE3 instruction set support.
+
+           core2
+               Intel Core 2 CPU with 64-bit extensions, MMX, SSE, SSE2, SSE3 and SSSE3 instruction set support.
+
+           nehalem
+               Intel Nehalem CPU with 64-bit extensions, MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2 and POPCNT instruction set support.
+
+           westmere
+               Intel Westmere CPU with 64-bit extensions, MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2, POPCNT, AES and PCLMUL instruction set support.
+
+           sandybridge
+               Intel Sandy Bridge CPU with 64-bit extensions, MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2, POPCNT, AVX, AES and PCLMUL instruction set support.
+
+           ivybridge
+               Intel Ivy Bridge CPU with 64-bit extensions, MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2, POPCNT, AVX, AES, PCLMUL, FSGSBASE, RDRND and F16C instruction set support.
+
+           haswell
+               Intel Haswell CPU with 64-bit extensions, MOVBE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2, POPCNT, AVX, AVX2, AES, PCLMUL, FSGSBASE, RDRND, FMA, BMI, BMI2 and F16C instruction set support.
+
+           broadwell
+               Intel Broadwell CPU with 64-bit extensions, MOVBE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2, POPCNT, AVX, AVX2, AES, PCLMUL, FSGSBASE, RDRND, FMA, BMI, BMI2, F16C, RDSEED, ADCX and PREFETCHW instruction set support.
+
+           bonnell
+               Intel Bonnell CPU with 64-bit extensions, MOVBE, MMX, SSE, SSE2, SSE3 and SSSE3 instruction set support.
+
+           silvermont
+               Intel Silvermont CPU with 64-bit extensions, MOVBE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, SSE4.2, POPCNT, AES, PCLMUL and RDRND instruction set support.
+
+           k6  AMD K6 CPU with MMX instruction set support.
+
+           k6-2
+           k6-3
+               Improved versions of AMD K6 CPU with MMX and 3DNow! instruction set support.
+
+           athlon
+           athlon-tbird
+               AMD Athlon CPU with MMX, 3dNOW!, enhanced 3DNow! and SSE prefetch instructions support.
+
+           athlon-4
+           athlon-xp
+           athlon-mp
+               Improved AMD Athlon CPU with MMX, 3DNow!, enhanced 3DNow! and full SSE instruction set support.
+
+           k8
+           opteron
+           athlon64
+           athlon-fx
+               Processors based on the AMD K8 core with x86-64 instruction set support, including the AMD Opteron, Athlon 64, and Athlon 64 FX processors.  (This supersets MMX, SSE, SSE2, 3DNow!, enhanced 3DNow! and 64-bit instruction set extensions.)
+
+           k8-sse3
+           opteron-sse3
+           athlon64-sse3
+               Improved versions of AMD K8 cores with SSE3 instruction set support.
+
+           amdfam10
+           barcelona
+               CPUs based on AMD Family 10h cores with x86-64 instruction set support.  (This supersets MMX, SSE, SSE2, SSE3, SSE4A, 3DNow!, enhanced 3DNow!, ABM and 64-bit instruction set extensions.)
+
+           bdver1
+               CPUs based on AMD Family 15h cores with x86-64 instruction set support.  (This supersets FMA4, AVX, XOP, LWP, AES, PCL_MUL, CX16, MMX, SSE, SSE2, SSE3, SSE4A, SSSE3, SSE4.1, SSE4.2, ABM and 64-bit instruction set extensions.)
+
+           bdver2
+               AMD Family 15h core based CPUs with x86-64 instruction set support.  (This supersets BMI, TBM, F16C, FMA, FMA4, AVX, XOP, LWP, AES, PCL_MUL, CX16, MMX, SSE, SSE2, SSE3, SSE4A, SSSE3, SSE4.1, SSE4.2, ABM and 64-bit instruction set extensions.)
+
+           bdver3
+               AMD Family 15h core based CPUs with x86-64 instruction set support.  (This supersets BMI, TBM, F16C, FMA, FMA4, FSGSBASE, AVX, XOP, LWP, AES, PCL_MUL, CX16, MMX, SSE, SSE2, SSE3, SSE4A, SSSE3, SSE4.1, SSE4.2, ABM and 64-bit instruction set extensions.
+
+           bdver4
+               AMD Family 15h core based CPUs with x86-64 instruction set support.  (This supersets BMI, BMI2, TBM, F16C, FMA, FMA4, FSGSBASE, AVX, AVX2, XOP, LWP, AES, PCL_MUL, CX16, MOVBE, MMX, SSE, SSE2, SSE3, SSE4A, SSSE3, SSE4.1, SSE4.2, ABM and 64-bit instruction set extensions.
+
+           btver1
+               CPUs based on AMD Family 14h cores with x86-64 instruction set support.  (This supersets MMX, SSE, SSE2, SSE3, SSSE3, SSE4A, CX16, ABM and 64-bit instruction set extensions.)
+
+           btver2
+               CPUs based on AMD Family 16h cores with x86-64 instruction set support. This includes MOVBE, F16C, BMI, AVX, PCL_MUL, AES, SSE4.2, SSE4.1, CX16, ABM, SSE4A, SSSE3, SSE3, SSE2, SSE, MMX and 64-bit instruction set extensions.
+
+           winchip-c6
+               IDT WinChip C6 CPU, dealt in same way as i486 with additional MMX instruction set support.
+
+           winchip2
+               IDT WinChip 2 CPU, dealt in same way as i486 with additional MMX and 3DNow!  instruction set support.
+
+           c3  VIA C3 CPU with MMX and 3DNow! instruction set support.  (No scheduling is implemented for this chip.)
+
+           c3-2
+               VIA C3-2 (Nehemiah/C5XL) CPU with MMX and SSE instruction set support.  (No scheduling is implemented for this chip.)
+
+           geode
+               AMD Geode embedded processor with MMX and 3DNow! instruction set support.
+
+       -mtune=cpu-type
+           Tune to cpu-type everything applicable about the generated code, except for the ABI and the set of available instructions.  While picking a specific cpu-type schedules things appropriately for that particular chip, the compiler does not generate any code that cannot run on the default machine type unless you use a -march=cpu-type option.  For example, if GCC is configured for i686-pc-linux-gnu then -mtune=pentium4 generates code that is tuned for Pentium 4 but still runs on i686 machines.
+
+           The choices for cpu-type are the same as for -march.  In addition, -mtune supports 2 extra choices for cpu-type:
+
+           generic
+               Produce code optimized for the most common IA32/AMD64/EM64T processors.  If you know the CPU on which your code will run, then you should use the corresponding -mtune or -march option instead of -mtune=generic.  But, if you do not know exactly what CPU users of your application will have, then you should use this option.
+
+               As new processors are deployed in the marketplace, the behavior of this option will change.  Therefore, if you upgrade to a newer version of GCC, code generation controlled by this option will change to reflect the processors that are most common at the time that version of GCC is released.
+
+               There is no -march=generic option because -march indicates the instruction set the compiler can use, and there is no generic instruction set applicable to all processors.  In contrast, -mtune indicates the processor (or, in this case, collection of processors) for which the code is optimized.
+
+           intel
+               Produce code optimized for the most current Intel processors, which are Haswell and Silvermont for this version of GCC.  If you know the CPU on which your code will run, then you should use the corresponding -mtune or -march option instead of -mtune=intel.  But, if you want your application performs better on both Haswell and Silvermont, then you should use this option.
+
+               As new Intel processors are deployed in the marketplace, the behavior of this option will change.  Therefore, if you upgrade to a newer version of GCC, code generation controlled by this option will change to reflect the most current Intel processors at the time that version of GCC is released.
+
+               There is no -march=intel option because -march indicates the instruction set the compiler can use, and there is no common instruction set applicable to all processors.  In contrast, -mtune indicates the processor (or, in this case, collection of processors) for which the code is optimized.
+
+       -mcpu=cpu-type
+           A deprecated synonym for -mtune.
+
+       -mfpmath=unit
+           Generate floating-point arithmetic for selected unit unit.  The choices for unit are:
+
+           387 Use the standard 387 floating-point coprocessor present on the majority of chips and emulated otherwise.  Code compiled with this option runs almost everywhere.  The temporary results are computed in 80-bit precision instead of the precision specified by the type, resulting in slightly different results compared to most of other chips.  See -ffloat-store for more detailed description.
+
+               This is the default choice for i386 compiler.
+
+           sse Use scalar floating-point instructions present in the SSE instruction set.  This instruction set is supported by Pentium III and newer chips, and in the AMD line by Athlon-4, Athlon XP and Athlon MP chips.  The earlier version of the SSE instruction set supports only single-precision arithmetic, thus the double and extended-precision arithmetic are still done using 387.  A later version, present only in Pentium 4 and AMD x86-64 chips, supports double-precision arithmetic too.
+
+               For the i386 compiler, you must use -march=cpu-type, -msse or -msse2 switches to enable SSE extensions and make this option effective.  For the x86-64 compiler, these extensions are enabled by default.
+
+               The resulting code should be considerably faster in the majority of cases and avoid the numerical instability problems of 387 code, but may break some existing code that expects temporaries to be 80 bits.
+
+               This is the default choice for the x86-64 compiler.
+
+           sse,387
+           sse+387
+           both
+               Attempt to utilize both instruction sets at once.  This effectively doubles the amount of available registers, and on chips with separate execution units for 387 and SSE the execution resources too.  Use this option with care, as it is still experimental, because the GCC register allocator does not model separate functional units well, resulting in unstable performance.
+
+       -masm=dialect
+           Output assembly instructions using selected dialect.  Supported choices are intel or att (the default).  Darwin does not support intel.
+
+       -mieee-fp
+       -mno-ieee-fp
+           Control whether or not the compiler uses IEEE floating-point comparisons.  These correctly handle the case where the result of a comparison is unordered.
+
+       -msoft-float
+           Generate output containing library calls for floating point.
+
+           Warning: the requisite libraries are not part of GCC.  Normally the facilities of the machine's usual C compiler are used, but this can't be done directly in cross-compilation.  You must make your own arrangements to provide suitable library functions for cross-compilation.
+
+           On machines where a function returns floating-point results in the 80387 register stack, some floating-point opcodes may be emitted even if -msoft-float is used.
+
+       -mno-fp-ret-in-387
+           Do not use the FPU registers for return values of functions.
+
+           The usual calling convention has functions return values of types "float" and "double" in an FPU register, even if there is no FPU.  The idea is that the operating system should emulate an FPU.
+
+           The option -mno-fp-ret-in-387 causes such values to be returned in ordinary CPU registers instead.
+
+       -mno-fancy-math-387
+           Some 387 emulators do not support the "sin", "cos" and "sqrt" instructions for the 387.  Specify this option to avoid generating those instructions.  This option is the default on FreeBSD, OpenBSD and NetBSD.  This option is overridden when -march indicates that the target CPU always has an FPU and so the instruction does not need emulation.  These instructions are not generated unless you also use the -funsafe-math-optimizations switch.
+
+       -malign-double
+       -mno-align-double
+           Control whether GCC aligns "double", "long double", and "long long" variables on a two-word boundary or a one-word boundary.  Aligning "double" variables on a two-word boundary produces code that runs somewhat faster on a Pentium at the expense of more memory.
+
+           On x86-64, -malign-double is enabled by default.
+
+           Warning: if you use the -malign-double switch, structures containing the above types are aligned differently than the published application binary interface specifications for the 386 and are not binary compatible with structures in code compiled without that switch.
+
+       -m96bit-long-double
+       -m128bit-long-double
+           These switches control the size of "long double" type.  The i386 application binary interface specifies the size to be 96 bits, so -m96bit-long-double is the default in 32-bit mode.
+
+           Modern architectures (Pentium and newer) prefer "long double" to be aligned to an 8- or 16-byte boundary.  In arrays or structures conforming to the ABI, this is not possible.  So specifying -m128bit-long-double aligns "long double" to a 16-byte boundary by padding the "long double" with an additional 32-bit zero.
+
+           In the x86-64 compiler, -m128bit-long-double is the default choice as its ABI specifies that "long double" is aligned on 16-byte boundary.
+
+           Notice that neither of these options enable any extra precision over the x87 standard of 80 bits for a "long double".
+
+           Warning: if you override the default value for your target ABI, this changes the size of structures and arrays containing "long double" variables, as well as modifying the function calling convention for functions taking "long double".  Hence they are not binary-compatible with code compiled without that switch.
+
+       -mlong-double-64
+       -mlong-double-80
+       -mlong-double-128
+           These switches control the size of "long double" type. A size of 64 bits makes the "long double" type equivalent to the "double" type. This is the default for 32-bit Bionic C library.  A size of 128 bits makes the "long double" type equivalent to the "__float128" type. This is the default for 64-bit Bionic C library.
+
+           Warning: if you override the default value for your target ABI, this changes the size of structures and arrays containing "long double" variables, as well as modifying the function calling convention for functions taking "long double".  Hence they are not binary-compatible with code compiled without that switch.
+
+       -mlarge-data-threshold=threshold
+           When -mcmodel=medium is specified, data objects larger than threshold are placed in the large data section.  This value must be the same across all objects linked into the binary, and defaults to 65535.
+
+       -mrtd
+           Use a different function-calling convention, in which functions that take a fixed number of arguments return with the "ret num" instruction, which pops their arguments while returning.  This saves one instruction in the caller since there is no need to pop the arguments there.
+
+           You can specify that an individual function is called with this calling sequence with the function attribute stdcall.  You can also override the -mrtd option by using the function attribute cdecl.
+
+           Warning: this calling convention is incompatible with the one normally used on Unix, so you cannot use it if you need to call libraries compiled with the Unix compiler.
+
+           Also, you must provide function prototypes for all functions that take variable numbers of arguments (including "printf"); otherwise incorrect code is generated for calls to those functions.
+
+           In addition, seriously incorrect code results if you call a function with too many arguments.  (Normally, extra arguments are harmlessly ignored.)
+
+       -mregparm=num
+           Control how many registers are used to pass integer arguments.  By default, no registers are used to pass arguments, and at most 3 registers can be used.  You can control this behavior for a specific function by using the function attribute regparm.
+
+           Warning: if you use this switch, and num is nonzero, then you must build all modules with the same value, including any libraries.  This includes the system libraries and startup modules.
+
+       -msseregparm
+           Use SSE register passing conventions for float and double arguments and return values.  You can control this behavior for a specific function by using the function attribute sseregparm.
+
+           Warning: if you use this switch then you must build all modules with the same value, including any libraries.  This includes the system libraries and startup modules.
+
+       -mvect8-ret-in-mem
+           Return 8-byte vectors in memory instead of MMX registers.  This is the default on Solaris@tie{}8 and 9 and VxWorks to match the ABI of the Sun Studio compilers until version 12.  Later compiler versions (starting with Studio 12 Update@tie{}1) follow the ABI used by other x86 targets, which is the default on Solaris@tie{}10 and later.  Only use this option if you need to remain compatible with existing code produced by those previous compiler versions or older versions of GCC.
+
+       -mpc32
+       -mpc64
+       -mpc80
+           Set 80387 floating-point precision to 32, 64 or 80 bits.  When -mpc32 is specified, the significands of results of floating-point operations are rounded to 24 bits (single precision); -mpc64 rounds the significands of results of floating-point operations to 53 bits (double precision) and -mpc80 rounds the significands of results of floating-point operations to 64 bits (extended double precision), which is the default.  When this option is used, floating-point operations in higher precisions are not available to the programmer without setting the FPU control word explicitly.
+
+           Setting the rounding of floating-point operations to less than the default 80 bits can speed some programs by 2% or more.  Note that some mathematical libraries assume that extended-precision (80-bit) floating-point operations are enabled by default; routines in such libraries could suffer significant loss of accuracy, typically through so-called "catastrophic cancellation", when this option is used to set the precision to less than extended precision.
+
+       -mstackrealign
+           Realign the stack at entry.  On the Intel x86, the -mstackrealign option generates an alternate prologue and epilogue that realigns the run-time stack if necessary.  This supports mixing legacy codes that keep 4-byte stack alignment with modern codes that keep 16-byte stack alignment for SSE compatibility.  See also the attribute "force_align_arg_pointer", applicable to individual functions.
+
+       -mpreferred-stack-boundary=num
+           Attempt to keep the stack boundary aligned to a 2 raised to num byte boundary.  If -mpreferred-stack-boundary is not specified, the default is 4 (16 bytes or 128 bits).
+
+           Warning: When generating code for the x86-64 architecture with SSE extensions disabled, -mpreferred-stack-boundary=3 can be used to keep the stack boundary aligned to 8 byte boundary.  Since x86-64 ABI require 16 byte stack alignment, this is ABI incompatible and intended to be used in controlled environment where stack space is important limitation.  This option will lead to wrong code when functions compiled with 16 byte stack alignment (such as functions from a standard library) are called with misaligned stack.  In this case, SSE instructions may lead to misaligned memory access traps.  In addition, variable arguments will be handled incorrectly for 16 byte aligned objects (including x87 long double and __int128), leading to wrong results.  You must build all modules with -mpreferred-stack-boundary=3, including any libraries.  This includes the system libraries and startup modules.
+
+       -mincoming-stack-boundary=num
+           Assume the incoming stack is aligned to a 2 raised to num byte boundary.  If -mincoming-stack-boundary is not specified, the one specified by -mpreferred-stack-boundary is used.
+
+           On Pentium and Pentium Pro, "double" and "long double" values should be aligned to an 8-byte boundary (see -malign-double) or suffer significant run time performance penalties.  On Pentium III, the Streaming SIMD Extension (SSE) data type "__m128" may not work properly if it is not 16-byte aligned.
+
+           To ensure proper alignment of this values on the stack, the stack boundary must be as aligned as that required by any value stored on the stack.  Further, every function must be generated such that it keeps the stack aligned.  Thus calling a function compiled with a higher preferred stack boundary from a function compiled with a lower preferred stack boundary most likely misaligns the stack.  It is recommended that libraries that use callbacks always use the default setting.
+
+           This extra alignment does consume extra stack space, and generally increases code size.  Code that is sensitive to stack space usage, such as embedded systems and operating system kernels, may want to reduce the preferred alignment to -mpreferred-stack-boundary=2.
+
+       -mmmx
+       -mno-mmx
+       -msse
+       -mno-sse
+       -msse2
+       -mno-sse2
+       -msse3
+       -mno-sse3
+       -mssse3
+       -mno-ssse3
+       -msse4.1
+       -mno-sse4.1
+       -msse4.2
+       -mno-sse4.2
+       -msse4
+       -mno-sse4
+       -mavx
+       -mno-avx
+       -mavx2
+       -mno-avx2
+       -mavx512f
+       -mno-avx512f
+       -mavx512pf
+       -mno-avx512pf
+       -mavx512er
+       -mno-avx512er
+       -mavx512cd
+       -mno-avx512cd
+       -msha
+       -mno-sha
+       -maes
+       -mno-aes
+       -mpclmul
+       -mno-pclmul
+       -mfsgsbase
+       -mno-fsgsbase
+       -mrdrnd
+       -mno-rdrnd
+       -mf16c
+       -mno-f16c
+       -mfma
+       -mno-fma
+       -mprefetchwt1
+       -mno-prefetchwt1
+       -msse4a
+       -mno-sse4a
+       -mfma4
+       -mno-fma4
+       -mxop
+       -mno-xop
+       -mlwp
+       -mno-lwp
+       -m3dnow
+       -mno-3dnow
+       -mpopcnt
+       -mno-popcnt
+       -mabm
+       -mno-abm
+       -mbmi
+       -mbmi2
+       -mno-bmi
+       -mno-bmi2
+       -mlzcnt
+       -mno-lzcnt
+       -mfxsr
+       -mxsave
+       -mxsaveopt
+       -mrtm
+       -mtbm
+       -mno-tbm
+           These switches enable or disable the use of instructions in the MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1, AVX, AVX2, AVX512F, AVX512PF, AVX512ER, AVX512CD, SHA, AES, PCLMUL, FSGSBASE, RDRND, F16C, FMA, SSE4A, FMA4, XOP, LWP, ABM, BMI, BMI2, FXSR, XSAVE, XSAVEOPT, LZCNT, RTM, or 3DNow!  extended instruction sets.  These extensions are also available as built-in functions: see X86 Built-in Functions, for details of the functions enabled and disabled by these switches.
+
+           To generate SSE/SSE2 instructions automatically from floating-point code (as opposed to 387 instructions), see -mfpmath=sse.
+
+           GCC depresses SSEx instructions when -mavx is used. Instead, it generates new AVX instructions or AVX equivalence for all SSEx instructions when needed.
+
+           These options enable GCC to use these extended instructions in generated code, even without -mfpmath=sse.  Applications that perform run-time CPU detection must compile separate files for each supported architecture, using the appropriate flags.  In particular, the file containing the CPU detection code should be compiled without these options.
+
+       -mdump-tune-features
+           This option instructs GCC to dump the names of the x86 performance tuning features and default settings. The names can be used in -mtune-ctrl=feature-list.
+
+       -mtune-ctrl=feature-list
+           This option is used to do fine grain control of x86 code generation features.  feature-list is a comma separated list of feature names. See also -mdump-tune-features. When specified, the feature will be turned on if it is not preceded with "^", otherwise, it will be turned off.  -mtune-ctrl=feature-list is intended to be used by GCC developers. Using it may lead to code paths not covered by testing and can potentially result in compiler ICEs or runtime errors.
+
+       -mno-default
+           This option instructs GCC to turn off all tunable features. See also -mtune-ctrl=feature-list and -mdump-tune-features.
+
+       -mcld
+           This option instructs GCC to emit a "cld" instruction in the prologue of functions that use string instructions.  String instructions depend on the DF flag to select between autoincrement or autodecrement mode.  While the ABI specifies the DF flag to be cleared on function entry, some operating systems violate this specification by not clearing the DF flag in their exception dispatchers.  The exception handler can be invoked with the DF flag set, which leads to wrong direction mode when string instructions are used.  This option can be enabled by default on 32-bit x86 targets by configuring GCC with the --enable-cld configure option.  Generation of "cld" instructions can be suppressed with the -mno-cld compiler option in this case.
+
+       -mvzeroupper
+           This option instructs GCC to emit a "vzeroupper" instruction before a transfer of control flow out of the function to minimize the AVX to SSE transition penalty as well as remove unnecessary "zeroupper" intrinsics.
+
+       -mprefer-avx128
+           This option instructs GCC to use 128-bit AVX instructions instead of 256-bit AVX instructions in the auto-vectorizer.
+
+       -mcx16
+           This option enables GCC to generate "CMPXCHG16B" instructions.  "CMPXCHG16B" allows for atomic operations on 128-bit double quadword (or oword) data types.  This is useful for high-resolution counters that can be updated by multiple processors (or cores).  This instruction is generated as part of atomic built-in functions: see __sync Builtins or __atomic Builtins for details.
+
+       -msahf
+           This option enables generation of "SAHF" instructions in 64-bit code.  Early Intel Pentium 4 CPUs with Intel 64 support, prior to the introduction of Pentium 4 G1 step in December 2005, lacked the "LAHF" and "SAHF" instructions which were supported by AMD64.  These are load and store instructions, respectively, for certain status flags.  In 64-bit mode, the "SAHF" instruction is used to optimize "fmod", "drem", and "remainder" built-in functions; see Other Builtins for details.
+
+       -mmovbe
+           This option enables use of the "movbe" instruction to implement "__builtin_bswap32" and "__builtin_bswap64".
+
+       -mcrc32
+           This option enables built-in functions "__builtin_ia32_crc32qi", "__builtin_ia32_crc32hi", "__builtin_ia32_crc32si" and "__builtin_ia32_crc32di" to generate the "crc32" machine instruction.
+
+       -mrecip
+           This option enables use of "RCPSS" and "RSQRTSS" instructions (and their vectorized variants "RCPPS" and "RSQRTPS") with an additional Newton-Raphson step to increase precision instead of "DIVSS" and "SQRTSS" (and their vectorized variants) for single-precision floating-point arguments.  These instructions are generated only when -funsafe-math-optimizations is enabled together with -finite-math-only and -fno-trapping-math.  Note that while the throughput of the sequence is higher than the throughput of the non-reciprocal instruction, the precision of the sequence can be decreased by up to 2 ulp (i.e. the inverse of 1.0 equals 0.99999994).
+
+           Note that GCC implements "1.0f/sqrtf(x)" in terms of "RSQRTSS" (or "RSQRTPS") already with -ffast-math (or the above option combination), and doesn't need -mrecip.
+
+           Also note that GCC emits the above sequence with additional Newton-Raphson step for vectorized single-float division and vectorized "sqrtf(x)" already with -ffast-math (or the above option combination), and doesn't need -mrecip.
+
+       -mrecip=opt
+           This option controls which reciprocal estimate instructions may be used.  opt is a comma-separated list of options, which may be preceded by a ! to invert the option:
+
+           all Enable all estimate instructions.
+
+           default
+               Enable the default instructions, equivalent to -mrecip.
+
+           none
+               Disable all estimate instructions, equivalent to -mno-recip.
+
+           div Enable the approximation for scalar division.
+
+           vec-div
+               Enable the approximation for vectorized division.
+
+           sqrt
+               Enable the approximation for scalar square root.
+
+           vec-sqrt
+               Enable the approximation for vectorized square root.
+
+           So, for example, -mrecip=all,!sqrt enables all of the reciprocal approximations, except for square root.
+
+       -mveclibabi=type
+           Specifies the ABI type to use for vectorizing intrinsics using an external library.  Supported values for type are svml for the Intel short vector math library and acml for the AMD math core library.  To use this option, both -ftree-vectorize and -funsafe-math-optimizations have to be enabled, and an SVML or ACML ABI-compatible library must be specified at link time.
+
+           GCC currently emits calls to "vmldExp2", "vmldLn2", "vmldLog102", "vmldLog102", "vmldPow2", "vmldTanh2", "vmldTan2", "vmldAtan2", "vmldAtanh2", "vmldCbrt2", "vmldSinh2", "vmldSin2", "vmldAsinh2", "vmldAsin2", "vmldCosh2", "vmldCos2", "vmldAcosh2", "vmldAcos2", "vmlsExp4", "vmlsLn4", "vmlsLog104", "vmlsLog104", "vmlsPow4", "vmlsTanh4", "vmlsTan4", "vmlsAtan4", "vmlsAtanh4", "vmlsCbrt4", "vmlsSinh4", "vmlsSin4", "vmlsAsinh4", "vmlsAsin4", "vmlsCosh4", "vmlsCos4", "vmlsAcosh4" and "vmlsAcos4" for corresponding function type when -mveclibabi=svml is used, and "__vrd2_sin", "__vrd2_cos", "__vrd2_exp", "__vrd2_log", "__vrd2_log2", "__vrd2_log10", "__vrs4_sinf", "__vrs4_cosf", "__vrs4_expf", "__vrs4_logf", "__vrs4_log2f", "__vrs4_log10f" and "__vrs4_powf" for the corresponding function type when -mveclibabi=acml is used.
+
+       -mabi=name
+           Generate code for the specified calling convention.  Permissible values are sysv for the ABI used on GNU/Linux and other systems, and ms for the Microsoft ABI.  The default is to use the Microsoft ABI when targeting Microsoft Windows and the SysV ABI on all other systems.  You can control this behavior for a specific function by using the function attribute ms_abi/sysv_abi.
+
+       -mtls-dialect=type
+           Generate code to access thread-local storage using the gnu or gnu2 conventions.  gnu is the conservative default; gnu2 is more efficient, but it may add compile- and run-time requirements that cannot be satisfied on all systems.
+
+       -mpush-args
+       -mno-push-args
+           Use PUSH operations to store outgoing parameters.  This method is shorter and usually equally fast as method using SUB/MOV operations and is enabled by default.  In some cases disabling it may improve performance because of improved scheduling and reduced dependencies.
+
+       -maccumulate-outgoing-args
+           If enabled, the maximum amount of space required for outgoing arguments is computed in the function prologue.  This is faster on most modern CPUs because of reduced dependencies, improved scheduling and reduced stack usage when the preferred stack boundary is not equal to 2.  The drawback is a notable increase in code size.  This switch implies -mno-push-args.
+
+       -mthreads
+           Support thread-safe exception handling on MinGW.  Programs that rely on thread-safe exception handling must compile and link all code with the -mthreads option.  When compiling, -mthreads defines "-D_MT"; when linking, it links in a special thread helper library -lmingwthrd which cleans up per-thread exception-handling data.
+
+       -mno-align-stringops
+           Do not align the destination of inlined string operations.  This switch reduces code size and improves performance in case the destination is already aligned, but GCC doesn't know about it.
+
+       -minline-all-stringops
+           By default GCC inlines string operations only when the destination is known to be aligned to least a 4-byte boundary.  This enables more inlining and increases code size, but may improve performance of code that depends on fast "memcpy", "strlen", and "memset" for short lengths.
+
+       -minline-stringops-dynamically
+           For string operations of unknown size, use run-time checks with inline code for small blocks and a library call for large blocks.
+
+       -mstringop-strategy=alg
+           Override the internal decision heuristic for the particular algorithm to use for inlining string operations.  The allowed values for alg are:
+
+           rep_byte
+           rep_4byte
+           rep_8byte
+               Expand using i386 "rep" prefix of the specified size.
+
+           byte_loop
+           loop
+           unrolled_loop
+               Expand into an inline loop.
+
+           libcall
+               Always use a library call.
+
+       -mmemcpy-strategy=strategy
+           Override the internal decision heuristic to decide if "__builtin_memcpy" should be inlined and what inline algorithm to use when the expected size of the copy operation is known. strategy is a comma-separated list of alg:max_size:dest_align triplets.  alg is specified in -mstringop-strategy, max_size specifies the max byte size with which inline algorithm alg is allowed.  For the last triplet, the max_size must be "-1". The max_size of the triplets in the list must be specified in increasing order.  The minimal byte size for alg is 0 for the first triplet and "max_size + 1" of the preceding range.
+
+       -mmemset-strategy=strategy
+           The option is similar to -mmemcpy-strategy= except that it is to control "__builtin_memset" expansion.
+
+       -momit-leaf-frame-pointer
+           Don't keep the frame pointer in a register for leaf functions.  This avoids the instructions to save, set up, and restore frame pointers and makes an extra register available in leaf functions.  The option -fomit-leaf-frame-pointer removes the frame pointer for leaf functions, which might make debugging harder.
+
+       -mtls-direct-seg-refs
+       -mno-tls-direct-seg-refs
+           Controls whether TLS variables may be accessed with offsets from the TLS segment register (%gs for 32-bit, %fs for 64-bit), or whether the thread base pointer must be added.  Whether or not this is valid depends on the operating system, and whether it maps the segment to cover the entire TLS area.
+
+           For systems that use the GNU C Library, the default is on.
+
+       -msse2avx
+       -mno-sse2avx
+           Specify that the assembler should encode SSE instructions with VEX prefix.  The option -mavx turns this on by default.
+
+       -mfentry
+       -mno-fentry
+           If profiling is active (-pg), put the profiling counter call before the prologue.  Note: On x86 architectures the attribute "ms_hook_prologue" isn't possible at the moment for -mfentry and -pg.
+
+       -m8bit-idiv
+       -mno-8bit-idiv
+           On some processors, like Intel Atom, 8-bit unsigned integer divide is much faster than 32-bit/64-bit integer divide.  This option generates a run-time check.  If both dividend and divisor are within range of 0 to 255, 8-bit unsigned integer divide is used instead of 32-bit/64-bit integer divide.
+
+       -mavx256-split-unaligned-load
+       -mavx256-split-unaligned-store
+           Split 32-byte AVX unaligned load and store.
+
+       -mstack-protector-guard=guard
+           Generate stack protection code using canary at guard.  Supported locations are global for global canary or tls for per-thread canary in the TLS block (the default).  This option has effect only when -fstack-protector or -fstack-protector-all is specified.
+
+       These -m switches are supported in addition to the above on x86-64 processors in 64-bit environments.
+
+       -m32
+       -m64
+       -mx32
+       -m16
+           Generate code for a 16-bit, 32-bit or 64-bit environment.  The -m32 option sets "int", "long", and pointer types to 32 bits, and generates code that runs on any i386 system.
+
+           The -m64 option sets "int" to 32 bits and "long" and pointer types to 64 bits, and generates code for the x86-64 architecture.  For Darwin only the -m64 option also turns off the -fno-pic and -mdynamic-no-pic options.
+
+           The -mx32 option sets "int", "long", and pointer types to 32 bits, and generates code for the x86-64 architecture.
+
+           The -m16 option is the same as -m32, except for that it outputs the ".code16gcc" assembly directive at the beginning of the assembly output so that the binary can run in 16-bit mode.
+
+       -mno-red-zone
+           Do not use a so-called "red zone" for x86-64 code.  The red zone is mandated by the x86-64 ABI; it is a 128-byte area beyond the location of the stack pointer that is not modified by signal or interrupt handlers and therefore can be used for temporary data without adjusting the stack pointer.  The flag -mno-red-zone disables this red zone.
+
+       -mcmodel=small
+           Generate code for the small code model: the program and its symbols must be linked in the lower 2 GB of the address space.  Pointers are 64 bits.  Programs can be statically or dynamically linked.  This is the default code model.
+
+       -mcmodel=kernel
+           Generate code for the kernel code model.  The kernel runs in the negative 2 GB of the address space.  This model has to be used for Linux kernel code.
+
+       -mcmodel=medium
+           Generate code for the medium model: the program is linked in the lower 2 GB of the address space.  Small symbols are also placed there.  Symbols with sizes larger than -mlarge-data-threshold are put into large data or BSS sections and can be located above 2GB.  Programs can be statically or dynamically linked.
+
+       -mcmodel=large
+           Generate code for the large model.  This model makes no assumptions about addresses and sizes of sections.
+
+       -maddress-mode=long
+           Generate code for long address mode.  This is only supported for 64-bit and x32 environments.  It is the default address mode for 64-bit environments.
+
+       -maddress-mode=short
+           Generate code for short address mode.  This is only supported for 32-bit and x32 environments.  It is the default address mode for 32-bit and x32 environments.
+
+
+
+   Options for Code Generation Conventions
+       -fexceptions
+           Enable exception handling.  Generates extra code needed to propagate exceptions.  For some targets, this implies GCC generates frame unwind information for all functions, which can produce significant data size overhead, although it does not affect execution.  If you do not specify this option, GCC enables it by default for languages like C++ that normally require exception handling, and disables it for languages like C that do not normally require it.  However, you may need to enable this option when compiling C code that needs to interoperate properly with exception handlers written in C++.  You may also wish to disable this option if you are compiling older C++ programs that don't use exception handling.
+
+       -fno-common
+           In C code, controls the placement of uninitialized global variables.  Unix C compilers have traditionally permitted multiple definitions of such variables in different compilation units by placing the variables in a common block.  This is the behavior specified by -fcommon, and is the default for GCC on most targets.  On the other hand, this behavior is not required by ISO C, and on some targets may carry a speed or code size penalty on variable references.  The -fno-common option specifies that the compiler should place uninitialized global variables in the data section of the object file, rather than generating them as common blocks.  This has the effect that if the same variable is declared (without "extern") in two different compilations, you get a multiple-definition error when you link them.  In this case, you must compile with -fcommon instead.  Compiling with -fno-common is useful on targets for which it provides better performance, or if you wish to verify that the program will work on other systems that always treat uninitialized variable declarations this way.
+
+
+       -fverbose-asm
+           Put extra commentary information in the generated assembly code to make it more readable.  This option is generally only of use to those who actually need to read the generated assembly code (perhaps while debugging the compiler itself).
+
+       -fpic
+           Generate position-independent code (PIC) suitable for use in a shared library, if supported for the target machine.  Such code accesses all constant addresses through a global offset table (GOT).  The dynamic loader resolves the GOT entries when the program starts (the dynamic loader is not part of GCC; it is part of the operating system).
+           When this flag is set, the macros "__pic__" and "__PIC__" are defined to 1.
+
+
+       -fstack-check
+           Generate code to verify that you do not go beyond the boundary of the stack.  You should specify this flag if you are running in an environment with multiple threads, but you only rarely need to specify it in a single-threaded environment since stack overflow is automatically detected on nearly all systems if there is only one stack.
+
+           Note that this switch does not actually cause checking to be done; the operating system or the language runtime must do that.  The switch causes generation of code to ensure that they see the stack being extended.
+
+           You can additionally specify a string parameter: "no" means no checking, "generic" means force the use of old-style checking, "specific" means use the best checking method and is equivalent to bare -fstack-check.
+
+           Old-style checking is a generic mechanism that requires no specific target support in the compiler but comes with the following drawbacks:
+
+           1.  Modified allocation strategy for large objects: they are always allocated dynamically if their size exceeds a fixed threshold.
+
+           2.  Fixed limit on the size of the static frame of functions: when it is topped by a particular function, stack checking is not reliable and a warning is issued by the compiler.
+
+           3.  Inefficiency: because of both the modified allocation strategy and the generic implementation, code performance is hampered.
+
+           Note that old-style stack checking is also the fallback method for "specific" if no target support has been added in the compiler.
+
+       -fstack-limit-register=reg
+       -fstack-limit-symbol=sym
+       -fno-stack-limit
+           Generate code to ensure that the stack does not grow beyond a certain value, either the value of a register or the address of a symbol.  If a larger stack is required, a signal is raised at run time.  For most targets, the signal is raised before the stack overruns the boundary, so it is possible to catch the signal without taking special precautions.
+
+           For instance, if the stack starts at absolute address 0x80000000 and grows downwards, you can use the flags -fstack-limit-symbol=__stack_limit and -Wl,--defsym,__stack_limit=0x7ffe0000 to enforce a stack limit of 128KB.  Note that this may only work with the GNU linker.
+
+
+ENVIRONMENT
+       LIBRARY_PATH
+           The value of LIBRARY_PATH is a colon-separated list of directories, much like PATH.  When configured as a native compiler, GCC tries the directories thus specified when searching for special linker files, if it can't find them using GCC_EXEC_PREFIX.  Linking using GCC also uses these directories when searching for ordinary libraries for the -l option (but directories specified with -L come first).
+
+           CPATH specifies a list of directories to be searched as if specified with -I, but after any paths given with -I options on the command line.  This environment variable is used regardless of which language is being preprocessed.
+
+

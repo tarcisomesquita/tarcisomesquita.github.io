@@ -1,0 +1,33 @@
+ maps		Memory maps to executables and library files	(2.4)
+ mem		Memory held by this process
+
+ statm		Process memory status information
+
+/proc/sys/vm - The virtual memory subsystem
+
+sudo cat /proc/iomem
+kernel ram
+
+sudo cat /proc/[pid]/maps
+sudo cat /proc/17040/smaps
+
+for P in $(ls /proc/ | grep -E '^[0-9]' | sort -h); do sudo echo $P; sudo cat /proc/${P}/cmdline; echo -e "\n"; done
+
+sudo cat /proc/[0-9]*/status | grep -E '^Name|^State|^Pid|^PPid|^Threads'
+
+/proc/[pid]/smaps (since Linux 2.6.14)
+              This file shows memory consumption for each of the process's mappings.
+pmap 312813
+
+/proc/[pid]/stat
+              Status  information  about the process.  This is used by ps(1).
+
+
+O Kernel Linux possui uma estrutura chamada mm_struct->pgd associada a cada processo existente no sistema operacional. É através dessa estrutura que o Kernel mantém o mapeamento dos endereços de memória virtual do processo para um endereço físico em RAM.
+
+qualquer endereço pode ser traduzido calculando o número da páginas somado ao seu offset.
+
+https://blog.4linux.com.br/conhecendo-o-kernel-linux-pelo-proc-parte-3-mapeamento-de-memoria-virtual/
+
+xxd /proc/<pid>/pagemap to get virtual - physical address mappings
+

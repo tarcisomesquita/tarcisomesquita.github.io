@@ -1,0 +1,163 @@
+<script>
+function click(){
+  if (event.button==2) alert("Botão direito bloqueado!");
+  if (event.button==3) alert("");
+}
+
+document.onmousedown=click;
+</script>
+
+
+<script type="text/javascript">
+function cursor()
+{
+trail.style.visibility="visible"
+trail.style.position="absolute"
+trail.style.left=event.clientX-200
+trail.style.top=event.clientY-25
+}
+</script>
+<BODY onmousemove="cursor()">
+<IMG id=”trail” style="VISIBILITY: hidden" src="imagem.gif" width="valor" height="valor">
+
+<!--inicio do código adicionar aos favoritos-->
+<a onclick="window.external.AddFavorite('http://www.endereço.com','Título
+da Página');" href="#">Adicionar aos Favoritos!<a>
+<!--fim do código adicionar aos favoritos-->
+
+<!--inicio do código data e hora-->
+<script>
+var dataHora,xHora,xdia,dia,xMinuto,xSegundo,mes,ano,txtsaudacao;
+dataHora=new Date();
+xHora=dataHora.getHours();
+dataHora = new Date();
+xDia = dataHora.getDay();
+dsem = new Array(7);
+dsem[0] = "Domingo";
+dsem[1] = "Segunda-feira";
+dsem[2] = "Terça-feira";
+dsem[3] = "Quarta-feira";
+dsem[4] = "Quinta-feira";
+dsem[5] = "Sexta-feira";
+dsem[6] = "Sábado";
+if (dia < 10) {dia = "0" + dia}
+dia = dataHora.getDate();
+mes = dataHora.getMonth();
+dmes = new Array(12);
+dmes[0] = "Janeiro";
+dmes[1] = "Fevereiro";
+dmes[2] = "Março";
+dmes[3] = "Abril";
+dmes[4] = "Maio";
+dmes[5] = "Junho";
+dmes[6] = "Julho";
+dmes[7] = "Agosto";
+dmes[8] = "Setembro";
+dmes[9] = "Outubro";
+dmes[10] = "Novembro";
+dmes[11] = "Dezembro";
+ano = dataHora.getFullYear();
+document.write("<font size=2 face='verdana' color=#666666>" + dsem[xDia] +
+", " + dia + " de " + dmes[mes] + " de " + ano + "");
+</script>
+<!--fim do código data e hora-->
+
+<!--inicio do código deixar como página inicial-->
+<a href="#"
+onclick="this.style.behavior='url(#default#homepage)';this.setHomePage('ht
+tp://www.endereço.com');">Deixe como Página Inicial!</a>
+<!--fim do código deixar como página inicial-->
+
+<head>
+<script language="javascript">
+function Resize()
+{
+     var ResizeH,ResizeW;
+     LarguraImagem = document ['figura'].width;
+     AlturaImagem = document ['figura'].height;
+     var JanH, JanW;
+     if (document.all)
+     {
+          JanH = document.body.clientHeight;
+          JanW = document.body.clientWidth;
+     } else    {
+          JanW = innerWidth;
+          JanH = innerHeight;
+     }
+     ResizeH = AlturaImagem - JanH;
+     ResizeW = LarguraImagem - JanW;
+     window.resizeBy(ResizeW,ResizeH);
+}
+function ExibeImagem()
+{
+var query=window.location.search;
+     if(query.indexOf("?") == -1)
+     {
+          document.write("Foto não localizada.");
+     }
+     else
+     {
+          var str="?foto=";
+          var imagem = query.slice(str.length);
+          var imprime_imagem = "<img src='" + imagem + "' name='figura'
+border='0' onload='Resize();'>";
+          document.getElementById("exibe_imagem").innerHTML =
+imprime_imagem;
+     }
+}
+</script>
+</head>
+<body onLoad="ExibeImagem()" topmargin="0" leftmargin="0">
+<div id="exibe_imagem"></div>
+</body>
+
+<script language="javascript">
+function AbreImagem(imagem)
+{
+     var url = 'pop_up.html?foto=' + imagem;
+     popup =
+window.open(url,'_blank','scrollbars=no,status=no,toolbar=no,resizable=no,
+location=no,menu=no,width=50,height=50');
+     popup.focus();
+}
+</script>
+<a href="javascript:AbreImagem('endereço da foto');">
+
+<input type="button" name="voltar" value="Voltar" onclick="history.go(-1)">
+
+
+<script language="JavaScript">
+function printit(){
+if (NS) {
+    window.print() ;
+} else {
+    var WebBrowser = '<OBJECT ID="WebBrowser1" WIDTH=0 HEIGHT=0
+CLASSID="CLSID:8856F961-340A-11D0-A96B-00C04FD705A2"></OBJECT>';
+document.body.insertAdjacentHTML('beforeEnd', WebBrowser);
+    WebBrowser1.ExecWB(6, 2);
+}
+}
+</script>
+Agora cole o código abaixo no lugar onde deseje que apareça o botão para Imprimir
+<script language="JavaScript">
+var NS = (navigator.appName == "Netscape");
+var VERSION = parseInt(navigator.appVersion);
+if (VERSION > 3) {
+    document.write('<form><input type=button value="Imprimir" name="Print"
+onClick="printit()"></form>');
+}
+</script>
+
+
+<script language="JavaScript">
+function doSaveAs(){
+if (document.execCommand){
+if (isReady){document.execCommand("SaveAs");}
+   }
+}
+</script>
+Agora faça uma Âncora como a seguir:
+<a href="javascript:doSaveAs()">Clique aqui para salvar está página</a>
+
+
+
