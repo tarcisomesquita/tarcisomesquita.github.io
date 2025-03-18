@@ -262,6 +262,12 @@ Brincam
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+sleep 3 && \
+xdotool getactivewindow windowmove 0 0 && \
+xdotool getactivewindow windowsize 1280 708
+
+ffmpeg -f x11grab -video_size 1280x720 -framerate 30 -i :0.0+0,17 -f pulse -i default -c:v libx264 -crf 23 -c:a aac -b:a 128k output.mp4
+
 https://support.google.com/youtube/answer/1722171?hl=pt-BR
 youtube
 ffmpeg -y -i input.mp4 -map_metadata -1 -maxrate 800k -bufsize 800k -r 24 -vf format=yuv420p teste4.mp4
