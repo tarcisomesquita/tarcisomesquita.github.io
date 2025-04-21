@@ -4,6 +4,10 @@ const arrayCondensed = new Array('Saab', 'Volvo', 'BMW');
 for (let x of arrayLiteral) { console.log("Tenho: " + x)}; // elementos
 for (let x in arrayLiteral) { console.log("Tenho: " + x)}; // índices
 
+['a', 'b', 'c'].forEach((elemento, index) => {
+  console.log(`${index} > ${elemento}`);
+})
+
 concat()  Join arrays
 join()    Join all elements of an array into a string
 pop()     Remove the last element of an array
