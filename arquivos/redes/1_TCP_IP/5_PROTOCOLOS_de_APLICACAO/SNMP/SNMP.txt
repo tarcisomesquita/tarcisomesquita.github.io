@@ -1,0 +1,108 @@
+
+Simple Network Management Protocol (SNMP) is a UDP-based network protocol.
+
+SNMP exposes management data in the form of variables on the managed systems, which describe the system configuration. These variables can then be queried (and sometimes set) by managing applications.
+
+one or more administrative computersSNMP called managers have the task of monitoring or managing a group of hosts or devices on a computer network. Each managed system executes, at all times, a software component called an agent which reports information via SNMP to the manager.
+
+The protocol also permits active management tasks, such as modifying and applying a new configuration through remote modification of these variables. The variables accessible via SNMP are organized in hierarchies.
+
+These hierarchies, and other metadata (such as type and description of the variable), are described by Management Information Bases (MIBs) (http://en.wikipedia.org/wiki/Management_Information_Base).
+
+SNMP itself does not define which information (which variables) a managed system should offer.
+
+SNMP versions 1 and 2c are subject to packet sniffing of the clear text community string from the network traffic, because they do not implement encryption.
+
+The SNMP agent receives requests on UDP port 161. The manager may send requests from any available source port to port 161 in the agent. The agent response will be sent back to the source port on the manager. The manager receives notifications (Traps and InformRequests) on port 162. The agent may generate notifications from any available port.
+
+SNMPv1 specifies five core protocol data units (PDUs). Two other PDUs, GetBulkRequest and InformRequest were added in SNMPv2 and carried over to SNMPv3.
+
+All SNMP PDUs are constructed as follows:
+ +-----------+------------+---------+-----------+----------+------------+--------------+-------------+-------------------+
+ | IP header | UDP header | version | community | PDU-type | request-id | error-status | error-index | variable bindings |
+ +-----------+------------+---------+-----------+----------+------------+--------------+-------------+-------------------+
+
+The seven SNMP protocol data units (PDUs) are as follows:
+
+GetRequest
+Retrieve the value of a variable or list of variables. Desired variables are specified in variable bindings (values are not used). Retrieval of the specified variable values is to be done as an atomic operation by the agent. A Response with current values is returned.
+
+SetRequest
+Change the value of a variable or list of variables. Variable bindings are specified in the body of the request. Changes to all specified variables are to be made as an atomic operation by the agent. A Response with (current) new values for the variables is returned.
+
+GetNextRequest
+Returns a Response with variable binding for the lexicographically next variable in the MIB. The entire MIB of an agent can be walked by iterative application of GetNextRequest starting at OID 0. Rows of a table can be read by specifying column OIDs in the variable bindings of the request.
+
+GetBulkRequest
+Optimized version of GetNextRequest. Requests multiple iterations of GetNextRequest and returns a Response with multiple variable bindings walked from the variable binding or bindings in the request. PDU specific non-repeaters and max-repetitions fields are used to control response behavior. GetBulkRequest was introduced in SNMPv2.
+
+Response
+Returns variable bindings and acknowledgement for GetRequest, SetRequest, GetNextRequest, GetBulkRequest and InformRequest. Error reporting is provided by error-status and error-index fields. Although it was used as a response to both gets and sets, this PDU was called GetResponse in SNMPv1.
+
+Trap
+Asynchronous notification from agent to manager. Includes current sysUpTime value, an OID identifying the type of trap and optional variable bindings. Destination addressing for traps is determined in an application specific manner typically through trap configuration variables in the MIB. The format of the trap message was changed in SNMPv2 and the PDU was renamed SNMPv2-Trap.
+
+InformRequest
+Acknowledged asynchronous notification from manager to manager. This PDU use the same format as the SNMPv2 version of Trap. Manager-to-manager notifications were already possible in SNMPv1 (using a Trap), but as SNMP commonly runs over UDP where delivery is not assured and dropped packets are not reported, delivery of a Trap was not guaranteed. InformRequest fixes this by sending back an acknowledgement on receipt. Receiver replies with Response parroting all information in the InformRequest. This PDU was introduced in SNMPv2.
+
+
+4.4. Error Status Mappings
+
+
+   The following tables shows the mappings of SNMPv1 error-status values
+   into SNMPv2 error-status values, and the mappings of SNMPv2 error-
+   status values into SNMPv1 error-status values.
+
+      SNMPv1 error-status    SNMPv2 error-status
+      ===================    ===================
+      noError                noError
+      tooBig                 tooBig
+      noSuchName             noSuchName
+      badValue               badValue
+      genErr                 genErr
+
+
+      SNMPv2 error-status    SNMPv1 error-status
+      ===================    ===================
+      noError                noError
+      tooBig                 tooBig
+      genErr                 genErr
+      wrongValue             badValue
+      wrongEncoding          badValue
+      wrongType              badValue
+      wrongLength            badValue
+      inconsistentValue      badValue
+      noAccess               noSuchName
+      notWritable            noSuchName
+      noCreation             noSuchName
+      inconsistentName       noSuchName
+      resourceUnavailable    genErr
+      commitFailed           genErr
+      undoFailed             genErr
+      authorizationError     noSuchName
+
+   Whenever the SNMPv2 error-status value of authorizationError is
+   translated to an SNMPv1 error-status value of noSuchName, the value
+   of snmpInBadCommunityUses MUST be incremented.
+
+
+Comandos do SNMP
+
+O SNMP não define um grande número de comandos, em lugar disso define duas operações básicas:
+
+    GET, para obter um valor de um dispositivo
+    SET, para colocar um valor num dispositivo
+
+O comando que especifica uma operação de GET ou SET deve especificar o nome do objeto, que é único.
+
+Podemos definir objetos. No caso de um contador de erros de CRC e uma vez que o SNMP não inclui comandos específicos para fazer reset do contador, uma forma simples é colocar zero no contador. Neste caso, o Gerente faz o GET (leitura) do parâmetro desejado para determinar o estado do dispositivo. As operações que controlam o dispositivo são definidas como efeitos secundários de SET (alterar/gravar valores) em objetos.
+
+Especifica (na versão 1) quatro pacote de unidades de dados (PDU):
+
+    GET, usado para retirar um pedaço de informação de gerenciamento.
+    GETNEXT, usado interativamente para retirar sequências de informação de gerenciamento.
+    GETBULK, usado para retirar informações de um grupo de objetos.
+    SET, usado para fazer uma mudança no subsistema gerido.
+    TRAP, usado para reportar uma notificação ou para outros eventos assíncronos sobre o subsistema gerido.
+
+

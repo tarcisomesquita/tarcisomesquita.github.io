@@ -1,0 +1,22 @@
+Segure o conector RJ-45 com os contatos elétricos voltados para seu olho e com o cabo de rede ao longo do seu braço.
+Os contatos são numerados de 1 a 8 da esquerda para direita.
+
+1 2 3 4 5 6 7 8
+v v l a a l m m
+e e a z z a a a
+r r r u u r r r
+d d a l l a r r
+e e n     n o o
+b   b   b   b
+
+1 e 2 (TD+ e TD– ) são usados para transmissão de dados.
+3 e 6 (RD+ e RD– ) são usados para recepção de dados.
+
+
+CABOS UTP (Unshielded Twisted Pair)
+Em todas as categorias, a distância máxima permitida é de 90 metros, considerando 5m a cada extremidade para conexão a equipamento.
+bitola 24 AWG
+Categoria 5 é recomendável para taxa de transmissão de 100 Mbps.
+Categoria 5e (enhanced) - 350 MHz
+Categoria 6 - 400 MHz. é recomendável para aplicações com taxa de transmissão muito elevada na faixa acima de 1000Mbps.
+

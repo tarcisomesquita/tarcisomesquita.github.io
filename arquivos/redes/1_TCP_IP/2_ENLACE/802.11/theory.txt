@@ -1,0 +1,476 @@
+IEEE 802.11 specs 
+http://grouper.ieee.org/groups/802/11/index.html
+
+preamble for synchronization field with info about frame
+
+   field       length in bits      info
+   SYNC      128         alternating 1s 0s
+   start frame   16         fixed bit pattern
+     delimiter
+   signal      8          speed
+   service      8         TBD
+   length      16         time in usecs to end of frame
+   FCS      16
+   
+   length is used to determine how long this incoming frame will last
+
+3.4.2 MAC layer
+
+There exist different kinds of frames: management, control, data.
+
+   bits in header (frame control) indicate what type:
+
+   management frame types include:
+      association request   - may I please visit you Mr. AP
+      association response
+      reassociation request
+      reassociation response    
+      probe request      - are there APs?
+      probe resonse      - yes, I am one
+      beacon         - here I am
+      Announcement Traffic Indication Map
+      Disassociation
+      Authentication
+      Deauthentication
+
+   control:
+      power-save poll  (PCF)
+      RTS
+      CTS
+      ACK
+      Contention Free End
+      CF End + CF ACK
+
+   data:
+      never mind, there are subtypes though
+
+   MAC part
+
+   field      length in bytes      info
+   frame control    8         bit field/s - info on frame
+   duration id    2         timing info
+   MAC address 1    6         addresses depend on
+                  kind of frame
+   MAC address 2    6   
+   MAC address 3    6
+   Sequence Control 2         fragmentation
+   MAC address 4    6
+   frame body    0-2312         data!
+   FCS       4
+   
+   address may be sending BSSID (MAC for AP), source, dst, recv AP
+   
+   frame control field (2 bytes) as follows:
+
+   field      bits         info
+   protocol    2         version 0 
+   version
+   type      2         management/control/data
+   subtype      4         what kind of mgmt/control
+                  e.g., beacon, etc.
+   To DS      1         to wired side
+   From DS      1         from wired side
+   More Frag   1
+   Retry      1
+   Pwr. Mgmt   1
+   More data   1
+   WEP      1         WEP in use
+   Order      1         process frames in order!
+
+   4 kinds of addresses defined:
+
+   DA - destination address, sent to whom
+   SA - src address, from whom
+   RA - AP that should get the frame
+   TA - AP sending the frame
+
+   4 addresses, because sometimes AP involved as sender OR
+      there is a possible case of AP to AP forwarding (neglected here)
+
+Some sample frame types and sizes:
+
+   distinquish management, control, data
+
+   management frames roughly fixed header + variable length part
+      variable length depends on subtype
+
+   rts, 20 bytes total
+      frame control   2
+      duration   2   estimate of transaction time
+      RA      6
+      TA      6
+      FCS      4
+
+   cts, 14 bytes
+
+   data frames
+      fixed header + LLC layer + data
+
+      addresses depend on To DS/From DS
+
+   To DS   From DS      a1   a2   a3   a4
+   0   0      DA   SA   BSSID
+   0   1      DA   BSSID   SA
+   1   0      BSSID   SA   DA
+   1   1      RA   TA   DA   SA
+   
+Skip to section 4, to look at packet traces.
+
+3.5. Handoff
+   
+   in theory, a MN can startoff either in
+
+   active scan (send a probe)
+
+   passive scan (wait for beacons)
+
+   a MN may go thru channels looking for a AP
+
+   an ESSID (string name for network) may be used to influence
+      the choice of AP
+
+   aps respond and in theory (depending on ESSID), a choice is
+      made in terms of strongest signal 
+ 
+   typically in infrastructure mode, you set the channel on the AP,
+      and the MNs find the AP channel automatically
+
+   note: ANY or "" (null string) may be used with lucent MNs to
+      associate with any AP
+
+3.6 Security 
+
+MAC addresses have been used as authentication mechanism
+
+   are changeable and hence spoofable.
+      See BSD wicontrol command.
+   often used with ethernet switches though.
+
+WEP 
+
+   remember we need confidentiality, integrity, authentication
+
+   for authentication, we only have MAC address checking.
+
+   IEEE process -- basically flawed as only those with money
+      can play in it (not underfunded highly busy competent crypto people)
+
+   WEP (an encryption mechanism using RC4)
+
+      4 packet initial exchange, that includes challenge/response,
+         so this can be called "authentication" in some sense.
+      per network secret
+
+   Wired equivalent privacy.
+
+   IEEE excuse:  "just as good as ethernet"
+
+   Wireless is more exposed barring the esoteric notions
+      of Van Eck/Tempest radiation (i.e., this is 
+      convential wisdom that is often but not necessarily true)
+
+   weak encryption, use of streaming rc-4 cipher because it
+      is fast cpu-wise
+
+      block symmetric encryption is usually a better idea
+
+   historically wireless (cellular!) security has not been good.
+
+   historical weaknesses with link-layer security apply:
+
+      .not end to end (which is always best) use ssh ...
+
+      .proposed/known plaintext attack always possible
+         when not end to end
+         .beacons are predictable
+         .a ping from the other end is easy
+         .WEP chose to use 802.3 not Ethernet header, has SNAP SAP in it.
+            first encrypted byte is always AA
+            this makes known plaintext attack possible
+
+      .key management techniques have been poor
+         ship WEP with default key and do not change
+            the key.
+
+      .or IV as we see below, always predictable
+
+      .or organization puts up web page says WEP key is X
+
+      .million people knowing a secret makes for a poor secret
+
+      .SNMP from one vendor allowed the key to be recovered
+
+   WEP key length only standardized at 40 bits ... 128 bits is
+      not so standard as it could be.
+
+      64 bit WEP is 40 bits of WEP encryption + 24 bits of IV (sent in clear)
+      128 bit WEP is 104 bits of WEP encryption + 24 bits of IV
+
+WEP - rc-4 as stream cipher
+
+   stream cipher means we must somehow generate a keystream
+
+      serial data bits  0 1 0 1 0 0 1 1
+      keystream   bits  1 0 1 1 0 0 1 0
+      encrypt (xor)     1 1 1 0 0 0 0 1
+
+   so we might have 40 bit WEP encryption
+
+   integrity is CSUM algorithm, part of WEP calculation
+      integrity hash inside WEP encryption in packet payload 
+      (and not 1-way hash like MD5, weaker)
+      called ICV: 4 bytes long
+
+   rough WEP frame payload:
+
+      plaintext:             : encrypted ..........   : plaintext
+      frame header: IV header: frame body: ICV trailer: FCS  
+
+   WEP key is combination of IV plus shared secret
+
+      
+   See following papers for a history of failure
+
+   N. Borisov, I. Goldberg, D. Wagner, "Intercepting Mobile
+   Communications: The ;Insecurity of 802.11", In Proceedings
+   of MobiCom 2001, July 2001.
+
+      pointed out bugs in scheme including:
+
+      IV space is too small (24 bits)
+
+      IVs may not be random
+
+   S. Fluhrer, I. Mantin, A. Shamir, "Weaknesses in the 
+   key scheduling algorithm of RC4", Eighth Annual Workshop
+   on Selected Areas in Cryptography, August 2001.
+
+      proposed plaintext attacks possible
+
+      IV scheme is weak
+
+      propose attack methodology
+   
+   A. Stubblefield, J. Ioannidis, A. Rubin, "Using the
+   Fluhrer, Mantin, and Shamir Attack to Break WEP",
+   ATT Labs Technical Report, TD-4ZCPZZ, Revision 2,
+   August 21, 2001.
+
+      implement attack methodology
+
+      key recovery takes 5-6 million packets (not that many really)
+
+   airsnort at
+   http://airsnort.shmoo.com/
+
+      tool to recover WEP keys
+
+   See the following for a different approach:
+
+   An Integrated IPSEC and Mobile-IP for FreeBSD" , 
+   Jim Binkley, Portland State University, PSU Technical Report 01-10,
+          October 2001. ps 
+
+   Ian Goldberg's Black Hat talk on the History of Cell Phone
+   Security *may* shed some light on this whole topic:
+
+   I recommend it:
+
+   http://www.cs.berkeley.edu/~iang/
+
+   the new new IEEE link-layer plan:
+
+      802.1x  plus possible and/or WEP with AES 
+      For some details, see my link layer security lecture.
+
+   We need authentication per packet.
+   We need authentication per client.
+   We need strong crypto.
+   We need an *open* process.  
+
+   Why not do this at Layer 3?  The answer "because of
+   appletalk" is not very good.  Appletalk has a layer 3.
+   Appletalk has taken things from the IETF as well (SNMP ...).
+
+WEP marches on (WEP is still here ... other things are emerging).
+
+   ?  WEP inadequate now what ?
+   
+   no authentication at all.
+   bad crypto encryption.
+   bad integrity
+
+So now IEEE has 802.1x for authentication, and a wg called 802.11i for
+   the "entire thing", whatever that may turn out to be.
+
+Industry impatience produced "WPA"  (Wi-fi protected access)
+
+   WPA = 802.1X & EAP + TKIP + MIC
+
+in reality authentication provided via RADIUS.  
+   WPA-PSK means pre-shared key.  as long as passwords match,
+   user is allowed access to network.
+
+   "user credentials" are in theory possible, but password is more likely.
+
+TKIP - better encryption thru session keys.  (Tee-kip).  temporal key integrity protocol).
+
+   name originally means: keys changed often.  hash function plus input of MAC address, etc.
+
+   firmware problem - i.e., RC4 encryption done in hardware.  can't replace it
+      without hw problem.  can fix firmware.  therfore TKIP is possible.
+
+   TKIP increases key size to 128 as default.
+
+   TKIP in WPA can use 802.1x as session key generation.
+
+   the MIC gives integrity as you would expect.
+
+   vendor may provide a different encryption algorithm (AES) which of course
+      may not interoperate
+
+   lots of software needed here - not clear it can fit in a driver/firmware/app daemon
+      whatever
+
+   leading to the "rule of 2".  ... you wanted that to interoperate?  hah. hah.
+      maybe it will if you the buy the AP and NIC card from the same vendor?
+
+802.11i
+   two "modes" ... WPA and RSN.
+
+   yes they called it "RSN".  no apparently sense of humor. 
+
+   RSN == EAP/802.1x plus AES.
+
+   AES in software will degrade performance.
+
+   but what the heck ...  
+
+How to make 802.11 more secure?
+   
+   1. use end to end security.  It is always better because
+      it more or less rules out proposed/known plaintext attacks.
+
+   2. design your wireless net so that it is "outside" any secure
+   enclave.  You may use VLANs, or simple physical plumbing.
+   3 NICS in a desktop box.  
+
+   3. personal opinion.  one of the problems with APs is that they
+   are bridges, and bridges mean a leaked broadcast domain.  That
+   is very bad network design.  There are security problems here
+   that are ignored (so far); e.g., the leaking of 802.1d packets
+   from switches out wireless APs.   Or that a multicast video
+   stream on the wired side can potentially shutdown the wireless
+   side.  Mixed-media bridges are always a bad idea.  L3 needs
+   to live between them. 
+
+-----------------------
+4. sniffer traces
+
+   beacon.txt - an 802.11 AP beacon
+   associate.txt - an association trace, between a    
+            Lucent NIC and an AP.
+   multicast.txt - multicast data packet
+   ping.txt - ping from wireless to wired
+   rip.bcast.txt - broadcast data packet from wired side
+   urldbcast.txt - broadcast data packet from wireless side
+
+-----------------------
+5. measurement/loading 
+
+   experimental setup
+      8 laptops.  1 to 8 flows (didn't do all flows;
+         e.g., we did not do 7 flows).
+         Typically 2 flows per laptop max; i.e.,
+         every laptop had a partner, and could do
+         no more than 2 flows.
+
+      Used TCP ttcp at default settings.
+
+      all laptops were close.  All could speak at "11 mbits".
+
+      with/without RTS.  RTS was turned on at 576 bytes.
+      Thus it affected the big mtu-sized TCP packets.
+      Not TCP acks.
+
+      FreeBSD used.  Lucent NICs used (silver).
+
+      We also used NS2 to simulate the results.  The
+      basic non-rts loading curve was similar.  This
+      was only at 2 mbit though (not 11.b).
+
+   see mbits3.ps   rts/norts and 1/n as approximation
+       fcs.ps   (especially rts vs norts) 
+       time.ps     increase in per node data fetch time is basically 
+            linear for more flows
+
+-----------------------
+6. criticism/rant time
+
+   802.11 is overly complex and is not well understood
+      many parts are off by default, which
+      is not well known
+
+      RTS/CTS
+      power management (PCF)
+      too many packet types/subtypes, too variable inside
+         packet.  
+
+   if we compare it to ethernet, one of them is a design morass
+
+   separation of policy and mechanism is not well understood
+      security  - how about exposing it to higher layers
+         or not doing it at all.  let ssh/ssl/ipsec
+         deal with it.
+
+      handoff
+         why send beacons (in IBSS mode?)
+         let that be a layer 3 function.
+
+         let handoff be decised by layer 7 daemons 
+         not buried in firmware
+
+      updating firmware is not a good idea
+      
+   we suggest KISS
+      why not just send a packet?  Let everybody else adapt.
+
+   RTS/CTS is disfunctional ... too much overhead, and it is not
+      clear that the pain is worth the "gain" 
+ 
+   hidden node problem.  Because something is a theoretical problem,
+      that does not mean it is a practical problem.
+
+   AP/bridge boondoggle.  mixed-media bridges are not a good
+      idea.  Exposing ethernet packets to wireless drive-bys
+      is not good security OR redundancy.
+      Suggest L3 architecture.
+
+   inefficiencies
+
+      6-8 nodes max talking at a time is not good.
+      losing > 50% of the raw bandwidth is not good.
+      There were lessons available in TCP/IP about
+         acking every data packet; 
+
+      Why do we have to have a stop and wait protocol
+         at the data link layer?
+
+      Stevens, Vol 1. TCP/IP illustrated, p. 275
+      in referring to TCP compared to TFTP, says:
+
+      "... this leads to faster data transfer, since
+      the sender doesn't have to stop and wait for an 
+      acknowledgement each time a packet is sent."
+
+      It is well-known that ping-pong protocols are
+      inefficient.
+
+      How do the designers of 802.11 *know* that RTS/CTS
+      is a good idea?  (Or that their particular RTS/CTS
+      design is any good?  Consider FAMA (Fullmer/JJ) papers).
+
+      How do they know that an ACK is a good idea? 
+    
+      These ideas need to be reassessed.  
+   

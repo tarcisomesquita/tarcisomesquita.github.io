@@ -1,0 +1,12 @@
+
+RTS/CTS: o cliente envia um frame RTS (Request to Send), e aguarda o recebimento de um frame CTS (Clear to Send) antes de começar a transmitir.
+(bytes, range: 256~2432, default: 2432)
+
+RTS/CTS reduz a taxa de transferência e é usado apenas em frames grandes, que demoram mais para serem transmitidos
+
+Deve ativar o RTS/CTS nas estações e não do ponto de acesso.
+
+No Linux os dois parâmetros são ajustados através do comando "iwconfig" usando, respectivamente, as opções "rts" e "frag". Os comandos "iwconfig eth1 frag 1024" e "iwconfig eth1 rts 512"
+
+No Windows, você encontra as opções dentro da configuração avançada da conexão wireless (Painel de Controle > Conexões de rede > Conexão de rede sem fio > propriedades > Configurar > Avançado). Se você estiver usando Windows em português, a opção RTS Threshold aparece como "Limiar de RTS". No mesmo menu, você pode ajustar também o Fragmentation Threshold (Limiar de fragmentação) para a estação.
+

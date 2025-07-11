@@ -1,0 +1,6 @@
+
+Set a watchpoint for an expression.
+A watchpoint stops execution of your program whenever the value of an expression changes.
+
+Precisa adicionar um breakpoint antes
+

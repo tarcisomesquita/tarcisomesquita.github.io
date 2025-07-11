@@ -1,0 +1,18 @@
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+iniciar em modo downloading (baixo + meio + power)
+conectar cabo
+
+heimdall help
+
+sudo ./heimdall download-pit --output teste.pit --verbose  --no-reboot
+
+./heimdall print-pit --file teste.pit 
+
+After executing a command with the --no-reboot argument, the next command should include the --resume argument.
+
+heimdall flash --repartition --resume --pit s1_odin_20100512.pit --FACTORYFS factoryfs.rfs --CACHE cache.rfs --DBDATA dbdata.rfs --IBL+PBL boot.bin --SBL Sbl.bin --PARAM param.lfs --KERNEL zImage --MODEM modem.bin
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+

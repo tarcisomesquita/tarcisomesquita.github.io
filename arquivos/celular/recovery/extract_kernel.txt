@@ -1,0 +1,24 @@
+cat kernel | grep --text --byte-offset --only-matching "$(echo -n -e \\xfd7zXZ)" | tail -n 1 | cut -d':' -f1
+dd if=kernel bs=1 skip=offset status=none | unxz > kernel_extracted
+strings kernel_extracted | grep "Linux version"
+
+cat kernel | grep --text --byte-offset --only-matching "$(echo -n -e \\x1f\\x8b\\x08)" | tail -n 1 | cut -d':' -f1
+dd if=kernel bs=1 skip=5534362 status=none | gunzip > kernel_extracted
+strings kernel_extracted | grep "Linux version"
+
+cat kernel | grep --text --byte-offset --only-matching "BZh" | tail -n 1 | cut -d':' -f1
+dd if=kernel bs=1 skip=5524361 status=none | bunzip2 > kernel_extracted
+strings kernel_extracted | grep "Linux version"
+
+cat kernel | hexdump -C | grep '5d 00 00 00'
+dd if=kernel bs=1 skip=$((0x7d97b8)) status=none | unlzma > kernel_extracted
+strings kernel_extracted | grep "Linux version"
+
+cat kernel | grep --text --byte-offset --only-matching "$(echo -n -e \\x89\\x4c\\x5a)" | tail -n 1 | cut -d':' -f1
+dd if=kernel bs=1 skip=5534362 status=none | lzop -d > kernel_extracted
+strings kernel_extracted | grep "Linux version"
+
+cat kernel | grep --text --byte-offset --only-matching "$(echo -n -e \\x02\!L\\x18)" | tail -n 1 | cut -d':' -f1
+dd if=kernel bs=1 skip=8681683 status=none | lz4 -d > kernel_extracted
+strings kernel_extracted | grep "Linux version"
+

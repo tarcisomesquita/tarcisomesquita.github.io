@@ -1,0 +1,19 @@
+systemd-run --scope -p MemoryMax=200M firefox
+
+systemd-run --timer-property=OnCalendar=$(systemd-analyze timestamp +5s) --timer-property=AccuracySec=1s ls 
+
+
+             2012-11-23 11:12:13 UTC
+                         @1395716396
+                                 +5s
+
+systemd-analyze timestamp +50s
+systemd-analyze timestamp "2021-11-03 11:03:50 UTC"
+systemd-analyze timestamp "+55s500ms"
+
+systemd-run --on-calendar="Tue 2021-11-02 11:18:20 UTC" --timer-property=AccuracySec=100ms touch /home/lubuntu/teste2.txt
+systemd-run --timer-property=OnCalendar="$(systemd-analyze timestamp +5s | grep UTC | cut -c 18-)" --timer-property=AccuracySec=100ms touch /home/lubuntu/teste5.txt
+
+systemd-run --on-calendar="$(systemd-analyze timestamp +5s | grep UTC | cut -c 18-)" --timer-property=AccuracySec=100ms bash -c 'whoami > /home/lubuntu/teste4.txt'
+
+cat /var/log/syslog | grep 'Started'

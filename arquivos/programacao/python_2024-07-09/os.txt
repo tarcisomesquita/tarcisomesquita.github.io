@@ -1,0 +1,198 @@
+os.system(command)                                Execute the command (a string) in a subshell. This is implemented by calling the Standard C function system(), and has the same limitations.
+
+os.getenv(key, default=None)¶
+Return the value of the environment variable key if it exists, or default if it doesn’t. key, default and the result are str.
+
+os.getlogin()¶
+Return the name of the user logged in on the controlling terminal of the process.
+
+os.geteuid()¶
+Return the current process’s effective user id.
+
+Availability: Unix.
+
+os.getgid()¶
+Return the real group id of the current process.
+
+os.getpid()¶
+Return the current process id.
+
+os.getppid()¶
+Return the parent’s process id.
+
+os.fdatasync(fd)¶
+Force write of file with filedescriptor fd to disk. Does not force update of metadata.
+
+os.fsync(fd)¶
+Force write of file with filedescriptor fd to disk. On Unix, this calls the native fsync() function; on Windows, the MS _commit() function.
+
+If you’re starting with a buffered Python file object f, first do f.flush(), and then do os.fsync(f.fileno()), to ensure that all internal buffers associated with f are written to disk.
+
+os.lseek(fd, pos, how)¶
+Set the current position of file descriptor fd to position pos, modified by how: SEEK_SET or 0 to set the position relative to the beginning of the file; SEEK_CUR or 1 to set it relative to the current position; SEEK_END or 2 to set it relative to the end of the file. Return the new cursor position in bytes, starting from the beginning.
+
+os.SEEK_SET¶
+os.SEEK_CUR¶
+os.SEEK_END¶
+Parameters to the lseek() function. Their values are 0, 1, and 2, respectively.
+
+New in version 3.3: Some operating systems could support additional values, like os.SEEK_HOLE or os.SEEK_DATA.
+
+os.open(path, flags, mode=0o777, *, dir_fd=None)¶
+Open the file path and set various flags according to flags and possibly its mode according to mode. When computing mode, the current umask value is first masked out. Return the file descriptor for the newly opened file. The new file descriptor is non-inheritable.
+
+For a description of the flag and mode values, see the C run-time documentation; flag constants (like O_RDONLY and O_WRONLY) are defined in the os module. In particular, on Windows adding O_BINARY is needed to open files in binary mode.
+
+This function can support paths relative to directory descriptors with the dir_fd parameter.
+
+Changed in version 3.4: The new file descriptor is now non-inheritable.
+
+Note
+
+This function is intended for low-level I/O. For normal usage, use the built-in function open(), which returns a file object with read() and write() methods (and many more). To wrap a file descriptor in a file object, use fdopen().
+
+New in version 3.3: The dir_fd argument.
+
+Changed in version 3.5: If the system call is interrupted and the signal handler does not raise an exception, the function now retries the system call instead of raising an InterruptedError exception (see PEP 475 for the rationale).
+
+Changed in version 3.6: Accepts a path-like object.
+
+The following constants are options for the flags parameter to the open() function. They can be combined using the bitwise OR operator |. Some of them are not available on all platforms. For descriptions of their availability and use, consult the open(2) manual page on Unix or the MSDN on Windows.
+
+os.O_RDONLY¶
+os.O_WRONLY¶
+os.O_RDWR¶
+os.O_APPEND¶
+os.O_CREAT¶
+os.O_EXCL¶
+os.O_TRUNC¶
+The above constants are available on Unix and Windows.
+
+os.O_DSYNC¶
+os.O_RSYNC¶
+os.O_SYNC¶
+os.O_NDELAY¶
+os.O_NONBLOCK¶
+os.O_NOCTTY¶
+os.O_CLOEXEC¶
+The above constants are only available on Unix.
+
+Changed in version 3.3: Add O_CLOEXEC constant.
+
+os.O_BINARY¶
+os.O_NOINHERIT¶
+os.O_SHORT_LIVED¶
+os.O_TEMPORARY¶
+os.O_RANDOM¶
+os.O_SEQUENTIAL¶
+os.O_TEXT¶
+The above constants are only available on Windows.
+
+os.O_ASYNC¶
+os.O_DIRECT¶
+os.O_DIRECTORY¶
+os.O_NOFOLLOW¶
+os.O_NOATIME¶
+os.O_PATH¶
+os.O_TMPFILE¶
+os.O_SHLOCK¶
+os.O_EXLOCK¶
+The above constants are extensions and not present if they are not defined by the C library.
+
+Changed in version 3.4: Add O_PATH on systems that support it. Add O_TMPFILE, only available on Linux Kernel 3.11 or newer.
+
+os.pread(fd, buffersize, offset)¶
+Read from a file descriptor, fd, at a position of offset. It will read up to buffersize number of bytes. The file offset remains unchanged.
+
+Availability: Unix.
+
+New in version 3.3.
+
+os.pwrite(fd, str, offset)¶
+Write bytestring to a file descriptor, fd, from offset, leaving the file offset unchanged.
+
+
+os.sendfile(out, in, offset, count)¶
+os.sendfile(out, in, offset, count, [headers, ][trailers, ]flags=0)
+Copy count bytes from file descriptor in to file descriptor out starting at offset. Return the number of bytes sent. When EOF is reached return 0.
+
+os.read(fd, n)¶
+Read at most n bytes from file descriptor fd. Return a bytestring containing the bytes read. If the end of the file referred to by fd has been reached, an empty bytes object is returned.
+
+Note
+
+This function is intended for low-level I/O and must be applied to a file descriptor as returned by os.open() or pipe(). To read a “file object” returned by the built-in function open() or by popen() or fdopen(), or sys.stdin, use its read() or readline() methods.
+
+os.readv(fd, buffers)¶
+Read from a file descriptor fd into a number of mutable bytes-like objects buffers. readv() will transfer data into each buffer until it is full and then move on to the next buffer in the sequence to hold the rest of the data. readv() returns the total number of bytes read (which may be less than the total capacity of all the objects).
+
+os.write(fd, str)¶
+Write the bytestring in str to file descriptor fd. Return the number of bytes actually written.
+
+Note
+
+This function is intended for low-level I/O and must be applied to a file descriptor as returned by os.open() or pipe(). To write a “file object” returned by the built-in function open() or by popen() or fdopen(), or sys.stdout or sys.stderr, use its write() method.
+
+os.writev(fd, buffers)¶
+Write the contents of buffers to file descriptor fd. buffers must be a sequence of bytes-like objects.
+
+os.listdir(path='.')
+
+os.makedirs(name, mode=0o777, exist_ok=False)¶
+Recursive directory creation function. Like mkdir(), but makes all intermediate-level directories needed to contain the leaf directory.
+
+os.mkfifo(path, mode=0o666, *, dir_fd=None)
+
+with os.scandir("./") as it:
+    for entry in it:
+        if not entry.name.startswith('.') and entry.is_file():
+            print(entry.name)
+
+import os
+statinfo = os.stat('somefile.txt')
+
+os.execl(path, arg0, arg1, ...)¶
+os.execle(path, arg0, arg1, ..., env)¶
+os.execlp(file, arg0, arg1, ...)¶
+os.execlpe(file, arg0, arg1, ..., env)¶
+os.execv(path, args)¶
+os.execve(path, args, env)¶
+os.execvp(file, args)¶
+os.execvpe(file, args, env)¶
+These functions all execute a new program, replacing the current process; they do not return. On Unix, the new executable is loaded into the current process, and will have the same process id as the caller. Errors will be reported as OSError exceptions.
+
+The current process is replaced immediately. Open file objects and descriptors are not flushed, so if there may be data buffered on these open files, you should flush them using sys.stdout.flush() or os.fsync() before calling an exec* function.
+
+os.fork()¶
+Fork a child process. Return 0 in the child and the child’s process id in the parent. If an error occurs OSError is raised.
+
+os.forkpty()
+Fork a child process, using a new pseudo-terminal as the child’s controlling terminal. Return a pair of (pid, fd), where pid is 0 in the child, the new child’s process id in the parent, and fd is the file descriptor of the master end of the pseudo-terminal. 
+
+os.kill(pid, sig)¶
+Send signal sig to the process pid. Constants for the specific signals available on the host platform are defined in the signal module.
+
+import os
+os.spawnlp(os.P_WAIT, 'cp', 'cp', 'index.html', '/dev/null')
+
+L = ['cp', 'index.html', '/dev/null']
+os.spawnvpe(os.P_WAIT, 'cp', L, os.environ)
+
+Execute the program path in a new process.
+
+(Note that the subprocess module provides more powerful facilities for spawning new processes and retrieving their results; using that module is preferable to using these functions. Check especially the Replacing Older Functions with the subprocess Module section.)
+
+If mode is P_NOWAIT, this function returns the process id of the new process; if mode is P_WAIT, returns the process’s exit code if it exits normally, or -signal, where signal is the signal that killed the process.
+
+os.sched_setaffinity(pid, mask)
+Restrict the process with PID pid (or the current process if zero) to a set of CPUs. mask is an iterable of integers representing the set of CPUs to which the process should be restricted.
+os.sched_getaffinity(26553)
+{0, 1, 2, 3}
+os.sched_setaffinity(26553,{2,3})
+
+os.sched_getaffinity(pid)¶
+Return the set of CPUs the process with PID pid (or the current process if zero) is restricted to.
+
+os.cpu_count()
+Return the number of CPUs in the system. Returns None if undetermined.
+

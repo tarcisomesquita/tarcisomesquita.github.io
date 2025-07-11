@@ -1,0 +1,20 @@
+separadas em páginas de 4kiB = 0x2000
+
+.text  Code Section
+.code  Code Section
+.rsrc  Resource Section (textos, disposição de itens na janela, ícones, imagens, menus, etc.)
+.data  Data Section (Variáveis inicializadas)
+.edata Export data section (informações sobre os nomes e endereços das funções externas contidas em uma DLL)
+.idata Import data section (informações sobre os nomes e endereços das funções internas contidas no executável)
+.rdata Section for Constant Data (Dados de somente leitura. Podem ser strings, constantes)
+.debug Debug information
+.tls   TLS Table
+.reloc Relocation Information
+
+BSS Contém todas as variáveis não inicializadas (sem um valor definido) do aplicativo.
+
+RSRC
+possui uma subdivisão interna separando cada recurso.
+Um bom modo de ver essas subdivisões e os dados nela contidos é utilizar um "Resource Editor", facilmente encontrado na
+internet. Recomendo o ResHack, que é gratuito e poderoso.
+

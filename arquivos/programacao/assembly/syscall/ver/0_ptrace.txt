@@ -1,0 +1,256 @@
+
+falta procurar por ptrace na pasta sobre linguagem c.
+faltar dominar a syscall clone.
+
+/usr/include/thread_db.h
+thread_db.h -- interface to libthread_db.so library for debugging -lpthread
+/lib/x86_64-linux-gnu/libthread_db-1.0.so
+/usr/lib/debug/lib/x86_64-linux-gnu/libthread_db-1.0.so
+
+/* Error codes of the library.  */
+typedef enum
+{
+  TD_OK,	  /* No error.  */
+  TD_ERR,	  /* No further specified error.  */
+  TD_NOTHR,	  /* No matching thread found.  */
+  TD_NOSV,	  /* No matching synchronization handle found.  */
+  TD_NOLWP,	  /* No matching light-weighted process found.  */
+  TD_BADPH,	  /* Invalid process handle.  */
+  TD_BADTH,	  /* Invalid thread handle.  */
+  TD_BADSH,	  /* Invalid synchronization handle.  */
+  TD_BADTA,	  /* Invalid thread agent.  */
+  TD_BADKEY,	  /* Invalid key.  */
+  TD_NOMSG,	  /* No event available.  */
+  TD_NOFPREGS,	  /* No floating-point register content available.  */
+  TD_NOLIBTHREAD, /* Application not linked with thread library.  */
+  TD_NOEVENT,	  /* Requested event is not supported.  */
+  TD_NOCAPAB,	  /* Capability not available.  */
+  TD_DBERR,	  /* Internal debug library error.  */
+  TD_NOAPLIC,	  /* Operation is not applicable.  */
+  TD_NOTSD,	  /* No thread-specific data available.  */
+  TD_MALLOC,	  /* Out of memory.  */
+  TD_PARTIALREG,  /* Not entire register set was read or written.  */
+  TD_NOXREGS,	  /* X register set not available for given thread.  */
+  TD_TLSDEFER,	  /* Thread has not yet allocated TLS for given module.  */
+  TD_NOTALLOC = TD_TLSDEFER,
+  TD_VERSION,	  /* Version if libpthread and libthread_db do not match.  */
+  TD_NOTLS	  /* There is no TLS segment in the given module.  */
+} td_err_e;
+
+/* The actual thread handle type.  This is also opaque.  */
+typedef struct td_thrhandle
+{
+  td_thragent_t *th_ta_p;
+  psaddr_t th_unique;
+} td_thrhandle_t;
+
+
+/* Retrieve general register contents of process running thread TH.  */
+extern td_err_e td_thr_getgregs (const td_thrhandle_t *__th, prgregset_t __gregs);
+
+/* Retrieve extended register contents of process running thread TH.  */
+extern td_err_e td_thr_getxregs (const td_thrhandle_t *__th, void *__xregs);
+
+/* Suspend execution of thread TH.  */
+extern td_err_e td_thr_dbsuspend (const td_thrhandle_t *__th);
+
+/* Resume execution of thread TH.  */
+extern td_err_e td_thr_dbresume (const td_thrhandle_t *__th);
+
+
+20212 [00007efdb63429d6] clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7efdb684b9d0) = 20213
+20212 [00007efdb637456e] ptrace(PTRACE_SEIZE, 20213, NULL, NULL) = -1 EPERM (Operation not permitted)
+20212 [00007efdb62ac757] kill(20213, SIGKILL <unfinished ...>
+
+20212 [00007efdb636d335] stat("./001_write", {st_mode=S_IFREG|0775, st_size=240, ...}) = 0
+20212 [00007efdb63429d6] clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7efdb684b9d0) = 20214
+20212 [00007efdb62ac59e] rt_sigaction(SIGTTOU, {SIG_IGN, [], SA_RESTORER, 0x7efdb62ac4a0}, NULL, 8) = 0
+20214 [00007efdb637456e] ptrace(PTRACE_TRACEME, 0, NULL, NULL <unfinished ...>
+20212 [00007efdb62ac59e] rt_sigaction(SIGTTIN, {SIG_IGN, [], SA_RESTORER, 0x7efdb62ac4a0},  <unfinished ...>
+
+man ptrace
+#include <sys/ptrace.h>
+ the tracer can use various ptrace requests to inspect and modify the tracee.
+
+PTRACE_SEIZE (since Linux 3.4)
+              Attach to the process specified in pid,  making  it  a  tracee  of  the  calling  process.   Unlike  PTRACE_ATTACH,
+              PTRACE_SEIZE does not stop the process.  Group-stops are reported as PTRACE_EVENT_STOP and WSTOPSIG(status) returns
+              the stop signal.  Automatically attached children stop with PTRACE_EVENT_STOP and WSTOPSIG(status) returns  SIGTRAP
+              instead  of  having  SIGSTOP  signal  delivered  to  them.   execve(2)  does  not deliver an extra SIGTRAP.  Only a
+              PTRACE_SEIZEd process can accept PTRACE_INTERRUPT and PTRACE_LISTEN commands.  The "seized" behavior just described
+              is  inherited  by  children  that  are  automatically  attached  using PTRACE_O_TRACEFORK, PTRACE_O_TRACEVFORK, and
+              PTRACE_O_TRACECLONE.  addr must be zero.  data contains a bit mask of ptrace options to activate immediately.
+
+
+$ find /usr/include/ -type f -exec grep "ptrace (" '{}' \;  -print
+/* Type of the REQUEST argument to `ptrace.'  */
+enum __ptrace_request
+{
+  /* Indicate that the process making this request should be traced.
+     All signals received by this process can be intercepted by its
+     parent, and its parent can use the other `ptrace' requests.  */
+  PTRACE_TRACEME = 0,
+#define PT_TRACE_ME PTRACE_TRACEME
+
+  /* Continue the process.  */
+  PTRACE_CONT = 7,
+#define PT_CONTINUE PTRACE_CONT
+
+  /* Kill the process.  */
+  PTRACE_KILL = 8,
+#define PT_KILL PTRACE_KILL
+
+  // execute a single instruction in the child task, then stop the child and notify the parent with a SIGTRAP. stepi from GDB
+  PTRACE_SINGLESTEP = 9,
+#define PT_STEP PTRACE_SINGLESTEP
+
+  /* Get all general purpose registers used by a processes.
+     This is not supported on all machines.
+/usr/include/x86_64-linux-gnu/sys/user.h
+struct user_regs_struct {
+  __extension__ unsigned long long int r15;
+  __extension__ unsigned long long int r14;
+  __extension__ unsigned long long int r13;
+  __extension__ unsigned long long int r12;
+  __extension__ unsigned long long int rbp;
+  __extension__ unsigned long long int rbx;
+  __extension__ unsigned long long int r11;
+  __extension__ unsigned long long int r10;
+  __extension__ unsigned long long int r9;
+  __extension__ unsigned long long int r8;
+  __extension__ unsigned long long int rax;
+  __extension__ unsigned long long int rcx;
+  __extension__ unsigned long long int rdx;
+  __extension__ unsigned long long int rsi;
+  __extension__ unsigned long long int rdi;
+  __extension__ unsigned long long int orig_rax;
+  __extension__ unsigned long long int rip;
+  __extension__ unsigned long long int cs;
+  __extension__ unsigned long long int eflags;
+  __extension__ unsigned long long int rsp;
+  __extension__ unsigned long long int ss;
+  __extension__ unsigned long long int fs_base;
+  __extension__ unsigned long long int gs_base;
+  __extension__ unsigned long long int ds;
+  __extension__ unsigned long long int es;
+  __extension__ unsigned long long int fs;
+  __extension__ unsigned long long int gs;
+};
+
+#include <sys/user.h>
+user_regs_struct regs;
+long ret = ptrace (PTRACE_GETREGS, child_pid, NULL, &regs);
+#ifdef __x86_64__
+regs.rip = 0xdeadbeef;
+#elif defined __i386__
+regs.eip = 0xdeadbeef;
+#endif
+ret = ptrace (PTRACE_SETREGS, child_pid, NULL, &regs);
+  */
+   PTRACE_GETREGS = 12,
+#define PT_GETREGS PTRACE_GETREGS
+
+  /* Set all general purpose registers used by a processes.
+     This is not supported on all machines.  */
+   PTRACE_SETREGS = 13,
+#define PT_SETREGS PTRACE_SETREGS
+
+  /* Attach to a process that is already running. */
+  PTRACE_ATTACH = 16,
+#define PT_ATTACH PTRACE_ATTACH
+
+  /* Detach from a process attached to with PTRACE_ATTACH.  */
+  PTRACE_DETACH = 17,
+#define PT_DETACH PTRACE_DETACH
+
+  /* Continue and stop at the next (return from) syscall.  */
+  PTRACE_SYSCALL = 24,
+#define PT_SYSCALL PTRACE_SYSCALL
+
+  /* Get last ptrace message.  */
+  PTRACE_GETEVENTMSG = 0x4201,
+#define PT_GETEVENTMSG PTRACE_GETEVENTMSG
+
+  /*
+Read  the tracee's registers.
+  addr specifies the type of registers to be read.
+  NT_PRSTATUS (with numerical value 1) usually results in reading of general-purpose registers.
+  If the CPU has, for example, floating-
+              point  and/or vector registers, they can be retrieved by setting addr to the corresponding NT_foo constant.  data points to a
+              struct iovec, which describes the destination buffer's location and length.  On return, the kernel modifies iov.len to  indi‐
+              cate the actual number of bytes returned.
+*/
+  PTRACE_GETREGSET = 0x4204,
+#define PTRACE_GETREGSET PTRACE_GETREGSET
+
+  /* Set register content.  */
+  PTRACE_SETREGSET = 0x4205,
+#define PTRACE_SETREGSET PTRACE_SETREGSET
+
+  /* Like PTRACE_ATTACH, but do not force tracee to trap and do not affect signal or group stop state.  */
+  PTRACE_SEIZE = 0x4206
+#define PTRACE_SEIZE PTRACE_SEIZE
+};
+
+REQUEST is one of the values above, and determines the action to be taken.
+   For all requests except PTRACE_TRACEME, PID specifies the process to be
+   traced.
+
+   PID and the other arguments described above for the various requests should
+   appear (those that are used for the particular request) as:
+     pid_t PID, void *ADDR, int DATA, void *ADDR2
+   after REQUEST.  */
+extern long int ptrace (enum ptrace_request request, ...);
+/usr/include/x86_64-linux-gnu/sys/ptrace.h
+
+
+struct iovec iov = { buf, len};
+
+ret = ptrace(PTRACE_GETREGSET/PTRACE_SETREGSET, pid, NT_XXX_TYPE, &iov);
+
+iov.len will be updated by the kernel, specifying how much the kernel has written/read to/from the user's iov.buf.
+#define PTRACE_SEIZE		0x4206
+#define PTRACE_TRACEME		   0
+
+
+
+
+ptrace 	long request, 	pid_t pid, 	long addr, 	long data
+
+  	arg 	eax	26	 
+  	  	ebx	requested action	 
+  	  	ecx	process id of the target job	 "child"
+  	  	edx	address in target job	         "address"
+  	  	esi	address in tracing job	         "data"
+  	return 	eax 	as specified by the request
+  	errors 	io, fault, perm, srch
+  	  	  	 
+ requests 	PTRACE_..   ret
+  	
+
+       PEEKTEXT pid,addr,*data  read word at location addr.
+       PEEKDATA pid,addr,*data  read the word at location addr in the USER area.
+       PEEKUSR pid,addr,*data   "
+       POKETEXT pid,addr,*data  write the word at location addr.
+       POKEDATA pid,addr,*data   "
+       POKEUSR pid,addr,*data  write the word at location addr in the USER area
+       TRACEME -/-  set the ptrace bit in the process flags.
+       CONT pid,,signo  restart after signal.
+       KILL pid  make the child exit, send it a sigkill.
+       SINGLESTEP pid sigtrap set the trap flag.
+    n.n.
+    n.n.
+       GETREGS pid,,*data  get all gp regs from the child. re register.
+       SETREGS pid,,*data  set all gp regs in the child.
+       GETFPREGS pid,,*data  get the child FPU state.
+       SETFPREGS pid,,*data  set the child FPU state.
+       ATTACH pid  attach to already running process
+       DETACH pid  detach a process that was attached.
+    K4 GETFPXREGS pid,,*data  get the child extended FPU state.
+    K4 SETFPXREGS pid,,*data  set the child extended FPU state.
+    n.n.
+    K4 SETOPTIONS pid,,data  -no comment- (option 'PTRACE_O_TRACESYSGOOD' or none)
+    n.n.
+    n.n.
+       SYSCALL pid,,signo  continue and stop at next (return from) syscall
+

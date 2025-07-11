@@ -1,0 +1,8 @@
+
+pipe
+
+add char to first byte
+ with rotate if > 0xff
+XOR char
+next byte, char++
+

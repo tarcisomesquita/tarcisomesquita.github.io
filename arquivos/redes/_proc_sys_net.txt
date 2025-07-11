@@ -1,0 +1,64 @@
+
+when building kernel:
+CONFIG_PROC_FS allows you to access and view the /proc filesystem
+CONFIG_SYSCTL allows to modify /proc entries
+
+echo "0" > /proc/sys/net/ipv4/ip_forward
+rp_filter can reject incoming packets if their source address doesn't match the network interface that they're arriving on
+It provides protection only against spoofed internal addresses; external addresses can still be spoofed.
+
+
+5.3.9.4. /proc/sys/net/
+#netdev_max_backlog  — Sets the maximum number of packets allowed to queue when a particular interface receives packets faster than the kernel can process them. The default value for this file is 300.
+#rmem_default — Sets the receive socket buffer default size in bytes.
+#rmem_max — Sets the receive socket buffer maximum size in bytes.
+#wmem_default — Sets the send socket buffer default size in bytes.
+#wmem_max — Sets the send socket buffer maximum size in bytes.
+
+The /proc/sys/net/ipv4/  directory contains additional networking settings. Many of these settings, used in conjunction with one another, are useful in preventing attacks on the system or when using the system to act as a router.
+
+    *
+
+      icmp_destunreach_rate, icmp_echoreply_rate, icmp_paramprob_rate, and icmp_timeexeed_rate — Set the maximum ICMP send packet rate, in 1/100 of a second, to hosts under certain conditions. A setting of 0 removes any delay and is not a good idea.
+    *
+
+      icmp_echo_ignore_all and icmp_echo_ignore_broadcasts — Allows the kernel to ignore ICMP ECHO packets from every host or only those originating from broadcast and multicast addresses, respectively. A value of 0 allows the kernel to respond, while a value of 1 ignores the packets.
+    *
+
+      ip_default_ttl — Sets the default Time To Live (TTL), which limits the number of hops a packet may make before reaching its destination. Increasing this value can diminish system performance.
+    *
+
+      ip_forward — Permits interfaces on the system to forward packets to one other. By default, this file is set to 0. Setting this file to 1 enables network packet forwarding.
+    *
+
+      ip_local_port_range — Specifies the range of ports to be used by TCP or UDP when a local port is needed. The first number is the lowest port to be used and the second number specifies the highest port. Any systems that expect to require more ports than the default 1024 to 4999 should use a range from 32768 to 61000.
+    *
+
+      tcp_syn_retries — Provides a limit on the number of times the system re-transmits a SYN packet when attempting to make a connection.
+    *
+
+      tcp_retries1 — Sets the number of permitted re-transmissions attempting to answer an incoming connection. Default of 3.
+    *
+
+      tcp_retries2 — Sets the number of permitted re-transmissions of TCP packets. Default of 15. 
+
+The
+
+/usr/share/doc/kernel-doc-<version>/Documentation/networking/ ip-sysctl.txt
+
+file contains a complete list of files and options available in the /proc/sys/net/ipv4/ directory.
+
+A number of other directories exist within the /proc/sys/net/ipv4/ directory and each covers a different aspect of the network stack. The /proc/sys/net/ipv4/conf/ directory allows each system interface to be configured in different ways, including the use of default settings for unconfigured devices (in the /proc/sys/net/ipv4/conf/default/ subdirectory) and settings that override all special configurations (in the /proc/sys/net/ipv4/conf/all/ subdirectory).
+
+The /proc/sys/net/ipv4/neigh/ directory contains settings for communicating with a host directly connected to the system (called a network neighbor) and also contains different settings for systems more than one hop away.
+
+Routing over IPV4 also has its own directory, /proc/sys/net/ipv4/route/. Unlike conf/ and neigh/, the /proc/sys/net/ipv4/route/ directory contains specifications that apply to routing with any interfaces on the system. Many of these settings, such as max_size, max_delay, and min_delay, relate to controlling the size of the routing cache. To clear the routing cache, write any value to the flush file.
+
+Additional information about these directories and the possible values for their configuration files can be found in:
+
+/usr/share/doc/kernel-doc-<version>/Documentation/filesystems/proc.txt
+
+
+ICMP redirect messages can also be a pain. If your box is not acting as a router, you'll probably want to disable them:
+
+    echo "0" > /proc/sys/net/ipv4/conf/all/accept_redirects

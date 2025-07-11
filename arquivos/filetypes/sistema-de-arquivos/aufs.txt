@@ -1,0 +1,31 @@
+
+veja também: https://help.ubuntu.com/community/aufsRootFileSystemOnUsbFlash
+
+aufs implements a union mount for Linux file systems.
+A union mount is a mount that allows several filesystems to be mounted at one time, appearing to be one filesystem.
+AUFS is frequently used by Live CDs.
+
+cat /proc/mounts
+
+aufs / aufs rw,noatime,si=8600af43,xino=/cow/.aufs.xino,br:/cow=rw:/rofs=rr 0 0
+
+mount -t aufs -o br=/tmp/dir1:/tmp/dir2 none /tmp/aufs-root/
+The directory /tmp/aufs-root will have the content of both /tmp/dir1 and /tmp/dir2
+br – specifies a branch, where each branch is separated by colon (:).
+none – specifies we don’t have any device associated with it, since we are going to mount two directories.
+
+mount -t aufs -o br=/home=rw:/home1=rw -o udba=reval  none /common/
+a file is created under /common/test/, it will be physically created in /home1/test/
+
+udba says what to do, if the user directly access a branch and create/update files without going through AuFS.
+
+udba=none – AuFS will be faster, but may show incorrect data, if the user created any files/directories without going through the AuFS.
+udba=reval – AuFS will re-lookup the branches and update it. So any changes done on any directories within the branch, will be reflected in “/common”.
+udba=notify – AuFS will register for inotify for all the directories in the branches. This affects the performance of AuFS.
+
+
+# mount -t aufs -o br=/tmp/dir1=rw:/home/lakshmanan=rw -o udba=reval -o create=rr none /tmp/aufs-root/
+When we have more than 2 branches which are writable, we can choose any one of the predefined policy, so that a file created will be stored based on the policy chosen.
+The option “create=rr”, specifies that round robin policy has to be applied for this union mount. In round robin policy, if we create 4 files, 2 files will be in “/tmp/dir1″ and 2 files will be in “/home/lakshmanan”.
+
+

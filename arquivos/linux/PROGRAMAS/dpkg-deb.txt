@@ -1,0 +1,6 @@
+Comando para extrair o conteúdo de um pacote deb para dentro de um diretório:
+# dpkg-deb -x <nome_do_Pacote.deb> /tmp/pacote
+
+Comando para extrair o arquivo de controle de um pacote deb:
+# dpkg-deb -e <nome_do_pacote.deb> /tmp/pacote/DEBIAN
+

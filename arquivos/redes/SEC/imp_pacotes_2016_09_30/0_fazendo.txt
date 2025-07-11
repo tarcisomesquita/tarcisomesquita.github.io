@@ -1,0 +1,14 @@
+fiz alterações necessárias para x64
+
+testei
+arp.pcap
+icmp.pcap
+dns.pcap
+STP.pcap
+
+
+acrescentar:
+nomes de camada
+trabalhando em rede_ipv2 e icmpv6
+informações sobre header nos arquivos
+

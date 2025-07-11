@@ -1,0 +1,7 @@
+
+$ethtool -i eth0
+driver: sky2
+version: 1.18
+firmware-version: N/A
+bus-info: 0000:02:00.0
+

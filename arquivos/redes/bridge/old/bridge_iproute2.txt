@@ -1,0 +1,16 @@
+sudo /etc/init.d/network-manager stop
+
+sudo ip link add name mybridge type bridge
+sudo ip link set mybridge up
+sudo ip link set enp3s0  master mybridge
+sudo ip link set enp0s25 master mybridge
+sudo modprobe br_netfilter
+
+sudo ip link set enp7s0 nomaster
+
+
+o que faz os modules presentes em:
+/lib/modules/4.13.0-16-generic/kernel/net/ipv6/netfilter/
+e
+/lib/modules/4.13.0-16-generic/kernel/net/netfilter/
+

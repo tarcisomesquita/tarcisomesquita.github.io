@@ -1,0 +1,315 @@
+file.wat  formato texto
+file.wasm formato binário
+
+https://github.com/schellingb/wajic/raw/master/samples/Basic.c
+https://wajic.github.io/samples/Basic.wasm
+
+https://emscripten.org/docs/porting/connecting_cpp_and_javascript/Interacting-with-code.html
+Calling JavaScript from C/C++
+emscripten_run_script("alert('hi')");
+
+
+int escolha(const char *texto) {
+  int valor;
+  
+  printf("%s", texto);
+  if (scanf("%d", &valor) != 1) {
+    printf("Entrada inválida. Por favor, digite um número inteiro.\n");
+    return -1; // Indica erro
+  }
+
+  return valor;
+}
+
+
+
+
+https://www.davidpriver.com/c-in-wasm.html
+parece interessante
+
+https://replit.com/
+Create a Repl > Template > HTML, CSS, JS > testeHTML
+
+rm script.js style.css 
+
+dependencies > System (advanced) > System Modules > Python tools 3.9
+
+# Get the emsdk repo
+git clone https://github.com/emscripten-core/emsdk.git
+
+# Enter that directory
+cd emsdk
+
+# Fetch the latest version of the emsdk (not needed the first time you clone)
+git pull
+
+# Download and install the latest SDK tools.
+./emsdk install latest
+
+# Make the "latest" SDK "active" for the current user. (writes .emscripten file)
+./emsdk activate latest
+
+# Activate PATH and other environment variables in the current terminal
+source ./emsdk_env.sh
+
+
+#include<stdio.h>
+
+int main() {
+  printf("Hello");
+  return 3;
+}
+
+emcc index.c -o index.html
+
+#include <stdio.h>
+int teste() {
+  char nome[50];
+  printf("Digite seu nome: ");
+  scanf("%s", nome);
+  printf("Seu nome é: %s\n", nome);
+  return 0;
+}
+emsdk
+
+
+https://webassembly.sh
+exemplo de shell
+
+https://webassembly.github.io/spec/core/
+Especificação
+
+https://developer.mozilla.org/en-US/docs/WebAssembly
+
+https://developer.mozilla.org/en-US/docs/WebAssembly/C_to_Wasm
+
+https://developer.mozilla.org/en-US/docs/WebAssembly/Understanding_the_text_format
+https://developer.mozilla.org/pt-BR/docs/WebAssembly/Understanding_the_text_format
+https://github.com/mdn/webassembly-examples
+
+https://developer.mozilla.org/en-US/docs/WebAssembly/Using_the_JavaScript_API
+
+https://github.com/webassembly/wabt
+
+https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/instantiateStreaming_static
+referência de WebAssembly.instantiateStreaming()
+
+usar WebAssembly.instantiateStreaming() em vez de WebAssembly.instantiate()
+
+https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage
+parece interessante
+
+const runWasm = async () => {
+  // Instantiate our wasm module
+  // And pass in a wasm module
+  const wasmModule = await wasmBrowserInstantiate("./index.wasm", {
+    index: {
+      consoleLog: value => console.log(value)
+    }
+  });
+};
+runWasm();
+
+
+WebAssembly.instantiateStreaming(fetch("simple.wasm"), importObject).then(
+  (results) => {
+    // Do something with the results!
+  },
+);
+
+importObject Optional
+An object containing the values to be imported into the newly-created Instance, such as functions or WebAssembly.Memory
+
+WebAssembly.instantiateStreaming(fetch("myModule.wasm"), importObject).then(
+  (obj) => {
+    // Call an exported function:
+    obj.instance.exports.exported_func();
+
+    // or access the buffer contents of an exported memory:
+    const dv = new DataView(obj.instance.exports.memory.buffer);
+
+    // or access the elements of an exported table:
+    const table = obj.instance.exports.table;
+    console.log(table.get(0)());
+  },
+);
+
+
+int main() {
+  return 54;
+}
+
+(module
+  (table 0 anyfunc)
+  (memory $0 1)
+  (export "memory" (memory $0))
+  (export "main" (func $func0))
+  (func $func0 (result i32)
+    i32.const 54
+  )
+)
+
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>wasm</title>
+</head>
+<body>
+<script>
+WebAssembly.instantiateStreaming(fetch('test.wasm'))
+.then(obj => {
+  console.log(obj.instance.exports.main());
+});
+</script>
+</body>
+</html>
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+(module
+  (export "main" (func $main))
+  (func $main (result i32)
+    i32.const 50
+  )
+)
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+export ::= {name name, desc exportdesc}
+func ::= {type typeidx, locals vec(valtype), body expr}
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+All code in a webassembly module is grouped into functions, which have the following pseudo-code structure:
+( func <signature> <locals> <body> )
+    The signature declares what the function takes (parameters) and returns (return values).
+    The locals are like vars in JavaScript, but with explicit types declared.
+    The body is just a linear list of low-level instructions.
+
+(func (param i32) (param i32) (result f64) ... )
+
+    i32: 32-bit integer
+    i64: 64-bit integer
+    f32: 32-bit float
+    f64: 64-bit float
+
+(func (param i32) (param f32) (local f64)
+  local.get 0
+  local.get 1
+  local.get 2)
+
+
+name prefixed by a dollar symbol
+Thus you could rewrite our previous signature like so:
+(func (param $p1 i32) (param $p2 f32) (local $loc f64) …)
+And then could write local.get $p1 instead of local.get 0,
+
+
+(module
+  (func (param $lhs i32) (param $rhs i32) (result i32)
+    local.get $lhs
+    local.get $rhs
+    i32.add))
+
+
+(module
+  (func $add (param $lhs i32) (param $rhs i32) (result i32)
+    local.get $lhs
+    local.get $rhs
+    i32.add)
+  (export "add" (func $add))
+)
+
+
+WebAssembly.instantiateStreaming(fetch('add.wasm'))
+  .then(obj => {
+    console.log(obj.instance.exports.add(1, 2));  // "3"
+  });
+
+
+(module
+  (func $getAnswer (result i32)
+    i32.const 42
+  )
+  (func (export "getAnswerPlus1") (result i32)
+    call $getAnswer
+    i32.const 1
+    i32.add
+  )
+)
+
+WebAssembly calling JavaScript functions
+(module
+  (import "console" "log" (func $log (param i32)))
+  (func (export "logIt")
+    i32.const 13
+    call $log))
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+ 
+(module
+  (import "console" "log" (func $log (param i32 i32)))
+  (import "js" "mem" (memory 1))
+  (data (i32.const 0) "Hi")
+  (func (export "writeHi")
+    i32.const 0  ;; pass offset 0 to log
+    i32.const 2  ;; pass length 2 to log
+    call $log))
+
+var memory = new WebAssembly.Memory({initial:1});
+
+var importObject = { console: { log: consoleLogString }, js: { mem: memory } };
+
+WebAssembly.instantiateStreaming(fetch('logger2.wasm'), importObject)
+  .then(obj => {
+    obj.instance.exports.writeHi();
+  });
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+The full module all together looks like this, and can be found in our wasm-table.wat example file:
+
+(module
+  (table 2 funcref)
+  (func $f1 (result i32)
+    i32.const 42
+  )
+  (func $f2 (result i32)
+    i32.const 13
+  )
+  (elem (i32.const 0) $f1 $f2)
+  (type $return_i32 (func (result i32)))
+  (func (export "callByIndex") (param $i i32) (result i32)
+    local.get $i
+    call_indirect (type $return_i32)
+  )
+)
+
+We load it into a webpage using the following JavaScript:
+
+WebAssembly.instantiateStreaming(fetch('wasm-table.wasm'))
+  .then(obj => {
+    console.log(obj.instance.exports.callByIndex(0)); // returns 42
+    console.log(obj.instance.exports.callByIndex(1)); // returns 13
+    console.log(obj.instance.exports.callByIndex(2)); // returns an error, because there is no index position 2 in the table
+  });
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+(module
+  (func $i (import "imports" "imported_func") (param i32))
+  (func (export "exported_func")
+    i32.const 42
+    call $i
+  )
+)
+
+var importObject = {
+  imports: { imported_func: arg => console.log(arg) }
+};
+
+WebAssembly.instantiateStreaming(fetch('simple.wasm'), importObject)
+.then(obj => obj.instance.exports.exported_func());
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

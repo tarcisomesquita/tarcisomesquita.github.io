@@ -1,0 +1,35 @@
+echo '<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>cores</title>
+<style>
+td {
+  margin: 4px;
+  border: 1px solid black;
+  width: 32px;
+  height: 32px;
+}
+</style>
+</head>
+
+<body>
+<div style="text-align:center">' > cores.html
+
+for B in 3 7 B F; do
+  echo '<table>' >> cores.html
+  for G in 3 7 B F; do
+    echo -n '<tr>' >> cores.html
+    for R in 3 7 B F; do
+      echo -n "<td bgcolor=\"#${R}F${G}F${B}F\"></td>" >> cores.html
+    done
+    echo '</tr>' >> cores.html
+  done
+  echo '</table><br/>' >> cores.html
+done
+
+echo '</div>
+
+</body>
+</html>' >> cores.html
+

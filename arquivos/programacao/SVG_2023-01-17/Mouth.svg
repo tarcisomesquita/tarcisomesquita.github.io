@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width='100%' height='100%'
+   xmlns='http://www.w3.org/2000/svg'
+   onload='Init(evt)'>
+   <title>Phonetics Guide</title>
+
+<script><![CDATA[
+
+var SVGDocument = null;
+var VocalFolds = null;
+
+function Init(evt) {
+   SVGDocument = evt.target.ownerDocument;
+   VocalFolds = SVGDocument.getElementById('vocalFolds');
+};
+
+function ShowPosition(evt, isShow) {
+   var button = evt.target;
+   var buttonId = button.getAttribute('id');
+
+   var labelText = buttonId;
+   var labelColor = 'gold';
+   if (!isShow) {
+      labelColor = 'white';
+      buttonId = 'rest';
+   }
+   
+   SVGDocument.getElementById(labelText + '-Label').setAttributeNS(null, 'fill', labelColor);
+   
+   if ('voiced' == buttonId || 'voiceless' == buttonId) {
+      var vocalFoldsPosition = buttonId;
+      if (!vocalFoldsArray[buttonId]) vocalFoldsPosition = 'voiceless';
+      var vocalFoldsDesc = vocalFoldsArray[vocalFoldsPosition];
+      newVocalFolds = vocalFoldsDesc;
+
+      AnimateVocalFolds();
+   }
+};
+
+var newVocalFolds = null;
+function AnimateVocalFolds()
+{
+   try
+   {
+      var currentVocalFolds = VocalFolds.getAttributeNS(null, 'd');
+      newVocalFolds = newVocalFolds.replace(/,/g, ' ');
+      currentVocalFolds = currentVocalFolds.replace(/,/g, ' ');
+
+      if (newVocalFolds != currentVocalFolds)
+      {
+         var changed = false;
+
+         var descArray = currentVocalFolds.split(/\W+/);
+         var newArray = newVocalFolds.split(/\W+/);
+         for (var n = 0; descArray.length > n; n++)
+         {
+            if (descArray[n])
+            {
+               header = descArray[n].match(/\D/);
+               eachDescNum = Number(descArray[n].match(/\d+/));
+               eachNewNum = Number(newArray[n].match(/\d+/));
+
+               if (eachNewNum > eachDescNum)
+               {
+                  eachDescNum++;
+                  changed = true;
+               }
+               else if (eachNewNum < eachDescNum)
+               {
+                  eachDescNum--;
+                  changed = true;
+               }
+               descArray[n] = header + eachDescNum;
+            }
+         }
+
+         var tempDesc = descArray.join(' ');
+         VocalFolds.setAttributeNS(null, 'd', tempDesc);
+
+         if (changed)
+         {
+            window.setTimeout('AnimateVocalFolds()', 0);
+         }
+      }
+   }
+   catch(er)
+   {
+      alert('Error in function AnimateVocalFolds:\n' + er.message)
+   }
+};
+
+var vocalFoldsArray = new Array();
+vocalFoldsArray['voiceless'] = 'M270,309 Q281,334 284,364 L295,360 Q291,324 275,301 H265 Q249,324 245,360 L256,364 Q259,334 270,309';
+vocalFoldsArray['voiced'] = 'M270,309 Q271,334 271,371 L283,364 Q285,324 275,301 H265 Q254,324 257,364 L269,371 Q269,334 270,309';
+
+]]></script>
+
+   <g fill='pink' fill-rule='evenodd' stroke='brown' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
+      <path id='vocalFolds'
+         d='M270,309 Q271,334 271,371 L283,364 Q285,324 275,301 H265 Q254,324 257,364 L269,371 Q269,334 270,309'
+            fill='white' stroke='#ff6347'
+         />
+   </g>
+
+
+<g stroke='blue' fill='cornflowerblue'
+   onmouseover='ShowPosition(evt, true)'
+   onmouseout='ShowPosition(evt, false)'>
+   <rect id='voiced'    x='400' y='370' width='100' height='20' rx='5' ry='5'/>
+   <rect id='voiceless' x='400' y='400' width='100' height='20' rx='5' ry='5'/>
+</g>
+
+<g fill='white' pointer-events='none' text-anchor='middle' font-size='14px'>
+   <text id='voiced-Label' x='450' y='385'>Voiced</text>
+   <text id='voiceless-Label' x='450' y='415'>Voiceless</text>
+</g>
+</svg>

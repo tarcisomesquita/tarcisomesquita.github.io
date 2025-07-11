@@ -1,0 +1,16 @@
+runlevel(8)
+
+SYNOPSIS
+runlevel [UTMP]
+
+DESCRIPTION
+runlevel reads the system utmp file (typically /var/run/utmp) to locate the most recent runlevel record, then outputs the previous and current runlevel to standard output, separated by a single space.
+If there is no previous runlevel in the record, the letter N will be printed instead.
+If no utmp file exists, or if no runlevel record can be found, runlevel prints the word unknown and exits with an error.
+
+EXIT STATUS
+runlevel will exit with status 0 if a utmp record was found or written to the file, otherwise it will exit with status 1.
+
+Upstart
+October 2006
+

@@ -1,0 +1,28 @@
+a configuração do link ADSL é composta por duas informações: os códigos VPI e VCI e o sistema de encapsulamento usado pela operadora.
+
+VPI é abreviação de "Virtual Path Identifier" e VCI de "Virtual Circuit Identifier". Juntos, os dois endereços indicam o caminho que o modem ADSL deve usar dentro da rede de telefonia para chegar até o roteador que oferece acesso à web.
+
+Os valores VPI/VCI usados atualmente no Brasil são:
+   Telefonica: VPI 8, VCI 35
+   Telemar: VPI 0, VCI 33
+   CTBC: VPI 0, VCI 35
+   Brasil Telecom: VPI 0, VCI 35
+   Brasil Telecom (no RS): VPI 1, VCI 32
+   GVT: VPI 0, VCI 35
+
+No Brasil é usado quase que exclusivamente o PPPoE encapsulado via LLC.
+
+PPPoE: Neste modo o link ADSL se comporta como um link Ethernet, usando o mesmo formato de frame e o mesmo sistema de endereçamento. Sobre este link Ethernet é criada uma conexão ponto a ponto (PPP), que liga seu modem ADSL ao servidor de acesso remoto, passando pelo DSLAN instalado na central, daí o termo "PPPoE", que significa "PPP over Ethernet".
+A conexão PPP simula uma conexão discada. Ao configurar o modem como bridge a "discagem" é feita pelo seu PC.
+
+PVC é abreviação de "Private Virtual Circuit". Normalmente, é usado um único PVC, responsável pelo link com a web, de forma que você simplesmente escolhe "PVC0" na configuração e especifica as demais informações referentes à conexão. É possível para as operadoras incluir mais circuitos virtuais na mesma conexão, usando um segundo circuito para VoIP, por exemplo, mas isso não é comum.
+
+A opção Authentication aceita os valores "PAP e "CHAP", que são os dois protocolos de autenticação usados em conjunto com o PPP. Normalmente, os provedores suportam ambos os protocolos, de forma que tanto faz qual dos dois é escolhido.
+
+A opção MTU permite definir o tamanho dos pacotes enviados através do link ppp, que podem conter até 1492 bytes no PPPoE e até 1500 bytes no PPPoA. Usar um tamanho de pacote menor pode ajudar em links ruins, mas normalmente só serve para reduzir a velocidade da conexão. A menos que tenha um bom motivo, simplesmente use o valor máximo.
+
+
+placa de rede deve estar configurada para obter o IP automaticamente.
+
+
+

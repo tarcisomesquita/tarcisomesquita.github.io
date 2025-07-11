@@ -1,0 +1,16 @@
+1. Select a target.
+2. Use intermediaries.
+3. Penetration testing steps.
+• Intelligence gathering
+• Active scanning and enumeration
+• Fingerprinting
+• Select a target system
+• Exploiting the uncovered vulnerabilities
+• Escalating privileges
+4. Preserve access. Installing a rootkit, back door, Trojan.
+5. Cover tracks.
+• Scrubbing event and audit logs
+• Hiding uploaded files
+• Hiding the active processes that allow the attacker to regain access
+• Disabling messages to security software and system logs to hide malicious processes and actions
+6. Harden the system. After taking ownership of a system, an attacker may fix the open vulnerabilities so no other attacker can use the system for other purposes.

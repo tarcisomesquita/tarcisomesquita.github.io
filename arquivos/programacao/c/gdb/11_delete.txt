@@ -1,0 +1,21 @@
+
+Delete some breakpoints or auto-display expressions.
+
+Arguments are breakpoint numbers with spaces in between.
+To delete all breakpoints, give no argument.
+
+Also a prefix command for deletion of other GDB objects.
+The "unset" command is also an alias for "delete".
+
+List of delete subcommands:
+
+delete breakpoints -- Delete some breakpoints or auto-display expressions
+delete checkpoint -- Delete a fork/checkpoint (experimental)
+delete display -- Cancel some expressions to be displayed when program stops
+delete mem -- Delete memory region
+delete tracepoints -- Delete specified tracepoints
+
+Type "help delete" followed by delete subcommand name for full documentation.
+Type "apropos word" to search for commands related to "word".
+Command name abbreviations are allowed if unambiguous.
+

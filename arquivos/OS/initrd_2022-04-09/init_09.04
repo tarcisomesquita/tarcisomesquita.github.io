@@ -1,0 +1,464 @@
+#!/bin/sh
+export PATH=/usr/bin:/usr/sbin:/bin:/sbin
+
+mkdir /sys  && mount -t sysfs -o nodev,noexec,nosuid none /sys
+mkdir /proc && mount -t proc  -o nodev,noexec,nosuid none /proc 
+mkdir /tmp  && mount -t tmpfs -o mode=0755           udev /dev
+
+mkdir -p /var/lock
+
+mknod -m 0600 /dev/console c 5 1
+mknod         /dev/null    c 1 3
+
+depmod -a
+
+# find total amount of available ram
+TOTAL_RAM=$( grep MemTotal /proc/meminfo | tr -d ': [A-Z][a-z]')
+
+# Use compcache on the liveCD if we have less than 512M
+if [ "${TOTAL_RAM}" -le 524288 ]; then
+   modprobe -q compcache compcache_size_kbytes="$(($(sed -nre 's/^MemTotal:\s*([0-9]+) kB$/\1/p' /proc/meminfo) * 25 / 100))"
+fi
+
+modprobe vesafb
+modprobe fbcon
+modprobe -q -b aufs
+
+for i in 1 2 3 4 5 6; do
+   mknod /dev/tty$i c 4 $i
+done
+
+for console in /dev/tty[1-6]; do
+   printf '\033%%G' >$console
+   #eval setfont -v -C $console /etc/console-setup/Uni1-Fixed16.psf.gz
+   #kbd_mode -u <$console
+done
+
+#eval loadkeys /etc/console-setup/boottime.kmap.gz
+
+# It's all over netlink now
+echo "" > /proc/sys/kernel/hotplug
+
+# Start the udev daemon to process events
+/sbin/udevd --daemon --resolve-names=never
+/sbin/udevadm trigger
+
+#exec 6>&1
+#exec 7>&2
+#exec 2>&1
+
+mkdir -p /cdrom
+sleep 3
+#mount -t vfat -o ro,noatime /dev/sda1 /cdrom || while /bin/true ; do echo "FALHOU: mount -t vfat /dev/sda1 /cdrom" ; read COMANDO ; $COMANDO ; done
+mount -t ext2 -o ro,noatime /dev/sda1 /cdrom || while /bin/true ; do echo "FALHOU: mount -t vfat /dev/sda1 /cdrom" ; read COMANDO ; $COMANDO ; done
+
+if [ "${TORAM}" ]; then
+   echo "Begin: Copying live_media to ram"
+   copy_live_to /cdrom ram
+   echo "Done."
+fi
+
+/sbin/udevadm settle
+#losetup /dev/loop0 /cdrom/casper/filesystem.squashfs
+losetup /dev/loop0 /cdrom/boot/filesystem.squashfs
+
+#fstype="squashfs"   # fstype=$(/lib/udev/vol_id -t /dev/loop0)
+mkdir /filesystem.squashfs
+mount -t squashfs -o ro,noatime /dev/loop0 /filesystem.squashfs || while /bin/true ; do echo "NAO MONTOU" ; read COMANDO ; $COMANDO ; done
+
+
+
+mkdir /cow  && mount -t tmpfs -o rw,noatime,mode=755 tmpfs /cow || panic "Can not mount tmpfs on /cow"
+mount -t aufs -o noatime,dirs=/cow=rw:/filesystem.squashfs=rr aufs /root || panic "aufs mount failed"
+
+mkdir /root/rofs  && mount -o move /filesystem.squashfs /root/rofs
+mkdir /root/cdrom && mount -o move /cdrom /root/cdrom
+
+# teste = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+while /bin/true ; do echo "DIGITE um COMANDO" ; read COMANDO ; $COMANDO ; done
+
+pkill udevd
+
+mkdir /root/dev  && mount -o move /dev  /root/dev
+mkdir /root/sys  && mount -o move /sys  /root/sys
+mkdir /root/proc && mount -o move /proc /root/proc
+
+# Chain to real filesystem
+#exec run-init /root /sbin/init "$@" </root/dev/console >/root/dev/console 2>&1
+exec switch_root /root /sbin/init "$@" </root/dev/console >/root/dev/console 2>&1
+panic "Could not execute run-init."
+
+while /bin/true ; do echo "DIGITE um COMANDO" ; read COMANDO ; $COMANDO ; done
+
+export USERNAME="ubuntu"
+export USERFULLNAME="PTAR"
+export HOST="enciclopedia"
+export BUILD_SYSTEM="Ubuntu"
+
+# U6aMy0wojraho is just a blank password
+# to obtain an encrypted password, you have to use the mkpasswd program that's shipped with whois package!
+# altera o arquivo /var/cache/debconf/config.dat
+chroot /root debconf-communicate -fnoninteractive casper > /dev/null <<EOF
+set passwd/root-password-crypted *
+set passwd/user-password-crypted U6aMy0wojraho
+set passwd/user-fullname $USERFULLNAME 
+set passwd/username $USERNAME
+set passwd/user-uid 999
+EOF
+
+chroot /root /usr/lib/user-setup/user-setup-apply > /dev/null
+
+# Clear out debconf database again to avoid confusing ubiquity later.
+chroot /root debconf-communicate -fnoninteractive casper > /dev/null <<EOF
+set passwd/root-password-crypted
+set passwd/user-password-crypted
+set passwd/user-fullname
+set passwd/username
+set passwd/user-uid
+EOF
+
+if [ -f /root/etc/sudoers ]; then
+   if [ "${BUILD_SYSTEM}" = "Ubuntu" ]; then
+      if grep -q '^%admin' /root/etc/sudoers; then
+         sed -i -e '/^%admin/s/(ALL) ALL$/(ALL) NOPASSWD: ALL/' /root/etc/sudoers
+      else
+         echo '%admin  ALL=(ALL) NOPASSWD: ALL' >> /root/etc/sudoers
+      fi
+   elif [ "${BUILD_SYSTEM}" = "Debian" ]; then
+      echo "${USERNAME}  ALL=(ALL) NOPASSWD: ALL" >> /root/etc/sudoers
+   fi
+fi
+
+# XXX - awful hack to stop xscreensaver locking the screen (#7150)
+echo 'RUNNING_UNDER_GDM="yes"' >> /root/etc/environment
+
+for file in /usr/share/applications/ubiquity-gtkui.desktop /usr/share/applications/kde/ubiquity-kdeui.desktop; do
+   if [ -f "/root/$file" ]; then
+      chroot /root install -d -o $USERNAME -g $USERNAME /home/$USERNAME/Desktop
+      chroot /root install -D -o $USERNAME -g $USERNAME $file /home/$USERNAME/Desktop/$(basename "$file")
+      break
+   fi
+done
+
+if [ -L /root/home/$USERNAME/Examples ]; then
+   chroot /root install -o $USERNAME -g $USERNAME -d /home/$USERNAME/Desktop/
+   mv /root/home/$USERNAME/Examples /root/home/$USERNAME/Desktop/
+fi
+
+if [ -f /root/home/$USERNAME/examples.desktop ]; then
+   chroot /root install -o $USERNAME -g $USERNAME -d /home/$USERNAME/Desktop/
+   mv /root/home/$USERNAME/examples.desktop /root/home/$USERNAME/Desktop/
+fi
+
+cat > /root/etc/fstab <<EOF
+aufs / aufs rw 0 0
+tmpfs /tmp tmpfs nosuid,nodev 0 0
+EOF
+
+rm -f /root/etc/rcS.d/S*checkroot.sh
+
+
+LANG=pt_BR.UTF-8
+printf 'LANG="%s"\n' "${LANG}" >> /root/etc/default/locale
+printf 'LANG="%s"\n' "${LANG}" >> /root/etc/environment
+printf '%s UTF-8\n' "${LANG}" > /root/etc/locale.gen
+chroot /root /usr/sbin/locale-gen "${LANG}"
+
+
+chroot /root sed -i \
+   -e "s/^AutomaticLoginEnable=.*\$/AutomaticLoginEnable=true/" \
+   -e "s/^AutomaticLogin=.*\$/AutomaticLogin=$USERNAME/" \
+   -e "s/^TimedLoginEnable=.*\$/TimedLoginEnable=true/" \
+   -e "s/^TimedLogin=.*\$/TimedLogin=$USERNAME/" \
+   -e "s/^TimedLoginDelay=.*\$/TimedLoginDelay=10/" \
+   /etc/gdm/gdm.conf
+
+echo "$HOST" > /root/etc/hostname
+cat > /root/etc/hosts <<EOF
+127.0.0.1 localhost
+127.0.1.1 $HOST
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+
+EOF
+hostname "$HOST"
+
+
+cslayout=br
+csmodel=abnt2
+
+chroot /root sed -i "s/^XKBLAYOUT=.*/XKBLAYOUT=\"$cslayout\"/" \
+   /etc/default/console-setup
+
+if ! (echo "SET console-setup/variantcode ''"; echo "FSET console-setup/variantcode seen false") | chroot /root debconf-communicate -fnoninteractive casper >/dev/null; then
+   chroot /root debconf-communicate -fnoninteractive casper >/dev/null <<EOF
+REGISTER debian-installer/dummy console-setup/variantcode
+SET console-setup/variantcode ''
+FSET console-setup/variantcode seen false
+EOF
+fi
+
+chroot /root sed -i "s/^XKBMODEL=.*/XKBMODEL=\"$csmodel\"/" \
+   /etc/default/console-setup
+
+if ! (echo "SET console-setup/optionscode ''"; echo "FSET console-setup/optionscode seen false") | chroot /root debconf-communicate -fnoninteractive casper >/dev/null; then
+   chroot /root debconf-communicate -fnoninteractive casper >/dev/null <<EOF
+REGISTER debian-installer/dummy console-setup/optionscode
+SET console-setup/optionscode ''
+FSET console-setup/optionscode seen false
+EOF
+fi
+
+if ! (echo "SET console-setup/codesetcode ''"; echo "FSET console-setup/codesetcode seen false") | chroot /root debconf-communicate -fnoninteractive casper >/dev/null; then
+   chroot /root debconf-communicate -fnoninteractive casper >/dev/null <<EOF
+REGISTER debian-installer/dummy console-setup/codesetcode
+SET console-setup/codesetcode ''
+FSET console-setup/codesetcode seen false
+EOF
+fi
+
+sed -i 's/CONSOLE_SCREEN=$/CONSOLE_SCREEN=setupcon/; t END; b; : END; n; b END' /root/etc/init.d/usplash
+
+
+echo "Configuring X..."
+
+mount -n -o bind /sys  /root/sys
+mount -n -o bind /proc /root/proc
+mount -n -o bind /dev  /root/dev
+
+chroot /root debconf-communicate -fnoninteractive casper > /dev/null <<EOF
+set xserver-xorg/autodetect_keyboard true
+fset xserver-xorg/autodetect_keyboard seen true
+EOF
+
+DEBUG_XORG_PACKAGE=1 DEBUG_XORG_DEBCONF=1 LANG=$LANG chroot /root /usr/sbin/dpkg-reconfigure -fnoninteractive --no-reload xserver-xorg
+umount /root/sys
+umount /root/proc
+umount /root/dev
+
+
+echo "Configuring gnome-panel-data..."
+
+if [ -x /root/usr/sbin/laptop-detect ]; then
+   if chroot /root laptop-detect; then
+      chroot /root /usr/sbin/dpkg-reconfigure -fnoninteractive --no-reload gnome-panel-data
+   fi
+fi
+
+panel_version=$(chroot /root /usr/bin/dpkg-query -W --showformat='${Version}' gnome-panel-data 2>/dev/null) || panel_version=""
+if [ -n "$panel_version" ]; then
+   chroot /root sudo -u "$USERNAME" gconftool-2 -s -t bool /apps/panel/global/disable_lock_screen true
+fi
+
+
+echo "Configuring screensaver..."
+
+gnome_screensaver_version=$(chroot /root dpkg-query -W --showformat='${Version}' gnome-screensaver 2>/dev/null) || gnome_screensaver_version=""
+if [ -n "$gnome_screensaver_version" ]; then
+   # Support legacy gconf value
+   chroot /root sudo -u "$USERNAME" gconftool-2 -t bool -s /apps/gnome-screensaver/lock false
+   chroot /root sudo -u "$USERNAME" gconftool-2 -t bool -s /apps/gnome-screensaver/lock_enabled false
+fi
+
+if [ -d /root/usr/share/kubuntu-default-settings/kde-profile/default/share/config ]; then
+   printf "[ScreenSaver]\nLock=false\n" >> /root/usr/share/kubuntu-default-settings/kde-profile/default/share/config/kdesktoprc
+fi
+
+
+echo "Regenerating SSL certificate..."
+if [ -x /root/usr/sbin/make-ssl-cert ]; then
+   chroot /root /usr/sbin/make-ssl-cert generate-default-snakeoil --force-overwrite
+fi
+
+
+echo "Preconfiguring networking..."
+cat > /root/etc/network/interfaces <<EOF
+auto lo
+iface lo inet loopback
+
+EOF
+
+/sbin/udevadm trigger
+/sbin/udevadm settle
+
+
+echo "Loading preseed file..."
+location=/cdrom/preseed/ubuntu.seed
+chroot /root debconf-set-selections < "/root$location"
+
+reply="$(echo "GET preseed/early_command" | chroot /root debconf-communicate -fnoninteractive casper)"
+if [ "${reply#0 }" != "$reply" ]; then
+   reply="${reply#0 }"
+   sh -c "$reply"
+fi
+
+# Clear out debconf database backup files to save memory.
+rm -f /root/var/cache/debconf/*.dat-old
+
+
+echo "Setting up init..."
+
+if [ -n "$USERNAME" ]; then
+   if [ -f /root/etc/inittab ]; then
+      sed -i -e "s|^\([^:]*:[^:]*:[^:]*\):.*getty.*\<\(tty[0-9]*\).*$|\1:/bin/login -f $USERNAME </dev/\2 >/dev/\2 2>\&1|" /root/etc/inittab
+   fi
+   if [ "/root/etc/event.d/tty*" != "$(echo /root/etc/event.d/tty*)" ]; then
+      for f in /root/etc/event.d/tty*; do
+         sed -i -e "s|^exec.*|exec /bin/login -f $USERNAME </dev/$(basename $f) > /dev/$(basename $f) 2>\&1|" $f
+      done
+      for x in $(cat /proc/cmdline); do
+         case $x in
+            textonly|automatic-ubiquity|only-ubiquity|noninteractive)
+               rm -f /root/etc/rc?.d/[SK]??[gkx]dm
+               ;;
+         esac
+      done
+   fi
+
+   # Since we use autologin, lastlog doesn't make sense on the console.
+   sed -i '/^[^#].*pam_lastlog\.so/s/^/# /' /root/etc/pam.d/login
+fi
+
+# This has the nice side effect of the cron.{daily,weekly,monthly} jobs in
+# /etc/crontab remaining disabled, yet also not run by anacron
+if [ -x /root/usr/sbin/anacron ]; then
+   chroot /root dpkg-divert --add --rename --quiet /usr/sbin/anacron
+   ln -s /bin/true /usr/sbin/anacron
+fi
+
+# No point, really
+rm -f /root/etc/rc?.d/[SK]??postfix
+
+# Avoid clobbering the user's clock
+rm -f /root/etc/rc?.d/K??hwclock.sh
+
+# Disable readahead since it doesn't play well with squashfs + unionfs
+# use chmod instead of mv to not trigger unionfs bugs.
+if [ -e /root/sbin/readahead-list ]; then
+   chmod -x /root/sbin/readahead-list
+fi
+
+
+echo "Disabling update-notifier..."
+
+# For GNOME, we divert away apt-check to avoid a regular 'apt-get update'
+# equivalent in the live session. We want to run update-notifier for crash
+# report handling.
+chroot /root dpkg-divert --add --rename --quiet \
+   /usr/lib/update-notifier/apt-check
+ln -s /bin/true /root/usr/lib/update-notifier/apt-check
+
+# For KDE, adept_notifier's only useful function at the moment is an
+# 'apt-get update' equivalent, so we disable it entirely.
+rm -f /root/usr/share/autostart/adept_notifier_auto.desktop
+
+
+echo "Configuring power management..."
+
+gpm_version=$(chroot /root /usr/bin/dpkg-query -W --showformat='${Version}' gnome-power-manager 2>/dev/null) || panel_version=""
+if [ -n "$gpm_version" ]; then
+#    casper-reconfigure /root gnome-power-manager
+   chroot /root sudo -u "$USERNAME" gconftool-2 -s -t bool /apps/gnome-power-manager/general/can_hibernate false
+fi
+
+
+echo "Enabling detection of crashes..."
+if [ -e /root/etc/default/apport ]; then
+   sed -i 's/enabled=0/enabled=1/' /root/etc/default/apport
+fi
+
+
+echo "Fixing language selector..."
+
+if [ -e /root/usr/share/applications/language-selector.desktop ]; then
+   sed -i '/^Exec/ s|/usr/bin/gnome-language-selector|& -n|' /root/usr/share/applications/language-selector.desktop
+
+fi
+
+if [ -x /root/usr/bin/fontconfig-voodoo ]; then
+   chroot /root fontconfig-voodoo --auto --quiet || true
+fi
+
+
+echo "Disabling jockey driver check..."
+rm -f /root/etc/xdg/autostart/jockey*.desktop
+while /bin/true ; do echo "DIGITE um COMANDO" ; read COMANDO ; $COMANDO ; done
+
+
+echo "Installing driver updates..."
+
+install_dir=/var/cache/driver-updates
+
+mkdir "/root$install_dir"
+cp -a /tmp/driver-updates/*.deb "/root$install_dir/"
+
+# We cannot leave packages in a bad state. So if the install fails, remove
+# it. This will get caught in casper.log.
+for deb in "/root$install_dir"/*; do
+   [ -f "$deb" ] || continue
+   debbase="${deb##*/}"
+   if ! chroot /root dpkg -i "$install_dir/$debbase"; then
+      chroot /root dpkg -P "${debbase%%_*}"
+   fi
+done
+
+
+echo "Adding APT-CDROM source..."
+chroot /root apt-cdrom -m add
+
+echo ="Disabling AppArmor (does not work with stacked file systems)..."
+chroot /root update-rc.d -f apparmor remove
+
+
+echo "Grant administrative PolicyKit pivilieges to default user..."
+
+# configure PolicyKit in live session
+cat << EOF > /root/etc/PolicyKit/PolicyKit.conf
+<?xml version="1.0" encoding="UTF-8"?> <!-- -*- XML -*- -->
+
+<!DOCTYPE pkconfig PUBLIC "-//freedesktop//DTD PolicyKit Configuration 1.0//EN"
+"http://hal.freedesktop.org/releases/PolicyKit/1.0/config.dtd">
+
+<!-- See the manual page PolicyKit.conf(5) for file format -->
+
+<config version="0.1">
+   <match user="root">
+      <return result="yes"/>
+   </match>
+   <!-- don't ask password for user in live session -->
+   <match user="$USERNAME">
+      <return result="yes"/>
+   </match>
+   <define_admin_auth group="admin"/>
+</config>
+EOF
+
+
+echo "Disabling gdm guest session functionality..."
+chroot /root dpkg -P gdm-guest-session
+
+#exec 1>&6 6>&-
+#exec 2>&7 7>&-
+
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+pkill udevd
+
+# Move /dev to the real filesystem
+mount -n -o move /dev  /root/dev
+mount -n -o move /sys  /root/sys
+mount -n -o move /proc /root/proc
+
+while /bin/true ; do echo "DIGITE um COMANDO" ; read COMANDO ; $COMANDO ; done
+
+# Chain to real filesystem
+exec run-init /root /sbin/init "$@" </root/dev/console >/root/dev/console 2>&1
+panic "Could not execute run-init."
+

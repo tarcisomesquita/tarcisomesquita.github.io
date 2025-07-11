@@ -1,0 +1,21 @@
+
+When you compile static programs, like the hello world program the compiler will automatically link to your program a library called `libc.a'. So when you type
+
+% gcc -c hello.c
+% gcc -static -o hello hello.o
+
+what is actually going on behind the scenes is:
+
+% gcc -c hello.c
+% gcc -o hello hello.c -lc
+
+To see why this is necessary, try `nm' on `hello.o':
+
+% nm hello.o
+00000000 t gcc2_compiled.
+00000000 T main
+         U printf
+
+The file `hello.o' defines the symbol `main', but it marks the symbol `printf' as undefined.
+
+

@@ -1,0 +1,6 @@
+
+Graphics g;
+g = getGraphics();
+✔ O método para se desenhar uma linha é :
+g.drawLine(x1,y1,x2,y2);
+

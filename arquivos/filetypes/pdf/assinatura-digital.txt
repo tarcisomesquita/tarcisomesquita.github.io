@@ -1,0 +1,19 @@
+https://assinador.iti.br/
+https://www.gov.br/governodigital/pt-br/assinatura-eletronica/saiba-como-importar-os-certificados-do-gov-br-no-adobe-acrobat-reader
+
+https://gov.br/assina
+
+https://manual-integracao-assinatura-eletronica.servicos.gov.br/pt_BR/latest/
+
+Passo a passo para integrar com o Login Único (Conta GOV.BR):
+https://manual-roteiro-integracao-login-unico.servicos.gov.br/pt/stable/iniciarintegracao.html
+
+
+
+O certificado digital GOV.BR
+
+Quando um cidadão que possui conta GOV.BR nível prata ou ouro acessa o Portal de Assinaturas GOV.BR ou um serviço integrado à API de Serviços de Assinatura Eletrônica GOV.BR um certificado digital avançado é emitido de forma automática e gratuita.
+
+Esse certificado é armazenado na infraestrutura do Instituto Nacional de Tecnologia da Informação (ITI), possui validade de 1 ano e pode ser utilizado por um número ilimitado de vezes nesse período. Após o vencimento, o cidadão poderá emitir outro certificado e assim sucessivamente, enquanto possuir uma conta GOV.BR nível prata ou ouro ativa. Também é possível revogar esse certificado mediante solicitação ao Departamento de Identidade Digital (DEPID/SGD).
+
+

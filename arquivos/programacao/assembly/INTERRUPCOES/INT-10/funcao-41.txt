@@ -1,0 +1,9 @@
+
+mov bx,0x55aa
+mov ah,0x41 ;  set text mode
+int 0x13
+
+jc x7CCC
+cmp bx,0xaa55
+jnz x7CCC
+

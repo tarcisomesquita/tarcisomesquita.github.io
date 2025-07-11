@@ -1,0 +1,68 @@
+cp /media/ubuntu/ARQ_D/redes/redes/4_sniffer_monitorar-trafego-da-rede/arpspoof/mac_def.elf ./
+sudo cp /media/ubuntu/ARQ_D/redes/redes/4_sniffer_monitorar-trafego-da-rede/bridge/brctl /bin
+sudo dpkg -i /media/ubuntu/ARQ_D/redes/redes/4_sniffer_monitorar-trafego-da-rede/bridge/ebtables_2.0.10.4-3.4ubuntu1_amd64.deb
+
+sudo /etc/init.d/network-manager stop
+sudo rfkill block all
+sudo bash -c "echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6"
+sudo bash -c "echo 8 > /proc/sys/net/ipv4/conf/all/arp_ignore"
+#sudo bash -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+#sudo bash -c "echo 1 > /proc/sys/net/ipv4/conf/all/forwarding"
+
+sudo bash -c 'echo "nameserver 192.168.1.1" >> /etc/resolv.conf'
+
+sudo ip6tables -t filter -P INPUT   DROP
+sudo ip6tables -t filter -P FORWARD DROP
+sudo ip6tables -t filter -P OUTPUT  DROP
+sudo iptables  -t filter -P INPUT   DROP
+sudo iptables  -t filter -P FORWARD DROP
+sudo iptables  -t filter -P OUTPUT  DROP
+
+sudo iptables -t filter -F INPUT
+sudo iptables -t filter -I INPUT -j DROP
+sudo iptables -t filter -I INPUT -m state --state NEW,INVALID                                   -j DROP
+sudo iptables -t filter -I INPUT                                                                -j LOG --log-prefix "NEW: " --log-level info
+sudo iptables -t filter -I INPUT -p udp --sport 53  -s 192.168.1.1 -m state --state ESTABLISHED -j ACCEPT
+sudo iptables -t filter -I INPUT -p tcp --sport 443                -m state --state ESTABLISHED -j ACCEPT
+
+sudo iptables -t filter -F OUTPUT
+sudo iptables -t filter -I OUTPUT -j DROP
+sudo iptables -t filter -I OUTPUT -d 172.217.0.0/16           -j ACCEPT   -m comment --comment "google"
+sudo iptables -t filter -I OUTPUT -d 216.58.0.0/16            -j ACCEPT   -m comment --comment "google"
+sudo iptables -t filter -I OUTPUT -p udp --dport 53  -d 192.168.1.1 -j ACCEPT
+
+
+sudo modprobe --verbose bridge
+
+sudo brctl addbr br0
+sudo brctl addif br0 enp7s0
+sudo ifconfig enp7s0 0.0.0.0 hw ether 00:98:67:76:05:32 promisc up
+sudo brctl setfd br0 0
+sudo brctl stp br0 off
+sudo ifconfig br0 192.168.2.92 hw ether 00:98:67:76:05:32 promisc up
+sudo route add default gw 192.168.1.1 dev br0
+
+sudo bash -c 'tcpdump -U -i enp7s0 -C 100 -w "$(date +'%Y-%m-%d_%H-%M')".pcap not \(arp and ether src 00:98:67:76:05:32\) &'
+
+sudo arp -i br0 -s 192.168.1.1 fc:b0:c4:62:ce:f4
+sudo arp -i enp7s0 -s 192.168.1.1 fc:b0:c4:62:ce:f4
+
+sudo ebtables -P FORWARD DROP
+sudo ebtables -P INPUT DROP
+sudo ebtables -I INPUT --log-level info --log-prefix EB_IN -j DROP
+sudo ebtables -I INPUT -p IPv4 -j ACCEPT
+sudo ebtables -I INPUT -p ARP -j DROP
+sudo ebtables -I INPUT -s ! fc:b0:c4:62:ce:f4 -j DROP
+
+
+sudo ebtables -P OUTPUT DROP
+sudo ebtables -I OUTPUT --log-level info --log-ip --log-arp --log-prefix EB_OUT -j DROP
+sudo ebtables -I OUTPUT -p IPv4 -j ACCEPT
+sudo ebtables -I OUTPUT -p ARP -j ACCEPT
+sudo ebtables -I OUTPUT -d ! fc:b0:c4:62:ce:f4 -j DROP
+
+sudo bash -c "./mac_def.elf &"
+sudo bash -c "while true ; do arping -c 10 191.168.1.1; sleep 1 ; done" &
+
+clear; sudo ebtables -L ; echo ""; sudo iptables -n -v -L
+

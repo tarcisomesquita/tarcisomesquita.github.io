@@ -1,0 +1,30 @@
+  54 find /rofs/usr/lib/ -name 'libopcodes*' -print
+  55 ls -l /rofs/usr/lib/x86_64-linux-gnu/libopcodes-2.26-system.so 
+  56 cp /rofs/usr/lib/x86_64-linux-gnu/libopcodes-2.26-system.so /lib/x86_64-linux-gnu/
+  57 ./x86_64-linux-gnu-as 
+  58 cp /rofs/usr/lib/x86_64-linux-gnu/libz.  /lib/x86_64-linux-gnu/
+  59 ./x86_64-linux-gnu-as 
+  60 find /rofs/usr/lib/ -name 'libz.so.1' -print
+  61 find /rofs/lib/ -name 'libz.so.1' -print
+  62 ls -l /rofs/lib/x86_64-linux-gnu/libz.so.1
+  63 ls -l /rofs/lib/x86_64-linux-gnu/libz.so.1.2.8 
+  64 cp /rofs/lib/x86_64-linux-gnu/libz.so.1.2.8 /lib/x86_64-linux-gnu/
+  65 cd /lib/x86_64-linux-gnu/
+  66 ln -s libz.so.1 libz.so.1.2.8
+  67 ln -s libz.so.1.2.8 libz.so.1
+  68 cd -
+  69 cd ..
+  70 ./x86_64-linux-gnu-as 
+  71 ./ldd 
+  72 ./x86_64-linux-gnu-readelf 
+  73 ./x86_64-linux-gnu-readelf ./ldd
+  74 file ./ldd
+  75 file x86_64-linux-gnu-as 
+  76 ./x86_64-linux-gnu-readelf ./ldd
+  77 ./x86_64-linux-gnu-readelf -a ./lddl
+  78 ls -l /rofs/usr/bin/ldd
+  79 ./x86_64-linux-gnu-readelf -a /rofs/usr/bin/ldd
+  80 cat -v /rofs/usr/bin/ldd
+  81 cat  /rofs/usr/bin/ldd | hexdump -C
+  82 cat  /rofs/usr/bin/ldd | hexdump -C | less
+  83 history | tail -n 30 > h.txt

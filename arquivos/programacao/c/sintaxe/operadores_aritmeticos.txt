@@ -1,0 +1,12 @@
+
+Operador  	Função
+= 	Atribuição
++ 	Soma
+- 	Subtração
+* 	Multiplicação
+/ 	Divisão
+% 	Resto da Divisão
+++ 	Incremento pré ou pós-fixado
+-- 	Decremento pré ou pós-fixado
+
+OBS.: Na divisao entre operandos inteiros o resultado é um valor inteiro.

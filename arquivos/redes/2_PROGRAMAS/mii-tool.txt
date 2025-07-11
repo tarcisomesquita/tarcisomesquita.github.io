@@ -1,0 +1,17 @@
+
+# mii-tool
+eth0: negotiated 100BaseTx-FD, link ok
+
+"100BaseTx-FD"  Full-Duplex
+"100BaseTx-HD"  Half-Duplex
+
+10BaseT-FD   10Mb/s
+10BaseT-HD
+
+"100BaseT4" cross-over
+
+para forçar um determinado modo de operação use o parâmetro "-F", seguido do padrão desejado:
+# mii-tool -F 100BaseTx-FD
+ou:
+# mii-tool -F 100BaseTx-HD
+

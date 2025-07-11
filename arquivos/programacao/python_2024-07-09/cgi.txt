@@ -1,0 +1,18 @@
+mkdir cgi-bin
+
+Example 1: cgi-bin/hello.py
+#!/data/data/com.termux/files/usr/bin/python3
+print("Content-type: text/html")
+print("")
+print("""<html><body>
+<p>Hello World cgi!</p>
+</body></html>""")
+
+chmod a+x cgi-bin/hello.py
+python3 -m http.server --cgi
+http://localhost:8000/cgi-bin/hello.py
+
+Example 2: cgi-bin/cgitest.py
+#!/data/data/com.termux/files/usr/bin/python3
+import cgi
+cgi.test()

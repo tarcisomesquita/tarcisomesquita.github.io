@@ -1,0 +1,264 @@
+
+Pcap_Global_Header:
+Magic_Number:     0xA1B2C3D4      ; pcap file
+Version_Major:    2               ; versão é 2.4
+Version_Minor:    4               ; 
+Thiszone:         0               ; sem correção de tempo em relação ao GMT
+sigfigs:          0               ; accuracy of time stamps
+snaplen:          01500           ; length for the capture, typically 65535
+network:          001             ; enlace Ethernet
+
+
+2012/01/02  10:47:40.375411  = = = = = = = = = offset = 0x00000018 = = = = = = = = = = = = = =
+
+Pcap_Packet_Header:
+ts_sec:           0x4F01A76C      ; number of seconds elapsed since 00:00:00 on January 1, 1970
+ts_usec:          0x0005BA73      ; tempo em microsegundos
+incl_len:              00074      ; quantidade de bytes capturados
+orig_len:              00074      ; quantidade de bytes que o pacote possuia
+
+
+Cabeçalho Ethernet:
+MAC destination . . . . . (48) 10:1D:C0:36:C1:E5
+MAC source  . . . . . . . (48) 00:13:02:54:33:47
+Ethertype . . . . . . . . (16) 0x0800  Internet Protocol, Version 4 (IPv4)
+
+
+Cabeçalho IP:
+version  . . . . . . . (04) 4   ipv4
+header length  . . . . (04) 5   (words de 4 bytes)
+TOS  . . . . . . . . . (08) 0
+total length . . . . . (16) 60
+identification . . . . (16) 53605
+flags  . . . . . . . . (03) 0 
+fragment offset  . . . (13) 0 
+TTL  . . . . . . . . . (08) 64 
+protocol . . . . . . . (08) 17 UDP
+header checksum  . . . (16) 0xD14F
+source address . . . . (32) 192.168.43.170
+destination address  . (32) 192.168.43.1
+
+
+Cabeçalho UDP:
+source port  . . . . . (16) 48142
+destination port . . . (16) 53
+lenght . . . . . . . . (16) 40
+checksum . . . . . . . (16) 57783
+
+
+Cabeçalho DNS:
+Identificação  . . . . (16) 64254
+OP . . . . . . . . . . (01) 0      Query
+QueryType              (04) 0      query
+AA                     (01) 0      answer not authoritive
+MT                     (01) 0      message not truncated
+RD                     (01) 1      recursion desired
+RA                     (01) 0      recursion not available
+Reserved               (03) 0b000
+ResponseType           (04) 0      No error
+Number of Questions    (16) 1
+Number of Answers      (16) 0
+Number of Authority    (16) 0
+Number of Additional   (16) 0
+
+Questões:
+www.google.com.
+type = A (host address)   class = IN (internet)
+
+
+
+2012/01/02  10:47:42.179949  = = = = = = = = = offset = 0x00000072 = = = = = = = = = = = = = =
+
+Pcap_Packet_Header:
+ts_sec:           0x4F01A76E      ; number of seconds elapsed since 00:00:00 on January 1, 1970
+ts_usec:          0x0002BEED      ; tempo em microsegundos
+incl_len:              00174      ; quantidade de bytes capturados
+orig_len:              00174      ; quantidade de bytes que o pacote possuia
+
+
+Cabeçalho Ethernet:
+MAC destination . . . . . (48) 00:13:02:54:33:47
+MAC source  . . . . . . . (48) 10:1D:C0:36:C1:E5
+Ethertype . . . . . . . . (16) 0x0800  Internet Protocol, Version 4 (IPv4)
+
+
+Cabeçalho IP:
+version  . . . . . . . (04) 4   ipv4
+header length  . . . . (04) 5   (words de 4 bytes)
+TOS  . . . . . . . . . (08) 0
+total length . . . . . (16) 160
+identification . . . . (16) 0
+flags  . . . . . . . . (03) 4 tem mais fragmentos
+fragment offset  . . . (13) 0 
+TTL  . . . . . . . . . (08) 64 
+protocol . . . . . . . (08) 17 UDP
+header checksum  . . . (16) 0x6251
+source address . . . . (32) 192.168.43.1
+destination address  . (32) 192.168.43.170
+
+
+Cabeçalho UDP:
+source port  . . . . . (16) 53
+destination port . . . (16) 48142
+lenght . . . . . . . . (16) 140
+checksum . . . . . . . (16) 26237
+
+
+Cabeçalho DNS:
+Identificação  . . . . (16) 64254
+OP . . . . . . . . . . (01) 1      Response
+QueryType              (04) 0      query
+AA                     (01) 0      answer not authoritive
+MT                     (01) 0      message not truncated
+RD                     (01) 1      recursion desired
+RA                     (01) 1      recursion available
+Reserved               (03) 0b000
+ResponseType           (04) 0      No error
+Number of Questions    (16) 1
+Number of Answers      (16) 6
+Number of Authority    (16) 0
+Number of Additional   (16) 0
+
+Questões:
+www.google.com.
+type = A (host address)   class = IN (internet)
+
+Respostas:
+www.google.com.
+type = CNAME (canonical name)           class = IN (internet)   ttl = 0x77030800 s   rdlen = 8   www.l.google.com.
+www.l.google.com.
+type = A (host address)                 class = IN (internet)   ttl = 0x7D4A0400 s   rdlen = 4   74.125.227.81
+www.l.google.com.
+type = A (host address)                 class = IN (internet)   ttl = 0x7D4A0400 s   rdlen = 4   74.125.227.84
+www.l.google.com.
+type = A (host address)                 class = IN (internet)   ttl = 0x7D4A0400 s   rdlen = 4   74.125.227.83
+www.l.google.com.
+type = A (host address)                 class = IN (internet)   ttl = 0x7D4A0400 s   rdlen = 4   74.125.227.80
+www.l.google.com.
+type = A (host address)                 class = IN (internet)   ttl = 0x7D4A0400 s   rdlen = 4   74.125.227.82
+
+
+
+2012/01/02  10:48:18.316084  = = = = = = = = = offset = 0x00000130 = = = = = = = = = = = = = =
+
+Pcap_Packet_Header:
+ts_sec:           0x4F01A792      ; number of seconds elapsed since 00:00:00 on January 1, 1970
+ts_usec:          0x0004D2B4      ; tempo em microsegundos
+incl_len:              00074      ; quantidade de bytes capturados
+orig_len:              00074      ; quantidade de bytes que o pacote possuia
+
+
+Cabeçalho Ethernet:
+MAC destination . . . . . (48) 10:1D:C0:36:C1:E5
+MAC source  . . . . . . . (48) 00:13:02:54:33:47
+Ethertype . . . . . . . . (16) 0x0800  Internet Protocol, Version 4 (IPv4)
+
+
+Cabeçalho IP:
+version  . . . . . . . (04) 4   ipv4
+header length  . . . . (04) 5   (words de 4 bytes)
+TOS  . . . . . . . . . (08) 0
+total length . . . . . (16) 60
+identification . . . . (16) 53606
+flags  . . . . . . . . (03) 0 
+fragment offset  . . . (13) 0 
+TTL  . . . . . . . . . (08) 64 
+protocol . . . . . . . (08) 17 UDP
+header checksum  . . . (16) 0xD14E
+source address . . . . (32) 192.168.43.170
+destination address  . (32) 192.168.43.1
+
+
+Cabeçalho UDP:
+source port  . . . . . (16) 54103
+destination port . . . (16) 53
+lenght . . . . . . . . (16) 40
+checksum . . . . . . . (16) 13588
+
+
+Cabeçalho DNS:
+Identificação  . . . . (16) 59388
+OP . . . . . . . . . . (01) 0      Query
+QueryType              (04) 0      query
+AA                     (01) 0      answer not authoritive
+MT                     (01) 0      message not truncated
+RD                     (01) 1      recursion desired
+RA                     (01) 0      recursion not available
+Reserved               (03) 0b000
+ResponseType           (04) 0      No error
+Number of Questions    (16) 1
+Number of Answers      (16) 0
+Number of Authority    (16) 0
+Number of Additional   (16) 0
+
+Questões:
+www.unicamp.br.
+type = A (host address)   class = IN (internet)
+
+
+
+2012/01/02  10:48:20.053481  = = = = = = = = = offset = 0x0000018A = = = = = = = = = = = = = =
+
+Pcap_Packet_Header:
+ts_sec:           0x4F01A794      ; number of seconds elapsed since 00:00:00 on January 1, 1970
+ts_usec:          0x0000D0E9      ; tempo em microsegundos
+incl_len:              00109      ; quantidade de bytes capturados
+orig_len:              00109      ; quantidade de bytes que o pacote possuia
+
+
+Cabeçalho Ethernet:
+MAC destination . . . . . (48) 00:13:02:54:33:47
+MAC source  . . . . . . . (48) 10:1D:C0:36:C1:E5
+Ethertype . . . . . . . . (16) 0x0800  Internet Protocol, Version 4 (IPv4)
+
+
+Cabeçalho IP:
+version  . . . . . . . (04) 4   ipv4
+header length  . . . . (04) 5   (words de 4 bytes)
+TOS  . . . . . . . . . (08) 0
+total length . . . . . (16) 95
+identification . . . . (16) 0
+flags  . . . . . . . . (03) 4 tem mais fragmentos
+fragment offset  . . . (13) 0 
+TTL  . . . . . . . . . (08) 64 
+protocol . . . . . . . (08) 17 UDP
+header checksum  . . . (16) 0x6292
+source address . . . . (32) 192.168.43.1
+destination address  . (32) 192.168.43.170
+
+
+Cabeçalho UDP:
+source port  . . . . . (16) 53
+destination port . . . (16) 54103
+lenght . . . . . . . . (16) 75
+checksum . . . . . . . (16) 44744
+
+
+Cabeçalho DNS:
+Identificação  . . . . (16) 59388
+OP . . . . . . . . . . (01) 1      Response
+QueryType              (04) 0      query
+AA                     (01) 0      answer not authoritive
+MT                     (01) 0      message not truncated
+RD                     (01) 1      recursion desired
+RA                     (01) 1      recursion available
+Reserved               (03) 0b000
+ResponseType           (04) 0      No error
+Number of Questions    (16) 1
+Number of Answers      (16) 2
+Number of Authority    (16) 0
+Number of Additional   (16) 0
+
+Questões:
+www.unicamp.br.
+type = A (host address)   class = IN (internet)
+
+Respostas:
+www.unicamp.br.
+type = CNAME (canonical name)           class = IN (internet)   ttl = 0x6C040700 s   rdlen = 7   lvs0.unicamp.br.
+lvs0.unicamp.br.
+type = A (host address)                 class = IN (internet)   ttl = 0x6A8F0400 s   rdlen = 4   143.106.10.30
+
+
+Foram impressos 519 bytes
+

@@ -1,0 +1,28 @@
+const arrayLiteral = ['Saab', 'Volvo', 'BMW'];
+const arrayCondensed = new Array('Saab', 'Volvo', 'BMW');
+
+for (let x of arrayLiteral) { console.log("Tenho: " + x)}; // elementos
+for (let x in arrayLiteral) { console.log("Tenho: " + x)}; // índices
+
+['a', 'b', 'c'].forEach((elemento, index) => {
+  console.log(`${index} > ${elemento}`);
+})
+
+concat()  Join arrays
+join()    Join all elements of an array into a string
+pop()     Remove the last element of an array
+push()    Add new elements to the end of an array and return array length
+reverse() Reverse the order of the elements in an array
+shift()   Remove the first element of an array
+slice()   Select elements from an array
+sort()    Sort numerically and ascending
+splice()  Add an element to position 2 in an array
+toString()Convert an array to a string
+unshift() Add new elements to the beginning of an array
+
+arrayLiteral.map((x) => ` ${x}`)
+
+...
+
+indexOf('a')
+includes('sdfasf')

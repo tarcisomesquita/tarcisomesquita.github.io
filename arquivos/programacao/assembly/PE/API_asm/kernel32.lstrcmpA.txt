@@ -1,0 +1,6 @@
+
+PUSH EBX
+PUSH EAX
+CALL kernel32.lstrcmpA
+JE short link
+

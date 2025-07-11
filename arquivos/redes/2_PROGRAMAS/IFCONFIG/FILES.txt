@@ -1,0 +1,7 @@
+
+FILES
+       /proc/net/socket
+       /proc/net/dev
+       /proc/net/if_inet6
+
+

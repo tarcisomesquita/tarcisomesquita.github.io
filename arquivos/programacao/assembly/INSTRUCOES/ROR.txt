@@ -1,0 +1,19 @@
+
+ROR – Rotate Right
+ register by 1               1101 000w : 11 001 reg
+ memory by 1                 1101 000w : mod 001 r/m
+ register by CL              1101 001w : 11 001 reg
+ memory by CL                1101 001w : mod 001 r/m
+ register by immediate count 1100 000w : 11 001 reg : imm8 data
+ memory by immediate count   1100 000w : mod 001 r/m : imm8 data
+
+D0 /1 ROR r/m8, 1 Valid Valid Rotate 8 bits r/m8 right once.
+
+The rotate right (ROR) instructions shift all the bits toward less significant bit positions,
+except for the least-significant bit, which is rotated to the most-significant bit loca-
+tion.
+
+1101 0000 b = D0 h
+
+ROR DX,0x8
+

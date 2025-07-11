@@ -1,0 +1,25 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<!-- 
+Define a path that starts at position 150,0 with a line to position 75,200 then from there, a line to 225,200 and finally closing the path back to 150,0
+-->
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <path d="M150,0 L75,200 L225,200 Z" />
+</svg>
+
+<!-- 
+    M = moveto
+    L = lineto
+    H = horizontal lineto
+    V = vertical lineto
+    C = curveto
+    S = smooth curveto
+    Q = quadratic B\E9zier curve
+    T = smooth quadratic B\E9zier curveto
+    A = elliptical Arc
+    Z = closepath
+
+Note: Capital letters means absolutely positioned, lower cases means relatively positioned.
+-->
+

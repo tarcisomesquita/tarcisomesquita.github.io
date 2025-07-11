@@ -1,0 +1,165 @@
+mass storage driver presents the USB device as a SCSI device
+kernel
+SCSI
+
+
+
+mknod /dev/video0 c 81 0
+
+/dev/input/mice
+
+cat /sys/bus/usb/devices/*/product
+
+cat /proc/bus/input/devices
+
+cat /proc/bus/pci/devices | tr '\t' ',' | sed 's/ //g'
+
+find /dev/ -exec ls -l '{}' \; | egrep '^c|^b'
+
+/proc/devices
+
+/proc/tty/drivers
+
+ls -l /sys/bus/scsi/drivers/sd
+total 0
+lrwxrwxrwx 1 root root    0 mai 17 09:46 0:0:0:0 -> ../../../../devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0/0:0:0:0
+lrwxrwxrwx 1 root root    0 mai 17 09:47 4:0:0:0 -> ../../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.3/1-1.3:1.0/host4/target4:0:0/4:0:0:0
+--w------- 1 root root 4096 mai 17 09:46 bind
+--w------- 1 root root 4096 mai 17 09:46 uevent
+--w------- 1 root root 4096 mai 17 09:46 unbind
+
+
+ls -l /sys/bus/pci_express/drivers/pcie_pme/
+total 0
+--w------- 1 root root 4096 mai 17 07:56 bind
+--w------- 1 root root 4096 mai 17 07:56 uevent
+--w------- 1 root root 4096 mai 17 07:56 unbind
+lubuntu@lubuntu:~$ ls -l /sys/bus/pci_express/drivers/pciehp/
+total 0
+--w------- 1 root root 4096 mai 17 07:56 bind
+--w------- 1 root root 4096 mai 17 07:56 uevent
+--w------- 1 root root 4096 mai 17 07:56 unbind
+
+ ls -l /sys/bus/pci/drivers/ath9k/
+total 0
+lrwxrwxrwx 1 root root    0 mai 17 07:58 0000:06:00.0 -> ../../../../devices/pci0000:00/0000:00:1c.2/0000:06:00.0
+--w------- 1 root root 4096 mai 17 07:58 bind
+lrwxrwxrwx 1 root root    0 mai 17 07:58 module -> ../../../../module/ath9k
+--w------- 1 root root 4096 mai 17 07:58 new_id
+--w------- 1 root root 4096 mai 17 07:58 remove_id
+--w------- 1 root root 4096 mai 17 07:58 uevent
+--w------- 1 root root 4096 mai 17 07:58 unbind
+
+
+ls -l /sys/bus/hid/drivers/hid-rmi/
+total 0
+lrwxrwxrwx 1 root root    0 mai 17 07:59 0018:06CB:2985.0001 -> ../../../../devices/pci0000:00/INT33C3:00/i2c-1/i2c-DLL0652:00/0018:06CB:2985.0001
+--w------- 1 root root 4096 mai 17 07:59 bind
+lrwxrwxrwx 1 root root    0 mai 17 07:59 module -> ../../../../module/hid_rmi
+--w------- 1 root root 4096 mai 17 07:59 new_id
+--w------- 1 root root 4096 mai 17 07:59 uevent
+--w------- 1 root root 4096 mai 17 07:59 unbind
+
+ls -l /sys/bus/usb/drivers/usb
+total 0
+lrwxrwxrwx 1 root root    0 mai 17 08:01 1-1 -> ../../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1
+lrwxrwxrwx 1 root root    0 mai 17 08:01 1-1.5 -> ../../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.5
+lrwxrwxrwx 1 root root    0 mai 17 08:01 1-1.6 -> ../../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.6
+lrwxrwxrwx 1 root root    0 mai 17 08:01 1-1.8 -> ../../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.8
+--w------- 1 root root 4096 mai 17 08:01 bind
+--w------- 1 root root 4096 mai 17 08:01 uevent
+--w------- 1 root root 4096 mai 17 08:01 unbind
+lrwxrwxrwx 1 root root    0 mai 17 08:01 usb1 -> ../../../../devices/pci0000:00/0000:00:1d.0/usb1
+
+ls -l /sys/bus/usb/drivers/usb-storage/
+total 0
+lrwxrwxrwx 1 root root    0 mai 17 08:02 1-1.3:1.0 -> ../../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.3/1-1.3:1.0
+--w------- 1 root root 4096 mai 17 08:01 bind
+lrwxrwxrwx 1 root root    0 mai 17 08:01 module -> ../../../../module/usb_storage
+-rw-r--r-- 1 root root 4096 mai 17 08:01 new_id
+-rw-r--r-- 1 root root 4096 mai 17 08:01 remove_id
+--w------- 1 root root 4096 mai 17 08:01 uevent
+--w------- 1 root root 4096 mai 17 08:01 unbind
+
+lsusb -t
+/:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=ehci-pci/2p, 480M
+    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/8p, 480M
+        |__ Port 3: Dev 105, If 0, Class=Mass Storage, Driver=usb-storage, 480M
+        |__ Port 5: Dev 4, If 0, Class=Video, Driver=uvcvideo, 480M
+        |__ Port 5: Dev 4, If 1, Class=Video, Driver=uvcvideo, 480M
+        |__ Port 6: Dev 85, If 0, Class=Wireless, Driver=btusb, 12M
+        |__ Port 6: Dev 85, If 1, Class=Wireless, Driver=btusb, 12M
+        |__ Port 8: Dev 6, If 0, Class=Vendor Specific Class, Driver=rtsx_usb, 480M
+lubuntu@lubuntu:~$ lsusb 
+Bus 001 Device 006: ID 0bda:0129 Realtek Semiconductor Corp. RTS5129 Card Reader Controller
+Bus 001 Device 085: ID 0cf3:0036 Atheros Communications, Inc. 
+Bus 001 Device 004: ID 0c45:670b Microdia 
+Bus 001 Device 105: ID 05e3:0736 Genesys Logic, Inc. microSD Reader/Writer
+Bus 001 Device 002: ID 8087:8000 Intel Corp. 
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+
+
+lubuntu@lubuntu:~$ ls -l /sys/bus/pci/devices
+total 0
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:00:00.0 -> ../../../devices/pci0000:00/0000:00:00.0
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:00:02.0 -> ../../../devices/pci0000:00/0000:00:02.0
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:00:03.0 -> ../../../devices/pci0000:00/0000:00:03.0
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:00:16.0 -> ../../../devices/pci0000:00/0000:00:16.0
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:00:1b.0 -> ../../../devices/pci0000:00/0000:00:1b.0
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:00:1c.0 -> ../../../devices/pci0000:00/0000:00:1c.0
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:00:1c.2 -> ../../../devices/pci0000:00/0000:00:1c.2
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:00:1c.3 -> ../../../devices/pci0000:00/0000:00:1c.3
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:00:1c.4 -> ../../../devices/pci0000:00/0000:00:1c.4
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:00:1d.0 -> ../../../devices/pci0000:00/0000:00:1d.0
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:00:1f.0 -> ../../../devices/pci0000:00/0000:00:1f.0
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:00:1f.2 -> ../../../devices/pci0000:00/0000:00:1f.2
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:00:1f.3 -> ../../../devices/pci0000:00/0000:00:1f.3
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:06:00.0 -> ../../../devices/pci0000:00/0000:00:1c.2/0000:06:00.0
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:07:00.0 -> ../../../devices/pci0000:00/0000:00:1c.3/0000:07:00.0
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0000:08:00.0 -> ../../../devices/pci0000:00/0000:00:1c.4/0000:08:00.0
+
+
+ls -l /sys/bus/scsi/devices
+total 0
+lrwxrwxrwx 1 root root 0 mai 16 20:23 0:0:0:0 -> ../../../devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0/0:0:0:0
+lrwxrwxrwx 1 root root 0 mai 17 08:35 1:0:0:0 -> ../../../devices/pci0000:00/0000:00:1f.2/ata2/host1/target1:0:0/1:0:0:0
+lrwxrwxrwx 1 root root 0 mai 17 08:02 4:0:0:0 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.3/1-1.3:1.0/host4/target4:0:0/4:0:0:0
+lrwxrwxrwx 1 root root 0 mai 17 08:35 host0 -> ../../../devices/pci0000:00/0000:00:1f.2/ata1/host0
+lrwxrwxrwx 1 root root 0 mai 17 08:35 host1 -> ../../../devices/pci0000:00/0000:00:1f.2/ata2/host1
+lrwxrwxrwx 1 root root 0 mai 17 08:35 host2 -> ../../../devices/pci0000:00/0000:00:1f.2/ata3/host2
+lrwxrwxrwx 1 root root 0 mai 17 08:35 host3 -> ../../../devices/pci0000:00/0000:00:1f.2/ata4/host3
+lrwxrwxrwx 1 root root 0 mai 17 08:02 host4 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.3/1-1.3:1.0/host4
+lrwxrwxrwx 1 root root 0 mai 17 08:35 target0:0:0 -> ../../../devices/pci0000:00/0000:00:1f.2/ata1/host0/target0:0:0
+lrwxrwxrwx 1 root root 0 mai 17 08:35 target1:0:0 -> ../../../devices/pci0000:00/0000:00:1f.2/ata2/host1/target1:0:0
+lrwxrwxrwx 1 root root 0 mai 17 08:35 target4:0:0 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.3/1-1.3:1.0/host4/target4:0:0
+
+
+/sys/bus/usb/devices:
+total 0
+lrwxrwxrwx 1 root root 0 mai 15 07:26 1-0:1.0 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-0:1.0
+lrwxrwxrwx 1 root root 0 mai 15 07:26 1-1 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1
+lrwxrwxrwx 1 root root 0 mai 15 07:26 1-1:1.0 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1:1.0
+lrwxrwxrwx 1 root root 0 mai 17 08:02 1-1.3 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.3
+lrwxrwxrwx 1 root root 0 mai 17 08:02 1-1.3:1.0 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.3/1-1.3:1.0
+lrwxrwxrwx 1 root root 0 mai 15 07:26 1-1.5 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.5
+lrwxrwxrwx 1 root root 0 mai 15 07:26 1-1.5:1.0 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.5/1-1.5:1.0
+lrwxrwxrwx 1 root root 0 mai 15 07:26 1-1.5:1.1 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.5/1-1.5:1.1
+lrwxrwxrwx 1 root root 0 mai 17 07:35 1-1.6 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.6
+lrwxrwxrwx 1 root root 0 mai 17 07:35 1-1.6:1.0 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.6/1-1.6:1.0
+lrwxrwxrwx 1 root root 0 mai 17 07:35 1-1.6:1.1 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.6/1-1.6:1.1
+lrwxrwxrwx 1 root root 0 mai 15 07:26 1-1.8 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.8
+lrwxrwxrwx 1 root root 0 mai 15 07:26 1-1.8:1.0 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1.8/1-1.8:1.0
+lrwxrwxrwx 1 root root 0 mai 15 07:26 usb1 -> ../../../devices/pci0000:00/0000:00:1d.0/usb1
+
+
+/sys/bus/hdaudio/devices:
+total 0
+lrwxrwxrwx 1 root root 0 mai 17 08:35 hdaudioC0D0 -> ../../../devices/pci0000:00/0000:00:03.0/hdaudioC0D0
+lrwxrwxrwx 1 root root 0 mai 17 08:35 hdaudioC1D0 -> ../../../devices/pci0000:00/0000:00:1b.0/hdaudioC1D0
+
+/sys/bus/hid/devices:
+total 0
+lrwxrwxrwx 1 root root 0 mai 17 08:35 0018:06CB:2985.0001 -> ../../../devices/pci0000:00/INT33C3:00/i2c-1/i2c-DLL0652:00/0018:06CB:2985.0001
+
+ls -l /sys/bus/*/devices
+

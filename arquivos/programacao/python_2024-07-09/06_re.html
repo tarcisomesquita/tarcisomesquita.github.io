@@ -1,0 +1,1749 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+>
+
+<html>
+  <head><meta charset="UTF-8" />
+    <meta>
+    <meta>
+    <title>6.2. re — Regular expression operations &#8212; Python 3.6.5 documentation</title>
+    <link>
+    <link>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Python 3.6.5 documentation"
+>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    
+    <script></script>
+    <script></script>
+    
+    
+ 
+
+  </head><body>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="difflib.html" title="6.3. difflib — Helpers for computing deltas"
+>next</a> |</li>
+        <li>
+          <a href="string.html" title="6.1. string — Common string operations"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>The Python Standard Library</a> &#187;</li>
+          <li><a>6. Text Processing Services</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>    
+
+    <div>
+      <div>
+        <div>
+          <div>
+            
+  <div>
+<span></span><h1>6.2. <a><code><span>re</span></code></a> — Regular expression operations<a>¶</a></h1>
+<p><strong>Source code:</strong> <a>Lib/re.py</a></p>
+<hr>
+<p>This module provides regular expression matching operations similar to
+those found in Perl.</p>
+<p>Both patterns and strings to be searched can be Unicode strings (<a><code><span>str</span></code></a>)
+as well as 8-bit strings (<a><code><span>bytes</span></code></a>).
+However, Unicode strings and 8-bit strings cannot be mixed:
+that is, you cannot match a Unicode string with a byte pattern or
+vice-versa; similarly, when asking for a substitution, the replacement
+string must be of the same type as both the pattern and the search string.</p>
+<p>Regular expressions use the backslash character (<code><span>'\'</span></code>) to indicate
+special forms or to allow special characters to be used without invoking
+their special meaning.  This collides with Python’s usage of the same
+character for the same purpose in string literals; for example, to match
+a literal backslash, one might have to write <code><span>'\\\\'</span></code> as the pattern
+string, because the regular expression must be <code><span>\\</span></code>, and each
+backslash must be expressed as <code><span>\\</span></code> inside a regular Python string
+literal.</p>
+<p>The solution is to use Python’s raw string notation for regular expression
+patterns; backslashes are not handled in any special way in a string literal
+prefixed with <code><span>'r'</span></code>.  So <code><span>r&quot;\n&quot;</span></code> is a two-character string containing
+<code><span>'\'</span></code> and <code><span>'n'</span></code>, while <code><span>&quot;\n&quot;</span></code> is a one-character string containing a
+newline.  Usually patterns will be expressed in Python code using this raw
+string notation.</p>
+<p>It is important to note that most regular expression operations are available as
+module-level functions and methods on
+<a><span>compiled regular expressions</span></a>.  The functions are shortcuts
+that don’t require you to compile a regex object first, but miss some
+fine-tuning parameters.</p>
+<div>
+<p>See also</p>
+<p>The third-party <a>regex</a> module,
+which has an API compatible with the standard library <a><code><span>re</span></code></a> module,
+but offers additional functionality and a more thorough Unicode support.</p>
+</div>
+<div>
+<span></span><h2>6.2.1. Regular Expression Syntax<a>¶</a></h2>
+<p>A regular expression (or RE) specifies a set of strings that matches it; the
+functions in this module let you check if a particular string matches a given
+regular expression (or if a given regular expression matches a particular
+string, which comes down to the same thing).</p>
+<p>Regular expressions can be concatenated to form new regular expressions; if <em>A</em>
+and <em>B</em> are both regular expressions, then <em>AB</em> is also a regular expression.
+In general, if a string <em>p</em> matches <em>A</em> and another string <em>q</em> matches <em>B</em>, the
+string <em>pq</em> will match AB.  This holds unless <em>A</em> or <em>B</em> contain low precedence
+operations; boundary conditions between <em>A</em> and <em>B</em>; or have numbered group
+references.  Thus, complex expressions can easily be constructed from simpler
+primitive expressions like the ones described here.  For details of the theory
+and implementation of regular expressions, consult the Friedl book <a>[Frie09]</a>,
+or almost any textbook about compiler construction.</p>
+<p>A brief explanation of the format of regular expressions follows.  For further
+information and a gentler presentation, consult the <a><span>Regular Expression HOWTO</span></a>.</p>
+<p>Regular expressions can contain both special and ordinary characters. Most
+ordinary characters, like <code><span>'A'</span></code>, <code><span>'a'</span></code>, or <code><span>'0'</span></code>, are the simplest regular
+expressions; they simply match themselves.  You can concatenate ordinary
+characters, so <code><span>last</span></code> matches the string <code><span>'last'</span></code>.  (In the rest of this
+section, we’ll write RE’s in <code><span>this</span> <span>special</span> <span>style</span></code>, usually without quotes, and
+strings to be matched <code><span>'in</span> <span>single</span> <span>quotes'</span></code>.)</p>
+<p>Some characters, like <code><span>'|'</span></code> or <code><span>'('</span></code>, are special. Special
+characters either stand for classes of ordinary characters, or affect
+how the regular expressions around them are interpreted.</p>
+<p>Repetition qualifiers (<code><span>*</span></code>, <code><span>+</span></code>, <code><span>?</span></code>, <code><span>{m,n}</span></code>, etc) cannot be
+directly nested. This avoids ambiguity with the non-greedy modifier suffix
+<code><span>?</span></code>, and with other modifiers in other implementations. To apply a second
+repetition to an inner repetition, parentheses may be used. For example,
+the expression <code><span>(?:a{6})*</span></code> matches any multiple of six <code><span>'a'</span></code> characters.</p>
+<p>The special characters are:</p>
+<dl>
+<dt><code><span>.</span></code></dt>
+<dd>(Dot.)  In the default mode, this matches any character except a newline.  If
+the <a><code><span>DOTALL</span></code></a> flag has been specified, this matches any character
+including a newline.</dd>
+<dt><code><span>^</span></code></dt>
+<dd>(Caret.)  Matches the start of the string, and in <a><code><span>MULTILINE</span></code></a> mode also
+matches immediately after each newline.</dd>
+<dt><code><span>$</span></code></dt>
+<dd>Matches the end of the string or just before the newline at the end of the
+string, and in <a><code><span>MULTILINE</span></code></a> mode also matches before a newline.  <code><span>foo</span></code>
+matches both ‘foo’ and ‘foobar’, while the regular expression <code><span>foo$</span></code> matches
+only ‘foo’.  More interestingly, searching for <code><span>foo.$</span></code> in <code><span>'foo1\nfoo2\n'</span></code>
+matches ‘foo2’ normally, but ‘foo1’ in <a><code><span>MULTILINE</span></code></a> mode; searching for
+a single <code><span>$</span></code> in <code><span>'foo\n'</span></code> will find two (empty) matches: one just before
+the newline, and one at the end of the string.</dd>
+<dt><code><span>*</span></code></dt>
+<dd>Causes the resulting RE to match 0 or more repetitions of the preceding RE, as
+many repetitions as are possible.  <code><span>ab*</span></code> will match ‘a’, ‘ab’, or ‘a’ followed
+by any number of ‘b’s.</dd>
+<dt><code><span>+</span></code></dt>
+<dd>Causes the resulting RE to match 1 or more repetitions of the preceding RE.
+<code><span>ab+</span></code> will match ‘a’ followed by any non-zero number of ‘b’s; it will not
+match just ‘a’.</dd>
+<dt><code><span>?</span></code></dt>
+<dd>Causes the resulting RE to match 0 or 1 repetitions of the preceding RE.
+<code><span>ab?</span></code> will match either ‘a’ or ‘ab’.</dd>
+<dt><code><span>*?</span></code>, <code><span>+?</span></code>, <code><span>??</span></code></dt>
+<dd>The <code><span>'*'</span></code>, <code><span>'+'</span></code>, and <code><span>'?'</span></code> qualifiers are all <em>greedy</em>; they match
+as much text as possible.  Sometimes this behaviour isn’t desired; if the RE
+<code><span>&lt;.*&gt;</span></code> is matched against <code><span>'&lt;a&gt;</span> <span>b</span> <span>&lt;c&gt;'</span></code>, it will match the entire
+string, and not just <code><span>'&lt;a&gt;'</span></code>.  Adding <code><span>?</span></code> after the qualifier makes it
+perform the match in <em>non-greedy</em> or <em>minimal</em> fashion; as <em>few</em>
+characters as possible will be matched.  Using the RE <code><span>&lt;.*?&gt;</span></code> will match
+only <code><span>'&lt;a&gt;'</span></code>.</dd>
+<dt><code><span>{m}</span></code></dt>
+<dd>Specifies that exactly <em>m</em> copies of the previous RE should be matched; fewer
+matches cause the entire RE not to match.  For example, <code><span>a{6}</span></code> will match
+exactly six <code><span>'a'</span></code> characters, but not five.</dd>
+<dt><code><span>{m,n}</span></code></dt>
+<dd>Causes the resulting RE to match from <em>m</em> to <em>n</em> repetitions of the preceding
+RE, attempting to match as many repetitions as possible.  For example,
+<code><span>a{3,5}</span></code> will match from 3 to 5 <code><span>'a'</span></code> characters.  Omitting <em>m</em> specifies a
+lower bound of zero,  and omitting <em>n</em> specifies an infinite upper bound.  As an
+example, <code><span>a{4,}b</span></code> will match <code><span>'aaaab'</span></code> or a thousand <code><span>'a'</span></code> characters
+followed by a <code><span>'b'</span></code>, but not <code><span>'aaab'</span></code>. The comma may not be omitted or the
+modifier would be confused with the previously described form.</dd>
+<dt><code><span>{m,n}?</span></code></dt>
+<dd>Causes the resulting RE to match from <em>m</em> to <em>n</em> repetitions of the preceding
+RE, attempting to match as <em>few</em> repetitions as possible.  This is the
+non-greedy version of the previous qualifier.  For example, on the
+6-character string <code><span>'aaaaaa'</span></code>, <code><span>a{3,5}</span></code> will match 5 <code><span>'a'</span></code> characters,
+while <code><span>a{3,5}?</span></code> will only match 3 characters.</dd>
+<dt><code><span>\</span></code></dt>
+<dd><p>Either escapes special characters (permitting you to match characters like
+<code><span>'*'</span></code>, <code><span>'?'</span></code>, and so forth), or signals a special sequence; special
+sequences are discussed below.</p>
+<p>If you’re not using a raw string to express the pattern, remember that Python
+also uses the backslash as an escape sequence in string literals; if the escape
+sequence isn’t recognized by Python’s parser, the backslash and subsequent
+character are included in the resulting string.  However, if Python would
+recognize the resulting sequence, the backslash should be repeated twice.  This
+is complicated and hard to understand, so it’s highly recommended that you use
+raw strings for all but the simplest expressions.</p>
+</dd>
+<dt><code><span>[]</span></code></dt>
+<dd><p>Used to indicate a set of characters.  In a set:</p>
+<ul>
+<li>Characters can be listed individually, e.g. <code><span>[amk]</span></code> will match <code><span>'a'</span></code>,
+<code><span>'m'</span></code>, or <code><span>'k'</span></code>.</li>
+<li>Ranges of characters can be indicated by giving two characters and separating
+them by a <code><span>'-'</span></code>, for example <code><span>[a-z]</span></code> will match any lowercase ASCII letter,
+<code><span>[0-5][0-9]</span></code> will match all the two-digits numbers from <code><span>00</span></code> to <code><span>59</span></code>, and
+<code><span>[0-9A-Fa-f]</span></code> will match any hexadecimal digit.  If <code><span>-</span></code> is escaped (e.g.
+<code><span>[a\-z]</span></code>) or if it’s placed as the first or last character
+(e.g. <code><span>[-a]</span></code> or <code><span>[a-]</span></code>), it will match a literal <code><span>'-'</span></code>.</li>
+<li>Special characters lose their special meaning inside sets.  For example,
+<code><span>[(+*)]</span></code> will match any of the literal characters <code><span>'('</span></code>, <code><span>'+'</span></code>,
+<code><span>'*'</span></code>, or <code><span>')'</span></code>.</li>
+<li>Character classes such as <code><span>\w</span></code> or <code><span>\S</span></code> (defined below) are also accepted
+inside a set, although the characters they match depends on whether
+<a><code><span>ASCII</span></code></a> or <a><code><span>LOCALE</span></code></a> mode is in force.</li>
+<li>Characters that are not within a range can be matched by <em>complementing</em>
+the set.  If the first character of the set is <code><span>'^'</span></code>, all the characters
+that are <em>not</em> in the set will be matched.  For example, <code><span>[^5]</span></code> will match
+any character except <code><span>'5'</span></code>, and <code><span>[^^]</span></code> will match any character except
+<code><span>'^'</span></code>.  <code><span>^</span></code> has no special meaning if it’s not the first character in
+the set.</li>
+<li>To match a literal <code><span>']'</span></code> inside a set, precede it with a backslash, or
+place it at the beginning of the set.  For example, both <code><span>[()[\]{}]</span></code> and
+<code><span>[]()[{}]</span></code> will both match a parenthesis.</li>
+</ul>
+</dd>
+<dt><code><span>|</span></code></dt>
+<dd><code><span>A|B</span></code>, where <em>A</em> and <em>B</em> can be arbitrary REs, creates a regular expression that
+will match either <em>A</em> or <em>B</em>.  An arbitrary number of REs can be separated by the
+<code><span>'|'</span></code> in this way.  This can be used inside groups (see below) as well.  As
+the target string is scanned, REs separated by <code><span>'|'</span></code> are tried from left to
+right. When one pattern completely matches, that branch is accepted. This means
+that once <em>A</em> matches, <em>B</em> will not be tested further, even if it would
+produce a longer overall match.  In other words, the <code><span>'|'</span></code> operator is never
+greedy.  To match a literal <code><span>'|'</span></code>, use <code><span>\|</span></code>, or enclose it inside a
+character class, as in <code><span>[|]</span></code>.</dd>
+<dt><code><span>(...)</span></code></dt>
+<dd>Matches whatever regular expression is inside the parentheses, and indicates the
+start and end of a group; the contents of a group can be retrieved after a match
+has been performed, and can be matched later in the string with the <code><span>\number</span></code>
+special sequence, described below.  To match the literals <code><span>'('</span></code> or <code><span>')'</span></code>,
+use <code><span>\(</span></code> or <code><span>\)</span></code>, or enclose them inside a character class: <code><span>[(]</span></code>, <code><span>[)]</span></code>.</dd>
+<dt><code><span>(?...)</span></code></dt>
+<dd>This is an extension notation (a <code><span>'?'</span></code> following a <code><span>'('</span></code> is not meaningful
+otherwise).  The first character after the <code><span>'?'</span></code> determines what the meaning
+and further syntax of the construct is. Extensions usually do not create a new
+group; <code><span>(?P&lt;name&gt;...)</span></code> is the only exception to this rule. Following are the
+currently supported extensions.</dd>
+<dt><code><span>(?aiLmsux)</span></code></dt>
+<dd>(One or more letters from the set <code><span>'a'</span></code>, <code><span>'i'</span></code>, <code><span>'L'</span></code>, <code><span>'m'</span></code>,
+<code><span>'s'</span></code>, <code><span>'u'</span></code>, <code><span>'x'</span></code>.)  The group matches the empty string; the
+letters set the corresponding flags: <a><code><span>re.A</span></code></a> (ASCII-only matching),
+<a><code><span>re.I</span></code></a> (ignore case), <a><code><span>re.L</span></code></a> (locale dependent),
+<a><code><span>re.M</span></code></a> (multi-line), <a><code><span>re.S</span></code></a> (dot matches all),
+<code><span>re.U</span></code> (Unicode matching), and <a><code><span>re.X</span></code></a> (verbose),
+for the entire regular expression.
+(The flags are described in <a><span>Module Contents</span></a>.)
+This is useful if you wish to include the flags as part of the
+regular expression, instead of passing a <em>flag</em> argument to the
+<a><code><span>re.compile()</span></code></a> function.  Flags should be used first in the
+expression string.</dd>
+<dt><code><span>(?:...)</span></code></dt>
+<dd>A non-capturing version of regular parentheses.  Matches whatever regular
+expression is inside the parentheses, but the substring matched by the group
+<em>cannot</em> be retrieved after performing a match or referenced later in the
+pattern.</dd>
+<dt><code><span>(?imsx-imsx:...)</span></code></dt>
+<dd><p>(Zero or more letters from the set <code><span>'i'</span></code>, <code><span>'m'</span></code>, <code><span>'s'</span></code>, <code><span>'x'</span></code>,
+optionally followed by <code><span>'-'</span></code> followed by one or more letters from the
+same set.)  The letters set or removes the corresponding flags:
+<a><code><span>re.I</span></code></a> (ignore case), <a><code><span>re.M</span></code></a> (multi-line), <a><code><span>re.S</span></code></a>
+(dot matches all), and <a><code><span>re.X</span></code></a> (verbose), for the part of the
+expression.  (The flags are described in <a><span>Module Contents</span></a>.)</p>
+<div>
+<p><span>New in version 3.6.</span></p>
+</div>
+</dd>
+<dt><code><span>(?P&lt;name&gt;...)</span></code></dt>
+<dd><p>Similar to regular parentheses, but the substring matched by the group is
+accessible via the symbolic group name <em>name</em>.  Group names must be valid
+Python identifiers, and each group name must be defined only once within a
+regular expression.  A symbolic group is also a numbered group, just as if
+the group were not named.</p>
+<p>Named groups can be referenced in three contexts.  If the pattern is
+<code><span>(?P&lt;quote&gt;['&quot;]).*?(?P=quote)</span></code> (i.e. matching a string quoted with either
+single or double quotes):</p>
+<table>
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr><th>Context of reference to group “quote”</th>
+<th>Ways to reference it</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>in the same pattern itself</td>
+<td><ul>
+<li><code><span>(?P=quote)</span></code> (as shown)</li>
+<li><code><span>\1</span></code></li>
+</ul>
+</td>
+</tr>
+<tr><td>when processing match object <em>m</em></td>
+<td><ul>
+<li><code><span>m.group('quote')</span></code></li>
+<li><code><span>m.end('quote')</span></code> (etc.)</li>
+</ul>
+</td>
+</tr>
+<tr><td>in a string passed to the <em>repl</em>
+argument of <code><span>re.sub()</span></code></td>
+<td><ul>
+<li><code><span>\g&lt;quote&gt;</span></code></li>
+<li><code><span>\g&lt;1&gt;</span></code></li>
+<li><code><span>\1</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt><code><span>(?P=name)</span></code></dt>
+<dd>A backreference to a named group; it matches whatever text was matched by the
+earlier group named <em>name</em>.</dd>
+<dt><code><span>(?#...)</span></code></dt>
+<dd>A comment; the contents of the parentheses are simply ignored.</dd>
+<dt><code><span>(?=...)</span></code></dt>
+<dd>Matches if <code><span>...</span></code> matches next, but doesn’t consume any of the string.  This is
+called a <em>lookahead assertion</em>.  For example, <code><span>Isaac</span> <span>(?=Asimov)</span></code> will match
+<code><span>'Isaac</span> <span>'</span></code> only if it’s followed by <code><span>'Asimov'</span></code>.</dd>
+<dt><code><span>(?!...)</span></code></dt>
+<dd>Matches if <code><span>...</span></code> doesn’t match next.  This is a <em>negative lookahead assertion</em>.
+For example, <code><span>Isaac</span> <span>(?!Asimov)</span></code> will match <code><span>'Isaac</span> <span>'</span></code> only if it’s <em>not</em>
+followed by <code><span>'Asimov'</span></code>.</dd>
+<dt><code><span>(?&lt;=...)</span></code></dt>
+<dd><p>Matches if the current position in the string is preceded by a match for <code><span>...</span></code>
+that ends at the current position.  This is called a <em>positive lookbehind
+assertion</em>. <code><span>(?&lt;=abc)def</span></code> will find a match in <code><span>'abcdef'</span></code>, since the
+lookbehind will back up 3 characters and check if the contained pattern matches.
+The contained pattern must only match strings of some fixed length, meaning that
+<code><span>abc</span></code> or <code><span>a|b</span></code> are allowed, but <code><span>a*</span></code> and <code><span>a{3,4}</span></code> are not.  Note that
+patterns which start with positive lookbehind assertions will not match at the
+beginning of the string being searched; you will most likely want to use the
+<a><code><span>search()</span></code></a> function rather than the <a><code><span>match()</span></code></a> function:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>re</span>
+<span>&gt;&gt;&gt; </span><span>m</span> <span>=</span> <span>re</span><span>.</span><span>search</span><span>(</span><span>&#39;(?&lt;=abc)def&#39;</span><span>,</span> <span>&#39;abcdef&#39;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>group</span><span>(</span><span>0</span><span>)</span>
+<span>&#39;def&#39;</span>
+</pre></div>
+</div>
+<p>This example looks for a word following a hyphen:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>m</span> <span>=</span> <span>re</span><span>.</span><span>search</span><span>(</span><span>r</span><span>&#39;(?&lt;=-)\w+&#39;</span><span>,</span> <span>&#39;spam-egg&#39;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>group</span><span>(</span><span>0</span><span>)</span>
+<span>&#39;egg&#39;</span>
+</pre></div>
+</div>
+<div>
+<p><span>Changed in version 3.5: </span>Added support for group references of fixed length.</p>
+</div>
+</dd>
+<dt><code><span>(?&lt;!...)</span></code></dt>
+<dd>Matches if the current position in the string is not preceded by a match for
+<code><span>...</span></code>.  This is called a <em>negative lookbehind assertion</em>.  Similar to
+positive lookbehind assertions, the contained pattern must only match strings of
+some fixed length.  Patterns which start with negative lookbehind assertions may
+match at the beginning of the string being searched.</dd>
+<dt><code><span>(?(id/name)yes-pattern|no-pattern)</span></code></dt>
+<dd>Will try to match with <code><span>yes-pattern</span></code> if the group with given <em>id</em> or
+<em>name</em> exists, and with <code><span>no-pattern</span></code> if it doesn’t. <code><span>no-pattern</span></code> is
+optional and can be omitted. For example,
+<code><span>(&lt;)?(\w+&#64;\w+(?:\.\w+)+)(?(1)&gt;|$)</span></code> is a poor email matching pattern, which
+will match with <code><span>'&lt;user&#64;host.com&gt;'</span></code> as well as <code><span>'user&#64;host.com'</span></code>, but
+not with <code><span>'&lt;user&#64;host.com'</span></code> nor <code><span>'user&#64;host.com&gt;'</span></code>.</dd>
+</dl>
+<p>The special sequences consist of <code><span>'\'</span></code> and a character from the list below.
+If the ordinary character is not an ASCII digit or an ASCII letter, then the
+resulting RE will match the second character.  For example, <code><span>\$</span></code> matches the
+character <code><span>'$'</span></code>.</p>
+<dl>
+<dt><code><span>\number</span></code></dt>
+<dd>Matches the contents of the group of the same number.  Groups are numbered
+starting from 1.  For example, <code><span>(.+)</span> <span>\1</span></code> matches <code><span>'the</span> <span>the'</span></code> or <code><span>'55</span> <span>55'</span></code>,
+but not <code><span>'thethe'</span></code> (note the space after the group).  This special sequence
+can only be used to match one of the first 99 groups.  If the first digit of
+<em>number</em> is 0, or <em>number</em> is 3 octal digits long, it will not be interpreted as
+a group match, but as the character with octal value <em>number</em>. Inside the
+<code><span>'['</span></code> and <code><span>']'</span></code> of a character class, all numeric escapes are treated as
+characters.</dd>
+<dt><code><span>\A</span></code></dt>
+<dd>Matches only at the start of the string.</dd>
+<dt><code><span>\b</span></code></dt>
+<dd><p>Matches the empty string, but only at the beginning or end of a word.
+A word is defined as a sequence of word characters.  Note that formally,
+<code><span>\b</span></code> is defined as the boundary between a <code><span>\w</span></code> and a <code><span>\W</span></code> character
+(or vice versa), or between <code><span>\w</span></code> and the beginning/end of the string.
+This means that <code><span>r'\bfoo\b'</span></code> matches <code><span>'foo'</span></code>, <code><span>'foo.'</span></code>, <code><span>'(foo)'</span></code>,
+<code><span>'bar</span> <span>foo</span> <span>baz'</span></code> but not <code><span>'foobar'</span></code> or <code><span>'foo3'</span></code>.</p>
+<p>By default Unicode alphanumerics are the ones used in Unicode patterns, but
+this can be changed by using the <a><code><span>ASCII</span></code></a> flag.  Word boundaries are
+determined by the current locale if the <a><code><span>LOCALE</span></code></a> flag is used.
+Inside a character range, <code><span>\b</span></code> represents the backspace character, for
+compatibility with Python’s string literals.</p>
+</dd>
+<dt><code><span>\B</span></code></dt>
+<dd>Matches the empty string, but only when it is <em>not</em> at the beginning or end
+of a word.  This means that <code><span>r'py\B'</span></code> matches <code><span>'python'</span></code>, <code><span>'py3'</span></code>,
+<code><span>'py2'</span></code>, but not <code><span>'py'</span></code>, <code><span>'py.'</span></code>, or <code><span>'py!'</span></code>.
+<code><span>\B</span></code> is just the opposite of <code><span>\b</span></code>, so word characters in Unicode
+patterns are Unicode alphanumerics or the underscore, although this can
+be changed by using the <a><code><span>ASCII</span></code></a> flag.  Word boundaries are
+determined by the current locale if the <a><code><span>LOCALE</span></code></a> flag is used.</dd>
+<dt><code><span>\d</span></code></dt>
+<dd><dl>
+<dt>For Unicode (str) patterns:</dt>
+<dd>Matches any Unicode decimal digit (that is, any character in
+Unicode character category [Nd]).  This includes <code><span>[0-9]</span></code>, and
+also many other digit characters.  If the <a><code><span>ASCII</span></code></a> flag is
+used only <code><span>[0-9]</span></code> is matched (but the flag affects the entire
+regular expression, so in such cases using an explicit <code><span>[0-9]</span></code>
+may be a better choice).</dd>
+<dt>For 8-bit (bytes) patterns:</dt>
+<dd>Matches any decimal digit; this is equivalent to <code><span>[0-9]</span></code>.</dd>
+</dl>
+</dd>
+<dt><code><span>\D</span></code></dt>
+<dd>Matches any character which is not a decimal digit. This is
+the opposite of <code><span>\d</span></code>. If the <a><code><span>ASCII</span></code></a> flag is used this
+becomes the equivalent of <code><span>[^0-9]</span></code> (but the flag affects the entire
+regular expression, so in such cases using an explicit <code><span>[^0-9]</span></code> may
+be a better choice).</dd>
+<dt><code><span>\s</span></code></dt>
+<dd><dl>
+<dt>For Unicode (str) patterns:</dt>
+<dd>Matches Unicode whitespace characters (which includes
+<code><span>[</span> <span>\t\n\r\f\v]</span></code>, and also many other characters, for example the
+non-breaking spaces mandated by typography rules in many
+languages). If the <a><code><span>ASCII</span></code></a> flag is used, only
+<code><span>[</span> <span>\t\n\r\f\v]</span></code> is matched (but the flag affects the entire
+regular expression, so in such cases using an explicit
+<code><span>[</span> <span>\t\n\r\f\v]</span></code> may be a better choice).</dd>
+<dt>For 8-bit (bytes) patterns:</dt>
+<dd>Matches characters considered whitespace in the ASCII character set;
+this is equivalent to <code><span>[</span> <span>\t\n\r\f\v]</span></code>.</dd>
+</dl>
+</dd>
+<dt><code><span>\S</span></code></dt>
+<dd>Matches any character which is not a whitespace character. This is
+the opposite of <code><span>\s</span></code>. If the <a><code><span>ASCII</span></code></a> flag is used this
+becomes the equivalent of <code><span>[^</span> <span>\t\n\r\f\v]</span></code> (but the flag affects the entire
+regular expression, so in such cases using an explicit <code><span>[^</span> <span>\t\n\r\f\v]</span></code> may
+be a better choice).</dd>
+<dt><code><span>\w</span></code></dt>
+<dd><dl>
+<dt>For Unicode (str) patterns:</dt>
+<dd>Matches Unicode word characters; this includes most characters
+that can be part of a word in any language, as well as numbers and
+the underscore. If the <a><code><span>ASCII</span></code></a> flag is used, only
+<code><span>[a-zA-Z0-9_]</span></code> is matched (but the flag affects the entire
+regular expression, so in such cases using an explicit
+<code><span>[a-zA-Z0-9_]</span></code> may be a better choice).</dd>
+<dt>For 8-bit (bytes) patterns:</dt>
+<dd>Matches characters considered alphanumeric in the ASCII character set;
+this is equivalent to <code><span>[a-zA-Z0-9_]</span></code>.  If the <a><code><span>LOCALE</span></code></a> flag is
+used, matches characters considered alphanumeric in the current locale
+and the underscore.</dd>
+</dl>
+</dd>
+<dt><code><span>\W</span></code></dt>
+<dd>Matches any character which is not a word character. This is
+the opposite of <code><span>\w</span></code>. If the <a><code><span>ASCII</span></code></a> flag is used this
+becomes the equivalent of <code><span>[^a-zA-Z0-9_]</span></code> (but the flag affects the
+entire regular expression, so in such cases using an explicit
+<code><span>[^a-zA-Z0-9_]</span></code> may be a better choice).  If the <a><code><span>LOCALE</span></code></a> flag is
+used, matches characters considered alphanumeric in the current locale
+and the underscore.</dd>
+<dt><code><span>\Z</span></code></dt>
+<dd>Matches only at the end of the string.</dd>
+</dl>
+<p>Most of the standard escapes supported by Python string literals are also
+accepted by the regular expression parser:</p>
+<div><div><pre><span></span>\<span>a</span>      \<span>b</span>      \<span>f</span>      \<span>n</span>
+\<span>r</span>      \<span>t</span>      \<span>u</span>      \<span>U</span>
+\<span>v</span>      \<span>x</span>      \\
+</pre></div>
+</div>
+<p>(Note that <code><span>\b</span></code> is used to represent word boundaries, and means “backspace”
+only inside character classes.)</p>
+<p><code><span>'\u'</span></code> and <code><span>'\U'</span></code> escape sequences are only recognized in Unicode
+patterns.  In bytes patterns they are errors.</p>
+<p>Octal escapes are included in a limited form.  If the first digit is a 0, or if
+there are three octal digits, it is considered an octal escape. Otherwise, it is
+a group reference.  As for string literals, octal escapes are always at most
+three digits in length.</p>
+<div>
+<p><span>Changed in version 3.3: </span>The <code><span>'\u'</span></code> and <code><span>'\U'</span></code> escape sequences have been added.</p>
+</div>
+<div>
+<p><span>Changed in version 3.6: </span>Unknown escapes consisting of <code><span>'\'</span></code> and an ASCII letter now are errors.</p>
+</div>
+</div>
+<div>
+<span></span><h2>6.2.2. Module Contents<a>¶</a></h2>
+<p>The module defines several functions, constants, and an exception. Some of the
+functions are simplified versions of the full featured methods for compiled
+regular expressions.  Most non-trivial applications always use the compiled
+form.</p>
+<div>
+<p><span>Changed in version 3.6: </span>Flag constants are now instances of <code><span>RegexFlag</span></code>, which is a subclass of
+<a><code><span>enum.IntFlag</span></code></a>.</p>
+</div>
+<dl>
+<dt>
+<code>re.</code><code>compile</code><span>(</span><em>pattern</em>, <em>flags=0</em><span>)</span><a>¶</a></dt>
+<dd><p>Compile a regular expression pattern into a <a><span>regular expression object</span></a>, which can be used for matching using its
+<a><code><span>match()</span></code></a>, <a><code><span>search()</span></code></a> and other methods, described
+below.</p>
+<p>The expression’s behaviour can be modified by specifying a <em>flags</em> value.
+Values can be any of the following variables, combined using bitwise OR (the
+<code><span>|</span></code> operator).</p>
+<p>The sequence</p>
+<div><div><pre><span></span><span>prog</span> <span>=</span> <span>re</span><span>.</span><span>compile</span><span>(</span><span>pattern</span><span>)</span>
+<span>result</span> <span>=</span> <span>prog</span><span>.</span><span>match</span><span>(</span><span>string</span><span>)</span>
+</pre></div>
+</div>
+<p>is equivalent to</p>
+<div><div><pre><span></span><span>result</span> <span>=</span> <span>re</span><span>.</span><span>match</span><span>(</span><span>pattern</span><span>,</span> <span>string</span><span>)</span>
+</pre></div>
+</div>
+<p>but using <a><code><span>re.compile()</span></code></a> and saving the resulting regular expression
+object for reuse is more efficient when the expression will be used several
+times in a single program.</p>
+<div>
+<p>Note</p>
+<p>The compiled versions of the most recent patterns passed to
+<a><code><span>re.compile()</span></code></a> and the module-level matching functions are cached, so
+programs that use only a few regular expressions at a time needn’t worry
+about compiling regular expressions.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>A</code><a>¶</a></dt>
+<dt>
+<code>re.</code><code>ASCII</code><a>¶</a></dt>
+<dd><p>Make <code><span>\w</span></code>, <code><span>\W</span></code>, <code><span>\b</span></code>, <code><span>\B</span></code>, <code><span>\d</span></code>, <code><span>\D</span></code>, <code><span>\s</span></code> and <code><span>\S</span></code>
+perform ASCII-only matching instead of full Unicode matching.  This is only
+meaningful for Unicode patterns, and is ignored for byte patterns.
+Corresponds to the inline flag <code><span>(?a)</span></code>.</p>
+<p>Note that for backward compatibility, the <code><span>re.U</span></code> flag still
+exists (as well as its synonym <code><span>re.UNICODE</span></code> and its embedded
+counterpart <code><span>(?u)</span></code>), but these are redundant in Python 3 since
+matches are Unicode by default for strings (and Unicode matching
+isn’t allowed for bytes).</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>DEBUG</code><a>¶</a></dt>
+<dd><p>Display debug information about compiled expression.
+No corresponding inline flag.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>I</code><a>¶</a></dt>
+<dt>
+<code>re.</code><code>IGNORECASE</code><a>¶</a></dt>
+<dd><p>Perform case-insensitive matching; expressions like <code><span>[A-Z]</span></code> will also
+match lowercase letters.  Full Unicode matching (such as <code><span>Ü</span></code> matching
+<code><span>ü</span></code>) also works unless the <a><code><span>re.ASCII</span></code></a> flag is used to disable
+non-ASCII matches.  The current locale does not change the effect of this
+flag unless the <a><code><span>re.LOCALE</span></code></a> flag is also used.
+Corresponds to the inline flag <code><span>(?i)</span></code>.</p>
+<p>Note that when the Unicode patterns <code><span>[a-z]</span></code> or <code><span>[A-Z]</span></code> are used in
+combination with the <a><code><span>IGNORECASE</span></code></a> flag, they will match the 52 ASCII
+letters and 4 additional non-ASCII letters: ‘İ’ (U+0130, Latin capital
+letter I with dot above), ‘ı’ (U+0131, Latin small letter dotless i),
+‘ſ’ (U+017F, Latin small letter long s) and ‘K’ (U+212A, Kelvin sign).
+If the <a><code><span>ASCII</span></code></a> flag is used, only letters ‘a’ to ‘z’
+and ‘A’ to ‘Z’ are matched (but the flag affects the entire regular
+expression, so in such cases using an explicit <code><span>(?-i:[a-zA-Z])</span></code> may be
+a better choice).</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>L</code><a>¶</a></dt>
+<dt>
+<code>re.</code><code>LOCALE</code><a>¶</a></dt>
+<dd><p>Make <code><span>\w</span></code>, <code><span>\W</span></code>, <code><span>\b</span></code>, <code><span>\B</span></code> and case-insensitive matching
+dependent on the current locale.  This flag can be used only with bytes
+patterns.  The use of this flag is discouraged as the locale mechanism
+is very unreliable, it only handles one “culture” at a time, and it only
+works with 8-bit locales.  Unicode matching is already enabled by default
+in Python 3 for Unicode (str) patterns, and it is able to handle different
+locales/languages.
+Corresponds to the inline flag <code><span>(?L)</span></code>.</p>
+<div>
+<p><span>Changed in version 3.6: </span><a><code><span>re.LOCALE</span></code></a> can be used only with bytes patterns and is
+not compatible with <a><code><span>re.ASCII</span></code></a>.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>M</code><a>¶</a></dt>
+<dt>
+<code>re.</code><code>MULTILINE</code><a>¶</a></dt>
+<dd><p>When specified, the pattern character <code><span>'^'</span></code> matches at the beginning of the
+string and at the beginning of each line (immediately following each newline);
+and the pattern character <code><span>'$'</span></code> matches at the end of the string and at the
+end of each line (immediately preceding each newline).  By default, <code><span>'^'</span></code>
+matches only at the beginning of the string, and <code><span>'$'</span></code> only at the end of the
+string and immediately before the newline (if any) at the end of the string.
+Corresponds to the inline flag <code><span>(?m)</span></code>.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>S</code><a>¶</a></dt>
+<dt>
+<code>re.</code><code>DOTALL</code><a>¶</a></dt>
+<dd><p>Make the <code><span>'.'</span></code> special character match any character at all, including a
+newline; without this flag, <code><span>'.'</span></code> will match anything <em>except</em> a newline.
+Corresponds to the inline flag <code><span>(?s)</span></code>.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>X</code><a>¶</a></dt>
+<dt>
+<code>re.</code><code>VERBOSE</code><a>¶</a></dt>
+<dd><p>This flag allows you to write regular expressions that look nicer and are
+more readable by allowing you to visually separate logical sections of the
+pattern and add comments. Whitespace within the pattern is ignored, except
+when in a character class, or when preceded by an unescaped backslash,
+or within tokens like <code><span>*?</span></code>, <code><span>(?:</span></code> or <code><span>(?P&lt;...&gt;</span></code>.
+When a line contains a <code><span>#</span></code> that is not in a character class and is not
+preceded by an unescaped backslash, all characters from the leftmost such
+<code><span>#</span></code> through the end of the line are ignored.</p>
+<p>This means that the two following regular expression objects that match a
+decimal number are functionally equal:</p>
+<div><div><pre><span></span><span>a</span> <span>=</span> <span>re</span><span>.</span><span>compile</span><span>(</span><span>r</span><span>&quot;&quot;&quot;\d +  # the integral part</span>
+<span>                   \.    # the decimal point</span>
+<span>                   \d *  # some fractional digits&quot;&quot;&quot;</span><span>,</span> <span>re</span><span>.</span><span>X</span><span>)</span>
+<span>b</span> <span>=</span> <span>re</span><span>.</span><span>compile</span><span>(</span><span>r</span><span>&quot;\d+\.\d*&quot;</span><span>)</span>
+</pre></div>
+</div>
+<p>Corresponds to the inline flag <code><span>(?x)</span></code>.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>search</code><span>(</span><em>pattern</em>, <em>string</em>, <em>flags=0</em><span>)</span><a>¶</a></dt>
+<dd><p>Scan through <em>string</em> looking for the first location where the regular expression
+<em>pattern</em> produces a match, and return a corresponding <a><span>match object</span></a>.  Return <code><span>None</span></code> if no position in the string matches the
+pattern; note that this is different from finding a zero-length match at some
+point in the string.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>match</code><span>(</span><em>pattern</em>, <em>string</em>, <em>flags=0</em><span>)</span><a>¶</a></dt>
+<dd><p>If zero or more characters at the beginning of <em>string</em> match the regular
+expression <em>pattern</em>, return a corresponding <a><span>match object</span></a>.  Return <code><span>None</span></code> if the string does not match the pattern;
+note that this is different from a zero-length match.</p>
+<p>Note that even in <a><code><span>MULTILINE</span></code></a> mode, <a><code><span>re.match()</span></code></a> will only match
+at the beginning of the string and not at the beginning of each line.</p>
+<p>If you want to locate a match anywhere in <em>string</em>, use <a><code><span>search()</span></code></a>
+instead (see also <a><span>search() vs. match()</span></a>).</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>fullmatch</code><span>(</span><em>pattern</em>, <em>string</em>, <em>flags=0</em><span>)</span><a>¶</a></dt>
+<dd><p>If the whole <em>string</em> matches the regular expression <em>pattern</em>, return a
+corresponding <a><span>match object</span></a>.  Return <code><span>None</span></code> if the
+string does not match the pattern; note that this is different from a
+zero-length match.</p>
+<div>
+<p><span>New in version 3.4.</span></p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>split</code><span>(</span><em>pattern</em>, <em>string</em>, <em>maxsplit=0</em>, <em>flags=0</em><span>)</span><a>¶</a></dt>
+<dd><p>Split <em>string</em> by the occurrences of <em>pattern</em>.  If capturing parentheses are
+used in <em>pattern</em>, then the text of all groups in the pattern are also returned
+as part of the resulting list. If <em>maxsplit</em> is nonzero, at most <em>maxsplit</em>
+splits occur, and the remainder of the string is returned as the final element
+of the list.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>split</span><span>(</span><span>r</span><span>&#39;\W+&#39;</span><span>,</span> <span>&#39;Words, words, words.&#39;</span><span>)</span>
+<span>[&#39;Words&#39;, &#39;words&#39;, &#39;words&#39;, &#39;&#39;]</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>split</span><span>(</span><span>r</span><span>&#39;(\W+)&#39;</span><span>,</span> <span>&#39;Words, words, words.&#39;</span><span>)</span>
+<span>[&#39;Words&#39;, &#39;, &#39;, &#39;words&#39;, &#39;, &#39;, &#39;words&#39;, &#39;.&#39;, &#39;&#39;]</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>split</span><span>(</span><span>r</span><span>&#39;\W+&#39;</span><span>,</span> <span>&#39;Words, words, words.&#39;</span><span>,</span> <span>1</span><span>)</span>
+<span>[&#39;Words&#39;, &#39;words, words.&#39;]</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>split</span><span>(</span><span>&#39;[a-f]+&#39;</span><span>,</span> <span>&#39;0a3B9&#39;</span><span>,</span> <span>flags</span><span>=</span><span>re</span><span>.</span><span>IGNORECASE</span><span>)</span>
+<span>[&#39;0&#39;, &#39;3&#39;, &#39;9&#39;]</span>
+</pre></div>
+</div>
+<p>If there are capturing groups in the separator and it matches at the start of
+the string, the result will start with an empty string.  The same holds for
+the end of the string:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>split</span><span>(</span><span>r</span><span>&#39;(\W+)&#39;</span><span>,</span> <span>&#39;...words, words...&#39;</span><span>)</span>
+<span>[&#39;&#39;, &#39;...&#39;, &#39;words&#39;, &#39;, &#39;, &#39;words&#39;, &#39;...&#39;, &#39;&#39;]</span>
+</pre></div>
+</div>
+<p>That way, separator components are always found at the same relative
+indices within the result list.</p>
+<div>
+<p>Note</p>
+<p><a><code><span>split()</span></code></a> doesn’t currently split a string on an empty pattern match.
+For example:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>split</span><span>(</span><span>&#39;x*&#39;</span><span>,</span> <span>&#39;axbc&#39;</span><span>)</span>
+<span>[&#39;a&#39;, &#39;bc&#39;]</span>
+</pre></div>
+</div>
+<p>Even though <code><span>'x*'</span></code> also matches 0 ‘x’ before ‘a’, between ‘b’ and ‘c’,
+and after ‘c’, currently these matches are ignored.  The correct behavior
+(i.e. splitting on empty matches too and returning <code><span>['',</span> <span>'a',</span> <span>'b',</span> <span>'c',</span>
+<span>'']</span></code>) will be implemented in future versions of Python, but since this
+is a backward incompatible change, a <a><code><span>FutureWarning</span></code></a> will be raised
+in the meanwhile.</p>
+<p>Patterns that can only match empty strings currently never split the
+string.  Since this doesn’t match the expected behavior, a
+<a><code><span>ValueError</span></code></a> will be raised starting from Python 3.5:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>split</span><span>(</span><span>&quot;^$&quot;</span><span>,</span> <span>&quot;foo</span><span>\n\n</span><span>bar</span><span>\n</span><span>&quot;</span><span>,</span> <span>flags</span><span>=</span><span>re</span><span>.</span><span>M</span><span>)</span>
+<span>Traceback (most recent call last):</span>
+  File <span>&quot;&lt;stdin&gt;&quot;</span>, line <span>1</span>, in <span>&lt;module&gt;</span>
+  <span>...</span>
+<span>ValueError</span>: <span>split() requires a non-empty pattern match.</span>
+</pre></div>
+</div>
+</div>
+<div>
+<p><span>Changed in version 3.1: </span>Added the optional flags argument.</p>
+</div>
+<div>
+<p><span>Changed in version 3.5: </span>Splitting on a pattern that could match an empty string now raises
+a warning.  Patterns that can only match empty strings are now rejected.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>findall</code><span>(</span><em>pattern</em>, <em>string</em>, <em>flags=0</em><span>)</span><a>¶</a></dt>
+<dd><p>Return all non-overlapping matches of <em>pattern</em> in <em>string</em>, as a list of
+strings.  The <em>string</em> is scanned left-to-right, and matches are returned in
+the order found.  If one or more groups are present in the pattern, return a
+list of groups; this will be a list of tuples if the pattern has more than
+one group.  Empty matches are included in the result.</p>
+<div>
+<p>Note</p>
+<p>Due to the limitation of the current implementation the character
+following an empty match is not included in a next match, so
+<code><span>findall(r'^|\w+',</span> <span>'two</span> <span>words')</span></code> returns <code><span>['',</span> <span>'wo',</span> <span>'words']</span></code>
+(note missed “t”).  This is changed in Python 3.7.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>finditer</code><span>(</span><em>pattern</em>, <em>string</em>, <em>flags=0</em><span>)</span><a>¶</a></dt>
+<dd><p>Return an <a><span>iterator</span></a> yielding <a><span>match objects</span></a> over
+all non-overlapping matches for the RE <em>pattern</em> in <em>string</em>.  The <em>string</em>
+is scanned left-to-right, and matches are returned in the order found.  Empty
+matches are included in the result.  See also the note about <a><code><span>findall()</span></code></a>.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>sub</code><span>(</span><em>pattern</em>, <em>repl</em>, <em>string</em>, <em>count=0</em>, <em>flags=0</em><span>)</span><a>¶</a></dt>
+<dd><p>Return the string obtained by replacing the leftmost non-overlapping occurrences
+of <em>pattern</em> in <em>string</em> by the replacement <em>repl</em>.  If the pattern isn’t found,
+<em>string</em> is returned unchanged.  <em>repl</em> can be a string or a function; if it is
+a string, any backslash escapes in it are processed.  That is, <code><span>\n</span></code> is
+converted to a single newline character, <code><span>\r</span></code> is converted to a carriage return, and
+so forth.  Unknown escapes such as <code><span>\&amp;</span></code> are left alone.  Backreferences, such
+as <code><span>\6</span></code>, are replaced with the substring matched by group 6 in the pattern.
+For example:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>sub</span><span>(</span><span>r</span><span>&#39;def\s+([a-zA-Z_][a-zA-Z_0-9]*)\s*\(\s*\):&#39;</span><span>,</span>
+<span>... </span>       <span>r</span><span>&#39;static PyObject*\npy_\1(void)\n{&#39;</span><span>,</span>
+<span>... </span>       <span>&#39;def myfunc():&#39;</span><span>)</span>
+<span>&#39;static PyObject*\npy_myfunc(void)\n{&#39;</span>
+</pre></div>
+</div>
+<p>If <em>repl</em> is a function, it is called for every non-overlapping occurrence of
+<em>pattern</em>.  The function takes a single <a><span>match object</span></a>
+argument, and returns the replacement string.  For example:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>def</span> <span>dashrepl</span><span>(</span><span>matchobj</span><span>):</span>
+<span>... </span>    <span>if</span> <span>matchobj</span><span>.</span><span>group</span><span>(</span><span>0</span><span>)</span> <span>==</span> <span>&#39;-&#39;</span><span>:</span> <span>return</span> <span>&#39; &#39;</span>
+<span>... </span>    <span>else</span><span>:</span> <span>return</span> <span>&#39;-&#39;</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>sub</span><span>(</span><span>&#39;-{1,2}&#39;</span><span>,</span> <span>dashrepl</span><span>,</span> <span>&#39;pro----gram-files&#39;</span><span>)</span>
+<span>&#39;pro--gram files&#39;</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>sub</span><span>(</span><span>r</span><span>&#39;\sAND\s&#39;</span><span>,</span> <span>&#39; &amp; &#39;</span><span>,</span> <span>&#39;Baked Beans And Spam&#39;</span><span>,</span> <span>flags</span><span>=</span><span>re</span><span>.</span><span>IGNORECASE</span><span>)</span>
+<span>&#39;Baked Beans &amp; Spam&#39;</span>
+</pre></div>
+</div>
+<p>The pattern may be a string or a <a><span>pattern object</span></a>.</p>
+<p>The optional argument <em>count</em> is the maximum number of pattern occurrences to be
+replaced; <em>count</em> must be a non-negative integer.  If omitted or zero, all
+occurrences will be replaced. Empty matches for the pattern are replaced only
+when not adjacent to a previous match, so <code><span>sub('x*',</span> <span>'-',</span> <span>'abc')</span></code> returns
+<code><span>'-a-b-c-'</span></code>.</p>
+<p>In string-type <em>repl</em> arguments, in addition to the character escapes and
+backreferences described above,
+<code><span>\g&lt;name&gt;</span></code> will use the substring matched by the group named <code><span>name</span></code>, as
+defined by the <code><span>(?P&lt;name&gt;...)</span></code> syntax. <code><span>\g&lt;number&gt;</span></code> uses the corresponding
+group number; <code><span>\g&lt;2&gt;</span></code> is therefore equivalent to <code><span>\2</span></code>, but isn’t ambiguous
+in a replacement such as <code><span>\g&lt;2&gt;0</span></code>.  <code><span>\20</span></code> would be interpreted as a
+reference to group 20, not a reference to group 2 followed by the literal
+character <code><span>'0'</span></code>.  The backreference <code><span>\g&lt;0&gt;</span></code> substitutes in the entire
+substring matched by the RE.</p>
+<div>
+<p><span>Changed in version 3.1: </span>Added the optional flags argument.</p>
+</div>
+<div>
+<p><span>Changed in version 3.5: </span>Unmatched groups are replaced with an empty string.</p>
+</div>
+<div>
+<p><span>Changed in version 3.6: </span>Unknown escapes in <em>pattern</em> consisting of <code><span>'\'</span></code> and an ASCII letter
+now are errors.</p>
+</div>
+<div>
+<p><span>Deprecated since version 3.5, will be removed in version 3.7: </span>Unknown escapes in <em>repl</em> consisting of <code><span>'\'</span></code> and an ASCII letter now raise
+a deprecation warning and will be forbidden in Python 3.7.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>subn</code><span>(</span><em>pattern</em>, <em>repl</em>, <em>string</em>, <em>count=0</em>, <em>flags=0</em><span>)</span><a>¶</a></dt>
+<dd><p>Perform the same operation as <a><code><span>sub()</span></code></a>, but return a tuple <code><span>(new_string,</span>
+<span>number_of_subs_made)</span></code>.</p>
+<div>
+<p><span>Changed in version 3.1: </span>Added the optional flags argument.</p>
+</div>
+<div>
+<p><span>Changed in version 3.5: </span>Unmatched groups are replaced with an empty string.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>escape</code><span>(</span><em>pattern</em><span>)</span><a>¶</a></dt>
+<dd><p>Escape all the characters in <em>pattern</em> except ASCII letters, numbers and <code><span>'_'</span></code>.
+This is useful if you want to match an arbitrary literal string that may
+have regular expression metacharacters in it.  For example:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>re</span><span>.</span><span>escape</span><span>(</span><span>&#39;python.exe&#39;</span><span>))</span>
+<span>python\.exe</span>
+
+<span>&gt;&gt;&gt; </span><span>legal_chars</span> <span>=</span> <span>string</span><span>.</span><span>ascii_lowercase</span> <span>+</span> <span>string</span><span>.</span><span>digits</span> <span>+</span> <span>&quot;!#$%&amp;&#39;*+-.^_`|~:&quot;</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>&#39;[</span><span>%s</span><span>]+&#39;</span> <span>%</span> <span>re</span><span>.</span><span>escape</span><span>(</span><span>legal_chars</span><span>))</span>
+<span>[abcdefghijklmnopqrstuvwxyz0123456789\!\#\$\%\&amp;\&#39;\*\+\-\.\^_\`\|\~\:]+</span>
+
+<span>&gt;&gt;&gt; </span><span>operators</span> <span>=</span> <span>[</span><span>&#39;+&#39;</span><span>,</span> <span>&#39;-&#39;</span><span>,</span> <span>&#39;*&#39;</span><span>,</span> <span>&#39;/&#39;</span><span>,</span> <span>&#39;**&#39;</span><span>]</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>&#39;|&#39;</span><span>.</span><span>join</span><span>(</span><span>map</span><span>(</span><span>re</span><span>.</span><span>escape</span><span>,</span> <span>sorted</span><span>(</span><span>operators</span><span>,</span> <span>reverse</span><span>=</span><span>True</span><span>))))</span>
+<span>\/|\-|\+|\*\*|\*</span>
+</pre></div>
+</div>
+<p>This functions must not be used for the replacement string in <a><code><span>sub()</span></code></a>
+and <a><code><span>subn()</span></code></a>, only backslashes should be escaped.  For example:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>digits_re</span> <span>=</span> <span>r</span><span>&#39;\d+&#39;</span>
+<span>&gt;&gt;&gt; </span><span>sample</span> <span>=</span> <span>&#39;/usr/sbin/sendmail - 0 errors, 12 warnings&#39;</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>re</span><span>.</span><span>sub</span><span>(</span><span>digits_re</span><span>,</span> <span>digits_re</span><span>.</span><span>replace</span><span>(</span><span>&#39;</span><span>\\</span><span>&#39;</span><span>,</span> <span>r</span><span>&#39;</span><span>\\</span><span>&#39;</span><span>),</span> <span>sample</span><span>))</span>
+<span>/usr/sbin/sendmail - \d+ errors, \d+ warnings</span>
+</pre></div>
+</div>
+<div>
+<p><span>Changed in version 3.3: </span>The <code><span>'_'</span></code> character is no longer escaped.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>re.</code><code>purge</code><span>(</span><span>)</span><a>¶</a></dt>
+<dd><p>Clear the regular expression cache.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<em>exception </em><code>re.</code><code>error</code><span>(</span><em>msg</em>, <em>pattern=None</em>, <em>pos=None</em><span>)</span><a>¶</a></dt>
+<dd><p>Exception raised when a string passed to one of the functions here is not a
+valid regular expression (for example, it might contain unmatched parentheses)
+or when some other error occurs during compilation or matching.  It is never an
+error if a string contains no match for a pattern.  The error instance has
+the following additional attributes:</p>
+<dl>
+<dt>
+<code>msg</code><a>¶</a></dt>
+<dd><p>The unformatted error message.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>pattern</code><a>¶</a></dt>
+<dd><p>The regular expression pattern.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>pos</code><a>¶</a></dt>
+<dd><p>The index in <em>pattern</em> where compilation failed (may be <code><span>None</span></code>).</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>lineno</code><a>¶</a></dt>
+<dd><p>The line corresponding to <em>pos</em> (may be <code><span>None</span></code>).</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>colno</code><a>¶</a></dt>
+<dd><p>The column corresponding to <em>pos</em> (may be <code><span>None</span></code>).</p>
+</dd></dl>
+
+<div>
+<p><span>Changed in version 3.5: </span>Added additional attributes.</p>
+</div>
+</dd></dl>
+
+</div>
+<div>
+<span></span><h2>6.2.3. Regular Expression Objects<a>¶</a></h2>
+<p>Compiled regular expression objects support the following methods and
+attributes:</p>
+<dl>
+<dt>
+<code>regex.</code><code>search</code><span>(</span><em>string</em><span>[</span>, <em>pos</em><span>[</span>, <em>endpos</em><span>]</span><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>Scan through <em>string</em> looking for the first location where this regular
+expression produces a match, and return a corresponding <a><span>match object</span></a>.  Return <code><span>None</span></code> if no position in the string matches the
+pattern; note that this is different from finding a zero-length match at some
+point in the string.</p>
+<p>The optional second parameter <em>pos</em> gives an index in the string where the
+search is to start; it defaults to <code><span>0</span></code>.  This is not completely equivalent to
+slicing the string; the <code><span>'^'</span></code> pattern character matches at the real beginning
+of the string and at positions just after a newline, but not necessarily at the
+index where the search is to start.</p>
+<p>The optional parameter <em>endpos</em> limits how far the string will be searched; it
+will be as if the string is <em>endpos</em> characters long, so only the characters
+from <em>pos</em> to <code><span>endpos</span> <span>-</span> <span>1</span></code> will be searched for a match.  If <em>endpos</em> is less
+than <em>pos</em>, no match will be found; otherwise, if <em>rx</em> is a compiled regular
+expression object, <code><span>rx.search(string,</span> <span>0,</span> <span>50)</span></code> is equivalent to
+<code><span>rx.search(string[:50],</span> <span>0)</span></code>.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>pattern</span> <span>=</span> <span>re</span><span>.</span><span>compile</span><span>(</span><span>&quot;d&quot;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>pattern</span><span>.</span><span>search</span><span>(</span><span>&quot;dog&quot;</span><span>)</span>     <span># Match at index 0</span>
+<span>&lt;_sre.SRE_Match object; span=(0, 1), match=&#39;d&#39;&gt;</span>
+<span>&gt;&gt;&gt; </span><span>pattern</span><span>.</span><span>search</span><span>(</span><span>&quot;dog&quot;</span><span>,</span> <span>1</span><span>)</span>  <span># No match; search doesn&#39;t include the &quot;d&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>regex.</code><code>match</code><span>(</span><em>string</em><span>[</span>, <em>pos</em><span>[</span>, <em>endpos</em><span>]</span><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>If zero or more characters at the <em>beginning</em> of <em>string</em> match this regular
+expression, return a corresponding <a><span>match object</span></a>.
+Return <code><span>None</span></code> if the string does not match the pattern; note that this is
+different from a zero-length match.</p>
+<p>The optional <em>pos</em> and <em>endpos</em> parameters have the same meaning as for the
+<a><code><span>search()</span></code></a> method.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>pattern</span> <span>=</span> <span>re</span><span>.</span><span>compile</span><span>(</span><span>&quot;o&quot;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>pattern</span><span>.</span><span>match</span><span>(</span><span>&quot;dog&quot;</span><span>)</span>      <span># No match as &quot;o&quot; is not at the start of &quot;dog&quot;.</span>
+<span>&gt;&gt;&gt; </span><span>pattern</span><span>.</span><span>match</span><span>(</span><span>&quot;dog&quot;</span><span>,</span> <span>1</span><span>)</span>   <span># Match as &quot;o&quot; is the 2nd character of &quot;dog&quot;.</span>
+<span>&lt;_sre.SRE_Match object; span=(1, 2), match=&#39;o&#39;&gt;</span>
+</pre></div>
+</div>
+<p>If you want to locate a match anywhere in <em>string</em>, use
+<a><code><span>search()</span></code></a> instead (see also <a><span>search() vs. match()</span></a>).</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>regex.</code><code>fullmatch</code><span>(</span><em>string</em><span>[</span>, <em>pos</em><span>[</span>, <em>endpos</em><span>]</span><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>If the whole <em>string</em> matches this regular expression, return a corresponding
+<a><span>match object</span></a>.  Return <code><span>None</span></code> if the string does not
+match the pattern; note that this is different from a zero-length match.</p>
+<p>The optional <em>pos</em> and <em>endpos</em> parameters have the same meaning as for the
+<a><code><span>search()</span></code></a> method.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>pattern</span> <span>=</span> <span>re</span><span>.</span><span>compile</span><span>(</span><span>&quot;o[gh]&quot;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>pattern</span><span>.</span><span>fullmatch</span><span>(</span><span>&quot;dog&quot;</span><span>)</span>      <span># No match as &quot;o&quot; is not at the start of &quot;dog&quot;.</span>
+<span>&gt;&gt;&gt; </span><span>pattern</span><span>.</span><span>fullmatch</span><span>(</span><span>&quot;ogre&quot;</span><span>)</span>     <span># No match as not the full string matches.</span>
+<span>&gt;&gt;&gt; </span><span>pattern</span><span>.</span><span>fullmatch</span><span>(</span><span>&quot;doggie&quot;</span><span>,</span> <span>1</span><span>,</span> <span>3</span><span>)</span>   <span># Matches within given limits.</span>
+<span>&lt;_sre.SRE_Match object; span=(1, 3), match=&#39;og&#39;&gt;</span>
+</pre></div>
+</div>
+<div>
+<p><span>New in version 3.4.</span></p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>regex.</code><code>split</code><span>(</span><em>string</em>, <em>maxsplit=0</em><span>)</span><a>¶</a></dt>
+<dd><p>Identical to the <a><code><span>split()</span></code></a> function, using the compiled pattern.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>regex.</code><code>findall</code><span>(</span><em>string</em><span>[</span>, <em>pos</em><span>[</span>, <em>endpos</em><span>]</span><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>Similar to the <a><code><span>findall()</span></code></a> function, using the compiled pattern, but
+also accepts optional <em>pos</em> and <em>endpos</em> parameters that limit the search
+region like for <a><code><span>search()</span></code></a>.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>regex.</code><code>finditer</code><span>(</span><em>string</em><span>[</span>, <em>pos</em><span>[</span>, <em>endpos</em><span>]</span><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>Similar to the <a><code><span>finditer()</span></code></a> function, using the compiled pattern, but
+also accepts optional <em>pos</em> and <em>endpos</em> parameters that limit the search
+region like for <a><code><span>search()</span></code></a>.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>regex.</code><code>sub</code><span>(</span><em>repl</em>, <em>string</em>, <em>count=0</em><span>)</span><a>¶</a></dt>
+<dd><p>Identical to the <a><code><span>sub()</span></code></a> function, using the compiled pattern.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>regex.</code><code>subn</code><span>(</span><em>repl</em>, <em>string</em>, <em>count=0</em><span>)</span><a>¶</a></dt>
+<dd><p>Identical to the <a><code><span>subn()</span></code></a> function, using the compiled pattern.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>regex.</code><code>flags</code><a>¶</a></dt>
+<dd><p>The regex matching flags.  This is a combination of the flags given to
+<a><code><span>compile()</span></code></a>, any <code><span>(?...)</span></code> inline flags in the pattern, and implicit
+flags such as <code><span>UNICODE</span></code> if the pattern is a Unicode string.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>regex.</code><code>groups</code><a>¶</a></dt>
+<dd><p>The number of capturing groups in the pattern.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>regex.</code><code>groupindex</code><a>¶</a></dt>
+<dd><p>A dictionary mapping any symbolic group names defined by <code><span>(?P&lt;id&gt;)</span></code> to group
+numbers.  The dictionary is empty if no symbolic groups were used in the
+pattern.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>regex.</code><code>pattern</code><a>¶</a></dt>
+<dd><p>The pattern string from which the RE object was compiled.</p>
+</dd></dl>
+
+</div>
+<div>
+<span></span><h2>6.2.4. Match Objects<a>¶</a></h2>
+<p>Match objects always have a boolean value of <code><span>True</span></code>.
+Since <a><code><span>match()</span></code></a> and <a><code><span>search()</span></code></a> return <code><span>None</span></code>
+when there is no match, you can test whether there was a match with a simple
+<code><span>if</span></code> statement:</p>
+<div><div><pre><span></span><span>match</span> <span>=</span> <span>re</span><span>.</span><span>search</span><span>(</span><span>pattern</span><span>,</span> <span>string</span><span>)</span>
+<span>if</span> <span>match</span><span>:</span>
+    <span>process</span><span>(</span><span>match</span><span>)</span>
+</pre></div>
+</div>
+<p>Match objects support the following methods and attributes:</p>
+<dl>
+<dt>
+<code>match.</code><code>expand</code><span>(</span><em>template</em><span>)</span><a>¶</a></dt>
+<dd><p>Return the string obtained by doing backslash substitution on the template
+string <em>template</em>, as done by the <a><code><span>sub()</span></code></a> method.
+Escapes such as <code><span>\n</span></code> are converted to the appropriate characters,
+and numeric backreferences (<code><span>\1</span></code>, <code><span>\2</span></code>) and named backreferences
+(<code><span>\g&lt;1&gt;</span></code>, <code><span>\g&lt;name&gt;</span></code>) are replaced by the contents of the
+corresponding group.</p>
+<div>
+<p><span>Changed in version 3.5: </span>Unmatched groups are replaced with an empty string.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>match.</code><code>group</code><span>(</span><span>[</span><em>group1</em>, <em>...</em><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>Returns one or more subgroups of the match.  If there is a single argument, the
+result is a single string; if there are multiple arguments, the result is a
+tuple with one item per argument. Without arguments, <em>group1</em> defaults to zero
+(the whole match is returned). If a <em>groupN</em> argument is zero, the corresponding
+return value is the entire matching string; if it is in the inclusive range
+[1..99], it is the string matching the corresponding parenthesized group.  If a
+group number is negative or larger than the number of groups defined in the
+pattern, an <a><code><span>IndexError</span></code></a> exception is raised. If a group is contained in a
+part of the pattern that did not match, the corresponding result is <code><span>None</span></code>.
+If a group is contained in a part of the pattern that matched multiple times,
+the last match is returned.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>m</span> <span>=</span> <span>re</span><span>.</span><span>match</span><span>(</span><span>r</span><span>&quot;(\w+) (\w+)&quot;</span><span>,</span> <span>&quot;Isaac Newton, physicist&quot;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>group</span><span>(</span><span>0</span><span>)</span>       <span># The entire match</span>
+<span>&#39;Isaac Newton&#39;</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>group</span><span>(</span><span>1</span><span>)</span>       <span># The first parenthesized subgroup.</span>
+<span>&#39;Isaac&#39;</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>group</span><span>(</span><span>2</span><span>)</span>       <span># The second parenthesized subgroup.</span>
+<span>&#39;Newton&#39;</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>group</span><span>(</span><span>1</span><span>,</span> <span>2</span><span>)</span>    <span># Multiple arguments give us a tuple.</span>
+<span>(&#39;Isaac&#39;, &#39;Newton&#39;)</span>
+</pre></div>
+</div>
+<p>If the regular expression uses the <code><span>(?P&lt;name&gt;...)</span></code> syntax, the <em>groupN</em>
+arguments may also be strings identifying groups by their group name.  If a
+string argument is not used as a group name in the pattern, an <a><code><span>IndexError</span></code></a>
+exception is raised.</p>
+<p>A moderately complicated example:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>m</span> <span>=</span> <span>re</span><span>.</span><span>match</span><span>(</span><span>r</span><span>&quot;(?P&lt;first_name&gt;\w+) (?P&lt;last_name&gt;\w+)&quot;</span><span>,</span> <span>&quot;Malcolm Reynolds&quot;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>group</span><span>(</span><span>&#39;first_name&#39;</span><span>)</span>
+<span>&#39;Malcolm&#39;</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>group</span><span>(</span><span>&#39;last_name&#39;</span><span>)</span>
+<span>&#39;Reynolds&#39;</span>
+</pre></div>
+</div>
+<p>Named groups can also be referred to by their index:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>group</span><span>(</span><span>1</span><span>)</span>
+<span>&#39;Malcolm&#39;</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>group</span><span>(</span><span>2</span><span>)</span>
+<span>&#39;Reynolds&#39;</span>
+</pre></div>
+</div>
+<p>If a group matches multiple times, only the last match is accessible:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>m</span> <span>=</span> <span>re</span><span>.</span><span>match</span><span>(</span><span>r</span><span>&quot;(..)+&quot;</span><span>,</span> <span>&quot;a1b2c3&quot;</span><span>)</span>  <span># Matches 3 times.</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>group</span><span>(</span><span>1</span><span>)</span>                        <span># Returns only the last match.</span>
+<span>&#39;c3&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>match.</code><code>__getitem__</code><span>(</span><em>g</em><span>)</span><a>¶</a></dt>
+<dd><p>This is identical to <code><span>m.group(g)</span></code>.  This allows easier access to
+an individual group from a match:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>m</span> <span>=</span> <span>re</span><span>.</span><span>match</span><span>(</span><span>r</span><span>&quot;(\w+) (\w+)&quot;</span><span>,</span> <span>&quot;Isaac Newton, physicist&quot;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>[</span><span>0</span><span>]</span>       <span># The entire match</span>
+<span>&#39;Isaac Newton&#39;</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>[</span><span>1</span><span>]</span>       <span># The first parenthesized subgroup.</span>
+<span>&#39;Isaac&#39;</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>[</span><span>2</span><span>]</span>       <span># The second parenthesized subgroup.</span>
+<span>&#39;Newton&#39;</span>
+</pre></div>
+</div>
+<div>
+<p><span>New in version 3.6.</span></p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>match.</code><code>groups</code><span>(</span><em>default=None</em><span>)</span><a>¶</a></dt>
+<dd><p>Return a tuple containing all the subgroups of the match, from 1 up to however
+many groups are in the pattern.  The <em>default</em> argument is used for groups that
+did not participate in the match; it defaults to <code><span>None</span></code>.</p>
+<p>For example:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>m</span> <span>=</span> <span>re</span><span>.</span><span>match</span><span>(</span><span>r</span><span>&quot;(\d+)\.(\d+)&quot;</span><span>,</span> <span>&quot;24.1632&quot;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>groups</span><span>()</span>
+<span>(&#39;24&#39;, &#39;1632&#39;)</span>
+</pre></div>
+</div>
+<p>If we make the decimal place and everything after it optional, not all groups
+might participate in the match.  These groups will default to <code><span>None</span></code> unless
+the <em>default</em> argument is given:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>m</span> <span>=</span> <span>re</span><span>.</span><span>match</span><span>(</span><span>r</span><span>&quot;(\d+)\.?(\d+)?&quot;</span><span>,</span> <span>&quot;24&quot;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>groups</span><span>()</span>      <span># Second group defaults to None.</span>
+<span>(&#39;24&#39;, None)</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>groups</span><span>(</span><span>&#39;0&#39;</span><span>)</span>   <span># Now, the second group defaults to &#39;0&#39;.</span>
+<span>(&#39;24&#39;, &#39;0&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>match.</code><code>groupdict</code><span>(</span><em>default=None</em><span>)</span><a>¶</a></dt>
+<dd><p>Return a dictionary containing all the <em>named</em> subgroups of the match, keyed by
+the subgroup name.  The <em>default</em> argument is used for groups that did not
+participate in the match; it defaults to <code><span>None</span></code>.  For example:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>m</span> <span>=</span> <span>re</span><span>.</span><span>match</span><span>(</span><span>r</span><span>&quot;(?P&lt;first_name&gt;\w+) (?P&lt;last_name&gt;\w+)&quot;</span><span>,</span> <span>&quot;Malcolm Reynolds&quot;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>m</span><span>.</span><span>groupdict</span><span>()</span>
+<span>{&#39;first_name&#39;: &#39;Malcolm&#39;, &#39;last_name&#39;: &#39;Reynolds&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>match.</code><code>start</code><span>(</span><span>[</span><em>group</em><span>]</span><span>)</span><a>¶</a></dt>
+<dt>
+<code>match.</code><code>end</code><span>(</span><span>[</span><em>group</em><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>Return the indices of the start and end of the substring matched by <em>group</em>;
+<em>group</em> defaults to zero (meaning the whole matched substring). Return <code><span>-1</span></code> if
+<em>group</em> exists but did not contribute to the match.  For a match object <em>m</em>, and
+a group <em>g</em> that did contribute to the match, the substring matched by group <em>g</em>
+(equivalent to <code><span>m.group(g)</span></code>) is</p>
+<div><div><pre><span></span><span>m</span><span>.</span><span>string</span><span>[</span><span>m</span><span>.</span><span>start</span><span>(</span><span>g</span><span>):</span><span>m</span><span>.</span><span>end</span><span>(</span><span>g</span><span>)]</span>
+</pre></div>
+</div>
+<p>Note that <code><span>m.start(group)</span></code> will equal <code><span>m.end(group)</span></code> if <em>group</em> matched a
+null string.  For example, after <code><span>m</span> <span>=</span> <span>re.search('b(c?)',</span> <span>'cba')</span></code>,
+<code><span>m.start(0)</span></code> is 1, <code><span>m.end(0)</span></code> is 2, <code><span>m.start(1)</span></code> and <code><span>m.end(1)</span></code> are both
+2, and <code><span>m.start(2)</span></code> raises an <a><code><span>IndexError</span></code></a> exception.</p>
+<p>An example that will remove <em>remove_this</em> from email addresses:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>email</span> <span>=</span> <span>&quot;tony@tiremove_thisger.net&quot;</span>
+<span>&gt;&gt;&gt; </span><span>m</span> <span>=</span> <span>re</span><span>.</span><span>search</span><span>(</span><span>&quot;remove_this&quot;</span><span>,</span> <span>email</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>email</span><span>[:</span><span>m</span><span>.</span><span>start</span><span>()]</span> <span>+</span> <span>email</span><span>[</span><span>m</span><span>.</span><span>end</span><span>():]</span>
+<span>&#39;tony@tiger.net&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>match.</code><code>span</code><span>(</span><span>[</span><em>group</em><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>For a match <em>m</em>, return the 2-tuple <code><span>(m.start(group),</span> <span>m.end(group))</span></code>. Note
+that if <em>group</em> did not contribute to the match, this is <code><span>(-1,</span> <span>-1)</span></code>.
+<em>group</em> defaults to zero, the entire match.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>match.</code><code>pos</code><a>¶</a></dt>
+<dd><p>The value of <em>pos</em> which was passed to the <a><code><span>search()</span></code></a> or
+<a><code><span>match()</span></code></a> method of a <a><span>regex object</span></a>.  This is
+the index into the string at which the RE engine started looking for a match.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>match.</code><code>endpos</code><a>¶</a></dt>
+<dd><p>The value of <em>endpos</em> which was passed to the <a><code><span>search()</span></code></a> or
+<a><code><span>match()</span></code></a> method of a <a><span>regex object</span></a>.  This is
+the index into the string beyond which the RE engine will not go.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>match.</code><code>lastindex</code><a>¶</a></dt>
+<dd><p>The integer index of the last matched capturing group, or <code><span>None</span></code> if no group
+was matched at all. For example, the expressions <code><span>(a)b</span></code>, <code><span>((a)(b))</span></code>, and
+<code><span>((ab))</span></code> will have <code><span>lastindex</span> <span>==</span> <span>1</span></code> if applied to the string <code><span>'ab'</span></code>, while
+the expression <code><span>(a)(b)</span></code> will have <code><span>lastindex</span> <span>==</span> <span>2</span></code>, if applied to the same
+string.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>match.</code><code>lastgroup</code><a>¶</a></dt>
+<dd><p>The name of the last matched capturing group, or <code><span>None</span></code> if the group didn’t
+have a name, or if no group was matched at all.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>match.</code><code>re</code><a>¶</a></dt>
+<dd><p>The <a><span>regular expression object</span></a> whose <a><code><span>match()</span></code></a> or
+<a><code><span>search()</span></code></a> method produced this match instance.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>match.</code><code>string</code><a>¶</a></dt>
+<dd><p>The string passed to <a><code><span>match()</span></code></a> or <a><code><span>search()</span></code></a>.</p>
+</dd></dl>
+
+</div>
+<div>
+<span></span><h2>6.2.5. Regular Expression Examples<a>¶</a></h2>
+<div>
+<h3>6.2.5.1. Checking for a Pair<a>¶</a></h3>
+<p>In this example, we’ll use the following helper function to display match
+objects a little more gracefully:</p>
+<div><div><pre><span></span><span>def</span> <span>displaymatch</span><span>(</span><span>match</span><span>):</span>
+    <span>if</span> <span>match</span> <span>is</span> <span>None</span><span>:</span>
+        <span>return</span> <span>None</span>
+    <span>return</span> <span>&#39;&lt;Match: </span><span>%r</span><span>, groups=</span><span>%r</span><span>&gt;&#39;</span> <span>%</span> <span>(</span><span>match</span><span>.</span><span>group</span><span>(),</span> <span>match</span><span>.</span><span>groups</span><span>())</span>
+</pre></div>
+</div>
+<p>Suppose you are writing a poker program where a player’s hand is represented as
+a 5-character string with each character representing a card, “a” for ace, “k”
+for king, “q” for queen, “j” for jack, “t” for 10, and “2” through “9”
+representing the card with that value.</p>
+<p>To see if a given string is a valid hand, one could do the following:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>valid</span> <span>=</span> <span>re</span><span>.</span><span>compile</span><span>(</span><span>r</span><span>&quot;^[a2-9tjqk]</span><span>{5}</span><span>$&quot;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>displaymatch</span><span>(</span><span>valid</span><span>.</span><span>match</span><span>(</span><span>&quot;akt5q&quot;</span><span>))</span>  <span># Valid.</span>
+<span>&quot;&lt;Match: &#39;akt5q&#39;, groups=()&gt;&quot;</span>
+<span>&gt;&gt;&gt; </span><span>displaymatch</span><span>(</span><span>valid</span><span>.</span><span>match</span><span>(</span><span>&quot;akt5e&quot;</span><span>))</span>  <span># Invalid.</span>
+<span>&gt;&gt;&gt; </span><span>displaymatch</span><span>(</span><span>valid</span><span>.</span><span>match</span><span>(</span><span>&quot;akt&quot;</span><span>))</span>    <span># Invalid.</span>
+<span>&gt;&gt;&gt; </span><span>displaymatch</span><span>(</span><span>valid</span><span>.</span><span>match</span><span>(</span><span>&quot;727ak&quot;</span><span>))</span>  <span># Valid.</span>
+<span>&quot;&lt;Match: &#39;727ak&#39;, groups=()&gt;&quot;</span>
+</pre></div>
+</div>
+<p>That last hand, <code><span>&quot;727ak&quot;</span></code>, contained a pair, or two of the same valued cards.
+To match this with a regular expression, one could use backreferences as such:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>pair</span> <span>=</span> <span>re</span><span>.</span><span>compile</span><span>(</span><span>r</span><span>&quot;.*(.).*\1&quot;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>displaymatch</span><span>(</span><span>pair</span><span>.</span><span>match</span><span>(</span><span>&quot;717ak&quot;</span><span>))</span>     <span># Pair of 7s.</span>
+<span>&quot;&lt;Match: &#39;717&#39;, groups=(&#39;7&#39;,)&gt;&quot;</span>
+<span>&gt;&gt;&gt; </span><span>displaymatch</span><span>(</span><span>pair</span><span>.</span><span>match</span><span>(</span><span>&quot;718ak&quot;</span><span>))</span>     <span># No pairs.</span>
+<span>&gt;&gt;&gt; </span><span>displaymatch</span><span>(</span><span>pair</span><span>.</span><span>match</span><span>(</span><span>&quot;354aa&quot;</span><span>))</span>     <span># Pair of aces.</span>
+<span>&quot;&lt;Match: &#39;354aa&#39;, groups=(&#39;a&#39;,)&gt;&quot;</span>
+</pre></div>
+</div>
+<p>To find out what card the pair consists of, one could use the
+<a><code><span>group()</span></code></a> method of the match object in the following manner:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>pair</span><span>.</span><span>match</span><span>(</span><span>&quot;717ak&quot;</span><span>)</span><span>.</span><span>group</span><span>(</span><span>1</span><span>)</span>
+<span>&#39;7&#39;</span>
+
+<span># Error because re.match() returns None, which doesn&#39;t have a group() method:</span>
+<span>&gt;&gt;&gt; </span><span>pair</span><span>.</span><span>match</span><span>(</span><span>&quot;718ak&quot;</span><span>)</span><span>.</span><span>group</span><span>(</span><span>1</span><span>)</span>
+<span>Traceback (most recent call last):</span>
+  File <span>&quot;&lt;pyshell#23&gt;&quot;</span>, line <span>1</span>, in <span>&lt;module&gt;</span>
+    <span>re</span><span>.</span><span>match</span><span>(</span><span>r</span><span>&quot;.*(.).*\1&quot;</span><span>,</span> <span>&quot;718ak&quot;</span><span>)</span><span>.</span><span>group</span><span>(</span><span>1</span><span>)</span>
+<span>AttributeError</span>: <span>&#39;NoneType&#39; object has no attribute &#39;group&#39;</span>
+
+<span>&gt;&gt;&gt; </span><span>pair</span><span>.</span><span>match</span><span>(</span><span>&quot;354aa&quot;</span><span>)</span><span>.</span><span>group</span><span>(</span><span>1</span><span>)</span>
+<span>&#39;a&#39;</span>
+</pre></div>
+</div>
+</div>
+<div>
+<h3>6.2.5.2. Simulating scanf()<a>¶</a></h3>
+<p>Python does not currently have an equivalent to <code><span>scanf()</span></code>.  Regular
+expressions are generally more powerful, though also more verbose, than
+<code><span>scanf()</span></code> format strings.  The table below offers some more-or-less
+equivalent mappings between <code><span>scanf()</span></code> format tokens and regular
+expressions.</p>
+<table>
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr><th><code><span>scanf()</span></code> Token</th>
+<th>Regular Expression</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code><span>%c</span></code></td>
+<td><code><span>.</span></code></td>
+</tr>
+<tr><td><code><span>%5c</span></code></td>
+<td><code><span>.{5}</span></code></td>
+</tr>
+<tr><td><code><span>%d</span></code></td>
+<td><code><span>[-+]?\d+</span></code></td>
+</tr>
+<tr><td><code><span>%e</span></code>, <code><span>%E</span></code>, <code><span>%f</span></code>, <code><span>%g</span></code></td>
+<td><code><span>[-+]?(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?</span></code></td>
+</tr>
+<tr><td><code><span>%i</span></code></td>
+<td><code><span>[-+]?(0[xX][\dA-Fa-f]+|0[0-7]*|\d+)</span></code></td>
+</tr>
+<tr><td><code><span>%o</span></code></td>
+<td><code><span>[-+]?[0-7]+</span></code></td>
+</tr>
+<tr><td><code><span>%s</span></code></td>
+<td><code><span>\S+</span></code></td>
+</tr>
+<tr><td><code><span>%u</span></code></td>
+<td><code><span>\d+</span></code></td>
+</tr>
+<tr><td><code><span>%x</span></code>, <code><span>%X</span></code></td>
+<td><code><span>[-+]?(0[xX])?[\dA-Fa-f]+</span></code></td>
+</tr>
+</tbody>
+</table>
+<p>To extract the filename and numbers from a string like</p>
+<div><div><pre><span></span><span>/</span><span>usr</span><span>/</span><span>sbin</span><span>/</span><span>sendmail</span> <span>-</span> <span>0</span> <span>errors</span><span>,</span> <span>4</span> <span>warnings</span>
+</pre></div>
+</div>
+<p>you would use a <code><span>scanf()</span></code> format like</p>
+<div><div><pre><span></span><span>%</span><span>s</span> <span>-</span> <span>%</span><span>d</span> <span>errors</span><span>,</span> <span>%</span><span>d</span> <span>warnings</span>
+</pre></div>
+</div>
+<p>The equivalent regular expression would be</p>
+<div><div><pre><span></span><span>(</span>\<span>S</span><span>+</span><span>)</span> <span>-</span> <span>(</span>\<span>d</span><span>+</span><span>)</span> <span>errors</span><span>,</span> <span>(</span>\<span>d</span><span>+</span><span>)</span> <span>warnings</span>
+</pre></div>
+</div>
+</div>
+<div>
+<span></span><h3>6.2.5.3. search() vs. match()<a>¶</a></h3>
+<p>Python offers two different primitive operations based on regular expressions:
+<a><code><span>re.match()</span></code></a> checks for a match only at the beginning of the string, while
+<a><code><span>re.search()</span></code></a> checks for a match anywhere in the string (this is what Perl
+does by default).</p>
+<p>For example:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>match</span><span>(</span><span>&quot;c&quot;</span><span>,</span> <span>&quot;abcdef&quot;</span><span>)</span>    <span># No match</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>search</span><span>(</span><span>&quot;c&quot;</span><span>,</span> <span>&quot;abcdef&quot;</span><span>)</span>   <span># Match</span>
+<span>&lt;_sre.SRE_Match object; span=(2, 3), match=&#39;c&#39;&gt;</span>
+</pre></div>
+</div>
+<p>Regular expressions beginning with <code><span>'^'</span></code> can be used with <a><code><span>search()</span></code></a> to
+restrict the match at the beginning of the string:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>match</span><span>(</span><span>&quot;c&quot;</span><span>,</span> <span>&quot;abcdef&quot;</span><span>)</span>    <span># No match</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>search</span><span>(</span><span>&quot;^c&quot;</span><span>,</span> <span>&quot;abcdef&quot;</span><span>)</span>  <span># No match</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>search</span><span>(</span><span>&quot;^a&quot;</span><span>,</span> <span>&quot;abcdef&quot;</span><span>)</span>  <span># Match</span>
+<span>&lt;_sre.SRE_Match object; span=(0, 1), match=&#39;a&#39;&gt;</span>
+</pre></div>
+</div>
+<p>Note however that in <a><code><span>MULTILINE</span></code></a> mode <a><code><span>match()</span></code></a> only matches at the
+beginning of the string, whereas using <a><code><span>search()</span></code></a> with a regular expression
+beginning with <code><span>'^'</span></code> will match at the beginning of each line.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>match</span><span>(</span><span>&#39;X&#39;</span><span>,</span> <span>&#39;A</span><span>\n</span><span>B</span><span>\n</span><span>X&#39;</span><span>,</span> <span>re</span><span>.</span><span>MULTILINE</span><span>)</span>  <span># No match</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>search</span><span>(</span><span>&#39;^X&#39;</span><span>,</span> <span>&#39;A</span><span>\n</span><span>B</span><span>\n</span><span>X&#39;</span><span>,</span> <span>re</span><span>.</span><span>MULTILINE</span><span>)</span>  <span># Match</span>
+<span>&lt;_sre.SRE_Match object; span=(4, 5), match=&#39;X&#39;&gt;</span>
+</pre></div>
+</div>
+</div>
+<div>
+<h3>6.2.5.4. Making a Phonebook<a>¶</a></h3>
+<p><a><code><span>split()</span></code></a> splits a string into a list delimited by the passed pattern.  The
+method is invaluable for converting textual data into data structures that can be
+easily read and modified by Python as demonstrated in the following example that
+creates a phonebook.</p>
+<p>First, here is the input.  Normally it may come from a file, here we are using
+triple-quoted string syntax:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>text</span> <span>=</span> <span>&quot;&quot;&quot;Ross McFluff: 834.345.1254 155 Elm Street</span>
+<span>...</span><span></span>
+<span>... </span><span>Ronald Heathmore: 892.345.3428 436 Finley Avenue</span>
+<span>... </span><span>Frank Burger: 925.541.7625 662 South Dogwood Way</span>
+<span>...</span><span></span>
+<span>...</span><span></span>
+<span>... </span><span>Heather Albrecht: 548.326.4584 919 Park Place&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>The entries are separated by one or more newlines. Now we convert the string
+into a list with each nonempty line having its own entry:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>entries</span> <span>=</span> <span>re</span><span>.</span><span>split</span><span>(</span><span>&quot;</span><span>\n</span><span>+&quot;</span><span>,</span> <span>text</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>entries</span>
+<span>[&#39;Ross McFluff: 834.345.1254 155 Elm Street&#39;,</span>
+<span>&#39;Ronald Heathmore: 892.345.3428 436 Finley Avenue&#39;,</span>
+<span>&#39;Frank Burger: 925.541.7625 662 South Dogwood Way&#39;,</span>
+<span>&#39;Heather Albrecht: 548.326.4584 919 Park Place&#39;]</span>
+</pre></div>
+</div>
+<p>Finally, split each entry into a list with first name, last name, telephone
+number, and address.  We use the <code><span>maxsplit</span></code> parameter of <a><code><span>split()</span></code></a>
+because the address has spaces, our splitting pattern, in it:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>[</span><span>re</span><span>.</span><span>split</span><span>(</span><span>&quot;:? &quot;</span><span>,</span> <span>entry</span><span>,</span> <span>3</span><span>)</span> <span>for</span> <span>entry</span> <span>in</span> <span>entries</span><span>]</span>
+<span>[[&#39;Ross&#39;, &#39;McFluff&#39;, &#39;834.345.1254&#39;, &#39;155 Elm Street&#39;],</span>
+<span>[&#39;Ronald&#39;, &#39;Heathmore&#39;, &#39;892.345.3428&#39;, &#39;436 Finley Avenue&#39;],</span>
+<span>[&#39;Frank&#39;, &#39;Burger&#39;, &#39;925.541.7625&#39;, &#39;662 South Dogwood Way&#39;],</span>
+<span>[&#39;Heather&#39;, &#39;Albrecht&#39;, &#39;548.326.4584&#39;, &#39;919 Park Place&#39;]]</span>
+</pre></div>
+</div>
+<p>The <code><span>:?</span></code> pattern matches the colon after the last name, so that it does not
+occur in the result list.  With a <code><span>maxsplit</span></code> of <code><span>4</span></code>, we could separate the
+house number from the street name:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>[</span><span>re</span><span>.</span><span>split</span><span>(</span><span>&quot;:? &quot;</span><span>,</span> <span>entry</span><span>,</span> <span>4</span><span>)</span> <span>for</span> <span>entry</span> <span>in</span> <span>entries</span><span>]</span>
+<span>[[&#39;Ross&#39;, &#39;McFluff&#39;, &#39;834.345.1254&#39;, &#39;155&#39;, &#39;Elm Street&#39;],</span>
+<span>[&#39;Ronald&#39;, &#39;Heathmore&#39;, &#39;892.345.3428&#39;, &#39;436&#39;, &#39;Finley Avenue&#39;],</span>
+<span>[&#39;Frank&#39;, &#39;Burger&#39;, &#39;925.541.7625&#39;, &#39;662&#39;, &#39;South Dogwood Way&#39;],</span>
+<span>[&#39;Heather&#39;, &#39;Albrecht&#39;, &#39;548.326.4584&#39;, &#39;919&#39;, &#39;Park Place&#39;]]</span>
+</pre></div>
+</div>
+</div>
+<div>
+<h3>6.2.5.5. Text Munging<a>¶</a></h3>
+<p><a><code><span>sub()</span></code></a> replaces every occurrence of a pattern with a string or the
+result of a function.  This example demonstrates using <a><code><span>sub()</span></code></a> with
+a function to “munge” text, or randomize the order of all the characters
+in each word of a sentence except for the first and last characters:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>def</span> <span>repl</span><span>(</span><span>m</span><span>):</span>
+<span>... </span>    <span>inner_word</span> <span>=</span> <span>list</span><span>(</span><span>m</span><span>.</span><span>group</span><span>(</span><span>2</span><span>))</span>
+<span>... </span>    <span>random</span><span>.</span><span>shuffle</span><span>(</span><span>inner_word</span><span>)</span>
+<span>... </span>    <span>return</span> <span>m</span><span>.</span><span>group</span><span>(</span><span>1</span><span>)</span> <span>+</span> <span>&quot;&quot;</span><span>.</span><span>join</span><span>(</span><span>inner_word</span><span>)</span> <span>+</span> <span>m</span><span>.</span><span>group</span><span>(</span><span>3</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>text</span> <span>=</span> <span>&quot;Professor Abdolmalek, please report your absences promptly.&quot;</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>sub</span><span>(</span><span>r</span><span>&quot;(\w)(\w+)(\w)&quot;</span><span>,</span> <span>repl</span><span>,</span> <span>text</span><span>)</span>
+<span>&#39;Poefsrosr Aealmlobdk, pslaee reorpt your abnseces plmrptoy.&#39;</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>sub</span><span>(</span><span>r</span><span>&quot;(\w)(\w+)(\w)&quot;</span><span>,</span> <span>repl</span><span>,</span> <span>text</span><span>)</span>
+<span>&#39;Pofsroser Aodlambelk, plasee reoprt yuor asnebces potlmrpy.&#39;</span>
+</pre></div>
+</div>
+</div>
+<div>
+<h3>6.2.5.6. Finding all Adverbs<a>¶</a></h3>
+<p><a><code><span>findall()</span></code></a> matches <em>all</em> occurrences of a pattern, not just the first
+one as <a><code><span>search()</span></code></a> does.  For example, if one was a writer and wanted to
+find all of the adverbs in some text, he or she might use <a><code><span>findall()</span></code></a> in
+the following manner:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>text</span> <span>=</span> <span>&quot;He was carefully disguised but captured quickly by police.&quot;</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>findall</span><span>(</span><span>r</span><span>&quot;\w+ly&quot;</span><span>,</span> <span>text</span><span>)</span>
+<span>[&#39;carefully&#39;, &#39;quickly&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div>
+<h3>6.2.5.7. Finding all Adverbs and their Positions<a>¶</a></h3>
+<p>If one wants more information about all matches of a pattern than the matched
+text, <a><code><span>finditer()</span></code></a> is useful as it provides <a><span>match objects</span></a> instead of strings.  Continuing with the previous example, if
+one was a writer who wanted to find all of the adverbs <em>and their positions</em> in
+some text, he or she would use <a><code><span>finditer()</span></code></a> in the following manner:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>text</span> <span>=</span> <span>&quot;He was carefully disguised but captured quickly by police.&quot;</span>
+<span>&gt;&gt;&gt; </span><span>for</span> <span>m</span> <span>in</span> <span>re</span><span>.</span><span>finditer</span><span>(</span><span>r</span><span>&quot;\w+ly&quot;</span><span>,</span> <span>text</span><span>):</span>
+<span>... </span>    <span>print</span><span>(</span><span>&#39;</span><span>%02d</span><span>-</span><span>%02d</span><span>: </span><span>%s</span><span>&#39;</span> <span>%</span> <span>(</span><span>m</span><span>.</span><span>start</span><span>(),</span> <span>m</span><span>.</span><span>end</span><span>(),</span> <span>m</span><span>.</span><span>group</span><span>(</span><span>0</span><span>)))</span>
+<span>07-16: carefully</span>
+<span>40-47: quickly</span>
+</pre></div>
+</div>
+</div>
+<div>
+<h3>6.2.5.8. Raw String Notation<a>¶</a></h3>
+<p>Raw string notation (<code><span>r&quot;text&quot;</span></code>) keeps regular expressions sane.  Without it,
+every backslash (<code><span>'\'</span></code>) in a regular expression would have to be prefixed with
+another one to escape it.  For example, the two following lines of code are
+functionally identical:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>match</span><span>(</span><span>r</span><span>&quot;\W(.)\1\W&quot;</span><span>,</span> <span>&quot; ff &quot;</span><span>)</span>
+<span>&lt;_sre.SRE_Match object; span=(0, 4), match=&#39; ff &#39;&gt;</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>match</span><span>(</span><span>&quot;</span><span>\\</span><span>W(.)</span><span>\\</span><span>1</span><span>\\</span><span>W&quot;</span><span>,</span> <span>&quot; ff &quot;</span><span>)</span>
+<span>&lt;_sre.SRE_Match object; span=(0, 4), match=&#39; ff &#39;&gt;</span>
+</pre></div>
+</div>
+<p>When one wants to match a literal backslash, it must be escaped in the regular
+expression.  With raw string notation, this means <code><span>r&quot;\\&quot;</span></code>.  Without raw string
+notation, one must use <code><span>&quot;\\\\&quot;</span></code>, making the following lines of code
+functionally identical:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>match</span><span>(</span><span>r</span><span>&quot;</span><span>\\</span><span>&quot;</span><span>,</span> <span>r</span><span>&quot;</span><span>\\</span><span>&quot;</span><span>)</span>
+<span>&lt;_sre.SRE_Match object; span=(0, 1), match=&#39;\\&#39;&gt;</span>
+<span>&gt;&gt;&gt; </span><span>re</span><span>.</span><span>match</span><span>(</span><span>&quot;</span><span>\\\\</span><span>&quot;</span><span>,</span> <span>r</span><span>&quot;</span><span>\\</span><span>&quot;</span><span>)</span>
+<span>&lt;_sre.SRE_Match object; span=(0, 1), match=&#39;\\&#39;&gt;</span>
+</pre></div>
+</div>
+</div>
+<div>
+<h3>6.2.5.9. Writing a Tokenizer<a>¶</a></h3>
+<p>A <a>tokenizer or scanner</a>
+analyzes a string to categorize groups of characters.  This is a useful first
+step in writing a compiler or interpreter.</p>
+<p>The text categories are specified with regular expressions.  The technique is
+to combine those into a single master regular expression and to loop over
+successive matches:</p>
+<div><div><pre><span></span><span>import</span> <span>collections</span>
+<span>import</span> <span>re</span>
+
+<span>Token</span> <span>=</span> <span>collections</span><span>.</span><span>namedtuple</span><span>(</span><span>&#39;Token&#39;</span><span>,</span> <span>[</span><span>&#39;typ&#39;</span><span>,</span> <span>&#39;value&#39;</span><span>,</span> <span>&#39;line&#39;</span><span>,</span> <span>&#39;column&#39;</span><span>])</span>
+
+<span>def</span> <span>tokenize</span><span>(</span><span>code</span><span>):</span>
+    <span>keywords</span> <span>=</span> <span>{</span><span>&#39;IF&#39;</span><span>,</span> <span>&#39;THEN&#39;</span><span>,</span> <span>&#39;ENDIF&#39;</span><span>,</span> <span>&#39;FOR&#39;</span><span>,</span> <span>&#39;NEXT&#39;</span><span>,</span> <span>&#39;GOSUB&#39;</span><span>,</span> <span>&#39;RETURN&#39;</span><span>}</span>
+    <span>token_specification</span> <span>=</span> <span>[</span>
+        <span>(</span><span>&#39;NUMBER&#39;</span><span>,</span>  <span>r</span><span>&#39;\d+(\.\d*)?&#39;</span><span>),</span>  <span># Integer or decimal number</span>
+        <span>(</span><span>&#39;ASSIGN&#39;</span><span>,</span>  <span>r</span><span>&#39;:=&#39;</span><span>),</span>           <span># Assignment operator</span>
+        <span>(</span><span>&#39;END&#39;</span><span>,</span>     <span>r</span><span>&#39;;&#39;</span><span>),</span>            <span># Statement terminator</span>
+        <span>(</span><span>&#39;ID&#39;</span><span>,</span>      <span>r</span><span>&#39;[A-Za-z]+&#39;</span><span>),</span>    <span># Identifiers</span>
+        <span>(</span><span>&#39;OP&#39;</span><span>,</span>      <span>r</span><span>&#39;[+\-*/]&#39;</span><span>),</span>      <span># Arithmetic operators</span>
+        <span>(</span><span>&#39;NEWLINE&#39;</span><span>,</span> <span>r</span><span>&#39;\n&#39;</span><span>),</span>           <span># Line endings</span>
+        <span>(</span><span>&#39;SKIP&#39;</span><span>,</span>    <span>r</span><span>&#39;[ \t]+&#39;</span><span>),</span>       <span># Skip over spaces and tabs</span>
+        <span>(</span><span>&#39;MISMATCH&#39;</span><span>,</span><span>r</span><span>&#39;.&#39;</span><span>),</span>            <span># Any other character</span>
+    <span>]</span>
+    <span>tok_regex</span> <span>=</span> <span>&#39;|&#39;</span><span>.</span><span>join</span><span>(</span><span>&#39;(?P&lt;</span><span>%s</span><span>&gt;</span><span>%s</span><span>)&#39;</span> <span>%</span> <span>pair</span> <span>for</span> <span>pair</span> <span>in</span> <span>token_specification</span><span>)</span>
+    <span>line_num</span> <span>=</span> <span>1</span>
+    <span>line_start</span> <span>=</span> <span>0</span>
+    <span>for</span> <span>mo</span> <span>in</span> <span>re</span><span>.</span><span>finditer</span><span>(</span><span>tok_regex</span><span>,</span> <span>code</span><span>):</span>
+        <span>kind</span> <span>=</span> <span>mo</span><span>.</span><span>lastgroup</span>
+        <span>value</span> <span>=</span> <span>mo</span><span>.</span><span>group</span><span>(</span><span>kind</span><span>)</span>
+        <span>if</span> <span>kind</span> <span>==</span> <span>&#39;NEWLINE&#39;</span><span>:</span>
+            <span>line_start</span> <span>=</span> <span>mo</span><span>.</span><span>end</span><span>()</span>
+            <span>line_num</span> <span>+=</span> <span>1</span>
+        <span>elif</span> <span>kind</span> <span>==</span> <span>&#39;SKIP&#39;</span><span>:</span>
+            <span>pass</span>
+        <span>elif</span> <span>kind</span> <span>==</span> <span>&#39;MISMATCH&#39;</span><span>:</span>
+            <span>raise</span> <span>RuntimeError</span><span>(</span><span>f</span><span>&#39;</span><span>{value!r}</span><span> unexpected on line </span><span>{line_num}</span><span>&#39;</span><span>)</span>
+        <span>else</span><span>:</span>
+            <span>if</span> <span>kind</span> <span>==</span> <span>&#39;ID&#39;</span> <span>and</span> <span>value</span> <span>in</span> <span>keywords</span><span>:</span>
+                <span>kind</span> <span>=</span> <span>value</span>
+            <span>column</span> <span>=</span> <span>mo</span><span>.</span><span>start</span><span>()</span> <span>-</span> <span>line_start</span>
+            <span>yield</span> <span>Token</span><span>(</span><span>kind</span><span>,</span> <span>value</span><span>,</span> <span>line_num</span><span>,</span> <span>column</span><span>)</span>
+
+<span>statements</span> <span>=</span> <span>&#39;&#39;&#39;</span>
+<span>    IF quantity THEN</span>
+<span>        total := total + price * quantity;</span>
+<span>        tax := price * 0.05;</span>
+<span>    ENDIF;</span>
+<span>&#39;&#39;&#39;</span>
+
+<span>for</span> <span>token</span> <span>in</span> <span>tokenize</span><span>(</span><span>statements</span><span>):</span>
+    <span>print</span><span>(</span><span>token</span><span>)</span>
+</pre></div>
+</div>
+<p>The tokenizer produces the following output:</p>
+<div><div><pre><span></span><span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;IF&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;IF&#39;</span><span>,</span> <span>line</span><span>=</span><span>2</span><span>,</span> <span>column</span><span>=</span><span>4</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;ID&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;quantity&#39;</span><span>,</span> <span>line</span><span>=</span><span>2</span><span>,</span> <span>column</span><span>=</span><span>7</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;THEN&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;THEN&#39;</span><span>,</span> <span>line</span><span>=</span><span>2</span><span>,</span> <span>column</span><span>=</span><span>16</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;ID&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;total&#39;</span><span>,</span> <span>line</span><span>=</span><span>3</span><span>,</span> <span>column</span><span>=</span><span>8</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;ASSIGN&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;:=&#39;</span><span>,</span> <span>line</span><span>=</span><span>3</span><span>,</span> <span>column</span><span>=</span><span>14</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;ID&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;total&#39;</span><span>,</span> <span>line</span><span>=</span><span>3</span><span>,</span> <span>column</span><span>=</span><span>17</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;OP&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;+&#39;</span><span>,</span> <span>line</span><span>=</span><span>3</span><span>,</span> <span>column</span><span>=</span><span>23</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;ID&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;price&#39;</span><span>,</span> <span>line</span><span>=</span><span>3</span><span>,</span> <span>column</span><span>=</span><span>25</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;OP&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;*&#39;</span><span>,</span> <span>line</span><span>=</span><span>3</span><span>,</span> <span>column</span><span>=</span><span>31</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;ID&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;quantity&#39;</span><span>,</span> <span>line</span><span>=</span><span>3</span><span>,</span> <span>column</span><span>=</span><span>33</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;END&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;;&#39;</span><span>,</span> <span>line</span><span>=</span><span>3</span><span>,</span> <span>column</span><span>=</span><span>41</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;ID&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;tax&#39;</span><span>,</span> <span>line</span><span>=</span><span>4</span><span>,</span> <span>column</span><span>=</span><span>8</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;ASSIGN&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;:=&#39;</span><span>,</span> <span>line</span><span>=</span><span>4</span><span>,</span> <span>column</span><span>=</span><span>12</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;ID&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;price&#39;</span><span>,</span> <span>line</span><span>=</span><span>4</span><span>,</span> <span>column</span><span>=</span><span>15</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;OP&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;*&#39;</span><span>,</span> <span>line</span><span>=</span><span>4</span><span>,</span> <span>column</span><span>=</span><span>21</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;NUMBER&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;0.05&#39;</span><span>,</span> <span>line</span><span>=</span><span>4</span><span>,</span> <span>column</span><span>=</span><span>23</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;END&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;;&#39;</span><span>,</span> <span>line</span><span>=</span><span>4</span><span>,</span> <span>column</span><span>=</span><span>27</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;ENDIF&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;ENDIF&#39;</span><span>,</span> <span>line</span><span>=</span><span>5</span><span>,</span> <span>column</span><span>=</span><span>4</span><span>)</span>
+<span>Token</span><span>(</span><span>typ</span><span>=</span><span>&#39;END&#39;</span><span>,</span> <span>value</span><span>=</span><span>&#39;;&#39;</span><span>,</span> <span>line</span><span>=</span><span>5</span><span>,</span> <span>column</span><span>=</span><span>9</span><span>)</span>
+</pre></div>
+</div>
+<table>
+<colgroup><col><col></colgroup>
+<tbody>
+<tr><td><a>[Frie09]</a></td><td>Friedl, Jeffrey. Mastering Regular Expressions. 3rd ed., O’Reilly
+Media, 2009. The third edition of the book no longer covers Python at all,
+but the first edition covered writing good regular expression patterns in
+great detail.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+  <h3><a>Table Of Contents</a></h3>
+  <ul>
+<li><a>6.2. <code><span>re</span></code> — Regular expression operations</a><ul>
+<li><a>6.2.1. Regular Expression Syntax</a></li>
+<li><a>6.2.2. Module Contents</a></li>
+<li><a>6.2.3. Regular Expression Objects</a></li>
+<li><a>6.2.4. Match Objects</a></li>
+<li><a>6.2.5. Regular Expression Examples</a><ul>
+<li><a>6.2.5.1. Checking for a Pair</a></li>
+<li><a>6.2.5.2. Simulating scanf()</a></li>
+<li><a>6.2.5.3. search() vs. match()</a></li>
+<li><a>6.2.5.4. Making a Phonebook</a></li>
+<li><a>6.2.5.5. Text Munging</a></li>
+<li><a>6.2.5.6. Finding all Adverbs</a></li>
+<li><a>6.2.5.7. Finding all Adverbs and their Positions</a></li>
+<li><a>6.2.5.8. Raw String Notation</a></li>
+<li><a>6.2.5.9. Writing a Tokenizer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p><a href="string.html"
+           >6.1. <code><span>string</span></code> — Common string operations</a></p>
+  <h4>Next topic</h4>
+  <p><a href="difflib.html"
+           >6.3. <code><span>difflib</span></code> — Helpers for computing deltas</a></p>
+  <div>
+    <h3>This Page</h3>
+    <ul>
+      <li><a>Report a Bug</a></li>
+      <li>
+        <a href="https://github.com/python/cpython/blob/3.6/Doc/library/re.rst"
+>Show Source
+        </a>
+      </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+      <div></div>
+    </div>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="difflib.html" title="6.3. difflib — Helpers for computing deltas"
+>next</a> |</li>
+        <li>
+          <a href="string.html" title="6.1. string — Common string operations"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>The Python Standard Library</a> &#187;</li>
+          <li><a>6. Text Processing Services</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>  
+    <div>
+    &copy; <a>Copyright</a> 2001-2018, Python Software Foundation.
+    <br>
+    The Python Software Foundation is a non-profit corporation.
+    <a>Please donate.</a>
+    <br>
+    Last updated on May 20, 2018.
+    <a>Found a bug</a>?
+    <br>
+    Created using <a>Sphinx</a> 1.7.4.
+    </div>
+
+  </body>
+</html>

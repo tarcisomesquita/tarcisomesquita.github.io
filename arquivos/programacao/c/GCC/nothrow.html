@@ -1,0 +1,998 @@
+<html lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- base href="http://www.digitalmars.com/d/archives/digitalmars/D/What_is_nothrow_for_70451.html" --></head><body><div style="background:#fff;border:1px solid #999;margin:-1px -1px 0;padding:0;"><div style="background:#ddd;border:1px solid #999;color:#000;font:13px arial,sans-serif;font-weight:normal;margin:12px;padding:8px;text-align:left">Este é o cache do Google de <a href="http://www.digitalmars.com/d/archives/digitalmars/D/What_is_nothrow_for_70451.html" style="text-decoration:underline;color:#00c">http://www.digitalmars.com/d/archives/digitalmars/D/What_is_nothrow_for_70451.html</a>. Ele é um instantâneo da página com a aparência que ela tinha em 16 jan. 2013 08:01:57 GMT. A <a href="http://www.digitalmars.com/d/archives/digitalmars/D/What_is_nothrow_for_70451.html" style="text-decoration:underline;color:#00c">página atual</a> pode ter sido alterada nesse meio tempo. <a href="http://support.google.com/websearch/bin/answer.py?hl=pt-BR&amp;p=cached&amp;answer=1687222" style="text-decoration:underline;color:#00c">Saiba mais</a><br>Dica: para localizar rapidamente o termo de pesquisa nesta página, pressione <b>Ctrl+F</b> ou <b>⌘-F</b> (Mac) e use a barra de localização.<br><br><div style="float:right"><a href="http://webcache.googleusercontent.com/search?q=cache:RbnxLaVBZHsJ:www.digitalmars.com/d/archives/digitalmars/D/What_is_nothrow_for_70451.html+what+is+attribute+nothrow&amp;hl=pt-BR&amp;tbo=d&amp;gl=br&amp;strip=0" style="text-decoration:underline;color:#00c">Versão completa</a></div>
+<div>Estes termos de pesquisa estão realçados: <span style="background:#ffff66;color:black;font-weight:bold">attribute</span>&nbsp;<span style="background:#a0ffff;color:black;font-weight:bold">nothrow</span>&nbsp;&nbsp;</div></div></div><div style="position:relative">
+
+
+
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>
+digitalmars.D - What is nothrow for?
+</title>
+
+
+
+
+
+<div id="heading">
+<a href="http://www.digitalmars.com/">www.digitalmars.com</a>
+
+  <a href="http://www.digitalmars.com/" title="Digital Mars"></a>
+&nbsp; <a href="http://www.digitalmars.com/advancedsearch.html" title="Search Digital Mars web site"></a>
+&nbsp; <a href="http://www.digitalmars.com/NewsGroup.html" title="News Groups"></a>
+&nbsp; <a href="http://www.digitalmars.com/d/" title="D Programming Language"></a>
+&nbsp; <a href="http://www.digitalmars.com/download/freecompiler.html" title="C/C++ compilers">C &amp; C++</a>
+&nbsp; <a href="http://www.digitalmars.com/dscript/" title="DMDScript">DMDScript</a>
+
+&nbsp;<a href="http://www.digitalmars.com/d/archives/digitalmars/D/index.html" title="topic index"></a>
+<a href="http://www.digitalmars.com/d/archives/digitalmars/D/Annotations_for_D_70464.html" title="Annotations for D"></a>
+<a href="http://www.digitalmars.com/d/archives/digitalmars/D/John_Conway_s_Game_of_Life_in_D_v1.0_70446.html" title="John Conway's Game of Life in D v1.0"></a>
+
+</div>
+<div id="navigation">
+
+<div class="navblock">
+
+<div style="text-align:center">
+
+
+
+
+
+</div>
+
+</div>
+
+<div class="navblock">
+<h2>D Programming</h2>
+<ul>
+<li><a href="http://www.digitalmars.com/d/archives/digitalmars/D">digitalmars.D</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/digitalmars/D/bugs">digitalmars.D.bugs</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/digitalmars/D/dtl">digitalmars.D.dtl</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/digitalmars/D/ide">digitalmars.D.ide</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/digitalmars/D/dwt">digitalmars.D.dwt</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/digitalmars/D/announce">digitalmars.D.announce</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/digitalmars/D/learn">digitalmars.D.learn</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/digitalmars/D/debugger">digitalmars.D.debugger</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/D/gnu">D.gnu</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/">D</a></li>
+</ul>
+</div>
+
+<div class="navblock">
+<h2>C/C++ Programming</h2>
+<ul>
+<li><a href="http://www.digitalmars.com/d/archives/c++">c++</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/announce">c++.announce</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/atl">c++.atl</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/beta">c++.beta</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/chat">c++.chat</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/command-line">c++.command-line</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/dos">c++.dos</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/dos/16-bits">c++.dos.16-bits</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/dos/32-bits">c++.dos.32-bits</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/idde">c++.idde</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/mfc">c++.mfc</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/rtl">c++.rtl</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/stl">c++.stl</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/stl/hp">c++.stl.hp</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/stl/port">c++.stl.port</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/stl/sgi">c++.stl.sgi</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/stlsoft">c++.stlsoft</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/windows">c++.windows</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/windows/16-bits">c++.windows.16-bits</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/windows/32-bits">c++.windows.32-bits</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/c++/wxwindows">c++.wxwindows</a></li>
+</ul>
+</div>
+
+<div class="navblock">
+<h2>Other</h2>
+<ul>
+<li><a href="http://www.digitalmars.com/d/archives/digitalmars/empire">digitalmars.empire</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/digitalmars/DMDScript">digitalmars.DMDScript</a></li>
+<li><a href="http://www.digitalmars.com/d/archives/electronics">electronics</a></li>
+</ul>
+</div>
+
+<div class="navblock">
+
+
+
+<hr>
+
+</div>
+
+</div>
+<div id="sidebar">
+<!-- Google ad -->
+
+
+</div>
+<div id="content">
+
+<h2>digitalmars.D - What is <b style="color:black;background-color:#a0ffff">nothrow</b> for?</h2>
+<div id="PostingTOC">
+<ul>
+<li>
+<a href="#N70451">
+"Janice Caron" &lt;caron800 googlemail.com&gt;</a>
+ Apr 24 2008
+</li>
+<ul>
+<li>
+<a href="#N70452">
+Walter Bright &lt;newshound1 digitalmars.com&gt;</a>
+ Apr 25 2008
+</li>
+<ul>
+<li>
+<a href="#N70455">
+Michel Fortin &lt;michel.fortin michelf.com&gt;</a>
+ Apr 25 2008
+</li>
+<ul>
+<li>
+<a href="#N70470">
+janderson &lt;askme me.com&gt;</a>
+ Apr 25 2008
+</li>
+<li>
+<a href="#N70479">
+Walter Bright &lt;newshound1 digitalmars.com&gt;</a>
+ Apr 25 2008
+</li>
+<ul>
+<li>
+<a href="#N70487">
+Frank Benoit &lt;keinfarbton googlemail.com&gt;</a>
+ Apr 25 2008
+</li>
+<ul>
+<li>
+<a href="#N70491">
+Frits van Bommel &lt;fvbommel REMwOVExCAPSs.nl&gt;</a>
+ Apr 25 2008
+</li>
+<li>
+<a href="#N70499">
+Walter Bright &lt;newshound1 digitalmars.com&gt;</a>
+ Apr 25 2008
+</li>
+</ul>
+</ul>
+</ul>
+<li>
+<a href="#N70462">
+Yigal Chripun &lt;yigal100 gmail.com&gt;</a>
+ Apr 25 2008
+</li>
+<ul>
+<li>
+<a href="#N70471">
+janderson &lt;askme me.com&gt;</a>
+ Apr 25 2008
+</li>
+<ul>
+<li>
+<a href="#N70476">
+Yigal Chripun &lt;yigal100 gmail.com&gt;</a>
+ Apr 25 2008
+</li>
+<ul>
+<li>
+<a href="#N70481">
+Walter Bright &lt;newshound1 digitalmars.com&gt;</a>
+ Apr 25 2008
+</li>
+<ul>
+<li>
+<a href="#N70484">
+Yigal Chripun &lt;yigal100 gmail.com&gt;</a>
+ Apr 25 2008
+</li>
+<ul>
+<li>
+<a href="#N70495">
+Yigal Chripun &lt;yigal100 gmail.com&gt;</a>
+ Apr 25 2008
+</li>
+<ul>
+<li>
+<a href="#N70501">
+Yigal Chripun &lt;yigal100 gmail.com&gt;</a>
+ Apr 25 2008
+</li>
+</ul>
+<li>
+<a href="#N70498">
+Walter Bright &lt;newshound1 digitalmars.com&gt;</a>
+ Apr 25 2008
+</li>
+<ul>
+<li>
+<a href="#N70512">
+Max Samukha &lt;nospam nospam.com&gt;</a>
+ Apr 26 2008
+</li>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+</ul>
+<li>
+<a href="#N70510">
+Christopher Wright &lt;dhasenan gmail.com&gt;</a>
+ Apr 25 2008
+</li>
+</ul>
+<li>
+<a href="#N70485">
+"Janice Caron" &lt;caron800 googlemail.com&gt;</a>
+ Apr 25 2008
+</li>
+<li>
+<a href="#N70497">
+"Janice Caron" &lt;caron800 googlemail.com&gt;</a>
+ Apr 25 2008
+</li>
+<li>
+<a href="#N70539">
+"Ameer Armaly" &lt;ameer.armaly furman.edu&gt;</a>
+ Apr 26 2008
+</li>
+<ul>
+<li>
+<a href="#N70541">
+Bill Baxter &lt;dnewsgroup billbaxter.com&gt;</a>
+ Apr 26 2008
+</li>
+</ul>
+<li>
+<a href="#N70540">
+"Janice Caron" &lt;caron800 googlemail.com&gt;</a>
+ Apr 26 2008
+</li>
+<ul>
+<li>
+<a href="#N70667">
+"Steven Schveighoffer" &lt;schveiguy yahoo.com&gt;</a>
+ Apr 28 2008
+</li>
+</ul>
+</ul>
+</ul>
+</div>
+<div id="Posting"><div id="PostingHeading"><a name="N70451">   </a><a href="#N70452">reply</a> "Janice Caron" &lt;caron800 googlemail.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70451"> writes</a>:</div>
+<pre class="PostingBody">D2.013 just added the "<b style="color:black;background-color:#a0ffff">nothrow</b>" keyword, so that one can write, e.g.
+
+    inf f() <b style="color:black;background-color:#a0ffff">nothrow</b>
+    {
+        return 42;
+    }
+
+to indicate that f does not throw an exception. My question is, what's
+the point?
+
+The documentation notes that the semantics are not implemented, but I
+have to ask, why is this desirable in general?
+
+Like any annotation, "<b style="color:black;background-color:#a0ffff">nothrow</b>" indicates a /contract/. Like any
+annation, there are two rules
+
+(1) if a function is annotated with the nothrowkeyword, then the
+compiler will emit a compile error within the function body, if the
+function body of f throws an exception.
+
+(2) if the caller of a function requires that the the called function
+not throw any exceptions, then the compiler will emit a compile error
+at the caller site if the callee is not annotated with the <b style="color:black;background-color:#a0ffff">nothrow</b>
+keyword.
+
+Rule one helps the human. Rule two helps the compiler - but positively
+/hinders/ the human. The problem is one of logical fallacy - given the
+proposition "all dogs have four legs", one may /not/ assume that if it
+has four legs, it must be a dog. Likewise, given the proposition "any
+function decorated with the <b style="color:black;background-color:#a0ffff">nothrow</b> keyword will not throw an
+exception", one may /not/ assume that if it doesn't throw an
+exception, then it will be decorated with the <b style="color:black;background-color:#a0ffff">nothrow</b> keyword. Here's
+a simple counterexample:
+
+    int f() { return 42; }
+    int g() <b style="color:black;background-color:#a0ffff">nothrow</b> { return f(); }
+
+Once the semantics of <b style="color:black;background-color:#a0ffff">nothrow</b> are implemented, the above code will not
+compile. This is because, /even though/ f doesn't throw any
+exceptions, the compiler isn't able to prove that (or at least, can't
+be bothered to prove that) at the time g is compiled.
+
+Like all annotations, "<b style="color:black;background-color:#a0ffff">nothrow</b>" therefore /propogates/ throughout
+code. In order to get the above to compile, the user must now decorate
+f.
+
+This is all very well, unless f is in a library, and the user is
+unable to modify f. In that case, presumably the user must do
+something like:
+
+    int g() <b style="color:black;background-color:#a0ffff">nothrow</b> { return cast(<b style="color:black;background-color:#a0ffff">nothrow</b>) f(); }
+
+or perhaps
+
+    int g() <b style="color:black;background-color:#a0ffff">nothrow</b>
+    {
+        try { return f(); }
+        catch(Exception e) { return 0; }
+    }
+
+Sure - we could decorate /every/ function which does not throw an
+exception with "<b style="color:black;background-color:#a0ffff">nothrow</b>", but are we really going to do that?
+
+So I guess my question is, in what circumstance would "<b style="color:black;background-color:#a0ffff">nothrow</b>" be
+helpful? And is it helpful /enough/ to warrant "polluting" all library
+code with "<b style="color:black;background-color:#a0ffff">nothrow</b>" annotations?
+</pre>
+<div id="PostingFooting"> Apr 24 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70452"> </a><a href="#N70485">next sibling</a> <a href="#N70451">parent</a> <a href="#N70455">reply</a> Walter Bright &lt;newshound1 digitalmars.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70452"> writes</a>:</div>
+<pre class="PostingBody">Janice Caron wrote:
+<pre class="PostingQuote"> So I guess my question is, in what circumstance would "<b style="color:black;background-color:#a0ffff">nothrow</b>" be
+ helpful? And is it helpful /enough/ to warrant "polluting" all library
+ code with "<b style="color:black;background-color:#a0ffff">nothrow</b>" annotations?
+</pre><br>
+"<b style="color:black;background-color:#a0ffff">nothrow</b>" is, as you say, a contract. It specifies that a function must 
+return normally (unless it aborts, crashes, or hangs). Such annotations:
+
+1. improves the API documentation
+2. enables significantly better code generation (if you use a lot of 
+scope statements and struct destructors)
+3. <b style="color:black;background-color:#a0ffff">nothrow</b> can be very useful in building up transactions, because you 
+know that the components cannot fail
+4. destructors cannot throw exceptions (because they are already in 
+one). Andrei has proposed a method to deal with this, but it is as yet 
+unimplemented.
+
+For more info, see <a href="http://www.gotw.ca/gotw/082.htm">http://www.gotw.ca/gotw/082.htm</a> and 
+<a href="http://www.boost.org/community/exception_safety.html">http://www.boost.org/community/exception_safety.html</a>
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70455"> </a><a href="#N70462">next sibling</a> <a href="#N70452">parent</a> <a href="#N70470">reply</a> Michel Fortin &lt;michel.fortin michelf.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70455"> writes</a>:</div>
+<pre class="PostingBody">On 2008-04-25 03:23:39 -0400, Walter Bright &lt;newshound1 digitalmars.com&gt; said:
+
+<pre class="PostingQuote"> Janice Caron wrote:
+<pre class="PostingQuote"> So I guess my question is, in what circumstance would "<b style="color:black;background-color:#a0ffff">nothrow</b>" be
+ helpful? And is it helpful /enough/ to warrant "polluting" all library
+ code with "<b style="color:black;background-color:#a0ffff">nothrow</b>" annotations?
+</pre><br>
+ "<b style="color:black;background-color:#a0ffff">nothrow</b>" is, as you say, a contract. It specifies that a function must 
+ return normally (unless it aborts, crashes, or hangs).
+</pre><br>
+I presume "aborts, crashes, or hangs" should also include "asserts". 
+After all, one can't assert in release mode so it doesn't hinder the 
+part about better code generation.
+
+
+<pre class="PostingQuote"> 4. destructors cannot throw exceptions (because they are already in 
+ one). Andrei has proposed a method to deal with this, but it is as yet 
+ unimplemented.
+</pre><br>
+Hum, I wonder, can one assert in a destructor?
+
+-- 
+Michel Fortin
+michel.fortin michelf.com
+<a href="http://michelf.com/">http://michelf.com/</a>
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70470"> </a><a href="#N70479">next sibling</a> <a href="#N70455">parent</a>  janderson &lt;askme me.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70470"> writes</a>:</div>
+<pre class="PostingBody">Michel Fortin wrote:
+<pre class="PostingQuote"> On 2008-04-25 03:23:39 -0400, Walter Bright &lt;newshound1 digitalmars.com&gt; 
+ said:
+ 
+<pre class="PostingQuote"> Janice Caron wrote:
+<pre class="PostingQuote"> So I guess my question is, in what circumstance would "<b style="color:black;background-color:#a0ffff">nothrow</b>" be
+ helpful? And is it helpful /enough/ to warrant "polluting" all library
+ code with "<b style="color:black;background-color:#a0ffff">nothrow</b>" annotations?
+</pre><br>
+ "<b style="color:black;background-color:#a0ffff">nothrow</b>" is, as you say, a contract. It specifies that a function 
+ must return normally (unless it aborts, crashes, or hangs).
+</pre><br>
+ I presume "aborts, crashes, or hangs" should also include "asserts". 
+ After all, one can't assert in release mode so it doesn't hinder the 
+ part about better code generation.
+ 
+ 
+<pre class="PostingQuote"> 4. destructors cannot throw exceptions (because they are already in 
+ one). Andrei has proposed a method to deal with this, but it is as yet 
+ unimplemented.
+</pre><br>
+ Hum, I wonder, can one assert in a destructor?
+ 
+</pre><br>
+It shouldn't include asserts.  Asserts can be disabled and don't cause 
+the problems that exceptions do.
+
+-Joel
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70479"></a><a href="#N70470">prev sibling</a>  <a href="#N70455">parent</a> <a href="#N70487">reply</a> Walter Bright &lt;newshound1 digitalmars.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70479"> writes</a>:</div>
+<pre class="PostingBody">Michel Fortin wrote:
+<pre class="PostingQuote"> I presume "aborts, crashes, or hangs" should also include "asserts". 
+</pre><br>
+Yes. An assert is an error that is not recoverable, so there is no need 
+for stack unwinding.
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70487">  </a><a href="#N70479">parent</a> <a href="#N70491">reply</a> Frank Benoit &lt;keinfarbton googlemail.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70487"> writes</a>:</div>
+<pre class="PostingBody">Walter Bright schrieb:
+<pre class="PostingQuote"> Michel Fortin wrote:
+<pre class="PostingQuote"> I presume "aborts, crashes, or hangs" should also include "asserts". 
+</pre><br>
+ Yes. An assert is an error that is not recoverable, so there is no need 
+ for stack unwinding.
+</pre><br>
+Perhaps to get the stack trace?
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70491"> </a><a href="#N70499">next sibling</a> <a href="#N70487">parent</a>  Frits van Bommel &lt;fvbommel REMwOVExCAPSs.nl&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70491"> writes</a>:</div>
+<pre class="PostingBody">Frank Benoit wrote:
+<pre class="PostingQuote"> Walter Bright schrieb:
+<pre class="PostingQuote"> Michel Fortin wrote:
+<pre class="PostingQuote"> I presume "aborts, crashes, or hangs" should also include "asserts". 
+</pre><br>
+ Yes. An assert is an error that is not recoverable, so there is no 
+ need for stack unwinding.
+</pre><br>
+ Perhaps to get the stack trace?
+</pre><br>
+Getting a stack trace doesn't require actually unwinding the stack, just 
+looking at it.
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70499"></a><a href="#N70491">prev sibling</a>  <a href="#N70487">parent</a>  Walter Bright &lt;newshound1 digitalmars.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70499"> writes</a>:</div>
+<pre class="PostingBody">Frank Benoit wrote:
+<pre class="PostingQuote"> Walter Bright schrieb:
+<pre class="PostingQuote"> Michel Fortin wrote:
+<pre class="PostingQuote"> I presume "aborts, crashes, or hangs" should also include "asserts". 
+</pre><br>
+ Yes. An assert is an error that is not recoverable, so there is no 
+ need for stack unwinding.
+</pre><br>
+ Perhaps to get the stack trace?
+</pre><br>
+Sure, but that isn't "recovering" from the error. It's just collecting 
+diagnostic information.
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70462"></a><a href="#N70455">prev sibling</a> <a href="#N70510">next sibling</a> <a href="#N70452">parent</a> <a href="#N70471">reply</a> Yigal Chripun &lt;yigal100 gmail.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70462"> writes</a>:</div>
+<pre class="PostingBody">Walter Bright wrote:
+<pre class="PostingQuote"> Janice Caron wrote:
+<pre class="PostingQuote"> So I guess my question is, in what circumstance would "<b style="color:black;background-color:#a0ffff">nothrow</b>" be
+ helpful? And is it helpful /enough/ to warrant "polluting" all library
+ code with "<b style="color:black;background-color:#a0ffff">nothrow</b>" annotations?
+</pre><br>
+ "<b style="color:black;background-color:#a0ffff">nothrow</b>" is, as you say, a contract. It specifies that a function must
+ return normally (unless it aborts, crashes, or hangs). Such annotations:
+ 
+ 1. improves the API documentation
+ 2. enables significantly better code generation (if you use a lot of
+ scope statements and struct destructors)
+ 3. <b style="color:black;background-color:#a0ffff">nothrow</b> can be very useful in building up transactions, because you
+ know that the components cannot fail
+ 4. destructors cannot throw exceptions (because they are already in
+ one). Andrei has proposed a method to deal with this, but it is as yet
+ unimplemented.
+ 
+ For more info, see <a href="http://www.gotw.ca/gotw/082.htm">http://www.gotw.ca/gotw/082.htm</a> and
+ <a href="http://www.boost.org/community/exception_safety.html">http://www.boost.org/community/exception_safety.html</a>
+</pre><br>
+I'd like to point out that you both agree that "<b style="color:black;background-color:#a0ffff">nothrow</b>" is a
+_contract_. That immediately begs the question: why implement it as yet
+another ad hoc feature instead of making it part of D's DBC (which is
+yet to be implemented...)?
+
+Personally, I don't see the point of constantly adding more annotations
+and keywords to D2 since it complicates the syntax and makes D2 much
+less attractive from a syntax POV.
+D2 will allow the following:
+pure invariant invariant(int) func(invariant(int)) <b style="color:black;background-color:#a0ffff">nothrow</b>;
+Am I the only one that thinks the above is too much?
+
+It's time for a standardized Annotations/Attributes mechanism for D.
+I'll post my initial suggestion for such a mechanism in a new thread.
+
+--Yigal
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70471">  </a><a href="#N70462">parent</a> <a href="#N70476">reply</a> janderson &lt;askme me.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70471"> writes</a>:</div>
+<pre class="PostingBody">Yigal Chripun wrote:
+<pre class="PostingQuote"> Walter Bright wrote:
+<pre class="PostingQuote"> Janice Caron wrote:
+<pre class="PostingQuote"> So I guess my question is, in what circumstance would "<b style="color:black;background-color:#a0ffff">nothrow</b>" be
+ helpful? And is it helpful /enough/ to warrant "polluting" all library
+ code with "<b style="color:black;background-color:#a0ffff">nothrow</b>" annotations?
+</pre><br>
+ return normally (unless it aborts, crashes, or hangs). Such annotations:
+
+ 1. improves the API documentation
+ 2. enables significantly better code generation (if you use a lot of
+ scope statements and struct destructors)
+ 3. <b style="color:black;background-color:#a0ffff">nothrow</b> can be very useful in building up transactions, because you
+ know that the components cannot fail
+ 4. destructors cannot throw exceptions (because they are already in
+ one). Andrei has proposed a method to deal with this, but it is as yet
+ unimplemented.
+
+ For more info, see <a href="http://www.gotw.ca/gotw/082.htm">http://www.gotw.ca/gotw/082.htm</a> and
+ <a href="http://www.boost.org/community/exception_safety.html">http://www.boost.org/community/exception_safety.html</a>
+</pre><br>
+ I'd like to point out that you both agree that "<b style="color:black;background-color:#a0ffff">nothrow</b>" is a
+ _contract_. That immediately begs the question: why implement it as yet
+ another ad hoc feature instead of making it part of D's DBC (which is
+ yet to be implemented...)?
+ 
+ Personally, I don't see the point of constantly adding more annotations
+ and keywords to D2 since it complicates the syntax and makes D2 much
+ less attractive from a syntax POV.
+ D2 will allow the following:
+ pure invariant invariant(int) func(invariant(int)) <b style="color:black;background-color:#a0ffff">nothrow</b>;
+ Am I the only one that thinks the above is too much?
+ 
+ It's time for a standardized Annotations/Attributes mechanism for D.
+ I'll post my initial suggestion for such a mechanism in a new thread.
+ 
+ --Yigal
+</pre><br>
+
+While attributes are a nice idea for somethings; for things like 
+invariants it would make the client syntax more difficult to read.  Also 
+invariant const etc.. could not go into the standard lib because then 
+the compiler would make it much more difficult for the compiler to 
+perform optimizations (Walters point 2).
+
+Also it would be more difficult to extend the concept of invariants; for 
+example, to something like functional programming because of <b style="color:black;background-color:#ffff66">attribute</b> 
+system limitations.
+
+If your moving something like invariants to attributes, don't forget 
+your not actually reducing the complexity to the end user.  Now they 
+have to figure-out what the standard lib is doing also.  The complexity 
+only reduces for the compiler writer.
+
+-Joel
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70476">  </a><a href="#N70471">parent</a> <a href="#N70481">reply</a> Yigal Chripun &lt;yigal100 gmail.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70476"> writes</a>:</div>
+<pre class="PostingBody">janderson wrote:
+<pre class="PostingQuote"> 
+ While attributes are a nice idea for somethings; for things like
+ invariants it would make the client syntax more difficult to read.  Also
+ invariant const etc.. could not go into the standard lib because then
+ the compiler would make it much more difficult for the compiler to
+ perform optimizations (Walters point 2).
+ 
+ Also it would be more difficult to extend the concept of invariants; for
+ example, to something like functional programming because of <b style="color:black;background-color:#ffff66">attribute</b>
+ system limitations.
+ 
+ If your moving something like invariants to attributes, don't forget
+ your not actually reducing the complexity to the end user.  Now they
+ have to figure-out what the standard lib is doing also.  The complexity
+ only reduces for the compiler writer.
+ 
+ -Joel
+</pre><br>
+Regarding optimizations, I don't know if it would be possible with
+attributes - I guess it depends on the compiler APIs exposed to the
+<b style="color:black;background-color:#ffff66">attribute</b> writer. I do agree that not _all_things_ should be implemented
+as attributes. The invariants are a bad example and I just used that to
+illustrate how complex the D syntax has become.
+It's like the type system - D provides a a set of built in primitive
+types like int,char,long,etc.. and a way to use those to create your own
+via classes/unions/structs...
+so it may make sense to have a built-in const but IMO <b style="color:black;background-color:#a0ffff">nothrow</b> doesn't
+deserve the same status. I'm also not sure that pure should be provided
+by D.
+Look at the link bellow for a Java DBC using annotations. Seems much
+better than what D provides (nothing.. since it's not implemented).
+Since D is not backed up by a giant like Sun/MS/Google/etc it makes
+sense to delegate these features to the community, since it's obvious
+not high on Walter's todo list and annotations make perfect sense for that.
+
+Note, you mention "<b style="color:black;background-color:#ffff66">attribute</b> system limitations" - since D does have
+that system yet, we do not know what limitations D's system would have
+compared to the .net or Java implementations.
+
+<a href="http://en.wikipedia.org/wiki/Java_Modeling_Language">http://en.wikipedia.org/wiki/Java_Modeling_Language</a>
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70481">  </a><a href="#N70476">parent</a> <a href="#N70484">reply</a> Walter Bright &lt;newshound1 digitalmars.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70481"> writes</a>:</div>
+<pre class="PostingBody">Yigal Chripun wrote:
+<pre class="PostingQuote"> Since D is not backed up by a giant like Sun/MS/Google/etc it makes
+ sense to delegate these features to the community, since it's obvious
+ not high on Walter's todo list and annotations make perfect sense for that.
+</pre><br>
+If attributes had meaning only in a library or for some special tool, 
+the compiler cannot extract any useful information from them.
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70484">  </a><a href="#N70481">parent</a> <a href="#N70495">reply</a> Yigal Chripun &lt;yigal100 gmail.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70484"> writes</a>:</div>
+<pre class="PostingBody">Walter Bright wrote:
+<pre class="PostingQuote"> Yigal Chripun wrote:
+<pre class="PostingQuote"> Since D is not backed up by a giant like Sun/MS/Google/etc it makes
+ sense to delegate these features to the community, since it's obvious
+ not high on Walter's todo list and annotations make perfect sense for
+ that.
+</pre><br>
+ If attributes had meaning only in a library or for some special tool,
+ the compiler cannot extract any useful information from them.
+</pre><br>
+if the compiler provides hooks for the <b style="color:black;background-color:#ffff66">attribute</b> writers than an
+<b style="color:black;background-color:#ffff66">attribute</b> would have meaning for the compiler.
+
+for example, it should be possible to write a user defined <b style="color:black;background-color:#ffff66">attribute</b> and
+via a hook, tell the compiler to verify transitivity of it at compile time.
+
+BTW, what information does the compiler extract from an <b style="color:black;background-color:#ffff66">attribute</b>?
+wouldn't it be enough to use the above approach to tell the compiler
+what to do for each <b style="color:black;background-color:#ffff66">attribute</b>?
+
+--Yigal
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70495"> </a><a href="#N70498">next sibling</a> <a href="#N70484">parent</a> <a href="#N70501">reply</a> Yigal Chripun &lt;yigal100 gmail.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70495"> writes</a>:</div>
+<pre class="PostingBody">Janice Caron wrote:
+<pre class="PostingQuote"> On 25/04/2008, Yigal Chripun &lt;yigal100 gmail.com&gt; wrote:
+<pre class="PostingQuote"> if the compiler provides hooks for the <b style="color:black;background-color:#ffff66">attribute</b> writers than an
+  <b style="color:black;background-color:#ffff66">attribute</b> would have meaning for the compiler.
+</pre><br>
+ I don't agree. I think Walter's right. An <b style="color:black;background-color:#ffff66">attribute</b> is a contract, and
+ only the compiler is in a position to enforce that code complies with
+ contracts.
+ 
+ For example, suppose I wanted an <b style="color:black;background-color:#ffff66">attribute</b> that meant "this function
+ does not modify static members" - what kind of "hooks" would make it
+ possible to enforce that contract, if it were not built into the
+ compiler?
+</pre><br>
+if I understand you correctly, you want a function that receives an
+instance of some class and an <b style="color:black;background-color:#ffff66">attribute</b> that makes sure that the above
+function does not modify any static members (data members) of that instance.
+
+I'm not sure how the compiler can verify that at all due to polymorphism
+- the dynamic type of the instance will be known only at run-time.
+
+maybe something like the following can work:
+you should be able to get a list of all the static members of an
+instance via introspection and for each of those, you'd need to check in
+your <b style="color:black;background-color:#ffff66">attribute</b> implementation that the old value (before executing the
+function body) is the same as the one after executing the function body.
+what if there was a way to "keep" the old value? than you'd throw an
+exception if (old(var) != var).
+
+I don't understand how this can be checked by the compiler at all (even
+if the <b style="color:black;background-color:#ffff66">attribute</b> is not user defined) without analyzing the entire code
+of the program. if you compile only one module the compiler does not
+know if there are derived classes that add more static data members.
+
+I'm not sure I'm correct on all of this so please point out errors.
+
+somewhat confused,
+Yigal
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70501">  </a><a href="#N70495">parent</a>  Yigal Chripun &lt;yigal100 gmail.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70501"> writes</a>:</div>
+<pre class="PostingBody">Janice Caron wrote:
+<pre class="PostingQuote"> On 25/04/2008, Yigal Chripun &lt;yigal100 gmail.com&gt; wrote:
+<pre class="PostingQuote"> if I understand you correctly, you want
+</pre><br>
+ No, I was merely postulating. It's not something I want, it was merely
+ an example of something the compiler could do that a library add-on
+ couldn't.
+ 
+<pre class="PostingQuote">  I'm not sure how the compiler can verify that at all due to polymorphism
+  - the dynamic type of the instance will be known only at run-time.
+</pre><br>
+ Who cares? If I'm going to invent an arbitrary <b style="color:black;background-color:#ffff66">attribute</b>, I can define
+ it to do anything I want. Besides, structs have a "this", but not
+ polymorphism, so the compiler could certainly check in the case of
+ structs.
+ 
+ To give an even sillier example, a compiler could introduce a function
+ <b style="color:black;background-color:#ffff66">attribute</b> that meant "this function will not modify any variable
+ starting with the letter x". I don't see how an add-on could do that
+ through hooks.
+</pre><br>
+I don't understand what you're trying to say here...
+anyway, I've searched the Java docs to see How Java works with
+annotations.I've found [1] which is a reflective API for build-time.
+This API provides information about the source code of a program.
+
+java 5 had a tool called apt that as of java 6 is part of the compiler,
+it runs annotation processors on the code. (these are Java programs that
+use the APIs in [1] and [2] and generate new source files)
+
+[1]<a href="http://java.sun.com/javase/6/docs/jdk/api/apt/mirror/overview-summary.html">http://java.sun.com/javase/6/docs/jdk/api/apt/mirror/overview-summary.html</a>
+[2]<a href="http://java.sun.com/javase/6/docs/technotes/guides/apt/index.html">http://java.sun.com/javase/6/docs/technotes/guides/apt/index.html</a>
+
+--Yigal
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70498"></a><a href="#N70495">prev sibling</a>  <a href="#N70484">parent</a> <a href="#N70512">reply</a> Walter Bright &lt;newshound1 digitalmars.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70498"> writes</a>:</div>
+<pre class="PostingBody">Yigal Chripun wrote:
+<pre class="PostingQuote"> BTW, what information does the compiler extract from an <b style="color:black;background-color:#ffff66">attribute</b>?
+</pre><br>
+With <b style="color:black;background-color:#a0ffff">nothrow</b>, for example, it can verify that the code inside the 
+function cannot propagate an exception outside of it. I have no idea how 
+you could do that with a user defined <b style="color:black;background-color:#ffff66">attribute</b>.
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70512">  </a><a href="#N70498">parent</a>  Max Samukha &lt;nospam nospam.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70512"> writes</a>:</div>
+<pre class="PostingBody">On Fri, 25 Apr 2008 14:10:23 -0700, Walter Bright
+&lt;newshound1 digitalmars.com&gt; wrote:
+
+<pre class="PostingQuote">Yigal Chripun wrote:
+<pre class="PostingQuote"> BTW, what information does the compiler extract from an <b style="color:black;background-color:#ffff66">attribute</b>?
+</pre><br>
+With <b style="color:black;background-color:#a0ffff">nothrow</b>, for example, it can verify that the code inside the 
+function cannot propagate an exception outside of it. I have no idea how 
+you could do that with a user defined <b style="color:black;background-color:#ffff66">attribute</b>.
+</pre><br>
+Like in .NET. And the proposed syntax was taken from C#. A number of
+intrinsic attributes are treated specially by the  IL compiler. For
+example, DllImport, Obsolete, MarshalAs, StructLayout etc. .NET has a
+nice extensible <b style="color:black;background-color:#ffff66">attribute</b> system. User defined attributes can be
+inspected through reflection at run-time.  I guess, D could allow to
+do that at compile time as well. 
+</pre>
+<div id="PostingFooting"> Apr 26 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70510"></a><a href="#N70462">prev sibling</a>  <a href="#N70452">parent</a>  Christopher Wright &lt;dhasenan gmail.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70510"> writes</a>:</div>
+<pre class="PostingBody">Walter Bright wrote:
+<pre class="PostingQuote"> Janice Caron wrote:
+<pre class="PostingQuote"> So I guess my question is, in what circumstance would "<b style="color:black;background-color:#a0ffff">nothrow</b>" be
+ helpful? And is it helpful /enough/ to warrant "polluting" all library
+ code with "<b style="color:black;background-color:#a0ffff">nothrow</b>" annotations?
+</pre><br>
+ "<b style="color:black;background-color:#a0ffff">nothrow</b>" is, as you say, a contract. It specifies that a function must 
+ return normally (unless it aborts, crashes, or hangs). Such annotations:
+ 
+ 1. improves the API documentation
+ 2. enables significantly better code generation (if you use a lot of 
+ scope statements and struct destructors)
+ 3. <b style="color:black;background-color:#a0ffff">nothrow</b> can be very useful in building up transactions, because you 
+ know that the components cannot fail
+ 4. destructors cannot throw exceptions (because they are already in 
+ one). Andrei has proposed a method to deal with this, but it is as yet 
+ unimplemented.
+ 
+ For more info, see <a href="http://www.gotw.ca/gotw/082.htm">http://www.gotw.ca/gotw/082.htm</a> and 
+ <a href="http://www.boost.org/community/exception_safety.html">http://www.boost.org/community/exception_safety.html</a>
+</pre><br>
+It's a usability argument that Janice is making. She isn't saying that 
+<b style="color:black;background-color:#a0ffff">nothrow</b> lacks benefits.
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70485"></a><a href="#N70452">prev sibling</a> <a href="#N70497">next sibling</a> <a href="#N70451">parent</a>  "Janice Caron" &lt;caron800 googlemail.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70485"> writes</a>:</div>
+<pre class="PostingBody">On 25/04/2008, Yigal Chripun &lt;yigal100 gmail.com&gt; wrote:
+<pre class="PostingQuote"> if the compiler provides hooks for the <b style="color:black;background-color:#ffff66">attribute</b> writers than an
+  <b style="color:black;background-color:#ffff66">attribute</b> would have meaning for the compiler.
+</pre><br>
+I don't agree. I think Walter's right. An <b style="color:black;background-color:#ffff66">attribute</b> is a contract, and
+only the compiler is in a position to enforce that code complies with
+contracts.
+
+For example, suppose I wanted an <b style="color:black;background-color:#ffff66">attribute</b> that meant "this function
+does not modify static members" - what kind of "hooks" would make it
+possible to enforce that contract, if it were not built into the
+compiler?
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70497"></a><a href="#N70485">prev sibling</a> <a href="#N70539">next sibling</a> <a href="#N70451">parent</a>  "Janice Caron" &lt;caron800 googlemail.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70497"> writes</a>:</div>
+<pre class="PostingBody">On 25/04/2008, Yigal Chripun &lt;yigal100 gmail.com&gt; wrote:
+<pre class="PostingQuote"> if I understand you correctly, you want
+</pre><br>
+No, I was merely postulating. It's not something I want, it was merely
+an example of something the compiler could do that a library add-on
+couldn't.
+
+<pre class="PostingQuote">  I'm not sure how the compiler can verify that at all due to polymorphism
+  - the dynamic type of the instance will be known only at run-time.
+</pre><br>
+Who cares? If I'm going to invent an arbitrary <b style="color:black;background-color:#ffff66">attribute</b>, I can define
+it to do anything I want. Besides, structs have a "this", but not
+polymorphism, so the compiler could certainly check in the case of
+structs.
+
+To give an even sillier example, a compiler could introduce a function
+<b style="color:black;background-color:#ffff66">attribute</b> that meant "this function will not modify any variable
+starting with the letter x". I don't see how an add-on could do that
+through hooks.
+</pre>
+<div id="PostingFooting"> Apr 25 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70539"></a><a href="#N70497">prev sibling</a> <a href="#N70540">next sibling</a> <a href="#N70451">parent</a> <a href="#N70541">reply</a> "Ameer Armaly" &lt;ameer.armaly furman.edu&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70539"> writes</a>:</div>
+<pre class="PostingBody">"Janice Caron" &lt;caron800 googlemail.com&gt; wrote in message 
+news:mailman.465.1209106347.2351.digitalmars-d puremagic.com...
+<pre class="PostingQuote"> D2.013 just added the "<b style="color:black;background-color:#a0ffff">nothrow</b>" keyword, so that one can write, e.g.
+</pre><br>
+a grain of salt:
+It seems to me that the compiler could figure out whether or not a function 
+throws exceptions and act accordingly; I really don't see why it needs to be 
+told. That means the only real use of <b style="color:black;background-color:#a0ffff">nothrow</b> that I could see would be to 
+say that you don't want this function ever throwing an exception in any 
+current or future incarnation.
+<pre class="PostingQuote">    inf f() <b style="color:black;background-color:#a0ffff">nothrow</b>
+    {
+        return 42;
+    }
+
+ to indicate that f does not throw an exception. My question is, what's
+ the point?
+
+ The documentation notes that the semantics are not implemented, but I
+ have to ask, why is this desirable in general?
+
+ Like any annotation, "<b style="color:black;background-color:#a0ffff">nothrow</b>" indicates a /contract/. Like any
+ annation, there are two rules
+
+ (1) if a function is annotated with the nothrowkeyword, then the
+ compiler will emit a compile error within the function body, if the
+ function body of f throws an exception.
+
+ (2) if the caller of a function requires that the the called function
+ not throw any exceptions, then the compiler will emit a compile error
+ at the caller site if the callee is not annotated with the <b style="color:black;background-color:#a0ffff">nothrow</b>
+ keyword.
+
+ Rule one helps the human. Rule two helps the compiler - but positively
+ /hinders/ the human. The problem is one of logical fallacy - given the
+ proposition "all dogs have four legs", one may /not/ assume that if it
+ has four legs, it must be a dog. Likewise, given the proposition "any
+ function decorated with the <b style="color:black;background-color:#a0ffff">nothrow</b> keyword will not throw an
+ exception", one may /not/ assume that if it doesn't throw an
+ exception, then it will be decorated with the <b style="color:black;background-color:#a0ffff">nothrow</b> keyword. Here's
+ a simple counterexample:
+
+    int f() { return 42; }
+    int g() <b style="color:black;background-color:#a0ffff">nothrow</b> { return f(); }
+
+ Once the semantics of <b style="color:black;background-color:#a0ffff">nothrow</b> are implemented, the above code will not
+ compile. This is because, /even though/ f doesn't throw any
+ exceptions, the compiler isn't able to prove that (or at least, can't
+ be bothered to prove that) at the time g is compiled.
+
+ Like all annotations, "<b style="color:black;background-color:#a0ffff">nothrow</b>" therefore /propogates/ throughout
+ code. In order to get the above to compile, the user must now decorate
+ f.
+
+ This is all very well, unless f is in a library, and the user is
+ unable to modify f. In that case, presumably the user must do
+ something like:
+
+    int g() <b style="color:black;background-color:#a0ffff">nothrow</b> { return cast(<b style="color:black;background-color:#a0ffff">nothrow</b>) f(); }
+
+ or perhaps
+
+    int g() <b style="color:black;background-color:#a0ffff">nothrow</b>
+    {
+        try { return f(); }
+        catch(Exception e) { return 0; }
+    }
+
+ Sure - we could decorate /every/ function which does not throw an
+ exception with "<b style="color:black;background-color:#a0ffff">nothrow</b>", but are we really going to do that?
+
+ So I guess my question is, in what circumstance would "<b style="color:black;background-color:#a0ffff">nothrow</b>" be
+ helpful? And is it helpful /enough/ to warrant "polluting" all library
+ code with "<b style="color:black;background-color:#a0ffff">nothrow</b>" annotations? 
+</pre><br>
+</pre>
+<div id="PostingFooting"> Apr 26 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70541">  </a><a href="#N70539">parent</a>  Bill Baxter &lt;dnewsgroup billbaxter.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70541"> writes</a>:</div>
+<pre class="PostingBody">Janice Caron wrote:
+<pre class="PostingQuote"> On 26/04/2008, Ameer Armaly &lt;ameer.armaly furman.edu&gt; wrote:
+<pre class="PostingQuote">  It seems to me that the compiler could figure out whether or not a function
+  throws exceptions and act accordingly;
+</pre><br>
+ Without the <b style="color:black;background-color:#a0ffff">nothrow</b> keyword, the only way it could do that is by
+ checking not only the function itself, but the function bodies of all
+ functions called by the function, and so, recursively, forever.
+ 
+ 
+<pre class="PostingQuote"> I really don't see why it needs to be
+ told.
+</pre><br>
+ With <b style="color:black;background-color:#a0ffff">nothrow</b>, it doesn't have to recurse.
+</pre><br>
+Yeh, it's the same problem with deducing things like pure and const 
+(which is the conclusion I came to following our previous discussion on 
+the topic... though I just let the thread fizzle rather than stating 
+this conclusion.).
+
+If you want to have the benefits of separate compilation then you have 
+to tell the compiler what to expect of functions without it having to 
+have the bodies of those functions present.
+
+--bb
+</pre>
+<div id="PostingFooting"> Apr 26 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70540"></a><a href="#N70539">prev sibling</a>  <a href="#N70451">parent</a> <a href="#N70667">reply</a> "Janice Caron" &lt;caron800 googlemail.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70540"> writes</a>:</div>
+<pre class="PostingBody">On 26/04/2008, Ameer Armaly &lt;ameer.armaly furman.edu&gt; wrote:
+<pre class="PostingQuote">  It seems to me that the compiler could figure out whether or not a function
+  throws exceptions and act accordingly;
+</pre><br>
+Without the <b style="color:black;background-color:#a0ffff">nothrow</b> keyword, the only way it could do that is by
+checking not only the function itself, but the function bodies of all
+functions called by the function, and so, recursively, forever.
+
+
+<pre class="PostingQuote"> I really don't see why it needs to be
+ told.
+</pre><br>
+With <b style="color:black;background-color:#a0ffff">nothrow</b>, it doesn't have to recurse.
+</pre>
+<div id="PostingFooting"> Apr 26 2008
+</div>
+</div><div id="Posting"><div id="PostingHeading"><a name="N70667">  </a><a href="#N70540">parent</a>  "Steven Schveighoffer" &lt;schveiguy yahoo.com&gt; <a href="http://www.digitalmars.com/pnews/read.php?server=news.digitalmars.com&amp;group=digitalmars.D&amp;artnum=70667"> writes</a>:</div>
+<pre class="PostingBody">"Janice Caron" wrote
+<pre class="PostingQuote"> On 26/04/2008, Ameer Armaly wrote:
+<pre class="PostingQuote">  It seems to me that the compiler could figure out whether or not a 
+ function
+  throws exceptions and act accordingly;
+</pre><br>
+ Without the <b style="color:black;background-color:#a0ffff">nothrow</b> keyword, the only way it could do that is by
+ checking not only the function itself, but the function bodies of all
+ functions called by the function, and so, recursively, forever.
+</pre><br>
+Enter your algorithmic friend, memoization :)  The compiler could store 
+attributes with the functions as they are compiled, marking ones which don't 
+throw exceptions and ones which are pure, etc. in the object files.
+
+The only issue then is if you are a developer and you desire a function to 
+be a <b style="color:black;background-color:#a0ffff">nothrow</b>, it must be marked by the developer.  Otherwise it's like 
+inlining.  You never know which functions will be marked <b style="color:black;background-color:#a0ffff">nothrow</b>/pure and 
+which ones will not.  It also becomes a question of maintainability, if one 
+makes a change in a <b style="color:black;background-color:#a0ffff">nothrow</b> function that throws an exception, this is no 
+good for dynamic libraries, who may depend on it keeping the <b style="color:black;background-color:#a0ffff">nothrow</b> status.
+
+-Steve 
+</pre>
+<div id="PostingFooting"> Apr 28 2008
+</div>
+</div>
+<div id="footer_ad">
+<br><br><br><br>
+<center>
+
+
+
+<!--
+<br>
+<br>
+<SCRIPT charset="utf-8" type="text/javascript" src="http://ws.amazon.com/widgets/q?ServiceVersion=20070822&MarketPlace=US&ID=V20070822/US/classicempire/8006/adfa749b-6f27-4cdf-a046-716a8fab7cab"> </SCRIPT> <NOSCRIPT><A HREF="http://ws.amazon.com/widgets/q?ServiceVersion=20070822&MarketPlace=US&ID=V20070822%2FUS%2Fclassicempire%2F8006%2Fadfa749b-6f27-4cdf-a046-716a8fab7cab&Operation=NoScript">Amazon.com Widgets</A></NOSCRIPT>
+-->
+
+</center>
+</div>
+</div>
+</div></body></html>

@@ -1,0 +1,5 @@
+ntpdate remote−servername
+
+2.android.pool.ntp.org
+tcpdump -t -n -V files.txt udp port 53 2>/dev/null | grep ntp | cut -d' ' -f7 | sort -u
+

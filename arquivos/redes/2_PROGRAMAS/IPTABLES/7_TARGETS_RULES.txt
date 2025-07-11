@@ -1,0 +1,41 @@
+
+TARGETS
+If the packet does not match to a rule, the next rule in the chain is the examined;
+if it does match, then the next rule is specified by the value of the target
+
+target can be the name of a user-defined chain or one of the special values ACCEPT, DROP, QUEUE, or RETURN.
+
+ACCEPT means to let the packet through.
+DROP means to drop the packet on the floor.
+QUEUE means to pass the packet to userspace. See the queue handlers ip_queue and nfnetlink_queue. Packets with a target of QUEUE will be sent to queue number '0'.
+RETURN means stop traversing this chain and resume at the next rule in the previous (calling) chain.
+
+If the end of a built-in chain is reached or a rule in a built-in chain with target RETURN is matched, the target specified by the chain policy determines the fate of the packet.
+
+See TARGETS EXTENSION
+
+QUEUE is a special target, which queues the packet for userspace
+
+  o  a "queue handler", which deals with the actual mechanics of passing packets between the kernel and userspace; and
+  o  a userspace application to receive, possibly manipulate, and issue verdicts on packets.
+
+     The standard queue handler for IPv4 iptables is the ip_queue module.
+
+       # modprobe iptable_filter
+       # modprobe ip_queue
+       # iptables -A OUTPUT -p icmp -j QUEUE
+
+If no  userspace application is waiting, the packets are dropped.
+
+To write a userspace application, use the libipq API. This is distributed with iptables.
+Example code may be found in the testsuite tools (e.g. redirect.c) in CVS.
+
+The status of ip_queue may be checked via:
+/proc/net/ip_queue
+
+the number packets delivered to userspace may be controlled via:
+/proc/sys/net/ipv4/ip_queue_maxlen
+
+The default value for the maximum queue length is 1024. Once this limit is reached, new packets will be dropped until the length of the queue falls below the limit again.
+
+

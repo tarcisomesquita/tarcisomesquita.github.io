@@ -1,0 +1,32 @@
+
+RUNTIME INTERACTION
+       During the execution of Nmap, all key presses are captured. This allows
+       you to interact with the program without aborting and restarting it.
+       Certain special keys will change options, while any other keys will
+       print out a status message telling you about the scan. The convention
+       is that lowercase letters increase the amount of printing, and
+       uppercase letters decrease the printing. You may also press '?' for
+       help.
+
+       v / V
+           Increase / decrease the verbosity level
+
+       d / D
+           Increase / decrease the debugging Level
+
+       p / P
+           Turn on / off packet tracing
+
+       ?
+           Print a runtime interaction help screen
+
+       Anything else
+           Print out a status message like this:
+
+           Stats: 0:00:08 elapsed; 111 hosts completed (5 up), 5 undergoing
+           Service Scan
+
+           Service scan Timing: About 28.00% done; ETC: 16:18 (0:00:15
+           remaining)
+
+

@@ -1,0 +1,2 @@
+
+mostra quantidade da bytes transferido nas interfaces.

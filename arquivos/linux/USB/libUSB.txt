@@ -1,0 +1,322 @@
+/usr/src/linux/Documentation/usb/usbmon.txt 
+modprobe usbmon
+FATAL: Module usbmon not found. (no meu caso)
+
+In libpcap 1.0.x, the devices for capturing on USB have the name usbn, where n is the number of the bus. In libpcap 1.1.0 and later, they have the name usbmonn. 
+
+
+sudo apt-get install usbmon
+
+http://libusb.wiki.sourceforge.net/
+libusb is a library which user level applications can used to access USB devices without worrying about the underlying operating system.
+
+http://libusb.sourceforge.net/doc/api.html
+we can see it as a high-level API which wraps low-level kernel interactions with USB modules
+
+Developing Linux Device Drivers using Libusb API article.
+http://www.linuxquestions.org/linux/answers/Programming/Developing_Linux_Device_Drivers_using_Libusb_API
+
+Package: libusb-0.1-4
+Installed-Size: 96
+Source: libusb
+Version: 2:0.1.12-13
+Depends: libc6 (>= 2.4)
+Conflicts: libccid (<< 0.9.2-3), libusb0
+Filename: pool/main/libu/libusb/libusb-0.1-4_0.1.12-13_i386.deb
+Size: 20278
+MD5sum: 280dc749f0e0efa9594b6a7a3a3ec56f
+Description: userspace USB programming library
+ Library for programming USB applications without the knowledge of Linux kernel internals.
+Homepage: http://www.linux-usb.org/
+
+Package: libusb-dev
+Installed-Size: 336
+Source: libusb
+Version: 2:0.1.12-13
+Replaces: libusb0 (<< 1:0.1.5-1)
+Depends: libusb-0.1-4 (= 2:0.1.12-13), libc6-dev | libc-dev
+Filename: pool/main/libu/libusb/libusb-dev_0.1.12-13_i386.deb
+Size: 38778
+MD5sum: b74ef26862015f12b2ad0a58021bc31c
+Description: userspace USB programming library development files
+ Library for programming USB applications without the knowledge of Linux kernel internals.
+Homepage: http://www.linux-usb.org/
+
+Package: usbutils
+Installed-Size: 520
+Version: 0.73-8ubuntu3
+Depends: libc6 (>= 2.4), libusb-0.1-4 (>= 2:0.1.12), zlib1g (>= 1:1.1.4)
+Filename: pool/main/u/usbutils/usbutils_0.73-8ubuntu3_i386.deb
+Size: 160904
+MD5sum: b8ba7bd05fd1466a733887c924209578
+Description: Linux USB utilities
+ This package contains the lsusb utility for inspecting the devices connected to the USB bus.
+ It shows a graphical representation of the devices that are currently plugged in, showing the topology of the USB bus.
+ It also displays information on each individual device on the bus.
+ http://www.linux-usb.org/ .
+
+Package: libhid-dev
+Installed-Size: 204
+Source: libhid
+Version: 0.2.15+20060325-2.2ubuntu1
+Depends: libhid0 (= 0.2.15+20060325-2.2ubuntu1), libusb-dev (>= 1:0.1.8)
+Filename: pool/universe/libh/libhid/libhid-dev_0.2.15+20060325-2.2ubuntu1_i386.deb
+Size: 41472
+MD5sum: 73ef784041d1091378194213b216c254
+Description: userspace USB HID development files
+libhid provides a generic and flexible way to access and interact with USB HID devices, much like libusb does for plain USB devices. It is based on libusb, thus it requires no HID support in the kernel and provides means to take control over a device even if the kernel governs it.
+This package provides the development files and static library for libhid.
+
+Package: libhid0
+Installed-Size: 152
+Architecture: i386
+Source: libhid
+Version: 0.2.15+20060325-2.2ubuntu1
+Depends: libc6 (>= 2.4), libusb-0.1-4 (>= 2:0.1.12)
+Filename: pool/universe/libh/libhid/libhid0_0.2.15+20060325-2.2ubuntu1_i386.deb
+Size: 29592
+MD5sum: 63bd7db37b556d1cfbbc96e123176187
+Description: userspace USB HID access library
+ libhid provides a generic and flexible way to access and interact with USB HID devices, much like libusb does for plain USB devices. It is based on libusb, thus it requires no HID support in the kernel and provides means to take control over a device even if the kernel governs it.
+
+Package: libusb-1.0-0
+Priority: optional
+Section: universe/libs
+Installed-Size: 112
+Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
+Original-Maintainer: Aurelien Jarno <aurel32@debian.org>
+Architecture: i386
+Source: libusb-1.0
+Version: 2:1.0.0-1
+Depends: libc6 (>= 2.4)
+Filename: pool/universe/libu/libusb-1.0/libusb-1.0-0_1.0.0-1_i386.deb
+Size: 29804
+MD5sum: b3daa14b6be4da1a05bd302c65757de0
+SHA1: ba6f9078aa4b11aea9ebfe7f4044bd553fd0b0e4
+SHA256: 65a070aa95e7548f6c2990c3f53261ddac8d0898ec39051d0cc7902d9e050f49
+Description: userspace USB programming library
+ Library for programming USB applications without the knowledge
+ of Linux kernel internals.
+Homepage: http://www.linux-usb.org/
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+
+Package: libusb-1.0-0-dev
+Priority: optional
+Section: universe/libdevel
+Installed-Size: 936
+Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
+Original-Maintainer: Aurelien Jarno <aurel32@debian.org>
+Architecture: i386
+Source: libusb-1.0
+Version: 2:1.0.0-1
+Depends: libusb-1.0-0 (= 2:1.0.0-1), libc6-dev | libc-dev
+Filename: pool/universe/libu/libusb-1.0/libusb-1.0-0-dev_1.0.0-1_i386.deb
+Size: 142442
+MD5sum: 0a77cb7121114dba955f28d7f659a434
+SHA1: 37125c5ece0f00a7ce4f58a306e37539b7a5bb94
+SHA256: 669d00780454564405ab224130f8e61f4123a2a8909abc57abdc0e02b3af56c7
+Description: userspace USB programming library development files
+ Library for programming USB applications without the knowledge
+ of Linux kernel internals.
+Homepage: http://www.linux-usb.org/
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+
+Package: libusbprog-dev
+Priority: extra
+Section: universe/libdevel
+Installed-Size: 352
+Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
+Original-Maintainer: Uwe Hermann <uwe@debian.org>
+Architecture: i386
+Source: usbprog
+Version: 0.1.7-1
+Depends: libusbprog0 (= 0.1.7-1)
+Filename: pool/universe/u/usbprog/libusbprog-dev_0.1.7-1_i386.deb
+Size: 93138
+MD5sum: 5827844e5aa4326399f926098860f15e
+SHA1: 94c4312d38efd19592a02e5ad7ee0adaf46c2186
+SHA256: 12fe32dfbda6426ac40ada6b7b15fce65f8b891f1b72e1cb87bc8527f027354d
+Description: Development files for libusbprog
+ A programming tool needed to replace the firmware on the USBprog
+ hardware. It can automatically retrieve a list of available firmwares from
+ the Internet, download one of them and upload it to the USBprog adapter.
+ .
+ USBprog is a free programming adapter. You can easily install different
+ firmware versions from an "online pool" over USB. The adapter can be used
+ for programming and debugging AVR and ARM processors, as USB-to-RS232
+ converter, as JTAG interface or as simple I/O interface (5 lines).
+ .
+ This package contains files needed to build libusbprog-based applications.
+Homepage: http://developer.berlios.de/projects/usbprog/
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+
+Package: libusbprog0
+Priority: extra
+Section: universe/libs
+Installed-Size: 228
+Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
+Original-Maintainer: Uwe Hermann <uwe@debian.org>
+Architecture: i386
+Source: usbprog
+Version: 0.1.7-1
+Depends: libc6 (>= 2.4), libcurl3-gnutls (>= 7.16.2-1), libgcc1 (>= 1:4.1.1), libgcrypt11 (>= 1.4.0), libgnutls26 (>= 2.4.0-0), libidn11 (>= 0.5.18), libkrb53 (>= 1.6.dfsg.2), libldap-2.4-2 (>= 2.4.7), libreadline5 (>= 5.2), libstdc++6 (>= 4.2.1), libtasn1-3 (>= 0.3.4), libusb-0.1-4 (>= 2:0.1.12), libxml2 (>= 2.6.27), zlib1g (>= 1:1.1.4)
+Filename: pool/universe/u/usbprog/libusbprog0_0.1.7-1_i386.deb
+Size: 77324
+MD5sum: eead38ff4d6d6a22140ed35802d8a484
+SHA1: 94f3c38ee4c13d24ed8271af73e2146a51742c7f
+SHA256: 9750b0aa56bee69a169399b01ca0c61692e46d3b9805bef67ce6c09ac25002b2
+Description: Library for programming the USBprog hardware
+ A programming tool needed to replace the firmware on the USBprog
+ hardware. It can automatically retrieve a list of available firmwares from
+ the Internet, download one of them and upload it to the USBprog adapter.
+ .
+ USBprog is a free programming adapter. You can easily install different
+ firmware versions from an "online pool" over USB. The adapter can be used
+ for programming and debugging AVR and ARM processors, as USB-to-RS232
+ converter, as JTAG interface or as simple I/O interface (5 lines).
+ .
+ This package contains the libusbprog shared library.
+Homepage: http://developer.berlios.de/projects/usbprog/
+
+
+
+001.#include <stdio.h>
+002.#include <usb.h>
+003. 
+004.void print_endpoint(struct usb_endpoint_descriptor *endpoint) {
+005.    printf(" bEndpointAddress: %02xh\n", endpoint->bEndpointAddress);
+006.    printf(" bmAttributes: %02xh\n", endpoint->bmAttributes);
+007.    printf(" wMaxPacketSize: %d\n", endpoint->wMaxPacketSize);
+008.    printf(" bInterval: %d\n", endpoint->bInterval);
+009.    printf(" bRefresh: %d\n", endpoint->bRefresh);
+010.    printf(" bSynchAddress: %d\n", endpoint->bSynchAddress);
+011.}
+012. 
+013.void print_altsetting(struct usb_interface_descriptor *interface) {
+014.    int i;
+015. 
+016.    printf(" bInterfaceNumber: %d\n", interface->bInterfaceNumber);
+017.    printf(" bAlternateSetting: %d\n", interface->bAlternateSetting);
+018.    printf(" bNumEndpoints: %d\n", interface->bNumEndpoints);
+019.    printf(" bInterfaceClass: %d\n", interface->bInterfaceClass);
+020.    printf(" bInterfaceSubClass: %d\n", interface->bInterfaceSubClass);
+021.    printf(" bInterfaceProtocol: %d\n", interface->bInterfaceProtocol);
+022.    printf(" iInterface: %d\n", interface->iInterface);
+023. 
+024.    for (i = 0; i < interface->bNumEndpoints; i++)
+025.        print_endpoint(&interface->endpoint[i]);
+026.}
+027. 
+028.void print_interface(struct usb_interface *interface) {
+029.    int i;
+030. 
+031.    for (i = 0; i < interface->num_altsetting; i++)
+032.        print_altsetting(&interface->altsetting[i]);
+033.}
+034. 
+035.void print_configuration(struct usb_config_descriptor *config) {
+036.    int i;
+037. 
+038.    printf(" wTotalLength: %d\n", config->wTotalLength);
+039.    printf(" bNumInterfaces: %d\n", config->bNumInterfaces);
+040.    printf(" bConfigurationValue: %d\n", config->bConfigurationValue);
+041.    printf(" iConfiguration: %d\n", config->iConfiguration);
+042.    printf(" bmAttributes: %02xh\n", config->bmAttributes);
+043.    printf(" MaxPower: %d\n", config->MaxPower);
+044. 
+045.    for (i = 0; i < config->bNumInterfaces; i++)
+046.        print_interface(&config->interface[i]);
+047.}
+048. 
+049.int main(void) {
+050. 
+051.    struct usb_bus *bus;
+052.    struct usb_device *dev;
+053. 
+054.    /* Initialize libusb */
+055.    usb_init();
+056. 
+057.    /* Find all USB busses on system */
+058.    usb_find_busses();
+059. 
+060.    /* Find all devices on all USB devices */
+061.    usb_find_devices();
+062. 
+063.    printf("bus/device idVendor/idProduct\n");
+064. 
+065.    /* usb_busses is a global variable. */
+066.    for (bus = usb_busses; bus; bus = bus->next) {
+067.        for (dev = bus->devices; dev; dev = dev->next) {
+068.            int ret, i;
+069.            char string[256];
+070.            usb_dev_handle *udev;
+071. 
+072.            printf("%s/%s %04X/%04X\n", bus->dirname, dev->filename,
+073.                    dev->descriptor.idVendor, dev->descriptor.idProduct);
+074.             
+075.            /* Opens a USB device */           
+076.            udev = usb_open(dev);
+077.            if (udev) {
+078.                if (dev->descriptor.iManufacturer) {
+079.                     
+080.                    /* Retrieves a string descriptor from a device using the first language */
+081.                    ret = usb_get_string_simple(udev, dev->descriptor.iManufacturer, string, sizeof (string));
+082.                    if (ret > 0)
+083.                        printf("- Manufacturer : %s\n", string);
+084.                    else
+085.                        printf("- Unable to fetch manufacturer string\n");
+086.                }
+087. 
+088.                if (dev->descriptor.iProduct) {
+089.                    ret = usb_get_string_simple(udev, dev->descriptor.iProduct, string, sizeof (string));
+090.                    if (ret > 0)
+091.                        printf("- Product : %s\n", string);
+092.                    else
+093.                        printf("- Unable to fetch product string\n");
+094.                }
+095. 
+096.                if (dev->descriptor.iSerialNumber) {
+097.                    ret = usb_get_string_simple(udev, dev->descriptor.iSerialNumber, string, sizeof (string));
+098.                    if (ret > 0)
+099.                        printf("- Serial Number: %s\n", string);
+100.                    else
+101.                        printf("- Unable to fetch serial number string\n");
+102.                }
+103. 
+104.                /* Closes a USB device */
+105.                usb_close(udev);
+106.            }
+107. 
+108.            if (!dev->config) {
+109.                printf(" Couldn't retrieve descriptors\n");
+110.                continue;
+111.            }
+112. 
+113.            for (i = 0; i < dev->descriptor.bNumConfigurations; i++)
+114.                print_configuration(&dev->config[i]);
+115.        }
+116.    }
+117. 
+118.    return 0;
+119.}
+
+For further details about the structures please look at the /usr/include/usb.h file.
+
+libusb is an open source library that allows you to communicate with USB devices from userspace.
+
+is aimed at application developers wishing to communicate with USB peripherals from their own software.
+
+http://libusb.sourceforge.net/api-1.0/modules.html
+
+http://libusb.sourceforge.net/api-1.0/io.html
+
+http://libusb.sourceforge.net/api-1.0/group__misc.html
+libusb functions typically return 0 on success or a negative error code on failure. These negative error codes relate to LIBUSB_ERROR constants which are listed on the miscellaneous documentation page.
+
+
+
+
+

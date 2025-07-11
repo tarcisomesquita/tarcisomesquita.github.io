@@ -1,0 +1,25 @@
+MAKE(1)
+
+$ make [ -f makefile ] [ options ] ... [ targets ] ...
+
+-f file, --file=file, --makefile=FILE
+Use file as a makefile.
+
+-j [jobs], --jobs[=jobs]
+Specifies the number of jobs (commands) to run simultaneously.
+
+-n, --just-print, --dry-run, --recon
+Print the commands that would be executed, but do not execute them.
+
+-r, --no-builtin-rules
+Eliminate use of the built-in implicit rules.  Also clear out the default list of suffixes for suffix rules.
+
+-R, --no-builtin-variables
+Don't define any built-in variables.
+
+-s, --silent, --quiet
+Silent operation; do not print the commands as they are executed.
+
+-w, --print-directory
+Print a message containing the working directory before and after other processing.
+

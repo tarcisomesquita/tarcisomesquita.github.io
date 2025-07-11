@@ -1,0 +1,78 @@
+
+sudo apt-get install build-essential cmake zlib1g-dev libusb-1.0-0-dev
+http://libusb.info
+wget https://gitlab.com/BenjaminDobell/Heimdall/-/archive/master/Heimdall-master.tar.gz
+
+em CMakeLists.txt
+option(DISABLE_FRONTEND "Disable GUI frontend" ON)
+
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make
+
+strace -o trace.txt -f -v -s 4000 make
+cd /home/ubuntu/Heimdall-master/build/libpit
+/usr/bin/c++ -std=gnu++11 -O3 -DNDEBUG -o CMakeFiles/pit.dir/source/libpit.cpp.o -c /home/ubuntu/Heimdall-master/libpit/source/libpit.cpp
+/usr/bin/ar qc libpit.a CMakeFiles/pit.dir/source/libpit.cpp.o
+/usr/bin/ranlib libpit.a
+
+cd /home/ubuntu/Heimdall-master/build/heimdall
+/usr/bin/c++ $OPT -o CMakeFiles/heimdall.dir/source/Arguments.cpp.o -c /home/ubuntu/Heimdall-master/heimdall/source/Arguments.cpp
+
+OPT='-DOS_LINUX -isystem /usr/include/libusb-1.0 -I/home/ubuntu/Heimdall-master/heimdall/../libpit/source  -std=gnu++11 -O3 -DNDEBUG'
+/usr/bin/c++ $OPT -o CMakeFiles/heimdall.dir/source/VersionAction.cpp.o -c /home/ubuntu/Heimdall-master/heimdall/source/VersionAction.cpp
+/usr/bin/c++ $OPT -o CMakeFiles/heimdall.dir/source/HelpAction.cpp.o -c /home/ubuntu/Heimdall-master/heimdall/source/HelpAction.cpp
+/usr/bin/c++ $OPT -o CMakeFiles/heimdall.dir/source/InfoAction.cpp.o -c /home/ubuntu/Heimdall-master/heimdall/source/InfoAction.cpp
+/usr/bin/c++ $OPT -o CMakeFiles/heimdall.dir/source/PrintPitAction.cpp.o -c /home/ubuntu/Heimdall-master/heimdall/source/PrintPitAction.cpp
+/usr/bin/c++ $OPT -o CMakeFiles/heimdall.dir/source/ClosePcScreenAction.cpp.o -c /home/ubuntu/Heimdall-master/heimdall/source/ClosePcScreenAction.cpp
+/usr/bin/c++ $OPT -o CMakeFiles/heimdall.dir/source/DetectAction.cpp.o -c /home/ubuntu/Heimdall-master/heimdall/source/DetectAction.cpp
+/usr/bin/c++ $OPT -o CMakeFiles/heimdall.dir/source/DownloadPitAction.cpp.o -c /home/ubuntu/Heimdall-master/heimdall/source/DownloadPitAction.cpp
+/usr/bin/c++ $OPT -o CMakeFiles/heimdall.dir/source/FlashAction.cpp.o -c /home/ubuntu/Heimdall-master/heimdall/source/FlashAction.cpp
+/usr/bin/c++ $OPT -o CMakeFiles/heimdall.dir/source/Arguments.cpp.o -c /home/ubuntu/Heimdall-master/heimdall/source/Arguments.cpp
+/usr/bin/c++ $OPT -o CMakeFiles/heimdall.dir/source/BridgeManager.cpp.o -c /home/ubuntu/Heimdall-master/heimdall/source/BridgeManager.cpp
+/usr/bin/c++ $OPT -o CMakeFiles/heimdall.dir/source/Interface.cpp.o -c /home/ubuntu/Heimdall-master/heimdall/source/Interface.cpp
+/usr/bin/c++ $OPT -o CMakeFiles/heimdall.dir/source/Utility.cpp.o -c /home/ubuntu/Heimdall-master/heimdall/source/Utility.cpp
+/usr/bin/c++ $OPT -o CMakeFiles/heimdall.dir/source/main.cpp.o -c /home/ubuntu/Heimdall-master/heimdall/source/main.cpp
+
+/usr/bin/ld \
+-plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so \
+-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper \
+-plugin-opt=-fresolution=/tmp/ccr3Y2BU.res \
+-plugin-opt=-pass-through=-lgcc_s \
+-plugin-opt=-pass-through=-lgcc \
+-plugin-opt=-pass-through=-lc \
+-plugin-opt=-pass-through=-lgcc_s \
+-plugin-opt=-pass-through=-lgcc --sysroot=/ \
+--build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu \
+--as-needed \
+-export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 \
+-pie -z now -z relro \
+-o ../bin/heimdall \
+/usr/lib/x86_64-linux-gnu/Scrt1.o \
+/usr/lib/x86_64-linux-gnu/crti.o \
+/usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o \
+-L/lib \
+-L/usr/lib \
+-L/usr/lib/gcc/x86_64-linux-gnu/7 \
+-L/usr/lib/x86_64-linux-gnu \
+-L/lib/x86_64-linux-gnu \
+CMakeFiles/heimdall.dir/source/Arguments.cpp.o CMakeFiles/heimdall.dir/source/BridgeManager.cpp.o CMakeFiles/heimdall.dir/source/ClosePcScreenAction.cpp.o CMakeFiles/heimdall.dir/source/DetectAction.cpp.o CMakeFiles/heimdall.dir/source/DownloadPitAction.cpp.o CMakeFiles/heimdall.dir/source/FlashAction.cpp.o CMakeFiles/heimdall.dir/source/HelpAction.cpp.o CMakeFiles/heimdall.dir/source/InfoAction.cpp.o CMakeFiles/heimdall.dir/source/Interface.cpp.o CMakeFiles/heimdall.dir/source/main.cpp.o CMakeFiles/heimdall.dir/source/PrintPitAction.cpp.o CMakeFiles/heimdall.dir/source/Utility.cpp.o CMakeFiles/heimdall.dir/source/VersionAction.cpp.o \
+../libpit/libpit.a -lusb-1.0 -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc \
+/usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o \
+/usr/lib/x86_64-linux-gnu/crtn.o
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+# sudo apt purge heimdall-flash
+# sudo apt install build-essential cmake zlib1g-dev libusb-1.0-0-dev qt5-default libgl1-mesa-glx libgl1-mesa-dev
+# cd ~
+# wget https://gitlab.com/BenjaminDobell/Heimdall/-/archive/master/Heimdall-master.tar.gz
+# tar -xvf Heimdall-master.tar.gz
+# cd Heimdall-master/
+# mkdir build
+# cd build
+# cmake -DCMAKE_BUILD_TYPE=Release ..
+# make
+# sudo mv ./bin/heimdall* /usr/local/bin
+

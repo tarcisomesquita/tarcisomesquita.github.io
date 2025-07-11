@@ -1,0 +1,70 @@
+du -chs /usr/lib/jvm/* | sort -h
+258M    /usr/lib/jvm/java-17-openjdk-amd64
+
+/media/arq/eclipse/java-2023-12/eclipse/eclipse
+
+/media/arq/eclipse/eclipse-workspace/projetoInicial/src/uninter/Principal.java
+/media/arq/eclipse/eclipse-workspace/projetoTeste/src/teste/Teste.java
+/media/arq/eclipse/eclipse-workspace/projetoTeste/src/teste2/Teste2.java
+
+nomeProjeto/src/nomePackage/nomeClasse
+
+https://docs.oracle.com/en/java/javase/17/docs/api/java.base/module-summary.html
+
+Packages são conjuntos de classes e interfaces.
+
+A declaração de package tem de ser a primeira linha sem comentários ou espaço em branco no arquivo.
+
+O compilador sabe achar uma classe se ela estiver no diretório de seu programa.
+
+A instrução import permite utilizar uma classes definida em outro pacote.
+
+import java.lang.System;
+import java.io.*;
+
+Packages Principais
+
+✔ java.lang
+Pacote em que não é necessário se dar um import
+Principais classes : Boolean, Character, Double, Float, Integer, Long, Math, Object, String, System, Thread
+
+✔ java.io
+Pacote que permite manipulação de Streams lendo ou gravando em arquivos e outros
+Principais classes : DataInputSream, FileInputStream, FileOutputStream, PrintStream
+
+✔ java.util
+Pacote que provê uma miscelânea de classe úteis incluindo estrutura de dados, time, date, geração de números randômicos, etc..
+
+✔ java.net
+Pacote que provê suporte a redes, incluindo-se URL’S, TCP Sockets, UDP Sockets, Endereços IP, etc.
+
+✔ java.awt
+Pacote que provê um conjunto de manipulações de interfaces para o usuário tais como windows, caixas de diálogos, botões, cores, checkboxes, listas, menus, scrollbars, textfields, etc...
+
+✔ java.applet
+Pacote que habilita a criação de applets através da classe applet. Também prove recursos de áudio.
+Principais métodos da classe Applet : destroy, getParameter, init, play, resize, showStatus, start, stop
+
+javac -verbose -deprecation  Teste.java
+[search path for class files: /usr/lib/jvm/java-17-openjdk-amd64/lib/modules,.]
+[loading /modules/java.base/java/lang/Object.class]
+[loading /modules/java.base/java/lang/String.class]
+
+ls -lh /usr/lib/jvm/java-17-openjdk-amd64/lib/modules 
+-rw-r--r-- 1 root root 123M Jan 30 20:08 /usr/lib/jvm/java-17-openjdk-amd64/lib/modules
+
+Usando javac -verbose -deprecation e04_GeometriaPrograma.java
+/home/ubuntu/Desktop/jdk1.6.0_26/jre/lib/resources.jar,
+/home/ubuntu/Desktop/jdk1.6.0_26/jre/lib/rt.jar,  (aqui está o java lang)
+/home/ubuntu/Desktop/jdk1.6.0_26/jre/lib/sunrsasign.jar,
+/home/ubuntu/Desktop/jdk1.6.0_26/jre/lib/jsse.jar,
+/home/ubuntu/Desktop/jdk1.6.0_26/jre/lib/jce.jar,
+/home/ubuntu/Desktop/jdk1.6.0_26/jre/lib/charsets.jar,
+/home/ubuntu/Desktop/jdk1.6.0_26/jre/lib/modules/jdk.boot.jar,
+/home/ubuntu/Desktop/jdk1.6.0_26/jre/lib/ext/localedata.jar,
+/home/ubuntu/Desktop/jdk1.6.0_26/jre/lib/ext/dnsns.jar,
+/home/ubuntu/Desktop/jdk1.6.0_26/jre/lib/ext/sunpkcs11.jar,
+/home/ubuntu/Desktop/jdk1.6.0_26/jre/lib/ext/sunjce_provider.jar,
+.]
+[loading java/lang/Object.class(java/lang:Object.class)]
+[loading java/lang/String.class(java/lang:String.class)]

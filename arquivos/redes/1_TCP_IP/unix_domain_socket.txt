@@ -1,0 +1,6 @@
+
+netstat -xpn
+
+A Unix domain socket or IPC socket (inter-process communication socket) is a data communications endpoint for exchanging data between processes executing within the same host operating system. While similar in functionality to named pipes, Unix domain sockets may be created as byte streams or as datagram sequences
+In addition to sending data, processes may send file descriptors across a Unix domain socket connection using the sendmsg() and recvmsg() system calls.
+

@@ -1,0 +1,110 @@
+PPPoE (sigla em inglês para Point-to-Point Protocol over Ethernet)
+O protocolo PPPoE deriva do protocolo PPP
+
+Ethertype: 0x8863 (Discovery Stage), 0x8864 (PPP Session Stage).
+
+MAC header 	PPPoE header 	Data :::
+
+PPPoE header:
+0001020304050607 0809101112131415 1617181920212223 2425262728293031
+Version          Type 	Code 	Session ID
+Length 	Data :::
+
+Version: 4 bits (Must be set to 1)
+Type: 4 bits (Must be set to 1)
+Code: 8 bits
+Session ID: 16 bits, unsigned
+Length: 16 bits
+Size of the Data: field in bytes
+Data: Variable length
+
+
+    Defines L2TP AVP attributes 55 (PPPoE Relay), 56 (PPPoE Relay Response Capability), 57(PPPoE Relay Forward Capability).
+
+
+
+
+O protocolo usado pelo modem 3G não é o PPPoE
+
+2 bytes (for PPP) + 6 (for PPPoE) + 18 (Ethernet framing, variable) + 10 (RFC 2684, variable) = 36 bytes
+
+PPPoE stages
+
+The PPPoE has two distinct stages:
+PPPoE discovery
+
+Since traditional PPP connections are established between two end points over a serial link or over an ATM virtual circuit that has already been established during dial-up, all PPP frames sent on the wire are sure to reach the other end. But Ethernet networks are multi-access where each node in the network can access every other node. An Ethernet frame contains the hardware address of the destination node (MAC address). This helps the frame reach the intended destination.
+
+Hence before exchanging PPP control packets to establish the connection over Ethernet, the MAC address of the two end points should be known to each other so that they can be encoded in these control packets. The PPPoE Discovery stage does exactly this. In addition it also helps establish a Session ID that can be used for further exchange of packets.
+PPP session
+
+Once the MAC address of the peer is known and a session has been established, the Session stage.
+PPPoE Discovery (PPPoED)
+
+Although traditional PPP is a peer-to-peer protocol, PPPoE is inherently a client-server relationship since multiple hosts can connect to a service provider over a single physical connection.
+
+The Discovery process consists of four steps between the host computer which acts as the client and the access concentrator at the internet service provider's end acts as the server. They are outlined below. The fifth and last step is the way to close an existing session.
+Client to server: Initiation (PADI)
+
+PADI stands for PPPoE Active Discovery Initiation.[6]
+If a user wants to dial up to the Internet using DSL, then his computer first must find the DSL access concentrator (DSL-AC) at the user's Internet service provider's point of presence (POP). Communication over Ethernet is only possible via MAC addresses. As the computer does not know the MAC address of the DSL-AC, it sends out a PADI packet via an Ethernet broadcast (MAC: ff:ff:ff:ff:ff:ff). This PADI packet contains the MAC address of the computer sending it.
+
+Example of a PADI-packet:
+
+Frame 1 (44 bytes on wire, 44 bytes captured)
+Ethernet II, Src: 00:50:da:42:d7:df, Dst: ff:ff:ff:ff:ff:ff
+PPP-over-Ethernet Discovery
+  Version: 1
+  Type 1
+  Code Active Discovery Initiation (PADI)
+  Session ID: 0000
+  Payload Length: 24
+PPPoE Tags
+  Tag: Service-Name
+  Tag: Host-Uniq
+    Binary Data: (16 bytes)
+
+Src. (=source) holds the MAC address of the computer sending the PADI.
+Dst. (=destination) is the Ethernet broadcast address.
+The PADI packet can be received by more than one DSL-AC. Only DSL-AC equipment that can serve the "Service-Name" tag should reply.
+Server to client: Offer (PADO)
+
+PADO stands for PPPoE Active Discovery Offer.[7]
+Once the user's computer has sent the PADI packet, the DSL-AC replies with a PADO packet, using the MAC address supplied in the PADI. The PADO packet contains the MAC address of the DSL-AC, its name (e.g. LEIX11-erx for the T-Com DSL-AC in Leipzig) and the name of the service. If more than one POP's DSL-AC replies with a PADO packet, the user's computer selects the DSL-AC for a particular POP using the supplied name or service.
+
+Here is an example of a PADO packet:
+
+Frame 2 (60 bytes on wire, 60 bytes captured)
+Ethernet II, Src: 00:0e:40:7b:f3:8a, Dst: 00:50:da:42:d7:df
+PPP-over-Ethernet Discovery
+  Version: 1
+  Type 1
+  Code Active Discovery Offer (PADO)
+  Session ID: 0000
+  Payload Length: 36
+PPPoE Tags
+  Tag: AC-Name
+    String Data: IpzbrOOl
+  Tag: Host-Uniq
+    Binary Data: (16 bytes)
+
+AC-Name -> String data holds the AC name, in this case “Ipzbr001” (the Arcor DSL-AC in Leipzig)
+Src. holds the MAC address of the DSL-AC.
+The MAC address of the DSL-AC also reveals the manufacturer of the DSL-AC (in this case Nortel Networks).
+Client to server: request (PADR)
+
+PADR stands for PPPoE active discovery request.[8]
+A PADR packet is sent by the user's computer to the DSL-AC following receipt of an acceptable PADO packet from the DSL-AC. It confirms acceptance of the offer of a PPPoE connection made by the DSL-AC issuing the PADO packet.
+Server to client: session-confirmation (PADS)
+
+PADS stands for PPPoE active discovery session-confirmation.[9]
+The PADR packet above is confirmed by the DSL-AC with a PADS packet, and a Session ID is given out with it. The connection with the DSL-AC for that POP has now been fully established.
+Either end to other end: termination (PADT)
+
+PADT stands for PPPoE active discovery termination.[10]
+This packet terminates the connection to the POP. It may be sent either from the user's computer or from the DSL-AC.
+
+
+[ PPP architecture ]
+
+

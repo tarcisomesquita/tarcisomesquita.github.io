@@ -1,0 +1,27 @@
+Booting the Kernel
+June 1, 1997
+
+make zImage or make boot
+cat arch/i386/boot/zImage > /dev/fd0
+
+The first sector (executing at 0x7c00) moves itself to 0x90000 and loads subsequent sectors after itself, getting them from the boot device using the firmware's functions to access the disk. The rest of the kernel is then loaded to address 0x10000, allowing for a maximum size of half a megabyte of data—remember, this is the compressed image. The boot sector code lives in bootsect.S, a real-mode assembly file.
+
+Then code at 0x90200 (defined in setup.S) takes care of some hardware initialization and allows the default text mode (video.S) to be changed. Text mode selection is a compile-time option from 2.1.9 onwards.
+
+Later, all the kernel is moved from 0x10000 (64K) to 0x1000 (4K). This move overwrites BIOS data stored in RAM, so BIOS calls can no longer be performed. The first physical page is not touched because it is the so-called “zero-page”, used in handling virtual memory.
+
+At this point, setup.S enters protected mode and jumps to 0x1000, where the kernel lives. All the available memory can be accessed now, and the system can begin to run.
+
+The steps just described were once the whole story of booting when the kernel was small enough to fit in half a megabyte of memory—the address range between 0x10000 and 0x90000. As features were added to the system, the kernel became larger than half a megabyte and could no longer be moved to 0x1000. Thus, code at 0x1000 is no longer the Linux kernel, instead the “gunzip” part of the gzip program resides at that address. The following additional steps are now needed to uncompress the kernel and execute it:
+
+head.S in the compressed directory is at 0x1000, and is in charge of “gunzipping” the kernel; it calls the function decompress_kernel, defined in compressed/misc.c, which in turns calls inflate which writes its output starting at address 0x100000 (1MB). High memory can now be accessed, because the processor is definitely out of its limited boot environment—the “real” mode.
+
+After decompression, head.S jumps to the actual beginning of the kernel. The relevant code is in ../kernel/head.S, outside of the boot directory.
+
+The boot process is now over, and head.S (i.e., the code found at 0x100000 that used to be at 0x1000 before introducing compressed boots) can complete processor initialization and call start_kernel(). Code for all functions after this step is written in C.
+
+
+After architecture-specific initialization is complete, the init/main.c program takes control of whichever processor you are using.
+
+The start_kernel() function first calls setup_arch(), which is the last architecture-specific function. Unlike other code, however, setup_arch() can exploit all the processor's features and is a much easier source file to deal with than those described earlier. This function is defined in the kernel/setup.c code under each architecture source tree.
+

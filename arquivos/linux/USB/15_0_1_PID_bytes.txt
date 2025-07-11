@@ -1,0 +1,31 @@
+
+PID bytes 
+
+PID value      Transmitted byte   Name    Description
+(msb-first)    (lsb-first)
+
+Special
+1000           0001 1110          SPLIT   High-bandwidth (USB 2.0) split transaction
+0100           0010 1101          PING    Check if endpoint can accept data (USB 2.0)
+1100           0011 1100          PRE     Low-bandwidth USB preamble
+1100                              ERR     Split transaction error (USB 2.0)
+0000           0000 1111          Reserved
+
+Handshake
+0010           0100 1011          ACK     Data packet accepted
+1010           0101 1010          NAK     Data packet not accepted; please retransmit
+0110           0110 1001          NYET    Data not ready yet (USB 2.0)
+1110           0111 1000          STALL   Transfer impossible; do error recovery
+
+Token
+0001           1000 0111          OUT     Address for host-to-device transfer
+1001           1001 0110          IN      Address for device-to-host transfer
+0101           1010 0101          SOF     Start of frame marker (sent each ms)
+1101           1011 0100          SETUP   Address for host-to-device control transfer
+
+Data
+0011           1100 0011          DATA0     Even-numbered data packet
+1011           1101 0010          DATA1     Odd-numbered data packet
+0111           1110 0001          DATA2     Data packet for high-bandwidth isochronous transfer (USB 2.0)
+1111           1111 0000          MDATA     Data packet for high-bandwidth isochronous transfer (USB 2.0)
+

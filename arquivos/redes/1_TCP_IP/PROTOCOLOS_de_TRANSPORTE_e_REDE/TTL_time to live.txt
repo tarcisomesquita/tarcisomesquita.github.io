@@ -1,0 +1,20 @@
+
+Outra função importante do ICMP é o controle do TTL (time to live) de cada pacote TCP ou UDP. Os pacotes tem vida curta e sua única função é carregar os dados até o destino. Eles são transmitidos de um roteador a outro e, uma vez que chegam ao destino, são desmontados e destruídos. Mas, o que acontece em casos onde não existe uma rota possível até o destino, seja por que a máquina está desligada, por erro no endereçamento, ou por um problema em algum dos links?
+
+Existem duas possibilidades. A primeira é um roteador próximo perceber que a máquina está fora do ar e destruir o pacote. Neste caso, ele responde ao emissor com um pacote ICMP "Destination Unreachable", avisando do ocorrido. Caso isso não aconteça, o pacote fica circulando pela rede, passando de um roteador a outro, sem que consiga chegar ao destino final.
+
+O TTL existe para evitar que estes pacotes fiquem em loop eterno, sendo retransmitidos indefinidamente e assim consumindo banda de forma desnecessária. Graças a ele, os pacotes têm "vida útil".
+
+O pacote é criado com um TTL de 64 hops (o default nas versões atuais do Linux). Cada vez que o pacote passa por um roteador, o número é reduzido em um. Se o número chegar a zero, o roteador destrói o pacote e avisa o emissor enviando um pacote ICMP "Time Exceeded".
+
+No Linux, o TTL padrão é configurável através do arquivo "/proc/sys/net/ipv4/ip_default_ttl". Você pode brincar com isso alterando o valor padrão por um número mais baixo, como em:
+
+# echo 8 > /proc/sys/net/ipv4/ip_default_ttl
+
+Com um valor tão baixo, os pacotes gerados pela sua máquina terão vida curta, e não conseguirão atingir hosts muito distantes. Você vai continuar conseguindo acessar a página do seu provedor, por exemplo, mas não conseguirá acessar servidores geograficamente distantes. Para retornar o valor padrão, use o comando:
+
+# echo 64 > /proc/sys/net/ipv4/ip_default_ttl
+
+Os pacotes ICMP "Time Exceeded" são usados pelo comando "traceroute" (no Linux) para criar um mapa dos caminho percorrido pelos pacotes até chegarem a um determinado endereço. Ele começa enviando um pacote com um TTL de apenas 1 hop, o que faz com que ele seja descartado logo pelo primeiro roteador. Ao receber a mensagem de erro, o traceroute envia um segundo pacote, desta vez com TTL de 2 hops, que é descartado no roteador seguinte. Ele continua, enviando vários pacotes, aumentando o TTL em 1 hop a cada tentativa. Isso permite mapear cada roteador por onde o pacote passa até chegar ao destino
+
+

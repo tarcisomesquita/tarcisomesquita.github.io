@@ -1,0 +1,14 @@
+
+cd [-LP] [directory]
+
+Switch to the specified directory (default HOME).
+If a single "-" is specified as the argument, it will be replaced by the value of OLDPWD.
+
+The cd command will print out the name of the directory that it actually switched to if this is different from the name that the user gave.
+
+If CDPATH is set and the directory name does not begin with a slash "/", then the directories listed in CDPATH will be searched for the specified directory.
+The format of CDPATH is the same as that of PATH.
+
+The -P option causes the physical directory structure to be used, that is, all symbolic links are resolved to their respective values.
+The -L option turns off the effect of any preceding -P options.
+

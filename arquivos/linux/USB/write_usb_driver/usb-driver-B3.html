@@ -1,0 +1,1066 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN"
+"http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    		<script type="text/javascript">var NREUMQ=NREUMQ||[];NREUMQ.push(["mark","firstbyte",new Date().getTime()]);</script>
+<title>Writing a Simple USB Driver | Linux Journal</title>
+      <!-- nokia_mobile theme by Andrea Trasatti -->
+		<link type="text/css" rel="stylesheet" media="all" href="/sites/linuxjournal.com/themes/nokia_mobile/css/high/reset.css?e" />
+<link type="text/css" rel="stylesheet" media="all" href="/sites/linuxjournal.com/themes/nokia_mobile/style.css?e" />
+<link type="text/css" rel="stylesheet" media="all" href="/sites/linuxjournal.com/themes/nokia_mobile/css/high/baseStyles.css?e" />
+<link type="text/css" rel="stylesheet" media="all" href="/sites/linuxjournal.com/themes/nokia_mobile/css/high/red.css?e" />
+		<script type="text/javascript" src="/files/linuxjournal.com/ufiles/js/js_fbe02f1157fb6eff13a15ef7fd2a0e4d.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+
+		function init() {
+			var myAccordionList = new AccordionList("accordion");
+			var myStyleTweaks = new StyleTweaker();
+			myStyleTweaks.add("Series60/5.0", "/sites/linuxjournal.com/themes/nokia_mobile/css/high/tweaks/S605th.css");
+			myStyleTweaks.add("Series60/3.2", "/sites/linuxjournal.com/themes/nokia_mobile/css/high/tweaks/S603rdFP2.css");
+			myStyleTweaks.add("AppleWebKit/420+", "/sites/linuxjournal.com/themes/nokia_mobile/css/high/tweaks/S406th.css");
+			myStyleTweaks.add("N900", "/sites/linuxjournal.com/themes/nokia_mobile/css/high/tweaks/maemo.css");
+			myStyleTweaks.add("Firefox/3.0a1 Tablet browser 0.3.7", "/sites/linuxjournal.com/themes/nokia_mobile/css/high/tweaks/maemo.css");
+			myStyleTweaks.add("Opera Mini/4", "/sites/linuxjournal.com/themes/nokia_mobile/css/high/tweaks/operamini.css");
+			myStyleTweaks.tweak();
+		}
+		addEvent("onload",init);
+
+//--><!]]>
+</script>
+		
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-1117794-1");
+pageTracker._setDomainName(".linuxjournal.com");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
+<!--<script type='text/javascript' src='http://partner.googleadservices.com/gampad/google_service.js'>
+</script>
+<script type='text/javascript'>
+GS_googleAddAdSenseService("ca-pub-3600556074671070");
+GS_googleEnableAllServices();
+</script>
+<script type='text/javascript'>
+GA_googleAddSlot("ca-pub-3600556074671070", "Mobile");
+</script>
+<script type='text/javascript'>
+GA_googleFetchAds();
+</script>-->
+<script type='text/javascript'>
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
+(function() {
+var gads = document.createElement('script');
+gads.async = true;
+gads.type = 'text/javascript';
+var useSSL = 'https:' == document.location.protocol;
+gads.src = (useSSL ? 'https:' : 'http:') + 
+'//www.googletagservices.com/tag/js/gpt.js';
+var node = document.getElementsByTagName('script')[0];
+node.parentNode.insertBefore(gads, node);
+})();
+</script>
+
+<script type='text/javascript'>
+googletag.cmd.push(function() {
+googletag.defineSlot('/1013989/Mobile_footer', [320, 50], 'div-gpt-ad-1384302154808-0').addService(googletag.pubads());
+googletag.defineSlot('/1013989/mobile_header', [320, 50], 'div-gpt-ad-1384302154808-1').addService(googletag.pubads());
+googletag.pubads().enableSingleRequest();
+googletag.enableServices();
+});
+</script>
+	</head>
+	<body class="">
+	<div id="container">
+		<div id="header">
+			
+			<div class="branding">
+              <div id="logo"><a href="/" title="Home" rel="home"><img src="/files/linuxjournal.com/ufiles/nokia_mobile_logo.jpg" alt="Home" id="logo-image" /></a></div>
+           
+            			</div>
+		</div>
+						<div class="header-blocks">
+
+			<div id="block-block-110" class="clear-block block block-block expanded">
+
+
+  <div class="content"><!--paging_filter--><!-- mobile_header -->
+<div style="text-align:center;" id='div-gpt-ad-1384302154808-1' style='width:320px; height:50px;'>
+<script type='text/javascript'>
+googletag.cmd.push(function() { googletag.display('div-gpt-ad-1384302154808-1'); });
+</script>
+</div></div>
+</div>
+			</div>
+			    		<div id="primary_links">
+			<div id="block-menu-menu-mobile-navbar" class="clear-block block block-menu expanded">
+
+
+  <div class="content"><ul class="menu"><li class="leaf first"><a href="/blog" title="">Blogs</a></li>
+<li class="leaf"><a href="/tag/how-tos" title="">HOW-TOs</a></li>
+<li class="leaf last"><a href="/tag/tech-tips" title="">Help &amp; Tips</a></li>
+</ul></div>
+</div>
+					</div>
+    		<ul class="breadcrumb"><li class="first"><a href="/">Home</a></li></ul>				<div id="maincontent" class="mobileregion">
+						<div id="main"><h2>Writing a Simple USB Driver</h2></div>																		<div id="content">
+				<div id="node-7353" class="node">
+			    <span class="submitted">Wed, 03/31/2004 - 23:00 — <a href="/user/800887" title="View user profile.">Greg Kroah-Hartman</a></span>
+		<div class="content clear-block box-flat">
+	<div>
+		</div>
+			<div class="simplesect" lang="en"><div class="titlepage"><a name="N0xf932890.0xfa1fbf0"></a></div><p>
+This function starts out by setting all bits in the variable
+color to 1. Then, if any LEDs are to be enabled, it turns off only
+that specific bit. We then send a USB control message to the
+device to write that color value to the device.
+</p><p>
+It first seems odd that the tiny buffer variable, which is only
+8-bytes long, is created with a call to kmalloc. Why not simply declare
+it on the stack and skip the overhead of dynamically
+allocating and then destroying it? This is done because some
+architectures that run Linux cannot send USB data created
+on the kernel stack, so all data that is to be sent to a USB
+device must be created dynamically.
+</p></div><div class="simplesect" lang="en"><div class="titlepage"><a name="N0xf932890.0xfa1fd50"></a>
+LEDs in Action</div><p>
+With this kernel driver created, built and loaded, when the USB
+lamp device is plugged in, the driver is bound to it. All USB devices
+bound to this driver can be found in the sysfs directory for the driver:
+
+
+<pre class="programlisting">
+
+$ tree /sys/bus/usb/drivers/usbled/
+/sys/bus/usb/drivers/usbled/
+`-- 4-1.4:1.0 -&gt;
+../../../../devices/pci0000:00/0000:00:0d.0/usb4/4-1/4-1.4/4-1.4:1.0
+
+</pre>
+</p><p>
+The file in that directory is a symlink back to the real location in
+the sysfs tree for that USB device. If we look into that directory we
+can see the files the driver has created for the LEDs:
+
+<pre class="programlisting">
+
+$ tree /sys/bus/usb/drivers/usbled/4-1.4:1.0/
+/sys/bus/usb/drivers/usbled/4-1.4:1.0/
+|-- bAlternateSetting
+|-- bInterfaceClass
+|-- bInterfaceNumber
+|-- bInterfaceProtocol
+|-- bInterfaceSubClass
+|-- bNumEndpoints
+|-- blue
+|-- detach_state
+|-- green
+|-- iInterface
+|-- power
+|   `-- state
+`-- red
+
+</pre>
+</p><p>
+Then, by writing either 0 or 1 to the blue, green and red files in that
+directory, the LEDs change color:
+
+<pre class="programlisting">
+
+$ cd /sys/bus/usb/drivers/usbled/4-1.4:1.0/
+$ cat green red blue
+0
+0
+0
+$ echo 1 &gt; red
+[greg@duel 4-1.4:1.0]$ echo 1 &gt; blue
+[greg@duel 4-1.4:1.0]$ cat green red blue
+0
+1
+1
+
+</pre>
+</p></div><div class="simplesect" lang="en"><div class="titlepage"><a name="N0xf932890.0xfa20068"></a></div><p>
+This produces the color shown in Figure 3.
+</p><div class="mediaobject"><a href="/files/linuxjournal.com/linuxjournal/articles/073/7353/7353f3.resized.jpg"><img src="/files/linuxjournal.com/linuxjournal/articles/073/7353/7353f3.inline.jpg" /></a><div class="caption"><p>
+Figure 3. The Device with the Red and Blue LEDs On
+</p></div></div></div><div class="simplesect" lang="en"><div class="titlepage"><a name="N0xf932890.0xfa20328"></a>
+Is There a Better Way?</div><p>
+Now that we have created a simple kernel driver for this device,
+which can be seen in the 2.6 kernel tree at drivers/usb/misc/usbled.c
+or on the <i>Linux Journal</i> FTP site at (<a href="ftp://ftp.linuxjournal.com/pub/lj/listings/issue120/7353.tgz">ftp.linuxjournal.com/pub/lj/listings/issue120/7353.tgz</a>), is this really the best
+way to talk to the device? What about using something like
+usbfs or libusb to control the device from user space without any
+special device drivers? In my next column, I will show how to do this
+and provide some shell scripts to control the USB lamp
+devices plugged in to the system easily.
+</p><p>
+If you would like to see kernel drivers written for any other types of
+devices, within reason&mdash;I'm not
+going to try to write an NVIDIA video card driver from scratch&mdash;please let me know.
+</p><p>
+Thanks to Don Marti for bugging me to get this device working
+on Linux. Without his prodding it would have never gotten finished.
+</p></div>
+<div class="authorblurb"><p>
+Greg Kroah-Hartman currently is the Linux kernel maintainer for a
+variety of different driver subsystems. He works
+for IBM, doing Linux kernel-related things, and can
+be reached at <a href="mailto:greg@kroah.com">greg@kroah.com</a>.
+
+</p></div><div class="links"><div class="item-list"><ul class="pager"><li class="pager-first first"><a href="/article/7353?page=0,0" title="Go to first page" class="active">« first</a></li>
+<li class="pager-previous"><a href="/article/7353?page=0,1" title="Go to previous page" class="active">‹ previous</a></li>
+<li class="pager-item"><a href="/article/7353?page=0,0" title="Go to page 1" class="active">1</a></li>
+<li class="pager-item"><a href="/article/7353?page=0,1" title="Go to page 2" class="active">2</a></li>
+<li class="pager-current last">3</li>
+</ul></div></div>	</div>
+	<div class="clear-block">
+		<div class="meta">
+						<div class="terms"></div>
+					</div>
+				<div class="links"></div>
+			</div>
+</div>
+<div id="comments"><h2 class="comments">Comments</h2><form action="/article/7353?page=0,2"  accept-charset="UTF-8" method="post" id="comment-controls">
+<div><div class="box">
+
+  <h2>Comment viewing options</h2>
+
+  <div class="content"><div class="container-inline"><input type="hidden" name="form_build_id" id="form-333ab68ef259d70def40f6dd9635c230" value="form-333ab68ef259d70def40f6dd9635c230"  />
+<input type="hidden" name="form_id" id="edit-comment-controls" value="comment_controls"  />
+<div class="form-item" id="edit-mode-wrapper">
+ <select name="mode" class="form-select" id="edit-mode" ><option value="1">Flat list - collapsed</option><option value="2">Flat list - expanded</option><option value="3">Threaded list - collapsed</option><option value="4" selected="selected">Threaded list - expanded</option></select>
+</div>
+<div class="form-item" id="edit-order-wrapper">
+ <select name="order" class="form-select" id="edit-order" ><option value="1" selected="selected">Date - newest first</option><option value="2">Date - oldest first</option></select>
+</div>
+<div class="form-item" id="edit-comments-per-page-wrapper">
+ <select name="comments_per_page" class="form-select" id="edit-comments-per-page" ><option value="10">10 comments per page</option><option value="30">30 comments per page</option><option value="50" selected="selected">50 comments per page</option><option value="70">70 comments per page</option><option value="90">90 comments per page</option><option value="150">150 comments per page</option><option value="200">200 comments per page</option><option value="250">250 comments per page</option><option value="300">300 comments per page</option></select>
+</div>
+<button value="Save settings" name="op" id="edit-submit"  class="form-submit button-submit"><span>Save settings</span></button> 
+</div><div class="description">Select your preferred way to display the comments and click "Save settings" to activate your changes.</div></div>
+</div>
+
+</div></form>
+<a id="comment-357354"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Fri, 10/22/2010 - 13:56 — <a href="http://WwW.B2S.WeBeGe.CoM" rel="nofollow">Black Spider</a> (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-357354" class="active">How To Get Port Values and the Resulting LED Patterns ???</a></strong>
+
+    <div class="content">
+      <p>Hi<br />
+Thanks For this guide but I want to know how to get Port Values and the Resulting LED Patterns without documents of the device ???</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-356462"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Fri, 10/01/2010 - 03:13 — <a href="/users/techieguy22" title="View user profile.">techieguy22</a></span>
+  
+  
+  <strong><a href="/article/7353#comment-356462" class="active">Souce</a></strong>
+
+    <div class="content">
+      <p>I was actually trying to write a kernel driver for usb and was hooked up reading this article only to find out it's been around for 6 years! Even so I've learned alot from this article. This is a great tutorial to make <a href="http://www.driversupdate.org/usb-drivers.htm" rel="nofollow">usb drivers</a>, however I'm quite stucked on the process of compiling the source.</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-351828"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Wed, 05/12/2010 - 22:27 — Anonymous</span>
+  
+  
+  <strong><a href="/article/7353#comment-351828" class="active">Delphi Hid get path</a></strong>
+
+    <div class="content">
+      <p>The first time I use SetupDiGetDeviceInterfaceDetailA<br />
+It returns GetLastError = ERROR_INSUFFICIENT_BUFFER or 78<br />
+and a byesreturned is a good expected number<br />
+DevData ( is the record below)</p>
+<p>TSPDevInfoData = packed record<br />
+    Size: DWORD;<br />
+    ClassGuid: TGUID;<br />
+    DevInst: DWORD;<br />
+    Reserved: DWord;<br />
+  end;<br />
+with TSPDevInfoData.ClassGuid = the Registry USB controller GUID</p>
+<p>When I call SetupDiGetDeviceInterfaceDetailA a second time it hates me<br />
+real bad. I'm not sure how to convert BytesReturned into my DevData.size or<br />
+TSPDeviceInterfaceDetailDataA.size correctly.</p>
+<p> I have checked my Structures through and through<br />
+The new structure being:- </p>
+<p>TSPDeviceInterfaceDetailDataA = record<br />
+         Size: DWord;<br />
+         DevicePath: Array [0..255] of AnsiChar;<br />
+    end; </p>
+<p>//*********************************************************<br />
+      LastSuccess := SetupDiGetDeviceInterfaceDetailA(IsDevPtr, DevData, nil, 0, @BytesReturned, nil);<br />
+      if (BytesReturned &lt;&gt; 0) and (GetLastError = ERROR_INSUFFICIENT_BUFFER{ 122 }) then<br />
+      begin<br />
+      ADWord := BytesReturned + Sizeof(TSPDeviceInterfaceDetailDataA) + 6; // Sizeof(TSPDeviceInterfaceDetailDataA)is one size in delphi<br />
+      Str.Size := ADWord; // this is a memory block<br />
+      DevIntfcDetailDataA := Str.Memory;<br />
+     //this makes a structure be in the memory block </p>
+<p>      LastSuccess := SetupDiGetDeviceInterfaceDetailA(IsDevPtr,<br />
+                                            DevData,<br />
+                                            DevIntfcDetailDataA,<br />
+                                            BytesReturned,<br />
+                                            @ADWord,<br />
+                                            nil);</p>
+<p>// lastsuccess is always and error </p>
+<p>can you suggest anything I have forgotten<br />
+lexdeanair at Hotmail.com</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-350598"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Sat, 04/10/2010 - 01:14 — Anonymous</span>
+  
+  
+  <strong><a href="/article/7353#comment-350598" class="active">writing protcol cool disk</a></strong>
+
+    <div class="content">
+      <p>Hello<br />
+i want save data(with txt format) on cool disk by microcontroller AVR.<br />
+For this i use cinvertor USRT to USB.</p>
+<p>my question is : what is protcol cool disk for writing data on it?</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-347937"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Mon, 02/01/2010 - 16:57 — Anonymous (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-347937" class="active">HELLO</a></strong>
+
+    <div class="content">
+      <p>hello plz i need help urgently !<br />
+i atached my motorola netmon phone to my USB , and it didnt present in the dev/ttyUSB1 directory ...</p>
+<p>second think , in c++ how do i write a fucntion that send command to the usb modem ( watever it is ) </p>
+<p>thx a lot plz help !</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-346475"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Wed, 12/16/2009 - 19:57 — Ajay Abraham (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-346475" class="active">USB Lamp writer error!</a></strong>
+
+    <div class="content">
+      <p>Hello Greg,</p>
+<p>Nice article, I bought the lamp<br />
+and I tried it out on Windows and Linux.<br />
+I get the following error:<br />
+bash: echo: writer error: Success</p>
+<p>My system is Ubuntu Jaunty Jackrabbit (9.04)<br />
+kernel 2.6.28-15</p>
+<p>I've got my usb files in the following directory:<br />
+/sys/bus/usb/drivers/usbled/2-2:1.0<br />
+|-- bAlternateSetting<br />
+|-- bInterfaceClass<br />
+|-- bInterfaceNumber<br />
+|-- bInterfaceProtocol<br />
+|-- bInterfaceSubClass<br />
+|-- bNumEndpoints<br />
+|-- blue<br />
+|-- driver -&gt; ../../../../../../bus/usb/drivers/usbled<br />
+|-- green<br />
+|-- modalias<br />
+|-- power<br />
+|   `-- wakeup<br />
+|-- red<br />
+|-- subsystem -&gt; ../../../../../../bus/usb<br />
+|-- supports_autosuspend<br />
+`-- uevent</p>
+<p>Scratching my head... any ideas appreciated...</p>
+<p>Thanks</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-355883"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Wed, 09/15/2010 - 03:48 — Anonymous (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-355883" class="active">USB lamp enquiry</a></strong>
+
+    <div class="content">
+      <p>Hello Ajay Abraham,</p>
+<p>This is Nagesh A from India.<br />
+I have gone through this artical, and found interested.<br />
+As I have seen your comment on this, I would like to ask you, how can I buy this product, thinking you might be aware of buying this product.</p>
+<p>Please give some detail, if you know.</p>
+<p>thank you,<br />
+-Nagesh A</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-346476"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Wed, 12/16/2009 - 21:20 — Ajay2 (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-346476" class="active">USB Lamp writer error</a></strong>
+
+    <div class="content">
+      <p>The command I gave was : echo 1 &gt; blue</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-350303"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Sun, 04/04/2010 - 12:00 — Anonymous</span>
+  
+  
+  <strong><a href="/article/7353#comment-350303" class="active">Solved</a></strong>
+
+    <div class="content">
+      <p>System : slax<br />
+kernel :2.6.27.27<br />
+Hardware : Lenovo Thinkpad R60</p>
+<p>echo 1 &gt; blue<br />
+echo 1 &gt; red<br />
+echo 1  &gt;green</p>
+<p>I didnt even have to write the driver<br />
+I just used usbfs mounted on sys/bus/usb/devices</p>
+          </div>
+
+  </div>
+
+  </div>
+</div></div><a id="comment-343771"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Fri, 10/09/2009 - 05:09 — abhinavabcd (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-343771" class="active">Simply amazing</a></strong>
+
+    <div class="content">
+      <p>Awsome tutorial . very very inspiring .Great job ,I helped me put courage into me to write a device driver..</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-339347"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Tue, 07/07/2009 - 03:46 — Toby (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-339347" class="active">A driver suggestion</a></strong>
+
+    <div class="content">
+      <p>How about a driver for the Wireless PC Lock<br />
+<a href="http://www.gadgets.co.uk/item/USBLOCK/USB-Wireless-PC-Lock.html" title="http://www.gadgets.co.uk/item/USBLOCK/USB-Wireless-PC-Lock.html">http://www.gadgets.co.uk/item/USBLOCK/USB-Wireless-PC-Lock.html</a></p>
+<p>The bundled software for windows is godawful and I think someone already did a tutorial on writing new software for the device to enable locking of the system etc. Would be nice if I could get this device working under Linux so I could look into writing some software to secure the system when I step away!</p>
+<p>~T</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-336660"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Sat, 05/02/2009 - 08:56 — Anonymous (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-336660" class="active">Some question</a></strong>
+
+    <div class="content">
+      <p>Hi! Is the way to read messages from usb mouse? I went to /dev/ folder. What I should to do? I only need to send/receive data via usb interface.</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-331452"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Sun, 01/11/2009 - 19:37 — Devajyoti Barman (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-331452" class="active">Re</a></strong>
+
+    <div class="content">
+      <p>I never thought that device driver writing could be this straightforward. Wow! Superb tutorial and very very inspiring. I simply love it.</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-327261"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Wed, 10/22/2008 - 06:11 — Eloi (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-327261" class="active">Problem when compilling</a></strong>
+
+    <div class="content">
+      <p>Hi !</p>
+<p>Thank you for this tutorial which allow easly to develop my own driver.</p>
+<p>However, I have a problem when I'm compiling your file. Normally I have all the libraries (libusb, libusb-dev). I just replace config.h by autoconf.h because ubuntu use this file rather than config.h</p>
+<p>My error is:</p>
+<p>driverUSB_HID.c:154: error: unknown field ‘owner’ specified in initializer</p>
+<p>So could you please help me ?</p>
+<p>BR</p>
+<p>Eloi</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-326992"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Fri, 10/17/2008 - 00:08 — Bhanu (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-326992" class="active">Mr Greg ,
+         I m</a></strong>
+
+    <div class="content">
+      <p>Mr Greg ,<br />
+         I m writing a driver for usb device in linux 2.4 version ,how i can get get minor no dynamically from usb core , how to create node in the /dev with using major and minor no without devfs .</p>
+<p>Thank you</p>
+<p>with regards<br />
+Bhanu</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-319505"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Tue, 02/19/2008 - 13:45 — Anonymous (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-319505" class="active">ThinkGeek USB Rocket Launcher</a></strong>
+
+    <div class="content">
+      <p>You should do a Linux device driver for the USB Rocket Launcher:<br />
+<a href="http://www.thinkgeek.com/geektoys/warfare/8a0f/" title="http://www.thinkgeek.com/geektoys/warfare/8a0f/">http://www.thinkgeek.com/geektoys/warfare/8a0f/</a></p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-306093"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Thu, 12/27/2007 - 21:31 — Anonymous (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-306093" class="active">USB dirver</a></strong>
+
+    <div class="content">
+      <p>Hey was wondering which would be the best method for writing a USB game control driver e.g. Would you make the driver listen for when a button is pressed or would you write the driver and then a program in say C to retrieve the current state of the button?</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-252187"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Mon, 06/04/2007 - 00:56 — Vadivelu N (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-252187" class="active">im wrting a driver programm..Help me...</a></strong>
+
+    <div class="content">
+      <p>Im writing a driver program for transfering data's between PC and my SWITCH(Its an telcom equipment)in Linux platform.Getting cofused in "how to program for send and receive data's b/w PC and my switch.Please help me to get clear idea about that.</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-248770"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Thu, 05/24/2007 - 14:38 — Sid (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-248770" class="active">USB driver for MPEG 4</a></strong>
+
+    <div class="content">
+      <p>Hi I want to write a driver for USB streaming of MPEG 4 Video. I am not sure how and where to start. I have MPEG 4 video capture and the video is saved as a file onto the system. How should I start writing the driver for streaming the video instead of saving it in the system?</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-270455"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Tue, 07/24/2007 - 02:37 — Renderman (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-270455" class="active">Doing it</a></strong>
+
+    <div class="content">
+      <p>Their are a few ways to do this.  The hardest way,would be to write a "pure driver".  To do that, you would have to first know how to the USB HID's Subclass and the exact paramters on using it. Also, if you told it to save the data to the device, and then later retrive it, it would deffinitly reduc bottlenecks. There is lots more and the hardest part would have to do with the audio.  The easiest way to do it,is with Java.  Get the Windows Media SDK, use Java to interface with the device.  If you look at some documentation for the WMSDK, it should tell you all the video paramters and how to set it up. There should be a HID protocol for streaming data between devices maybe MTP, I am not fully sure on the semantics,but that should help you.</p>
+          </div>
+
+  </div>
+
+  </div>
+</div><a id="comment-234499"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Fri, 04/06/2007 - 05:51 — Peyman (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-234499" class="active">USB cable to work as a communication medium</a></strong>
+
+    <div class="content">
+      <p>How can I write a driver for a simple two headed USB cable that enables it to work as a communication medium? The only thing I want it to do is to be able to send and receive data from one machine to/from another, and they're connected to each other using this USB cable. /*the cable is a wire, with two USB plugs on both ends*/I appreciate any pointer to a reference or help.</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-230530"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Tue, 03/13/2007 - 19:35 — syed (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-230530" class="active">error when i passs command line argument</a></strong>
+
+    <div class="content">
+      <p>hi,<br />
+when i pass this argument then this error appear.<br />
+plz help me.</p>
+<p>[root@localhost 4-1:1.0]# echo '1' &gt; blue<br />
+bash: echo: write error: Success</p>
+<p>thnx</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-323744"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Mon, 06/30/2008 - 14:38 — Anonymous (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-323744" class="active">Write Error</a></strong>
+
+    <div class="content">
+      <p>I get the same write error. Did you find a resolution?</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-272825"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Tue, 08/07/2007 - 01:03 — Anonymous (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-272825" class="active">try passing it without the</a></strong>
+
+    <div class="content">
+      <p>try passing it without the '' like echo 1 &gt; blue</p>
+          </div>
+
+  </div>
+
+  </div>
+</div><a id="comment-177251"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Wed, 09/27/2006 - 04:00 — <a href="/user/6475" title="View user profile.">hssiddhu</a></span>
+  
+  
+  <strong><a href="/article/7353#comment-177251" class="active">Help needed</a></strong>
+
+    <div class="content">
+      <p>Hi Greg,</p>
+<p>I saw your posts, its very nice and i got a lot of knowledge from them. Can you do me a favour? I'm writing a host side USB driver for ucos. Can you help me how to start....<br />
+It should be like it should check for the vendor id and for product id then it should load the driver. It should also have routines  for endpoint creations. If you have any idea on this just mail to the below address</p>
+<p><a href="mailto:hssiddhu@yahoo.com">hssiddhu@yahoo.com</a></p>
+<p>Thanks in advance</p>
+<p>Siddhu</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-228497"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Mon, 03/05/2007 - 23:15 — Anonymous (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-228497" class="active">i&#039;m writing a kernel driver for usb on arm linux-2.6.20</a></strong>
+
+    <div class="content">
+      <p>Hai</p>
+<p>  I'm pavan. I'm writing the kernel driver for usb.All the code is available on the kernel and i enabled the relavent features in the menuconfig .when i insert the following modules ,usbcore.ko,hid.ko,usbhid.ko,usb-stotage.ko and ohci-hcd.ko.Its giving the messages that</p>
+<p>insmod usbcore.ko<br />
+usbcore: registered new interface driver usbfs<br />
+usbcore: registered new interface driver hub<br />
+usbcore: registered new device driver usb</p>
+<p>insmod usbhid.ko<br />
+usbcore: registered new interface driver usbhid<br />
+drivers/usb/input/hid-core.c: v2.6:USB HID core driver</p>
+<p>insmod usb-storage.ko<br />
+Initializing USB Mass Storage driver...<br />
+usbcore: registered new interface driver usb-storage<br />
+USB Mass Storage support registered.</p>
+<p>insmod ohci-hcd.ko<br />
+probe in platform.c is working&lt;7&gt;In ohci_hcd_pxa27x_drv_probe</p>
+<p>in last module i.e ohci-hcd.ko ,its terminating by -ENODEV this i got by printk. i hope the usb is not detecting the devices ,inorder to detect devices what changes i have to made in the kenel.</p>
+<p>i'm struck from 3days to debug this problem ,please if anyone have idea about this please share with me.</p>
+<p>with regards<br />
+pavan</p>
+          </div>
+
+  </div>
+
+  </div>
+</div><a id="comment-133356"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Sat, 03/25/2006 - 17:08 — Markus Rechberger (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-133356" class="active">usbreplay</a></strong>
+
+    <div class="content">
+      <p><a href="http://linuxtv.org/v4lwiki/index.php/USBVideo" title="http://linuxtv.org/v4lwiki/index.php/USBVideo">http://linuxtv.org/v4lwiki/index.php/USBVideo</a></p>
+<p>please have a look at usbreplay and co. these tools might ease up everything quite alot</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-11274"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Tue, 04/20/2004 - 01:00 — Anonymous</span>
+  
+  
+  <strong><a href="/article/7353#comment-11274" class="active">Now Delcom has variable intensity LED lights?</a></strong>
+
+    <div class="content">
+      <p>Looks like their latest products allow setting brightness per color?</p>
+<p>Also looks like they cost around eighty bucks?!?</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-11273"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Tue, 03/30/2004 - 02:00 — phonghtn (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-11273" class="active">Re: Writing a Simple USB Driver</a></strong>
+
+    <div class="content">
+      <p>Hi there,<br />
+I am planing to write a virtual device which use USB port to talk with the computer. So, my idea is I want to developt a virtual device connect with the PC through USB port. I mean, if you have an usb lamp and you begin write a drive for it. You have a specification of the lamp. And you plug the lamp to the pc. In my case, i want to build my lamp by the software with all properties like a real lamp. So, my first problem is i don't know how to write a virtual device run on both Linux and Windows. So any idea help me now.<br />
+Thanks a lot.<br />
+Phong</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-11270"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Mon, 03/29/2004 - 02:00 — Anonymous</span>
+  
+  
+  <strong><a href="/article/7353#comment-11270" class="active">Re: Writing a Simple USB Driver</a></strong>
+
+    <div class="content">
+      <p>Greg:</p>
+<p>Excellent article.  I went with the Delcom "USB Numeric Display", which is a numeric counter.  </p>
+<p>I noticed something on my system.  When I create device files under the /sys/bus/usb/drivers/mydevice directory, and send data to it with the echo command, I can hear the disk access on my computer...  It's really getting hit with a lot of  data; Perl script that writes lots of changing data to the USB device.  Is this normal? I'm making changes in my program so that data goes to the device from a  "/proc/mydevice/entries" instead, since "/proc"  seems to be mounted in ram vs. /sys on the hard drive.   </p>
+<p>I'm running 2.6.4 and /sys was mounted with "sysfs  /sys  sysfs defaults 0 0" in my /etc/fstab.  Here's a link to how I setup 2.6<br />
+<a href="http://osdn.dl.sourceforge.net/sourceforge/souptonuts/README_26.txt" title="http://osdn.dl.sourceforge.net/sourceforge/souptonuts/README_26.txt">http://osdn.dl.sourceforge.net/sourceforge/souptonuts/README_26.txt</a></p>
+<p>Its seems problematic if new directory trees created under /sys/bus... for input will require disk reads and writes.  Maybe I'm overlooking something?</p>
+<p>Regards,</p>
+<p>Mike Chirico</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-11271"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Tue, 04/06/2004 - 01:00 — Anonymous</span>
+  
+  
+  <strong><a href="/article/7353#comment-11271" class="active">Re: Writing a Simple USB Driver</a></strong>
+
+    <div class="content">
+      <p>I stand corrected.... I had the debug commands "dev_dbg" writing to the log files.  Ok, good.  I'm on my way.</p>
+<p>Regards,</p>
+<p>Mike Chirico</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-11272"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Fri, 04/09/2004 - 01:00 — mchirico (not verified)</span>
+  
+  
+  <strong><a href="/article/7353#comment-11272" class="active">Re: Writing a Simple USB Driver</a></strong>
+
+    <div class="content">
+      <p>Here's the code if interested<br />
+<a href="http://sourceforge.net/project/showfiles.php?group_id=106606" rel="nofollow"> code </a></p>
+<p>Regards,</p>
+<p>Mike Chirico</p>
+          </div>
+
+  </div>
+
+  </div>
+</div></div><a id="comment-11268"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Fri, 03/26/2004 - 02:00 — Anonymous</span>
+  
+  
+  <strong><a href="/article/7353#comment-11268" class="active">Re: Writing a Simple USB Driver</a></strong>
+
+    <div class="content">
+      <p>Great article. I'd like see an article on creating your own USB device and then creating a kernel driver for it.</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-11269"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Mon, 03/29/2004 - 02:00 — Anonymous</span>
+  
+  
+  <strong><a href="/article/7353#comment-11269" class="active">Re: Writing a Simple USB Driver</a></strong>
+
+    <div class="content">
+      <p>Very good article, in this case, you writing a simple driver for a Led lamp. But I am researching now a virtual program simulate a led lamp and I am not found any document for this.</p>
+          </div>
+
+  </div>
+
+  </div>
+</div><a id="comment-11267"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Thu, 03/11/2004 - 02:00 — Anonymous</span>
+  
+  
+  <strong><a href="/article/7353#comment-11267" class="active">Re: Writing a Simple USB Driver</a></strong>
+
+    <div class="content">
+      <p>Looks very cool -- thanks for the article, Greg. I've ordered one of these already to set up a weather-forcast indicator to be installed by my front door.</p>
+<p>It looks from the documentation that the device has a programmable flash rate -- it'd be cool to see support for that in the driver. And maybe the buzzer, although I don't think I have a use for that.</p>
+          </div>
+
+  </div>
+
+  </div>
+</div><div id="block-block-75" class="clear-block block block-block expanded">
+
+
+  <div class="content"><p><a href="http://m.youtube.com/linuxjournalonline" rel="nofollow">See <em>Linux Journal</em> videos.</a></p>
+</div>
+</div>
+<div id="block-mobile_tools-0" class="clear-block block block-mobile_tools expanded">
+
+
+  <div class="content">Mobile Version | <a href="http://www.linuxjournal.com?nomobile=true">Desktop Version</a></div>
+</div>
+			</div>
+		</div>
+				<div id="sidebar-right" class="mobileregion">
+								</div>
+				<div id="footer" class="mobileregion">
+						<div id="block-block-70" class="clear-block block block-block expanded">
+
+
+  <div class="content"><!--paging_filter--><div id="copyright">Copyright © 1994 - 2013 <em>Linux Journal</em>. All rights reserved.</div>
+</div>
+</div>
+<div id="block-block-111" class="clear-block block block-block expanded">
+
+
+  <div class="content"><!--paging_filter--><div id="mobile-footer" style="background:#333;bottom: 0px;left: 0;position: fixed;text-align: center;width: 100%;z-index: 10000;margin-left:0;">
+<!-- Mobile_footer -->
+<div id='div-gpt-ad-1384302154808-0' style='width:320px; height:50px;'>
+<script type='text/javascript'>
+googletag.cmd.push(function() { googletag.display('div-gpt-ad-1384302154808-0'); });
+</script>
+</div>
+</div></div>
+</div>
+		</div>
+	</div>
+	<div id="user_relationships_popup_form" class="user_relationships_ui_popup_form"></div><script type="text/javascript" src="/files/linuxjournal.com/ufiles/js/js_97c717c79bb17bd0c821c210d820ca2f.js"></script>
+  <script type="text/javascript">if(!NREUMQ.f){NREUMQ.f=function(){NREUMQ.push(["load",new Date().getTime()]);var e=document.createElement("script");e.type="text/javascript";e.src=(("http:"===document.location.protocol)?"http:":"https:")+"//"+"js-agent.newrelic.com/nr-100.js";document.body.appendChild(e);if(NREUMQ.a)NREUMQ.a();};NREUMQ.a=window.onload;window.onload=NREUMQ.f;};NREUMQ.push(["nrfj","beacon-5.newrelic.com","2a1dc4588f","1935594","b1NTNkdRWhFSVkBZWlYZZBBcH0IDQRpDR0IXQlQRQR9dDFdQTB5FUEY=",0,78,new Date().getTime(),"","","","",""]);</script>
+</body>
+</html>

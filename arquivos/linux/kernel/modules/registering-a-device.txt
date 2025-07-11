@@ -1,0 +1,18 @@
+Registering A Device
+
+Adding a driver to your system means registering it with the kernel. This is synonymous with assigning it a major number during the module's initialization. You do this by using the register_chrdev function, defined by linux/fs.h.
+
+int register_chrdev(unsigned int major, const char *name, struct file_operations *fops);
+
+where unsigned int major is the major number you want to request, const char *name is the name of the device as it'll appear in /proc/devices and struct file_operations *fops is a pointer to the file_operations table for your driver.
+
+A negative return value means the registration failed. Note that we didn't pass the minor number to register_chrdev. That's because the kernel doesn't care about the minor number; only our driver uses it.
+
+how do you get a major number without hijacking one that's already in use? The easiest way would be to look through Documentation/devices.txt and pick an unused one.
+you can ask the kernel to assign you a dynamic major number.
+If you pass a major number of 0 to register_chrdev, the return value will be the dynamically allocated major number.
+
+the newly registered device will have an entry in /proc/devices, and we can make the device file by a shell script that read the file in and make the device file.
+or
+our driver make the the device file using the mknod system call after a successful registration and rm during the call to cleanup_module.
+

@@ -1,0 +1,265 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+>
+
+<html>
+  <head><meta charset="UTF-8" />
+    <meta>
+    <meta>
+    <title>11.7. glob — Unix style pathname pattern expansion &#8212; Python 3.6.5 documentation</title>
+    <link>
+    <link>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Python 3.6.5 documentation"
+>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    
+    <script></script>
+    <script></script>
+    
+    
+ 
+
+  </head><body>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="fnmatch.html" title="11.8. fnmatch — Unix filename pattern matching"
+>next</a> |</li>
+        <li>
+          <a href="tempfile.html" title="11.6. tempfile — Generate temporary files and directories"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>The Python Standard Library</a> &#187;</li>
+          <li><a>11. File and Directory Access</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>    
+
+    <div>
+      <div>
+        <div>
+          <div>
+            
+  <div>
+<span></span><h1>11.7. <a><code><span>glob</span></code></a> — Unix style pathname pattern expansion<a>¶</a></h1>
+<p><strong>Source code:</strong> <a>Lib/glob.py</a></p>
+<hr>
+<p>The <a><code><span>glob</span></code></a> module finds all the pathnames matching a specified pattern
+according to the rules used by the Unix shell, although results are returned in
+arbitrary order.  No tilde expansion is done, but <code><span>*</span></code>, <code><span>?</span></code>, and character
+ranges expressed with <code><span>[]</span></code> will be correctly matched.  This is done by using
+the <a><code><span>os.scandir()</span></code></a> and <a><code><span>fnmatch.fnmatch()</span></code></a> functions in concert, and
+not by actually invoking a subshell.  Note that unlike <a><code><span>fnmatch.fnmatch()</span></code></a>,
+<a><code><span>glob</span></code></a> treats filenames beginning with a dot (<code><span>.</span></code>) as special cases.
+(For tilde and shell variable expansion, use <a><code><span>os.path.expanduser()</span></code></a> and
+<a><code><span>os.path.expandvars()</span></code></a>.)</p>
+<p>For a literal match, wrap the meta-characters in brackets.
+For example, <code><span>'[?]'</span></code> matches the character <code><span>'?'</span></code>.</p>
+<div>
+<p>See also</p>
+<p>The <a><code><span>pathlib</span></code></a> module offers high-level path objects.</p>
+</div>
+<dl>
+<dt>
+<code>glob.</code><code>glob</code><span>(</span><em>pathname</em>, <em>*</em>, <em>recursive=False</em><span>)</span><a>¶</a></dt>
+<dd><p>Return a possibly-empty list of path names that match <em>pathname</em>, which must be
+a string containing a path specification. <em>pathname</em> can be either absolute
+(like <code><span>/usr/src/Python-1.5/Makefile</span></code>) or relative (like
+<code><span>../../Tools/*/*.gif</span></code>), and can contain shell-style wildcards. Broken
+symlinks are included in the results (as in the shell).</p>
+<p>If <em>recursive</em> is true, the pattern “<code><span>**</span></code>” will match any files and zero or
+more directories and subdirectories.  If the pattern is followed by an
+<code><span>os.sep</span></code>, only directories and subdirectories match.</p>
+<div>
+<p>Note</p>
+<p>Using the “<code><span>**</span></code>” pattern in large directory trees may consume
+an inordinate amount of time.</p>
+</div>
+<div>
+<p><span>Changed in version 3.5: </span>Support for recursive globs using “<code><span>**</span></code>”.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>glob.</code><code>iglob</code><span>(</span><em>pathname</em>, <em>*</em>, <em>recursive=False</em><span>)</span><a>¶</a></dt>
+<dd><p>Return an <a><span>iterator</span></a> which yields the same values as <a><code><span>glob()</span></code></a>
+without actually storing them all simultaneously.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>glob.</code><code>escape</code><span>(</span><em>pathname</em><span>)</span><a>¶</a></dt>
+<dd><p>Escape all special characters (<code><span>'?'</span></code>, <code><span>'*'</span></code> and <code><span>'['</span></code>).
+This is useful if you want to match an arbitrary literal string that may
+have special characters in it.  Special characters in drive/UNC
+sharepoints are not escaped, e.g. on Windows
+<code><span>escape('//?/c:/Quo</span> <span>vadis?.txt')</span></code> returns <code><span>'//?/c:/Quo</span> <span>vadis[?].txt'</span></code>.</p>
+<div>
+<p><span>New in version 3.4.</span></p>
+</div>
+</dd></dl>
+
+<p>For example, consider a directory containing the following files:
+<code><span>1.gif</span></code>, <code><span>2.txt</span></code>, <code><span>card.gif</span></code> and a subdirectory <code><span>sub</span></code>
+which contains only the file <code><span>3.txt</span></code>.  <a><code><span>glob()</span></code></a> will produce
+the following results.  Notice how any leading components of the path are
+preserved.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>glob</span>
+<span>&gt;&gt;&gt; </span><span>glob</span><span>.</span><span>glob</span><span>(</span><span>&#39;./[0-9].*&#39;</span><span>)</span>
+<span>[&#39;./1.gif&#39;, &#39;./2.txt&#39;]</span>
+<span>&gt;&gt;&gt; </span><span>glob</span><span>.</span><span>glob</span><span>(</span><span>&#39;*.gif&#39;</span><span>)</span>
+<span>[&#39;1.gif&#39;, &#39;card.gif&#39;]</span>
+<span>&gt;&gt;&gt; </span><span>glob</span><span>.</span><span>glob</span><span>(</span><span>&#39;?.gif&#39;</span><span>)</span>
+<span>[&#39;1.gif&#39;]</span>
+<span>&gt;&gt;&gt; </span><span>glob</span><span>.</span><span>glob</span><span>(</span><span>&#39;**/*.txt&#39;</span><span>,</span> <span>recursive</span><span>=</span><span>True</span><span>)</span>
+<span>[&#39;2.txt&#39;, &#39;sub/3.txt&#39;]</span>
+<span>&gt;&gt;&gt; </span><span>glob</span><span>.</span><span>glob</span><span>(</span><span>&#39;./**/&#39;</span><span>,</span> <span>recursive</span><span>=</span><span>True</span><span>)</span>
+<span>[&#39;./&#39;, &#39;./sub/&#39;]</span>
+</pre></div>
+</div>
+<p>If the directory contains files starting with <code><span>.</span></code> they won’t be matched by
+default. For example, consider a directory containing <code><span>card.gif</span></code> and
+<code><span>.card.gif</span></code>:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>glob</span>
+<span>&gt;&gt;&gt; </span><span>glob</span><span>.</span><span>glob</span><span>(</span><span>&#39;*.gif&#39;</span><span>)</span>
+<span>[&#39;card.gif&#39;]</span>
+<span>&gt;&gt;&gt; </span><span>glob</span><span>.</span><span>glob</span><span>(</span><span>&#39;.c*&#39;</span><span>)</span>
+<span>[&#39;.card.gif&#39;]</span>
+</pre></div>
+</div>
+<div>
+<p>See also</p>
+<dl>
+<dt>Module <a><code><span>fnmatch</span></code></a></dt>
+<dd>Shell-style filename (not path) expansion</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+  <h4>Previous topic</h4>
+  <p><a href="tempfile.html"
+           >11.6. <code><span>tempfile</span></code> — Generate temporary files and directories</a></p>
+  <h4>Next topic</h4>
+  <p><a href="fnmatch.html"
+           >11.8. <code><span>fnmatch</span></code> — Unix filename pattern matching</a></p>
+  <div>
+    <h3>This Page</h3>
+    <ul>
+      <li><a>Report a Bug</a></li>
+      <li>
+        <a href="https://github.com/python/cpython/blob/3.6/Doc/library/glob.rst"
+>Show Source
+        </a>
+      </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+      <div></div>
+    </div>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="fnmatch.html" title="11.8. fnmatch — Unix filename pattern matching"
+>next</a> |</li>
+        <li>
+          <a href="tempfile.html" title="11.6. tempfile — Generate temporary files and directories"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>The Python Standard Library</a> &#187;</li>
+          <li><a>11. File and Directory Access</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>  
+    <div>
+    &copy; <a>Copyright</a> 2001-2018, Python Software Foundation.
+    <br>
+    The Python Software Foundation is a non-profit corporation.
+    <a>Please donate.</a>
+    <br>
+    Last updated on May 20, 2018.
+    <a>Found a bug</a>?
+    <br>
+    Created using <a>Sphinx</a> 1.7.4.
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"><title>802.11 Wireless Ethernet Frame Fields</title></head><body>﻿
+
+
+    
+
+
+    <h3>802.11 Wireless Ethernet Frame Fields</h3>
+
+    <img src="WirelessEthernetFrameFields_arquivos/Figure6p13.jpg" alt="802.11 Wireless Ethernet Frame Fields">
+
+    <br><br>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tbody><tr>
+            <th colspan="2">Purpose of each MAC Address Field</th>
+        </tr>
+        <tr>
+            <td>MAC Address 1</td>
+            <td>Transmitter MAC Address</td>
+        </tr>
+        <tr>
+            <td>MAC Address 2</td>
+            <td>Receiver MAC Address</td>
+        </tr>
+        <tr>
+            <td>MAC Address 3</td>
+            <td>Wired/Infrastructure Host or Router MAC Address.<br>
+                This is either the final destination or the original source of a wireless packet.
+            </td>
+        </tr>
+        <tr>
+            <td>MAC Address 4</td>
+            <td>Not used in Infrastructure Wireless LANs (only used in ad hoc wireless LANs)</td>
+        </tr>
+    </tbody></table>
+
+    <br><br>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tbody><tr>
+            <th colspan="2">What is in each MAC Address Field Depends on the Direction of Travel</th>
+        </tr>
+        <tr>
+            <td>From wireless host to AP</td>
+            <td>
+                <table border="1" cellpadding="5" cellspacing="0">
+                    <tbody><tr>
+                        <td>Address 1</td>
+                        <td>transmitter</td>
+                        <td>wireless host</td>
+                        <td>SRC</td>
+                    </tr>
+                    <tr>
+                        <td>Address 2</td>
+                        <td>receiver</td>
+                        <td>wireless AP</td>
+                        <td>BSSID</td>
+                    </tr>
+                    <tr>
+                        <td>Address 3</td>
+                        <td>infrastructure node</td>
+                        <td>wired host/router</td>
+                        <td>DST</td>
+                    </tr>
+                </tbody></table>
+             </td>
+        </tr>
+        <tr>
+            <td>From AP to wireless host</td>
+            <td>
+                <table border="1" cellpadding="5" cellspacing="0">
+                    <tbody><tr>
+                        <td>Address 1</td>
+                        <td>transmitter</td>
+                        <td>wireless AP</td>
+                        <td>BSSID</td>
+                    </tr>
+                    <tr>
+                        <td>Address 2</td>
+                        <td>receiver</td>
+                        <td>wireless host</td>
+                        <td>DST</td>
+                    </tr>
+                    <tr>
+                        <td>Address 3</td>
+                        <td>infrastructure node</td>
+                        <td>wired host/router</td>
+                        <td>SRC</td>
+                    </tr>
+                </tbody></table>
+            </td>
+        </tr>
+    </tbody></table>
+    
+    <br><br>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tbody><tr>
+            <th colspan="2">Frame Control Field subfields</th>
+        </tr>
+        <tr>
+            <td>Protocol Version</td>
+            <td>Not used, always 0.</td>
+        </tr>
+        <tr>
+            <td>Type</td>
+            <td>
+                00 Management<br>
+                01 Control<br>
+                10 Data<br>
+                11 Future/Not Used
+            </td>
+        </tr>
+        <tr>
+            <td>Subtype</td>
+            <td>
+                Management Subtypes
+                <ul>
+                    <li>Association Request</li>
+                    <li>Association Response</li>
+                    <li>Reassociation Request</li>
+                    <li>Reassociation Response</li>
+                    <li>Probe Request</li>
+                    <li>Probe Response</li>
+                    <li>Beacon</li>
+                    <li>Disassociation</li>
+                    <li>Authentication</li>
+                    <li>Deauthentication</li>
+                    <li></li>
+                </ul>
+                Control Subtypes
+                <ul>
+                    <li>RTS</li>
+                    <li>CTS</li>
+                    <li>ACK</li>
+                </ul>
+                Data Subtype
+                <ul>
+                    <li>Data (duh!)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>To AP &amp; From AP</td>
+            <td>Only used in ad hoc wireless,<br>
+                Not used in infrastructure wireless.</td>
+        </tr>
+    </tbody></table>
+
+    
+</body></html>

@@ -1,0 +1,8 @@
+let pessoa = { name: "Kobe" };
+let outraPessoa = pessoa;
+pessoa.name = "Bryant";
+
+console.log(outraPessoa.name); // Bryant
+console.log(pessoa.name);      // Bryant
+
+

@@ -1,0 +1,200 @@
+OpenVPN
+
+Matriz
+    ADSL com IP 200.217.222.222
+    LAN com a classe 192.168.1.0/24 
+
+
+Filial
+    ADSL com ip 200.141.64.33
+    LAN com a classe 192.168.2.0/24 
+
+[*] Network device support
+             <*> Universal TUN/TAP device driver 
+               <*> PPP (point-to-point protocol) support
+
+pacotes lzo-1.08.tar.gz (biblioteca de compressão de dados) e o pacote openvpn-1.5.0.tar.gz
+
+O OpenVPN pode operar com 3 tipos de criptografia. Nenhuma criptografia (apenas o túnel), criptografia com chaves estáticas e no modo TLS, em que as chaves são trocadas periodicamente. No nosso exemplo, usaremos criptografia com chaves estáticas.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+1 - Execute os seguintes comandos:
+# mkdir /etc/openvpn
+Criamos o diretório onde estarão todos os arquivos de configuração.
+
+# openvpn --genkey --secret /etc/openvpn/chave 
+Foi gerada uma chave de criptografia com o nome de chave (pode ser qualquer nome de arquivo) dentro do diretório /etc/openvpn.
+
+# touch /etc/openvpn/matriz.conf
+Crie esse arquivo com o seguinte conteúdo:
+
+# Usar como interface o driver TUN
+dev tun
+# 10.0.0.1 ip que será assumido na matriz
+# 10.0.0.2 ip remoto, ou seja, esse será o ip da filial
+ifconfig 10.0.0.1 10.0.0.2
+# Entra no diretório onde se encontram os arquivos de configuração
+cd /etc/openvpn
+# Indica que esse túnel possui uma chave de criptografia
+secret chave
+# OpenVPN usa a porta 5000/UDP por padrão.
+# Cada túnel do OpenVPN deve usar
+# uma porta diferente.
+# O padrão é a porta 5000
+port 5000
+# Usuário que rodará o daemon do OpenVPN
+user nobody
+# Grupo que rodará o daemon do OpenVPN
+group nobody
+# Usa a biblioteca lzo
+comp-lzo
+# Envia um ping via UDP para a parte
+# remota a cada 15 segundos para manter
+# a conexão de pé em firewall statefull
+# Muito recomendado, mesmo se você não usa
+# um firewall baseado em statefull.
+ping 15
+# Nível de log
+verb 3
+
+Em seguida, vamos iniciar a conexão no servidor, faltando apenas configurar a filial. Execute o seguinte comando no servidor da Matriz:
+
+# openvpn --config /etc/openvpn/matriz.conf -daemon
+# ifconfig tun0
+
+tun0      Link encap:Point-to-Point Protocol
+          inet addr:10.0.0.1  P-t-P:10.0.0.2  Mask:255.255.255.255
+          UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1255  Metric:1
+          RX packets:1383257 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:1144968 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:10
+
+          RX bytes:82865921 (79.0 Mb)  TX bytes:383951667 (366.1 Mb)
+
+Se aparecer algo assim ou parecido, o túnel na Matriz já está pronto e a espera da conexão da filial.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+A parte da instalação na filial é exatamente igual a da Matriz, é só seguir os passos descritos no tópico instalação. 
+
+Já na parte de configuração, não muda muita coisa também, pois o maior trabalho é simplesmente copiar a chave que geramos na Matriz por um canal seguro até a filial. Execute os seguintes comandos. Criaremos o mesmo diretório de configuração na filial:
+
+# mkdir /etc/openvpn
+
+Copie a chave gerada na matriz para a filial com seguinte comando:
+
+# scp /etc/openvpn/chave ip_filial:/etc/openvpn
+
+Em seguida crie o arquivo de configuração chamado filial.conf:
+
+# touch /etc/openvpn/filial.conf
+
+Crie esse arquivo com o seguinte conteúdo:
+
+# Usar como interface o driver TUN
+dev tun
+# 10.0.0.1 ip que será assumido na matriz
+# 10.0.0.2 ip remoto, ou seja, esse será o ip da filial
+ifconfig 10.0.0.2 10.0.0.1
+# Indica onde está o ip da Matriz (essa é a única linha que acrescentamos
+# no arquivo de configuração da filial), o resto é tudo igual.
+remote 200.217.222.222
+# Entra no diretório onde se encontram os arquivos de configuração
+cd /etc/openvpn
+# Indica que esse túnel possui uma chave de criptografia
+secret chave
+# OpenVPN usa a porta 5000/UDP por padrão.
+# Cada túnel do OpenVPN deve usar
+# uma porta diferente.
+# O padrão é a porta 5000
+port 5000
+# Usuário que rodará o daemon do OpenVPN
+user nobody
+# Grupo que rodará o daemon do OpenVPN
+group nobody
+# Usa a biblioteca lzo
+comp-lzo
+# Envia um ping via UDP para a parte
+# remota a cada 15 segundos para manter
+# a conexão de pé em firewall statefull
+# Muito recomendado, mesmo se você não usa
+# um firewall baseado em statefull.
+ping 15
+# Nível de log
+verb 3
+
+Inicie a conexão na filial com o seguinte comando:
+
+# openvpn --config /etc/openvpn/filial.conf -daemon
+
+# ifconfig tun0
+
+tun0      Link encap:Point-to-Point Protocol
+          inet addr:10.0.0.2  P-t-P:10.0.0.1  Mask:255.255.255.255
+          UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1255       Metric:1
+          RX packets:1383257 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:1144968 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:10
+          RX bytes:82865921 (79.0 Mb)  TX bytes:383951667 (366.1 Mb)
+
+Ok! Se aparecer algo assim, sua VPN, está de pé!!! Teste pingando de uma ponta a outra:
+
+# ping 10.0.0.1
+PING 10.0.0.1 (10.0.0.1) 56(84) bytes of data.
+64 bytes from 10.0.0.1: icmp_seq=1 ttl=63 time=11.9 ms
+64 bytes from 10.0.0.1: icmp_seq=2 ttl=63 time=6.09 ms
+64 bytes from 10.0.0.1: icmp_seq=3 ttl=63 time=5.93 ms
+64 bytes from 10.0.0.1: icmp_seq=4 ttl=63 time=8.15 ms
+64 bytes from 10.0.0.1: icmp_seq=5 ttl=63 time=6.19 ms
+
+Se
+aparecer algo assim, sua VPN já esta funcionando. Agora só falta adicionarmos as rotas para as redes internas se enxergarem.
+
+
+
+NOTA: Antes de adicionarmos as rotas, é necessário ativar o roteamento no kernel em ambas as pontas (Matriz e Filial). Execute os seguintes comandos na matriz e filial:
+
+# echo 1 > /proc/sys/net/ipv4/ip_forward
+
+Para adicionar a rota com destino a rede da Filial, execute de dentro do servidor da Matriz o seguinte comando:
+
+# route add -net 192.168.2.0/24 gw 10.0.0.2
+
+Para adicionar a rota com destino a rede da Matriz, execute de dentro do servidor da Filial o seguinte comando:
+
+# route add -net 192.168.1.0/24 gw 10.0.0.1
+
+Bom, agora é só testar. Tente pingar de dentro de uma máquina da LAN da Matriz com destino a LAN da Filial. Vale lembrar também que temos que colocar toda a seqüência de comandos acima no rc.local de sua distro, para que a mesma carregue as configurações ao iniciar o sistema operacional. 
+
+
+
+
+
+
+
+um exemplo de configuração de um arquivo e configuração de um clientes Windows. Lembrando que a rede remota no qual o cliente windows quer acessar é 192.168.0.0/24.
+
+dev tun
+remote 200.x.x.x
+ifconfig 10.10.10.2 10.10.10.1
+route 192.168.0.0 255.255.255.0 10.10.10.1
+secret chave
+port 5006
+ping 15
+verb 3
+
+
+arquivo conf do windows ficou assim :
+
+dev tun
+remote 200.200.200.201
+ifconfig 11.0.0.2 11.0.0.1
+route 192.168.0.0 netmask 255.255.255.0 11.0.0.1
+secret chave
+port 5001
+ping 15
+verb 3
+
+
+

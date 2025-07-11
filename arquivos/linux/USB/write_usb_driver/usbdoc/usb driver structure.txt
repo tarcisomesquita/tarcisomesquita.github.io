@@ -1,0 +1,28 @@
+
+the structure needed to register a USB device driver at the subsystem. 
+
+struct usb_driver
+{
+   const char *name;
+   void *(*probe)(struct usb_device *, unsigned int, const struct usb_device_id *id_table);
+   void (*disconnect)(struct usb_device *, void *);
+   struct list_head driver_list;
+   struct file_operations *fops;
+   int minor;
+   struct semaphore serialize;
+   int (*ioctl)(struct usb_device *dev, unsigned int code, void *buf)
+   const struct usb_device_id *id_table;
+}
+
+
+    *  name: Usually the name of the module.
+    * probe: The entry point of the probe function.
+    * disconnect: The entry point of the disconnect function.
+    * driver_list: For internal use of the subsystem - initialize to {NULL,NULL}
+    * fops: The usual list of file operations for a driver
+    * minor: The base minor number assigned to this device (the value has to be a multiple of 16)
+    * serialize:
+    * ioctl:
+    * id_table:
+
+

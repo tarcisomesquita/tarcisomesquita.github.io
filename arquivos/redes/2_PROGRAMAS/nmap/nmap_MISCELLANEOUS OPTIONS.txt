@@ -1,0 +1,31 @@
+MISCELLANEOUS OPTIONS
+
+       -6 (Enable IPv6 scanning)
+
+       -A (Aggressive scan options)
+           enables OS detection (-O), version scanning (-sV), script scanning (-sC) and traceroute (--traceroute).
+
+       --datadir directoryname (Specify custom Nmap data file location)
+           Nmap obtains some special data at runtime in files named
+           nmap-service-probes, nmap-services, nmap-protocols, nmap-rpc,
+           nmap-mac-prefixes, and nmap-os-db. If the location of any of these
+           files has been specified (using the --servicedb or --versiondb
+           options), that location is used for that file. After that, Nmap
+           searches these files in the directory specified with the --datadir
+           option (if any). Any files not found there, are searched for in the
+           directory specified by the NMAPDIR environmental variable. Next
+           comes ~/.nmap for real and effective UIDs (POSIX systems only) or
+           location of the Nmap executable (Win32 only), and then a
+           compiled-in location such as /usr/local/share/nmap or
+           /usr/share/nmap
+
+       --send-eth (Use raw ethernet sending)
+
+       --send-ip (Send at raw IP level)
+
+       --privileged (Assume that the user is fully privileged)
+
+       -V; --version (Print version number)
+
+       -h; --help (Print help summary page)
+

@@ -1,0 +1,15 @@
+
+gateway é o número de ip da placa para onde será enviado os pacotes que irão para a internet
+
+# route -n
+
+# route add  default gw 192.168.1.1 dev eth0
+# route add -host 192.168.98.101 gw 192.168.99.1 dev eth0
+# route add -net 192.168.0.0 netmask 255.255.255.0 dev eth0
+# route add -net 10.38.0.0   netmask 255.255.0.0   gw 192.168.109.1
+
+# route del  default
+# route del -host linorg.usp.br
+# route del -host 205.254.211.184 dev eth3
+# route del -net 192.168.33.0/24  dev wlan0
+

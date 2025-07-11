@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<title>IPv6.br</title>
+	<meta charset="UTF-8" />
+	
+
+<link rel='prev' title='Introdução' href='http://ipv6.br/entenda/introducao/' />
+
+<link rel='next' title='Endereçamento' href='http://ipv6.br/entenda/enderecamento/' />
+
+<link rel='canonical' href='http://ipv6.br/entenda/cabecalho/' />
+
+<link rel='shortlink' href='http://ipv6.br/?p=14' />
+	
+</head>
+
+<body class="page page-id-14 page-child parent-pageid-10 page-template page-template-aula-php">
+
+<ul>
+<li class="page_item page-item-10 page_item_has_children current_page_ancestor current_page_parent"><a href="http://ipv6.br/entenda/">O IPv6</a><ul class='children'>
+<li class="page_item page-item-12"><a href="http://ipv6.br/entenda/introducao/">Introdução</a></li>
+<li class="page_item page-item-1885"><a href="http://ipv6.br/entenda/ative/">Ative e use o IPv6</a></li>
+<li class="page_item page-item-14 current_page_item"><a href="http://ipv6.br/entenda/cabecalho/">Cabeçalho</a></li>
+<li class="page_item page-item-16"><a href="http://ipv6.br/entenda/enderecamento/">Endereçamento</a></li>
+<li class="page_item page-item-3114"><a href="http://ipv6.br/entenda/alocacao-de-enderecos/">Alocação de endereços</a></li>
+<li class="page_item page-item-18"><a href="http://ipv6.br/entenda/funcionalidades/">Funcionalidades Básicas</a></li>
+<li class="page_item page-item-24"><a href="http://ipv6.br/entenda/transicao/">Transição</a></li>
+<li class="page_item page-item-2785"><a href="http://ipv6.br/entenda/happy-eyeballs/">Happy Eyeballs</a></li></ul></li>
+<li class="page_item page-item-3726"><a href="http://ipv6.br/universidade/">Universidade IPv6</a></li>
+<li class="page_item page-item-3632"><a href="http://ipv6.br/normas-e-recomendacoes/">Normas e recomendações</a></li>
+<li class="page_item page-item-1376"><a href="http://ipv6.br/cronograma/">Cronograma de implantação</a></li>
+<li class="page_item page-item-2992"><a href="http://ipv6.br/transito-ipv6/">Trânsito IPv6</a></li>
+<li class="page_item page-item-418"><a href="http://ipv6.br/estatisticas/">Estatísticas</a></li>
+</ul>
+
+	<article>
+<h2 id="cabecalho-ipv6">Cabeçalho IPv6</h2>
+<p style="text-align: center;"><img class="aligncenter  wp-image-662" src="cabecalho-021.jpg" /></a></p>
+<p>o tamanho do cabeçalho base do IPv6 foi fixado de 40 Bytes.<br />
+mais flexível e eficiente com a adição de cabeçalhos de extensão<br />
+Dentre essas mudanças, destaca-se a remoção de seis dos campos existentes  cabeçalho IPv4, como resultado tanto da inutilização de suas funções quanto de sua reimplentação com o uso de cabeçalhos de extensão. A figura a seguir identifica esses campos.</p>
+<p style="text-align: center;"><img class="aligncenter  wp-image-663" src="cabecalho-03.jpg" /></p>
+
+<p>Outra alteração realizada com o intuito de agilizar o processamento foi a renomeação e reposicionamento de quatro campos conforme a tabela abaixo:</p>
+<table>
+<tbody>
+<tr>
+<td>IPv4</td>
+<td>IPv6</td>
+</tr>
+<tr>
+<td>Tipo de Serviço</td>
+<td>Classe de Serviço</td>
+</tr>
+<tr>
+<td>Tamanho Total</td>
+<td>Tamanho dos Dados</td>
+</tr>
+<tr>
+<td>Tempo de Vida (TTL)</td>
+<td>Limite de encaminhamento</td>
+</tr>
+<tr>
+<td>Protocolo</td>
+<td>Próximo Cabeçalho</td>
+</tr>
+</tbody>
+</table>
+<p>Além disso, o campo &#8220;Identificador de Fluxo&#8221; foi adicionado para possibilitar o funcionamento de um mecanismo extra de suporte a QoS (Quality of Service).</p>
+
+
+<h3 id="cabecalho-campos">2.1. Campos do Cabeçalho IPv6</h3>
+<p>O cabeçalho do IPv6 está dividido nos seguintes campos:</p>
+<ul>
+<li><strong>Versão (4 bits) </strong>- O valor desse campo é 6.</li>
+
+<li><strong>Classe de Tráfego (8 bits)</strong> &#8211; Identifica os pacotes por classes de serviços ou prioridade. Ele provê as mesmas funcionalidades e definições do campo &#8220;Tipo de Serviço do IPv4&#8243;.</li>
+
+<li><strong>Identificador de Fluxo (20 bits)</strong> &#8211; Idealmente esse campo é configurado pelo endereço de destino para separar os fluxos de cada uma das aplicações.</li>
+
+<li><strong>Tamanho do Dados (16 bits)</strong> &#8211; Indica o tamanho, em Bytes, apenas dos dados enviados junto ao cabeçalho IPv6. O tamnho dos cabeçalhos de extensão também são somado nesse novo campo.</li>
+
+<li><strong>Próximo Cabeçalho (8 bits)</strong> &#8211; Identifica o cabeçalho que segue o atual.</li>
+
+<li><strong>Limite de Encaminhamento (8 bits)</strong> &#8211; Esse campo é decrementado a cada salto de roteamento e indica o número máximo de roteadores pelos quais o pacote pode passar antes de ser descartado.</li>
+
+<li><strong>Endereço de origem (128 bits)</strong> &#8211; Indica o endereço de origem do pacote.</li>
+
+<li><strong>Endereço de Destino (128 bits)</strong> &#8211; Indica o endereço de destino do pacote.</li>
+</ul>
+
+<h4 id="cabecalho-extensao">Cabeçalhos de extensão</h4>
+<p style="text-align: justify;">não possuem quantidade ou tamanho fixo, podem existir múltiplos cabeçalhos de extensão no mesmo pacote. A figura abaixo exemplifica essa situação.</p>
+<p style="text-align: center;"><img class="aligncenter  wp-image-1452" src="pilha-de-cabeçalhos.png" /></p>
+<p>As especificações do IPv6 definem seis cabeçalhos de extensão: Hop-by-Hop Options (00), Destination Options (60), Routing (43), Fragmentation (44), Authentication Header (51) e Encapsulating Security Payload (52).</p>
+
+<p>O esquema abaixo mostra o template de um cabeçalho de extensão.</p>
+<p style="text-align: center;"><img class="aligncenter size-full wp-image-1456" src="cab-extensao.png" /></p>
+
+<h4 id="cabecalho-hop-by-hop">Hop-by-Hop</h4>
+<p>Identificado pelo valor 00 no campo Próximo Cabeçalho, o cabeçalho de extensão Hop-by-Hop deve ser colocado imediatamente após o cabeçalho base IPv6.</p>
+<p>Os seguintes campos estão presentes nesse cabeçalho:</p>
+<ul>
+<li><strong>Próximo Cabeçalho (1 Byte): </strong>Identifica o tipo de cabeçalho que segue ao <em>Hop-by-Hop</em>.</li>
+<li><strong>Tamanho do Cabeçalho (1 Byte): </strong>Indica o tamanho seu tamanho (em unidades de 8 Bytes) excluídos o oito primeiros bits.</li>
+
+<li><strong>Opções:</strong> Contem uma ou mais opções e seu tamanho é variável. Neste campo, o primeiro Byte contém informações sobre como estas opções devem ser tratadas caso o nó que as esteja processando, não as reconheça. Desse byte, o valor dos primeiros dois bits especifica qual das seguintes ações a devem ser tomadas:
+<ul>
+<li>00: ignorar e continuar o processamento.</li>
+<li>01: descartar o pacote.</li>
+<li>10: descartar o pacote e enviar uma mensagem ICMP Parameter Problem para o endereço de origem do pacote.</li>
+<li>11: descartar o pacote e enviar uma mensagem ICMP Parameter Problem para o endereço de origem do pacote, apenas se o destino não for um endereço de multicast.</li>
+</ul>
+</li>
+</ul>
+
+<p>O terceiro bit indica se a informação opcional pode mudar de rota (valor 1) ou não (valor 0).<br />
+Até o momento existem dois tipos definidos para o cabeçalho <em>Hop-by-Hop</em>: Router Alert e Jumbogram:</p>
+<ul>
+
+<li><strong>Router Alert:</strong> Utilizado para informar aos nós intermediários que a mensagem a ser encaminhada exige tratamento especial. Está opção é utilizada pelos protocols MLD (Multicast Listener Discovery) e RSVP (Resource Reservation Protocol).</li>
+
+<li><strong>Jumbogram:</strong> Utilizado para informa que o tamanho do pacote IPv6 é maior do que 64KB.</li>
+</ul>
+<h4>Mais informações</h4>
+<p>RFC 2711 &#8211; IPv6 Router Alert Option</p>
+
+
+<h4 id="cabecalho-destination-options"> Destination Options</h4>
+<p>Identificado pelo valor 60 no campo Próximo Cabeçalho, o cabeçalho de extensão <em>Destination Options</em> deve ser processado apenas pelo nó de destino do pacote. A definição de seus campos é igual as do cabeçalho <em>Hop-by-Hop</em>.</p>
+<p>Ele é utilizado no suporte ao mecanismo de mobilidade do IPv6 através da opção <em>Home Address</em>, que contém o Endereço de Origem do Nó Móvel quando este está em transito.</p>
+<h4 id="cabecalho-routing">Routing</h4>
+<p style="text-align: center;"><img class="aligncenter size-full wp-image-1460" src="routing.png" /></p>
+<p>Identificado pelo valor 43 no campo Próximo Cabeçalho, o cabeçalho de extensão <em>Routing</em> foi desenvolvido inicialmente para listar um ou mais nós intermediários que deveriam ser visitados até o pacote chegar ao destino,  de forma semelhante às opções <em>Loose Source</em> e <em>Record Route</em> do IPv4. No entanto, esta função tornou-se obsoleta pela RFC5095 devido a problemas de segurança.</p>
+<p>Um novo cabeçalho <em>Routing</em>, <em>Type</em> 2, foi definido para ser utilizado como parte do mecanismo de suporte a mobilidade do IPv6. Segundo essa nova definição, ele deve  carregar o Endereço de Origem do Nó Móvel em pacotes enviados pelo Nó Correspondente.</p>
+<p>As definições de cada campo desse cabeçalho são as seguintes:</p>
+<ul>
+
+<li><strong>Próximo Cabeçalho (1 Byte):</strong> Identifica o tipo de cabeçalho que segue ao cabeçalho Routing.<br />
+<strong></strong></li>
+
+<li><strong>Tamanho do Cabeçalho (1 Byte)</strong>: Indica o tamanho seu tamanho (em unidades de 8 Bytes) excluídos o oito primeiros bits.</li>
+
+<li><strong>Routing Type (1 Byte): </strong>Identifica o tipo de cabeçalho Routing. Atualmente apenas o Type 2 está especificado.</li>
+
+<li><strong>Saltos restantes:</strong> Definido para ser utilizado com o Routing Type 0, indica o número de saltos a serem visitados antes do pacote atingir seu destino final.</li>
+
+<li><strong>Endereço de Origem:</strong> Carrega o Endereço de Origem de um Nó Móvel.</li>
+</ul>
+<h4>Mais informações</h4>
+<p>RFC 3775 &#8211; Mobility Support in IPv6 &#8211; 6.4. Type 2 Routing Header<br />
+RFC 5095 &#8211; Deprecation of Type 0 Routing Headers in IPv6<strong></strong></p>
+
+<h4 id="cabecalho-fragmentation">Fragmentation</h4>
+<p style="text-align: left;"><img class="aligncenter size-full wp-image-1463" src="fragmentation1.png" /></p>
+<p>Identificado pelo valor 44 no campo Próximo Cabeçalho, o cabeçalho de extensão <em>Fragmentation</em> é utilizado quando o pacote IPv6 a ser enviado é maior que o Path MTU.</p>
+<p>As definições de cada campo do cabeçalho são as seguintes:</p>
+<ul>
+
+<li><strong>Próximo Cabeçalho (1 Byte):</strong> Identifica o tipo de cabeçalho que segue ao cabeçalho <em>Fragmentation</em>.</li>
+
+<li><strong>Deslocamento do Fragmento (13 bits):</strong> Indica, em unidades de oito Bytes, a posição dos dados transportados pelo fragmento atual em relação ao início do pacote original.</li>
+
+<li><strong>Flag M (1 bit):</strong> Se marcado com o valor 1, indica que há mais fragmentos. Se marcado com o valor 0, indica que é o fragmento final.</li>
+
+<li><strong>Identificação (4 Bytes):</strong> Valor único gerado pelo nó de origem, para identificar o pacote original. É utilizado para detectar os fragmentos de um mesmo pacote.</li>
+</ul>
+<p>O processo de fragmentação é definido na seção de <a title="Funcionalidades Básicas" href="http://www.ipv6.br/o-ipv6/funcionalidades/">Funcionalidades Básicas</a>.</p>
+<h4 id="cabecalho-authentication-header">Authentication Header e Encapsulating Security Payload</h4>
+<p>Os cabeçalhos de extensão <em>Authentication Header (AH)</em> e <em>Encapsulating Security Payload (ESP)</em>, indicados respectivamente pelos valores 51 e 52 no campo Próximo Cabeçalho, fazem parte do cabeçalho IPSec.</p>
+<p>Embora as funcionalidades do IPSec sejam idênticas tanto no IPv4 quanto no IPv6, sua utilização com IPv6 é facilitada pelo fato de seus principais elementos integrarem essa nova versão do protocolo. Outros aspectos que também facilitam sua utilização são a inexistência de NAT IPv6 e o detalhamento dos cabeçalhos AH e ESP.</p>
+<h3 id="cabecalho-aspectos">Aspectos dos cabeçalhos de extensão</h3>
+<p>Alguns aspectos sobre os cabeçalhos de extensão devem ser observados. Primeiramente, estes cabeçalhos devem ser enviados segundo uma determinada ordem com o intuito de evitar que os nós intermediários tenham que processar toda a cadeia de cabeçalhos para decidir quais eles deverão tratar. Assim, os cabeçalhos importantes para todos os nós envolvidos no roteamento devem ser colocados em antes daqueles que são relevantes apenas para o destinatário final. A vantagem, é que um nó pode parar de analisar cabeçalhos assim que encontrar algum dedicado ao destino. Isso, melhora significativamente o desempenho dos roteadores pacotes, porque, em geral, apenas o processamento do cabeçalho base é necessário. Deste modo, a sequência a ser seguida é:</p>
+<ul>
+
+<li>Hop-by-Hop Options</li>
+
+<li>Routing</li>
+
+<li>Fragmentation</li>
+
+<li>Authentication Header</li>
+
+<li>Encapsulating Security Payload</li>
+
+<li>Destination Options</li>
+</ul>
+<p>Vale também observar que, se um pacote for enviado para um endereço multicast, os cabeçalhos de extensão serão examinados por todos os nós do grupo.</p>
+<p>Em relação à flexibilidade oferecida pelos cabeçalhos de extensão, merece destaque o desenvolvimento do cabeçalho Mobility, que é utilizado por nós com suporte ao mecanismo de mobilidade IPv6.</p>
+</div>
+
+</article>
+
+
+</body>
+</html>
+

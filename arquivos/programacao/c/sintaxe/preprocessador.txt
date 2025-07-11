@@ -1,0 +1,102 @@
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#include <arquivo.ext>
+/usr/include/
+
+#include "arquivo.ext"
+diretório atual
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#define NOME valor
+#define PI 3.14159265358979323846
+
+Pode se usar o gcc -D
+
+
+Pode substituir uma coisa por mais de uma:
+
+#define CMDS \
+   a = b; \
+   c = d
+ 
+  if (var == 13) {
+    CMDS;
+  }
+  else
+    return;
+
+will expand to
+
+  if (var == 13) {
+    a = b;
+    c = d;
+  }
+  else
+    return;
+
+
+Uma macro pode conter argumentos, que são substituidos na ordem em que aparecem, independente de seu nome. Por exemplo:
+#define DOBRO(a) (2*a)
+CUIDADO com os PARENTESES, pois DOBRO(c + d) será expandido para (2*c + d)
+#define MAIOR(x,y) ((x>y)?x:y)
+#define odd(n) (n%2!=0)
+
+
+Uma macro pode substituir valores no meio de uma expressão:
+#define COMMAND(NAME)  { #NAME, NAME ## _command }
+struct command commands[] =
+{
+  COMMAND (quit),
+  COMMAND (help),
+};
+Após preprocessar:
+struct command commands[] =
+{
+  { "quit", quit_command },
+  { "help", help_command },
+};
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#undef foo
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+The #if, #ifdef, #ifndef, #else, #elif and #endif directives can be used for conditional compilation.
+
+#ifdef WIN32 // WIN32 is defined by all Windows 32 compilers, but not by others.
+#include 
+#else
+#include 
+#endif
+
+#if VERBOSE >= 2
+  print("trace message");
+#endif
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+The #error directive inserts an error message into the compiler output.
+#ifdef WINDOWS
+    ... // Windows specific code
+#elif defined(UNIX)
+    ... // Unix specific code
+#else
+    #error "What's your operating system?"
+#endif
+
+#warning is like the directive `#error', but causes the preprocessor to issue a warning and continue preprocessing.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+printf("%s:%d: erro na abertura de aquivo.\n", __FILE__, __LINE__);
+
+__DATE__
+"Feb 1 1996"
+
+__TIME__
+"23:59:01"
+
+__BASE_FILE__

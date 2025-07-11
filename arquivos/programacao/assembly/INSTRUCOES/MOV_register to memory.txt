@@ -1,0 +1,40 @@
+
+reg to memory 1000 100w : mod reg r/m
+88 00                   mov    BYTE PTR  [rax],al
+89 00                   mov    DWORD PTR [rax],eax
+89 07                   mov    DWORD PTR [rdi],eax
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+reg to memory            0100 0RXB : 1000 100w : mod reg r/m
+
+40 88 00                rex mov BYTE PTR [rax],al
+42 88 00              rex.X mov BYTE PTR [rax],al
+44 88 00                    mov BYTE PTR [rax],r8b
+
+41 89 00                    mov DWORD PTR [r8],eax
+42 89 00                rex.X mov DWORD PTR [rax],eax
+44 89 00                    mov DWORD PTR [rax],r8d
+45 89 00                    mov DWORD PTR [r8],r8d
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+AL, AX, or EAX to memory 1010 001w : full displacement
+a2 11 22 33 44 55     movabs ds:0x8877665544332211,al   # w=0
+   66 77 88 
+a3 11 22 33 44 55     movabs ds:0x8877665544332211,eax  # w=1
+   66 77 88 
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+AL, AX, or EAX to memory 0100 0000 : 1010 001w : displacement
+40 a2 11 22 33 44 55    rex movabs ds:0x8877665544332211, al
+   66 77 88
+40 a3 11 22 33 44 55    rex movabs ds:0x8877665544332211, eax
+   66 77 88 
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+RAX to memory64          0100 1000 : 1010 0011 : displacement64
+48 a3 11 22 33 44 55    movabs ds:0x8877665544332211, rax
+   66 77 88 

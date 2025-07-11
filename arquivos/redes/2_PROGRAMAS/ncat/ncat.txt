@@ -1,0 +1,222 @@
+sudo apt-get install libssl-dev
+usei para compilar nmap
+
+NCAT(1)
+
+SYNOPSIS
+ncat [OPTIONS...] [hostname] [port]
+
+DESCRIPTION
+Ncat 7.80 ( https://nmap.org/ncat )
+
+chain Ncats together;
+redirection of TCP, UDP, and SCTP ports to other sites;
+SSL support;
+proxy connections via SOCKS4, SOCKS5 or HTTP proxies 
+
+OPTIONS
+Options taking a time assume seconds. Append ms for milliseconds, s for seconds, m for minutes, or h for hours (e.g. 500ms).
+  -4                         Use IPv4 only
+  -6                         Use IPv6 only
+  -C, --crlf                 Use CRLF for EOL sequence
+  -c, --sh-exec <command>    Executes the given command via /bin/sh
+  -d, --delay <time>         Wait between read/writes (dá para fazer controle de banda)
+  -e, --exec <command>       Executes the given command
+  -h, --help                 Display this help screen
+  -i, --idle-timeout <time>  Idle read/write timeout
+  -k, --keep-open            Accept multiple connections in listen mode
+  -l, --listen               Bind and listen for incoming connections
+  -m, --max-conns <n>        Maximum <n> simultaneous connections
+  -n, --nodns                Do not resolve hostnames via DNS
+  -o, --output <filename>    Dump session data to a file
+  -p, --source-port port     Specify source port to use
+  -s, --source addr          Specify source address to use (doesnt affect -l)
+  -u, --udp                  Use UDP instead of default TCP
+  -v, --verbose              Set verbosity level (can be used several times)
+  -w, --wait <time>          Connect timeout ()
+      sudo iptables -I INPUT -p tcp --dport 8083 -j DROP
+      ./ncat -v -w 10ms 127.0.0.1 8083
+  -z                         Zero-I/O mode, report connection status only
+  --append-output        Append rather than clobber specified output files
+  --send-only            Only send data, ignoring received; quit on EOF
+  --recv-only            Only receive data, never send anything
+  --allow                Allow only given hosts to connect to Ncat
+  --deny                 Deny given hosts from connecting to Ncat
+  --broker               Enable Ncats connection brokering mode
+  --chat                 Start a simple Ncat chat server
+  --proxy <addr[:port]>  Specify address of host to proxy through
+  --proxy-type <type>    Specify proxy type ("http", "socks4", "socks5")
+  --proxy-auth <auth>    Authenticate with HTTP or SOCKS proxy server
+  --proxy-dns <type>     Specify where to resolve proxy destination
+  --ssl                  Connect or listen with SSL
+  --ssl-cert             Specify SSL certificate file (PEM) for listening
+  --ssl-key              Specify SSL private key (PEM) for listening
+  --ssl-verify           Verify trust and domain name of certificates
+  --ssl-trustfile        PEM file containing trusted SSL certificates
+  --ssl-ciphers          Cipherlist containing SSL ciphers to use
+  --ssl-alpn             ALPN protocol list to use.
+  --version              Display Ncats version information and exit
+
+LISTEN MODE OPTIONS
+-k, --keep-open (Accept multiple connections)
+    Normally a listening server accepts only one connection and then quits when the connection is closed. This option makes it accept multiple simultaneous connections and wait for more connections after they have all been closed. It must be combined with --listen. In this mode there is no way for Ncat to know when its network input is finished, so it will keep running until interrupted. This also means that it will never close its output stream, so any program reading from Ncat and looking for end-of-file will also hang.
+
+--broker (Connection brokering)
+    Allow multiple parties to connect to a centralised Ncat server and communicate with each other. Ncat can broker communication between systems that are behind a NAT or otherwise unable to directly connect. This option is used in conjunction with --listen, which causes the --listen port to have broker mode enabled.
+
+--chat (Ad-hoc “chat server”)
+    The --chat option enables chat mode, intended for the exchange of text between several users. In chat mode, connection brokering is turned on. Ncat prefixes each message received with an ID before relaying it to the other connections. The ID is unique for each connected client. This helps distinguish who sent what. Additionally, non-printing characters such as control characters are escaped to keep them from doing damage to a terminal.
+
+SSL OPTIONS
+--ssl (Use SSL)
+    In connect mode, this option transparently negotiates an SSL session with an SSL server to securely encrypt the connection. This is particularly handy for talking to SSL enabled HTTP servers, etc.
+
+    In server mode, this option listens for incoming SSL connections, rather than plain untunneled traffic.
+
+    In UDP connect mode, this option enables Datagram TLS (DTLS). This is not supported in server mode.
+
+--ssl-verify (Verify server certificates)
+    In client mode, --ssl-verify is like --ssl except that it also requires verification of the server certificate. Ncat comes with a default set of trusted certificates in the file ca-bundle.crt.  Some operating systems provide a default list of trusted certificates; these will also be used if available. Use --ssl-trustfile to give a custom list. Use -v one or more times to get details about verification failures.  Ncat does not check for revoked certificates.
+
+    This option has no effect in server mode.
+
+--ssl-cert certfile.pem (Specify SSL certificate)
+    This option gives the location of a PEM-encoded certificate files used to authenticate the server (in listen mode) or the client (in connect mode). Use it in combination with --ssl-key.
+
+--ssl-key keyfile.pem (Specify SSL private key)
+    This option gives the location of the PEM-encoded private key file that goes with the certificate named with --ssl-cert.
+
+--ssl-trustfile cert.pem (List trusted certificates)
+    This option sets a list of certificates that are trusted for purposes of certificate verification. It has no effect unless combined with --ssl-verify. The argument to this option is the name of a PEM file containing trusted certificates. Typically, the file will contain certificates of certification authorities, though it may also contain server certificates directly. When this option is used, Ncat does not use its default certificates.
+
+--ssl-ciphers cipherlist (Specify SSL ciphersuites)
+    This option sets the list of ciphersuites that Ncat will use when connecting to servers or when accepting SSL connections from clients. The syntax is described in the OpenSSL ciphers(1) man page, and defaults to ALL:!aNULL:!eNULL:!LOW:!EXP:!RC4:!MD5:@STRENGTH
+
+--ssl-alpn ALPN list (Specify ALPN protocol list)
+    This option allows you to specify a comma-separated list of protocols to send via the Application-Layer Protocol Negotiation (ALPN) TLS extension. Not supported by all versions of OpenSSL.
+
+PROXY OPTIONS
+--proxy host[:port] (Specify proxy address)
+    Requests proxying through host:port, using the protocol specified by --proxy-type.
+
+    If no port is specified, the proxy protocols well-known port is used (1080 for SOCKS and 3128 for HTTP). When specifying an IPv6 HTTP proxy server using the IP address rather than the hostname, the square-bracket notation (for example [2001:db8::1]:8080) MUST be used to separate the port from the IPv6 address. If the proxy requires authentication, use --proxy-auth.
+
+--proxy-type proto (Specify proxy protocol)
+    In connect mode, this option requests the protocol proto to connect through the proxy host specified by --proxy. In listen mode, this option has Ncat act as a proxy server using the specified protocol.
+
+    The currently available protocols in connect mode are http (CONNECT), socks4 (SOCKSv4), and socks5 (SOCKSv5). The only server currently supported is http. If this option is not used, the default protocol is http.
+
+--proxy-auth user[:pass] (Specify proxy credentials)
+    In connect mode, gives the credentials that will be used to connect to the proxy server. In listen mode, gives the credentials that will be required of connecting clients. For use with --proxy-type http or --proxy-type socks5, the form should be username:password. For --proxy-type socks4, it should be a username only.
+
+--proxy-dns type (Specify where to resolve proxy destination)
+    In connect mode, it provides control over whether proxy destination hostnames are resolved by the remote proxy server or locally, by Ncat itself. Possible values for type are:
+
+    local - Hostnames are resolved locally on the Ncat host. Ncat exits with error if the hostname cannot be resolved.
+
+    remote - Hostnames are passed directly onto the remote proxy server. This is the default behavior.
+
+    both - Hostname resolution is first attempted on the Ncat host. Unresolvable hostnames are passed onto the remote proxy server.
+
+    none - Hostname resolution is completely disabled. Only a literal IPv4 or IPv6 address can be used as the proxy destination.
+
+    Local hostname resolution generally respects IP version specified with options -4 or -6, except for SOCKS4, which is incompatible with IPv6.
+
+TIMING OPTIONS
+These options accept a time parameter. This is specified in seconds by default, though you can append ms, s, m, or h to the value to specify milliseconds, seconds, minutes, or hours.
+
+-d time, --delay time (Specify line delay)
+    Set the delay interval for lines sent. This effectively limits the number of lines that Ncat will send in the specified period. This may be useful for low-bandwidth sites, or have other uses such as coping with annoying iptables --limit options.
+
+-i time, --idle-timeout time (Specify idle timeout)
+    Set a fixed timeout for idle connections. If the idle timeout is reached, the connection is terminated.
+
+-w time, --wait time (Specify connect timeout)
+    Set a fixed timeout for connection attempts.
+
+OUTPUT OPTIONS
+-o file, --output file (Save session data)
+    Dump session data to a file
+
+-x file, --hex-dump file (Save session data in hex)
+    Dump session data in hex to a file.
+
+--append-output (Append output)
+    Issue Ncat with --append-ouput along with -o and/or -x and it will append the resulted output rather than truncating the specified output files.
+
+-v, --verbose (Be verbose)
+    Issue Ncat with -v and it will be verbose and display all kinds of useful connection based information. Use more than once (-vv, -vvv...) for greater verbosity.
+
+EXAMPLES
+Redirect
+    ./ncat -l -p 8080 --keep-open --sh-exec "./ncat 127.0.0.1 8081"
+
+Backdoor
+    ./ncat -l --allow 192.168.0.0/24 -p 8081 --keep-open --max-conns 2 --exec "/bin/bash"
+
+Connect to smtphost:25 through a SOCKS4 server on port 1080.
+    ncat --proxy socks4host --proxy-type socks4 --proxy-auth joe smtphost 25
+
+Connect to smtphost:25 through a SOCKS5 server on port 1080.
+    ncat --proxy socks5host --proxy-type socks5 --proxy-auth joe:secret smtphost 25
+
+Create an HTTP proxy server on localhost port 8888.
+    ncat -l --proxy-type http localhost 8888
+
+
+File transfer
+    HOST1$ ./ncat -l --send-only -p 8080 < ncat.txt
+    ou 
+    HOST1$ ./ncat -l -p 8080 -c "cat ncat.txt"
+    ou 
+    HOST1$ cat ncat.txt | ./ncat -l -p 8080
+
+    HOST2$ ./ncat --recv-only 127.0.0.1 8080 > ncat_copia.txt
+
+
+Servidor:
+for ((;;)); do
+   ./ncat -l -p 8080 > teste_$(date +'%Y-%m-%d_%H-%M-%S').txt &
+   wait $!
+done
+
+
+servidor http
+./ncat -l -p 8080 -c '/bin/echo -e "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<html><h1>Hello World 2</h1></html>"'
+nc -lk -p 8080 --sh-exec "echo -e 'HTTP/1.1 200 OK\r\n'; cat index.html"
+
+
+download pagina
+/bin/echo -n -e "GET / HTTP/1.0\r\n\r\n" > GET.txt
+./ncat localhost 8080 < GET.txt
+ou
+/bin/echo -n -e "GET / HTTP/1.0\r\n\r\n" | ./ncat localhost 8080
+
+port scanning
+date
+for P in {1..65535}; do
+ ./ncat -v -z 127.0.0.1 $P 2>&1 | grep Connected
+done
+date
+
+
+Broker
+HOST1$ ./ncat -v -l -p 8080 --broker
+HOST2$ ./ncat -v 127.0.0.1 8080
+HOST3$ ./ncat -v 127.0.0.1 8080
+Aguardar a conexão, então enviar o arquivo.
+
+echo '#!/bin/bash
+while read; do
+  if [ "${REPLY:0:5}" == "GET /" ]; then
+    /bin/echo -e "HTTP/1.1 200 OK\r\n";
+    cat ncat.txt;
+    REPLY="";
+  fi;
+done' > exec.sh
+
+chmod +x exec.sh
+
+./ncat -v --exec ./exec.sh 127.0.0.1 8080
+
+

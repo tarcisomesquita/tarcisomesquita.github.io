@@ -1,0 +1,25 @@
+
+# iwconfig wlan0 txpower on
+# iwconfig wlan0 txpower off
+
+A opção txpower permite ativar ou desativar o transmissor da placa e configura a potência de transmissão.
+
+
+# iwlist wlan0 txpower
+
+Mostra qual potência está sendo usada atualmente.
+
+
+A maioria das placas suporta até um máximo de 20 dBm (100 mW) ou 25 dBm (250 mW). Para configurar a placa "wlan0" para usar 25 dBm, por exemplo, use:
+
+# iwconfig wlan0 txpower 25
+
+
+A potência média de um aparelho de microondas é 2.500.000 milliwatts.
+A potência máxima permitida pela legislação é 1.000 milliwatts.
+
+
+As taxas disponíveis em uma rede 802.11b são 11M, 5.5M, 2M e 1M. No caso de uma rede 802.11g, temos também 22M e 54M. Para que a rede passe a trabalhar a 2 megabits, por exemplo, use:
+
+# iwconfig eth0 rate 2M
+

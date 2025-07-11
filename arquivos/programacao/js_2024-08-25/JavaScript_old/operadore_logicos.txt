@@ -1,0 +1,11 @@
+
+=== 	is exactly equal to (value and type)  x=5; x===5 is true ; x==="5" is false
+== Igual 
+!= Diferente 
+> Maior 
+>= Maior ou Igual 
+< Menor 
+<= Menor ou Igual 
+&& E 
+|| Ou 
+

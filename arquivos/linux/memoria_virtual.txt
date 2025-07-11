@@ -1,0 +1,41 @@
+use /proc to find and modify variables (in this example, an ASCII string) contained inside the virtual memory of a running process
+
+ver memoria_virtual.png
+stack, growing “downwards”
+heap is a portion of memory that is dynamically allocated (malloc)
+
+64-bit machine
+size of each process virtual memory is 2^64 bytes = 0xffffffffffffffff
+lowest is 0x0
+
+/proc/[pid]/mem
+This file can be used to access the pages of a process's memory through open(2), read(2), and lseek(2).
+So, can we access and modify the entire virtual memory of any process?
+
+/proc/[pid]/maps
+A  file containing the currently mapped memory regions and their access permissions.
+See mmap(2) for some further information about memory mappings.
+
+The format of the file is:
+address           perms offset  dev   inode       pathname
+00400000-00452000 r-xp 00000000 08:02 173521      /usr/bin/dbus-daemon
+
+For ELF files, you can easily coordinate with the offset field by looking at the Offset field in the ELF program headers (readelf -l).
+
+There are additional helpful pseudo-paths:
+[stack]
+The initial process's (also known as the main thread's) stack.
+
+[stack:<tid>] (since Linux 3.4)
+A thread's stack (where the <tid> is a thread ID).
+It corresponds to the /proc/[pid]/task/[tid]/ path.
+
+[vdso]
+The virtual dynamically linked shared object.
+
+[heap]
+The process's heap.
+
+If the pathname field is blank, this is an anonymous mapping as obtained via the mmap(2) function.
+There is no easy  way  to  coordinate
+this back to a process's source, short of running it through gdb(1), strace(1), or similar.

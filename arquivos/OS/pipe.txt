@@ -1,0 +1,44 @@
+
+
+int pipe(int pipefd[2]);
+int pipe2(int pipefd[2], int flags);
+pipe() cria um pipe, um canal de dados unidirecional que pode
+ser usado em IPC.
+O array pipefd é usado para retornar dois descritores de
+arquivo:
+– pipefd[0] referencia o lado de leitura
+– pipefd[1] o lado de escrita.
+Os dados escritos são colocados em um buffer pelo kernel até
+ser lido pelo lado de leitura.
+Se flags é 0, então pipe2() é o mesmo que pipe().
+Mais detalhes: man pipe
+
+Exemplo de Pipe
+
+int main(void) {
+pid_t pid;
+int mypipe[2];
+/* Criar o pipe. */
+if (pipe(mypipe)) {
+fprintf(stderr, "Falha ao criar o Pipe.\n");
+return EXIT_FAILURE;
+}
+/* Criar o processo filho. */
+pid = fork();
+if (pid == (pid_t) 0) {
+/* No processo filho. */
+close(mypipe[1]);
+read_from_pipe(mypipe[0]);
+return EXIT_SUCCESS;
+} else if (pid < (pid_t) 0) {
+/* pid negativo, falha no fork. */
+fprintf(stderr, "Falha ao executar o Fork.\n");
+return EXIT_FAILURE;
+} else {
+/* Processo pai. */
+close(mypipe[0]);
+write_to_pipe(mypipe[1]);
+return EXIT_SUCCESS;
+}
+}
+

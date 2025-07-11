@@ -1,0 +1,10 @@
+if (confirm("Função terminada")) {
+   alert("ok pressionado")
+}
+/*
+else if () {
+}
+*/
+else {
+   alert("cancelar pressionado")
+}

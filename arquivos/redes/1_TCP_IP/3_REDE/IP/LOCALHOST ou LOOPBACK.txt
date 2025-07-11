@@ -1,0 +1,6 @@
+
+Localhost
+A faixa de IP 127.0.0.0 – 127.255.255.255 (ou 127.0.0.0/8 na notação CIDR) é reservada para a comunicação com o computador local (localhost). 
+
+A camada do protocolo IP reencaminha de volta o pacote.
+

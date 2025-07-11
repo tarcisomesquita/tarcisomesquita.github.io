@@ -1,0 +1,91 @@
+Structure of MP4 Files
+
+MP4 is an extensible container file. The data in the MP4 file is divided into two sections, the first containing the media-related data and the second containing metadata. The media data contains audio or video and metadata indicate flags for random access, timestamps, etc. The structures in MP4 are typically referred to as atoms or boxes. The minimum size of an atom is 8 bytes (the first 4 bytes specify size and the next 4 bytes specify type). List of the root level atoms contained in MP files:
+
+    ftyp: Contains the file type, description, and the common data structures used.
+    pdin: Contains progressive video loading/downloading information.
+    moov: Container for all the movie metadata.
+    moof: Container with video fragments.
+    mfra: The container with random access to the video fragment
+    mdat: Data container for media.
+    stts: sample-to-time table.
+    stsc: sample-to-chunk table.
+    stsz: sample sizes (framing)
+    meta: The container with the metadata information.
+
+Here is a list of second-level atoms used in MP4:
+    mvhd: Contains the video header information with full details of the video.
+    trak: Container with the individual track.
+    udta: The container with the user and track information.
+    iods: MP4 file descriptor
+
+
+MP4 files consist of consecutive chunks. Each chunk has 8 byte header: 4-byte chunk size (big-endian, high byte first) and 4-byte chunk type - one of pre-defined signatures: "ftyp", "mdat", "moov", "pnot", "udta", "uuid", "moof", "free", "skip", "jP2 ", "wide", "load", "ctab", "imap", "matt", "kmat", "clip", "crgn", "sync", "chap", "tmcd", "scpt", "ssrc", "PICT".
+
+First chunk must be of type "ftype" and has a sub-type at offset 8. MP4 defined by sub-type which must be one of values: "avc1", "iso2", "isom", "mmp4", "mp41", "mp42", "mp71", "msnv", "ndas", "ndsc", "ndsh", "ndsm", "ndsp", "ndss", "ndxc", "ndxh", "ndxm", "ndxp", "ndxs".
+
+
+
+video.mp4
+├───general file metadata
+├───movie data
+├───tracks
+│   ├───video
+│   │   ├───video metadata
+│   │   └───video sample data
+│   └───audio
+│       ├───audio metadata
+│       └───audio sample data
+└───more metadata
+
+video.mp4
+├───ftyp -------------------> FileType Box
+├───mdat -------------------> Movie Data Box
+├───moov -------------------> Movie Boxes
+│   ├───trak ---------------> Track Box
+│   │   ├─── tkhd ----------> Track Header
+│   │   └─── mdia ----------> Media Box
+│   │        └─── ...
+│   └───trak
+│   │   ├─── tkhd ----------> Track Header
+│   │   └─── mdia ----------> Media Box
+│   │        └─── ...
+└───udta -------------------> Userdata Box
+
+
+┌─────────────────────┐
+|      Box Header     |
+| Size (4) | Type (4) | Box Header = 8 Bytes
+| --------------------|
+|     Box Data (N)    | Box Data = N Bytes
+└─────────────────────┘
+           └─────────── Box Size = 8 + N bytes
+
+"Box Header", where the first 4 bytes are the size of the box, and the next 4 bytes are the box name.
+
+ftyp box has the following structure:
+
+aligned(8) class FileTypeBox
+  extends Box(‘ftyp’) {
+  unsigned int(32) major_brand;
+  unsigned int(32) minor_version;
+  unsigned int(32) compatible_brands[]; // to end of the box
+}
+
+type MoovBox struct {
+  *Box
+  Mvhd  *MvhdBox
+}
+
+type MvhdBox struct {
+  *Box
+  Flags            uint32
+  Version          uint8
+  CreationTime     uint32
+  ModificationTime uint32
+  Timescale        uint32
+  Duration         uint32
+  Rate             Fixed32
+  Volume           Fixed16
+}
+

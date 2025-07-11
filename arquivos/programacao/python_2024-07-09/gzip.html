@@ -1,0 +1,379 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+>
+
+<html>
+  <head><meta charset="UTF-8" />
+    <meta>
+    <meta>
+    <title>13.2. gzip — Support for gzip files &#8212; Python 3.6.5 documentation</title>
+    <link>
+    <link>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Python 3.6.5 documentation"
+>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    
+    <script></script>
+    <script></script>
+    
+    
+ 
+
+  </head><body>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="bz2.html" title="13.3. bz2 — Support for bzip2 compression"
+>next</a> |</li>
+        <li>
+          <a href="zlib.html" title="13.1. zlib — Compression compatible with gzip"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>The Python Standard Library</a> &#187;</li>
+          <li><a>13. Data Compression and Archiving</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>    
+
+    <div>
+      <div>
+        <div>
+          <div>
+            
+  <div>
+<span></span><h1>13.2. <a><code><span>gzip</span></code></a> — Support for <strong>gzip</strong> files<a>¶</a></h1>
+<p><strong>Source code:</strong> <a>Lib/gzip.py</a></p>
+<hr>
+<p>This module provides a simple interface to compress and decompress files just
+like the GNU programs <strong>gzip</strong> and <strong>gunzip</strong> would.</p>
+<p>The data compression is provided by the <a><code><span>zlib</span></code></a> module.</p>
+<p>The <a><code><span>gzip</span></code></a> module provides the <a><code><span>GzipFile</span></code></a> class, as well as the
+<a><code><span>open()</span></code></a>, <a><code><span>compress()</span></code></a> and <a><code><span>decompress()</span></code></a> convenience functions.
+The <a><code><span>GzipFile</span></code></a> class reads and writes <strong>gzip</strong>-format files,
+automatically compressing or decompressing the data so that it looks like an
+ordinary <a><span>file object</span></a>.</p>
+<p>Note that additional file formats which can be decompressed by the
+<strong>gzip</strong> and <strong>gunzip</strong> programs, such  as those produced by
+<strong>compress</strong> and <strong>pack</strong>, are not supported by this module.</p>
+<p>The module defines the following items:</p>
+<dl>
+<dt>
+<code>gzip.</code><code>open</code><span>(</span><em>filename</em>, <em>mode='rb'</em>, <em>compresslevel=9</em>, <em>encoding=None</em>, <em>errors=None</em>, <em>newline=None</em><span>)</span><a>¶</a></dt>
+<dd><p>Open a gzip-compressed file in binary or text mode, returning a <a><span>file
+object</span></a>.</p>
+<p>The <em>filename</em> argument can be an actual filename (a <a><code><span>str</span></code></a> or
+<a><code><span>bytes</span></code></a> object), or an existing file object to read from or write to.</p>
+<p>The <em>mode</em> argument can be any of <code><span>'r'</span></code>, <code><span>'rb'</span></code>, <code><span>'a'</span></code>, <code><span>'ab'</span></code>,
+<code><span>'w'</span></code>, <code><span>'wb'</span></code>, <code><span>'x'</span></code> or <code><span>'xb'</span></code> for binary mode, or <code><span>'rt'</span></code>,
+<code><span>'at'</span></code>, <code><span>'wt'</span></code>, or <code><span>'xt'</span></code> for text mode. The default is <code><span>'rb'</span></code>.</p>
+<p>The <em>compresslevel</em> argument is an integer from 0 to 9, as for the
+<a><code><span>GzipFile</span></code></a> constructor.</p>
+<p>For binary mode, this function is equivalent to the <a><code><span>GzipFile</span></code></a>
+constructor: <code><span>GzipFile(filename,</span> <span>mode,</span> <span>compresslevel)</span></code>. In this case, the
+<em>encoding</em>, <em>errors</em> and <em>newline</em> arguments must not be provided.</p>
+<p>For text mode, a <a><code><span>GzipFile</span></code></a> object is created, and wrapped in an
+<a><code><span>io.TextIOWrapper</span></code></a> instance with the specified encoding, error
+handling behavior, and line ending(s).</p>
+<div>
+<p><span>Changed in version 3.3: </span>Added support for <em>filename</em> being a file object, support for text mode,
+and the <em>encoding</em>, <em>errors</em> and <em>newline</em> arguments.</p>
+</div>
+<div>
+<p><span>Changed in version 3.4: </span>Added support for the <code><span>'x'</span></code>, <code><span>'xb'</span></code> and <code><span>'xt'</span></code> modes.</p>
+</div>
+<div>
+<p><span>Changed in version 3.6: </span>Accepts a <a><span>path-like object</span></a>.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<em>class </em><code>gzip.</code><code>GzipFile</code><span>(</span><em>filename=None</em>, <em>mode=None</em>, <em>compresslevel=9</em>, <em>fileobj=None</em>, <em>mtime=None</em><span>)</span><a>¶</a></dt>
+<dd><p>Constructor for the <a><code><span>GzipFile</span></code></a> class, which simulates most of the
+methods of a <a><span>file object</span></a>, with the exception of the <code><span>truncate()</span></code>
+method.  At least one of <em>fileobj</em> and <em>filename</em> must be given a non-trivial
+value.</p>
+<p>The new class instance is based on <em>fileobj</em>, which can be a regular file, an
+<a><code><span>io.BytesIO</span></code></a> object, or any other object which simulates a file.  It
+defaults to <code><span>None</span></code>, in which case <em>filename</em> is opened to provide a file
+object.</p>
+<p>When <em>fileobj</em> is not <code><span>None</span></code>, the <em>filename</em> argument is only used to be
+included in the <strong>gzip</strong> file header, which may include the original
+filename of the uncompressed file.  It defaults to the filename of <em>fileobj</em>, if
+discernible; otherwise, it defaults to the empty string, and in this case the
+original filename is not included in the header.</p>
+<p>The <em>mode</em> argument can be any of <code><span>'r'</span></code>, <code><span>'rb'</span></code>, <code><span>'a'</span></code>, <code><span>'ab'</span></code>, <code><span>'w'</span></code>,
+<code><span>'wb'</span></code>, <code><span>'x'</span></code>, or <code><span>'xb'</span></code>, depending on whether the file will be read or
+written.  The default is the mode of <em>fileobj</em> if discernible; otherwise, the
+default is <code><span>'rb'</span></code>.</p>
+<p>Note that the file is always opened in binary mode. To open a compressed file
+in text mode, use <a><code><span>open()</span></code></a> (or wrap your <a><code><span>GzipFile</span></code></a> with an
+<a><code><span>io.TextIOWrapper</span></code></a>).</p>
+<p>The <em>compresslevel</em> argument is an integer from <code><span>0</span></code> to <code><span>9</span></code> controlling
+the level of compression; <code><span>1</span></code> is fastest and produces the least
+compression, and <code><span>9</span></code> is slowest and produces the most compression. <code><span>0</span></code>
+is no compression. The default is <code><span>9</span></code>.</p>
+<p>The <em>mtime</em> argument is an optional numeric timestamp to be written to
+the last modification time field in the stream when compressing.  It
+should only be provided in compression mode.  If omitted or <code><span>None</span></code>, the
+current time is used.  See the <a><code><span>mtime</span></code></a> attribute for more details.</p>
+<p>Calling a <a><code><span>GzipFile</span></code></a> object’s <code><span>close()</span></code> method does not close
+<em>fileobj</em>, since you might wish to append more material after the compressed
+data.  This also allows you to pass an <a><code><span>io.BytesIO</span></code></a> object opened for
+writing as <em>fileobj</em>, and retrieve the resulting memory buffer using the
+<a><code><span>io.BytesIO</span></code></a> object’s <a><code><span>getvalue()</span></code></a> method.</p>
+<p><a><code><span>GzipFile</span></code></a> supports the <a><code><span>io.BufferedIOBase</span></code></a> interface,
+including iteration and the <a><code><span>with</span></code></a> statement.  Only the
+<code><span>truncate()</span></code> method isn’t implemented.</p>
+<p><a><code><span>GzipFile</span></code></a> also provides the following method and attribute:</p>
+<dl>
+<dt>
+<code>peek</code><span>(</span><em>n</em><span>)</span><a>¶</a></dt>
+<dd><p>Read <em>n</em> uncompressed bytes without advancing the file position.
+At most one single read on the compressed stream is done to satisfy
+the call.  The number of bytes returned may be more or less than
+requested.</p>
+<div>
+<p>Note</p>
+<p>While calling <a><code><span>peek()</span></code></a> does not change the file position of
+the <a><code><span>GzipFile</span></code></a>, it may change the position of the underlying
+file object (e.g. if the <a><code><span>GzipFile</span></code></a> was constructed with the
+<em>fileobj</em> parameter).</p>
+</div>
+<div>
+<p><span>New in version 3.2.</span></p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>mtime</code><a>¶</a></dt>
+<dd><p>When decompressing, the value of the last modification time field in
+the most recently read header may be read from this attribute, as an
+integer.  The initial value before reading any headers is <code><span>None</span></code>.</p>
+<p>All <strong>gzip</strong> compressed streams are required to contain this
+timestamp field.  Some programs, such as <strong>gunzip</strong>, make use
+of the timestamp.  The format is the same as the return value of
+<a><code><span>time.time()</span></code></a> and the <a><code><span>st_mtime</span></code></a> attribute of
+the object returned by <a><code><span>os.stat()</span></code></a>.</p>
+</dd></dl>
+
+<div>
+<p><span>Changed in version 3.1: </span>Support for the <a><code><span>with</span></code></a> statement was added, along with the
+<em>mtime</em> constructor argument and <a><code><span>mtime</span></code></a> attribute.</p>
+</div>
+<div>
+<p><span>Changed in version 3.2: </span>Support for zero-padded and unseekable files was added.</p>
+</div>
+<div>
+<p><span>Changed in version 3.3: </span>The <a><code><span>io.BufferedIOBase.read1()</span></code></a> method is now implemented.</p>
+</div>
+<div>
+<p><span>Changed in version 3.4: </span>Added support for the <code><span>'x'</span></code> and <code><span>'xb'</span></code> modes.</p>
+</div>
+<div>
+<p><span>Changed in version 3.5: </span>Added support for writing arbitrary
+<a><span>bytes-like objects</span></a>.
+The <a><code><span>read()</span></code></a> method now accepts an argument of
+<code><span>None</span></code>.</p>
+</div>
+<div>
+<p><span>Changed in version 3.6: </span>Accepts a <a><span>path-like object</span></a>.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>gzip.</code><code>compress</code><span>(</span><em>data</em>, <em>compresslevel=9</em><span>)</span><a>¶</a></dt>
+<dd><p>Compress the <em>data</em>, returning a <a><code><span>bytes</span></code></a> object containing
+the compressed data.  <em>compresslevel</em> has the same meaning as in
+the <a><code><span>GzipFile</span></code></a> constructor above.</p>
+<div>
+<p><span>New in version 3.2.</span></p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>gzip.</code><code>decompress</code><span>(</span><em>data</em><span>)</span><a>¶</a></dt>
+<dd><p>Decompress the <em>data</em>, returning a <a><code><span>bytes</span></code></a> object containing the
+uncompressed data.</p>
+<div>
+<p><span>New in version 3.2.</span></p>
+</div>
+</dd></dl>
+
+<div>
+<span></span><h2>13.2.1. Examples of usage<a>¶</a></h2>
+<p>Example of how to read a compressed file:</p>
+<div><div><pre><span></span><span>import</span> <span>gzip</span>
+<span>with</span> <span>gzip</span><span>.</span><span>open</span><span>(</span><span>&#39;/home/joe/file.txt.gz&#39;</span><span>,</span> <span>&#39;rb&#39;</span><span>)</span> <span>as</span> <span>f</span><span>:</span>
+    <span>file_content</span> <span>=</span> <span>f</span><span>.</span><span>read</span><span>()</span>
+</pre></div>
+</div>
+<p>Example of how to create a compressed GZIP file:</p>
+<div><div><pre><span></span><span>import</span> <span>gzip</span>
+<span>content</span> <span>=</span> <span>b</span><span>&quot;Lots of content here&quot;</span>
+<span>with</span> <span>gzip</span><span>.</span><span>open</span><span>(</span><span>&#39;/home/joe/file.txt.gz&#39;</span><span>,</span> <span>&#39;wb&#39;</span><span>)</span> <span>as</span> <span>f</span><span>:</span>
+    <span>f</span><span>.</span><span>write</span><span>(</span><span>content</span><span>)</span>
+</pre></div>
+</div>
+<p>Example of how to GZIP compress an existing file:</p>
+<div><div><pre><span></span><span>import</span> <span>gzip</span>
+<span>import</span> <span>shutil</span>
+<span>with</span> <span>open</span><span>(</span><span>&#39;/home/joe/file.txt&#39;</span><span>,</span> <span>&#39;rb&#39;</span><span>)</span> <span>as</span> <span>f_in</span><span>:</span>
+    <span>with</span> <span>gzip</span><span>.</span><span>open</span><span>(</span><span>&#39;/home/joe/file.txt.gz&#39;</span><span>,</span> <span>&#39;wb&#39;</span><span>)</span> <span>as</span> <span>f_out</span><span>:</span>
+        <span>shutil</span><span>.</span><span>copyfileobj</span><span>(</span><span>f_in</span><span>,</span> <span>f_out</span><span>)</span>
+</pre></div>
+</div>
+<p>Example of how to GZIP compress a binary string:</p>
+<div><div><pre><span></span><span>import</span> <span>gzip</span>
+<span>s_in</span> <span>=</span> <span>b</span><span>&quot;Lots of content here&quot;</span>
+<span>s_out</span> <span>=</span> <span>gzip</span><span>.</span><span>compress</span><span>(</span><span>s_in</span><span>)</span>
+</pre></div>
+</div>
+<div>
+<p>See also</p>
+<dl>
+<dt>Module <a><code><span>zlib</span></code></a></dt>
+<dd>The basic data compression module needed to support the <strong>gzip</strong> file
+format.</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+  <h3><a>Table Of Contents</a></h3>
+  <ul>
+<li><a>13.2. <code><span>gzip</span></code> — Support for <strong>gzip</strong> files</a><ul>
+<li><a>13.2.1. Examples of usage</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p><a href="zlib.html"
+           >13.1. <code><span>zlib</span></code> — Compression compatible with <strong>gzip</strong></a></p>
+  <h4>Next topic</h4>
+  <p><a href="bz2.html"
+           >13.3. <code><span>bz2</span></code> — Support for <strong>bzip2</strong> compression</a></p>
+  <div>
+    <h3>This Page</h3>
+    <ul>
+      <li><a>Report a Bug</a></li>
+      <li>
+        <a href="https://github.com/python/cpython/blob/3.6/Doc/library/gzip.rst"
+>Show Source
+        </a>
+      </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+      <div></div>
+    </div>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="bz2.html" title="13.3. bz2 — Support for bzip2 compression"
+>next</a> |</li>
+        <li>
+          <a href="zlib.html" title="13.1. zlib — Compression compatible with gzip"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>The Python Standard Library</a> &#187;</li>
+          <li><a>13. Data Compression and Archiving</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>  
+    <div>
+    &copy; <a>Copyright</a> 2001-2018, Python Software Foundation.
+    <br>
+    The Python Software Foundation is a non-profit corporation.
+    <a>Please donate.</a>
+    <br>
+    Last updated on May 20, 2018.
+    <a>Found a bug</a>?
+    <br>
+    Created using <a>Sphinx</a> 1.7.4.
+    </div>
+
+  </body>
+</html>

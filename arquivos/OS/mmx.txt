@@ -1,0 +1,113 @@
+MMX
+The main purpose of MMX technology is to perform SIMD operations on integer data types. The MMX
+SIMD architecture provides three additional types of integer values:
+❑ 64-bit packed byte integers (contains eight single-byte integer values)
+❑ 64-bit packed word integers (contains four word integer values)
+❑ 64-bit packed doubleword integers (contains two doubleword integer values)
+Because the MMX integer data types use 64 bits, they cannot be held by the normal general-purpose reg-
+isters. Instead, the MMX technology utilizes the 80-bit FPU registers to perform all of its mathematical
+operations. The MMX registers are called MMX0 through MMX7 . They are directly mapped to FPU registers
+R0 through R7 . Unlike the FPU registers, however, the MMX registers are static, they cannot be used as a
+stack. The MMX0 register always references FPU register R0 . Placing a data value in the MMX0 register does
+not shift the previous value down to the MMX1 register. The FPU top of stack register value does not have
+any effect on MMX instructions.
+While the FPU registers are used to hold MMX data, they can also be used to hold FPU data. This can
+become extremely confusing. The registers are placed in MMX mode to handle MMX data (the exponent
+value of the register is set to all ones), and put in FPU mode to handle normal FPU double-extended
+floating-point data.
+Unfortunately, when using the FPU registers in MMX mode, the FPU Tag register becomes corrupt. To
+solve this, it is best to separate instructions that use FPU registers from instructions that use MMX registers.
+The solution is to save the FPU registers in memory using the FSAVE or FXSAVE instructions, and restore
+them using the FRSTOR or FXRSTOR instructions when the MMX instructions are complete. The FSAVE and
+FRSTOR instructions save just the FPU state (this is discussed and demonstrated in Chapter 9, “Advanced
+Math Functions”). The FXSAVE and FXRSTOR instructions save the FPU, MMX, and SSE states.
+When the MMX processing is complete, the EMMS instruction should be used to clear the FPU Tag regis-
+ter value, to enable any FPU instructions to perform properly.
+As you can see, the 64-bit packed integer values hold multiple integer values. The MMX architecture
+includes additional instructions to enable processing the multiple integer values in a single instruction
+(thus the single instruction, multiple data nomenclature).
+482Using Advanced IA-32 Features
+SSE
+The main purpose of the SSE technology is to perform SIMD operations on floating-point data. The SSE
+architecture provides another new data type: the 128-bit, packed, single-precision floating-point data
+type. This data type is used to contain four single-precision floating-point values (as described in
+Chapter 7, a single-precision floating-point value requires 32 bits).
+Because the new data type requires 128 bits, a new register set was created just for SSE processing. These
+new registers include eight 128-bit registers ( XMM0 through XMM7 ) that are used to hold the 128-bit,
+packed, single-precision floating-point data values. SSE floating-point mathematical operations use the
+XMM registers.
+The SSE architecture also included new instructions for performing SIMD mathematical operations on
+the packed, single-precision floating-point values. This enables up to four floating-point calculations in
+a single operation.
+SSE2
+The SSE2 architecture expands on the core SSE architecture by adding five new data types:
+❑ 128-bit packed double-precision floating-point value (contains two double-precision values)
+❑ 128-bit packed byte integer value (contains 16 single-byte integer values)
+❑ 128-bit packed word integer value (contains eight word integer values)
+❑ 128-bit packed doubleword integer value (contains four doubleword integer values)
+❑ 128-bit packed quadword integer value (contains two quadword integer values)
+Each of these new data types utilizes the 128-bit XMM registers to hold data for processing. The SSE2
+technology provides for additional floating-point and integer SIMD operations. It includes additional
+instructions for performing mathematical calculations on the packed data (again using a single
+operation).
+The SSE3 architecture does not add any additional data types to the SSE2 architecture. It does provide
+new instructions for advanced processing of SSE2 data types.
+
+
+
+# features.s - Determine MMX, SSE, SSE2, and SSE3 capabilities
+.section .data
+gotmmx:
+.asciz “Supports MMX”
+gotsse:
+.asciz “Supports SSE”
+gotsse2:
+.asciz “Supports SSE2”
+gotsse3:
+.asciz “Supports SSE3”
+output:
+.asciz “%s\n”
+.section .bss
+.lcomm ecxdata, 4
+.lcomm edxdata, 4
+.section .text
+.globl _start
+_start:
+nop
+movl $1, %eax
+cpuid
+485Chapter 17
+movl %ecx, ecxdata
+movl %edx, edxdata
+test $0x00800000, %edx
+jz done
+pushl $gotmmx
+pushl $output
+call printf
+addl $8, %esp
+movl edxdata, %edx
+test $0x02000000, %edx
+jz done
+pushl $gotsse
+pushl $output
+call printf
+addl $8, %esp
+movl edxdata, %edx
+test $0x04000000, %edx
+jz done
+pushl $gotsse2
+pushl $output
+call printf
+addl $8, %esp
+movl ecxdata, %ecx
+test $0x00000001, %ecx
+jz done
+pushl $gotsse3
+pushl $output
+call printf
+addl $8, %esp
+done:
+pushl $0
+call exit
+
+

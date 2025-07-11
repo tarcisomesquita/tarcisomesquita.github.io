@@ -1,0 +1,5 @@
+import json
+with open('Q42.json') as jsonfile:
+parsed = json.load(jsonfile)
+quit()
+

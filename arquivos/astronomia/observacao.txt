@@ -1,0 +1,122 @@
+a Lua nasce cerca de 48 minutos mais tarde a cada dia.
+
+Observando sempre do mesmo ponto o observador verá que uma mesma estrela sempre aparece e desaparece, todos os dias, nos mesmos pontos do horizonte. O observador também irá notar que de um dia para o outro a mesma estrela aparecerá e desaparecerá 4 minutos mais cedo.
+Em um mês esse avanço será de duas horas. Assim, o céu de 1 de outubro, às 20 horas, será o mesmo de 1 de setembro as 22 horas.
+
+
+M41: próxima da estrela Sírius
+
+Nebulosas:
+Nebulosa Eta da Carina
+centro da Nebulosa da Águia (junho)
+Nebulosa do Cisne, na constelação da Águia (junho)
+Nomes                Magnitude
+M42, Órion           4,0
+M16, Águia           6,4
+M8, Lagoa            6,0
+M17, Omega           6,0
+NGC2070, Tarântula   8,2
+M20, Trífida         9,0
+
+Nebulosas: a morte das estrelas
+Algumas das nebulosas não estão associadas às etapas iniciais de vida das estrelas, mas aos
+estágios finais de sua evolução. Assim, algumas estrelas, no final da vida, ejetam suas camadas
+mais externas, originando o que se denomina Nebulosas Planetárias.
+Nomes Magnitude
+M27, Halteres  7,4
+M57, Anel 8,8
+M97, Coruja 9,9
+
+
+Galaxias
+Nomes
+M31, Andrômeda  3,4
+M33  5,7
+M51, Redemoinho  8,4
+M64, Olho Negro 8,5
+M83 7,6
+M104, Sombrero 8,0
+NGC55  8,0
+NGC253  7,1
+NCG5128,centaurusA 7,0
+
+
+Estrelas duplas:
+Duplas gravitacionais são estrelas binárias que estão fisicamente próximas e orbitam um centro de gravidade em comum.
+Duplas visuais são estrelas que não estão próximas entre si, mas devido a um efeito de projeção elas parecem estar juntas, portanto elas são consideradas "binárias aparentes".
+Sírius
+Prócion
+Acrux (no Cruzeiro)     1,9 e 2,1
+Albireo (em Cisne)      3,0 e 5,3
+Gamma Arietis           4,6 e 4,7
+Gamma Delphini          4,0 e 5,0
+Iota Cancri             4,0 e 6,6
+Iota Crucis.            4,7 e 7,5
+
+Alfa
+Centauri, a estrela mais próxima de nós (depois do Sol) é, na verdade, um sistema triplo.
+
+Aglomerados jovens
+Estrelas raramente nascem sozinhas. Normalmente nascem muitas ao mesmo tempo, formando estruturas que chamamos de Aglomerados Abertos.
+Com o passar do tempo, forças dentro de nossa galáxia tendem a destruir estas estruturas, espalhando as estrelas.
+Nomes  Magnitude
+M6, Borboleta  4,2
+M45, Plêiades  1,6
+NGC 3293  4,7
+NGC 4755,Caixinha de Jóias  4,2
+
+Aglomerados globulares
+Os aglomerados globulares são sistemas estelares muito densos, ou seja muitas estrelas concentradas em uma pequena área do céu. Alguns podem ter muitos milhares de estrelas. Em geral são muito velhos, tendo sido formados no começo da vida de nossa galáxia. Ao contrário dos aglomerados abertos, os globulares não foram destruídos porque são muito mais densos que eles.
+
+Nomes  Magnitude
+M4 5,6
+M13 5,8
+M22 5,1
+NGC 5139,omega Centauri 3,7
+Omega Centauri talvez não seja um aglomerado globular, mas o núcleo de uma galáxia anã que foi "canibalizada" pela Via Láctea.
+Galáxias grandes crescem incorporando galáxias menores.
+
+M3
+M92
+
+
+
+Observatório Argus - Valinhos (SP)
+Latitude: 23° 00' 00'' S
+Longitude: 47° 08' 00'' W
+Altitude: 850m
+
+Objeto                   A. R.        Declinação
+NGC55                    00h15m08s    -39º13m13s 
+M31,NGC224,Andrômeda     00h42m44s    +41º16m09s 
+NGC253                   00h47m33s    -25º17m18s 
+M33,NGC598               01h33m51s    +30º39m37s 
+Gamma Arietis            01h53m32s    +19º17m38s 
+M45, Plêiades            03h47m       +24º07m    
+M42,NGC1976,Órion        05h35m17s    -05º23m28s 
+NGC2070,Tarântula        05h38m42s    -69º06m    
+Iota Cancri              08h46m40s    +28º45m36s 
+NGC3293                  10h35m49s    -58º13m00s 
+M97,NGC3587,Coruja       11h14m48s    +55º01m09s 
+Acrux                    12h26m36s    -63º05m57s 
+M104,NGC4594,Sombrero    12h39m59s    -11º37m23s 
+Iota Crucis              12h45m38s    -60º58m53s 
+NGC4755,Caixinha         12h53m42s    -60º22m00s 
+M64,NGC4826,olho Negro   12h56m44s    +21º41m00s 
+NCG5128,centaurusA       13h25m28s    -43º01m09s 
+NGC5139,omega Centauri   13h26m46s    -47º28m37s 
+M51,NGC5194,Redemoinho   13h29m52s    +47º11m41s 
+M83,NGC5236              13h37m01s    -29º51m59s 
+M4,NGC6121               16h23m35s    -26º31m32s 
+M13,NGC6205              16h41m41s    +36º27m37s 
+M6,NGC6405,Borboleta     17h40m06s    -32º13m    
+M20,NGC6514,Trífida      18h02m23s    -23º01m48s 
+M8, Lagoa                18h03m37s    -24º23m12s 
+M16,NGC6611,Águia        18h18m48s    -13º47m    
+M17,NGC6618,omega        18h20m26s    -16º10m36s 
+M22,NGC6656              18h36m24s    -23º54m12s 
+M57,NGC6720,Anel         18h53m35s    +33º01m45s 
+Albireo                  19h30m43s    +27º57m35  
+M27,NGC6853,Halteres     19h59m36s    +22º43m16s 
+Gamma Delphini           20h46m39s    +16º07m27s 
+

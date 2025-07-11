@@ -1,0 +1,115 @@
+
+-c     Exit after receiving count packets.
+       sudo tcpdump -i lo -c 3
+       Sai após capturar 3 pacotes.
+
+-C     Before  writing  a  raw  packet to a savefile, check whether the
+       file is currently larger than file_size and, if  so,  close  the
+       current  savefile and open a new one.  Savefiles after the first
+       savefile will have the name specified with the -w flag,  with  a
+       number after it, starting at 1 and continuing upward.  The units
+       of  file_size  are  millions  of  bytes  (1,000,000  bytes,  not
+       1,048,576 bytes).
+
+-D     Print the list of the network interfaces available on the system
+       and on which tcpdump can  capture  packets.   For  each  network
+       interface,  a number and an interface name, possibly followed by
+       a text description of the interface, is printed.  The  interface
+       name  or the number can be supplied to the -i flag to specify an
+       interface on which to capture.
+
+-e     Print the link-level header on each dump line.
+
+-F     Use file as input for  the  filter  expression.   An  additional
+       expression given on the command line is ignored.
+
+-i     Listen  on interface.
+       On Linux systems with 2.2 or later kernels, an  interface  argu-
+       ment  of  ''any'' can be used to capture packets from all inter-
+       faces.  Note that captures on the ''any''  device  will  not  be
+       done in promiscuous mode.
+
+-l     Make stdout line buffered. Print only when the buffer is full. Useful if you want to see the data while capturing it.
+       "tcpdump -l | tee dat" or "tcpdump -l > dat & tail -f dat"
+
+-L     List the known data link types for the interface and exit.
+
+-n     Don't convert addresses (i.e., host addresses, port numbers, etc.) to names.
+
+-q     Quick output. Print less protocol information so output lines are shorter.
+
+-r     Read packets from file (which was created with the  -w  option).
+       Standard input is used if file is ''-''.
+
+-S     Print absolute, rather than relative, TCP sequence numbers.
+
+-s     Exemplo:
+       tcpdump -i eth0 -s 1500
+       Captura até 1500 bytes dos pacotes ao invés dos 68 bytes capturados na opção padrão.
+       68  bytes is adequate for IP, ICMP, TCP and UDP.
+       Packets  truncated  because  of a limited snapshot are
+       indicated in the output with ''[|proto]'', where  proto  is  the
+       name of the protocol level at which the truncation has occurred.
+
+       Note that taking larger snapshots both increases the  amount  of
+       time it takes to process packets and, effectively, decreases the
+       amount of packet buffering.  This may cause packets to be  lost.
+
+       Setting snaplen to 0 means use the required length to catch whole packets.
+
+-t     Don't print a timestamp on each dump line.
+
+-tt    Print an unformatted timestamp on each dump line.
+
+-ttt   Print  a  delta  (in micro-seconds) between current and previous
+       line on each dump line.
+
+-tttt  Print a timestamp in default format proceeded by  date  on  each
+       dump line.
+
+-U     Quando salva para arquivo com -w, o pacote não fica retido em buffer.
+
+-v     When  parsing and printing, produce (slightly more) verbose out-
+       put.  For example,  the  time  to  live,  identification,  total
+       length  and  options  in an IP packet are printed.  Also enables
+       additional packet integrity checks such as verifying the IP  and
+       ICMP header checksum.
+
+       When writing to a file with the -w option, report, every 10 sec-
+       onds, the number of packets captured.
+
+-vv    Even more verbose output.  For example,  additional  fields  are
+       printed  from  NFS  reply  packets,  and  SMB  packets are fully
+       decoded.
+
+-vvv   Even more verbose output.  For example, telnet SB ... SE options
+       are  printed in full.  With -X Telnet options are printed in hex
+       as well.
+
+-w     Write the raw packets to file rather than parsing  and  printing
+       them  out.  They can later be printed with the -r option.  Stan-
+       dard output is used if file is -.
+
+       Exemplo
+       # tcpdump -U -i eth0 -w ./lab.bin host 192.168.0.1 and port 22
+       # tcpdump -t -r ./lab.bin
+
+-W     Used in conjunction with the -C option, this will limit the num-
+       ber  of  files  created to the specified number, and begin over-
+       writing files from the beginning,  thus  creating  a  'rotating'
+       buffer.  In addition, it will name the files with enough leading
+       0s to support the maximum number of files, allowing them to sort
+       correctly.
+
+-X     When  parsing  and printing, in addition to printing the headers
+       of each packet, print the data of each packet  (minus  its  link
+       level  header)  in  hex  and  ASCII.   This  is  very  handy for
+       analysing new protocols.
+
+-XX    When parsing and printing, in addition to printing  the  headers
+       of  each  packet,  print  the data of each packet, including its
+       link level header, in hex and ASCII.
+
+-y     Set the data  link  type  to  use  while  capturing  packets  to
+       datalinktype.
+

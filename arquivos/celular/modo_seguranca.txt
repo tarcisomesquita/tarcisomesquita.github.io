@@ -1,0 +1,3 @@
+desabilita aplicativos de terceiros
+
+toque no botão de liga e desliga e quando a mensagem de desligar aparecer toque nela e segure até aparecer outra mensagem dizendo que o aparelho será reiniciado em modo de segurança.

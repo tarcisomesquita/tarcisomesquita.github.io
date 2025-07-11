@@ -1,0 +1,60 @@
+sudo ip6tables -t filter -P INPUT   DROP
+sudo ip6tables -t filter -P FORWARD DROP
+sudo ip6tables -t filter -P OUTPUT  DROP
+sudo iptables  -t filter -P INPUT   DROP
+sudo iptables  -t filter -P FORWARD DROP
+sudo iptables  -t filter -P OUTPUT  DROP
+
+sudo iptables -t filter -F INPUT
+sudo iptables -t filter -I INPUT -j DROP
+sudo iptables -t filter -I INPUT -m state --state NEW,INVALID                                   -j DROP
+sudo iptables -t filter -I INPUT                                                                -j LOG --log-prefix "NEW: " --log-level info
+sudo iptables -t filter -I INPUT -p udp --sport 53  -s 192.168.0.1 -m state --state ESTABLISHED -j ACCEPT
+sudo iptables -t filter -I INPUT -p tcp --sport 443                -m state --state ESTABLISHED -j ACCEPT
+sudo iptables -t filter -I INPUT -p tcp --dport 80   -d 127.0.1.2  -m state --state NEW,ESTABLISHED -j ACCEPT
+sudo iptables -t filter -I INPUT -p udp --dport 80   -d 127.0.1.2  -m state --state NEW,ESTABLISHED -j ACCEPT
+
+sudo iptables -t nat    -I OUTPUT -p tcp                       -j DNAT --to 127.0.1.2:80  -m comment --comment "DNAT"
+
+if [ " " ] ; then
+sudo bash -c '
+while true ; do
+nc -vv -l 127.0.1.2 80 &
+wait $(pidof nc)
+done'
+fi
+
+for DEVICE in $(find /sys/devices/pci0000\:00 -type f -name device -print ); do 
+  if [ "$(cat $DEVICE 2>/dev/null)" == "0x9c03" ] ; then
+    echo "SATA Controller 1 [AHCI mode]" ; 
+    sudo bash -c "echo 1 > $(dirname $DEVICE)/remove";
+  fi
+done
+
+sudo rmmod ahci
+
+
+sudo /etc/init.d/network-manager stop
+echo 8 > /proc/sys/net/ipv4/conf/all/arp_ignore
+
+sudo rfkill list
+sudo rfkill unblock 1
+
+sudo ifconfig wlp6s0 down
+sudo ifconfig wlp6s0 hw ether 18:89:5b:46:29:ed up  # 14-CC-20-FD-44-80
+
+sudo bash -c '
+echo "
+network={
+	ssid=\"TBL\"
+	psk=...
+}" >  /etc/wpa_supplicant.conf '
+cat /etc/wpa_supplicant.conf
+
+sudo /sbin/wpa_supplicant -d wext -i wlp6s0 -c /etc/wpa_supplicant.conf -B
+sudo iwconfig wlp6s0
+
+/sbin/dhclient wlp6s0
+sudo bash -c 'tcpdump -U -i wlp6s0 -C 100 -w "$(date +'%Y-%m-%d_%H-%M')".pcap &'
+
+

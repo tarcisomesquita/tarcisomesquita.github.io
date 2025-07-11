@@ -1,0 +1,53 @@
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar
+
+private properties and object properties allow reserved words.
+const obj = { import: "value" }; // Legal despite `import` being reserved
+class C {
+  #import = "value";
+}
+
+
+const
+let
+var // não usar
+
+true
+false
+null
+
+if
+else
+
+switch
+case
+default
+
+while
+for
+do
+break
+continue
+in
+of
+
+function  // não usar
+return
+
+try
+catch
+finally
+
+class
+extends
+implements
+instanceof
+new
+super
+this
+throw
+throws
+void
+with
+
+import as from
+export default

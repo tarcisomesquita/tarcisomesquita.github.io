@@ -1,0 +1,162 @@
+Keep code and data on separate pages.
+
+Assembly/Compiler Coding Rule 1. (MH impact, M generality) Arrange code
+to make basic blocks contiguous and eliminate unnecessary branches.
+
+Assembly/Compiler Coding Rule 2. (M impact, ML generality) Use the SETCC
+and CMOV instructions to eliminate unpredictable conditional branches where
+possible. Do not do this for predictable branches.
+
+   Use the CMOV instruction.
+   Use the SETCC instruction.
+
+X = (A < B) ? CONST1 : CONST2;
+
+Example 3-1. Assembly Code with an Unpredictable Branch
+cmp a, b
+jbe L30
+mov ebx const1
+jmp L31
+L30:
+mov ebx, const2
+L31:
+; Condition
+; Conditional branch
+; ebx holds X
+; Unconditional branch
+
+
+Assembly/Compiler Coding Rule 4. (MH impact, MH generality) Near calls
+must be matched with near returns, and far calls must be matched with far returns.
+
+Assembly/Compiler Coding Rule 7. (ML impact, ML generality) If there are
+more than 16 nested calls and returns in rapid succession; consider transforming
+the program with inline to reduce the call depth.
+
+Assembly/Compiler Coding Rule 9. (L impact, L generality) If the last
+statement in a function is a call to another function, consider converting the call to
+a jump. This will save the call/return overhead as well as an entry in the return
+stack buffer.
+
+Assembly/Compiler Coding Rule 10. (M impact, L generality) Do not put
+more than four branches in a 16-byte chunk.
+
+Assembly/Compiler Coding Rule 11. (M impact, L generality) Do not put
+more than two end loop branches in a 16-byte chunk.
+
+Assembly/Compiler Coding Rule 12. (M impact, H generality) All branch
+targets should be 16-byte aligned.
+
+Assembly/Compiler Coding Rule 13. (M impact, H generality) If the body of a
+conditional is not likely to be executed, it should be placed in another part of the
+program. If it is highly unlikely to be executed and code locality is an issue, it
+should be placed on a different code page.
+
+
+Assembly/Compiler Coding Rule 15. (H impact, M generality) Unroll small
+loops until the overhead of the branch and induction variable accounts (generally)
+for less than 10% of the execution time of the loop.
+
+Assembly/Compiler Coding Rule 16. (H impact, M generality) Avoid unrolling
+loops excessively; this may thrash the trace cache or instruction cache.
+
+Assembly/Compiler Coding Rule 17. (M impact, M generality) Unroll loops
+that are frequently executed and have a predictable number of iterations to reduce
+the number of iterations to 16 or fewer. Do this unless it increases code size so that
+the working set no longer fits in the trace or instruction cache. If the loop body
+contains more than one conditional branch, then unroll so that the number of
+iterations is 16/(# conditional branches).
+
+Example 3-2. Code Optimization to Eliminate Branches
+xor ebx, ebx
+cmp A, B
+setge bl
+; Clear ebx (X in the C code)
+; When ebx = 0 or 1
+; OR the complement condition
+sub ebx, 1
+; ebx=11...11 or 00...00
+and ebx, CONST3; CONST3 = CONST1-CONST2
+add ebx, CONST2; ebx=CONST1 or CONST2
+
+
+
+Example 3-3. Eliminating Branch with CMOV Instruction
+test ecx, ecx
+jne 1H
+mov eax, ebx
+1H:
+
+; To optimize code, combine jne and mov into one cmovcc instruction that checks the equal flag
+test ecx, ecx
+; Test the flags
+cmoveq eax, ebx
+; If the equal flag is set, move
+; ebx to eax- the 1H: tag no longer needed
+
+
+
+Before unrolling:
+do i = 1, 100
+if ( i mod 2 == 0 ) then a( i ) = x
+else a( i ) = y
+enddo
+
+After unrolling
+do i = 1, 100, 2
+a( i ) = y
+a( i+1 ) = x
+enddo
+
+
+Assembly/Compiler Coding Rule 18. (ML impact, M generality) For improving
+fetch/decode throughput, Give preference to memory flavor of an instruction over
+the register-only flavor of the same instruction, if such instruction can benefit from
+micro-fusion.
+
+Assembly/Compiler Coding Rule 19. (M impact, ML generality) Employ
+macro-fusion where possible using instruction pairs that support macro-fusion.
+Prefer TEST over CMP if possible. Use unsigned variables and unsigned jumps when
+possible. Try to logically verify that a variable is non-negative at the time of
+comparison. Avoid CMP or TEST of MEM-IMM flavor when possible.
+
+
+
+//if (a == 0)
+cmp a, 0
+jne lbl
+...
+lbl: 
+
+//best
+test a, a
+jne lbl
+...
+lbl:
+
+Assembly/Compiler Coding Rule 31. (ML impact, M generality) Avoid using
+complex instructions (for example, enter, leave, or loop) that have more than four
+μops and require multiple cycles to decode. Use sequences of simple instructions
+instead.
+
+Assembly/Compiler Coding Rule 32. (M impact, H generality) INC and DEC
+instructions should be replaced with ADD or SUB instructions, because ADD and
+SUB overwrite all flags, whereas INC and DEC do not, therefore creating false
+dependencies on earlier instructions that set the flags.
+
+
+Assembly/Compiler Coding Rule 33. (ML impact, L generality) If an LEA
+instruction using the scaled index is on the critical path, a sequence with ADDs may
+be better.
+
+Assembly/Compiler Coding Rule 34. (ML impact, L generality) Avoid ROTATE
+by register or ROTATE by immediate instructions. If possible, replace with a
+ROTATE by 1 instruction.
+
+
+Assembly/Compiler Coding Rule 35. (M impact, ML generality)
+In contexts where the
+condition codes must be preserved, move 0 into the register instead. This requires
+more code space than using XOR and SUB, but avoids setting the condition codes.
+
+

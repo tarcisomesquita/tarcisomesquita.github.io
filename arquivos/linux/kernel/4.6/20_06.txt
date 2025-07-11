@@ -1,0 +1,111 @@
+
+/media/ubuntu/SD/SD/linux/kernel/4.6/config  tela preta
+/media/ubuntu/SD/SD/linux/kernel/4.6/config.old  funciona
+
+problema: comecei a configuração de baixo para cima.
+prioridade para EFI e initramfs
+
+
+
+
+cat /proc/net/dev
+sudo ip address add 192.168.0.3/24 dev enp7s0
+sudo ip link set enp7s0 up
+sudo ip route add default via 192.168.0.1 dev enp7s0
+
+sudo bash -c /media/ubuntu/SD/SD/pacotes/VirtualBox-5.0.10-104061-Linux_amd64.run
+VBoxManage extpack install /media/ubuntu/SD/SD/pacotes/Oracle_VM_VirtualBox_Extension_Pack-5.0.10-104061.vbox-extpack
+
+cd /home/ubuntu/Desktop
+dd if=/dev/zero of=efi.bin bs=$((128*1024*1024)) count=1 status=none && \
+export LOOP=$(sudo losetup -f) && \
+sudo losetup $LOOP /home/ubuntu/Desktop/efi.bin && \
+sudo mkfs.vfat -n "EFI" -i "35737DF7" $LOOP
+
+montar
+mkdir -p /media/ubuntu/EFI/EFI/BOOT
+sudo sync
+VBoxManage internalcommands createrawvmdk -filename /home/ubuntu/Desktop/efi.vmdk -rawdisk /home/ubuntu/Desktop/efi.bin
+VBoxManage hostonlyif create
+VBoxManage hostonlyif ipconfig "vboxnet0" --ip 192.168.0.1 --netmask 255.255.255.0
+
+VBoxManage createvm --name "efi" --ostype Linux_64 --register --basefolder /home/ubuntu/Desktop/VM_image && \
+VBoxManage modifyvm "efi" --memory 3072 --pae on --acpi on --firmware efi64 --bioslogodisplaytime 0 --biosbootmenu messageandmenu --biossystemtimeoffset 3000 --boot1 disk --nic1 hostonly --hostonlyadapter1 vboxnet0 --cableconnected1 on --nictracefile1 /home/ubuntu/Desktop/nic1.bin --nicpromisc1 allow-all --nicspeed1 10000 --macaddress1 000000000001 --mouse ps2 --keyboard ps2 --audio none --clipboard bidirectional --draganddrop bidirectional --vrde off --usb off  --teleporter off  && \
+VBoxManage storagectl "efi" --name mySata --add sata --portcount 2      --hostiocache off --bootable off && \
+VBoxManage storageattach "efi" --storagectl mySata --medium  /home/ubuntu/Desktop/efi.vmdk --port 0 --type hdd
+
+VBoxManage startvm "efi" --type gui
+
+sudo umount /media/ubuntu/EFI && \
+sudo losetup -d $LOOP
+
+
+cd linux-4.6/
+make distclean
+make x86_64_defconfig
+
+
+
+rm ../config.old.txt
+mv ../config.txt ../config.old.txt
+cp .config ../config.txt
+make distclean
+cp ../config.txt ./.config
+make menuconfig
+
+make -j 4 modules
+rm /home/ubuntu/Desktop/initrd/modules/*
+rm /home/ubuntu/Desktop/initramfs.cpio
+cp drivers/ata/ahci.ko \
+drivers/ata/libahci.ko \
+drivers/net/ethernet/intel/e1000/e1000.ko \
+fs/nls/nls_iso8859-1.ko  /home/ubuntu/Desktop/initrd/modules
+cd /home/ubuntu/Desktop/initrd
+find . -print | cpio --quiet -R 0:0 -o -H newc > ../initramfs.cpio
+cd -
+
+Próximo:
+Power management and ACPI options  --->
+
+make -j 4 bzImage
+VBoxManage controlvm efi poweroff
+#rm /media/ubuntu/EFI/EFI/BOOT/bootx64.efi 
+rm /media/ubuntu/EFI/casper/vmlinuz.efi
+sudo sync
+#cp arch/x86/boot/bzImage /media/ubuntu/EFI/EFI/BOOT/bootx64.efi
+cp arch/x86/boot/bzImage /media/ubuntu/EFI/casper/vmlinuz.efi
+sudo sync
+VBoxManage startvm "efi"
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+ > Enable the block layer > Partition Types > PC BIOS (MSDOS partition tables) support
+Sem isso, fica uma tela preta
+
+
+mkdir /home/ubuntu/Desktop/initrd
+cd    /home/ubuntu/Desktop/initrd
+lzma -dc -S .lz /media/ubuntu/SD/initrd.lz_vb | cpio -imvd --no-absolute-filenames
+
+
+
+fs/fat/fat.ko \
+fs/fat/vfat.ko \
+fs/ext2/ext2.ko \
+drivers/block/loop.ko \
+drivers/cdrom/cdrom.ko \
+drivers/net/ethernet/realtek/r8169.ko \
+drivers/net/mii.ko \
+drivers/net/usb/r8152.ko \
+drivers/thermal/x86_pkg_temp_thermal.ko \
+drivers/usb/mon/usbmon.ko \
+drivers/usb/storage/usb-storage.ko \
+drivers/usb/usbip/usbip-core.ko \
+drivers/usb/usbip/usbip-host.ko \
+fs/nls/nls_ascii.ko \
+fs/nls/nls_cp437.ko \
+fs/nls/nls_cp860.ko \
+fs/nls/nls_utf8.ko \
+fs/overlayfs/overlay.ko \
+fs/squashfs/squashfs.ko

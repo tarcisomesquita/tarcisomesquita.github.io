@@ -1,0 +1,24 @@
+Servidor Autoritativo
+Ao receber requisições de resolução de nome, responde um endereço caso possua, uma referência caso conheça o caminho da resolução ou uma negação caso não conheça.
+
+Servidor Recursivo
+Ao receber requisições de resolução de nomes, faz requisições para os servidores autoritativos e conforme a resposta recebida dos mesmos continua a realizar requisições para outros servidores autoritativos até obter a resposta satisfatória
+
+
+Iterative queries
+An iterative query sends a domain name to a DNS server and asks the server to return either the IP address of the domain or the name of the DNS server that is authoritative for the domain or one of its parents: The server does not query other servers when seeking an answer. Nameservers typically send each other iterative queries.
+
+Recursive queries
+A recursive query sends a domain name to a DNS server and asks the server to return the IP address of the domain. The server might need to query other servers to get the answer.
+
+
+There are three main types of DNS servers: primary (master), secondary (slave), and caching-only.
+
+• A primary master server, also called a primary server or master server, is the authoritative server that holds the master copy of zone data. It copies information from the zone or master file, a local file that the server administrator maintains. For security and efficiency, a primary master server should provide iterative answers only. A primary master server that provides recursive answers is more easily subverted by a DoS attack (page 1245) than one that provides iterative answers only.
+
+• Slave servers, also called secondary servers, are authoritative and copy zone information from the primary master server or another slave server. On some systems, when information on the primary master server changes, the primary master server notifies the slave servers. When a slave receives such a message, it uses a process called zone transfer to copy the new zone information from the master server to itself.
+
+• DNS caches, also called caching-only servers, are not authoritative. These servers store answers to previous queries in cache (memory). When a DNS cache receives a query, it answers it from cache if it can. If the DNS cache does not have the answer in cache, it forwards the query to an authoritative server.
+
+
+

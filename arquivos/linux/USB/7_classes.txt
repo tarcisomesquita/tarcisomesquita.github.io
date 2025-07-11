@@ -1,0 +1,31 @@
+
+interface descriptors contain fields that are related to classification: class, sub-class and protocol.
+
+CLASSES
+A USB device can either use a custom driver or use one already present in the system and this is based on the concept of a device class. This means that if a device belongs to a certain class, then other devices belonging to the same class can make use of the same device driver.
+Some of these classes are:
+> USB HID (Human Interface Devices) class which covers input devices like keyboards and mice;
+> USB Mass Storage devices class which covers devices like pen drives, digital cameras, audio players etc;
+> USB CDC (Communication Devices Class) which essentially covers USB modems and similar devices. 
+
+
+Class 	Usage 	Description 	Examples
+00h 	Device 	Unspecified[8] 	(Device class is unspecified. Interface descriptors are used for determining the required drivers.)
+01h 	Interface 	Audio 	Speaker, microphone, sound card, MIDI
+02h 	Both 	Communications and CDC Control 	Ethernet adapter, modem
+03h 	Interface 	Human interface device (HID) 	Keyboard, mouse, joystick
+05h 	Interface 	Physical Interface Device (PID) 	Force feedback joystick
+06h 	Interface 	Image 	Webcam, scanner
+07h 	Interface 	Printer 	Laser printer, inkjet printer, CNC machine
+08h 	Interface 	Mass storage 	USB flash drive, memory card reader, digital audio player, digital camera, external drive
+09h 	Device 	USB hub 	Full bandwidth hub
+0Ah 	Interface 	CDC-Data 	(This class is used together with class 02h—Communications and CDC Control.)
+0Bh 	Interface 	Smart Card 	USB smart card reader
+0Dh 	Interface 	Content security 	Fingerprint reader
+0Eh 	Interface 	Video 	Webcam
+0Fh 	Interface 	Personal Healthcare 	Pulse monitor (watch)
+DCh 	Both 	Diagnostic Device 	USB compliance testing device
+E0h 	Interface 	Wireless Controller 	Wi-Fi adapter, Bluetooth adapter
+EFh 	Both 	Miscellaneous 	ActiveSync device
+FEh 	Interface 	Application-specific 	IrDA Bridge, Test & Measurement Class (USBTMC),[9] USB DFU (Direct Firmware update)[10]
+FFh 	Both 	Vendor-specific 	(This class code indicates that the device needs vendor specific drivers.)

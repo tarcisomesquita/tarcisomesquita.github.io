@@ -1,0 +1,91 @@
+multicast pkt from wireless laptop to 224.0.0.1 (udp app/urld)
+
+Frame 56 (402 on wire, 402 captured)
+    Arrival Time: Mar 10, 2002 09:03:23.342899000
+    Time delta from previous packet: 0.064748000 seconds
+    Time relative to first packet: 4.678114000 seconds
+    Frame Number: 56
+    Packet Length: 402 bytes
+    Capture Length: 402 bytes
+IEEE 802.11
+    Type/Subtype: Data (32)
+    Frame Control: 0x0108
+        Version: 0
+        Type: Data frame (2)
+        Subtype: 0
+        Flags: 0x1
+            DS status: Frame is entering DS (To DS: 1  From DS: 0) (0x01)
+            .... .0.. = Fragments: No fragments
+            .... 0... = Retry: Frame is not being retransmitted
+            ...0 .... = PWR MGT: STA will stay up
+            ..0. .... = More Data: No data buffered
+            .0.. .... = WEP flag: WEP is disabled
+            0... .... = Order flag: Not strictly ordered
+    Duration: 258
+    BSS Id: 00:50:18:05:d0:f8 (00:50:18:05:d0:f8)
+    Source address: 00:02:2d:0d:06:c2 (00:02:2d:0d:06:c2)
+    Destination address: 01:00:5e:00:00:01 (01:00:5e:00:00:01)
+    Fragment number: 0
+    Sequence number: 48
+Logical-Link Control
+    DSAP: SNAP (0xaa)
+    IG Bit: Individual
+    SSAP: SNAP (0xaa)
+    CR Bit: Command
+    Control field: U, func = UI (0x03)
+        000. 00.. = Unnumbered Information
+        .... ..11 = Unnumbered frame
+    Organization Code: Encapsulated Ethernet (0x000000)
+    Type: IP (0x0800)
+Internet Protocol, Src Addr: 192.168.30.146 (192.168.30.146), Dst Addr: 224.0.0.1 (224.0.0.1)
+    Version: 4
+    Header length: 20 bytes
+    Differentiated Services Field: 0x00 (DSCP 0x00: Default; ECN: 0x00)
+        0000 00.. = Differentiated Services Codepoint: Default (0x00)
+        .... ..0. = ECN-Capable Transport (ECT): 0
+        .... ...0 = ECN-CE: 0
+    Total Length: 370
+    Identification: 0x0039
+    Flags: 0x00
+        .0.. = Don't fragment: Not set
+        ..0. = More fragments: Not set
+    Fragment offset: 0
+    Time to live: 1
+    Protocol: UDP (0x11)
+    Header checksum: 0xf906 (correct)
+    Source: 192.168.30.146 (192.168.30.146)
+    Destination: 224.0.0.1 (224.0.0.1)
+User Datagram Protocol, Src Port: 1048 (1048), Dst Port: 1999 (1999)
+    Source port: 1048 (1048)
+    Destination port: 1999 (1999)
+    Length: 350
+    Checksum: 0xfae2 (correct)
+Data (342 bytes)
+
+0000  08 01 02 01 00 50 18 05 d0 f8 00 02 2d 0d 06 c2   .....P......-...
+0010  01 00 5e 00 00 01 00 03 aa aa 03 00 00 00 08 00   ..^.............
+0020  45 00 01 72 00 39 00 00 01 11 f9 06 c0 a8 1e 92   E..r.9..........
+0030  e0 00 00 01 04 18 07 cf 01 5e fa e2 00 5b 00 1f   .........^...[..
+0040  6a 72 62 20 6c 61 70 74 6f 70 2f 6d 69 73 73 6f   jrb laptop/misso
+0050  75 72 69 2e 63 73 2e 70 64 78 2e 65 64 75 20 00   uri.cs.pdx.edu .
+0060  5e 00 01 01 00 5c 00 1a 68 74 74 70 3a 2f 2f 77   ^....\..http://w
+0070  77 77 2e 63 73 2e 70 64 78 2e 65 64 75 2f 7e 6a   ww.cs.pdx.edu/~j
+0080  72 62 00 5d 00 0d 4a 52 42 20 48 6f 6d 65 20 70   rb.]..JRB Home p
+0090  61 67 65 00 5c 00 1b 68 74 74 70 3a 2f 2f 6d 69   age.\..http://mi
+00a0  73 73 6f 75 72 69 2e 63 73 2e 70 64 78 2e 65 64   ssouri.cs.pdx.ed
+00b0  75 2f 00 5d 00 20 4a 52 42 20 48 6f 6d 65 20 70   u/.]. JRB Home p
+00c0  61 67 65 20 6f 6e 20 6d 69 73 73 6f 75 72 69 2f   age on missouri/
+00d0  6c 61 70 74 6f 70 00 5c 00 16 68 74 74 70 3a 2f   laptop.\..http:/
+00e0  2f 31 33 31 2e 32 35 32 2e 32 32 32 2e 39 37 2f   /131.252.222.97/
+00f0  00 5d 00 20 4a 52 42 20 48 6f 6d 65 20 70 61 67   .]. JRB Home pag
+0100  65 20 6f 6e 20 6d 69 73 73 6f 75 72 69 2f 6c 61   e on missouri/la
+0110  70 74 6f 70 00 5c 00 1c 68 74 74 70 3a 2f 2f 77   ptop.\..http://w
+0120  77 77 2e 70 65 72 73 6f 6e 61 6c 74 65 6c 63 6f   ww.personaltelco
+0130  2e 6e 65 74 00 5d 00 18 50 65 72 73 6f 6e 61 6c   .net.]..Personal
+0140  20 54 65 6c 63 6f 20 48 6f 6d 65 20 50 61 67 65    Telco Home Page
+0150  00 5c 00 18 68 74 74 70 3a 2f 2f 77 77 77 2e 72   .\..http://www.r
+0160  6f 75 74 65 72 67 6f 64 2e 63 6f 6d 00 5d 00 22   outergod.com.]."
+0170  72 6f 75 74 65 72 67 6f 64 2e 63 6f 6d 20 20 72   routergod.com  r
+0180  6f 75 74 65 72 67 6f 64 20 68 6f 6d 65 20 70 61   outergod home pa
+0190  67 65                                             ge              
+

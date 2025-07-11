@@ -1,0 +1,43 @@
+
+apt-get install wpa_supplicant
+
+# /etc/wpa_supplicant/wpa_supplicant.conf
+ctrl_interface=/var/run/wpa_supplicant
+ctrl_interface_group=root
+network={
+        ssid="homenet"
+        key_mgmt=WPA-PSK
+        psk="ketchup_and_mustard"
+}
+
+# wpa_passphrase homenet ketchup_and_mustard
+network={
+        ssid="homenet"
+        #psk="ketchup_and_mustard"
+        psk=aeaa365d1703f88afc11715cd997b71038ce5798907510bd1b1c6786d33c8c3a
+}
+
+# /etc/sysconfig/wpa_supplicant
+INTERFACES="-iwlan0"
+DRIVERS="-Dwext"
+
+# service wpa_supplicant restart 
+# chkconfig wpa_supplicant on
+
+# /etc/sysconfig/network-scripts/ifcfg-eth0
+DEVICE=wlan0
+IPADDR=192.168.43.170
+NETMASK=255.255.255.0
+ONBOOT=yes
+TYPE=Wireless
+MODE=Managed
+
+# File: /etc/network/interfaces
+auto wlan0
+iface eth1 inet static
+        address 192.168.43.170
+        netmask 255.255.255.0
+        wireless-essid HALL
+        pre-up wpa_supplicant -B -D wext -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf
+        post-down killall -q wpa_supplicant
+

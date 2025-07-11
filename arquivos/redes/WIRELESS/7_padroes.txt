@@ -1,0 +1,25 @@
+
+802.11b
+frequência: 2.4 GHz
+velocidade: 11 Mbps
+alcança distâncias ~120m (depende da antena)
+
+802.11a
+frequência 5 GHz
+velocidade: 54 Mbps
+taxas de transmissão (reais) em torno de 3,4 MB/s
+alcança distâncias ~35m (depende da antena)
+
+802.11g
+freqüência: 2.4 GHz
+velocidade: 54 Mbps
+taxas de transmissão (reais) em torno de 3,0 MB/s
+Chips da Atheros utilizam o "Atheros Super G", um sistema dual-band, onde a placa passa a transmitir usando dois canais simultaneamente (channel bonding), dobrando a taxa de transmissão.
+
+802.11n
+frequência: 2,4 GHz e/ou 5 GHz
+velocidade: 150 a 600 Mbps
+
+802.11ax
+frequência: 6 Ghz e/ou 5 Ghz e 2.4 Ghz
+velocidade: 9.6 Gbps

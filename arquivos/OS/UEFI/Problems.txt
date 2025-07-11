@@ -1,0 +1,8 @@
+When control is handed to your UEFI application by firmware, it sets a watchdog timer for 5 minutes, after which the firmware is reinvoked as it assumes your application has hung.
+you can disable it completely with code like
+
+SystemTable->BootServices->SetWatchdogTimer(0, 0, 0, NULL);
+
+My bootloader hangs if I change EFI_MEMORY_TYPE values
+bug: values above 0x80000000 = 2 GiB
+

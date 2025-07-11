@@ -1,0 +1,48 @@
+clear ; adb shell su -c 'ps'
+root      95    1     101176 27984 c0130ab8 afd0dc84 S zygote
+
+
+$ clear ; adb shell su -c '/data/strace -p 95'
+Após esse comando abri o navegador gps, o maps e o gpsconf
+
+Process 95 attached - interrupt to quit
+select(21, [10 20], NULL, NULL, NULL)   = 1 (in [20])
+ioctl(20, FIONREAD, [96])               = 0
+recvmsg(20, {msg_name(0)=NULL, msg_iov(1)=[{"5\n--runtime-init\n--setuid=10054\n"..., 5077}], msg_controllen=0, msg_flags=0}, MSG_NOSIGNAL) = 96
+ioctl(20, FIONREAD, [0])                = 0
+sigaction(SIGCHLD, {0x80b5ca71, [], 0}, NULL, 0x553e0) = 0
+fork()                                  = 928
+getpgid(0xac)                           = 95
+setpgid(928, 95)                        = 0
+sendmsg(20, {msg_name(0)=NULL, msg_iov(1)=[{"\0\0\3\240", 4}], msg_controllen=0, msg_flags=0}, MSG_NOSIGNAL) = 4
+select(21, [10 20], NULL, NULL, NULL)   = ? ERESTARTNOHAND (To be restarted)
+--- SIGCHLD (Child exited) @ 0 (0) ---
+wait4(-1, [{WIFSIGNALED(s) && WTERMSIG(s) == SIGKILL}], WNOHANG, NULL) = 445
+wait4(-1, 0xbebad49c, WNOHANG, NULL)    = 0
+sigreturn()                             = ? (mask now [])
+select(21, [10 20], NULL, NULL, NULL)   = 1 (in [20])
+ioctl(20, FIONREAD, [96])               = 0
+recvmsg(20, {msg_name(0)=NULL, msg_iov(1)=[{"5\n--runtime-init\n--setuid=10054\n"..., 4981}], msg_controllen=0, msg_flags=0}, MSG_NOSIGNAL) = 96
+ioctl(20, FIONREAD, [0])                = 0
+sigaction(SIGCHLD, {0x80b5ca71, [], 0}, NULL, 0x553e0) = 0
+fork()                                  = 969
+getpgid(0xac)                           = 95
+setpgid(969, 95)                        = 0
+sendmsg(20, {msg_name(0)=NULL, msg_iov(1)=[{"\0\0\3\311", 4}], msg_controllen=0, msg_flags=0}, MSG_NOSIGNAL) = 4
+select(21, [10 20], NULL, NULL, NULL)   = ? ERESTARTNOHAND (To be restarted)
+--- SIGCHLD (Child exited) @ 0 (0) ---
+wait4(-1, [{WIFSIGNALED(s) && WTERMSIG(s) == SIGKILL}], WNOHANG, NULL) = 454
+wait4(-1, 0xbebad49c, WNOHANG, NULL)    = 0
+sigreturn()                             = ? (mask now [])
+select(21, [10 20], NULL, NULL, NULL)   = 1 (in [20])
+ioctl(20, FIONREAD, [101])              = 0
+
+conclui que ele abre outros processos
+
+
+
+
+
+
+
+

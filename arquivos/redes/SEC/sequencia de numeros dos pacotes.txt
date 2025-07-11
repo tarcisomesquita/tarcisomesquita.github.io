@@ -1,0 +1,103 @@
+
+cliente:
+identification . . . . (16) 0b 33
+sequence number . . . .(32) 6e 39 c2 59
+acknowledgment number .(32) 00 00 00 00
+flags . . . . . . . . .(06) 0b000010               SYN
+
+servidor:
+identification . . . . (16) 00 00
+sequence number . . . .(32) 25 3e bf 02
+acknowledgment number .(32) 6e 39 c2 5a
+flags . . . . . . . . .(06) 0b010010     ACK        SYN
+
+cliente:
+identification . . . . (16) 0b 34
+sequence number . . . .(32) 6e 39 c2 5a
+acknowledgment number .(32) 25 3e bf 03
+flags . . . . . . . . .(06) 0b010000      ACK         
+
+cliente: (requer a página)
+identification . . . . (16) 0b 35
+sequence number . . . .(32) 6e 39 c2 5a
+acknowledgment number .(32) 25 3e bf 03
+flags . . . . . . . . .(06) 0b011000     ACK PUSH
+
+servidor:
+identification . . . . (16) 61 02
+sequence number . . . .(32) 25 3e bf 03
+acknowledgment number .(32) 6e 39 c3 f4
+flags . . . . . . . . .(06) 0b010000     ACK
+
+servidor: (primeira parte da página)
+identification . . . . (16) 61 03
+sequence number . . . .(32) 25 3e bf 03
+acknowledgment number .(32) 6e 39 c3 f4
+flags . . . . . . . . .(06) 0b010000     ACK
+
+cliente:
+identification . . . . (16) 0b 36
+sequence number . . . .(32) 6e 39 c3 f4
+acknowledgment number .(32) 25 3e c4 5b
+flags . . . . . . . . .(06) 0b010000      ACK         
+
+servidor: (segunda parte da página)
+identification . . . . (16) 61 04
+sequence number . . . .(32) 25 3e c4 5b
+acknowledgment number .(32) 6e 39 c3 f4
+flags . . . . . . . . .(06) 0b010000     ACK
+
+cliente:
+identification . . . . (16) 0b 37
+sequence number . . . .(32) 6e 39 c3 f4
+acknowledgment number .(32) 25 3e c9 b3
+flags . . . . . . . . .(06) 0b010000      ACK         
+
+servidor: (terceira parte da página)
+identification . . . . (16) 61 05
+sequence number . . . .(32) 25 3e c9 b3
+acknowledgment number .(32) 6e 39 c3 f4
+flags . . . . . . . . .(06) 0b010000     ACK
+
+cliente:
+identification . . . . (16) 0b 38
+sequence number . . . .(32) 6e 39 c3 f4
+acknowledgment number .(32) 25 3e cf 0b
+flags . . . . . . . . .(06) 0b010000      ACK         
+
+servidor: (quarta e última parte da página)
+identification . . . . (16) 61 07
+sequence number . . . .(32) 25 3e d4 63
+acknowledgment number .(32) 6e 39 c3 f4
+flags . . . . . . . . .(06) 0b011000     ACK PUSH
+
+cliente:
+identification . . . . (16) 0b 39
+sequence number . . . .(32) 6e 39 c3 f4
+acknowledgment number .(32) 25 3e cf 0b
+flags . . . . . . . . .(06) 0b010000      ACK         
+
+cliente:
+identification . . . . (16) 09 9b
+sequence number . . . .(32) 6f 05 c3 0f
+acknowledgment number .(32) 00 00 00 00
+flags . . . . . . . . .(06) 0b000010                  SYN
+
+cliente:
+identification . . . . (16) d9 30
+sequence number . . . .(32) 6e ab 13 a5
+acknowledgment number .(32) 00 00 00 00
+flags . . . . . . . . .(06) 0b000010                  SYN
+
+servidor:
+identification . . . . (16) 61 06
+sequence number . . . .(32) 25 3e cf 0b
+acknowledgment number .(32) 6e 39 c3 f4
+flags . . . . . . . . .(06) 0b011000     ACK PUSH
+
+cliente:
+identification . . . . (16) 0b 3a
+sequence number . . . .(32) 6e 39 c3 f4
+acknowledgment number .(32) 25 3e d6 0f
+flags . . . . . . . . .(06) 0b010000      ACK         
+

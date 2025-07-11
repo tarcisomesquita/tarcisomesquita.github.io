@@ -1,0 +1,5 @@
+https://media.netflix.com/pt_br/
+
+https://www.opensubtitles.com/pt-BR/
+
+cat homem_bicentenario.srt | egrep -v '^[0-9]*$|^[0-9][0-9]:' | sed ':I; $bF; N; bI; :F; s|</\?i>||g; s/ *\n/\n/g; s/\([a-z0-9àáéêóô:]\)\n\([áéàa-z0-9]\)/\1 \2/g; s/,\n/, /g; s/\.\.\.\n\([a-zé]\)/... \1/g' | egrep -B1 '^[^A-ZÉÀ"-]'

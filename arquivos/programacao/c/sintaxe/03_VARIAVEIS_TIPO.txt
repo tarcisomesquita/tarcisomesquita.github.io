@@ -1,0 +1,35 @@
+
+TIPO
+char 	Armazena um único caracter ou números inteiro de um byte
+int 	Números inteiros (sem casas decimais)
+float 	Números em ponto flutuante (com casas decimais) com precisão simples (padrão IEEE 754-1985.)
+double 	Números em ponto flutuante (com casas decimais) com precisão dupla
+void    Vazio. (apenas para ponteiro)
+
+O tipo padrão (default) em C é int, por isso sempre que a declaração tiver apenas modificadores é assumido o tipo int. Por exemplo, long é equivalente a signed long int. Toda a função sem tipo declarado é assumida como sendo int.
+
+
+Exemplo de conversão de formato:
+
+extern int printf(const char *, ...);
+
+int main() {
+   int  i = 84;
+   char c = 'a';
+   char s[] = "Teste"; // Inclui \0 no final
+   // char var1[] = {'T', 'e', 's', 't', 'e'}; // Não inclui \0 no final
+   float f = 23.215;
+   
+   printf("\n");
+   printf("i = %d, c = %c, s = %s, f = %2.2f\n", i, c, s, f);
+   c = i;
+   printf("c <-- i : c = %c\n", c);
+   i = f;
+   printf("i <-- f : i = %d\n", i);
+   f = c;
+   printf("f <-- c : f = %2.2f\n", f);
+   printf("\n");
+   
+   return 0;
+}
+

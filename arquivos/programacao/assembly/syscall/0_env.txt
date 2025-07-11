@@ -1,0 +1,4 @@
+for V in $(env | cut -d'=' -f1) ; do unset $V ; done
+export TERM=xterm-256color
+export PATH=/bin:/usr/bin
+

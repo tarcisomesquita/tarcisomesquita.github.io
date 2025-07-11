@@ -1,0 +1,13 @@
+Follow the next example to create your first text file using ed.
+
+/home/larry# ed
+a
+This is my first text file using Ed.
+This is really fun.
+.
+w firstone.txt
+/home/larry# q
+
+You can verify the file's contents using the Unix concatenate utility.
+
+/home/larry# cat firstone.txt

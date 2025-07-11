@@ -1,0 +1,96 @@
+INT 13 - IBM/MS INT 13 Extensions - GET DRIVE PARAMETERS
+	AH = 48h
+	DL = drive (80h-FFh)
+	DS:SI -> buffer for drive parameters (see #00273)
+Return: CF clear if successful
+	    AH = 00h
+	    DS:SI buffer filled
+	CF set on error
+	    AH = error code (see #00234)
+
+
+Format of IBM/MS INT 13 Extensions drive parameters:
+Offset	Size	Description	(Table 00273)
+ 00h	WORD	(call) size of buffer (001Ah for v1.x, 001Eh for v2.x, 42h for v3.0)
+		(ret) size of returned data
+ 02h	WORD	information flags (see #00274)
+ 04h	DWORD	number of physical cylinders on drive
+ 08h	DWORD	number of physical heads on drive
+ 0Ch	DWORD	number of physical sectors per track
+ 10h	QWORD	total number of sectors on drive
+ 18h	WORD	bytes per sector
+---v2.0+ ---
+ 1Ah	DWORD	-> EDD configuration parameters (see #00278)
+		FFFFh:FFFFh if not available
+---v3.0 ---
+ 1Eh	WORD	signature BEDDh to indicate presence of Device Path info
+ 20h	BYTE	length of Device Path information, including signature and this
+		  byte (24h for v3.0)
+ 21h  3 BYTEs	reserved (0)
+ 24h  4 BYTEs	ASCIZ name of host bus ("ISA" or "PCI")
+ 28h  8 BYTEs	ASCIZ name of interface type
+		"ATA"
+		"ATAPI"
+		"SCSI"
+		"USB"
+		"1394" IEEE 1394 (FireWire)
+		"FIBRE" Fibre Channel
+ 30h  8 BYTEs	Interface Path (see #00275)
+ 38h  8 BYTEs	Device Path (see #00276)
+ 40h	BYTE	reserved (0)
+ 41h	BYTE	checksum of bytes 1Eh-40h (two's complement of sum, which makes
+		  the 8-bit sum of bytes 1Eh-41h equal 00h)
+
+
+Bitfields for IBM/MS INT 13 Extensions information flags:
+Bit(s)	Description	(Table 00274)
+ 0	DMA boundary errors handled transparently
+ 1	cylinder/head/sectors-per-track information is valid
+ 2	removable drive
+ 3	write with verify supported
+ 4	drive has change-line support (required if drive >= 80h is removable)
+ 5	drive can be locked (required if drive >= 80h is removable)
+ 6	CHS information set to maximum supported values, not current media
+ 15-7	reserved (0)
+Note:	bits 4-6 are only valid if bit 2 is set
+
+
+(Table 00234)
+Values for disk operation status:
+ 00h	successful completion
+ 01h	invalid function in AH or invalid parameter
+ 02h	address mark not found
+ 03h	disk write-protected
+ 04h	sector not found/read error
+ 05h	reset failed (hard disk)
+ 05h	data did not verify correctly (TI Professional PC)
+ 06h	disk changed (floppy)
+ 07h	drive parameter activity failed (hard disk)
+ 08h	DMA overrun
+ 09h	data boundary error (attempted DMA across 64K boundary or >80h sectors)
+ 0Ah	bad sector detected (hard disk)
+ 0Bh	bad track detected (hard disk)
+ 0Ch	unsupported track or invalid media
+ 0Dh	invalid number of sectors on format (PS/2 hard disk)
+ 0Eh	control data address mark detected (hard disk)
+ 0Fh	DMA arbitration level out of range (hard disk)
+ 10h	uncorrectable CRC or ECC error on read
+ 11h	data ECC corrected (hard disk)
+ 20h	controller failure
+ 31h	no media in drive (IBM/MS INT 13 extensions)
+ 32h	incorrect drive type stored in CMOS (Compaq)
+ 40h	seek failed
+ 80h	timeout (not ready)
+ AAh	drive not ready (hard disk)
+ B0h	volume not locked in drive (INT 13 extensions)
+ B1h	volume locked in drive (INT 13 extensions)
+ B2h	volume not removable (INT 13 extensions)
+ B3h	volume in use (INT 13 extensions)
+ B4h	lock count exceeded (INT 13 extensions)
+ B5h	valid eject request failed (INT 13 extensions)
+ B6h	volume present but read protected (INT 13 extensions)
+ BBh	undefined error (hard disk)
+ CCh	write fault (hard disk)
+ E0h	status register error (hard disk)
+ FFh	sense operation failed (hard disk)
+

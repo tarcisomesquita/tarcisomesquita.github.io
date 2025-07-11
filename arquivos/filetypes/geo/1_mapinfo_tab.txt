@@ -1,0 +1,16 @@
+.TAB (The ASCII file that is the link between all other files and holds information about the type of data set file)
+.DAT (The file that stores the attribute data. This is a dBase III DBF file) https://en.wikipedia.org/wiki/DBase .dbf 
+.MAP (Stores the graphic and geographic information needed to display each vector feature on a map)
+.ID (Stores information linking graphic data to the database information. This contains a 4-byte integer index into the MAP file for each feature).
+
+.IND (Optional index file for tabular data. This is present if any columns are indexed).
+
+
+raster images as layers in a map, such as *.JPG, *.TIF or *.PNG
+creates a *.TAB file which includes georeferencing information.
+
+As an alternative to the *.DAT file, MapInfo Professional can use other data formats such as, *.TXT, *.XLS
+
+https://mygeodata.cloud
+
+https://products.aspose.app/gis/viewer

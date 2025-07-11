@@ -1,0 +1,468 @@
+#!/bin/sh
+
+[ -d /dev ] || mkdir -m 0755 /dev
+[ -d /root ] || mkdir -m 0700 /root
+[ -d /sys ] || mkdir /sys
+[ -d /proc ] || mkdir /proc
+[ -d /tmp ] || mkdir /tmp
+mkdir -p /var/lock
+mount -t sysfs -o nodev,noexec,nosuid sysfs /sys
+mount -t proc -o nodev,noexec,nosuid proc /proc
+# Some things don't work properly without /etc/mtab.
+ln -sf /proc/mounts /etc/mtab
+
+echo "EM initrd.lz"
+
+if ! mount -t devtmpfs -o mode=0755 udev /dev; then
+	echo "W: devtmpfs not available, falling back to tmpfs for /dev"
+	mount -t tmpfs -o mode=0755 udev /dev
+	[ -e /dev/console ] || mknod -m 0600 /dev/console c 5 1
+	[ -e /dev/null ] || mknod /dev/null c 1 3
+fi
+mkdir /dev/pts
+mount -t devpts -o noexec,nosuid,gid=5,mode=0620 devpts /dev/pts || true
+mount -t tmpfs -o "noexec,nosuid,size=10%,mode=0755" tmpfs /run
+mkdir /run/initramfs
+# compatibility symlink for the pre-oneiric locations
+ln -s /run/initramfs /dev/.initramfs
+
+# mdadm needs hostname to be set. This has to be done before the udev rules are called!
+if [ -f "/etc/hostname" ]; then
+        /bin/hostname -b -F /etc/hostname 2>&1 1>/dev/null
+fi
+
+/bin/kbd_mode -u
+loadkeys -q -u /etc/boottime.kmap.gz
+
+echo > /sys/kernel/uevent_helper
+/lib/systemd/systemd-udevd --daemon --resolve-names=never
+udevadm trigger --action=add
+
+modprobe -q vesafb 2>/dev/null
+udevadm settle
+
+# Valid font faces are: VGA (sizes 8, 14 and 16), Terminus (sizes
+# 12x6, 14, 16, 20x10, 24x12, 28x14 and 32x16), TerminusBold (sizes
+# 14, 16, 20x10, 24x12, 28x14 and 32x16), TerminusBoldVGA (sizes 14
+# and 16) and Fixed (sizes 13, 14, 15, 16 and 18).  Only when
+FONTFACE="Fixed"
+FONTSIZE="16"
+
+#XKBMODEL="br-abnt2"
+#XKBLAYOUT="br"
+#XKBVARIANT=""
+#XKBOPTIONS="lv3:ralt_switch"
+
+# veja /usr/share/X11/xkb/rules/base.lst
+XKBMODEL=pc105      # the model of the keyboard
+XKBLAYOUT=br             # US QWERTY and Dvorak keyboards
+XKBVARIANT=""
+#XKBOPTIONS=lv3:ralt_switch,grp:ctrl_shift_toggle
+XKBOPTIONS=""
+
+for i in 1 2 3 4 5 6; do
+	[ -c /dev/tty$i ] || mknod /dev/tty$i c 4 $i
+done
+
+#man console_codes
+#  \\x1B  starts an escape sequence
+# %           Start sequence selecting character set
+# %G       Select UTF-8
+for console in /dev/tty[1-6] ; do
+	[ -w $console ] || continue
+       echo -e -n "\\x1B%G" >$console
+	eval setfont -v -C $console /etc/console-setup/Uni2-Fixed16.psf
+       kbd_mode -u <$console
+done
+
+eval loadkeys /etc/console-setup/cached.kmap.gz
+
+#man console_codes
+#  \\x1B  starts an escape sequence
+# [              Control sequence introducer
+# ?25l       ESC [ ? 25 h           DECTECM (default on): Make cursor visible.
+# echo -e "\\x1B[?25l" > /dev/tty7
+#mkdir /run/plymouth
+#/sbin/plymouthd --mode=boot --attach-to-session --pid-file=/run/plymouth/pid
+#/bin/plymouth show-splash
+
+echo "Loading essential drivers"
+
+modprobe dm-mod
+modprobe dm-mirror
+
+mkdir -p /tmp/mountroot-fail-hooks.d
+ln -s add_mountroot_fail_hook /tmp/mountroot-fail-hooks.d/20-lvm2
+
+echo "Mounting root file system"
+
+mkdir -p /cdrom
+
+export USERNAME="lubuntu"
+export USERFULLNAME="Live session user"
+export HOST="live"
+
+touch /casper.vars
+
+    livefs_root=""
+    dev_cow=""
+    for sysblock in $(echo /sys/block/* | tr ' ' '\n' | egrep '^/sys/block/sd' ); do
+        sysdev=${sysblock#/sys}
+        devname=$(echo "/dev/$(/sbin/udevadm info --query=name --path="${sysdev}" 2>/dev/null)")
+        [ ! -z "$devname" ] && [ -e "$devname" ] || continue
+        /sbin/udevadm info --query=all --path="${sysdev}" | egrep -q "DEVTYPE=disk" || continue
+        
+        for dev in  $(for dev in "${sysblock}"/*; do  if [ -e "${dev}/dev" ] ; then  echo "${dev}" ; fi ; done); do
+            echo "Scanning $dev"
+            
+            sysdev=${dev#/sys}
+            devname_part=$(echo "/dev/$(/sbin/udevadm info --query=name --path="${sysdev}" 2>/dev/null)")
+            
+            fstype=$(/sbin/blkid -s TYPE -o value "${devname_part}")
+            case ${fstype} in
+                vfat|iso9660|ext2|ext3|ext4|ntfs) 
+                    mount -t ${fstype} -o ro,noatime "${devname_part}" /cdrom || continue
+                    if [ -d "/cdrom/casper" ] ; then
+                        if [ "$(echo /cdrom/casper/*.squashfs)" == "/cdrom/casper/*.squashfs" ] ||
+                            [ "$(echo /cdrom/casper/*.ext2)"            == "/cdrom/casper/*.ext2" ] ; then
+                            livefs_root=/cdrom
+                            dev_cow=${devname}2
+                        else
+                            umount /cdrom
+                        fi
+                    else
+                        umount /cdrom
+                    fi
+                    ;;
+                esac
+            done
+    done
+     
+    if [ -z "${livefs_root}" ] ; then
+        echo "EM mountroot(). Unable to find a medium containing a live file system" ; while true ; do echo -n "CMD: " ; read COMANDO ; $COMANDO ; done
+    fi
+
+#    if [ "${TORAM}" ] ; then
+#        live_dest="ram"
+#        echo "Copying live_media to ${live_dest}"
+#        copy_live_to "${livefs_root}" "${live_dest}"
+#    fi
+
+
+mkdir -p /root/media/lubuntu/arq_metal
+mount  -t ext2 -o rw,noatime ${dev_cow} /root/media/lubuntu/arq_metal
+rm -r /root/media/lubuntu/arq_metal/cow
+mkdir /root/media/lubuntu/arq_metal/cow
+
+
+#mkdir -p /cow
+#cowdevice="tmpfs"
+#mount -t tmpfs -o rw,noatime,mode=755 ${cowdevice} /cow || (echo "Can not mount /cdrom/casper/filesystem.squashfs" && PS1="# " /bin/sh)
+
+# poderia haver um arquivo /casper/filesystem.ext2
+losetup /dev/loop0 /cdrom/casper/filesystem.squashfs
+mkdir -p /filesystem.squashfs
+mount -t squashfs -o ro,noatime /dev/loop0 /filesystem.squashfs || (echo "Can not mount /cdrom/casper/filesystem.squashfs" && PS1="# " /bin/sh)
+
+# all modifications go to upper writable layer
+modprobe overlayfs
+#mount -t overlayfs -o "lowerdir=/filesystem.squashfs,upperdir=/cow" overlayfs /root
+mount -t overlayfs -o "lowerdir=/filesystem.squashfs,upperdir=/root/media/lubuntu/arq_metal/cow" overlayfs /root
+
+# /dev/loop0 /rofs squashfs ro,noatime 0 0
+# tmpfs /cow tmpfs rw,noatime,mode=755 0 0
+# /cow / overlayfs rw,relatime,lowerdir=//filesystem.squashfs,upperdir=/cow 0 0
+# none /run/user tmpfs rw,nosuid,nodev,noexec,relatime,size=102400k,mode=755 0 0
+
+exec 6>&1
+exec 7>&2
+
+# Open up two fifo's fd's for debconf-communicate to use.
+# Speeds up the Casper process considerably.
+mkfifo /tmp/debconf-in.fifo
+mkfifo /tmp/debconf-out.fifo
+
+    # Make the template database read-only, so that passthrough debconf
+    # instances can write to it directly; otherwise templates are only
+    # passed through when necessary.  Use temporary config databases as
+    # well; we'll copy their contents back at the end.
+    DEBCONF_TMPDIR="$(chroot /root mktemp -dt debconf.XXXXXX)"
+    echo "DEBCONF_TMPDIR=$DEBCONF_TMPDIR"
+    cp -a /root/var/cache/debconf/config.dat "/root$DEBCONF_TMPDIR/"
+    cp -a /root/var/cache/debconf/passwords.dat "/root$DEBCONF_TMPDIR/"
+    sed "s,^Filename: /var/cache/debconf/\(config\|passwords\).dat$,Filename: $DEBCONF_TMPDIR/\1.dat,; /^Name: templatedb/a\
+Readonly: true" /root/etc/debconf.conf >"/root$DEBCONF_TMPDIR/debconf.conf"
+
+    cp /root$DEBCONF_TMPDIR/debconf.conf /root$DEBCONF_TMPDIR/debconf.conf.old
+    DEBCONF_SYSTEMRC="$DEBCONF_TMPDIR/debconf.conf" chroot /root debconf-communicate -fnoninteractive casper > /tmp/debconf-out.fifo < /tmp/debconf-in.fifo &
+    debconfpid="$!"
+
+exec 4</tmp/debconf-out.fifo 3>/tmp/debconf-in.fifo
+
+echo "CASPER-BOTTON"
+
+# Move to the new root filesystem so that programs there can get at it.
+mkdir -p /root/cdrom
+mount -n -o move /cdrom /root/cdrom
+
+# temporary hack for LP#727783
+mkdir -p /root/media
+ln -s /cdrom /root/media/cdrom
+
+
+cat > /root/etc/fstab <<EOF
+overlayfs / overlayfs rw 0 0
+tmpfs /tmp tmpfs nosuid,nodev 0 0
+EOF
+
+rm -f /root/etc/rcS.d/S*checkroot.sh
+
+devices=""
+for device in /dev/[hsv]d[a-z][0-9]*; do
+    if ! [ -b "$device" ]; then
+        continue
+    fi
+
+    magic=$(/bin/dd if="$device" bs=4086 skip=1 count=1 2>/dev/null | /bin/dd bs=10 count=1 2>/dev/null) || continue
+    
+    if [ "$magic" = "SWAPSPACE2" -o "$magic" = "SWAP-SPACE" ]; then
+#        log "Found $device"
+        devices="$devices $device"
+        fi
+done
+
+for device in $devices; do
+    cat >> /root/etc/fstab <<EOF
+$device swap swap defaults 0 0
+EOF
+done
+
+locale=pt_BR.UTF-8
+set_locale="true"
+
+LANG=pt_BR.UTF-8
+printf 'LANG="%s"\n' "${LANG}" > /root/etc/default/locale
+printf '%s UTF-8\n' "${LANG}" > /root/etc/locale.gen
+chroot /root /usr/sbin/locale-gen "${LANG}"
+
+sed -i -r -e "s/^# autologin=dgod/autologin=$USERNAME/"  /root/etc/xdg/lubuntu/lxdm/lxdm.conf
+
+LightDMCustomFile=/root/etc/lightdm/lightdm.conf
+AutologinParameters="allow-guest=false\n\
+autologin-guest=false\n\
+autologin-user=$USERNAME\n\
+autologin-user-timeout=0\n\
+autologin-session=lightdm-autologin"
+
+echo '[SeatDefaults]' >> $LightDMCustomFile
+sed -i "s/\[SeatDefaults\]/\[SeatDefaults\]\n$AutologinParameters/" $LightDMCustomFile
+
+echo "$HOST" > /root/etc/hostname
+cat > /root/etc/hosts <<EOF
+127.0.0.1 localhost
+127.0.1.1 $HOST
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+
+EOF
+hostname "$HOST"
+
+PREFIX=keyboard-configuration
+CONFIGFILE=/etc/default/keyboard
+cp /root$CONFIGFILE /tmp/keyboard.orig
+
+# Reset the config for persistent medias
+if [ -f /cow$CONFIGFILE ]; then
+    echo "Resetting $CONFIGFILE"
+    cp /root/rofs$CONFIGFILE /root$CONFIGFILE
+fi
+
+kbd=us
+csmodel="abnt2"
+cslayout="br"
+csoptions="${csoptions:+$csoptions,}lv3:ralt_switch"
+csvariant=
+latin=yes
+
+chroot /root sed -i "s/^XKBLAYOUT=.*/XKBLAYOUT=\"$cslayout\"/"  "$CONFIGFILE"
+chroot /root sed -i "s/^XKBMODEL=.*/XKBMODEL=\"$csmodel\"/" "$CONFIGFILE"
+chroot /root sed -i "s/^XKBOPTIONS=.*/XKBOPTIONS=\"$csoptions\"/" "$CONFIGFILE"
+casper-preseed /root "$PREFIX/variantcode" '' false
+casper-preseed /root "$PREFIX/optionscode" '' false
+casper-preseed /root console-setup/codesetcode '' false
+
+printf "[org.gnome.desktop.lockdown]\ndisable-lock-screen=true\n" >> /root/usr/share/glib-2.0/schemas/casper.gschema.override
+printf "[org.gnome.desktop.screensaver]\nlock-enabled=false\n" >> /root/usr/share/glib-2.0/schemas/casper.gschema.override
+chroot /root glib-compile-schemas /usr/share/glib-2.0/schemas/
+
+chroot /root /usr/sbin/make-ssl-cert generate-default-snakeoil --force-overwrite
+
+cat > /root/etc/network/interfaces <<EOF
+# interfaces(5) file used by ifup(8) and ifdown(8)
+auto lo
+iface lo inet loopback
+EOF
+
+udevadm trigger
+udevadm settle
+
+cat >> /root/etc/apt/sources.list <<EOF
+deb cdrom:[Lubuntu 14.10 _Utopic Unicorn_ - Release i386 (20141022.1)]/ utopic main multiverse restricted universe
+EOF
+
+# U6aMy0wojraho is just a blank password
+# to obtain an encrypted password, you have to use the mkpasswd program that's shipped with whois package!
+# altera o arquivo /var/cache/debconf/config.dat
+chroot /root debconf-communicate -fnoninteractive casper > /dev/null <<EOF
+set passwd/root-password-crypted *
+set passwd/user-password-crypted U6aMy0wojraho
+set passwd/user-fullname $USERFULLNAME 
+set passwd/username $USERNAME
+set passwd/user-uid 999
+EOF
+
+chroot /root /usr/lib/user-setup/user-setup-apply > /dev/null
+
+# Clear out debconf database again to avoid confusing ubiquity later.
+chroot /root debconf-communicate -fnoninteractive casper > /dev/null <<EOF
+set passwd/root-password-crypted
+set passwd/user-password-crypted
+set passwd/user-fullname
+set passwd/username
+set passwd/user-uid
+EOF
+
+echo "${USERNAME}  ALL=(ALL) NOPASSWD: ALL" > /root/etc/sudoers.d/casper
+
+chroot /root install -d -o $USERNAME -g $USERNAME /home/$USERNAME/Desktop
+chroot /root install -D -o $USERNAME -g $USERNAME $file /home/$USERNAME/Desktop/$(basename /usr/share/applications/ubiquity.desktop)
+
+		for f in /root/etc/init/tty*; do
+			sed -i -e "s|^exec.*|exec /bin/login -f $USERNAME </dev/$(basename $f .conf) > /dev/$(basename $f .conf) 2>\&1|" $f
+		done
+		for x in $(cat /proc/cmdline); do
+			case $x in
+				textonly|automatic-ubiquity|only-ubiquity|noninteractive)
+					rm -f /root/etc/rc?.d/[SK]??lightdm
+					;;
+			esac
+		done
+
+	# Since we use autologin, lastlog doesn't make sense on the console.
+	sed -i '/^[^#].*pam_lastlog\.so/s/^/# /' /root/etc/pam.d/login
+
+# Avoid clobbering the user's clock
+rm -f /root/etc/rc?.d/K??hwclock.sh /root/etc/init/hwclock-save.conf  # VER ISSO
+
+# Disable ureadahead too since we don't ship a pack file for it anyway, so
+# all we'll end up doing is profiling the live CD boot. ureadahead also
+# breaks partman occasionally by reading from its synchronisation FIFOs.
+rm -f /root/etc/init/ureadahead*.conf
+
+
+chroot /root dpkg-divert --add --rename --quiet /usr/lib/update-notifier/apt-check
+ln -sf /bin/true /root/usr/lib/update-notifier/apt-check
+
+# Upgrading the live CD to new releases is probably not a great plan.
+chroot /root dpkg-divert --add --rename --quiet /usr/lib/ubuntu-release-upgrader/check-new-release
+ln -sf /bin/true /root/usr/lib/ubuntu-release-upgrader/check-new-release
+
+chroot /root dpkg-divert --add --rename --quiet /usr/lib/ubuntu-release-upgrader/check-new-release-gtk
+ln -sf /bin/true /root/usr/lib/ubuntu-release-upgrader/check-new-release-gtk
+
+cat <<EOF > /root/var/lib/polkit-1/localauthority/50-local.d/disable-hibernate.pkla
+[Disable hibernate in live system]
+Identity=unix-user:*
+Action=org.freedesktop.upower.hibernate
+ResultActive=no
+EOF
+
+# During development releases apport is enabled, no need to change anything;
+# for released versions, enable it only for Ubiquity (LP #593606)
+if grep -q 'enabled=0' /root/etc/default/apport; then
+    sed -i 's/enabled=0/enabled=1/' /root/etc/default/apport
+    mkdir -p /root/etc/apport/whitelist.d/
+    echo "/usr/lib/ubiquity/bin/ubiquity" > /root/etc/apport/whitelist.d/ubiquity
+fi
+
+# Parece ser interessante /root/etc/xdg/autostart
+
+chroot /root dpkg-divert --add --rename --quiet /usr/sbin/update-initramfs
+
+# configure PolicyKit in live session
+mkdir -p /root/var/lib/polkit-1/localauthority/10-vendor.d
+cat << EOF > /root/var/lib/polkit-1/localauthority/10-vendor.d/10-live-cd.pkla
+# Policy to allow the livecd user to bypass policykit
+[Live CD user permissions]
+Identity=unix-user:$USERNAME;unix-user:lightdm
+Action=*
+ResultAny=no
+ResultInactive=yes
+ResultActive=yes
+EOF
+
+
+# we cannot properly synthesize LVM LV change events with udevadm trigger
+# if we use LVM, we need to let it finish; otherwise we get missing LV symlinks
+if [ -x /sbin/vgchange ]; then
+    udevadm settle --timeout=121 || true
+fi
+
+# Stop udevd, we'll miss a few events while we run init, but we catch up
+udevadm control --timeout=121 --exit || echo "udev exit failed -- rc=$?"
+
+# move the /dev tmpfs to the rootfs
+mount -n -o move /dev /root/dev
+
+# create a temporary symlink to the final /dev for other initramfs scripts
+rm -rf /dev
+ln -s /root/dev /dev
+
+# Close the fd's associated with debconf-communicate.
+exec 3>&- 4<&-
+
+rm -f /tmp/debconf-in.fifo
+rm -f /tmp/debconf-out.fifo
+wait $debconfpid
+
+# Copy config database changes back to the master files.
+chroot /root debconf-copydb tmpdb config           --config=Name:tmpdb --config=Driver:File --config="Filename:$DEBCONF_TMPDIR/config.dat"
+chroot /root debconf-copydb tmpdb passwords --config=Name:tmpdb --config=Driver:File --config="Filename:$DEBCONF_TMPDIR/passwords.dat"
+rm -rf "$DEBCONF_TMPDIR"
+exec 6>&- 
+exec 7>&- 
+
+
+
+# Preserve information on old systems without /run on the rootfs
+if [ -d /root/run ]; then
+	mount -n -o move /run /root/run
+else
+	# The initramfs udev database must be migrated:
+	if [ -d /run/udev ] && [ ! -d /dev/.udev ]; then
+		mv /run/udev /dev/.udev
+	fi
+	# The initramfs debug info must be migrated:
+	if [ -d /run/initramfs ] && [ ! -d /dev/.initramfs ]; then
+		mv /run/initramfs /dev/.initramfs
+	fi
+	umount /run
+fi
+
+# Move virtual filesystems over to the real filesystem
+mount -n -o move /sys /root/sys
+mount -n -o move /proc /root/proc
+
+export recovery=
+
+# Chain to real filesystem
+exec run-init /root /sbin/init "$@" ${recovery:+--startup-event=recovery} </root/dev/console >/root/dev/console 2>&1
+
+echo "Could not execute run-init."
+PS1='# ' /bin/sh -i

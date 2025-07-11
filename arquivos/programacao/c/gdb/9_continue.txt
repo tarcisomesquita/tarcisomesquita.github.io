@@ -1,0 +1,5 @@
+
+Continue program being debugged, after signal or breakpoint.
+
+If proceeding from breakpoint, a number N may be used as an argument, which means to set the ignore count of that breakpoint to N - 1 (so that the breakpoint won't break until the Nth time it is reached).
+

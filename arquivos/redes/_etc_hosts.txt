@@ -1,0 +1,33 @@
+
+#/etc/hosts
+
+#usado para atribuir nomes aos micros da rede local, sem para isso precisar configurar um servidor DNS.
+
+127.0.0.1 localhost
+127.0.1.1 ubuntu
+
+# other hosts in the local network
+192.168.0.1     enterprise.mycompany.com      enterprise
+192.168.0.2     constellation.mycompany.com   constellation
+192.168.0.3     intrepid.mycompany.com        intrepid
+192.168.0.4     exeter.mycompany.com          exeter
+192.168.0.5     router.mycompany.com          router
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+
+
+# bloquear site
+# 127.0.0.1 www.tio.com.br
+
+
+maps network names to network numbers
+cat /etc/networks
+default         0.0.0.0
+loopback        127.0.0.0
+link-local      169.254.0.0

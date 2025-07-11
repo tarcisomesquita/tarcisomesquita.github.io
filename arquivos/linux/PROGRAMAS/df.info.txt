@@ -1,0 +1,44 @@
+DF(1)
+
+df [OPTION]... [FILE]...
+
+df -B M /dev/sda1 /dev/sda3
+df -B M /media/tmp
+
+cat /sys/block/sda/size # * 512
+cat /sys/block/sda/stat # https://docs.kernel.org/block/stat.html
+
+df displays the amount of disk space available on the file system containing each file name  argument.
+If  no file name is given, the space available on all currently mounted file systems is shown.
+
+OPTIONS
+-a, --all
+       include dummy file systems
+
+-B, --block-size=SIZE
+       use SIZE-byte blocks
+
+-h, --human-readable
+       print sizes in human readable format (e.g., 1K 234M 2G)
+
+-H, --si
+       likewise, but use powers of 1000 not 1024
+
+-i, --inodes
+       list inode information instead of block usage
+
+-l, --local
+       limit listing to local file systems
+
+-t, --type=TYPE
+       limit listing to file systems of type TYPE
+
+-T, --print-type
+       print file system type
+
+--version
+
+SIZE may be (or may be an integer optionally followed by) one of following: kB 1000, K 1024, MB 1000*1000, M 1024*1024, and so on for G, T, P, E, Z, Y.
+
+GNU coreutils 6.9.92.4-f088d-dirtJanuary 2008
+

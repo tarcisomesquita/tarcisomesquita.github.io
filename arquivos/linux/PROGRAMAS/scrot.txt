@@ -1,0 +1,16 @@
+scrot -o -a 0,85,800,600 ${TICKER}_60M.png
+
+scrot '%Y-%m-%d_%H-%M-%S_%z.bmp'
+
+-d, --delay NUM
+Wait NUM seconds before taking a shot.
+
+-e, --exec APP
+Exec APP on the saved image.
+
+-s, --select
+Interactively select a window or rectangle with the mouse.
+
+scrot '%Y-%m-%d_$wx$h.png' -e 'mv $f ~/shots/'
+This would create a file called something like 2000-10-30_2560x1024.png and move it to your shots directory.
+

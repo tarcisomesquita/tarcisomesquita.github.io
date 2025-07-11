@@ -1,0 +1,9 @@
+notation is:
+SEGMENT:OFFSET
+
+CS:IP => Points to the currently executing code.
+SS:SP => Points to the current stack position.
+                 
+SEGMENT * 16 + OFFSET = 20 bit address  # Pode endereçar 1 MiB.
+
+

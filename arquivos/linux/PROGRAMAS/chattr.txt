@@ -1,0 +1,14 @@
+
+chattr +i <filename>
+make the file "immutable". It cannot be changed, either by writing or deleting or renamed or hard links made, even by the "superuser".
+back to normal with the same command
+
+with an “a” the file can only be appended
+This is useful for log files
+
+Ext2 and Ext3 filesystems do support it.
+
+sudo chattr +i /media/ARQUIVOS/teste.txt
+sudo chattr -i /media/ARQUIVOS/teste.txt
+lsattr         /media/ARQUIVOS/teste.txt
+

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+
+<title>CEEJA Paulo Decourt</title>
+<meta name="description" content="Página de serviços para os alunos do CEEJA Paulo Decourt.">
+
+<meta viewport="width=device-width, initial-scale=1">
+
+<script src="https://tarcisomesquita.github.io/log.js" onload="logsend()" async defer></script>
+
+<script>
+function login() {
+  let form = document.createElement('form');
+  form.setAttribute('method', 'GET');
+  form.setAttribute('action', 'https://accounts.google.com/o/oauth2/v2/auth');
+  
+  let params = {
+    'client_id': '424899238646-9rov4v21n8936trraugrl3vcb3cs54id.apps.googleusercontent.com',
+    'redirect_uri': 'https://tarcisomesquita.github.io/login.html',
+    'response_type': 'token',
+    'scope': 'https://www.googleapis.com/auth/userinfo.email',
+    'include_granted_scopes': 'true',
+    'prompt': 'select_account'
+  };
+  
+  for (let p in params) {
+    let input = document.createElement('input');
+    input.setAttribute('type', 'hidden');
+    input.setAttribute('name', p);
+    input.setAttribute('value', params[p]);
+    form.appendChild(input);
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+}
+
+function sair() {
+  document.cookie = `email=;expires=1970-01-01T00:00:00.000Z;path=/;samesite=none;secure;`;
+  // expires
+  // access_token
+  let access_token = getCookie('access_token');
+  if (access_token === '') return;
+  
+  let form = document.createElement('form');
+  form.setAttribute('method', 'post');
+  form.setAttribute('action', 'https://oauth2.googleapis.com/revoke');
+  
+  let tokenField = document.createElement('input');
+  tokenField.setAttribute('type', 'hidden');
+  tokenField.setAttribute('name', 'token');
+  tokenField.setAttribute('value', access_token);
+  form.appendChild(tokenField);
+  
+  document.body.appendChild(form);
+  form.submit();
+}
+</script>
+
+<style>
+body {
+  font-family: 'Open Sans',sans-serif;
+  font-size: 1.5em;
+  line-height: 1.5em;
+  text-align: justify;
+  margin: 0em;
+  padding: 1em;
+}
+</style>
+</head>
+
+<body>
+
+<!-- begin barra login -->
+<div style="
+margin: 0.5em;
+height: 3.5em;
+padding: 0px;
+line-height: 3.5em;
+">
+
+<div style="
+float: right;
+margin: 0px;
+height: 3.5em;
+padding: 0px;
+">
+
+<p id="idBotao" onclick="login()" style="
+display: none;
+
+background: #1a73e8;
+
+margin: 0px;
+border-width: 0.125em;
+border-style: solid;
+border-radius: 0.5em;
+border-color: #ffffff;
+box-sizing: border-box;
+height: 3.5em;
+padding-top:  0.25em;
+padding-bottom: 0.25em;
+padding-left:  1.5em;
+padding-right: 1.5em;
+
+line-height: 2.75em;
+
+color: #ffffff;
+
+white-space: nowrap;
+
+text-align: center;
+vertical-align: middle;
+
+text-decoration: none;
+cursor: pointer;
+">Fazer login</span></p>
+
+
+<p id="idEmail" style="
+display: inline-block;
+
+margin: 0px;
+border-width: 0px;
+height: 3.5em;
+padding-top:  0.25em;
+padding-bottom: 0.25em;
+padding-left:  1.5em;
+padding-right: 1.5em;
+
+line-height: 3em;
+
+white-space: nowrap;
+
+text-align: center;
+vertical-align: middle;
+">
+Usuário: 
+<span id="textEmail" style='color:#DD4433'></span>
+<span onclick="sair()" style="
+background: #cccccc;
+
+margin: 0px;
+border-width: 0.125em;
+border-style: solid;
+border-radius: 0.5em;
+border-color: #000000;
+box-sizing: border-box;
+height: 3em;
+padding-top:  0.25em;
+padding-bottom: 0.25em;
+padding-left:  1.5em;
+padding-right: 1.5em;
+
+line-height: 2.5em;
+
+text-decoration: none;
+cursor: pointer;
+">Sair</span>
+</p>
+</div>
+</div>
+<!-- end barra login -->
+
+<div style="text-align: center; heigth: 60em; ">
+<img src="https://tarcisomesquita.github.io/ceejapd/imagens/p_logo.svg" heigth="100%" alt="logo do CEEJA Paulo Decourt">
+</div>
+<h1 style="text-align:center">CEEJA Paulo Decourt</h1>
+
+<br>
+
+<p>No CEEJA, você recebe livros <b>gratuitamente</b> para ler <b>em casa</b>.</p>
+
+<p>Quando tiver tempo livre, <b>venha à escola para fazer avaliação</b> ou tirar dúvidas.</p>
+
+<p>Atendemos das 08:30 às 21:00.</p>
+
+<p>Servimos gratuitamente almoço e jantar.</p>
+
+<p>Atendemos na rua Amélia Bueno de Camargo, sn, Jardim Santana, Campinas.</p>
+
+<p>👩‍🎓 Vai concluir o Ensino Médio conosco? 👨‍🎓</p>
+
+</body>
+</html>

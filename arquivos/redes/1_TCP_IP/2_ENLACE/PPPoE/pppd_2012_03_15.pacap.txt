@@ -1,0 +1,58 @@
+Mar 15 09:44:09 FISICA pppd[2513]: Serial link appears to be disconnected.
+Mar 15 09:44:09 FISICA pppd[2513]: Connect time 7.0 minutes.
+Mar 15 09:44:09 FISICA pppd[2513]: Sent 141819 bytes, received 57763 bytes.
+Mar 15 09:44:09 FISICA pppd[2513]: Connection terminated.
+Mar 15 09:45:29 FISICA pppd[2513]: Timeout waiting for PADS packets
+Mar 15 09:46:05 FISICA pppd[2513]: PPP session is 2866
+Mar 15 09:46:05 FISICA pppd[2513]: Connected to 00:90:1a:a0:a8:c9 via interface eth0
+Mar 15 09:46:05 FISICA pppd[2513]: Using interface ppp0
+Mar 15 09:46:05 FISICA pppd[2513]: Connect: ppp0 <--> eth0
+Mar 15 09:46:33 FISICA pppd[2513]: PAP authentication succeeded
+Mar 15 09:46:33 FISICA pppd[2513]: peer from calling number 00:90:1A:A0:A8:C9 authorized
+Mar 15 09:46:45 FISICA pppd[2513]: local  IP address 189.111.165.55
+Mar 15 09:46:45 FISICA pppd[2513]: remote IP address 200.204.210.230
+Mar 15 09:46:45 FISICA pppd[2513]: primary   DNS address 200.204.0.10
+Mar 15 09:46:45 FISICA pppd[2513]: secondary DNS address 200.204.0.138
+Mar 15 09:46:45 FISICA pppd[2513]: Connect time 0.0 minutes.
+Mar 15 09:46:45 FISICA pppd[2513]: Sent 41 bytes, received 10 bytes.
+Mar 15 09:46:45 FISICA pppd[2513]: local  IP address 189.111.165.55
+Mar 15 09:46:45 FISICA pppd[2513]: remote IP address 200.204.210.230
+Mar 15 09:46:45 FISICA pppd[2513]: primary   DNS address 200.204.0.10
+Mar 15 09:46:45 FISICA pppd[2513]: secondary DNS address 200.204.0.138
+Mar 15 09:46:49 FISICA pppd[2513]: Connect time 0.1 minutes.
+Mar 15 09:46:49 FISICA pppd[2513]: Sent 217 bytes, received 10 bytes.
+Mar 15 09:47:22 FISICA pppd[2513]: local  IP address 189.111.165.55
+Mar 15 09:47:22 FISICA pppd[2513]: remote IP address 200.204.210.230
+Mar 15 09:47:22 FISICA pppd[2513]: primary   DNS address 200.204.0.10
+Mar 15 09:47:22 FISICA pppd[2513]: secondary DNS address 200.204.0.138
+Mar 15 09:47:22 FISICA pppd[2513]: Connect time 0.0 minutes.
+Mar 15 09:47:22 FISICA pppd[2513]: Sent 0 bytes, received 10 bytes.
+Mar 15 09:47:28 FISICA pppd[2513]: local  IP address 189.111.165.55
+Mar 15 09:47:28 FISICA pppd[2513]: remote IP address 200.204.210.230
+Mar 15 09:47:28 FISICA pppd[2513]: primary   DNS address 200.204.0.10
+Mar 15 09:47:28 FISICA pppd[2513]: secondary DNS address 200.204.0.138
+Mar 15 09:47:28 FISICA pppd[2513]: Connect time 0.0 minutes.
+Mar 15 09:47:28 FISICA pppd[2513]: Sent 0 bytes, received 10 bytes.
+Mar 15 09:48:16 FISICA pppd[2513]: IPCP: timeout sending Config-Requests 
+Mar 15 09:48:22 FISICA pppd[2513]: Connection terminated.
+Mar 15 09:48:22 FISICA pppd[2513]: Modem hangup
+Mar 15 09:49:27 FISICA pppd[2513]: Timeout waiting for PADO packets
+Mar 15 09:50:44 FISICA pppd[2513]: Timeout waiting for PADO packets
+Mar 15 09:51:20 FISICA pppd[2513]: PPP session is 2980
+Mar 15 09:51:20 FISICA pppd[2513]: Connected to 00:90:1a:a0:a8:c9 via interface eth0
+Mar 15 09:51:20 FISICA pppd[2513]: Using interface ppp0
+Mar 15 09:51:20 FISICA pppd[2513]: Connect: ppp0 <--> eth0
+Mar 15 09:52:15 FISICA pppd[2513]: PAP authentication succeeded
+Mar 15 09:52:15 FISICA pppd[2513]: peer from calling number 00:90:1A:A0:A8:C9 authorized
+Mar 15 09:52:18 FISICA pppd[2513]: local  IP address 189.111.165.55
+Mar 15 09:52:18 FISICA pppd[2513]: remote IP address 200.204.210.230
+Mar 15 09:52:18 FISICA pppd[2513]: primary   DNS address 200.204.0.10
+Mar 15 09:52:18 FISICA pppd[2513]: secondary DNS address 200.204.0.138
+Mar 15 09:59:12 FISICA pppd[2513]: No response to 4 echo-requests
+Mar 15 09:59:12 FISICA pppd[2513]: Serial link appears to be disconnected.
+Mar 15 09:59:12 FISICA pppd[2513]: Connect time 6.9 minutes.
+Mar 15 09:59:12 FISICA pppd[2513]: Sent 51583 bytes, received 29450 bytes.
+Mar 15 09:59:18 FISICA pppd[2513]: Connection terminated.
+Mar 15 09:59:18 FISICA pppd[2513]: Modem hangup
+Mar 15 10:00:23 FISICA pppd[2513]: Timeout waiting for PADO packets
+

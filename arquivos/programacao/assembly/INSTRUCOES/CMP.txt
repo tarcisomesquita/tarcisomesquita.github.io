@@ -1,0 +1,57 @@
+
+Instrução CMP
+
+Proposito: Comparar os operadores.
+
+Sintaxe:
+CMP destino,fonte
+
+The comparison is performed by subtracting the second operand from the first operand and then setting the status flags in the same manner as the SUB instruction.
+
+Sets the OF and CF flags to indicate an overflow in the signed or unsigned result, respectively. The SF flag indicates the sign of the signed result.
+
+ e caso o resultado for zero (valores iguais), ele seta a ZF para 1.
+
+Flags Affected
+The CF, OF, SF, ZF, AF, and PF flags are set according to the result.
+
+CMP – Compare Two Operands
+ register1 with register2      0011 100w : 11 reg1 reg2
+ register2 with register1      0011 101w : 11 reg1 reg2
+ memory with register          0011 100w : mod reg r/m
+ register with memory          0011 101w : mod reg r/m
+ immediate with register       1000 00sw : 11 111 reg : immediate data
+ immediate with AL, AX, or EAX 0011 110w : immediate data
+ immediate with memory         1000 00sw : mod 111 r/m : immediate data
+
+00000006  817D040000        cmp word [di+0x04],0x0000
+00000015  394504            cmp [di+0x4],ax
+000000A8  3C00              cmp al,0x00
+
+Opcode             Instruction        Op/En   64-Bit Mode   Compat/Leg Mode   Description
+3C ib              CMP AL, imm8       I       Valid         Valid             Compare imm8 with AL.
+3D iw              CMP AX, imm16      I       Valid         Valid             Compare imm16 with AX.
+3D id              CMP EAX, imm32     I       Valid         Valid             Compare imm32 with EAX.
+REX.W + 3D id      CMP RAX, imm32     I       Valid         N.E.              Compare imm32 sign-extended to 64-bits with RAX.
+
+80 /7 ib           CMP r/m8,  imm8    MI      Valid         Valid             Compare imm8 with r/m8.
+REX + 80 /7 ib     CMP r/m8,  imm8    MI      Valid         N.E.              Compare imm8 with r/m8.
+81 /7 iw           CMP r/m16, imm16   MI      Valid         Valid             Compare imm16 with r/m16.
+81 /7 id           CMP r/m32, imm32   MI      Valid         Valid             Compare imm32 with r/m32.
+REX.W + 81 /7 id   CMP r/m64, imm32   MI      Valid         N.E.              Compare imm32 sign-extended to 64-bits with r/m64.
+
+83 /7 ib           CMP r/m16, imm8    MI      Valid         Valid             Compare imm8 with r/m16.
+83 /7 ib           CMP r/m32, imm8    MI      Valid         Valid             Compare imm8 with r/m32.
+REX.W + 83 /7 ib   CMP r/m64, imm8    MI      Valid         N.E.              Compare imm8 with r/m64.
+38 /r              CMP r/m8, r8       MR      Valid         Valid             Compare r8 with r/m8.
+REX + 38 /r        CMP r/m8 , r8      MR      Valid         N.E.              Compare r8 with r/m8.
+39 /r              CMP r/m16, r16     MR      Valid         Valid             Compare r16 with r/m16.
+39 /r              CMP r/m32, r32     MR      Valid         Valid             Compare r32 with r/m32.
+REX.W + 39 /r      CMP r/m64,r64      MR      Valid         N.E.              Compare r64 with r/m64.
+3A /r              CMP r8, r/m8       RM      Valid         Valid             Compare r/m8 with r8.
+REX + 3A /r        CMP r8 , r/m8      RM      Valid         N.E.              Compare r/m8 with r8.
+3B /r              CMP r16, r/m16     RM      Valid         Valid             Compare r/m16 with r16.
+3B /r              CMP r32, r/m32     RM      Valid         Valid             Compare r/m32 with r32.
+REX.W + 3B /r      CMP r64, r/m64     RM      Valid         N.E.              Compare r/m64 with r64.
+
+NOTES: In 64-bit mode, r/m8 can not be encoded to access the following byte registers if a REX prefix is used: AH, BH, CH, DH.

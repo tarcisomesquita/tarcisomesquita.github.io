@@ -1,0 +1,13 @@
+
+SINTAXE
+[Especificador de classe de armazenamento] [Modificador de tipo quanto ao sinal e quanto ao tamanho] Tipo Nome;
+
+NOME
+Pode ter até 32 caracteres, sendo que o primeiro deverá ser letra ou _ e os demais caracteres podem ser letras, números ou _.
+
+Exemplo:
+auto unsigned long int var_local = 5;
+
+A inicialização pode ser feita com uma constante, expressão ou função.
+int var1 = 10, var2 = var1 * 5, var3 = abs(var2);
+

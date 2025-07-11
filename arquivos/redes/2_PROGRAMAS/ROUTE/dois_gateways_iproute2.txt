@@ -1,0 +1,55 @@
+two routers with different internet connections.
+router A with WAN IP 12.34.56.78 and LAN IP 192.168.0.1
+router B with WAN IP 34.56.78.90 and LAN IP 192.168.1.1
+
+web server with IP 192.168.0.50 and 192.168.1.50.
+
+gedit /etc/iproute2/rt_tables
+# reserved values
+255	local
+254	main
+253	default
+102	WAN2
+101	WAN1
+0	 unspec
+#
+# local
+#1	inr.ruhep
+
+gedit /etc/network/interfaces
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto eth0
+iface eth0 inet static
+	address 192.168.0.50
+	netmask 255.255.255.0
+	broadcast 192.168.0.255
+	gateway 192.168.0.1
+	post-up /sbin/ip route add 192.168.0.0/24 dev eth0 src 192.168.0.50 table WAN1
+	post-up /sbin/ip route add default via 192.168.0.1 table WAN1
+	post-up /sbin/ip route add 192.168.0.0/24 dev eth0 src 192.168.0.50
+	post-up /sbin/ip rule add from 192.168.0.50 table WAN1
+
+auto eth0:0
+iface eth0:0 inet static
+	address 192.168.1.50
+	netmask 255.255.255.0
+	broadcast 192.168.1.255
+	post-up /sbin/ip route add 192.168.1.0/24 dev eth0:0 src 192.168.1.50 table WAN2
+	post-up /sbin/ip route add default via 192.168.1.1 table WAN2
+	post-up /sbin/ip route add 192.168.1.0/24 dev eth0:0 src 192.168.1.50
+	post-up /sbin/ip rule add from 192.168.1.50 table WAN2
+
+The key bits are as follows:
+
+1. By having a "gateway 192.168.0.1" line, I set the default gateway of the system out the WAN1 pipe.
+2. "/sbin/ip route add 192.168.0.0/24 dev eth0 src 192.168.0.50" adds the normal routing for a LAN interface to the system; nothing unusual
+3. "/sbin/ip route add 192.168.0.0/24 dev eth0 src 192.168.0.50 table WAN1" adds the normal routing for a LAN interface to the "WAN1" table
+4. "/sbin/ip route add default via 192.168.0.1 table WAN1" sets the default route for the "WAN1" table
+5. "/sbin/ip rule add from 192.168.0.50 table WAN1" sets a rule that forces any routing that involves 192.168.0.50 to be forced through table "WAN1"
+
+"ip route flush cache" will cause routing changes to take effect immediately.
+

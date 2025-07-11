@@ -1,0 +1,582 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+>
+
+<html>
+  <head><meta charset="UTF-8" />
+    <meta>
+    <meta>
+    <title>7. Input and Output &#8212; Python 3.6.5 documentation</title>
+    <link>
+    <link>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Python 3.6.5 documentation"
+>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    
+    <script></script>
+    <script></script>
+    
+    
+ 
+
+  </head><body>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="errors.html" title="8. Errors and Exceptions"
+>next</a> |</li>
+        <li>
+          <a href="modules.html" title="6. Modules"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>The Python Tutorial</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>    
+
+    <div>
+      <div>
+        <div>
+          <div>
+            
+  <div>
+<span></span><h1>7. Input and Output<a>¶</a></h1>
+<p>There are several ways to present the output of a program; data can be printed
+in a human-readable form, or written to a file for future use. This chapter will
+discuss some of the possibilities.</p>
+<div>
+<span></span><h2>7.1. Fancier Output Formatting<a>¶</a></h2>
+<p>So far we’ve encountered two ways of writing values: <em>expression statements</em> and
+the <a><code><span>print()</span></code></a> function.  (A third way is using the <code><span>write()</span></code> method
+of file objects; the standard output file can be referenced as <code><span>sys.stdout</span></code>.
+See the Library Reference for more information on this.)</p>
+<p>Often you’ll want more control over the formatting of your output than simply
+printing space-separated values.  There are two ways to format your output; the
+first way is to do all the string handling yourself; using string slicing and
+concatenation operations you can create any layout you can imagine.  The
+string type has some methods that perform useful operations for padding
+strings to a given column width; these will be discussed shortly.  The second
+way is to use <a><span>formatted string literals</span></a>, or the
+<a><code><span>str.format()</span></code></a> method.</p>
+<p>The <a><code><span>string</span></code></a> module contains a <a><code><span>Template</span></code></a> class which offers
+yet another way to substitute values into strings.</p>
+<p>One question remains, of course: how do you convert values to strings? Luckily,
+Python has ways to convert any value to a string: pass it to the <a><code><span>repr()</span></code></a>
+or <a><code><span>str()</span></code></a> functions.</p>
+<p>The <a><code><span>str()</span></code></a> function is meant to return representations of values which are
+fairly human-readable, while <a><code><span>repr()</span></code></a> is meant to generate representations
+which can be read by the interpreter (or will force a <a><code><span>SyntaxError</span></code></a> if
+there is no equivalent syntax).  For objects which don’t have a particular
+representation for human consumption, <a><code><span>str()</span></code></a> will return the same value as
+<a><code><span>repr()</span></code></a>.  Many values, such as numbers or structures like lists and
+dictionaries, have the same representation using either function.  Strings, in
+particular, have two distinct representations.</p>
+<p>Some examples:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>s</span> <span>=</span> <span>&#39;Hello, world.&#39;</span>
+<span>&gt;&gt;&gt; </span><span>str</span><span>(</span><span>s</span><span>)</span>
+<span>&#39;Hello, world.&#39;</span>
+<span>&gt;&gt;&gt; </span><span>repr</span><span>(</span><span>s</span><span>)</span>
+<span>&quot;&#39;Hello, world.&#39;&quot;</span>
+<span>&gt;&gt;&gt; </span><span>str</span><span>(</span><span>1</span><span>/</span><span>7</span><span>)</span>
+<span>&#39;0.14285714285714285&#39;</span>
+<span>&gt;&gt;&gt; </span><span>x</span> <span>=</span> <span>10</span> <span>*</span> <span>3.25</span>
+<span>&gt;&gt;&gt; </span><span>y</span> <span>=</span> <span>200</span> <span>*</span> <span>200</span>
+<span>&gt;&gt;&gt; </span><span>s</span> <span>=</span> <span>&#39;The value of x is &#39;</span> <span>+</span> <span>repr</span><span>(</span><span>x</span><span>)</span> <span>+</span> <span>&#39;, and y is &#39;</span> <span>+</span> <span>repr</span><span>(</span><span>y</span><span>)</span> <span>+</span> <span>&#39;...&#39;</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>s</span><span>)</span>
+<span>The value of x is 32.5, and y is 40000...</span>
+<span>&gt;&gt;&gt; </span><span># The repr() of a string adds string quotes and backslashes:</span>
+<span>... </span><span>hello</span> <span>=</span> <span>&#39;hello, world</span><span>\n</span><span>&#39;</span>
+<span>&gt;&gt;&gt; </span><span>hellos</span> <span>=</span> <span>repr</span><span>(</span><span>hello</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>hellos</span><span>)</span>
+<span>&#39;hello, world\n&#39;</span>
+<span>&gt;&gt;&gt; </span><span># The argument to repr() may be any Python object:</span>
+<span>... </span><span>repr</span><span>((</span><span>x</span><span>,</span> <span>y</span><span>,</span> <span>(</span><span>&#39;spam&#39;</span><span>,</span> <span>&#39;eggs&#39;</span><span>)))</span>
+<span>&quot;(32.5, 40000, (&#39;spam&#39;, &#39;eggs&#39;))&quot;</span>
+</pre></div>
+</div>
+<p>Here are two ways to write a table of squares and cubes:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>for</span> <span>x</span> <span>in</span> <span>range</span><span>(</span><span>1</span><span>,</span> <span>11</span><span>):</span>
+<span>... </span>    <span>print</span><span>(</span><span>repr</span><span>(</span><span>x</span><span>)</span><span>.</span><span>rjust</span><span>(</span><span>2</span><span>),</span> <span>repr</span><span>(</span><span>x</span><span>*</span><span>x</span><span>)</span><span>.</span><span>rjust</span><span>(</span><span>3</span><span>),</span> <span>end</span><span>=</span><span>&#39; &#39;</span><span>)</span>
+<span>... </span>    <span># Note use of &#39;end&#39; on previous line</span>
+<span>... </span>    <span>print</span><span>(</span><span>repr</span><span>(</span><span>x</span><span>*</span><span>x</span><span>*</span><span>x</span><span>)</span><span>.</span><span>rjust</span><span>(</span><span>4</span><span>))</span>
+<span>...</span>
+<span> 1   1    1</span>
+<span> 2   4    8</span>
+<span> 3   9   27</span>
+<span> 4  16   64</span>
+<span> 5  25  125</span>
+<span> 6  36  216</span>
+<span> 7  49  343</span>
+<span> 8  64  512</span>
+<span> 9  81  729</span>
+<span>10 100 1000</span>
+
+<span>&gt;&gt;&gt; </span><span>for</span> <span>x</span> <span>in</span> <span>range</span><span>(</span><span>1</span><span>,</span> <span>11</span><span>):</span>
+<span>... </span>    <span>print</span><span>(</span><span>&#39;</span><span>{0:2d}</span><span> </span><span>{1:3d}</span><span> </span><span>{2:4d}</span><span>&#39;</span><span>.</span><span>format</span><span>(</span><span>x</span><span>,</span> <span>x</span><span>*</span><span>x</span><span>,</span> <span>x</span><span>*</span><span>x</span><span>*</span><span>x</span><span>))</span>
+<span>...</span>
+<span> 1   1    1</span>
+<span> 2   4    8</span>
+<span> 3   9   27</span>
+<span> 4  16   64</span>
+<span> 5  25  125</span>
+<span> 6  36  216</span>
+<span> 7  49  343</span>
+<span> 8  64  512</span>
+<span> 9  81  729</span>
+<span>10 100 1000</span>
+</pre></div>
+</div>
+<p>(Note that in the first example, one space between each column was added by the
+way <a><code><span>print()</span></code></a> works: by default it adds spaces between its arguments.)</p>
+<p>This example demonstrates the <a><code><span>str.rjust()</span></code></a> method of string
+objects, which right-justifies a string in a field of a given width by padding
+it with spaces on the left.  There are similar methods <a><code><span>str.ljust()</span></code></a> and
+<a><code><span>str.center()</span></code></a>.  These methods do not write anything, they just return a
+new string.  If the input string is too long, they don’t truncate it, but
+return it unchanged; this will mess up your column lay-out but that’s usually
+better than the alternative, which would be lying about a value.  (If you
+really want truncation you can always add a slice operation, as in
+<code><span>x.ljust(n)[:n]</span></code>.)</p>
+<p>There is another method, <a><code><span>str.zfill()</span></code></a>, which pads a numeric string on the
+left with zeros.  It understands about plus and minus signs:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>&#39;12&#39;</span><span>.</span><span>zfill</span><span>(</span><span>5</span><span>)</span>
+<span>&#39;00012&#39;</span>
+<span>&gt;&gt;&gt; </span><span>&#39;-3.14&#39;</span><span>.</span><span>zfill</span><span>(</span><span>7</span><span>)</span>
+<span>&#39;-003.14&#39;</span>
+<span>&gt;&gt;&gt; </span><span>&#39;3.14159265359&#39;</span><span>.</span><span>zfill</span><span>(</span><span>5</span><span>)</span>
+<span>&#39;3.14159265359&#39;</span>
+</pre></div>
+</div>
+<p>Basic usage of the <a><code><span>str.format()</span></code></a> method looks like this:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>&#39;We are the </span><span>{}</span><span> who say &quot;</span><span>{}</span><span>!&quot;&#39;</span><span>.</span><span>format</span><span>(</span><span>&#39;knights&#39;</span><span>,</span> <span>&#39;Ni&#39;</span><span>))</span>
+<span>We are the knights who say &quot;Ni!&quot;</span>
+</pre></div>
+</div>
+<p>The brackets and characters within them (called format fields) are replaced with
+the objects passed into the <a><code><span>str.format()</span></code></a> method.  A number in the
+brackets can be used to refer to the position of the object passed into the
+<a><code><span>str.format()</span></code></a> method.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>&#39;</span><span>{0}</span><span> and </span><span>{1}</span><span>&#39;</span><span>.</span><span>format</span><span>(</span><span>&#39;spam&#39;</span><span>,</span> <span>&#39;eggs&#39;</span><span>))</span>
+<span>spam and eggs</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>&#39;</span><span>{1}</span><span> and </span><span>{0}</span><span>&#39;</span><span>.</span><span>format</span><span>(</span><span>&#39;spam&#39;</span><span>,</span> <span>&#39;eggs&#39;</span><span>))</span>
+<span>eggs and spam</span>
+</pre></div>
+</div>
+<p>If keyword arguments are used in the <a><code><span>str.format()</span></code></a> method, their values
+are referred to by using the name of the argument.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>&#39;This </span><span>{food}</span><span> is </span><span>{adjective}</span><span>.&#39;</span><span>.</span><span>format</span><span>(</span>
+<span>... </span>      <span>food</span><span>=</span><span>&#39;spam&#39;</span><span>,</span> <span>adjective</span><span>=</span><span>&#39;absolutely horrible&#39;</span><span>))</span>
+<span>This spam is absolutely horrible.</span>
+</pre></div>
+</div>
+<p>Positional and keyword arguments can be arbitrarily combined:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>&#39;The story of </span><span>{0}</span><span>, </span><span>{1}</span><span>, and </span><span>{other}</span><span>.&#39;</span><span>.</span><span>format</span><span>(</span><span>&#39;Bill&#39;</span><span>,</span> <span>&#39;Manfred&#39;</span><span>,</span>
+<span>                                                       other=&#39;Georg&#39;))</span>
+<span>The story of Bill, Manfred, and Georg.</span>
+</pre></div>
+</div>
+<p><code><span>'!a'</span></code> (apply <a><code><span>ascii()</span></code></a>), <code><span>'!s'</span></code> (apply <a><code><span>str()</span></code></a>) and <code><span>'!r'</span></code>
+(apply <a><code><span>repr()</span></code></a>) can be used to convert the value before it is formatted:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>contents</span> <span>=</span> <span>&#39;eels&#39;</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>&#39;My hovercraft is full of </span><span>{}</span><span>.&#39;</span><span>.</span><span>format</span><span>(</span><span>contents</span><span>))</span>
+<span>My hovercraft is full of eels.</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>&#39;My hovercraft is full of </span><span>{!r}</span><span>.&#39;</span><span>.</span><span>format</span><span>(</span><span>contents</span><span>))</span>
+<span>My hovercraft is full of &#39;eels&#39;.</span>
+</pre></div>
+</div>
+<p>An optional <code><span>':'</span></code> and format specifier can follow the field name. This allows
+greater control over how the value is formatted.  The following example
+rounds Pi to three places after the decimal.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>math</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>&#39;The value of PI is approximately </span><span>{0:.3f}</span><span>.&#39;</span><span>.</span><span>format</span><span>(</span><span>math</span><span>.</span><span>pi</span><span>))</span>
+<span>The value of PI is approximately 3.142.</span>
+</pre></div>
+</div>
+<p>Passing an integer after the <code><span>':'</span></code> will cause that field to be a minimum
+number of characters wide.  This is useful for making tables pretty.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>table</span> <span>=</span> <span>{</span><span>&#39;Sjoerd&#39;</span><span>:</span> <span>4127</span><span>,</span> <span>&#39;Jack&#39;</span><span>:</span> <span>4098</span><span>,</span> <span>&#39;Dcab&#39;</span><span>:</span> <span>7678</span><span>}</span>
+<span>&gt;&gt;&gt; </span><span>for</span> <span>name</span><span>,</span> <span>phone</span> <span>in</span> <span>table</span><span>.</span><span>items</span><span>():</span>
+<span>... </span>    <span>print</span><span>(</span><span>&#39;</span><span>{0:10}</span><span> ==&gt; </span><span>{1:10d}</span><span>&#39;</span><span>.</span><span>format</span><span>(</span><span>name</span><span>,</span> <span>phone</span><span>))</span>
+<span>...</span>
+<span>Jack       ==&gt;       4098</span>
+<span>Dcab       ==&gt;       7678</span>
+<span>Sjoerd     ==&gt;       4127</span>
+</pre></div>
+</div>
+<p>If you have a really long format string that you don’t want to split up, it
+would be nice if you could reference the variables to be formatted by name
+instead of by position.  This can be done by simply passing the dict and using
+square brackets <code><span>'[]'</span></code> to access the keys</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>table</span> <span>=</span> <span>{</span><span>&#39;Sjoerd&#39;</span><span>:</span> <span>4127</span><span>,</span> <span>&#39;Jack&#39;</span><span>:</span> <span>4098</span><span>,</span> <span>&#39;Dcab&#39;</span><span>:</span> <span>8637678</span><span>}</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>&#39;Jack: </span><span>{0[Jack]:d}</span><span>; Sjoerd: </span><span>{0[Sjoerd]:d}</span><span>; &#39;</span>
+<span>... </span>      <span>&#39;Dcab: </span><span>{0[Dcab]:d}</span><span>&#39;</span><span>.</span><span>format</span><span>(</span><span>table</span><span>))</span>
+<span>Jack: 4098; Sjoerd: 4127; Dcab: 8637678</span>
+</pre></div>
+</div>
+<p>This could also be done by passing the table as keyword arguments with the ‘**’
+notation.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>table</span> <span>=</span> <span>{</span><span>&#39;Sjoerd&#39;</span><span>:</span> <span>4127</span><span>,</span> <span>&#39;Jack&#39;</span><span>:</span> <span>4098</span><span>,</span> <span>&#39;Dcab&#39;</span><span>:</span> <span>8637678</span><span>}</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>&#39;Jack: </span><span>{Jack:d}</span><span>; Sjoerd: </span><span>{Sjoerd:d}</span><span>; Dcab: </span><span>{Dcab:d}</span><span>&#39;</span><span>.</span><span>format</span><span>(</span><span>**</span><span>table</span><span>))</span>
+<span>Jack: 4098; Sjoerd: 4127; Dcab: 8637678</span>
+</pre></div>
+</div>
+<p>This is particularly useful in combination with the built-in function
+<a><code><span>vars()</span></code></a>, which returns a dictionary containing all local variables.</p>
+<p>For a complete overview of string formatting with <a><code><span>str.format()</span></code></a>, see
+<a><span>Format String Syntax</span></a>.</p>
+<div>
+<h3>7.1.1. Old string formatting<a>¶</a></h3>
+<p>The <code><span>%</span></code> operator can also be used for string formatting. It interprets the
+left argument much like a <code><span>sprintf()</span></code>-style format string to be applied
+to the right argument, and returns the string resulting from this formatting
+operation. For example:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>math</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>&#39;The value of PI is approximately </span><span>%5.3f</span><span>.&#39;</span> <span>%</span> <span>math</span><span>.</span><span>pi</span><span>)</span>
+<span>The value of PI is approximately 3.142.</span>
+</pre></div>
+</div>
+<p>More information can be found in the <a><span>printf-style String Formatting</span></a> section.</p>
+</div>
+</div>
+<div>
+<span></span><h2>7.2. Reading and Writing Files<a>¶</a></h2>
+<p><a><code><span>open()</span></code></a> returns a <a><span>file object</span></a>, and is most commonly used with
+two arguments: <code><span>open(filename,</span> <span>mode)</span></code>.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>f</span> <span>=</span> <span>open</span><span>(</span><span>&#39;workfile&#39;</span><span>,</span> <span>&#39;w&#39;</span><span>)</span>
+</pre></div>
+</div>
+<p>The first argument is a string containing the filename.  The second argument is
+another string containing a few characters describing the way in which the file
+will be used.  <em>mode</em> can be <code><span>'r'</span></code> when the file will only be read, <code><span>'w'</span></code>
+for only writing (an existing file with the same name will be erased), and
+<code><span>'a'</span></code> opens the file for appending; any data written to the file is
+automatically added to the end.  <code><span>'r+'</span></code> opens the file for both reading and
+writing. The <em>mode</em> argument is optional; <code><span>'r'</span></code> will be assumed if it’s
+omitted.</p>
+<p>Normally, files are opened in <em>text mode</em>, that means, you read and write
+strings from and to the file, which are encoded in a specific encoding. If
+encoding is not specified, the default is platform dependent (see
+<a><code><span>open()</span></code></a>). <code><span>'b'</span></code> appended to the mode opens the file in
+<em>binary mode</em>: now the data is read and written in the form of bytes
+objects.  This mode should be used for all files that don’t contain text.</p>
+<p>In text mode, the default when reading is to convert platform-specific line
+endings (<code><span>\n</span></code> on Unix, <code><span>\r\n</span></code> on Windows) to just <code><span>\n</span></code>.  When writing in
+text mode, the default is to convert occurrences of <code><span>\n</span></code> back to
+platform-specific line endings.  This behind-the-scenes modification
+to file data is fine for text files, but will corrupt binary data like that in
+<code><span>JPEG</span></code> or <code><span>EXE</span></code> files.  Be very careful to use binary mode when
+reading and writing such files.</p>
+<p>It is good practice to use the <a><code><span>with</span></code></a> keyword when dealing
+with file objects.  The advantage is that the file is properly closed
+after its suite finishes, even if an exception is raised at some
+point.  Using <a><code><span>with</span></code></a> is also much shorter than writing
+equivalent <a><code><span>try</span></code></a>-<a><code><span>finally</span></code></a> blocks:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>with</span> <span>open</span><span>(</span><span>&#39;workfile&#39;</span><span>)</span> <span>as</span> <span>f</span><span>:</span>
+<span>... </span>    <span>read_data</span> <span>=</span> <span>f</span><span>.</span><span>read</span><span>()</span>
+<span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>closed</span>
+<span>True</span>
+</pre></div>
+</div>
+<p>If you’re not using the <a><code><span>with</span></code></a> keyword, then you should call
+<code><span>f.close()</span></code> to close the file and immediately free up any system
+resources used by it. If you don’t explicitly close a file, Python’s
+garbage collector will eventually destroy the object and close the
+open file for you, but the file may stay open for a while.  Another
+risk is that different Python implementations will do this clean-up at
+different times.</p>
+<p>After a file object is closed, either by a <a><code><span>with</span></code></a> statement
+or by calling <code><span>f.close()</span></code>, attempts to use the file object will
+automatically fail.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>close</span><span>()</span>
+<span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>read</span><span>()</span>
+<span>Traceback (most recent call last):</span>
+  File <span>&quot;&lt;stdin&gt;&quot;</span>, line <span>1</span>, in <span>&lt;module&gt;</span>
+<span>ValueError</span>: <span>I/O operation on closed file</span>
+</pre></div>
+</div>
+<div>
+<span></span><h3>7.2.1. Methods of File Objects<a>¶</a></h3>
+<p>The rest of the examples in this section will assume that a file object called
+<code><span>f</span></code> has already been created.</p>
+<p>To read a file’s contents, call <code><span>f.read(size)</span></code>, which reads some quantity of
+data and returns it as a string (in text mode) or bytes object (in binary mode).
+<em>size</em> is an optional numeric argument.  When <em>size</em> is omitted or negative, the
+entire contents of the file will be read and returned; it’s your problem if the
+file is twice as large as your machine’s memory. Otherwise, at most <em>size</em> bytes
+are read and returned.
+If the end of the file has been reached, <code><span>f.read()</span></code> will return an empty
+string (<code><span>''</span></code>).</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>read</span><span>()</span>
+<span>&#39;This is the entire file.\n&#39;</span>
+<span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>read</span><span>()</span>
+<span>&#39;&#39;</span>
+</pre></div>
+</div>
+<p><code><span>f.readline()</span></code> reads a single line from the file; a newline character (<code><span>\n</span></code>)
+is left at the end of the string, and is only omitted on the last line of the
+file if the file doesn’t end in a newline.  This makes the return value
+unambiguous; if <code><span>f.readline()</span></code> returns an empty string, the end of the file
+has been reached, while a blank line is represented by <code><span>'\n'</span></code>, a string
+containing only a single newline.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>readline</span><span>()</span>
+<span>&#39;This is the first line of the file.\n&#39;</span>
+<span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>readline</span><span>()</span>
+<span>&#39;Second line of the file\n&#39;</span>
+<span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>readline</span><span>()</span>
+<span>&#39;&#39;</span>
+</pre></div>
+</div>
+<p>For reading lines from a file, you can loop over the file object. This is memory
+efficient, fast, and leads to simple code:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>for</span> <span>line</span> <span>in</span> <span>f</span><span>:</span>
+<span>... </span>    <span>print</span><span>(</span><span>line</span><span>,</span> <span>end</span><span>=</span><span>&#39;&#39;</span><span>)</span>
+<span>...</span>
+<span>This is the first line of the file.</span>
+<span>Second line of the file</span>
+</pre></div>
+</div>
+<p>If you want to read all the lines of a file in a list you can also use
+<code><span>list(f)</span></code> or <code><span>f.readlines()</span></code>.</p>
+<p><code><span>f.write(string)</span></code> writes the contents of <em>string</em> to the file, returning
+the number of characters written.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>write</span><span>(</span><span>&#39;This is a test</span><span>\n</span><span>&#39;</span><span>)</span>
+<span>15</span>
+</pre></div>
+</div>
+<p>Other types of objects need to be converted – either to a string (in text mode)
+or a bytes object (in binary mode) – before writing them:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>value</span> <span>=</span> <span>(</span><span>&#39;the answer&#39;</span><span>,</span> <span>42</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>s</span> <span>=</span> <span>str</span><span>(</span><span>value</span><span>)</span>  <span># convert the tuple to string</span>
+<span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>write</span><span>(</span><span>s</span><span>)</span>
+<span>18</span>
+</pre></div>
+</div>
+<p><code><span>f.tell()</span></code> returns an integer giving the file object’s current position in the file
+represented as number of bytes from the beginning of the file when in binary mode and
+an opaque number when in text mode.</p>
+<p>To change the file object’s position, use <code><span>f.seek(offset,</span> <span>from_what)</span></code>.  The position is computed
+from adding <em>offset</em> to a reference point; the reference point is selected by
+the <em>from_what</em> argument.  A <em>from_what</em> value of 0 measures from the beginning
+of the file, 1 uses the current file position, and 2 uses the end of the file as
+the reference point.  <em>from_what</em> can be omitted and defaults to 0, using the
+beginning of the file as the reference point.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>f</span> <span>=</span> <span>open</span><span>(</span><span>&#39;workfile&#39;</span><span>,</span> <span>&#39;rb+&#39;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>write</span><span>(</span><span>b</span><span>&#39;0123456789abcdef&#39;</span><span>)</span>
+<span>16</span>
+<span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>seek</span><span>(</span><span>5</span><span>)</span>      <span># Go to the 6th byte in the file</span>
+<span>5</span>
+<span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>read</span><span>(</span><span>1</span><span>)</span>
+<span>b&#39;5&#39;</span>
+<span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>seek</span><span>(</span><span>-</span><span>3</span><span>,</span> <span>2</span><span>)</span>  <span># Go to the 3rd byte before the end</span>
+<span>13</span>
+<span>&gt;&gt;&gt; </span><span>f</span><span>.</span><span>read</span><span>(</span><span>1</span><span>)</span>
+<span>b&#39;d&#39;</span>
+</pre></div>
+</div>
+<p>In text files (those opened without a <code><span>b</span></code> in the mode string), only seeks
+relative to the beginning of the file are allowed (the exception being seeking
+to the very file end with <code><span>seek(0,</span> <span>2)</span></code>) and the only valid <em>offset</em> values are
+those returned from the <code><span>f.tell()</span></code>, or zero. Any other <em>offset</em> value produces
+undefined behaviour.</p>
+<p>File objects have some additional methods, such as <code><span>isatty()</span></code> and
+<code><span>truncate()</span></code> which are less frequently used; consult the Library
+Reference for a complete guide to file objects.</p>
+</div>
+<div>
+<span></span><h3>7.2.2. Saving structured data with <a><code><span>json</span></code></a><a>¶</a></h3>
+<p>Strings can easily be written to and read from a file.  Numbers take a bit more
+effort, since the <code><span>read()</span></code> method only returns strings, which will have to
+be passed to a function like <a><code><span>int()</span></code></a>, which takes a string like <code><span>'123'</span></code>
+and returns its numeric value 123.  When you want to save more complex data
+types like nested lists and dictionaries, parsing and serializing by hand
+becomes complicated.</p>
+<p>Rather than having users constantly writing and debugging code to save
+complicated data types to files, Python allows you to use the popular data
+interchange format called <a>JSON (JavaScript Object Notation)</a>.  The standard module called <a><code><span>json</span></code></a> can take Python
+data hierarchies, and convert them to string representations; this process is
+called <em>serializing</em>.  Reconstructing the data from the string representation
+is called <em>deserializing</em>.  Between serializing and deserializing, the
+string representing the object may have been stored in a file or data, or
+sent over a network connection to some distant machine.</p>
+<div>
+<p>Note</p>
+<p>The JSON format is commonly used by modern applications to allow for data
+exchange.  Many programmers are already familiar with it, which makes
+it a good choice for interoperability.</p>
+</div>
+<p>If you have an object <code><span>x</span></code>, you can view its JSON string representation with a
+simple line of code:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>json</span>
+<span>&gt;&gt;&gt; </span><span>json</span><span>.</span><span>dumps</span><span>([</span><span>1</span><span>,</span> <span>&#39;simple&#39;</span><span>,</span> <span>&#39;list&#39;</span><span>])</span>
+<span>&#39;[1, &quot;simple&quot;, &quot;list&quot;]&#39;</span>
+</pre></div>
+</div>
+<p>Another variant of the <a><code><span>dumps()</span></code></a> function, called <a><code><span>dump()</span></code></a>,
+simply serializes the object to a <a><span>text file</span></a>.  So if <code><span>f</span></code> is a
+<a><span>text file</span></a> object opened for writing, we can do this:</p>
+<div><div><pre><span></span><span>json</span><span>.</span><span>dump</span><span>(</span><span>x</span><span>,</span> <span>f</span><span>)</span>
+</pre></div>
+</div>
+<p>To decode the object again, if <code><span>f</span></code> is a <a><span>text file</span></a> object which has
+been opened for reading:</p>
+<div><div><pre><span></span><span>x</span> <span>=</span> <span>json</span><span>.</span><span>load</span><span>(</span><span>f</span><span>)</span>
+</pre></div>
+</div>
+<p>This simple serialization technique can handle lists and dictionaries, but
+serializing arbitrary class instances in JSON requires a bit of extra effort.
+The reference for the <a><code><span>json</span></code></a> module contains an explanation of this.</p>
+<div>
+<p>See also</p>
+<p><a><code><span>pickle</span></code></a> - the pickle module</p>
+<p>Contrary to <a><span>JSON</span></a>, <em>pickle</em> is a protocol which allows
+the serialization of arbitrarily complex Python objects.  As such, it is
+specific to Python and cannot be used to communicate with applications
+written in other languages.  It is also insecure by default:
+deserializing pickle data coming from an untrusted source can execute
+arbitrary code, if the data was crafted by a skilled attacker.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+  <h3><a>Table Of Contents</a></h3>
+  <ul>
+<li><a>7. Input and Output</a><ul>
+<li><a>7.1. Fancier Output Formatting</a><ul>
+<li><a>7.1.1. Old string formatting</a></li>
+</ul>
+</li>
+<li><a>7.2. Reading and Writing Files</a><ul>
+<li><a>7.2.1. Methods of File Objects</a></li>
+<li><a>7.2.2. Saving structured data with <code><span>json</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p><a href="modules.html"
+           >6. Modules</a></p>
+  <h4>Next topic</h4>
+  <p><a href="errors.html"
+           >8. Errors and Exceptions</a></p>
+  <div>
+    <h3>This Page</h3>
+    <ul>
+      <li><a>Report a Bug</a></li>
+      <li>
+        <a href="https://github.com/python/cpython/blob/3.6/Doc/tutorial/inputoutput.rst"
+>Show Source
+        </a>
+      </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+      <div></div>
+    </div>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="errors.html" title="8. Errors and Exceptions"
+>next</a> |</li>
+        <li>
+          <a href="modules.html" title="6. Modules"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>The Python Tutorial</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>  
+    <div>
+    &copy; <a>Copyright</a> 2001-2018, Python Software Foundation.
+    <br>
+    The Python Software Foundation is a non-profit corporation.
+    <a>Please donate.</a>
+    <br>
+    Last updated on May 13, 2018.
+    <a>Found a bug</a>?
+    <br>
+    Created using <a>Sphinx</a> 1.7.4.
+    </div>
+
+  </body>
+</html>

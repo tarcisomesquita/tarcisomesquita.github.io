@@ -1,0 +1,25 @@
+
+PTR é precedido por QWORD ou DWORD ou WORD ou BYTE.
+
+DWORD PTR ds:0x2000, eax
+
+# escreve em edx o número armazenado no endereço lh
+mov   edx, DWORD PTR lh          é equivalente a  mov edx, lh                   é equivalente a  mov edx, [lh]
+                                                                                                 ^
+
+mov   DWORD PTR lh, 0x00010000   é equivalente a  mov lh, DWORD PTR 0x00010000  é equivalente a  mov [lh], DWORD PTR 0x00010000  
+                                                  ^
+
+mov   WORD PTR [eax], 0x0009     é equivalente a  mov [eax], WORD PTR 0x0009
+                                                  ^
+
+mov   BYTE PTR setup_sects, al   é equivalente a  mov setup_sects, al
+                                                  ^
+
+
+mov   eax, OFFSET FLAT: lh            # escreve em eax o endereço representado por lh
+
+mov    rax, text_f - ehdr + 0x400000
+mov    rax, . - ehdr + 0x400000
+
+

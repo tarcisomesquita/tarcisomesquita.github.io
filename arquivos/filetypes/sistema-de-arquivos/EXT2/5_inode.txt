@@ -1,0 +1,107 @@
+
+There is one inode table per block group and it can be located by reading the bg_inode_table in its  associated group descriptor.
+There are s_inodes_per_group inodes per table.
+
+Each inode contain the information about a single physical file on the system. A file can be a directory, a socket, a buffer, character or block device, symbolic link or a regular file. An inode say its location on disk, its size and its owner. 
+
+// Structure of an inode on the disk
+struct ext2_inode {
+   unsigned short i_mode;        // describe file type and the access rights (ver tabela)
+   unsigned short i_uid;         // user id associated with the file (UID)
+   unsigned int i_size;          // Only for regular files, represents the lower 32-bit of the file size; the upper 32-bit is located in the i_dir_acl.
+   unsigned int i_atime;         // last time this inode was accessed (number of seconds since january 1st 1970)
+   unsigned int i_ctime;         // when the inode was created.
+   unsigned int i_mtime;         // last time this inode was modified
+   unsigned int i_dtime;         // when the inode was deleted
+   unsigned short i_gid;         // group having access to this file (GID)
+   unsigned short i_links_count; // Symbolic links do not affect the link count. Add 1 for each hard links.
+   unsigned int i_blocks;        // total number of 512-byte blocks reserved to contain the data of this inode. i_block = i_blocks/(2<<s_log_block_size)
+                                 // The block numbers of these reserved blocks are contained in the i_block array.
+   unsigned int i_flags;         // how the ext2 implementation should behave when accessing the data for this inode. (ver tabela)
+                                 // flags can be listed with lsattr and changed with the chattr command
+   union {
+      struct {
+         unsigned int l_i_reserved1;   // reserved
+      } linux1;
+   } osd1; // OS dependent 1
+   unsigned int i_block[15];  // block numbers pointing to the blocks containing the data for this inode.
+                              // The first 12 blocks are direct blocks.
+                              // The 13th entry is the block number of the first indirect block, a block with an array of block ID containing the data.
+                              // The 14th entry is the block number of the first doubly-indirect block, a block with an array of indirect block IDs.
+                              // The 15th entry is the block number of the triply-indirect block, a block with an array of doubly-indrect block IDs.
+   unsigned int i_generation;    // File version (for NFS)
+   unsigned int i_file_acl;      // block number containing the extended attributes
+   unsigned int i_dir_acl;       // for regular files, the high 32 bits of the 64bit file size.
+   unsigned int i_faddr;         // block number of location of the actual file fragment. The fragment number and its size would be contained in the i_osd2
+   union {
+      struct {
+         unsigned char l_i_frag;       // Fragment number. Always 0 in Linux since fragments are not supported.
+         unsigned char l_i_fsize;      // Fragment size
+         unsigned short i_pad1;
+         unsigned short l_i_uid_high;  // these 2 fields   
+         unsigned short l_i_gid_high;  // were reserved2[0]
+         unsigned int l_i_reserved2;
+      } linux2;
+   } osd2; // OS dependent 2
+} *inode = 0x00000000;
+
+
+
+The first few entries of the inode tables are reserved. The number of reserved inodes entries is specified in the s_first_ino of the superblock structure. Here’s a listing of the known reserved inode entries:
+ Constant Name                              Value                 Description
+ EXT2_BAD_INO                               1                     bad blocks inode
+ EXT2_ROOT_INO                              2                     root directory inode
+ EXT2_ACL_IDX_INO                           3                     ACL index inode (deprecated?)
+ EXT2_ACL_DATA_INO                          4                     ACL data inode (deprecated?)
+ EXT2_BOOT_LOADER_INO                       5                     boot loader inode
+ EXT2_UNDEL_DIR_INO                         6                     undelete directory inode
+
+
+i_mode
+ Constant                                   Value                 Description
+ -- file format --
+ EXT2_S_IFSOCK                              0xC000                socket
+ EXT2_S_IFLNK                               0xA000                symbolic link
+ EXT2_S_IFREG                               0x8000                regular file
+ EXT2_S_IFBLK                               0x6000                block device
+ EXT2_S_IFDIR                               0x4000                directory
+ EXT2_S_IFCHR                               0x2000                character device
+ EXT2_S_IFIFO                               0x1000                fifo
+ -- process execution user/group override --
+ EXT2_S_ISUID                               0x0800                Set process User ID
+ EXT2_S_ISGID                               0x0400                Set process Group ID
+ EXT2_S_ISVTX                               0x0200                sticky bit
+ -- access rights --
+ EXT2_S_IRUSR                               0x0100                user read
+ EXT2_S_IWUSR                               0x0080                user write
+ EXT2_S_IXUSR                               0x0040                user execute
+ EXT2_S_IRGRP                               0x0020                group read
+ EXT2_S_IWGRP                               0x0010                group write
+ EXT2_S_IXGRP                               0x0008                group execute
+ EXT2_S_IROTH                               0x0004                others read
+ EXT2_S_IWOTH                               0x0002                others write
+ EXT2_S_IXOTH                               0x0001                others execute
+
+
+i_flags
+ Constant Name                        Value      Description
+ EXT2_SECRM_FL                        0x00000001 secure deletion. Write random data over file.
+ EXT2_UNRM_FL                         0x00000002 record for undelete. Quando apagado é movido para a lixeira.
+ EXT2_COMPR_FL                        0x00000004 compressed file
+ EXT2_SYNC_FL                         0x00000008 synchronous updates. Mantém o conteúdo da memória sincronizado com o do disco. Evitar perda por desligar.
+ EXT2_IMMUTABLE_FL                    0x00000010 immutable file. Não é movido. Útil para arquivo stage2 do bootloader.
+ EXT2_APPEND_FL                       0x00000020 append only
+ EXT2_NODUMP_FL                       0x00000040 do not dump/delete file
+ EXT2_NOATIME_FL                      0x00000080 do not update .i_atime
+ -- Reserved for compression usage --
+ EXT2_DIRTY_FL                        0x00000100 Dirty (modified) (file is in use?)
+ EXT2_COMPRBLK_FL                     0x00000200 compressed blocks
+ EXT2_NOCOMPR_FL                      0x00000400 access raw compressed data. Not decompress the blocks, give for aplication it as is.
+ EXT2_ECOMPR_FL                       0x00000800 compression error
+ -- End of compression flags --
+ EXT2_BTREE_FL                        0x00001000 b-tree format directory
+ EXT2_INDEX_FL                        0x00001000 hash indexed directory
+ EXT2_IMAGIC_FL                       0x00002000 AFS directory
+ EXT3_JOURNAL_DATA_FL                 0x00004000 journal file data
+ EXT2_RESERVED_FL                     0x80000000 reserved for ext2 library
+

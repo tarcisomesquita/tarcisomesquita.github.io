@@ -1,0 +1,132 @@
+
+INT 13 - IBM/MS INT 13 Extensions - EXTENDED READ
+
+Input Parameters:
+	AH = 42h
+	DL = drive number
+	DS:SI -> disk address packet (see table below)
+
+Output Parameters:
+	Successful:
+	   CF = 0
+	   AH = 00h
+	Error:
+	   CF = 1
+	   AH = error code (see below Values for disk operation status)
+	   disk address packet's block count field set to number of blocks successfully transferred
+
+
+
+Format of disk address packet:
+Offset	Size	Description
+ 00h	BYTE	size of packet (10h or 18h)
+ 01h	BYTE	reserved (0)
+ 02h	WORD	number of blocks to transfer (max 007Fh for Phoenix EDD)
+ 04h	DWORD	-> transfer buffer
+ 08h	QWORD	starting absolute block number
+		(for non-LBA devices, compute as
+		  (Cylinder*NumHeads + SelectedHead) * SectorPerTrack + SelectedSector - 1
+ 10h	QWORD	(EDD-3.0, optional) 64-bit flat address of transfer buffer;
+		  used if DWORD at 04h is FFFFh:FFFFh
+
+
+Values for disk operation status:
+ 00h	successful completion
+ 01h	invalid function in AH or invalid parameter
+ 02h	address mark not found
+ 03h	disk write-protected
+ 04h	sector not found/read error
+ 05h	reset failed (hard disk)
+ 05h	data did not verify correctly (TI Professional PC)
+ 06h	disk changed (floppy)
+ 07h	drive parameter activity failed (hard disk)
+ 08h	DMA overrun
+ 09h	data boundary error (attempted DMA across 64K boundary or >80h sectors)
+ 0Ah	bad sector detected (hard disk)
+ 0Bh	bad track detected (hard disk)
+ 0Ch	unsupported track or invalid media
+ 0Dh	invalid number of sectors on format (PS/2 hard disk)
+ 0Eh	control data address mark detected (hard disk)
+ 0Fh	DMA arbitration level out of range (hard disk)
+ 10h	uncorrectable CRC or ECC error on read
+ 11h	data ECC corrected (hard disk)
+ 20h	controller failure
+ 31h	no media in drive (IBM/MS INT 13 extensions)
+ 32h	incorrect drive type stored in CMOS (Compaq)
+ 40h	seek failed
+ 80h	timeout (not ready)
+ AAh	drive not ready (hard disk)
+ B0h	volume not locked in drive (INT 13 extensions)
+ B1h	volume locked in drive (INT 13 extensions)
+ B2h	volume not removable (INT 13 extensions)
+ B3h	volume in use (INT 13 extensions)
+ B4h	lock count exceeded (INT 13 extensions)
+ B5h	valid eject request failed (INT 13 extensions)
+ B6h	volume present but read protected (INT 13 extensions)
+ BBh	undefined error (hard disk)
+ CCh	write fault (hard disk)
+ E0h	status register error (hard disk)
+ FFh	sense operation failed (hard disk)
+
+
+BITS 16
+
+ORG 0x7C00
+
+x001:
+cli
+jmp word 0x0000:x1
+x1:
+xor ax,ax
+mov ds,ax
+mov ss,ax
+mov sp,0x2000
+sti
+
+; Copia do disco para ram o primeiro setor de stage2, que é o start.asm
+mov  dl,0x80           ; drive number
+push dx
+
+mov  si,address_packet_start
+mov  ah,0x42           ; EXTENDED READ
+int  0x13
+jc   read_error
+
+jmp word 0x0000:0x8200
+
+
+read_error:
+mov si,read_error_string
+call word message
+
+stop:
+hlt 
+jmp short stop ; Loop infinito
+
+read_error_string: db "Read Error", 0x00
+
+x2:
+mov bx,0x0001
+mov ah,0x0e  ; função imprimir caracter
+int 0x10
+message:
+lodsb
+cmp al,0x00
+jnz x2
+ret
+
+address_packet_start:
+db 0x10                ; size of packet
+db 0x00                ; reserved
+dw 0x0086              ; number of setor to transfer
+dd 0x00008200          ; transfer buffer [0000:8200]
+dq 0x0000000000000002  ; starting absolute setor number ; setor onde inicia o arquivo stage2
+
+x002:
+tenho equ x002 - x001
+falta equ 0x1be - tenho
+times falta db 0x00
+
+x7DBE:
+%include "/home/ubuntu/Desktop/tabela_de_particao.asm"
+

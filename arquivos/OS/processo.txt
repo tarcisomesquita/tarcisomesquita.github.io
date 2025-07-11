@@ -1,0 +1,21 @@
+Processos
+
+Os processos são criados pela chamadas de sistema fork() e clone().
+Quando um processo filho é criado, ele compartilha as mesmas páginas de memória do pai.
+Itens compartilhados por processos: Espaço de endereçamento; Variáveis globais; Arquivos abertos; Processos filhos; Alarmes pendentes; Sinais e tratadores de sinais; Informação de contabilidade.
+
+Threads são mais rápidos de criar e destruir se comparado aos processos
+thread compartilha o mesmo espaço de memória (endereçado a um mesmo processo-pai)
+Itens privados por thread: Contador de programa; Registradores; Pilha; Estado.
+Uma thread pode assumir os seguintes estados:
+    Unstarted: logo após ser criada (antes do Start());
+    Running: após ser ativada (Start()) ou após método Resume();
+    Suspended: após método Suspended();
+    Stopped: após método Abort().
+
+task_struct: descritor do processo contém todas as informações relativas ao processo
+runqueue: fila de processos por processador
+
+a prioridade de um processo pode ser estática ou dinâmica e varia de 1, a maior prioridade, a 139, a menor.
+Os números 1 a 99 são atribuídos a processos de tempo real e 100 a 139 são atribuídos a processos tradicionais (interativos e segundo plano).
+

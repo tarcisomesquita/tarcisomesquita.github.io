@@ -1,0 +1,39 @@
+xmodmap -e "keycode 62 = Menu"
+
+xev
+show keycode
+
+KeyRelease event, serial 48, synthetic NO, window 0x2600001,
+    root 0x12a, subw 0x0, time 7542900, (1175,263), root:(1177,293),
+    state 0x0, keycode 135 (keysym 0xff67, Menu), same_screen YES,
+    XLookupString gives 0 bytes: 
+    XFilterEvent returns: False
+
+xmodmap -pke > map.txt
+cat map.txt | grep 135
+keycode 135 = Menu NoSymbol Menu
+
+
+KeyPress event, serial 48, synthetic NO, window 0x2600001,
+    root 0x12a, subw 0x0, time 7627580, (736,384), root:(738,414),
+    state 0x0, keycode 105 (keysym 0xffe4, Control_R), same_screen YES,
+    XLookupString gives 0 bytes: 
+    XmbLookupString gives 0 bytes: 
+    XFilterEvent returns: False
+
+cat map.txt | grep 105
+keycode 105 = Control_R NoSymbol Control_R
+
+xmodmap -e "keycode 105 = Menu"
+
+xmodmap -pke | grep Menu
+keycode 105 = Menu NoSymbol Menu
+keycode 135 = Menu NoSymbol Menu
+
+sudo sed -i 's/#HandlePowerKey=poweroff/HandlePowerKey=ignore/' /etc/systemd/logind.conf
+sudo sed -i 's/#HandleHibernateKey=hibernate/HandleHibernateKey=ignore/' /etc/systemd/logind.conf
+sudo /usr/bin/systemctl kill -s HUP systemd-logind
+
+Pressão por longo tempo ainda desliga o computador
+
+https://wiki.archlinux.org/title/Power_management

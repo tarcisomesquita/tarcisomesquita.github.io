@@ -1,0 +1,124 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<title>  Funcionalidades Básicas | IPv6.br</title>
+<meta charset="UTF-8" />
+
+	
+</head>
+
+<body>
+
+<article>
+<h2>Introdução</h2>
+<ol>
+<li>ICMPv6 (Internet Control Message Protocol)</li>
+<li>NDP (Neighbor Discovery Protocol)</li>
+</ol>
+
+<h2>ICMPv6 (Internet Control Message Protocol)</h2>
+<p>Os protocolos usados no IPv4, que não existem mais no IPv6, cujas funcionalidades foram agregadas pelo ICMPv6, são:</p>
+<ul>
+<li>ARP (Address Resolution Protocol), cujo o objetivo é mapear os endereços fisicos através do endereços lógicos.</li>
+<li>RARP (Reverse Address Resolution Protocol), que realiza o inverso do ARP, mapeando os endereços lógicos para endereços fisicos.</li>
+<li>IGMP (Internet Group Management Protocol), que atua com o gerenciamento de membros de grupos multicast.</li>
+</ul>
+
+<ul>
+<li>MLD (multicast Listener Discovery), que opera com o gerenciamento dos grupos multicast.</li>
+<li>NDP (Neighbor Discovery Protocol), que é responsável por identificar e conhecer caracteristicas da vizinhança.</li>
+<li>Path MTU discovery, que trabalha no processo de descoberta do menor MTU em comunicação entre dois nós.</li>
+<li>Mobility support, que cuida do gerenciamento de endereços de origem dos host dinamicamente.</li>
+<li>Autoconfiguração Stateless, que permite a aquisição de endereços globais sem o uso de DHCP.</li>
+</ul>
+
+<h3">Identificação e Localização</h3>
+<p>O pacote ICMPv6 é identificado no cabeçalho IPv6 pelo valor 58 no campo chamado Next Header. Ele se localiza logo após os cabeçalho base do IPv6, se não existir cabeçalhos de extensão.</p>
+
+<h3">Formato do pacote</h3>
+<p>O ICMPv6 possui um cabeçalho de estrutura simples, baseado em quatro campos básicos:</p>
+<ul>
+<li>O campo Type de 8 bits: especifica o tipo da mensagem e assim determina o formato do corpo da mensagem (campo Data). Um exemplo de seu uso é o valor 2 que representa uma mensagem “Packet Too Big”.</li>
+<li>O campo Code de 8 bits: apresenta algumas informações adicionais sobre o motivo da mensagem. Um exemplo de seu uso seria para indicar a razão da falha de conexão entre dois dispositivos, numa mensagem “Destination Unreachable”. Neste caso o valor 0 representaria que não há rota para o destino.</li>
+<li>O campo Checksum de 16 bits: é utilizado para detectar dados corrompidos no cabeçalho ICMPv6 e em parte do cabeçalho IPv6.</li>
+<li>O campo Data: mostra as informações relativas ao tipo da mensagem, podendo ser desde diagnósticos de rede até erros. Seu tamanho é variável de acordo com a mensagem, desde que não exceda o tamanho de MTU mínimo do IPv6 (1280 bits).</li>
+</ul>
+<p><img src="image05-300x94.png" /><br />
+<strong>Figura 2: Formato do Pacote ICMPv6</strong></p>
+<h3 id="func-class">Classes</h3>
+<p>Devido o amplo conjunto de informações que podem ser transmitidas por meio dos pacotes ICMPv6, foram designadas duas classes para categorizar as mensagens: Erro e Informação. As duas tabelas a seguir mostram os tipos mensagens pertencentes a cada uma dessas classes.</p>
+<p><strong>Mensagens de Erro:</strong><br />
+<img src="image12.jpg" /></p>
+<p><strong>Mensagem de Informação:</strong><br />
+<img src="image19.jpg" /><br />
+Os tipos 100, 101, 200 e 201 são para uso experimental enquanto que os tipos do 102 até o 126 não são utilizados.</p>
+<h2 id="func-ndp">NDP (Neighbor Discovery Protocol)</h2>
+<p>O protocolo de descoberta de vizinhança foi desenvolvido sob a finalidade de resolver os problemas de interação entre nós vizinhos em uma rede. Para isso ele atua sobre dois aspectos primordiais na comunicação IPv6, a autoconfiguração de nós e a transmissão de pacotes.</p>
+<p>No caso da autoconfiguração de nós, o protocolo fornece suporte para a realização de três funcionalidades:</p>
+<ul>
+<li><strong>Parameter Discovery:</strong> atua na descoberta por um nó de informações sobre o enlace (como MTU) e sobre a Internet(como hop limit).</li>
+<li><strong>Address Autoconfiguration:</strong> trabalha com a autoconfiguração stateless de endereços nas interfaces de um nó.</li>
+<li><strong>Duplicate Address Detection:</strong> utilizado para descobrir se o endereço que se deseja atribuir a uma interface já está sendo utilizado por um outro nó na rede.</li>
+</ul>
+<p>Já no caso da transmissão de pacotes entre nós, o suporte é dado para a realização de seis funcionalidades:</p>
+<ul>
+<li><strong>Router Discovery:</strong> trabalha com a descoberta de roteadores pertencentes ao enlace.</li>
+<li><strong>Prefix Discovery:</strong> implementa a descoberta de prefixos de redes do enlace, cuja a finalidade é decidir para onde os pacotes serão direcionados numa comunicação (se é para um roteador especifico ou direto para um nó do enlace).</li>
+<li><strong>Address Resolution:</strong> descobre o endereço fisico através de um endereço lógico IPv6.</li>
+<li><strong>Neighbor Unreachability Detection:</strong> permite que os nós descubram se um vizinho é ou se continua alcançavel, uma vez que problemas podem acontecer tanto nos nós como na rede.</li>
+<li><strong>Redirect:</strong> permite ao roteador informar ao nó uma rota melhor ao ser utilizada para enviar pacotes a determinado destino.</li>
+<li><strong> Next-Hop Determination</strong>: algoritmo para mapear um endereço IP de destino em um endereço IP de um vizinho para onde o trafego deve ser enviado.</li>
+</ul>
+<h3 id="func-npd-msg">Mensagens</h3>
+<p>O protocolo NDP foi construido com base nas mensagens do protocolo ICMPv6 para a realização de suas tarefas. Para isso foram reservadas 5 tipos de mensagens:</p>
+<ul>
+<li>Router Solicitation (RS), tipo 133.</li>
+<li>Router Advertisement (RA), tipo 134.</li>
+<li>Neighbor Solicitation (NS), tipo 135.</li>
+<li>Neighbor Advertisement (NA), tipo 136.</li>
+<li>Redirect, tipo 137.</li>
+</ul>
+<p>A seguir serão detalhadas cada uma dessas mensagens com suas respectivas informações.</p>
+<h4>2.1.1. Router Solicitation</h4>
+<p>A mensagem Router Solicitation é enviada por um dispositivo para requisitar aos roteadores o envio de mensagens Router Advertisement.</p>
+<p>Sua importância provém da necessidade da descoberta imediata, por um nó, de informações (como rotas, MTU, Hop Limit e outras) que estão dispostas no roteador. De tempos em tempos o roteador envia a todos os nós do enlace esses dados, contudo, esse intervalo pode ser muito longo impedindo o nó de estabelecer alguma comunicação.  Portanto, essa mensagem serve para solicitar ao roteador que responda rapidamente o pedido do dispositivo. Geralmente essa situação acontece quando uma máquina tenta se conectar ou reconectar a rede (ou seja, no momento em que ele habilita sua interface) e por isso desconhece qualquer detalhe das configurações do enlace e da Internet.</p>
+<h4>2.1.2. Router Advertisement</h4>
+<p>A mensagem Router Advertisement é enviada periodicamente ou em resposta à mensagem Router Solicitation por um roteador para anunciar sua presença no enlace.</p>
+<p>Sua importância provém do caráter informativo dessa mensagem. Além de anunciar o roteador como alternativa para rota de tráfego no enlace, ela também transmiti dados como prefixos, MTU, DNS e outros, para que os nós realizem autoconfiguração. Esses dados só estão persistidos nos roteadores, seja por configuração manual ou automática, e eles são os reponsáveis por dissiminar aos demais nós do link.</p>
+<h4>2.1.3. Neighbor Solicitation Message</h4>
+<p>A mensagem Neighbor Solicitation é enviada por um dispositivo para requisitar a um determinado vizinho o envio de mensagens Neighbor Advertisement. Por causa dessa funcionalidade, ela é utilizada para suprir três necessidades basicas de comunicação em redes IPV6.</p>
+<p>A primeira consiste na descoberta de um endereço físico associado a um endereço lógico. Nesse caso a resposta ao Neighbor Solicitation conterá o endereço requisitado. No IPv4, o Address Resolution Protocol realiza a mesma função.</p>
+<p>A segunda consiste no teste de acessibilidade de nós vizinhos no enlace. Nesse caso, a mensagem pode ser enviada para se verificar se determinado endereço lógico existe ou se ainda está respondendo.</p>
+<p>A terceira é sobre a detecção de endereços IPv6 duplicados na vizinhança. Para isso, a mensagem serve como uma pergunta, se naquele momento existe alguma interface configurada com um determinado endereço lógico antes de assumir-lo como dono.</p>
+<h4>2.1.4. Neighbor Advertisement</h4>
+<p>A mensagem Neighbor Advertisement é enviada em resposta a uma mensagem Neighbor Solicitation ou espontaneamente para anunciar a mudança de alguma caracteristica do dispositivo na rede de maneira rápida.</p>
+<p>Igual a mensagem Neighbor Solicitation, essa mensagem também é utilizada para auxiliar nas funcionalidades de resolução de endereços fisicos, no teste de acessibilidade de um nó vizinho e na detecção de endereços duplicados.</p>
+<h4>2.1.5. Redirect</h4>
+<p>A mensagem Redirect é enviada por roteadores para informar ao nó solicitante de uma comunicação, uma melhor opção de caminho para ser utilizada. Em outras palavras, ele envia o endereço do próximo salto que deve ser usado para encaminhar pacotes quando se comunicar com aquele determinado destino.</p>
+<h4>2.1.6. Opções</h4>
+<p>As mensagens pertencentes ao protocolo Neighbor Discovery podem ou não incluir em seus dados opcionais para agregar informações relevantes e assim auxiliar nas funcionalidades básicas.</p>
+<p>Todas as opções possuem uma estrutura básica de dois campos de 8 bits, o Type e o Length . O primeiro serve para indicar qual é a opção escolhida que está sendo transmitida. Já o segundo serve para demarcar o tamanho utilizado no campo opcional.</p>
+<p>Existem atualmente diversas opcões com distintas funções, porém só algumas serão detalhadas por serem mais utilizadas nas funcionalidades básicas do IPv6.</p>
+<ul>
+<li><strong>Source Link Layer Address</strong> - Sua função é carregar o endereço fisico do nó de origem da mensagem. Ele é utilizado nas seguintes mensagens, Neighbor Solicitation, Router Solicitation e Router Advertisement.</li>
+<li><strong>Target Link Layer Address</strong> - Sua função é carregar o endereço fisico do nó de destino questionado por outra mensagem. Ele é utilizado nas seguintes mensagens, Neighbor Advertisement e Redirect.</li>
+<li><strong>Prefix Information</strong> - Sua função é prover ao nó solicitante um prefixo de rede que pode ser utilizado tanto para se autoconfigurar como para se identificar se um endereço de destino em um pacote pertence ao enlace. Ele é utilizado nas mensagens Router Advertisement e deve ser ignorado em outras mensagens.</li>
+<li><strong>Redirect Header</strong> - Sua função é enviar parte ou a totalidade da mensagem original que deverá ser redirecionada pelo nó de origem a outro nó . Ele é utilizado nas mensagens Redirect e deve ser ignorado em outras mensagens.</li>
+<li><strong>MTU</strong> - Sua função é transmitir a todos os nós do enlace o mesmo tamanho de MTU válido.</li>
+<li><strong>Recursive DNS Server Option (RDNSS)</strong> - Sua função é transmitir um ou mais endereços lógicos de servidores recursivos de DNS. Ele é utilizado nas mensagens Router Advertisement e deve ser ignorado em outras mensagens.</li>
+</ul>
+
+<h2 id="func-ndp-func">Referências</h2>
+<p><a href="http://tools.ietf.org/html/rfc4861">http://tools.ietf.org/html/rfc4861</a><br />
+<a href="http://tools.ietf.org/html/rfc5175">http://tools.ietf.org/html/rfc5175</a><br />
+<a href="http://tools.ietf.org/html/rfc3775">http://tools.ietf.org/html/rfc3775</a><br />
+<a href="http://tools.ietf.org/html/rfc4389">http://tools.ietf.org/html/rfc4389</a><br />
+<a href="http://tools.ietf.org/html/rfc6106">http://tools.ietf.org/html/rfc6106</a></p>
+</div>
+
+</article>
+</body>
+</html>
+

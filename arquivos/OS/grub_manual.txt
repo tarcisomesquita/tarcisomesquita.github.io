@@ -1,0 +1,17 @@
+Use the ls command to find the partition containing the boot directory.
+
+set root=(hd0,msdos1)
+
+insmod fat
+insmod chain
+
+insmod part_gpt
+insmod part_msdos
+
+insmod normal
+
+normal
+
+linux /boot/vmlinuz-4.2.0-16-generic root=/dev/sda1 ro
+
+boot

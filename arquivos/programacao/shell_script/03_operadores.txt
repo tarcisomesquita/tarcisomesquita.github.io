@@ -1,0 +1,19 @@
+
+Control operators:
+& && ( ) ; ;; | || <newline>
+
+
+Redirection operators:
+< > >| << >> <& >& <<- <>
+
+
+
+
+&& equivale a AND
+
+|| equivale a OR
+
+$ ping -c1 www.linux.org && echo 'rede OK' || echo 'rede SUJOU!'
+
+Só executa o terceiro comando se os dois primeiros não apresentarem erro.
+

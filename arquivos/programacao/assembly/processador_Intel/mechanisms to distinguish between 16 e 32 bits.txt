@@ -1,0 +1,47 @@
+The following IA-32 architecture mechanisms are used to distinguish between and
+support 16-bit and 32-bit segments and operations:
+•  The D (default operand and address size) flag in code-segment descriptors.
+•  The B (default stack size) flag in stack-segment descriptors.
+•  16-bit and 32-bit call gates, interrupt gates, and trap gates.
+•  Operand-size and address-size instruction prefixes.
+•  16-bit and 32-bit general-purpose registers.
+
+32-bit programs or
+tasks should have the D flag in the code-segment descriptor and the B flag in the
+stack-segment descriptor set, and 16-bit programs or tasks should have these flags
+clear. Program control transfers from 16-bit segments to 32-bit segments (and vice
+versa) are handled most efficiently through call, interrupt, or trap gates.
+
+The following two instruction prefixes allow mixing of 32-bit and 16-bit operations
+within one segment:
+•   The operand-size prefix (66H)
+•   The address-size prefix (67H)
+
+These prefixes reverse the default size selected by the D flag in the code-segment
+descriptor. For example, the processor can interpret the (MOV mem, reg) instruction
+in any of four ways:
+•   In a 32-bit code segment:
+    — Moves 32 bits from a 32-bit register to memory using a 32-bit effective
+        address.
+    — If preceded by an operand-size prefix, moves 16 bits from a 16-bit register to
+        memory using a 32-bit effective address.
+    — If preceded by an address-size prefix, moves 32 bits from a 32-bit register to
+        memory using a 16-bit effective address.
+    — If preceded by both an address-size prefix and an operand-size prefix, moves
+        16 bits from a 16-bit register to memory using a 16-bit effective address.
+•   In a 16-bit code segment:
+    — Moves 16 bits from a 16-bit register to memory using a 16-bit effective
+        address.
+    — If preceded by an operand-size prefix, moves 32 bits from a 32-bit register to
+        memory using a 16-bit effective address.
+    — If preceded by an address-size prefix, moves 16 bits from a 16-bit register to
+        memory using a 32-bit effective address.
+    — If preceded by both an address-size prefix and an operand-size prefix, moves
+        32 bits from a 32-bit register to memory using a 32-bit effective address.
+
+Three things can determine the operand-size of a call:
+•  The D flag in the segment descriptor for the calling code segment.
+•  An operand-size instruction prefix.
+•  The type of call gate (16-bit or 32-bit), if a call is made through a call gate.
+
+

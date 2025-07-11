@@ -1,0 +1,47 @@
+
+ESPECIFICADORES DE CLASSE DE ARMAZENAMENTO
+
+Os especificadores de classe de armazenamento definem a forma de armazenamento do valor e a sua duração de vida.
+
+    * auto: Indica que a variável existe somente dentro da função na qual foi definida, perdendo o seu valor assim que a função termina. É a classe default.
+    * static: Define variáveis locais, mas que mantêm seu valor entre as chamadas da função. Só é inicializada uma vez, na declaração.
+    * register: A variável é armazenada em um registrador da CPU ao invés da memória RAM, tornando o acesso a ela mais rápido. Só pode ser usada com tipo int e char.
+
+    * const: Define que a variável possui um valor inicial que não pode ser alterado.
+    * extern: Indica que a variável foi definida em outro arquivo.
+
+Na falta de inicialização explícita, variáveis globais e statics são inicializadas automaticamente com zero. Variáveis auto e register tem valor indefinido (lixo) quando não inicializadas na declaração.
+
+
+EXEMPLOS
+
+auto unsigned char val_c = 'A';
+static signed long int val_i = 100;
+const double val_d = 50.5;
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+EXEMPLO extern
+
+// file exec_teste.c
+
+extern signed short int var_test;
+extern int printf(char *, ...);
+
+int main () {
+   printf("\n%d\n\n", var_test);
+   return 0;
+}
+
+
+// file obj_teste.c
+
+const signed short int var_test = 8916;
+
+
+Crie os arquivos objeto:
+gcc -c -o exec_teste.o exec_teste.c
+gcc -c -o obj_teste.o obj_teste.c
+
+Crie o arquivo executavel:
+gcc -Wall -o exec_teste exec_teste.o obj_teste.o

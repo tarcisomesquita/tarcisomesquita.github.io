@@ -1,0 +1,8 @@
+>>> help()
+help> keywords
+help> if
+help> topics
+help> modules
+
+>>> help(re)
+

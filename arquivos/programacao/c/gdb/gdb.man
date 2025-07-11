@@ -1,0 +1,180 @@
+gdb(1)                          GNU Tools                         gdb(1)
+
+
+
+NAME
+       gdb - The GNU Debugger
+
+SYNOPSIS
+       gdb    [-help] [-nx] [-q] [-batch] [-cd=dir] [-f] [-b bps]
+              [-tty=dev] [-s symfile] [-e prog] [-se prog] [-c core] [-x
+              cmds] [-d dir] [prog [core|procID]]
+
+       gdb    [options] --args prog [arguments]
+
+       gdbtui [options]
+
+DESCRIPTION
+
+specify a process ID as a second  argument,  if you want to debug a running process:
+
+       gdb program 1234
+
+
+the most frequently needed GDB commands:
+
+       break [file:]function
+               Set a breakpoint at function (in file).
+
+       run [arglist]
+              Start your program (with arglist, if specified).
+
+       bt     Backtrace: display the program stack.
+
+       print expr
+               Display the value of an expression.
+
+       c      Continue running your program (after stopping, e.g.  at  a
+              breakpoint).
+
+       next   Execute  next program line (after stopping); step over any
+              function calls in the line.
+
+       edit [file:]function
+              look at the program line where it is presently stopped.
+
+       list [file:]function
+              type the text of the program in the vicinity of  where  it
+              is presently stopped.
+
+       step   Execute  next program line (after stopping); step into any
+              function calls in the line.
+
+       help [name]
+              Show information about GDB command name, or general infor‐
+              mation about using GDB.
+
+       quit   Exit from GDB.
+
+       For  full  details  on  GDB,  see  Using  GDB: A Guide to the GNU
+       Source-Level Debugger, by  Richard  M.  Stallman  and  Roland  H.
+       Pesch.
+
+OPTIONS
+       -help
+
+       -h     List all options, with brief explanations.
+
+
+       -symbols=file
+
+       -s file
+               Read symbol table from file file.
+
+
+       -write Enable writing into executable and core files.
+
+
+       -exec=file
+
+       -e file
+                Use  file  file  as  the executable file to execute when
+              appropriate, and for examining pure  data  in  conjunction
+              with a core dump.
+
+
+       -se=file
+                Read  symbol table from file file and use it as the exe‐
+              cutable file.
+
+
+       -core=file
+
+       -c file
+               Use file file as a core dump to examine.
+
+
+       -command=file
+
+       -x file
+               Execute GDB commands from file file.
+
+
+       -directory=directory
+
+       -d directory
+               Add directory to the path to search for source files.
+
+
+
+       -nx
+
+       -n     Do not execute commands from any ‘.gdbinit’ initialization
+              files.  Normally, the commands in these files are executed
+              after all the command options and arguments have been pro‐
+              cessed.
+
+
+
+       -quiet
+
+       -q     ‘‘Quiet’’.   Do  not  print the introductory and copyright
+              messages.  These messages are  also  suppressed  in  batch
+              mode.
+
+
+       -batch Run  in  batch  mode.  Exit with status 0 after processing
+              all the command files specified with ‘-x’ (and ‘.gdbinit’,
+              if  not  inhibited).  Exit with nonzero status if an error
+              occurs in executing the GDB commands in the command files.
+
+              Batch  mode may be useful for running GDB as a filter, for
+              example to download and run a program on another computer;
+              in order to make this more useful, the message
+
+              Program exited normally.
+
+
+              (which  is  ordinarily  issued  whenever a program running
+              under GDB control terminates) is not issued  when  running
+              in batch mode.
+
+
+       -cd=directory
+               Run GDB using directory as its working directory, instead
+              of the current directory.
+
+
+       -fullname
+
+       -f     Emacs sets this option when it runs GDB as  a  subprocess.
+              It  tells GDB to output the full file name and line number
+              in a standard, recognizable  fashion  each  time  a  stack
+              frame  is  displayed (which includes each time the program
+              stops).  This recognizable format  looks  like  two  ‘ 32’
+              characters,  followed  by  the  file name, line number and
+              character position separated by  colons,  and  a  newline.
+              The  Emacs-to-GDB  interface  program  uses  the two ‘ 32’
+              characters as a signal to display the source code for  the
+              frame.
+
+
+       -b bps   Set the line speed (baud rate or bits per second) of any
+              serial interface used by GDB for remote debugging.
+
+
+       -tty=device
+               Run using device for your program’s  standard  input  and
+              output.
+
+
+       --args Pass  arguments after the program name to the program when
+              it is run.
+
+
+       -tui   Run GDB using a text (console) user interface.
+
+
+
+
+GNU Tools                       22may2002                         gdb(1)

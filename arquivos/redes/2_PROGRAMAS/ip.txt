@@ -1,0 +1,143 @@
+
+ip neighbor
+Displaying the ARP cache with ip neighbor show
+# ip neighbor show
+# ip neighbor show   dev eth0
+# ip neighbor show   192.168.99.254
+# ip neighbor show   192.168.100.0/24
+# ip neighbor add    192.168.100.1 lladdr 00:c0:7b:7d:00:c8 dev eth3 nud permanent
+# ip neighbor change 192.168.99.254 lladdr 00:80:c8:27:69:2d dev eth3
+# ip neighbor del    192.168.100.1 dev eth3
+# ip neighbor flush  dev eth3
+
+ip route
+# ip route flush cache
+# ip route list
+# ip route show dev eth1
+# ip route show dev eth1 table local
+# ip route show          table main
+# ip route show          table 4
+# ip route add nat 192.168.0.100 via 200.1.2.20
+# ip route add table local local 10.10.20.64   dev eth0 proto kernel scope host src 10.10.20.67
+# ip route add default via 205.254.211.254 src 205.254.211.198 table 7
+# ip route add table 4 $ROUTE
+# ip route add table 4 default via 67.17.28.14
+# ip route flush table 4
+# ip route del 10.38.0.0/16 via 192.168.100.1 dev eth3
+# ip route change default via 192.168.99.113 dev eth0
+
+unicast
+ip route add default via 193.7.255.1
+ip route del default via 193.7.255.1
+ip route add 10.40.0.0/16 via 10.72.75.254
+ip route add unicast 192.168.0.0/24 via 192.168.100.5
+ip route add unicast default via 206.59.29.193
+
+broadcast
+ip route add table local broadcast 10.10.20.255 dev eth0 proto kernel scope link src 10.10.20.67
+ip route add table local broadcast 192.168.43.31 dev eth4 proto kernel scope link src 192.168.43.14
+
+unreachable
+    When requested, an ICMP unreachable is returned to the source address.
+    ip route add unreachable 172.16.82.184
+    ip route add unreachable 192.168.14.0/26
+    ip route add unreachable 209.10.26.51
+
+prohibit
+    When requested, an ICMP prohibited is returned to the source address.
+    ip route add prohibit 10.21.82.157
+    ip route add prohibit 172.28.113.0/28
+    ip route add prohibit 209.10.26.51
+
+blackhole
+    A packet matching this route is discarded. No ICMP is sent and no packet is forwarded.
+    ip route add blackhole default
+    ip route add blackhole 202.143.170.0/24
+    ip route add blackhole 64.65.64.0/18
+
+local
+    The kernel will add entries into the local routing table when IP addresses are added to an interface.
+    ip route add table local local 10.10.20.64   dev eth0 proto kernel scope host src 10.10.20.67
+    ip route add table local local 192.168.43.12 dev eth4 proto kernel scope host src 192.168.43.14
+
+nat
+    This route entry is added by the kernel in the local routing table.
+    ip route add nat 193.7.255.184 via 172.16.82.184
+    ip route add nat 10.40.0.0/16  via 172.40.0.0
+    ip route show dev eth1 table local
+
+nat
+    The nat rule type is required for correct operation of stateless NAT.
+    rewrite the source address of an outbound packet.
+    ip rule add nat 193.7.255.184 from 172.16.82.184
+    ip rule add nat 10.40.0.0     from 172.40.0.0/16
+
+
+NAT requires two matching commands:
+   one to cause the kernel to rewrite the inbound packets (ip route add nat $NATIP via $REAL)
+   one to rewrite the outbound packets (ip rule add from $REAL nat $NATIP).
+It will simply transform any packets passing through, not retaining state on connections.
+
+Basic commands to create a stateless NAT
+# ip route add nat 205.254.211.17 via  192.168.100.17
+# ip rule  add nat 205.254.211.17 from 192.168.100.17
+# ip route flush cache
+# ip route show table all | grep ^nat
+nat 205.254.211.17 via 192.168.100.17  table local  scope host
+# ip rule show    
+
+
+o Kernel verifica se o pacote se enquadra inicialmente em uma prioridade mais baixa. O Kernel utiliza três tabelas iniciais:
+local: identificada no Kernel por 255, é associada com a regra de prioridade 0;
+main: identificada no Kernel por 254, é associada com a regra de prioridade 32766, possui as rotas normais do sistema, sem envolver quaisquer políticas especiais de roteamento, podendo ser alterada livremente pelo administrador, ou até apagada;
+default: identificada no Kernel por 253, é associada com a regra de prioridade 32768, por padrão está vazia, é reservada para alguma atividade de pós-processamento, se o pacote não foi selecionado por nenhuma das tabelas iniciais.
+
+# tcpdump -qnn
+19:30:17.824853 eth1 < 64.70.12.210.35131 > 205.254.211.17.25: tcp 0 (DF)
+19:30:17.824976 eth0 > 64.70.12.210.35131 > 192.168.100.17.25: tcp 0 (DF)
+19:30:17.825400 eth0 < 192.168.100.17.25 > 64.70.12.210.35131: tcp 0 (DF)
+19:30:17.825568 eth1 > 205.254.211.17.25 > 64.70.12.210.35131: tcp 0 (DF)
+
+Conditional Stateless NAT (not performing NAT for a specified destination network)
+# ip rule add to 192.168.99.0/24 from 192.168.100.17
+# ip route flush cache
+# ip rule show
+
+Using DNAT for all protocols (and ports) on one IP
+# iptables -t nat -A PREROUTING -d 10.10.20.99 -j DNAT --to-destination 10.10.14.2
+
+Using DNAT for a single port
+# iptables -t nat -A PREROUTING -p tcp -d 10.10.20.99 --dport 80 -j DNAT --to-destination 10.10.14.2
+
+Simulating full NAT with SNAT and DNAT
+# iptables -t nat -A PREROUTING  -d 205.254.211.17 -j DNAT --to-destination 192.168.100.17
+# iptables -t nat -A POSTROUTING -s 192.168.100.17 -j SNAT --to-destination 205.254.211.17
+
+Now, let's mark the traffic we would like to route in using conditional logic. We'll use iptables to select traffic bound for destination ports 80 and 443 originating in the main office desktop network.
+
+Example 10.2. Multiple Outbound Internet links, part II; iptables
+
+# iptables -t mangle -A PREROUTING -p tcp --dport 80  -s 192.168.99.0/24 -j MARK --set-mark 4
+# iptables -t mangle -A PREROUTING -p tcp --dport 443 -s 192.168.99.0/24 -j MARK --set-mark 4
+
+# iptables -t nat -A POSTROUTING -o eth4 -j SNAT --to-source 67.17.28.12
+# iptables -t nat -A POSTROUTING -o eth1 -j SNAT --to-source 205.254.211.179
+
+With these iptables lines we have instructed netfilter to mark packets matching these criteria with the fwmark and we have prepared the NAT rules so that our outbound packets will originate from the correct IPs. 
+
+Multiple Outbound Internet links, part III; ip rule
+
+# ip rule add fwmark 4 table 4
+# ip rule show
+# ip route flush cache
+
+using iproute2 only
+# ip route add nat 67.17.28.10 via 192.168.100.10
+# ip rule  add nat 67.17.28.10 from 192.168.100.10 table 4
+# ip route add nat 205.254.211.17 via 192.168.100.17
+# ip rule  add nat 205.254.211.17 from 192.168.100.17
+# ip rule show
+
+Atribuindo peso às rotas
+ip route add default scope global nexthop via 200.100.10.1 dev eth0 weight 1 nexthop via 200.1.2.1 dev eth1 weight 1
+

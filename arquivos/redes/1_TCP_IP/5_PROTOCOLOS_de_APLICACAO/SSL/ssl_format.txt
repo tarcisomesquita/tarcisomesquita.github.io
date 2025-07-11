@@ -1,0 +1,97 @@
+SSL record format
+There are three record types for SSL version 3 and TLS version 1:
+
+    Handshake
+    Alert, which is a warning or fatal error
+    Data (application data).
+
+The data in the record has the following characteristics:
+
+    A variable length and starts with a 5-byte record header
+    Contains handshake data, alert data, or application data
+    Is encrypted, except for the first SSL handshake flows.
+
+The message digest has the following characteristics:
+
+    A fixed length that is based on the digest algorithm used
+    Is included only if the data is encrypted.
+
+Format of an SSL record
+
+Byte   0       = SSL record type
+Bytes 1-2      = SSL version (major/minor)
+Bytes 3-4      = Length of data in the record (excluding the header itself).
+                 The maximum SSL supports is 16384 (16K).
+
+Byte 0 in the record has the following record type values:
+
+SSL3_RT_CHANGE_CIPHER_SPEC      20   (x'14')
+SSL3_RT_ALERT                   21   (x'15')
+SSL3_RT_HANDSHAKE               22   (x'16')
+SSL3_RT_APPLICATION_DATA        23   (x'17')
+
+Bytes 1-2 in the record have the following version values:
+
+SSL3_VERSION           x'0300'
+TLS1_VERSION           x'0301'
+
+Format of an SSL handshake record
+
+Byte   0       = SSL record type = 22 (SSL3_RT_HANDSHAKE)
+Bytes 1-2      = SSL version (major/minor)
+Bytes 3-4      = Length of data in the record (excluding the header itself).
+Byte   5       = Handshake type
+Bytes 6-8      = Length of data to follow in this record
+Bytes 9-n      = Command-specific data                      
+
+Byte 5 in the record has the following handshake type values:
+
+SSL3_MT_HELLO_REQUEST            0   (x'00')
+SSL3_MT_CLIENT_HELLO             1   (x'01')
+SSL3_MT_SERVER_HELLO             2   (x'02')
+SSL3_MT_CERTIFICATE             11   (x'0B')
+SSL3_MT_SERVER_KEY_EXCHANGE     12   (x'0C')
+SSL3_MT_CERTIFICATE_REQUEST     13   (x'0D')
+SSL3_MT_SERVER_DONE             14   (x'0E')
+SSL3_MT_CERTIFICATE_VERIFY      15   (x'0F')
+SSL3_MT_CLIENT_KEY_EXCHANGE     16   (x'10')
+SSL3_MT_FINISHED                20   (x'14') 
+
+The ChangeCipherspec type has the following value:
+
+SSL3_MT_CCS       1
+
+Format of an SSL alert record
+
+SSL3_AL_WARNINGS        1
+SSL3_AL_FATAL           2
+
+The following shows the alert values for SSL and TLS. Alerts that begin with SSL3 are supported by both SSL version 3 and TLS version 1. Alerts that begin with TLS1 are supported by TLS only.
+
+SSL3_AD_CLOSE_NOTIFY                   0      x'00'
+SSL3_AD_UNEXPECTED_MESSAGE            10      x'0A'
+SSL3_AD_BAD_RECORD_MAC                20      x'14'
+TLS1_AD_DECRYPTION_FAILED             21      x'15'
+TLS1_AD_RECORD_OVERFLOW               22      x'16'
+SSL3_AD_DECOMPRESSION_FAILURE         30      x'1E'
+SSL3_AD_HANDSHAKE_FAILURE             40      x'28'
+SSL3_AD_NO_CERTIFICATE                41      x'29'
+SSL3_AD_BAD_CERTIFICATE               42      x'2A'
+SSL3_AD_UNSUPPORTED_CERTIFICATE       43      x'2B'
+SSL3_AD_CERTIFICATE_REVOKED           44      x'2C'
+SSL3_AD_CERTIFICATE_EXPIRED           45      x'2D'
+SSL3_AD_CERTIFICATE_UNKNOWN           46      x'2E'
+SSL3_AD_ILLEGAL_PARAMETER             47      x'2F'
+TLS1_AD_UNKNOWN_CA                    48      x'30'
+TLS1_AD_ACCESS_DENIED                 49      x'31'
+TLS1_AD_DECODE_ERROR                  50      x'32'
+TLS1_AD_DECRYPT_ERROR                 51      x'33'
+TLS1_AD_EXPORT_RESTRICTION            60      x'3C'
+TLS1_AD_PROTOCOL_VERSION              70      x'46'
+TLS1_AD_INSUFFICIENT_SECURITY         71      x'47'
+TLS1_AD_INTERNAL_ERROR                80      x'50'
+TLS1_AD_USER_CANCELLED                90      x'5A'
+TLS1_AD_NO_RENEGOTIATION             100      x'64'	
+ 
+
+

@@ -1,0 +1,27 @@
+struct ext2_dir_entry_2 {
+   unsigned int inode;      // Inode number
+   unsigned short rec_len;  // Directory entry length
+   unsigned char name_len;  // Name length
+   unsigned char file_type;
+   char name[255];          // File name
+} *dir_entry = 0x00000000;
+
+rec_len
+If an entry cannot completely fit in one block, it must be pushed to the next data block and the rec_len of the previous entry properly adjusted. 
+
+file_type
+Constant Name      Value   Description
+EXT2_FT_UNKNOWN    0       Unknown File Type
+EXT2_FT_REG_FILE   1       Regular File
+EXT2_FT_DIR        2       Directory File
+EXT2_FT_CHRDEV     3       Character Device
+EXT2_FT_BLKDEV     4       Block Device
+EXT2_FT_FIFO       5       Buffer File
+EXT2_FT_SOCK       6       Socket File
+EXT2_FT_SYMLINK    7       Symbolic Link
+
+
+To improve performances hashed index is used.
+Bit EXT2-INDEX-FL in the i_flags of the directory inode is set if the indexed directory format is used.
+
+

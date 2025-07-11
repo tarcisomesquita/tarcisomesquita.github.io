@@ -1,0 +1,33 @@
+ip link
+Usado para verificar e/ou configurar o endereço físico (MAC) das interfaces de rede.
+Aceita as opções show e set.
+
+ip link set DEVICE {
+   up | down | arp { on | off } |
+   promisc { on | off } |
+   allmulticast { on | off } |
+   dynamic { on | off } |
+   multicast { on | off } |
+   txqueuelen PACKETS |
+   name NEWNAME |
+   address LLADDR | broadcast LLADDR |
+   mtu MTU |
+   netns PID }
+
+# ip link set  dev eth0 promisc on
+# ip link set  dev eth0 promisc off multicast off
+# ip link set  dev eth0 dynamic	on
+# ip link set  dev eth0 multicast off
+# ip link set  dev eth0 arp off
+# ip link set  dev eth0 down
+# ip link set  dev eth0 up
+# ip link set  dev eth0 mtu 1500
+# ip link set  dev eth0 address 00:80:c8:f8:be:ef
+# ip link set  dev eth0 broadcast ff:ff:88:ff:ff:88
+# ip link set  dev eth0 name inside
+
+ip link show [ DEVICE ]
+# ip link show
+# ip link show dev eth0
+# ip link show dev inside
+

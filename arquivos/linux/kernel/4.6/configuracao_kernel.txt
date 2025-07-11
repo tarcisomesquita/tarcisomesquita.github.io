@@ -1,0 +1,183 @@
+> Device Drivers > Character devices > /dev/nvram support
+get read and write access to "CMOS RAM"
+
+man ss
+
+> Networking support > Networking options >  IP: TCP syncookie support
+attack known as "SYN flooding"
+echo 0 > /proc/sys/net/ipv4/tcp_syncookies
+
+> Networking support > Wireless
+> Networking support > Networking options>   The IPv6 protocol
+> Networking support > Networking options > Network packet filtering framework (Netfilter)  --->
+
+> Networking support > Networking options > Network testing
+This module will inject preconfigured packets, at a configurable                                                                       │  
+  │ rate, out of a given interface.  It is used for network interface                                                                      │  
+  │ stress testing and performance analysis.
+Documentation/networking/pktgen.txt
+
+CONFIG_NETFILTER_XT_TARGET_REDIRECT:                                                                                                   │  
+  │                                                                                                                                        │  
+  │ REDIRECT is a special case of NAT: all incoming connections are                                                                        │  
+  │ mapped onto the incoming interface's address, causing the packets to                                                                   │  
+  │ come to the local machine instead of passing through. This is                                                                          │  
+  │ useful for transparent proxies.                                                                                                        │  
+  │  
+
+ CONFIG_NETFILTER_XT_TARGET_TEE:                                                                                                        │  
+  │                                                                                                                                        │  
+  │ This option adds a "TEE" target with which a packet can be cloned and                                                                  │  
+  │ this clone be rerouted to another nexthop.                                                                                             │  
+ 
+CONFIG_NETFILTER_XT_TARGET_TPROXY:                                                                                                     │  
+  │                                                                                                                                        │  
+  │ This option adds a `TPROXY' target, which is somewhat similar to                                                                       │  
+  │ REDIRECT.  It can only be used in the mangle table and is useful                                                                       │  
+  │ to redirect traffic to a transparent proxy.  It does _not_ depend                                                                      │  
+  │ on Netfilter connection tracking and NAT, unlike REDIRECT.                                                                             │  
+  │ For it to work you will have to configure certain iptables rules                                                                       │  
+  │ and use policy routing. For more information on how to set it up                                                                       │  
+  │ see Documentation/networking/tproxy.txt.                                                                                               │  
+ 
+
+ CONFIG_NETFILTER_XT_TARGET_TCPMSS:                                                                                                     │  
+  │                                                                                                                                        │  
+  │ This option adds a `TCPMSS' target, which allows you to alter the                                                                      │  
+  │ MSS value of TCP SYN packets, to control the maximum size for that                                                                     │  
+  │ connection (usually limiting it to your outgoing interface's MTU                                                                       │  
+  │ minus 40).                                                                                                                             │  
+  │                                                                                                                                        │  
+  │ This is used to overcome criminally braindead ISPs or servers which                                                                    │  
+  │ block ICMP Fragmentation Needed packets.  The symptoms of this                                                                         │  
+  │ problem are that everything works fine from your Linux                                                                                 │  
+  │ firewall/router, but machines behind it can never exchange large                                                                       │  
+  │ packets:                                                                                                                               │  
+  │       1) Web browsers connect, then hang with no data received.                                                                        │  
+  │       2) Small mail works fine, but large emails hang.                                                                                 │  
+  │       3) ssh works fine, but scp hangs after initial handshaking.                                                                      │  
+  │                                                                                                                                        │  
+  │ Workaround: activate this option and add a rule to your firewall                                                                       │  
+  │ configuration like:                                                                                                                    │  
+  │                                                                                                                                        │  
+  │ iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN \                                                                                   │  
+  │                -j TCPMSS --clamp-mss-to-pmtu                                                                                           │  
+
+CONFIG_NETFILTER_XT_TARGET_TCPOPTSTRIP:                                                                                                │  
+  │                                                                                                                                        │  
+  │ This option adds a "TCPOPTSTRIP" target, which allows you to strip                                                                     │  
+  │ TCP options from TCP packets.                                                                                                          │  
+  │
+
+CONFIG_NETFILTER_XT_MATCH_ADDRTYPE:                                                                                                    │  
+  │                                                                                                                                        │  
+  │ This option allows you to match what routing thinks of an address,                                                                     │  
+  │ eg. UNICAST, LOCAL, BROADCAST, ...                                                                                                     │  
+  │                                                                                                                                        │  
+  │ If you want to compile it as a module, say M here and read                                                                             │  
+  │ <file:Documentation/kbuild/modules.txt>.  If unsure, say `N'.                                                                          │  
+  │ 
+
+CONFIG_NETFILTER_XT_MATCH_CONNBYTES:                                                                                                   │  
+  │                                                                                                                                        │  
+  │ This option adds a `connbytes' match, which allows you to match the                                                                    │  
+  │ number of bytes and/or packets for each direction within a connection.                                                                 │  
+  │                                                                                                                                        │  
+  │ If you want to compile it as a module, say M here and read                                                                             │  
+  │ <file:Documentation/kbuild/modules.txt>.  If unsure, say `N'.                                                                          │  
+  │ 
+
+CONFIG_NETFILTER_XT_MATCH_CONNLIMIT:                                                                                                   │  
+  │                                                                                                                                        │  
+  │ This match allows you to match against the number of parallel                                                                          │  
+  │ connections to a server per client IP address (or address block).                                                                      │  
+  │ 
+
+ CONFIG_NETFILTER_XT_MATCH_IPRANGE:                                                                                                     │  
+  │                                                                                                                                        │  
+  │ This option adds a "iprange" match, which allows you to match based on                                                                 │  
+  │ an IP address range. (Normal iptables only matches on single addresses                                                                 │  
+  │ with an optional mask.)                                                                                                                │  
+  │
+
+CONFIG_NETFILTER_XT_MATCH_LENGTH:                                                                                                      │  
+  │                                                                                                                                        │  
+  │ This option allows you to match the length of a packet against a                                                                       │  
+  │ specific value or range of values.                                                                                                     │  
+  │ 
+
+CONFIG_NETFILTER_XT_MATCH_LIMIT:                                                                                                       │  
+  │                                                                                                                                        │  
+  │ limit matching allows you to control the rate at which a rule can be                                                                   │  
+  │ matched: mainly useful in combination with the LOG target ("LOG                                                                        │  
+  │ target support", below) and to avoid some Denial of Service attacks.                                                                   │  
+  │ 
+
+CONFIG_NETFILTER_XT_MATCH_MULTIPORT:                                                                                                   │  
+  │                                                                                                                                        │  
+  │ Multiport matching allows you to match TCP or UDP packets based on                                                                     │  
+  │ a series of source or destination ports: normally a rule can only                                                                      │  
+  │ match a single range of ports.                                                                                                         │  
+  │
+
+CONFIG_NETFILTER_XT_MATCH_OSF:                                                                                                         │  
+  │                                                                                                                                        │  
+  │ This option selects the Passive OS Fingerprinting match module                                                                         │  
+  │ that allows to passively match the remote operating system by                                                                          │  
+  │ analyzing incoming TCP SYN packets.                                                                                                    │  
+  │                                                                                                                                        │  
+  │ Rules and loading software can be downloaded from                                                                                      │  
+  │ http://www.ioremap.net/projects/osf                                                                                                    │  
+  │ 
+
+ CONFIG_NETFILTER_XT_MATCH_OWNER:                                                                                                       │  
+  │                                                                                                                                        │  
+  │ Socket owner matching allows you to match locally-generated packets                                                                    │  
+  │ based on who created the socket: the user or group. It is also                                                                         │  
+  │ possible to check whether a socket actually exists.                                                                                    │  
+  │ 
+
+CONFIG_NETFILTER_XT_MATCH_PHYSDEV:                                                                                                     │  
+  │                                                                                                                                        │  
+  │ Physdev packet matching matches against the physical bridge ports                                                                      │  
+  │ the IP packet arrived on or will leave by.                                                                                             │  
+  │
+
+CONFIG_NETFILTER_XT_MATCH_PKTTYPE:                                                                                                     │  
+  │                                                                                                                                        │  
+  │ Packet type matching allows you to match a packet by                                                                                   │  
+  │ its "class", eg. BROADCAST, MULTICAST, ...                                                                                             │  
+  │                                                                                                                                        │  
+  │ Typical usage:                                                                                                                         │  
+  │ iptables -A INPUT -m pkttype --pkt-type broadcast -j LOG                                                                               │  
+  │
+
+CONFIG_NETFILTER_XT_MATCH_QUOTA:                                                                                                       │  
+  │                                                                                                                                        │  
+  │ This option adds a `quota' match, which allows to match on a                                                                           │  
+  │ byte counter.                                                                                                                          │  
+  │ 
+
+ CONFIG_NETFILTER_XT_MATCH_STRING:                                                                                                      │  
+  │                                                                                                                                        │  
+  │ This option adds a `string' match, which allows you to look for                                                                        │  
+  │ pattern matchings in packets.                                                                                                          │  
+  │
+
+CONFIG_NETFILTER_XT_MATCH_TCPMSS:                                                                                                      │  
+  │                                                                                                                                        │  
+  │ This option adds a `tcpmss' match, which allows you to examine the                                                                     │  
+  │ MSS value of TCP SYN packets, which control the maximum packet size                                                                    │  
+  │ for that connection.                                                                                                                   │  
+  │ 
+
+ CONFIG_NETFILTER_XT_MATCH_TIME:                                                                                                        │  
+  │                                                                                                                                        │  
+  │ This option adds a "time" match, which allows you to match based on                                                                    │  
+  │ the packet arrival time (at the machine which netfilter is running)                                                                    │  
+  │ on) or departure time/date (for locally generated packets).                                                                            │  
+  │                                                                                                                                        │  
+  │ If you say Y here, try `iptables -m time --help` for                                                                                   │  
+  │ more information.                                                                                                                      │  
+  │
+

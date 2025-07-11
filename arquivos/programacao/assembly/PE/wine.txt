@@ -1,0 +1,3 @@
+dpkg --add-architecture i386 && apt-get update && apt-get install wine32:i386
+
+requer 1.120 MB

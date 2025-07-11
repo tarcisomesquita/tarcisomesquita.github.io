@@ -1,0 +1,1 @@
+Os nomes de arquivos e pastas utilizam caracteres em Unicode. Cada caracter ocupa dois bytes.

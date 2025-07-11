@@ -1,0 +1,36 @@
+# lsmod
+xt_state               10112  1 
+ipt_MASQUERADE         10752  1 
+iptable_nat            13700  1 
+ipt_LOG                13700  1 
+iptable_filter         10752  1 
+iptable_mangle         10880  0 
+ip_tables              19472  3 iptable_mangle,iptable_nat,iptable_filter
+nf_nat                 25876  2 ipt_MASQUERADE,iptable_nat
+nf_conntrack_ipv4      21388  4 iptable_nat,nf_nat
+nf_conntrack           72008  5 xt_state,ipt_MASQUERADE,iptable_nat,nf_nat,nf_conntrack_ipv4
+x_tables               23044  5 xt_state,ipt_MASQUERADE,iptable_nat,ipt_LOG,ip_tables
+
+
+# iptable_mangle - this target allows for packets to be manipulated for things like the TCPMSS option, etc.
+# ipt_mark - this target marks a given packet for future action.
+# This automatically loads the ipt_MARK module
+
+# ipt_tcpmss - this target allows to manipulate the TCP MSS option for braindead remote firewalls.
+# This automatically loads the ipt_TCPMSS module
+#
+# ipt_limit - this target allows for packets to be limited to to many hits per sec/min/hr
+--limit avg			max average match rate: default 3/hour
+                                [Packets per second unless followed by 
+                                /sec /minute /hour /day postfixes]
+-A INPUT -m limit --limit 5/min -j LOG --log-prefix "iptables denied: "
+
+
+# ipt_multiport - this match allows for targets within a range of port numbers vs. listing each port individually
+#
+# ipt_state - this match allows to catch packets with various IP and TCP flags set/unset
+#
+# ipt_unclean - this match allows to catch packets that have invalid IP/TCP flags set
+#
+# iptable_filter - this module allows for packets to be DROPped,  REJECTed, or LOGged.#
+

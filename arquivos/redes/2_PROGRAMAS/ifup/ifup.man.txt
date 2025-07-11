@@ -1,0 +1,28 @@
+ifup(8)
+
+DESCRIPTION
+       The  ifup  and  ifdown  commands may be used to configure (or, respectively, deconfigure) network interfaces based on interface definitions in the
+       file /etc/network/interfaces.
+
+EXAMPLES
+       ifup -a
+              Bring up all the interfaces defined with auto in /etc/network/interfaces
+
+       ifup eth0
+              Bring up interface eth0
+
+       ifup eth0=home
+              Bring up interface eth0 as logical interface home
+
+       ifdown -a
+              Bring down all interfaces that are currently up.
+
+NOTES
+       ifup and ifdown are actually the same program called by different names.
+       The program does not configure network interfaces directly; it runs low level utilities such as ifconfig and route to do its dirty work.
+
+/var/run/network/ifstate current state of network interfaces
+
+LIMITATIONS
+an interface that was brought up using ifup and later deconfigured using ifconfig will still be recorded as up.  To fix this you can use the --force option to force ifup or ifdown.
+

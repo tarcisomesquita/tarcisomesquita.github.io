@@ -1,0 +1,23 @@
+$ openssl genrsa -des3 -out server.key.secure 2048
+
+The genrsa command causes openssl to generate an RSA private key, –des3 specifies that the private key is to be encrypted using the triple-DES encryption algorithm, –out server.key.secure specifies that the private key is to be written to the file named server.key.secure, and 2048 is the length of the key in bits.
+
+$ openssl rsa -in server.key.secure -pubout -out server.key
+
+The rsa command causes openssl to process an RSA key, –in server.key.secure specifies server.key.secure as the input file that contains the private key, –pubout causes openssl to output the public key, and –out server.key specifies that the public key is to be written to the file named server.key.
+
+
+Generating a Self-Signed SSL Certificate
+$ openssl req -new -key server.key.secure -out server.csr
+
+Signing an SSL Certificate
+$ openssl x509 -req -days 365 -in server.csr -signkey server.key.secure -out server.crt
+The x509 command causes openssl to work with a certificate, –req tells openssl to expect a csr file as input, –days 365 specifies that the certificate will be valid for 365 days, –signkey server.key.secure specifies that the certificate is to be signed by the key held in the file named server.key.secure, and –out server.crt specifies that the certificate is to be written to the file named server.crt.
+
+
+The *.crt file is the self-signed SSL certificate, *.csr is the certificate signing request, server.key is the public key, and server.key.secure is the private key.
+
+
+testar conexão
+$ openssl s_client -connect www.eff.org:443
+

@@ -1,0 +1,22 @@
+gcc -c -o time-func.o time-func.c
+gcc -DHAVE_CONFIG_H -I. -c -o parse.o parse.c
+gcc -DHAVE_CONFIG_H -I. -c -o mime.o mime.c
+gcc -DHAVE_CONFIG_H -I. -c -o log.o log.c
+gcc -DHAVE_CONFIG_H -I. -c -o file.o file.c
+gcc -DHAVE_CONFIG_H -I. -c -o http.o http.c
+gcc -DHAVE_CONFIG_H -I. -c -o recv.o recv.c
+gcc -DHAVE_CONFIG_H -I. -c -o conf.o conf.c
+gcc -DHAVE_CONFIG_H -I. -c -o children.o children.c
+gcc -DHAVE_CONFIG_H -I. -c -o send.o send.c
+gcc -DHAVE_CONFIG_H -I. -c -o additional.o additional.c
+gcc -DHAVE_CONFIG_H -I. -c -o scripts.o scripts.c
+gcc -DHAVE_CONFIG_H -I. -c -o cache.o cache.c
+gcc -DHAVE_CONFIG_H -I. -c -o main.o main.c
+
+gcc -c -o additional2.o additional2.c
+gcc -c -o children2.o children2.c
+gcc -c -o debug_variaveis.o debug_variaveis.c
+gcc -c -o parse2.o parse2.c
+
+gcc -DHAVE_CONFIG_H -I. -o dhttpd time-func.o parse.o mime.o log.o file.o http.o recv.o conf.o children.o send.o additional.o scripts.o cache.o main.o
+

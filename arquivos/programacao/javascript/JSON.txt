@@ -1,0 +1,20 @@
+
+https://www.json.org/
+JSON (JavaScript Object Notation)
+
+Extension: ".json"
+MIME type: "application/json"
+
+JSON.parse('null') 
+JSON.parse('true') 
+JSON.parse('4')
+JSON.parse('"teste"')
+JSON.parse('["teste"]')
+JSON.parse('{"t":"teste"}')
+
+
+const listaNatal = { mike:"Livro", jason:"blusa", chelsea:"iPad" }
+console.log(JSON.stringify(listaNatal));
+console.log(JSON.stringify(listaNatal,null,2));
+
+obj = eval("(" + listaNatalString + ")");

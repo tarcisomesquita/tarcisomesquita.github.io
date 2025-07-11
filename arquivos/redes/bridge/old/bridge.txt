@@ -1,0 +1,23 @@
+set the source MAC address to the MAC address of the bridge for all frames sent to the AP.
+# ebtables -t nat -A POSTROUTING -o wlan0 -j snat --to-src $MAC_OF_BRIDGE --snat-arp --snat-target ACCEPT
+
+MAC and IP of each of the machines behind your bridge
+# ebtables -t nat -A PREROUTING -p IPv4 -i wlan0 --ip-dst     $IP -j dnat --to-dst $MAC --dnat-target ACCEPT
+# ebtables -t nat -A PREROUTING -p ARP  -i wlan0 --arp-ip-dst $IP -j dnat --to-dst $MAC --dnat-target ACCEPT
+
+
+proxy arp
+configure an inside client with a static IP of 10.42.0.11/24
+
+on the bridge:
+bridge# echo 1 > /proc/sys/net/ipv4/conf/all/proxy_arp
+bridge# echo 1 > /proc/sys/net/ipv4/ip_forward
+bridge# ip ro add 10.42.0.11/32 dev eth0
+
+ping from the inside host to an outside host, and examine the ARP table:
+insidehost$ ping -c 1 10.42.0.2
+PING 10.42.0.2 (10.42.0.2) 56(84) bytes of data.
+64 bytes from 10.42.0.2: icmp_req=1 ttl=64 time=14.7 ms
+
+insidehost$ arp -n 10.42.0.2
+

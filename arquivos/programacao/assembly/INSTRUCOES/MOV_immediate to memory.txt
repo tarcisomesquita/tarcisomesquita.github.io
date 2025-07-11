@@ -1,0 +1,24 @@
+
+immediate to memory 1100 011w : mod 000 r/m : immediate data
+
+
+C744020100    MOV     WORD [SI+0x02],0x0001
+C7041000      MOV     WORD [SI],0x0010
+C644FF01      MOV     BYTE [SI-0x01],0x01
+
+ModR/M  44 h = 01 000 100 b
+ModR/M  04 h = 00 000 100 b
+
+C7 44 24 04 01 00 00 00 	mov    DWORD PTR [esp+0x4],0x1
+
+
+livros/64-ia-32-architectures-software-developer-manual-325462.pdf
+pag. 1810
+
+MOV – Move Data
+reg to memory 0100 0RXB : 1000 100w : mod reg r/m
+qwordregister to memory64 0100 1RXB 1000 1001 : mod qwordreg r/m
+immediate to memory 0100 00XB : 1100 011w : mod 000 r/m : imm
+immediate32 to memory64 (zero extend) 0100 10XB 1100 0111 : mod 000 r/m : imm32
+AL, AX, or EAX to memory 0100 0000 : 1010 001w : displacement
+RAX to memory64 0100 1000 1010 0011 : displacement64

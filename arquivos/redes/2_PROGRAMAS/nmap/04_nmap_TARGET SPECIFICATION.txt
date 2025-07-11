@@ -1,0 +1,24 @@
+
+TARGET SPECIFICATION
+Ex:
+nmap scanme.nmap.org, microsoft.com/24, 192.168.10.0/24, 192.168.0.1, 10.0.0-255.1-254
+
+       CIDR notation 192.168.0.0/16 skip any IPs ending with .0 or .255 because they are commonly broadcast addresses.
+
+       IPv6 addresses can only be specified by their fully qualified IPv6 address or hostname.
+       CIDR and octet ranges aren't supported for IPv6 because they are rarely useful.
+
+       -iL inputfilename
+           Reads target specifications from inputfilename.
+           Entries formats accepted (IP address, hostname, CIDR, IPv6, or octet ranges).
+           Each entry must be separated by one or more spaces, tabs, or newlines.
+           You can specify a hyphen (-) as the filename if you want Nmap to read hosts from standard input.
+
+       -iR num hosts (Choose random targets)
+           The num hosts argument tells Nmap how many IPs to generate. Undesirable IPs such as those in certain
+           private, multicast, or unallocated address ranges are automatically skipped.
+
+       --exclude host1[,host2[,...]] (Exclude hosts/networks)
+
+       --excludefile exclude_file (Exclude list from file)
+

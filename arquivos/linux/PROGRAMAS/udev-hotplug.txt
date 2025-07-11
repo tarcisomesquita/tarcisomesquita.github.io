@@ -1,0 +1,25 @@
+HOTPLUG E UDEV
+o ker­nel noti­fica o user­space quando um hard­ware é inserido, removido, etc.
+O ker­nel noti­fica o user­space através de um socket do tipo netlink. Qual­quer processo que estiver "escu­tando" este socket irá rece­ber as notificações (que tam­bém são chamadas de uevents).
+
+o processo udevd para escu­tar os even­tos no netlink socket.
+
+ps aux | grep udev
+sudo netstat -p | grep 2360
+unix  2      [ ]         DGRAM                    5748     2360/udevd          @/org/kernel/udev/udevd
+
+O evento ger­ado pelo ker­nel traz um iden­ti­fi­cador do dis­pos­i­tivo.
+A par­tir deste iden­ti­fi­cador, o udev busca as infor­mações necessárias no diretório /sys
+veja mais detalhes em http://www.kernel.org/doc/pending/hotplug.txt
+
+No udev, as regras são sal­vas em /etc/udev/rules.d, e para cada evento rece­bido, o udev procura uma regra que se encaixe. No exem­plo abaixo, con­seguimos garan­tir que a impres­sora à laser, que pos­sui o número ser­ial “L72010011070626380”, será sem­pre asso­ci­ada ao arquivo de dis­pos­i­tivo /dev/printer/laser:
+SUBSYSTEM=="usb", ATTRS{serial}=="L72010011070626380", SYMLINK+="printer/laser"
+
+
+Além da cri­ação de arquivos de dis­pos­i­tivo, o udev tam­bém é capaz de car­regar dri­vers ou baixar um firmware no hard­ware conectado.
+
+A imple­men­tação do udev é bem com­pacta (no meu desk­top com Ubuntu ela tem ape­nas 100K), mas para sis­temas embar­ca­dos com recur­sos bem escas­sos, podemos recor­rer imple­men­tações mais enx­u­tas como o mdev do nosso bom e velho amigo Busy­box.
+
+O ker­nel pre­cisa ser com­pi­lado com a opção CONFIG_HOTPLUG habil­i­tada. Para ver­i­ficar se seu ker­nel foi com­pi­lada com esta opção habil­i­tada, veja se o arquivo /proc/sys/kernel/hotplug existe. Se não exi­s­tir, você pre­cis­ará habilitá-lo e recom­pi­lar o kernel.
+
+

@@ -1,0 +1,33 @@
+http://whois.arin.net/rest/nets;q=173.194.15.32?showDetails=true&showARIN=false
+whois.lacnic.net
+whois.registro.br
+ws.arin.net/whois/
+
+http://www.geektools.com/whois.php
+http://longurl.org/
+
+Whois
+O Whois é excelente para obtermos informações sobre sites. Bancos de dados como o Internic (www.internic.org) mantêm informações interessantes sobre os domínios, tais como nome do dono, endereço e telefone. No Brasil, o orgão responsável por essa tarefa é a Fapesp e podem ser feitas pesquisas no seguinte endereço: www.registro.br.
+
+registro.br/cgi-bin/whois/?qr=google.com.br
+
+IANA (Autoridade para Atribuição de Números na Internet)
+http://www.iana.org/
+
+Canadá, Estados Unidos da América, algumas ilhas do Pacífico
+http://whois.arin.net/rest/nets;q=143.106.10.174?showDetails=true&showARIN=false&ext=netref2
+
+América Latina e Caribe
+http://lacnic.net/cgi-bin/lacnic/whois?lg=SP&query=143.106.10.174
+http://registro.br/cgi-bin/whois/?qr=143.106.10.174
+
+África
+http://www.afrinic.net/
+
+Ásia, regiões do Pacífico
+http://www.apnic.net/
+
+Europa, partes da Ásia
+http://www.ripe.net/
+
+

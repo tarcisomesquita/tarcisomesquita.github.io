@@ -1,0 +1,17 @@
+
+Whenever a USB device is attached to the bus it will be enumerated by the USB subsystem - i.e an unique device number (1-127) is assigned and then the device descriptor is read.
+
+Device Descriptor describes general information about a USB device. A USB device has only one device descriptor.
+
+Configuration Descriptor gives information about a specific device configuration. A USB device has one or more configuration descriptors. Each configuration has one or more interfaces and each interface has zero or more endpoints. Different configurations can be used to change global device settings, such as power consumption.
+
+Interface Descriptor describes a specific interface within a configuration. The default setting for an interface is always alternate setting zero. Alternate settings can be selected exclusively by the standard control transfer set_interface. For example a multifunctional device like a video camera with internal microphone could have three alternate settings to change the bandwidth allocation on the bus. 
+Camera activated
+Microphone activated
+Camera and microphone activated
+
+Endpoint Descriptor contains information required by the host to determine the bandwidth requirements of each endpoint. An endpoint represents a logical data source or sink of a USB device. The endpoint zero is used for all control transfers and there is never a descriptor for this endpoint. The USB specification uses the terms pipe and endpoint interchangably.
+
+String Descriptors are optional and provide additional information in human readable unicode format. They can be used for vendor and device names or serial numbers.
+
+

@@ -1,0 +1,711 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<base href="http://ebtables.netfilter.org/" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>ebtables &#8211; Basic examples</title>
+
+
+<link href="_css/main.css" rel="stylesheet" type="text/css" media="screen" />
+<link rel="shortcut icon" href="_images/favicon.ico" type="image/x-icon" />
+<meta name="Description" content="Linux Ethernet bridge firewall tables" />
+<meta name="Keywords" content="Linux, networking, Ethernet, firewall, bridge, bridging firewall, stealth firewall, transparent firewall" />
+
+<script src="_js/tabs.js" type="text/javascript" ></script>
+</head>
+<body onload="init()">
+
+<div id="wrapper">
+<div id="wrapper2">
+<div class="menu-back">
+<div class="menu-shadow">
+<div class="menu">
+  <ul>
+	<li><a class="hide">About</a>
+      <ul>
+        <li><a href="index.html">Short description</a></li>
+        <li><a href="about/pronunciation.html">Pronunciation</a></li>
+        <li><a href="about/who.html">Who's behind ebtables?</a></li>
+        <li><a href="about/license.html">License</a></li>
+        <li><a href="about/code.html">About the code</a></li>
+      </ul>
+    </li>
+	<li><a class="hide">Downloads</a>
+      <ul>
+        <li><a href="downloads/latest.html">Latest release</a></li>
+        <li><a href="downloads/compilation.html">Source compilation</a></li>
+        <li><a href="downloads/git.html">Git repository</a></li>
+      </ul>
+    </li>
+	<li><a class="hide">Documentation</a>
+      <ul>
+        <li><a href="documentation/what.html">What</a></li>
+        <li><a href="documentation/features.html">Main features</a></li>
+        <li><a href="documentation/can.html">What can it do?</a></li>
+        <li><a href="documentation/cant.html">What can't it do?</a></li>
+        <li><a href="documentation/bridge-nf.html">What's bridge-netfilter?</a></li>
+        <li><a href="documentation/docs.html">Documents</a></li>
+        <li><a href="documentation/todo.html">Todo</a></li>
+        <li><a href="documentation/links.html">Links</a></li>
+      </ul>
+    </li>
+    <li><a class="hide">Examples</a>
+      <ul>
+        <li><a href="examples/basic.html">Basic examples</a></li>
+        <li><a href="examples/real.html">Real-life examples</a></li>
+      </ul>
+    </li>
+	<li><a class="hide">Contact</a>
+      <ul>
+        <li><a href="contact/lists.html" class="point">Mailing lists</a></li>
+        <li><a href="contact/webmaster.html" class="point">Webmaster</a></li>
+      </ul>
+    </li>
+  </ul>
+</div></div></div>
+
+<div id="content">
+<h1>Introduction</h1>
+<div class="paragraphs">
+<p>
+For more information about the various commands and options used
+in these examples, we refer to the
+<a href="misc/ebtables-man.html" target="_blank">manual page</a>.
+</p>
+<p>
+Feel free to supply additional examples and applications of ebtables into
+other network configurations. Your contributions are appreciated. You can
+mail the
+<script type="text/javascript">
+<!--
+var string1 = "bdschuym";
+var string2 = "@pan";
+var string3 = "dora.be";
+var string4 = string1 + string2 + string3;
+document.write("<a href=" + "mail" + "to:" + string1 + string2 + string3 + ">");
+//-->
+</script>
+webmaster
+<script type="text/javascript">
+<!--
+document.write("</a>");
+//-->
+</script>
+to get the additional content online.
+</p>
+<p>
+When needing a network protocol for an example, we usually use
+the IP protocol, as it is most common. When appropriate, these
+examples can be reformulated using a different network protocol
+(like Appletalk). Unless otherwise stated, we assume a bridge
+setup consisting of one bridge device br0 with two bridge ports
+eth0 and eth1.
+</p>
+</div>
+<h1>Basic examples</h1>
+<div class="paragraphs">
+<h2>Choose one of the examples below</h2>
+<ul id="tabs">
+<li><a href="examples/basic.html#ex_config">Basic filtering configuration</a></li>
+<li><a href="examples/basic.html#ex_anti-spoof">Associate IP addresses to MAC addresses (anti-spoofing rules)</a></li>
+<li><a href="examples/basic.html#ex_nat">MAC NAT</a></li>
+<li><a href="examples/basic.html#ex_onlyIPv4">Only forward IPv4 for a specific MAC address</a></li>
+<li><a href="examples/basic.html#ex_brouter">Making a brouter</a></li>
+<li><a href="examples/basic.html#ex_redirect">The redirect target</a></li>
+<li><a href="examples/basic.html#ex_atomic">Atomically load or update a table</a></li>
+<li><a href="examples/basic.html#ex_nobridge">Filtering with ebtables on interfaces not enslaved to a bridge</a></li>
+<li><a href="examples/basic.html#ex_speed">Speeding up traffic destinated to the bridge itself</a></li>
+<li><a href="examples/basic.html#ex_mark">Using the <code>mark</code> match and target</a></li>
+<li><a href="examples/basic.html#ex_arpreply">Using <code>arpreply</code> for arp requests and letting the arp
+request populate the arp cache</a></li>
+<li><a href="examples/basic.html#ex_broadcast">Changing the destination IP and MAC address to the respective
+broadcast addresses</a></li>
+<li><a href="examples/basic.html#ex_ulog">Copying packets to userspace</a></li>
+<li><a href="examples/basic.html#ex_concurrent">Enable support for running the ebtables tool concurrently.</a></li>
+<li><a href="examples/basic.html#ex_network_separation">Closing IP security holes with multiple networks.</a></li>
+</ul>
+<script type="text/javascript">
+//<![CDATA[
+document.writeln("<p>You can also view all examples on <a href=\"examples/basic.html#all\" id=\"alltabs\">one page</a>.</p>");
+//]]>
+</script>
+</div>
+<div class="tabContent" id="ex_config">
+<h3><a name="ex_config">Basic filtering configuration:</a></h3>
+<div class="paragraphs">
+<pre>
+ebtables -P FORWARD DROP
+ebtables -A FORWARD -p IPv4 -j ACCEPT
+ebtables -A FORWARD -p ARP -j ACCEPT
+ebtables -A FORWARD -p LENGTH -j ACCEPT
+ebtables -A FORWARD --log-level info --log-ip --log-prefix EBFW
+ebtables -P INPUT DROP
+ebtables -A INPUT -p IPv4 -j ACCEPT
+ebtables -A INPUT -p ARP -j ACCEPT
+ebtables -A INPUT -p LENGTH -j ACCEPT
+ebtables -A INPUT --log-level info --log-ip --log-prefix EBFW
+ebtables -P OUTPUT DROP
+ebtables -A OUTPUT -p IPv4 -j ACCEPT
+ebtables -A OUTPUT -p ARP -j ACCEPT
+ebtables -A OUTPUT -p LENGTH -j ACCEPT
+ebtables -A OUTPUT --log-level info --log-ip --log-arp --log-prefix EBFW -j DROP
+</pre>
+<p>
+This is a basic filter configuration which will only let frames made by
+the protocols IP version 4 and ARP through. Also, the network has some
+old machines that use the protocol field of the Ethernet frame as a length
+field (they use the Ethernet 802.2 or 802.3 protocol). There was no reason
+not to let those machines through, more precisely: there was a reason to let
+them through ;-). So, those frames, with protocol LENGTH denoting that it's
+really a length field, are accepted. Of course one could filter on the MAC
+addresses of those old machines so no other machine can use the old Ethernet
+802.2 or 802.3 protocol. All other frames get logged and dropped. This
+logging consists of the protocol number, the MAC addresses, the ip/arp info
+(if it's an IP/ARP packet of course) and the in and out interfaces.
+</p>
+<p>
+Important note:<br/>
+If you don't absolutely need to let those old machines (using the 802.2 or
+803.2 Ethernet protocol) through the bridge, don't let them. Opening it up
+with the <code>ebtables -A FORWARD -p LENGTH -j ACCEPT</code> actually
+breaches security if you're filtering IP bridge traffic with iptables: IP
+traffic passing the bridge using the 802.2 or 802.3 Ethernet protocol
+won't get filtered by iptables (it's on the todo list).
+</p>
+</div>
+</div>
+<div class="tabContent" id="ex_anti-spoof">
+<h3><a name="ex_anti-spoof">Associate IP addresses to MAC addresses (anti-spoofing rules):</a></h3>
+<div class="paragraphs">
+<pre>
+ebtables -A FORWARD -p IPv4 --ip-src 172.16.1.4 -s ! 00:11:22:33:44:55 -j DROP
+</pre>
+<p>
+This is an anti-spoofing filter rule. It says that the computer using IP
+address 172.16.1.4 has to be the one that uses ethernet card
+00:11:22:33:44:55 to send this traffic.<br/>
+Note: this can also be done using iptables. In iptables it would look like this:
+</p>
+<pre>
+iptables -A FORWARD -s 172.16.1.4 -m mac ! --mac-source 00:11:22:33:44:55 -j DROP
+</pre>
+<p>
+The difference is that the frame will be dropped earlier if the ebtables rule
+is used, because ebtables inspects the frame before iptables does. Also note
+the subtle difference in what is considered the default type for a source
+address: an IP address in iptables, a MAC address in ebtables.
+</p>
+<p>
+If you have many such rules, you can also use the <code>among</code> match to
+speed up the filtering.
+</p>
+<pre>
+ebtables -N MATCHING-MAC-IP-PAIR
+ebtables -A FORWARD -p IPv4 --among-dst 00:11:22:33:44:55=172.16.1.4,00:11:33:44:22:55=172.16.1.5 \
+-j MATCHING-MAC-IP-PAIR
+</pre>
+<p>
+We first make a new user-defined chain <code>MATCHING-MAC-IP-PAIR</code> and we send all
+traffic with matching MAC-IP source address pair to that chain, using the <code>among</code>
+match. The filtering in the <code>MATCHING-MAC-IP-PAIR</code> chain can then assume that the
+MAC-IP source address pairs are correct.
+</p>
+</div>
+</div>
+<div class="tabContent" id="ex_nat">
+<h3><a name="ex_nat">MAC NAT:</a></h3>
+<div class="paragraphs">
+<p>See the <a href="examples/real.html#macnat">real-life examples</a> section for an application.
+</p>
+<pre>
+ebtables -t nat -A PREROUTING -d 00:11:22:33:44:55 -i eth0 -j dnat --to-destination 54:44:33:22:11:00
+</pre>
+<p>
+This will make all frames destined to 00:11:22:33:44:55 that arrived on
+interface eth0 be transferred to 54:44:33:22:11:00 instead. As this change of
+destination MAC address is done in the <code>PREROUTING</code> chain of the
+<code>nat</code> table, it is done before the bridge code makes the forwarding
+decision. The hosts with addresses 00:11:22:33:44:55 and 54:44:33:22:11:00
+therefore don't need to be on the same side of the bridge. If the host with
+MAC address 54:44:33:22:11:00 is on the same side of the bridge as where the
+packet arrived, this packet won't be sent out again. You can therefore only use
+this if the host with the destination MAC address 54:44:33:22:11:00 is on another
+side of the bridge than the sender of the packet. Note that this MAC NAT does
+not care about protocols of higher layers. F.e. when the network layer is IP,
+the host with MAC ADDRESS 54:44:33:22:11:00 will see that the destination IP
+address is not the same as its own IP address and will probably discard the
+packet (unless it's a router).<br/>
+If you want to use IP NAT, use iptables.
+</p>
+</div>
+</div>
+<div class="tabContent" id="ex_onlyIPv4">
+<h3><a name="ex_onlyIPv4">Only forward IPv4 for a specific MAC address:</a></h3>
+<div class="paragraphs">
+<p>
+This situation was described by someone:<br/>
+&quot;For a wierd setup (kind of half a half bridge :-)) I would need a generic<br/>
+MAC-source based filter. I need to prevent ARPs and other Layer2 based<br/>
+packets (DEC diag. packets, netbios, etc.) from a specific MAC-source to<br/>
+cross the bridge, to prevent loops.&quot;<br/><br/>
+This is easily solved with ebtables:
+</p>
+<pre>
+ebtables -A FORWARD -s 00:11:22:33:44:55 -p IPV4 -j ACCEPT
+ebtables -A FORWARD -s 00:11:22:33:44:55 -j DROP
+</pre>
+</div>
+</div>
+<div class="tabContent" id="ex_brouter">
+<h3><a name="ex_brouter">Making a brouter:</a></h3>
+<div class="paragraphs">
+<p>
+Here is an example setup for a brouter with the following situation:
+br0 with ports eth0 and eth1.
+</p>
+<pre>
+ifconfig br0 0.0.0.0
+ifconfig eth0 172.16.1.1 netmask 255.255.255.0
+ifconfig eth1 172.16.2.1 netmask 255.255.255.0
+ebtables -t broute -A BROUTING -p ipv4 -i eth0 --ip-dst 172.16.1.1 -j DROP
+ebtables -t broute -A BROUTING -p ipv4 -i eth1 --ip-dst 172.16.2.1 -j DROP
+ebtables -t broute -A BROUTING -p arp -i eth0 -d $MAC_OF_ETH0 -j DROP
+ebtables -t broute -A BROUTING -p arp -i eth1 -d $MAC_OF_ETH1 -j DROP
+ebtables -t broute -A BROUTING -p arp -i eth0 --arp-ip-dst 172.16.1.1 -j DROP
+ebtables -t broute -A BROUTING -p arp -i eth1 --arp-ip-dst 172.16.2.1 -j DROP
+</pre>
+<p>
+As mentioned in the man pages, the <code>DROP</code> target in the <code>BROUTING</code> chain
+actually broutes the frame. This means the bridge code won't touch
+the frame and it is sent up to the higher network layers. This results
+in the frame entering the box as if it didn't arrive on a bridge port
+but on the device itself.<br/>
+The first two ebtables commands are easy to explain: they make sure
+the IP packets that must be routed enter the IP routing code through
+the eth0 (resp. eth1) device, not throught the br0 device. If you
+want the box to also route traffic with a MAC destination address
+different from the router's, you need to use the <code>redirect</code>
+target, which changes the MAC destination address to the bridge's MAC
+address (see the subsequent example).<br/>
+The last four commands are needed to get ARP working. When the brouter
+sends an ARP request for, let's say 172.16.1.5, this request is sent
+through the eth0 or eth1 device (we assume there is no route using output
+device br0). Without the third ebtables rule, the ARP
+reply would arrive on the br0 device instead of the eth{0,1} device, as
+far as the ARP code can tell. This reply is then discarded by the
+ARP code. Using the third rule, the reply arrives on the eth0 device
+and the ARP code is happy. So the third and fourth rules are needed to make
+the ARP code use the ARP replies. Without the third rule, the brouter
+will not send IP packets to 172.16.1.5 (unless it already knew the
+MAC address of 172.16.1.5 and therefore didn't send an ARP request in
+the first place). The last two commands are needed so that the ARP requests
+for 172.16.1.1 and 172.16.2.1 are answered. You can use more restrictive
+matching on the ARP packets (e.g. only match on arp requests in the last two
+rules).
+</p>
+</div>
+</div>
+<div class="tabContent" id="ex_redirect">
+<h3><a name="ex_redirect">The redirect target:</a></h3>
+<div class="paragraphs">
+<p>
+Here is a simple example that will make all IP traffic entering a
+(forwarding) bridge port be routed instead of bridged (suppose eth0
+is a port of the bridge br0):
+</p>
+<pre>
+ebtables -t broute -A BROUTING -i eth0 -p ipv4 -j redirect --redirect-target DROP
+</pre>
+<p>
+As mentioned in the man pages, the <code>DROP</code> target in the <code>BROUTING</code> chain
+actually broutes the frame. The <code>redirect</code>
+target will trick the network code to think the packet was originally
+destined for the box.
+</p>
+<p>
+Using the following rule has a similar effect:
+</p>
+<pre>
+ebtables -t nat -A PREROUTING --logical-in br0 -p ipv4 -j redirect --redirect-target ACCEPT
+</pre>
+<p>
+The difference is that in the second case the IP code and routing code
+will think the IP packet entered through the br0 device. In the first
+case the IP code and routing code will think the IP packet entered through
+the eth0 device. It depends on the situation in which chain to use the
+redirect target. F.e., if your routing table only uses br0, then the redirect belongs
+in the PREROUTING chain.
+</p>
+</div>
+</div>
+<div class="tabContent" id="ex_atomic">
+<h3><a name="ex_atomic">Atomically load or update a table:</a></h3>
+<div class="paragraphs">
+<p>
+Why do we want to be able to atomically load or update a table?
+Because then the table data is given to the kernel in one step.
+This is sometimes desirable to prevent race conditions when adding multiple rules
+at once. The most obvious use case, however, is when the tables are initially
+populated with rules. Committing the table to the kernel at once saves a lot
+of context switching and kernel time, resulting in much faster configuration.
+Here is a brief description how to do this.
+The examples will use the <code>nat</code> table, of course this works for any table.<br/>
+The simplest situation is when the kernel table already contains the
+right data. We can then do the following:<br/>
+First we put the kernel's table into the file <code>nat_table</code>:
+</p>
+<pre>
+ebtables --atomic-file nat_table -t nat --atomic-save
+</pre>
+<p>
+Then we (optionally) zero the counters of the rules in the file:
+</p>
+<pre>
+ebtables -t nat --atomic-file nat_table -Z
+</pre>
+<p>
+At bootup we use the following command to get everything into the
+kernel table at once:
+</p>
+<pre>
+ebtables --atomic-file nat_table -t nat --atomic-commit
+</pre>
+<p>
+We can also build up the complete table in the file. We can use
+the environment variable <code>EBTABLES_ATOMIC_FILE</code>. First we set the
+environment variable:
+</p>
+<pre>
+export EBTABLES_ATOMIC_FILE=nat_table
+</pre>
+<p>
+Then we initialize the file with the default table, which has
+empty chains and policy <code>ACCEPT</code>:
+</p>
+<pre>
+ebtables -t nat --atomic-init
+</pre>
+<p>
+We then add our rules, user defined chains, change policies:
+</p>
+<pre>
+ebtables -t nat -A PREROUTING -j DROP
+</pre>
+<p>
+We can check the contents of our table with:
+</p>
+<pre>
+ebtables -t nat -L --Lc --Ln
+</pre>
+<p>
+We then use the following command to get everything into the
+kernel table at once:
+</p>
+<pre>
+ebtables -t nat --atomic-commit
+</pre>
+<p>
+Don't forget to unset the environment variable:
+</p>
+<pre>
+unset EBTABLES_ATOMIC_FILE
+</pre>
+<p>
+Now all ebtables commands will execute onto the actual kernel
+table again, instead of on the file <code>nat_table</code>.
+</p>
+</div>
+</div>
+<div class="tabContent" id="ex_nobridge">
+<h3><a name="ex_nobridge">Filtering with ebtables on interfaces not enslaved to a bridge:</a></h3>
+<div class="paragraphs">
+<p>
+If you really need filtering on an interface and can't
+use a standard way of doing it (i.e. there is no standard
+filtering tool for the protocol), there is a solution if
+you only need basic filtering.<br/>
+We consider here the case where basic Appletalk filtering
+is needed. As there is no Appletalk filter mechanism for
+Linux, we need something else.
+The example below is for a computer that also uses the IP
+protocol. Obviously, if you only need to filter the IP stuff,
+just use iptables. The IP protocol is included in this,
+because it gives an idea of what configuring could be needed
+for the other protocol (e.g. Appletalk). If the computer does
+indeed use the IP protocol too, then the following IP stuff
+will need to be done.<br/>
+Suppose your current setup consists of device eth0 with IP
+address 172.16.1.10.<br/>
+The first three commands make sure ebtables will see all traffic
+entering on eth0, which will be a bridge port of br0. The other
+commands are purely IP related.<br/>
+First make a bridge device:
+</p>
+<pre>
+brctl addbr br0
+</pre>
+<p>
+Then (perhaps) disable the spanning tree protocol on that bridge:
+</p>
+<pre>
+brctl stp br0 off
+</pre>
+<p>
+Then add the physical device eth0 to the logical bridge device:
+</p>
+<pre>
+brctl addif br0 eth0
+</pre>
+<p>
+give the IP address of eth0 to
+the bridge device and remove it from eth0:
+</p>
+<pre>
+ifconfig br0 172.16.1.10 netmask 255.255.255.0
+ifconfig eth0 0.0.0.0
+</pre>
+<p>
+The routing table must be corrected too, f.e.:
+</p>
+<pre>
+route del -net 172.16.1.0 netmask 255.255.255.0 dev eth0
+route add -net 172.16.1.0 netmask 255.255.255.0 dev br0
+route del default gateway $DEFAULT_GW dev eth0
+route add default gateway $DEFAULT_GW dev br0
+</pre>
+<p>
+So, now all IP traffic that originally went through eth0 will go
+through br0. Note that this is kind of a hack: using a bridge
+with only one enslaved device. However, now ebtables will see all
+the traffic that passes eth0, because eth0 is now a port of the
+bridge device br0.<br/>
+The other protocol used (f.e. Appletalk) will have to be configured
+to accept traffic from br0 (instead of eth0) and to transmit
+traffic to br0 (instead of eth0).<br/>
+Alternatively, this can be used in conjunction with the brouter
+functionality. A
+<a href = "examples/real.html#nonbridged" target="_blank">real-life example</a>
+for filtering Appletalk, which can be found in the
+<a href="examples/real.html">real-life examples</a> section, uses
+this approach. For performance reasons, it's actually better to use
+the brouter approach, see the next example to find out why.
+</p>
+</div>
+</div>
+<div class="tabContent" id="ex_speed">
+<h3><a name="ex_speed">Speeding up traffic destinated to the bridge itself:</a></h3>
+<div class="paragraphs">
+<p>
+In some situations the bridge not only serves as a bridge box, but
+also talks to other hosts. Packets that arrive on a bridge port
+and that are destinated to the bridge box itself will by default
+enter the iptables <code>INPUT</code> chain with the logical bridge
+port as input device. These packets will be queued twice by the
+network code, the first time they are queued after they are received
+by the network device. The second time after the bridge
+code examined the destination MAC address and determined it was
+a locally destinated packet and therefore decided to pass the
+frame up to the higher protocol stack.
+</p>
+<p>
+The way to let locally destinated packets be queued only once is
+by brouting them in the <code>BROUTING</code> chain of the <code>broute</code>
+table.
+Suppose br0 has an IP address and that br0's bridge ports do not
+have an IP address. Using the following rule should make all
+locally directed traffic be queued only once:
+</p>
+<pre>
+ebtables -t broute -A BROUTING -d $MAC_OF_BR0 -p ipv4 -j redirect --redirect-target DROP
+</pre>
+<p>
+The replies from the bridge will be sent out through the br0
+device (assuming your routing table is correct and sends all
+traffic through br0), so everything keeps working neatly, without
+the performance loss caused by the packet being queued twice.
+</p>
+<p>
+The redirect target is needed because the MAC address of the bridge
+port is not necessarily equal to the MAC address of the bridge device.
+The packets destinated to the bridge box will have a destination MAC
+address equal to that of the bridge br0, so that destination address
+must be changed to that of the bridge port.
+</p>
+</div>
+</div>
+<div class="tabContent" id="ex_mark">
+<h3><a name="ex_mark">Using the <code>mark</code> match and target:</a></h3>
+<div class="paragraphs">
+<p>
+Say there are 3 types of traffic you want to mark. The best mark
+values are powers of 2, because these translate to setting one bit
+in the <code>unsigned long</code> mark value. So, as we have three types of
+traffic, we will use the mark values 1, 2 and 4.<br/>
+How do we mark traffic? Simple, filter out the exact traffic you
+need and then use the mark target. Example:<br/>
+Mark, in the filter table's FORWARD chain, all IP traffic that
+entered through eth0 with the second mark value; and let later
+rules have the chance of seeing the frame/packet.
+</p>
+<pre>
+ebtables -A FORWARD -p ipv4 -i eth0 -j mark --set-mark 2 --mark-target CONTINUE
+</pre>
+<p>
+Suppose we want to do something to all frames that are marked with
+the first mark value:
+</p>
+<pre>
+ebtables -A FORWARD --mark 1/1
+</pre>
+<p>
+Suppose we want to do something to all frames that are marked with
+either the first, either the third mark value:
+</p>
+<pre>
+ebtables -A FORWARD --mark /5
+</pre>
+<p>
+1 + 4 = 5. We only specified the <code>mark</code> mask, which results in taking
+the logical and of the mark value of the frame with the specified
+mark mask and checking if the result is non-zero. So, if the result is
+non-zero, which means that the mark value is either 1, either 4,
+either 5, the rule matches.
+</p>
+<p>
+Note that iptables uses the same <code>unsigned long</code> value for its
+<code>mark</code> match and <code>MARK</code> target. So this enables
+communication between ebtables and iptables. Be sure the mark values used
+in iptables and those used in ebtables don't conflict with each other.
+</p>
+</div>
+</div>
+<div class="tabContent" id="ex_arpreply">
+<h3><a name="ex_arpreply">Using <code>arpreply</code> for arp requests and letting
+the arp request populate the arp cache:</a></h3>
+<div class="paragraphs">
+<p>
+The <code>arpreply</code> target can only be used in the <code>PREROUTING</code>
+chain of the <code>nat</code> table and its default target is <code>DROP</code>.
+A rule like below will therefore prevent an update of the arp cache of the bridge box:
+</p>
+<pre>
+ebtables -t nat -A PREROUTING -p arp --arp-opcode Request -j arpreply \
+--arpreply-mac 10:11:12:13:14:15
+</pre>
+<p>
+This can be fixed by changing the target to <code>ACCEPT</code> or <code>CONTINUE</code>:
+</p>
+<pre>
+ebtables -t nat -A PREROUTING -p arp --arp-opcode Request -j arpreply \
+--arpreply-mac 10:11:12:13:14:15 --arpreply-target ACCEPT
+</pre>
+</div>
+</div>
+<div class="tabContent" id="ex_broadcast">
+<h3><a name="ex_broadcast">Changing the destination IP and MAC address to the respective
+broadcast addresses:</a></h3>
+<div class="paragraphs">
+<p>
+This is not possible in a standard way, but it is possible with some tricks.
+Suppose you want to direct traffic to 192.168.0.255, then this should work:
+</p>
+<pre>
+# suppose there is no route to 192.168.0.0 yet
+route add -net 192.168.0.0 netmask 255.255.255.0 dev br0
+ifconfig br0 0.0.0.0
+arp -s 192.168.0.255 ff:ff:ff:ff:ff:ff
+iptables -t nat -A PREROUTING -j DNAT --to-destination 192.168.0.255
+</pre>
+<p>
+The bridge device should not have an address in the range of 192.168.0.0/24, because if
+it does, the routing code won't decide to send the packet out through the bridge device.
+</p>
+</div>
+</div>
+<div class="tabContent" id="ex_ulog">
+<h3><a name="ex_ulog">Copying packets to userspace for logging:</a></h3>
+<div class="paragraphs">
+<p>
+The <code>ulog</code> watcher passes the packet to a userspace logging daemon using netlink
+multicast sockets. This differs from the log watcher in the sense that the complete
+packet is sent to userspace instead of a descriptive text and that netlink multicast
+sockets are used instead of the syslog. This watcher enables parsing of packets with
+userspace programs. Sending this information to userspace is simple, just use the <code>ulog</code> watcher.
+The physical bridge input and output ports are also included in the netlink
+messages.</p>
+<p>For example, the following rule will send all to be forwarded packets to userspace programs
+listening on netlink group number 5 before dropping the packets:</p>
+<pre>
+ebtables -A FORWARD --ulog-nlgroup 5 -j DROP
+</pre>
+<p>
+To read the packets sent to userspace, a program needs to be written. Under <code>examples/ulog/</code>
+in the ebtables directory you can find a working example in C that looks for ICMP echo requests and
+replies. See <code>INSTALL</code> for compilation.</p>
+<p>Gustavo J. A. M. Carneiro &lt;gjc_at_inescporto.pt&gt; has written some Python code to be able
+to look at the data using Python code. These are the files he released:
+<a href="examples/ebtulogmodule_GC.c">ebtulogmodule_CC.c</a> and <a href="examples/ulog_GC.c">ulog_GC.c</a>.
+</p>
+</div>
+</div>
+<div class="tabContent" id="ex_concurrent">
+<h3><a name="ex_concurrent">Enable support for running the ebtables tool concurrently:</a></h3>
+<div class="paragraphs">
+<p>
+Updating the ebtables kernel tables is a two-phase process. First, the userspace program sends the new table
+to the kernel and receives the packet counters for the rules in the old table. In a second phase, the
+userspace program uses these counter values to determine the initial counter values of the new table, which
+is already active in the kernel. These values are sent to the kernel which adds these values to the kernel's
+counter values. Due to this two-phase process, it is possible to confuse the ebtables userspace tool when
+more than one instance is run concurrently. Note that even in a one-phase process it would be possible to
+confuse the tool.</p>
+<p>
+The ebtables tool supports an option named <code>--concurrent</code>, which makes the ebtables tool first
+acquire a lock on a specific file before reading and updating the kernel tables. As long as you make sure
+all ebtables processes run with this option enabled, there is no problem in running ebtables processes
+concurrently. If your firewall scripts can run concurrently, make sure to enable this option.</p>
+<p>
+An alternative would be to use the tool <code>flock</code> in your script.</p>
+<p>
+When the ebtables process crashes unexpectedly while holding the file lock, subsequent execution of the program
+will fail to acquire the lock. In this case, you will need to explicitly delete the lock file: <code>/var/lib/ebtables/lock</code>.</p>
+</div>
+</div>
+<div class="tabContent" id="ex_network_separation">
+<h3><a name="ex_network_separation">Closing IP security holes with multiple networks:</a></h3>
+<div class="paragraphs">
+<p>
+When the bridge is configured to allow iptables or ip6tables to filter bridged traffic, care must be taken in
+order to prevent unforeseen security holes. The iptables chains are traversed for all IP packets on all bridges.
+If there is more than one bridge, you must make sure that packets forwarded by different bridges don't interfere
+in iptables rules. One simple way to avoid this, is by using different IP subnets for each bridged network. This is
+not always possible, of course. A similar concern arrises when you allow iptables to filter bridged IP traffic
+encapsulated in a vlan or pppoe header.</p>
+<p>
+The multi-bridge scenario is especially a potential problem for connection tracking, since this doesn't consider
+the input and output interfaces. The vlan/pppoe scenario is also a potential problem for all other IP traffic, since
+iptables itself isn't aware of the vlan id or pppoe session id.</p>
+<p>
+It is possible, however, to let iptables indirectly know these details by using the mark target of ebtables. In the
+example below, we use netfilter's connection tracking zone mechanism to separate connection tracking between the
+bridged vlan traffic with vlan id 1 and 5.</p>
+<pre>
+# set up the connection tracking zones
+iptables -t raw -A PREROUTING -m mark --mark 1 -j CT --zone 1
+iptables -t raw -A PREROUTING -m mark --mark 2 -j CT --zone 2
+# mark packets according to the vlan id
+ebtables -t nat -A PREROUTING -p 802_1Q --vlan-id 1 -j mark --mark-set 1
+ebtables -t nat -A PREROUTING -p 802_1Q --vlan-id 5 -j mark --mark-set 2
+</pre>
+</div>
+</div>
+</div>
+<div id="footer">
+</div>
+</div>
+</div>
+</body>
+</html>
+

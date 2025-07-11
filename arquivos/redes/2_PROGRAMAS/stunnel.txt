@@ -1,0 +1,55 @@
+database listening on port 1433
+run stunnel on your server with the IP address 192.168.1.100 (note that if your service supports protocols like SSL, you don’t need to have the server side, just install stunnel on the client)
+
+stunnel listens on port (like 10001) and sends data received to the service port (in this case 1433)
+
+client configure stunnel to receive on port (let’s say 6004) and send the data to the server 192.168.1.100 port 10001.
+
+client configure service to start the session on its IP(127.0.0.1) and port 6004.
+
+
+wget https://www.stunnel.org/downloads/stunnel-5.40.tar.gz
+tar -xvf stunnel-5.40.tar.gz
+./configure
+make
+make install
+stunnel -version
+
+Generating the private key
+cd /src/stunnel-5.40/tools
+./makecert.sh
+
+create a stunnel.pem file including the private key and certificate
+
+configuration file in /src/stunnel-5.40/tools
+$ stunnel /src/stunnel-5.40/tools/stunnel.conf)
+
+configuration file as server mode, client mode and both
+
+To do that you need a stunnel.pem(for server) file and a certificate.crt(for client) file
+Go head and edit the stunnel.conf
+vi stunnel.conf
+
+debug = 7
+output = stunnel.log
+cert = stunnel.pem
+[test]
+accept = 127.0.0.1:10001
+connect = 127.0.0.1:1433
+
+
+Now create a file
+
+vi client.conf
+
+debug = 7
+output = stunnel-server.log
+[test]
+client = yes
+accept = 127.0.0.1:6004
+connect = 127.0.0.1:10001
+CAfile = certificate.crt
+
+
+To create certificate.crt you can easily copy the certificate from the .pem file
+Your certificate.crt file should look like this:

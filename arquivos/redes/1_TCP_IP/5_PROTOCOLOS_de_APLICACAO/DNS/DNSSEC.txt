@@ -1,0 +1,73 @@
+download keys found in the "." zone:
+dig . DNSKEY | grep -Ev '^($|;)' > root.keys
+
+verify the A record for www.eurid.eu:
+dig +sigchase +trusted-key=./root.keys www.eurid.eu. A | cat -n
+
+The validation we just performed is a so-called "bottom-up" validation, similar to what happens when SSL certificates are verified: every stage validates the previous one, going up until a trusted key is found, at which point the whole chain (not yet validated until then) suddenly is declared valid by the transitive property of trust. In the DNSSEC world, this means starting from the domain name to verify, and going up towards the root.
+
+But given the way trust chains are built in DNSSEC, it should also be possible to perform a "top-down" validation, starting from the root and going down towards the domain name that needs to be verified. Indeed, dig permits to run a "top-down" validation, using the +topdown option.
+
+dig +sigchase +topdown +trusted-key=./root.keys www.eurid.eu. A | cat -n
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+DNSKEY
+Representa a chave pública de uma zona
+                    1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3
+0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|      Flags                  |   Protocol    |  Algorithm      |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/                                                               /
+/                   Public Key                                  /
+/                                                               /
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+dig -q www.registro.br -t dnskey  +dnssec
+;; ANSWER SECTION:
+registro.br.		172773	IN	DNSKEY	257 3 5 AwEAAcF6+zP+LmnU+07iZdjoMX5GQ67LVj7shp4Qqqm1oxYyBzBV2IfB sSj3EBvyMZ8sKGTD0eVByEoDkLx0+PvaOkvFrmg3+gc5YWCl76jTtpSz DkQvbf/oJTm/Iv9kkXXp0BWR6dOvItC9uVEKDOZtIGhRB2AGkqvtf/FF IP12f1elMGxAQasL+NQ8TF4tm+IUvw==
+
+
+RRSIG
+Representa a assinatura de um RRset (um conjunto de Resources Record) específico com uma determinada chave (DNSKEY)
+
+RRSIG
+                     1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|         Type Covered          |   Algorithm   |    Labels     |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                       Original TTL                            |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                     Signature Expiration                      |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                     Signature Inception                       |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|           Key Tag             |                               /
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+      Signer’s Name            /
+/                                                               /
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/                                                               /
+/                           Signature                           /
+/                                                               /
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+
+NSEC - Next Secure
+Permite autenticar uma resposta negativa
+- Indica o próximo nome seguro na zona
+- Indica os tipos de RRsets existentes para o nome
+- Circular (Último aponta para o primeiro)
+                     1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/                              Next Domain Name                 /
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/                             Type Bit Maps                     /
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+dig @200.192.233.10 -q www.registro.br -t nsec  +dnssec
+
+
+

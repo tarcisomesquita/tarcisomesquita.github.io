@@ -1,0 +1,13 @@
+xrandr -o [normal,inverted,left,right]
+
+xrandr --listmonitors
+Monitors: 1
+ 0: +*eDP-1 1366/344x768/193+0+0  eDP-1
+ 
+xrandr --current
+
+xrandr --verbose
+Identifier: 0x42
+
+xrandr --output 0x42 --mode 1024x768
+xrandr --output eDP-1 --mode 1366x768

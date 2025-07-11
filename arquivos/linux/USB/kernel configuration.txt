@@ -1,0 +1,11 @@
+
+make menuconfig
+
+Under  USB support, you need to select Support for USB.
+
+USB Human Interface Device (HID) support for a USB keyboard, mouse, joystick, tablet or gamepad
+
+USB Audio support for USB speakers
+
+USB Mass Storage support for mass storage device
+

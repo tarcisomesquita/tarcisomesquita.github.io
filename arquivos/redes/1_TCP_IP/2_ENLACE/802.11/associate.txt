@@ -1,0 +1,497 @@
+Association Overview:
+
+-------------------------------------------------------
+phase 1: choosing an AP
+Frame 64 - beacon from AP
+Frame 65 - probe request from laptop
+Frame 66 - probe response from AP
+Frame 67 - yet another beacon (ignored)
+Frame 68 - 71, more probe requests from laptop
+
+phase 2: association with AP
+Frame 72 - authentication
+Frame 73 - authentication
+Frame 74 - association request 
+Frame 75 - association response 
+
+later on reassociation control packet sent presumably to
+	keep AP from timing laptop out (?)
+
+-----------------
+Overview of packets:
+1. Frame 65 probe request, 40 bytes
+	802.11 
+		type 4, probe request
+		flags: not leaving DS
+		macs:
+		Dst: ff:ff:ff:ff:ff:ff (ff:ff:ff:ff:ff:ff)
+         	Src: 00:02:2d:0d:06:c2 (Agere_0d:06:c2)
+    		BSS Id: ff:ff:ff:ff:ff:ff (ff:ff:ff:ff:ff:ff)
+	2nd part: TLV section
+		1. ESSID: xyzzyium (it was set)
+		2. supported rates
+
+2. Frame 66, probe response, 63 bytes
+		type 5, reponse
+		flags: not leaving DS
+		macs:
+	        Destination address: 00:02:2d:0d:06:c2 (Agere_0d:06:c2)
+    		Source address: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    		BSS Id: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+	management part:
+		fixed params:
+			timestamp
+			beacon interval: .1 sec
+			capability info:
+				ESS
+		tagged portion:
+			ESSID: xyzzyium	
+			supported rates
+			includes channel:  1
+			does not include TIM, traffic indication map
+
+3. Frame 72, authentication, 30 bytes
+		type 11
+		flags: not leaving DS
+		macs:
+		    Destination address: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+		    Source address: 00:02:2d:0d:06:c2 (Agere_0d:06:c2)
+		    BSS Id: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+		fixed parameters: 6 bytes
+			authentication algorithm: 0
+			seq no: 1
+			status code: 0 (ok)
+
+4. Frame 73, authentication, 30 bytes
+		the same, except AP to laptop for MACs
+		macs:
+		    Destination address: 00:02:2d:0d:06:c2 (Agere_0d:06:c2)
+		    Source address: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+		    BSS Id: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+
+5. Frame 74, association request, laptop to AP, 44 bytes
+	type 0
+	flags: not leaving DS
+	macs:
+	    Destination address: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+	    Source address: 00:02:2d:0d:06:c2 (Agere_0d:06:c2)
+	    BSS Id: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+	fixed params:
+	    includes capabilities
+	TLV
+	    essid here
+	    supported rates
+	
+6. Frame 75, association response, AP to laptop, 52 bytes
+	type 1
+	flags: not leaving DS
+	macs:
+	    Destination address: 00:02:2d:0d:06:c2 (Agere_0d:06:c2)
+	    Source address: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+	    BSS Id: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+	fixed params:
+	   capabilities: ESS
+	   status code: successful
+	tlvs:
+	   supported rates
+	   some TLV not understood ...
+	   association idea: some hex value
+		
+-----------------
+Details:
+
+Frame 64 (68 on wire, 68 captured)
+    Arrival Time: Mar  9, 2002 16:46:58.066902000
+    Time delta from previous packet: 0.102398000 seconds
+    Time relative to first packet: 5.733964000 seconds
+    Frame Number: 64
+    Packet Length: 68 bytes
+    Capture Length: 68 bytes
+IEEE 802.11
+    Type/Subtype: Beacon frame (8)
+    Frame Control: 0x0080
+        Version: 0
+        Type: Management frame (0)
+        Subtype: 8
+        Flags: 0x0
+            DS status: Not leaving DS or network is operating in AD-HOC mode (To DS: 0  From DS: 0) (0x00)
+            .... .0.. = Fragments: No fragments
+            .... 0... = Retry: Frame is not being retransmitted
+            ...0 .... = PWR MGT: STA will stay up
+            ..0. .... = More Data: No data buffered
+            .0.. .... = WEP flag: WEP is disabled
+            0... .... = Order flag: Not strictly ordered
+    Duration: 0
+    Destination address: ff:ff:ff:ff:ff:ff (ff:ff:ff:ff:ff:ff)
+    Source address: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    BSS Id: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    Fragment number: 0
+    Sequence number: 262
+IEEE 802.11 wireless LAN management frame
+    Fixed parameters (12 bytes)
+        Timestamp: 0x000000B53A4E3182
+        Beacon Interval: 0.102400 [Seconds]
+        Capability Information: 0x0001
+            .... ...1 = ESS capabilities: Transmitter is an AP
+            .... ..0. = IBSS status: Transmitter belongs to a BSS
+            ...0 .... = Privacy: AP/STA cannot support WEP
+            ..0. .... = Short Preamble: Short preamble not allowed
+            .0.. .... = PBCC: PBCC modulation not allowed
+            0... .... = Channel Agility: Channel agility not in use
+            CFP participation capabilities: No point coordinator at AP (0x0000)
+    Tagged parameters (32 bytes)
+        Tag Number: 0 (SSID parameter set)
+        Tag length: 8
+        Tag interpretation: xyzzyium
+        Tag Number: 1 (Supported Rates)
+        Tag length: 4
+        Tag interpretation: Supported rates: 1.0(B) 2.0(B) 5.5 11.0 [Mbit/sec]
+        Tag Number: 3 (DS Parameter set)
+        Tag length: 1
+        Tag interpretation: Current Channel: 1
+        Tag Number: 5 ((TIM) Traffic Indication Map)
+        Tag length: 4
+        Tag interpretation: DTIM count 0, DTIM period 1, Bitmap control 0x0, (Bitmap suppressed)
+[Malformed Packet: IEEE 802.11]
+
+0000  80 00 00 00 ff ff ff ff ff ff 00 02 2d 2a 1f d1   ............-*..
+0010  00 02 2d 2a 1f d1 60 10 82 31 4e 3a b5 00 00 00   ..-*..`..1N:....
+0020  64 00 01 00 00 08 XX YY ZZ ZZ YY 69 75 6d 01 04   d.....xyzzyium..
+0030  82 84 0b 16 03 01 01 05 04 00 01 00 00 80 06 00   ................
+0040  60 1d 00 36                                       `..6            
+
+Frame 65 (40 on wire, 40 captured)
+    Arrival Time: Mar  9, 2002 16:46:58.168160000
+    Time delta from previous packet: 0.101258000 seconds
+    Time relative to first packet: 5.835222000 seconds
+    Frame Number: 65
+    Packet Length: 40 bytes
+    Capture Length: 40 bytes
+IEEE 802.11
+    Type/Subtype: Probe Request (4)
+    Frame Control: 0x0040
+        Version: 0
+        Type: Management frame (0)
+        Subtype: 4
+        Flags: 0x0
+            DS status: Not leaving DS or network is operating in AD-HOC mode (To DS: 0  From DS: 0) (0x00)
+            .... .0.. = Fragments: No fragments
+            .... 0... = Retry: Frame is not being retransmitted
+            ...0 .... = PWR MGT: STA will stay up
+            ..0. .... = More Data: No data buffered
+            .0.. .... = WEP flag: WEP is disabled
+            0... .... = Order flag: Not strictly ordered
+    Duration: 0
+    Destination address: ff:ff:ff:ff:ff:ff (ff:ff:ff:ff:ff:ff)
+    Source address: 00:02:2d:0d:06:c2 (Agere_0d:06:c2)
+    BSS Id: ff:ff:ff:ff:ff:ff (ff:ff:ff:ff:ff:ff)
+    Fragment number: 0
+    Sequence number: 11
+IEEE 802.11 wireless LAN management frame
+    Tagged parameters (16 bytes)
+        Tag Number: 0 (SSID parameter set)
+        Tag length: 8
+        Tag interpretation: xyzzyium
+        Tag Number: 1 (Supported Rates)
+        Tag length: 4
+        Tag interpretation: Supported rates: 1.0 2.0 5.5 11.0 [Mbit/sec]
+
+0000  40 00 00 00 ff ff ff ff ff ff 00 02 2d 0d 06 c2   @...........-...
+0010  ff ff ff ff ff ff b0 00 00 08 XX YY ZZ ZZ YY 69   ..........xyzzyi
+0020  75 6d 01 04 02 04 0b 16                           um......        
+
+Frame 66 (63 on wire, 63 captured)
+    Arrival Time: Mar  9, 2002 16:46:58.169145000
+    Time delta from previous packet: 0.000985000 seconds
+    Time relative to first packet: 5.836207000 seconds
+    Frame Number: 66
+    Packet Length: 63 bytes
+    Capture Length: 63 bytes
+IEEE 802.11
+    Type/Subtype: Probe Response (5)
+    Frame Control: 0x0050
+        Version: 0
+        Type: Management frame (0)
+        Subtype: 5
+        Flags: 0x0
+            DS status: Not leaving DS or network is operating in AD-HOC mode (To DS: 0  From DS: 0) (0x00)
+            .... .0.. = Fragments: No fragments
+            .... 0... = Retry: Frame is not being retransmitted
+            ...0 .... = PWR MGT: STA will stay up
+            ..0. .... = More Data: No data buffered
+            .0.. .... = WEP flag: WEP is disabled
+            0... .... = Order flag: Not strictly ordered
+    Duration: 258
+    Destination address: 00:02:2d:0d:06:c2 (Agere_0d:06:c2)
+    Source address: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    BSS Id: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    Fragment number: 0
+    Sequence number: 263
+IEEE 802.11 wireless LAN management frame
+    Fixed parameters (12 bytes)
+        Timestamp: 0x000000B53A4FC142
+        Beacon Interval: 0.102400 [Seconds]
+        Capability Information: 0x0001
+            .... ...1 = ESS capabilities: Transmitter is an AP
+            .... ..0. = IBSS status: Transmitter belongs to a BSS
+            ...0 .... = Privacy: AP/STA cannot support WEP
+            ..0. .... = Short Preamble: Short preamble not allowed
+            .0.. .... = PBCC: PBCC modulation not allowed
+            0... .... = Channel Agility: Channel agility not in use
+            CFP participation capabilities: No point coordinator at AP (0x0000)
+    Tagged parameters (27 bytes)
+        Tag Number: 0 (SSID parameter set)
+        Tag length: 8
+        Tag interpretation: xyzzyium
+        Tag Number: 1 (Supported Rates)
+        Tag length: 4
+        Tag interpretation: Supported rates: 1.0(B) 2.0(B) 5.5 11.0 [Mbit/sec]
+        Tag Number: 3 (DS Parameter set)
+        Tag length: 1
+        Tag interpretation: Current Channel: 1
+        Tag Number: 128 (Reserved tag number)
+        Tag length: 6
+        Tag interpretation: Not interpreted
+
+0000  50 00 02 01 00 02 2d 0d 06 c2 00 02 2d 2a 1f d1   P.....-.....-*..
+0010  00 02 2d 2a 1f d1 70 10 42 c1 4f 3a b5 00 00 00   ..-*..p.B.O:....
+0020  64 00 01 00 00 08 XX YY ZZ ZZ ZZ ZZ YY 6d 01 04   d.....xyzzyium..
+0030  82 84 0b 16 03 01 01 80 06 00 60 1d 00 36 00      ..........`..6. 
+
+Frame 67 (68 on wire, 68 captured)
+    Arrival Time: Mar  9, 2002 16:46:58.170084000
+    Time delta from previous packet: 0.000939000 seconds
+    Time relative to first packet: 5.837146000 seconds
+    Frame Number: 67
+    Packet Length: 68 bytes
+    Capture Length: 68 bytes
+IEEE 802.11
+    Type/Subtype: Beacon frame (8)
+    Frame Control: 0x0080
+        Version: 0
+        Type: Management frame (0)
+        Subtype: 8
+        Flags: 0x0
+            DS status: Not leaving DS or network is operating in AD-HOC mode (To DS: 0  From DS: 0) (0x00)
+            .... .0.. = Fragments: No fragments
+            .... 0... = Retry: Frame is not being retransmitted
+            ...0 .... = PWR MGT: STA will stay up
+            ..0. .... = More Data: No data buffered
+            .0.. .... = WEP flag: WEP is disabled
+            0... .... = Order flag: Not strictly ordered
+    Duration: 0
+    Destination address: ff:ff:ff:ff:ff:ff (ff:ff:ff:ff:ff:ff)
+    Source address: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    BSS Id: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    Fragment number: 0
+    Sequence number: 264
+IEEE 802.11 wireless LAN management frame
+    Fixed parameters (12 bytes)
+        Timestamp: 0x000000B53A4FC498
+        Beacon Interval: 0.102400 [Seconds]
+        Capability Information: 0x0001
+            .... ...1 = ESS capabilities: Transmitter is an AP
+            .... ..0. = IBSS status: Transmitter belongs to a BSS
+            ...0 .... = Privacy: AP/STA cannot support WEP
+            ..0. .... = Short Preamble: Short preamble not allowed
+            .0.. .... = PBCC: PBCC modulation not allowed
+            0... .... = Channel Agility: Channel agility not in use
+            CFP participation capabilities: No point coordinator at AP (0x0000)
+    Tagged parameters (32 bytes)
+        Tag Number: 0 (SSID parameter set)
+        Tag length: 8
+        Tag interpretation: xyzzyium
+        Tag Number: 1 (Supported Rates)
+        Tag length: 4
+        Tag interpretation: Supported rates: 1.0(B) 2.0(B) 5.5 11.0 [Mbit/sec]
+        Tag Number: 3 (DS Parameter set)
+        Tag length: 1
+        Tag interpretation: Current Channel: 1
+        Tag Number: 5 ((TIM) Traffic Indication Map)
+        Tag length: 4
+        Tag interpretation: DTIM count 0, DTIM period 1, Bitmap control 0x0, (Bitmap suppressed)
+[Malformed Packet: IEEE 802.11]
+
+0000  80 00 00 00 ff ff ff ff ff ff 00 02 2d 2a 1f d1   ............-*..
+0010  00 02 2d 2a 1f d1 80 10 98 c4 4f 3a b5 00 00 00   ..-*......O:....
+0020  64 00 01 00 00 08 XX YY ZZ ZZ YY 69 75 6d 01 04   d.....xyzzyium..
+0030  82 84 0b 16 03 01 01 05 04 00 01 00 00 80 06 00   ................
+0040  60 1d 00 36                                       `..6            
+
+... probe requests ... (deleted)
+
+Frame 72 (30 on wire, 30 captured)
+    Arrival Time: Mar  9, 2002 16:46:58.251093000
+    Time delta from previous packet: 0.015306000 seconds
+    Time relative to first packet: 5.918155000 seconds
+    Frame Number: 72
+    Packet Length: 30 bytes
+    Capture Length: 30 bytes
+IEEE 802.11
+    Type/Subtype: Authentication (11)
+    Frame Control: 0x00B0
+        Version: 0
+        Type: Management frame (0)
+        Subtype: 11
+        Flags: 0x0
+            DS status: Not leaving DS or network is operating in AD-HOC mode (To DS: 0  From DS: 0) (0x00)
+            .... .0.. = Fragments: No fragments
+            .... 0... = Retry: Frame is not being retransmitted
+            ...0 .... = PWR MGT: STA will stay up
+            ..0. .... = More Data: No data buffered
+            .0.. .... = WEP flag: WEP is disabled
+            0... .... = Order flag: Not strictly ordered
+    Duration: 258
+    Destination address: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    Source address: 00:02:2d:0d:06:c2 (Agere_0d:06:c2)
+    BSS Id: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    Fragment number: 0
+    Sequence number: 22
+IEEE 802.11 wireless LAN management frame
+    Fixed parameters (6 bytes)
+        Authentication Algorithm: Shared key (1)
+        Authentication SEQ: 0x0001
+        Status code: Successful (0x0000)
+
+0000  b0 00 02 01 00 02 2d 2a 1f d1 00 02 2d 0d 06 c2   ......-*....-...
+0010  00 02 2d 2a 1f d1 60 01 00 00 01 00 00 00         ..-*..`.......  
+
+Frame 73 (30 on wire, 30 captured)
+    Arrival Time: Mar  9, 2002 16:46:58.252075000
+    Time delta from previous packet: 0.000982000 seconds
+    Time relative to first packet: 5.919137000 seconds
+    Frame Number: 73
+    Packet Length: 30 bytes
+    Capture Length: 30 bytes
+IEEE 802.11
+    Type/Subtype: Authentication (11)
+    Frame Control: 0x00B0
+        Version: 0
+        Type: Management frame (0)
+        Subtype: 11
+        Flags: 0x0
+            DS status: Not leaving DS or network is operating in AD-HOC mode (To DS: 0  From DS: 0) (0x00)
+            .... .0.. = Fragments: No fragments
+            .... 0... = Retry: Frame is not being retransmitted
+            ...0 .... = PWR MGT: STA will stay up
+            ..0. .... = More Data: No data buffered
+            .0.. .... = WEP flag: WEP is disabled
+            0... .... = Order flag: Not strictly ordered
+    Duration: 258
+    Destination address: 00:02:2d:0d:06:c2 (Agere_0d:06:c2)
+    Source address: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    BSS Id: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    Fragment number: 0
+    Sequence number: 265
+IEEE 802.11 wireless LAN management frame
+    Fixed parameters (6 bytes)
+        Authentication Algorithm: Shared key (1)
+        Authentication SEQ: 0x0001
+        Status code: Successful (0x0000)
+
+0000  b0 00 02 01 00 02 2d 0d 06 c2 00 02 2d 2a 1f d1   ......-.....-*..
+0010  00 02 2d 2a 1f d1 90 10 00 00 02 00 00 00         ..-*..........  
+
+Frame 74 (44 on wire, 44 captured)
+    Arrival Time: Mar  9, 2002 16:46:58.252779000
+    Time delta from previous packet: 0.000704000 seconds
+    Time relative to first packet: 5.919841000 seconds
+    Frame Number: 74
+    Packet Length: 44 bytes
+    Capture Length: 44 bytes
+IEEE 802.11
+    Type/Subtype: Association Request (0)
+    Frame Control: 0x0000
+        Version: 0
+        Type: Management frame (0)
+        Subtype: 0
+        Flags: 0x0
+            DS status: Not leaving DS or network is operating in AD-HOC mode (To DS: 0  From DS: 0) (0x00)
+            .... .0.. = Fragments: No fragments
+            .... 0... = Retry: Frame is not being retransmitted
+            ...0 .... = PWR MGT: STA will stay up
+            ..0. .... = More Data: No data buffered
+            .0.. .... = WEP flag: WEP is disabled
+            0... .... = Order flag: Not strictly ordered
+    Duration: 258
+    Destination address: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    Source address: 00:02:2d:0d:06:c2 (Agere_0d:06:c2)
+    BSS Id: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    Fragment number: 0
+    Sequence number: 23
+IEEE 802.11 wireless LAN management frame
+    Fixed parameters (4 bytes)
+        Capability Information: 0x0001
+            .... ...1 = ESS capabilities: Transmitter is an AP
+            .... ..0. = IBSS status: Transmitter belongs to a BSS
+            ...0 .... = Privacy: AP/STA cannot support WEP
+            ..0. .... = Short Preamble: Short preamble not allowed
+            .0.. .... = PBCC: PBCC modulation not allowed
+            0... .... = Channel Agility: Channel agility not in use
+            CFP participation capabilities: No point coordinator at AP (0x0000)
+        Listen Interval: 0x0001
+    Tagged parameters (16 bytes)
+        Tag Number: 0 (SSID parameter set)
+        Tag length: 8
+        Tag interpretation: xyzzyium
+        Tag Number: 1 (Supported Rates)
+        Tag length: 4
+        Tag interpretation: Supported rates: 1.0 2.0 5.5 11.0 [Mbit/sec]
+
+0000  00 00 02 01 00 02 2d 2a 1f d1 00 02 2d 0d 06 c2   ......-*....-...
+0010  00 02 2d 2a 1f d1 70 01 01 00 01 00 00 08 XX YY   ..-*..p.......xy
+0020  ZZ ZZ YY 69 75 6d 01 04 02 04 0b 16               zzyium......    
+
+Frame 75 (52 on wire, 52 captured)
+    Arrival Time: Mar  9, 2002 16:46:58.253553000
+    Time delta from previous packet: 0.000774000 seconds
+    Time relative to first packet: 5.920615000 seconds
+    Frame Number: 75
+    Packet Length: 52 bytes
+    Capture Length: 52 bytes
+IEEE 802.11
+    Type/Subtype: Association Response (1)
+    Frame Control: 0x0010
+        Version: 0
+        Type: Management frame (0)
+        Subtype: 1
+        Flags: 0x0
+            DS status: Not leaving DS or network is operating in AD-HOC mode (To DS: 0  From DS: 0) (0x00)
+            .... .0.. = Fragments: No fragments
+            .... 0... = Retry: Frame is not being retransmitted
+            ...0 .... = PWR MGT: STA will stay up
+            ..0. .... = More Data: No data buffered
+            .0.. .... = WEP flag: WEP is disabled
+            0... .... = Order flag: Not strictly ordered
+    Duration: 258
+    Destination address: 00:02:2d:0d:06:c2 (Agere_0d:06:c2)
+    Source address: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    BSS Id: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    Fragment number: 0
+    Sequence number: 266
+IEEE 802.11 wireless LAN management frame
+    Fixed parameters (6 bytes)
+        Capability Information: 0x0001
+            .... ...1 = ESS capabilities: Transmitter is an AP
+            .... ..0. = IBSS status: Transmitter belongs to a BSS
+            ...0 .... = Privacy: AP/STA cannot support WEP
+            ..0. .... = Short Preamble: Short preamble not allowed
+            .0.. .... = PBCC: PBCC modulation not allowed
+            0... .... = Channel Agility: Channel agility not in use
+            CFP participation capabilities: No point coordinator at AP (0x0000)
+        Status code: Successful (0x0000)
+        Association ID: 0xc006
+    Tagged parameters (22 bytes)
+        Tag Number: 1 (Supported Rates)
+        Tag length: 4
+        Tag interpretation: Supported rates: 1.0(B) 2.0(B) 5.5 11.0 [Mbit/sec]
+        Tag Number: 129 (Reserved tag number)
+        Tag length: 13
+        Tag interpretation: Not interpreted
+[Malformed Packet: IEEE 802.11]
+
+0000  10 00 02 01 00 02 2d 0d 06 c2 00 02 2d 2a 1f d1   ......-.....-*..
+0010  00 02 2d 2a 1f d1 a0 10 01 00 00 00 06 c0 01 04   ..-*............
+0020  82 84 0b 16 81 0d 00 60 1d 01 40 32 36 0a 02 06   .......`..@26...
+0030  2b 09 00 04                                       +...            
+

@@ -1,0 +1,20 @@
+
+Operador   Função
+&&         AND
+||         OR
+!          NOT
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#include <stdio.h>
+
+int main() {
+  char a;
+  a = 0x00;
+  
+  printf("a = 0x%02X\n", a);
+  
+  if (! a) printf("ENTREI\n");
+  
+  return 0;
+}

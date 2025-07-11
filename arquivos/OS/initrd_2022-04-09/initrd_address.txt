@@ -1,0 +1,3 @@
+copiar initrd no endereço 0x02800000
+quanto mais para o final da RAM melhor?
+

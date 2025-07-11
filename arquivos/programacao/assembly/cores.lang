@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+sudo cp /media/ubuntu/SD/linguas/Assembly/cores.lang /usr/share/gtksourceview-3.0/language-specs/
+
+killall gedit
+gedit /media/ubuntu/SD/linguas/Assembly/cores.lang
+Mudar o tipo de código de xml para Cores e observar as cores em map-to
+-->
+
+<language id="cores" _name="Cores" version="2.0" _section="Source">
+   <metadata>
+      <property name="mimetypes">text/plain</property>
+      <property name="globs">*.teste</property>
+   </metadata>
+   
+   <styles>
+      <style id="keyword"        _name="Keyword"        map-to="def:keyword"/>
+      <style id="comment"        _name="Comment"        map-to="def:comment"/>
+      <style id="identifier"     _name="Identifier"     map-to="def:identifier"/>
+      <style id="type"           _name="Type"           map-to="def:type"/>
+      <style id="preprocessor"   _name="Preprocessor"   map-to="def:preprocessor"/>
+      <style id="constant"       _name="Constant"       map-to="def:constant"/>
+      <style id="special-char"   _name="Special-char"   map-to="def:special-char"/>
+      <style id="error"          _name="Error"          map-to="def:error"/>
+   </styles>
+   
+   <default-regex-options case-sensitive="false"/>
+   
+   <definitions>
+      <context id="keyword" style-ref="keyword">
+         <match>def\:keyword</match>
+      </context>
+      
+      <context id="comment" style-ref="comment">
+         <match>def\:comment</match>
+      </context>
+      
+      <context id="identifier" style-ref="identifier">
+         <match>def\:identifier</match>
+      </context>
+      
+      <context id="type" style-ref="type">
+         <match>def\:type</match>
+      </context>
+      
+      <context id="preprocessor" style-ref="preprocessor">
+         <match>def\:preprocessor</match>
+      </context>
+      
+      <context id="constant" style-ref="constant">
+         <match>def\:constant</match>
+      </context>
+      
+      <context id="special-char" style-ref="special-char">
+         <match>def\:special-char</match>
+      </context>
+      
+      <context id="error" style-ref="error">
+         <match>def\:error</match>
+      </context>
+      
+      <context id="cores">
+         <include>
+            <context ref="keyword"/>
+            <context ref="comment"/>
+            <context ref="identifier"/>
+            <context ref="type"/>
+            <context ref="preprocessor"/>
+            <context ref="constant"/>
+            <context ref="special-char"/>
+            <context ref="error"/>
+         </include>
+      </context>
+      
+   </definitions>
+</language>
+

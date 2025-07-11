@@ -1,0 +1,526 @@
+<HTML>
+<BODY CLASS="BOOK" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#840084" ALINK="#0000FF">
+
+
+<DIV CLASS="CHAPTER">
+<HR>
+<H1><A NAME="DIRECTORY"></A>Chapter 4. Directory Structure</H1>
+
+
+<DIV CLASS="SECT1">
+<HR>
+<P>Immediately following the Section 4.2.1 structure is an array of Section 4.2.2 up to the end of the data block or until all files have been indexed.</P>
+<P>When the number of files to be indexed exceeds the number of Section 4.2.2 that can fit in a block Section 4.2.2.3), a level of indirect indexes is created.  An indirect index is another data block allocated to the directory inode that contains directory entries.</P>
+
+<DIV CLASS="SECT2">
+<H3 CLASS="SECT2">4.2.1. Indexed Directory Root</H3>
+<DIV CLASS="TABLE">
+<TABLE
+BORDER="1"
+RULES="none"
+WIDTH="100%" CLASS="CALSTABLE">
+<COL
+WIDTH="20%"
+TITLE="C1"><COL
+WIDTH="20%"
+TITLE="C2"><COL
+WIDTH="60%"
+TITLE="C3"><THEAD>
+<TR>
+<TH>Offset (bytes)</TH>
+<TH>Size (bytes)</TH>
+<TH>Description</TH>
+</TR>
+</THEAD>
+<TBODY>
+<TR>
+<TD
+COLSPAN="3"
+ALIGN="LEFT">-- Linked Directory Entry: . --</TD>
+</TR>
+<TR>
+<TD>0</TD>
+<TD>4</TD>
+<TD>inode: this directory</TD>
+</TR>
+<TR>
+<TD>4</TD>
+<TD>2</TD>
+<TD>rec_len: 12</TD>
+</TR>
+<TR>
+<TD>6</TD>
+<TD>1</TD>
+<TD>name_len: 1</TD>
+</TR>
+<TR>
+<TD>7</TD>
+<TD>1</TD>
+<TD>file_type: <CODE CLASS="CONSTANT">EXT2_FT_DIR</CODE>=2</TD>
+</TR>
+<TR>
+<TD>8</TD>
+<TD>1</TD>
+<TD>name: .</TD>
+</TR>
+<TR>
+<TD>9</TD>
+<TD>3</TD>
+<TD>padding</TD>
+</TR>
+<TR>
+<TD
+COLSPAN="3"
+ALIGN="LEFT">-- Linked Directory Entry: .. --</TD>
+</TR>
+<TR>
+<TD>12</TD>
+<TD>4</TD>
+<TD>inode: parent directory</TD>
+</TR>
+<TR>
+<TD>16</TD>
+<TD>2</TD>
+<TD>rec_len: (blocksize - this entry's length(12))</TD>
+</TR>
+<TR>
+<TD>18</TD>
+<TD>1</TD>
+<TD>name_len: 2</TD>
+</TR>
+<TR>
+<TD>19</TD>
+<TD>1</TD>
+<TD>file_type: <CODE CLASS="CONSTANT">EXT2_FT_DIR</CODE>=2</TD>
+</TR>
+<TR>
+<TD>20</TD>
+<TD>2</TD>
+<TD>name: ..</TD>
+</TR>
+<TR>
+<TD>22</TD>
+<TD>2</TD>
+<TD>padding</TD>
+</TR>
+<TR>
+<TD
+COLSPAN="3"
+ALIGN="LEFT">-- Indexed Directory Root Information Structure --</TD>
+</TR>
+<TR>
+<TD>24</TD>
+<TD>4</TD>
+<TD>reserved, zero</TD>
+</TR>
+<TR>
+<TD>28</TD>
+<TD>1</TD>
+<TD>
+<A HREF="#DX-HASH-VERSION">hash_version</A>
+</TD>
+</TR>
+<TR>
+<TD>29</TD>
+<TD>1</TD>
+<TD>
+<A HREF="#DX-INFO-LENGTH">info_length</A>
+</TD>
+</TR>
+<TR>
+<TD>30</TD>
+<TD>1</TD>
+<TD>
+<A HREF="#DX-INDIRECT-LEVELS">indirect_levels</A>
+</TD>
+</TR>
+<TR>
+<TD>31</TD>
+<TD>1</TD>
+<TD>reserved - unused flags</TD>
+</TR>
+</TBODY>
+</TABLE>
+</DIV>
+
+<DIV CLASS="SECT3">
+<HR><H4 CLASS="SECT3">4.2.1.1. hash_version</H4>
+<P>	8bit value representing the hash version used in this indexed directory.
+     </P><DIV CLASS="TABLE">
+<A NAME="DEFINED-DX-HASH-VERSION-VALUES"></A>
+<P>
+<B>Table 4-5. Defined Indexed Directory Hash Versions</B>
+</P><TABLE
+BORDER="0"
+FRAME="void"
+WIDTH="100%" CLASS="CALSTABLE">
+<COL
+WIDTH="40%"
+TITLE="C1"><COL
+WIDTH="20%"
+TITLE="C2"><COL
+WIDTH="40%"
+TITLE="C3"><THEAD>
+<TR>
+<TH>Constant Name</TH>
+<TH>Value</TH>
+<TH>Description</TH>
+</TR>
+</THEAD>
+<TBODY>
+<TR>
+<TD>DX_HASH_LEGACY</TD>
+<TD>0</TD>
+<TD>TODO: link to section</TD>
+</TR>
+<TR>
+<TD>DX_HASH_HALF_MD4</TD>
+<TD>1</TD>
+<TD>TODO: link to section</TD>
+</TR>
+<TR>
+<TD>DX_HASH_TEA</TD>
+<TD>2</TD>
+<TD>TODO: link to section</TD>
+</TR>
+</TBODY>
+</TABLE>
+</DIV>
+</DIV>
+<DIV CLASS="SECT3">
+<HR><H4 CLASS="SECT3">
+<A NAME="DX-INFO-LENGTH">4.2.1.2. info_length</A>
+</H4>
+<P>	8bit length of the indexed directory information structure (dx_root); 
+	currently equal to 8.
+     </P></DIV>
+<DIV CLASS="SECT3">
+<HR><H4 CLASS="SECT3">
+<A NAME="DX-INDIRECT-LEVELS">4.2.1.3. indirect_levels</A>
+</H4>
+<P>	8bit value indicating how many indirect levels of indexing are present in
+	this hash.
+     </P><DIV CLASS="NOTE">
+<P>
+</P><TABLE CLASS="NOTE"
+WIDTH="100%"
+BORDER="0">
+<TR>
+<TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP">
+<IMG
+SRC="../images/note.gif"
+HSPACE="5"
+ALT="Note"></TD>
+<TD
+ALIGN="LEFT"
+VALIGN="TOP">
+<P>	In Linux, as of 2.6.28, the maximum indirect levels value supported is 1.
+     </P></TD>
+</TR>
+</TABLE>
+</DIV>
+</DIV>
+</DIV>
+<DIV CLASS="SECT2">
+<HR><H3 CLASS="SECT2">
+<A NAME="DX-ENTRY">4.2.2. Indexed Directory Entry</A>
+</H3>
+<P>	The indexed directory entries are used to quickly lookup the inode number
+	associated with the hash of a filename.  These entries are located immediately
+	following the fake linked directory entry of the directory data blocks, or
+	immediately following the <A HREF="#DX-ROOT">Section 4.2.1</A>.
+    </P><P>	The first indexed directory entry, rather than containing an actual hash and
+	block	number, contains the maximum number of indexed directory entries that
+	can fit in the block and the actual number of indexed directory entries 
+	stored in the block.	The format of this special entry is detailed in
+	<A HREF="#DX-ENTRY-COUNTLIMIT">Table 4-7</A>.
+    </P><P>	The other directory entries are sorted by hash value starting from the 
+	smallest to the largest numerical value.
+    </P><DIV CLASS="TABLE">
+<A NAME="DX-ENTRY-STRUCTURE"></A>
+<P>
+<B>Table 4-6. Indexed Directory Entry Structure (dx_entry)</B>
+</P><TABLE
+BORDER="0"
+FRAME="void"
+WIDTH="100%" CLASS="CALSTABLE">
+<COL
+WIDTH="20%"
+TITLE="C1"><COL
+WIDTH="20%"
+TITLE="C2"><COL
+WIDTH="60%"
+TITLE="C3"><THEAD>
+<TR>
+<TH>Offset (bytes)</TH>
+<TH>Size (bytes)</TH>
+<TH>Description</TH>
+</TR>
+</THEAD>
+<TBODY>
+<TR>
+<TD>0</TD>
+<TD>4</TD>
+<TD>
+<A HREF="#DX-ENTRY-HASH">hash</A>
+</TD>
+</TR>
+<TR>
+<TD>4</TD>
+<TD>4</TD>
+<TD>
+<A HREF="#DX-ENTRY-BLOCK">block</A>
+</TD>
+</TR>
+</TBODY>
+</TABLE>
+</DIV>
+<DIV CLASS="TABLE">
+<A NAME="DX-ENTRY-COUNTLIMIT"></A>
+<P>
+<B>Table 4-7. Indexed Directory Entry Count and Limit Structure</B>
+</P><TABLE
+BORDER="0"
+FRAME="void"
+WIDTH="100%" CLASS="CALSTABLE">
+<COL
+WIDTH="20%"
+TITLE="C1"><COL
+WIDTH="20%"
+TITLE="C2"><COL
+WIDTH="60%"
+TITLE="C3"><THEAD>
+<TR>
+<TH>Offset (bytes)</TH>
+<TH>Size (bytes)</TH>
+<TH>Description</TH>
+</TR>
+</THEAD>
+<TBODY>
+<TR>
+<TD>0</TD>
+<TD>2</TD>
+<TD>
+<A HREF="#DX-ENTRY-COUNTLIMIT-LIMIT">limit</A>
+</TD>
+</TR>
+<TR>
+<TD>2</TD>
+<TD>2</TD>
+<TD>
+<A HREF="#DX-ENTRY-COUNTLIMIT-COUNT">count</A>
+</TD>
+</TR>
+</TBODY>
+</TABLE>
+</DIV>
+<DIV CLASS="SECT3">
+<HR><H4 CLASS="SECT3">
+<A NAME="DX-ENTRY-HASH">4.2.2.1. hash</A>
+</H4>
+<P>	32bit hash of the filename represented by this entry.
+     </P></DIV>
+<DIV CLASS="SECT3">
+<HR><H4 CLASS="SECT3">
+<A NAME="DX-ENTRY-BLOCK">4.2.2.2. block</A>
+</H4>
+<P>	32bit block index of the directory inode data block containing the (linked) directory entry for the filename.
+     </P></DIV>
+<DIV CLASS="SECT3">
+<HR><H4 CLASS="SECT3">
+<A NAME="DX-ENTRY-COUNTLIMIT-LIMIT">4.2.2.3. limit</A>
+</H4>
+<P>	16bit value representing the total number of indexed directory entries that
+	fit within the block, after removing the other structures, but including
+	the count/limit entry.
+     </P></DIV>
+<DIV CLASS="SECT3">
+<HR><H4 CLASS="SECT3">
+<A NAME="DX-ENTRY-COUNTLIMIT-COUNT">4.2.2.4. count</A>
+</H4>
+<P>	16bit value representing the total number of indexed directory entries
+	present in the block. TODO: Research if this value includes the count/limit entry.
+     </P></DIV>
+</DIV>
+<DIV CLASS="SECT2">
+<HR><H3 CLASS="SECT2">
+<A NAME="CONTRIB-LOOKUP-ALGORITHM">4.2.3. Lookup Algorithm</A>
+</H3>
+<P>	Lookup is straightforword:
+    </P><PRE CLASS="PROGRAMLISTING">- Compute a hash of the name
+- Read the index root
+- Use binary search (linear in the current code) to find the
+  first index or leaf block that could contain the target hash
+  (in tree order)
+- Repeat the above until the lowest tree level is reached
+- Read the leaf directory entry block and do a normal Ext2
+  directory block search in it.
+- If the name is found, return its directory entry and buffer
+- Otherwise, if the collision bit of the next directory entry is
+  set, continue searching in the successor block
+    </PRE>
+<P>	Normally, two logical blocks of the file will need to be accessed, and
+	one or two metadata index blocks.  The effect of the metadata index
+	blocks can largely be ignored in terms of disk access time since these
+	blocks are unlikely to be evicted from cache.  There is some small CPU
+	cost that can be addressed by moving the whole directory into the page
+	cache.
+    </P></DIV>
+<DIV CLASS="SECT2">
+<HR><H3 CLASS="SECT2">
+<A NAME="CONTRIB-INSERT-ALGORITHM">4.2.4. Insert Algorithm</A>
+</H3>
+<P>	Insertion of new entries into the directory is considerably more
+	complex than lookup, due to the need to split leaf blocks when they
+	become full, and to satisfy the conditions that allow hash key
+	collisions to be handled reliably and efficiently.  I'll just summarize
+	here:
+    </P><PRE CLASS="PROGRAMLISTING">- Probe the index as for lookup
+- If the target leaf block is full, split it and note the block
+  that will receive the new entry
+- Insert the new entry in the leaf block using the normal Ext2
+  directory entry insertion code.
+    </PRE>
+<P>	The details of splitting and hash collision handling are somewhat
+	messy, but I will be happy to dwell on them at length if anyone is
+	interested.
+    </P></DIV>
+<DIV CLASS="SECT2">
+<HR><H3 CLASS="SECT2">
+<A NAME="CONTRIB-SPLITTING">4.2.5. Splitting</A>
+</H3>
+<P>	In brief, when a leaf node fills up and we want to put a new entry into
+	it the leaf has to be split, and its share of the hash space has to
+	be partitioned.  The most straightforward way to do this is to sort the
+	entrys by hash value and split somewhere in the middle of the sorted
+	list.  This operation is log(number_of_entries_in_leaf) and is not a
+	great cost so long as an efficient sorter is used.  I used Combsort
+	for this, although Quicksort would have been just as good in this
+	case since average case performance is more important than worst case. 
+    </P><P>	An alternative approach would be just to guess a median value for the
+	hash key, and the partition could be done in linear time, but the
+	resulting poorer partitioning of hash key space outweighs the small
+	advantage of the linear partition algorithm.  In any event, the number
+	of entries needing sorting is bounded by the number that fit in a leaf.
+    </P></DIV>
+<DIV CLASS="SECT2">
+<HR><H3 CLASS="SECT2">
+<A NAME="CONTRIB-KEY-COLLISIONS">4.2.6. Key Collisions</A>
+</H3>
+<P>	Some complexity is introduced by the need to handle sequences of hash
+	key collisions.  It is desireable to avoid splitting such sequences
+	between blocks, so the split point of a block is adjusted with this in
+	mind.  But the possibility still remains that if the block fills up
+	with identically-hashed entries, the sequence may still have to be
+	split.  This situation is flagged by placing a 1 in the low bit of the
+	index entry that points at the sucessor block, which is naturally
+	interpreted by the index probe as an intermediate value without any
+	special coding.  Thus, handling the collision problem imposes no real
+	processing overhead, just come extra code and a slight reduction in the
+	hash key space.  The hash key space remains  sufficient for any
+	conceivable number of directory entries, up into the billions.
+    </P></DIV>
+<DIV CLASS="SECT2">
+<HR><H3 CLASS="SECT2">
+<A NAME="CONTRIB-HASH-FUNCTION">4.2.7. Hash Function</A>
+</H3>
+<P>	The exact properties of the hash function critically affect the
+	performance of this indexing strategy, as I learned by trying a number
+	of poor hash functions, at times intentionally.  A poor hash function
+	will result in many collisions or poor partitioning of the hash space. 
+	To illustrate why the latter is a problem, consider what happens when a
+	block is split such that it covers just a few distinct hash values. 
+	The probability of later index entries hashing into the same, small
+	hash space is very small.  In practice, once a block is split, if its
+	hash space is too small it tends to stay half full forever, an effect I
+	observed in practice.
+    </P><P>	After some experimentation I came up with a hash function that gives
+	reasonably good dispersal of hash keys across the entire 31 bit key
+	space.  This improved the average fullness of leaf blocks considerably,
+	getting much closer to the theoretical average of 3/4 full.
+    </P><P>	But the current hash function is just a place holder, waiting for
+	an better version based on some solid theory.  I currently favor the
+	idea of using crc32 as the default hash function, but I welcome
+	suggestions.
+    </P><P>	Inevitably, no matter how good a hash function I come up with, somebody
+	will come up with a better one later.  For this reason the design
+	allows for additional hash functiones to be added, with backward
+	compatibility.  This is accomplished simply, by including a hash
+	function number in the index root.  If a new, improved hash function is
+	added, all the previous versions remain available, and previously
+	created indexes remain readable.
+    </P><P>	Of course, the best strategy is to have a good hash function right from
+	the beginning.  The initial, quick hack has produced results that
+	certainly have not been disappointing.
+    </P></DIV>
+<DIV CLASS="SECT2">
+<HR><H3 CLASS="SECT2">
+<A NAME="CONTRIB-PERFORMANCE">4.2.8. Performance</A>
+</H3>
+<P>	OK, if you have read this far then this is no doubt the part you've
+	been waiting for.  In short, the performance improvement over normal
+	Ext2 has been stunning.  With very small directories performance is
+	similar to standard Ext2, but as directory size increases standard
+	Ext2 quickly blows up quadratically, while htree-enhanced Ext2
+	continues to scale linearly.
+    </P><P>	Uli Luckas ran benchmarks for file creation in various sizes of
+	directories ranging from 10,000 to 90,000 files.  The results are
+	pleasing: total file creation time stays very close to linear, versus
+	quadratic increase with normal Ext2.
+    </P><P>	Time to create:
+    </P><DIV CLASS="FIGURE">
+<A NAME="AEN2384"></A>
+<P>
+<B>Figure 4-1. Performance of Indexed Directories</B>
+</P><PRE CLASS="PROGRAMLISTING">		Indexed		Normal
+		=======		======
+10000 Files:	0m1.350s	0m23.670s
+20000 Files:	0m2.720s	1m20.470s
+30000 Files:	0m4.330s	3m9.320s
+40000 Files:	0m5.890s	5m48.750s
+50000 Files:	0m7.040s	9m31.270s
+60000 Files:	0m8.610s	13m52.250s
+70000 Files:	0m9.980s	19m24.070s
+80000 Files:	0m12.060s	25m36.730s
+90000 Files:	0m13.400s	33m18.550s
+    </PRE>
+</DIV>
+<P>	A graph is posted at: http://www.innominate.org/~phillips/htree/performance.png
+    </P><P>	All of these tests are CPU-bound, which may come as a surprise.  The
+	directories fit easily in cache, and the limiting factor in the case of
+	standard Ext2 is the looking up of directory blocks in buffer cache,
+	and the low level scan of directory entries.  In the case of htree
+	indexing there are a number of costs to be considered, all of them
+	pretty well bounded.  Notwithstanding, there are a few obvious
+	optimizations to be done:
+    </P><PRE CLASS="PROGRAMLISTING">- Use binary search instead of linear search in the interior index
+  nodes.
+
+- If there is only one leaf block in a directory, bypass the index
+  probe, go straight to the block.
+
+- Map the directory into the page cache instead of the buffer cache.
+    </PRE>
+<P>	Each of these optimizations will produce a noticeable improvement in
+	performance, but naturally it will never be anything like the big jump
+	going from N**2 to Log512(N), ~= N.  In time the optimizations will be
+	applied and we can expect to see another doubling or so in performance.
+    </P><P>	There will be a very slight performance hit when the directory gets big
+	enough to need a second level.  Because of caching this will be very
+	small.  Traversing the directories metadata index blocks will be a
+	bigger cost, and once again, this cost can be reduced by moving the
+	directory blocks into the page cache.
+    </P><P>	Typically, we will traverse 3 blocks to read or write a directory
+	entry, and that number increases to 4-5 with really huge directories. 
+	But this is really nothing compared to normal Ext2, which traverses
+	several hundred blocks in the same situation.
+    </P></DIV>
+</DIV>
+</DIV>
+
+
+</BODY>
+</HTML>

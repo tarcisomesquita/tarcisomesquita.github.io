@@ -1,0 +1,44 @@
+[*] Networking support  --->
+        Networking options  --->
+        [*] Unix domain sockets
+        [*] TCP/IP networking
+        <*>   INET: socket monitoring interface (NEW)
+        [*] Network packet filtering framework (Netfilter)  --->
+            [*]   Advanced netfilter configuration (NEW)
+                  Core Netfilter Configuration  --->
+                  <M> Netfilter Xtables support (required for ip_tables)
+                  <M>   LOG target support
+                  <M>   "mac" address match support
+                  <M>   "owner" match support
+        
+    Device Drivers  --->
+       Generic Driver Options  --->
+       [*] Maintain a devtmpfs filesystem to mount at /dev
+    [*] Serial ATA and Parallel ATA drivers  --->
+        [*]   ATA ACPI Support
+        [*]   SATA Port Multiplier support
+        <*>   AHCI SATA support
+    [*] Network device support  --->
+        [*]   Network core driver support (NEW)
+        [*]   Ethernet driver support (NEW)  --->
+              [*]   Intel devices (NEW)
+              <M>     Intel(R) PRO/100+ support
+              <M>     Intel(R) PRO/1000 Gigabit Ethernet support
+    [*] USB support  --->
+        <M>   Support for Host-side USB
+        [*]     Enable USB persist by default (NEW)
+        <M>     USB Monitor
+        <M>     EHCI HCD (USB 2.0) support
+        [*]       Improved Transaction Translator scheduling (NEW)
+        <M>     UHCI HCD (most Intel and VIA) support
+        <M>     USB Modem (CDC ACM) support
+        <M>     USB Mass Storage support
+        [*]       USB Mass Storage verbose debug
+        
+
+    File systems  --->
+    <M> Second extended fs support
+    [*] Inotify support for userspace
+        Pseudo filesystems  --->
+        [*] Tmpfs virtual memory file system support (former shm fs)
+

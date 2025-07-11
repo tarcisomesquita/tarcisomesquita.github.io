@@ -1,0 +1,21 @@
+for () {}
+do {} while()
+while() {}
+
+igual ao c
+
+
+    label: {
+        for (...; ...; ...) {
+             ...
+             while (...) {
+                 ...
+                 if (...)
+                    break label;
+                 ...
+             }
+             ...
+        }
+        ...
+    }
+

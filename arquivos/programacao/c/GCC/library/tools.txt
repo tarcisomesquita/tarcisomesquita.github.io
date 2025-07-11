@@ -1,0 +1,3 @@
+$ readelf -r exemplo.elf
+$ ldd exemplo.elf
+$ nm libprint.so

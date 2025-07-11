@@ -1,0 +1,37 @@
+https://github.com/Tomas-M
+
+sb2dir	Convert a .sb module into a directory
+rmsbdir remove the directory created by sb2dir
+dir2sb	Convert a directory into .sb module
+
+slax activate module.sb
+slax deactivate module.sb
+
+savechanges /slax/modules/mychanges.sb
+
+you can copy the module directly to /run/initramfs/memory/data/slax/modules/, which is already mapped to your USB disk.
+
+/run/initramfs/memory/toram/modules/
+
+
+/usr/share/applications/
+
+fluxbox
+/usr/bin/fluxbox
+
+su - username
+su - root -c "command"
+su - root -c "ls -l /root"
+
+cat /var/log/auth.log 
+ver cron
+
+If you want to run a GUI application as another user, you need first allow to the target user connecting to your display:
+xhost +si:localuser:user
+then use runuser/su/sudo/pkexec to run the application,
+and then use xhost to prevent the subsequent connections:
+xhost -si:localuser:user
+
+initrfs.img file - it is a compressed CPIO archive with some directories and files inside, including core Linux tools (commands) and the desired init.
+
+https://www.slax.org/internals.php

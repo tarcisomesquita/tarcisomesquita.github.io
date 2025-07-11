@@ -1,0 +1,668 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN"
+"http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    		<script type="text/javascript">var NREUMQ=NREUMQ||[];NREUMQ.push(["mark","firstbyte",new Date().getTime()]);</script>
+<title>Writing a Real Driver&amp;mdash;In User Space | Linux Journal</title>
+      <!-- nokia_mobile theme by Andrea Trasatti -->
+		<link type="text/css" rel="stylesheet" media="all" href="/sites/linuxjournal.com/themes/nokia_mobile/css/high/reset.css?e" />
+<link type="text/css" rel="stylesheet" media="all" href="/sites/linuxjournal.com/themes/nokia_mobile/style.css?e" />
+<link type="text/css" rel="stylesheet" media="all" href="/sites/linuxjournal.com/themes/nokia_mobile/css/high/baseStyles.css?e" />
+<link type="text/css" rel="stylesheet" media="all" href="/sites/linuxjournal.com/themes/nokia_mobile/css/high/red.css?e" />
+		<script type="text/javascript" src="/files/linuxjournal.com/ufiles/js/js_fbe02f1157fb6eff13a15ef7fd2a0e4d.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+
+		function init() {
+			var myAccordionList = new AccordionList("accordion");
+			var myStyleTweaks = new StyleTweaker();
+			myStyleTweaks.add("Series60/5.0", "/sites/linuxjournal.com/themes/nokia_mobile/css/high/tweaks/S605th.css");
+			myStyleTweaks.add("Series60/3.2", "/sites/linuxjournal.com/themes/nokia_mobile/css/high/tweaks/S603rdFP2.css");
+			myStyleTweaks.add("AppleWebKit/420+", "/sites/linuxjournal.com/themes/nokia_mobile/css/high/tweaks/S406th.css");
+			myStyleTweaks.add("N900", "/sites/linuxjournal.com/themes/nokia_mobile/css/high/tweaks/maemo.css");
+			myStyleTweaks.add("Firefox/3.0a1 Tablet browser 0.3.7", "/sites/linuxjournal.com/themes/nokia_mobile/css/high/tweaks/maemo.css");
+			myStyleTweaks.add("Opera Mini/4", "/sites/linuxjournal.com/themes/nokia_mobile/css/high/tweaks/operamini.css");
+			myStyleTweaks.tweak();
+		}
+		addEvent("onload",init);
+
+//--><!]]>
+</script>
+		
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-1117794-1");
+pageTracker._setDomainName(".linuxjournal.com");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
+<!--<script type='text/javascript' src='http://partner.googleadservices.com/gampad/google_service.js'>
+</script>
+<script type='text/javascript'>
+GS_googleAddAdSenseService("ca-pub-3600556074671070");
+GS_googleEnableAllServices();
+</script>
+<script type='text/javascript'>
+GA_googleAddSlot("ca-pub-3600556074671070", "Mobile");
+</script>
+<script type='text/javascript'>
+GA_googleFetchAds();
+</script>-->
+<script type='text/javascript'>
+var googletag = googletag || {};
+googletag.cmd = googletag.cmd || [];
+(function() {
+var gads = document.createElement('script');
+gads.async = true;
+gads.type = 'text/javascript';
+var useSSL = 'https:' == document.location.protocol;
+gads.src = (useSSL ? 'https:' : 'http:') + 
+'//www.googletagservices.com/tag/js/gpt.js';
+var node = document.getElementsByTagName('script')[0];
+node.parentNode.insertBefore(gads, node);
+})();
+</script>
+
+<script type='text/javascript'>
+googletag.cmd.push(function() {
+googletag.defineSlot('/1013989/Mobile_footer', [320, 50], 'div-gpt-ad-1384302154808-0').addService(googletag.pubads());
+googletag.defineSlot('/1013989/mobile_header', [320, 50], 'div-gpt-ad-1384302154808-1').addService(googletag.pubads());
+googletag.pubads().enableSingleRequest();
+googletag.enableServices();
+});
+</script>
+	</head>
+	<body class="">
+	<div id="container">
+		<div id="header">
+			
+			<div class="branding">
+              <div id="logo"><a href="/" title="Home" rel="home"><img src="/files/linuxjournal.com/ufiles/nokia_mobile_logo.jpg" alt="Home" id="logo-image" /></a></div>
+           
+            			</div>
+		</div>
+						<div class="header-blocks">
+
+			<div id="block-block-110" class="clear-block block block-block expanded">
+
+
+  <div class="content"><!--paging_filter--><!-- mobile_header -->
+<div style="text-align:center;" id='div-gpt-ad-1384302154808-1' style='width:320px; height:50px;'>
+<script type='text/javascript'>
+googletag.cmd.push(function() { googletag.display('div-gpt-ad-1384302154808-1'); });
+</script>
+</div></div>
+</div>
+			</div>
+			    		<div id="primary_links">
+			<div id="block-menu-menu-mobile-navbar" class="clear-block block block-menu expanded">
+
+
+  <div class="content"><ul class="menu"><li class="leaf first"><a href="/blog" title="">Blogs</a></li>
+<li class="leaf"><a href="/tag/how-tos" title="">HOW-TOs</a></li>
+<li class="leaf last"><a href="/tag/tech-tips" title="">Help &amp; Tips</a></li>
+</ul></div>
+</div>
+					</div>
+    		<ul class="breadcrumb"><li class="first"><a href="/">Home</a></li></ul>				<div id="maincontent" class="mobileregion">
+						<div id="main"><h2>Writing a Real Driver&amp;mdash;In User Space</h2></div>																		<div id="content">
+				<div id="node-7466" class="node">
+			    <span class="submitted">Tue, 06/01/2004 - 01:00 — <a href="/user/800887" title="View user profile.">Greg Kroah-Hartman</a></span>
+		<div class="content clear-block box-flat">
+	<div>
+		</div>
+			<div class="links"><div class="item-list"><ul class="pager"><li class="pager-first first"><a href="/article/7466?page=0,0" title="Go to first page" class="active">« first</a></li>
+<li class="pager-previous"><a href="/article/7466?page=0,1" title="Go to previous page" class="active">‹ previous</a></li>
+<li class="pager-item"><a href="/article/7466?page=0,0" title="Go to page 1" class="active">1</a></li>
+<li class="pager-item"><a href="/article/7466?page=0,1" title="Go to page 2" class="active">2</a></li>
+<li class="pager-current last">3</li>
+</ul></div></div>	</div>
+	<div class="clear-block">
+		<div class="meta">
+						<div class="terms"></div>
+					</div>
+				<div class="links"></div>
+			</div>
+</div>
+<div id="comments"><h2 class="comments">Comments</h2><form action="/article/7466?page=0,2"  accept-charset="UTF-8" method="post" id="comment-controls">
+<div><div class="box">
+
+  <h2>Comment viewing options</h2>
+
+  <div class="content"><div class="container-inline"><input type="hidden" name="form_build_id" id="form-aafca079d46c8cc685bf8008926d3aa6" value="form-aafca079d46c8cc685bf8008926d3aa6"  />
+<input type="hidden" name="form_id" id="edit-comment-controls" value="comment_controls"  />
+<div class="form-item" id="edit-mode-wrapper">
+ <select name="mode" class="form-select" id="edit-mode" ><option value="1">Flat list - collapsed</option><option value="2">Flat list - expanded</option><option value="3">Threaded list - collapsed</option><option value="4" selected="selected">Threaded list - expanded</option></select>
+</div>
+<div class="form-item" id="edit-order-wrapper">
+ <select name="order" class="form-select" id="edit-order" ><option value="1" selected="selected">Date - newest first</option><option value="2">Date - oldest first</option></select>
+</div>
+<div class="form-item" id="edit-comments-per-page-wrapper">
+ <select name="comments_per_page" class="form-select" id="edit-comments-per-page" ><option value="10">10 comments per page</option><option value="30">30 comments per page</option><option value="50" selected="selected">50 comments per page</option><option value="70">70 comments per page</option><option value="90">90 comments per page</option><option value="150">150 comments per page</option><option value="200">200 comments per page</option><option value="250">250 comments per page</option><option value="300">300 comments per page</option></select>
+</div>
+<button value="Save settings" name="op" id="edit-submit"  class="form-submit button-submit"><span>Save settings</span></button> 
+</div><div class="description">Select your preferred way to display the comments and click "Save settings" to activate your changes.</div></div>
+</div>
+
+</div></form>
+<a id="comment-344293"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Mon, 10/19/2009 - 22:01 — Santhosh (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-344293" class="active">How to create device entry under /dev in rootfs</a></strong>
+
+    <div class="content">
+      <p>Hi,</p>
+<p>I am facing a issue, while creating /dev entry for LCD backlight driver.</p>
+<p>I am using following functions for doing the same.</p>
+<p>1) alloc_chrdev_region(&amp;bl-&gt;bdev, 0, 1, BIHP_BL_DEVICE_NAME);<br />
+2) cdev_init(&amp;bl-&gt;cdev, &amp;bl_fops);<br />
+3) cdev_add(&amp;bl-&gt;cdev, bl-&gt;bdev, 1);</p>
+<p>Compilation is done properly, If I check /dev entry for backlight there it is showing nothing.</p>
+<p>Please let me know, Am I doing any thing wrong?</p>
+<p>Kind Regards,<br />
+Santhosh Reddy.P</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-344294"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Mon, 10/19/2009 - 23:31 — <a href="/users/mitch-frazier" title="View user profile.">Mitch Frazier</a></span>
+  
+  
+  <strong><a href="/article/7466#comment-344294" class="active">Check /proc/devices</a></strong>
+
+    <div class="content">
+      <p>The device name (BIHP_BL_DEVICE_NAME) you specify in alloc_chrdev_region() puts an entry in /proc/devices not /dev.  You create the /dev file with mknod.</p>
+            <div class="clear-block">
+        <div>—</div>
+        <p>Mitch Frazier is an Associate Editor for <i>Linux Journal</i>.</p>
+      </div>
+          </div>
+
+  </div>
+
+  </div>
+</div><a id="comment-341047"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Thu, 08/06/2009 - 09:33 — joshperry (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-341047" class="active">/proc/bus/usb deprecated</a></strong>
+
+    <div class="content">
+      <p>Just FYI /proc/bus/usb has been deprecated for a while and in fact is no longer mounted by default on recent Linux distros. The new location is /dev/bus/usb.</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-339432"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Thu, 07/09/2009 - 18:51 — Anonymous (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-339432" class="active">libusb-1.0.2</a></strong>
+
+    <div class="content">
+      <p>I've been trying to figure out how to do an isochronous read but I'm not having any luck. Could you please outline the sequence of steps to accomplish this. I'm using libusb_fill_iso_transfer () followed by libusb_submit_transfer () but this hangs up inside libusb. I'm suspicious that libusb is incomplete since I don't see any way of specifying the interval.<br />
+Also, I need to get at the manufacturers name string, but all I can find is an index (iManufacturer) in the device descriptor. There should be an access function.</p>
+<p>So far I've been able to open this device, detach the kernel driver and claim the interface.</p>
+<p>The device has a vendorId=18f5 and a productId=1000 (yes, it's in the Linux list). The device contains 2 joysticks and 16 switches (it's not a gaming device), I need to read the raw data so that I can extract the individual components. I have the memory map. Using usbviewer I found one endpoint at 0x81, the transfer size is 12 bytes and the interval is 5ms.<br />
+Hurst</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-332724"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Thu, 02/05/2009 - 04:21 — amit (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-332724" class="active">access data from USB using c++</a></strong>
+
+    <div class="content">
+      <p>how can i access data from USB using c++ code, libusb1.0, in linux.</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-332003"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Thu, 01/22/2009 - 11:17 — Kyuhyong (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-332003" class="active">Some questions.</a></strong>
+
+    <div class="content">
+      <p>Hello, it's a very nice posting and great help for newbie like me.<br />
+I'm trying to implement a usb driver that enables a programmer can write a program to communicate with a usb device. But your advice seems not working for me because our device has API that communicate with the device and I just want the api can initialize the device and programmers don't have to care about it.<br />
+Could you give me any advice on that?</p>
+<p>Also, I'm confused about the header file you included in the program. It has usb.h instead of libusb.h. is it something different from the libusb.h or you just wrote another header that refers libusb.h?</p>
+<p>Thanks,</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-227918"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Sun, 03/04/2007 - 22:47 — Anonymous (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-227918" class="active">USBFS IOCTLS</a></strong>
+
+    <div class="content">
+      <p>Hi , </p>
+<p>This is a very interesting article . Is the documentation for using USBFS IOCTL's documented . </p>
+<p>I wanted to issue basic USB String Descriptor to a device . </p>
+<p>Help is appreciated </p>
+<p>Thanks</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-217685"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Mon, 01/29/2007 - 12:06 — <a href="http://www.readingfordummies.com/blog/" rel="nofollow">Reid</a> (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-217685" class="active">What are the usb_control_msg values?</a></strong>
+
+    <div class="content">
+      <p>Hi Greg -</p>
+<p>Thanks for the great article.  It's been a big help in writing a program to talk to a little communications board that I'm working with.</p>
+<p>I have a question about the usb_control_msg() function, and I can't find any documentation on it (no man page, even on the Google?).</p>
+<p>What are requesttype, request, value, and index for, exactly?  Your program has requesttype 0x000000c8 (not sure where this is defined/how you chose it), request 0x00000012 (again, not sure how you decided this was the option to use), value (0x02 * 0x100) + 0x0a, index 0xff &amp; (~color).  It seems a little odd to me, wouldn't the request type/etc simply be part of the usb packet header and the data would be which pins you're setting?  Probably my device is a little more complicated :).</p>
+<p>I've been using SnoopyPro to sniff my device (i have a program for windows that interfaces with it correctly) and all the communication with the device is using Function "BULK_OR_INTERRUPT_TRANSFER" (0x09), so I'm guessing this would be my request_type?  or my request?  My device receives data via the buffer variable, so buffer and length are a no brainer (I know what these values need to be), I'm just not sure about these header-y things.  If you have any idea or know a good place for documentation, toss it my way.</p>
+<p>Thanks a ton,<br />
+Reid</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-334367"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Mon, 03/09/2009 - 19:42 — Roberto (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-334367" class="active">yeah! What are the usb_control_msg values?</a></strong>
+
+    <div class="content">
+      <p>Somebody can you tell us?</p>
+<p>According SnoopyPro for my device i got something like this:<br />
+<code><br />
+-----------<br />
+URB Header (length: 80)<br />
+SequenceNumber: 10<br />
+Function: 001b (CLASS_INTERFACE)<br />
+PipeHandle: 00000000<br />
+SetupPacket:<br />
+0000: 22 01 00 03 00 00 00 00<br />
+bmRequestType: 22<br />
+  DIR: Host-To-Device<br />
+  TYPE: Class<br />
+  RECIPIENT: Endpoint<br />
+bRequest: 01<br />
+No TransferBuffer<br />
+-----------<br />
+<code></code></code></p>
+<p>I guess that bmRequestType:22 is the 2nd parameter, bRequest:01 is the 3rd. But, what about the 'value' and 'index' parameters?</p>
+<p>If you read the line-&gt; <b>0000: 22 01 00 03 00 00 00 00</b> it's the command sent to the device .. but how can i put this into the usb_control_msg function? </p>
+<p>Thanks!</p>
+<p>PS: I don't speak english ... sorry</p>
+          </div>
+
+  </div>
+
+  </div>
+</div><a id="comment-177521"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Wed, 09/27/2006 - 09:19 — Felipe (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-177521" class="active">Errors while compilling</a></strong>
+
+    <div class="content">
+      <p>Anybody could help me?<br />
+I found some errors wihle I tried do compile this example:</p>
+<p>g++    -c -o usb.o usb.cc<br />
+usb.cc: In function ‘void change_color(usb_dev_handle*, unsigned char)’:<br />
+usb.cc:24: error: ‘usb_control_msg’ was not declared in this scope<br />
+usb.cc: In function ‘usb_device* device_init()’:<br />
+usb.cc:30: error: ‘usb_init’ was not declared in this scope<br />
+usb.cc:31: error: ‘usb_find_busses’ was not declared in this scope<br />
+usb.cc:32: error: ‘usb_find_devices’ was not declared in this scope<br />
+usb.cc:33: error: ‘usb_busses’ was not declared in this scope<br />
+usb.cc:35: error: invalid use of undefined type ‘struct usb_bus’<br />
+usb.cc:28: error: forward declaration of ‘struct usb_bus’<br />
+usb.cc:36: error: invalid use of undefined type ‘struct usb_bus’<br />
+usb.cc:28: error: forward declaration of ‘struct usb_bus’<br />
+usb.cc:38: error: invalid use of undefined type ‘struct usb_device’<br />
+usb.cc:26: error: forward declaration of ‘struct usb_device’<br />
+usb.cc:39: error: invalid use of undefined type ‘struct usb_device’<br />
+usb.cc:26: error: forward declaration of ‘struct usb_device’<br />
+usb.cc:41: error: invalid use of undefined type ‘struct usb_device’<br />
+usb.cc:26: error: forward declaration of ‘struct usb_device’<br />
+usb.cc: In function ‘int main(int, char**)’:<br />
+usb.cc:60: error: ‘usb_open’ was not declared in this scope<br />
+usb.cc:63: error: expected primary-expression before ‘goto’<br />
+usb.cc:89: error: ‘usb_close’ was not declared in this scope</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-263767"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Mon, 07/02/2007 - 07:26 — Daniel (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-263767" class="active">expected primary-expression before &quot;goto&quot;</a></strong>
+
+    <div class="content">
+      <p>Same problem when I try to use goto in the place like these<br />
+if(goto location);<br />
+OR<br />
+i!=j?goto location:exit;<br />
+If you know the solution or why is this happening plz mail me.</p>
+<p>Thnks,<br />
+Daniel</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-251636"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Sat, 06/02/2007 - 05:47 — Dusan Sukovic (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-251636" class="active">Errors while compilling</a></strong>
+
+    <div class="content">
+      <p>Hi Felipe,</p>
+<p>Try this:<br />
+locate libusb<br />
+/usr/lib/libusbhid.a<br />
+/usr/lib/libusbhid.so.3.0<br />
+/usr/lib/libusbhid_p.a<br />
+/usr/lib/libusbhid_pic.a<br />
+/usr/local/bin/libusb-config<br />
+/usr/local/lib/libusb.a<br />
+/usr/local/lib/libusb.so.8.2<br />
+/usr/local/lib/libusbpp.a<br />
+/usr/local/lib/libusbpp.so.9.0<br />
+/var/db/pkg/libusb-0.1.10ap1<br />
+/var/db/pkg/libusb-0.1.10ap1/+CONTENTS<br />
+/var/db/pkg/libusb-0.1.10ap1/+DESC<br />
+/var/db/pkg/libusb-0.1.10ap1/+REQUIRED_BY</p>
+<p>gcc -o driver driver.c -L/usr/local/lib -lusb</p>
+<p>It compiles without problems on OpenBSD 4.1, just remember to force library path to libusb to compile.</p>
+          </div>
+
+  </div>
+
+  </div>
+</div><a id="comment-26384"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Thu, 03/10/2005 - 11:22 — Anonymous (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-26384" class="active">HELP ME ???</a></strong>
+
+    <div class="content">
+      <p>Hi,<br />
+I wanted to write just a simple driver for my usb-mass-storage (memory stick).<br />
+All I want to do is to flash (On/Off) the led on the device. It is only one led, I changed the LED_VENDOR_ID and LED_PRODUCT_ID Everything works fine, except that this usb_control_msg() doesnt work for this device :(!<br />
+Can someone help me with this? All I want is to switch this Led On and Off! Nothing more :).<br />
+Do I have to use another function? Is there a function that can manage to do this(put this only Led on)?<br />
+I hope u can help me with this.</p>
+<p>Thank you</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-15405"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Sun, 02/20/2005 - 05:03 — acs (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-15405" class="active">Little mistake in the code</a></strong>
+
+    <div class="content">
+      <p>In the program code appears:</p>
+<p>if (usb_handle == NULL) {<br />
+        fprintf(stderr,<br />
+        goto exit;<br />
+    }</p>
+<p>I think this is a block that can be deleted because the error check is also done in the next block.</p>
+<p>¡Nice article!</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-319551"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Tue, 02/19/2008 - 15:52 — <a href="http://tdhutt.googlepages.com" rel="nofollow">Tim</a> (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-319551" class="active">Bad code...</a></strong>
+
+    <div class="content">
+      <p>Hmm, goto's are bad anywhere.</p>
+<p>Also doesn't your control message write 8 bytes to a random location (dummy isn't initialised)?</p>
+<p>And you don't use usb_claim_interface() anywhere. The doc's say this "Must be called!" I'm not entirely sure what an interface is yet though. libusb has terrible documentation. It is also the best example of why C++ is better than C that I've ever seen.</p>
+          </div>
+
+  </div>
+
+  </div>
+</div><a id="comment-11803"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Sun, 05/16/2004 - 01:00 — Anonymous</span>
+  
+  
+  <strong><a href="/article/7466#comment-11803" class="active">Re: Writing a Real Driver</a></strong>
+
+    <div class="content">
+      <p>hello,</p>
+<p>I just want to ask for some links to more information about USB in general, how to implement USB in Self build devices,<br />
+An overview, how USB (and pehaps also the serial and parallel interface) are implemented in Gnu/Linux and also BSD-Unix. </p>
+<p>I'm an Engineer and it was easy to send some bytes to a device in the Dos Area - continued in Win9x. How can I do it - as easy as possible in Linux, especialy if new computers only have USB - this is the Future if we believe Intel</p>
+<p>Greatings<br />
+D. Schneider</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-11804"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Sat, 06/19/2004 - 01:00 — Anonymous</span>
+  
+  
+  <strong><a href="/article/7466#comment-11804" class="active">Re: Writing a Real Driver</a></strong>
+
+    <div class="content">
+      <p>hello,</p>
+<p>this is in your example code:<br />
+    usb_handle = usb_open(usb_dev);<br />
+    if (usb_handle == NULL) {<br />
+        fprintf(stderr,<br />
+        goto exit;<br />
+    }</p>
+<p>    usb_handle = usb_open(usb_dev);<br />
+    if (usb_handle == NULL) {<br />
+        fprintf(stderr,<br />
+             "Not able to claim the USB device<br />
+");<br />
+        goto exit;<br />
+    }</p>
+<p>Sorry for the request but the libusb developer manual say to call usb_init() and usb_claim_device() (for claim), before  any operation with USB device...</p>
+<p>There are step by step example to respect correct order?</p>
+<p>Greatings<br />
+R.LOBERTO</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-128037"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Tue, 01/10/2006 - 11:42 — Jing (not verified)</span>
+  
+  
+  <strong><a href="/article/7466#comment-128037" class="active">ioctl for massive storage device</a></strong>
+
+    <div class="content">
+      <p>Hi,</p>
+<p>I want to access the massive storage device (memory stick) using ioctl instead of libusb. Can you recommend a reference for this purpose?</p>
+<p>I tried to do the work but was not successful. The sequence of actions I did is as following:</p>
+<p>/*open the device*/<br />
+fd = open(file, O_RDWR);</p>
+<p>/*reset the device*/<br />
+ioctl(fd, USBDEVFS_RESET, NULL);<br />
+close(fd);<br />
+fd = open(file, O_RDWR);</p>
+<p>/*configure the device*/<br />
+ioctl(fd, USBDEVFS_SETCONFIGURATION, &amp;configuration);</p>
+<p>/*claim the interface*/<br />
+ioctl(fd, USBDEVFS_CLAIMINTERFACE, &amp;interface);</p>
+<p>/*read data via the bulk endpoint*/<br />
+ioctl(fd, USBDEVFS_BULK, &amp;bulk);</p>
+<p>All steps successed until it failed at the last step.</p>
+<p>Regards,<br />
+Jing</p>
+          </div>
+
+  </div>
+
+  </div>
+</div></div></div><div id="block-block-75" class="clear-block block block-block expanded">
+
+
+  <div class="content"><p><a href="http://m.youtube.com/linuxjournalonline" rel="nofollow">See <em>Linux Journal</em> videos.</a></p>
+</div>
+</div>
+<div id="block-mobile_tools-0" class="clear-block block block-mobile_tools expanded">
+
+
+  <div class="content">Mobile Version | <a href="http://www.linuxjournal.com?nomobile=true">Desktop Version</a></div>
+</div>
+			</div>
+		</div>
+				<div id="sidebar-right" class="mobileregion">
+								</div>
+				<div id="footer" class="mobileregion">
+						<div id="block-block-70" class="clear-block block block-block expanded">
+
+
+  <div class="content"><!--paging_filter--><div id="copyright">Copyright © 1994 - 2013 <em>Linux Journal</em>. All rights reserved.</div>
+</div>
+</div>
+<div id="block-block-111" class="clear-block block block-block expanded">
+
+
+  <div class="content"><!--paging_filter--><div id="mobile-footer" style="background:#333;bottom: 0px;left: 0;position: fixed;text-align: center;width: 100%;z-index: 10000;margin-left:0;">
+<!-- Mobile_footer -->
+<div id='div-gpt-ad-1384302154808-0' style='width:320px; height:50px;'>
+<script type='text/javascript'>
+googletag.cmd.push(function() { googletag.display('div-gpt-ad-1384302154808-0'); });
+</script>
+</div>
+</div></div>
+</div>
+		</div>
+	</div>
+	<div id="user_relationships_popup_form" class="user_relationships_ui_popup_form"></div><script type="text/javascript" src="/files/linuxjournal.com/ufiles/js/js_97c717c79bb17bd0c821c210d820ca2f.js"></script>
+  <script type="text/javascript">if(!NREUMQ.f){NREUMQ.f=function(){NREUMQ.push(["load",new Date().getTime()]);var e=document.createElement("script");e.type="text/javascript";e.src=(("http:"===document.location.protocol)?"http:":"https:")+"//"+"js-agent.newrelic.com/nr-100.js";document.body.appendChild(e);if(NREUMQ.a)NREUMQ.a();};NREUMQ.a=window.onload;window.onload=NREUMQ.f;};NREUMQ.push(["nrfj","beacon-5.newrelic.com","2a1dc4588f","1935594","b1NTNkdRWhFSVkBZWlYZZBBcH0IDQRpDR0IXQlQRQR9dDFdQTB5FUEY=",0,67,new Date().getTime(),"","","","",""]);</script>
+</body>
+</html>

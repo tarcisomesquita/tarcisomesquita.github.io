@@ -1,0 +1,29 @@
+
+Read Cache Status (F400h)
+
+The Read Cache Status BIOS function is called to request the status of the external cache as supported by the BIOS.
+
+Input Parameters:
+        AH - F4h, indicating the Cache Control Function.
+        AL - 00h, indicating the Read Cache Status Subfunction.
+
+Output Parameters:
+        AH - cache status, as follows:
+               not modified - no cache status is available.
+               E2h - successful, information returned.
+        AL - cache controller status, as follows:
+               00h - cache controller not present.
+               01h - cache memory enabled.
+               02h - cache memory disabled.
+        CX - cache memory size, as follows:
+               Bit 15 - 1 if information invalid, else 0 if valid.
+               Bits 14 through 0 - cache memory size in KB.
+        DH - cache write strategy, as follows:
+               Bit 7 - 1 if information invalid, else 0 if valid.
+               Bits 6 through 1 - set to 0's.
+               Bit 0 - 0 if write-through, else 1 if write-back.
+        DL - cache type, as follows:
+               Bit 7 - 1 if information invalid, else 0 if valid.
+               Bits 6 through 1 - set to 0's.
+               Bit 0 - 0 if direct-mapped else 1 if two-way set associative.
+

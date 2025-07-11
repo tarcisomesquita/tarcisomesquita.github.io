@@ -1,0 +1,13 @@
+setup_early_printk() ini­cia a con­sole
+
+
+A função “register_console()”, imple­men­tada no arquivo “kernel/printk.c”, é respon­sável pela ini­cial­iza­ção da con­sole.
+
+getty é ape­nas um wrap­per para abrir a porta tty e chamar o pro­grama “login”. Este sim real­iza o processo de login e então passa o con­t­role para o inter­pre­ta­dor de comando disponível no seu rootfs (bash, sh, ash, ksh, etc). Desta forma, cada byte rece­bido pela ser­ial chegará ao inter­pre­ta­dor de comando, e a saída será envi­ada de volta para a porta serial.
+
+linux-5.4/kernel/printk/printk.c
+  void __init console_init(void)
+  
+  #ifdef CONFIG_EARLY_PRINTK
+  struct console *early_console;
+

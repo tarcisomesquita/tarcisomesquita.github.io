@@ -1,0 +1,138 @@
+HTTP/1.1
+https://tools.ietf.org/html/rfc2616
+
+GET <ficheiro> HTTP/1.1
+Host: <ip>
+User-Agent: software/version (comentário) software/version
+Connection: <tipo>
+
+Resposta do servidor:
+HTTP/1.1 200 OK
+Date: Mon, 23 May 2005 22:38:34 GMT
+Server: Apache/1.3.27 (Unix)  (Red-Hat/Linux)
+Last-Modified: Wed, 08 Jan 2003 23:11:55 GMT
+Accept-Ranges: bytes
+Content-Length: 438
+Connection: close
+Content-Type: text/html; charset=UTF-8
+
+
+MUST be supported GET and HEAD by all servers.
+MUST include a Host header field in all HTTP/1.1 request messages.
+SHOULD include User agents in requests.
+
+Accept: media-range [ accept-params ]
+media-range = "*/*" | ( type "/" "*" ) | ( type "/" subtype ) *( ";" parameter )
+
+Accept: text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c
+Verbally, this would be interpreted as "text/html and text/x-c are the preferred media types, but if they do not exist, then send the text/x-dvi entity, and if that does not exist, send the text/plain entity."
+
+Accept: text/html, text/plain; q=0.5
+
+If the request does not include an Accept-Encoding field, and if the "identity" content-coding is unavailable, then content-codings commonly understood by HTTP/1.0 clients (i.e., "gzip" and "compress") are preferred.
+
+Accept-Encoding: gzip;q=1.0, identity; q=0.5, *;q=0
+0 significa que não é aceito
+
+Accept-Encoding: identity
+identity: The default (identity) encoding; the use of no transformation.
+The content-coding is a characteristic of the entity identified by the Request-URI.
+   
+Connection: close
+HTTP/1.1 applications that do not support persistent connections MUST include the "close" connection option in every message.
+
+If-Modified-Since: Sat, 29 Oct 1994 19:43:31 GMT
+If the requested variant has not been modified since the time specified in this field, an entity will not be returned from the server; instead, a 304 (not modified) response will be returned without any message-body.
+
+
+Range: ranges-specifier
+
+       ranges-specifier = byte-ranges-specifier
+       byte-ranges-specifier = bytes-unit "=" byte-range-set
+       byte-range-set  = 1#( byte-range-spec | suffix-byte-range-spec )
+       byte-range-spec = first-byte-pos "-" [last-byte-pos]
+       first-byte-pos  = 1*DIGIT
+       last-byte-pos   = 1*DIGIT
+
+   The first-byte-pos value in a byte-range-spec gives the byte-offset
+   of the first byte in a range. The last-byte-pos value gives the
+   byte-offset of the last byte in the range; that is, the byte
+   positions specified are inclusive. Byte offsets start at zero.
+
+      - The second 500 bytes (byte offsets 500-999, inclusive):
+        bytes=500-999
+
+      - The final 500 bytes (byte offsets 9500-9999, inclusive):
+        bytes=-500
+
+      - The first and last bytes only (bytes 0 and 9999):  bytes=0-0,-1
+
+
+
+
+Any HTTP/1.1 message containing an entity-body SHOULD include a Content-Type header field defining the media type of that body.
+
+Date: Tue, 15 Nov 1994 08:12:31 GMT
+Origin servers MUST include a Date header field in all responses
+LC_ALL=en TZ=GMT date "+%a, %d %b %Y %H:%M:%S GMT"
+LC_ALL=en TZ=GMT date --date='TZ="GMT" 2004-10-31 06:30' "+%a, %d %b %Y %H:%M:%S GMT"
+
+
+
+GET /xml/gethint.asp?q=j&amp;sid=0.2688157815825092 HTTP/1.1
+Host: www.w3schools.com
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:17.0) Gecko/20100101 Firefox/17.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: pt-BR,pt;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+Referer: http://www.w3schools.com/xml/xml_http.asp
+Cookie: ASPSESSIONIDSCSQSDBC=NMENMDNCCCDAINEDPDMMCFHF; __utma=119627022.508820367.1363540390.1363540390.1363540390.1; __utmb=119627022.1.10.1363540390; __utmc=119627022; __utmz=119627022.1363540390.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=xmlhttprequest%20object%20is%20used%20to%20exchange%20data%20with%20a%20server%20behind%20the%20scenes; __gads=ID=f1f35ff77231664c:T=1363547627:S=ALNI_MY28Z_3U2vrC-1niN2semAtZ2mPzQ
+
+
+GET /logos/2012/startrek2012-sr.png HTTP/1.1
+Host: www.google.com.br
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:15.0) Gecko/20100101 Firefox/15.0
+Accept: image/png,image/*;q=0.8,*/*;q=0.5
+Accept-Language: pt-br,pt;q=0.8,en-us;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+Referer: http://www.google.com.br/
+Cookie: PREF=ID=9b950726c855b18b:FF=0:TM=1347142961:LM=1347142961:S=zaU2hnOmsoFWBljd; NID=63=MQ1Iq4iJbk-HmsPl5oCjxnVuHTPWy22ATinIFX7xSBjuR0MUXCDI_nHxqhAWjqKDuwuBXy47HiDIBmKigALmwUMsmnC-hC7LeUwtNnmyUwehrh3irCPavjXKKssJUNHo
+
+HTTP/1.1 200 OK
+Content-Type: image/png
+Last-Modified: Fri, 07 Sep 2012 00:05:29 GMT
+Date: Sat, 08 Sep 2012 02:00:00 GMT
+Expires: Sun, 08 Sep 2013 02:00:00 GMT
+X-Content-Type-Options: nosniff
+Server: sffe
+Content-Length: 3063
+X-XSS-Protection: 1; mode=block
+Cache-Control: public, max-age=31536000
+Age: 73362
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+DNS_Query ->
+DNS Response <-
+
+SYN ->
+SYN+ACK  <-
+ACK ->
+HTTP GET ->
+HTTP/1.1 200 OK <-
+HTTP continue < -
+ACK ->
+HTTP continue < -
+ACK ->
+Quando terminar a conexão principal, pode usar a mesma conexão para baixar outro arquivo
+HTTP GET ->
+HTTP/1.1 200 OK <-
+HTTP continue < -
+ACK ->
+FIN ->
+ACK <-
+FIN <-
+ACK ->
+

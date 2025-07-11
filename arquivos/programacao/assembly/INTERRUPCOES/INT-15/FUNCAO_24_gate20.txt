@@ -1,0 +1,13 @@
+inform if can switch the A20 gate with port 92h. This is a legacy function used by HIMEM.SYS.
+
+Input Parameters:
+       AH - 24h, indicating Query Port 92h A20 Gate Capability Function.
+       AL - subfunction, as follows:
+               01h - Enable A20 gate.
+               02h - Disable A20 gate.
+               03h - Determine if port 92h support is available.
+Output Parameters:
+       CY - set if failure (no port 92h support), else clear if success.
+       AH - if failure, 86h.
+       BX - if subfunction 03h, returns the value 2, indicating support available.
+

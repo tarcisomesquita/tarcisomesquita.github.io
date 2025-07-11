@@ -1,0 +1,7 @@
+sudo cat /sys/kernel/debug/usb/usbmon/0u | grep -v ':1:006:' > pendrive.txt
+
+sudo cat /dev/usbmon1 > pendrive.bin
+
+sudo tcpdump -i usbmon1 -n -U -w pendrive.pcap
+
+

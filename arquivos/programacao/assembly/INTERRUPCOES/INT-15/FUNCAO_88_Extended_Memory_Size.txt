@@ -1,0 +1,61 @@
+; return in AX the amount in kiB of extended memory (that RAM available to the application above the 1MB physical address boundary).
+
+; Input: AH = 0x88
+; Output:
+;    CY - set if failure, else clear if success.
+;    AH = 0x86h - protected mode services not available.
+;    AX - if success, extended memory size in 1KB units.
+
+MOV  AH, 0x88
+INT  15
+
+
+
+
+
+
+
+// get_memsize(i) :  return the memory size in KB in AX.
+// i == 0 for conventional memory (BIOS call "INT 12H")
+// i == 1 for extended memory (BIOS call "INT 15H, AH=88H")
+nome:
+   .string   "> get_memsize()\n"
+   .align 4
+
+.globl get_memsize
+get_memsize:
+   push   %ebp
+   push   %ebx
+
+   movl   $nome, (%esp)
+   call   grub_printf
+//   call   console_getkey
+
+   mov   0xc(%esp), %ebx
+
+   call   prot_to_real
+   
+   .code16
+
+   cmpb   $0x1, %bl
+   data32   je   xext
+
+   int   $0x12
+   data32   jmp   xdone
+
+xext:
+   movb   $0x88, %ah
+   int   $0x15
+
+xdone:
+   movw   %ax, %bx
+
+   data32   call real_to_prot
+   
+   .code32
+
+   movw   %bx, %ax
+   pop   %ebx
+   pop   %ebp
+   ret
+

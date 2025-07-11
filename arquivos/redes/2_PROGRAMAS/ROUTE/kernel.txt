@@ -1,0 +1,58 @@
+A configuração e uso das funções especiais do Kernel do Linux não são acessíveis nos comandos arp, ifconfig e route. Estes comandos, embora utilizem syscalls adaptadas ao novo subsistema, fazem as chamadas passando diversos argumentos com valores padrão, perdendo-se a flexibilidade de configuração neles existente. O pacote iproute2 liberta o poder do sub-sistema de rede do Linux.
+
+informações sobre IPv6 
+http://www.6bone.rnp.br/
+
+Network Device Support
+[*] TCP/IP Networking.
+
+<*> The IPv6 Protocol
+[*] enable EUI-64 token format
+
+iptables, ip rule, possibilitando recursos com NAT e Proxy Transparent:
+[*] Network packet filtering (replaces ipchains)
+[*] Network packet filtering debugging
+[*] Socket Filtering
+
+"IP: Netfilter Configuration -->"  ?
+
+Opções avançadas de roteamento, incluindo NAT, devem estar ativas para os nossos propósitos:
+
+[*] IP: advanced router
+[*] IP: policy routing
+[*] IP: use netfilter MARK value as routing key
+[*] IP: fast network address translation
+[*] IP: equal cost multipath
+[*] IP: use TOS value as routing key
+[*] IP: verbose route monitoring
+[*] IP: large routing tables
+
+Faz controle sobre interface inteira.
+tc qdisc add dev ppp0 root tbf rate 220kbit
+
+Networking options --->
+   QoS and/or fair queueing --->
+[*] QoS and/or fair queueing
+<M> HTB packet scheduler
+<M> CBQ packet scheduler
+<M> CSZ packet scheduler
+<M> The simplest PRIO pseudoscheduler
+<M> RED queue
+<M> TEQL queue                <M> TC index classifier
+<M> TBF queue                 <M> Routing table based classifier
+<M> GRED queue                <M> Firewall based classifier
+<M> Diffserv field marker     <M> U32 classifier
+<M> Ingress Qdisc             <M> Special RSVP classifier
+[*] QoS support               [*] Traffic policing (needed for in/egress)
+[*] Rate estimator            
+[*] Packet classifier API
+
+tc qdisc add dev eth0 root handle 1: htb default 1000
+tc class add dev eth0 parent 1: classid 1:1 htb rate 256 kbit ceil 256 kbit
+tc class add dev eth0 parent 1:1 classid 1:10 htb rate 56 kbit ceil 128 kbit burst 6k
+tc class add dev eth0 parent 1:1 classid 1:1000 htb rate 32 kbit ceil 56 kbit burst 6k
+tc qdisc add dev eth0 parent 1:10 handle 10: sfq pertub 10
+tc qdisc add dev eth0 parent 1:1000 handle 1000: sfq pertub 10
+tc filter add dev eth0 parent 1: protocol ip prio 1 u32 match ip src $IP flowid 1:1
+tc filter add dev eth0 parent ffff: protocol ip prio 50 u32 match ip src $IP police rate 32 kbit burst 6k drop flowid :1
+

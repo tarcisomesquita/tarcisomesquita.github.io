@@ -1,0 +1,31 @@
+A JavaScript name must begin with:
+
+A letter (A-Z or a-z)
+A dollar sign ($)
+Or an underscore (_)
+Subsequent characters may be letters, digits, underscores, or dollar signs.
+
+identifiers can be described by the regex /[$_\p{ID_Start}][$\u200c\u200d\p{ID_Continue}]*/u
+const 你好 = "Hello";
+console.log(\u4f60\u597d);
+
+Underscore:
+first_name, last_name, master_card, inter_city.
+
+Lower Camel Case (most used):
+firstName, lastName, masterCard, interCity.
+
+When to Use var, let, or const?
+1. Always declare variables
+2. Always use const if the value should not be changed
+3. Always use const if the type should not be changed (Arrays and Objects)
+4. Only use let if you can't use const
+5. Only use var if you MUST support old browsers.
+
+let carName;
+After the declaration, the variable has no value (technically it is undefined).
+
+let x = "5" + 2 + 3; // = "523"
+let x = 2 + 3 + "5"; // = "55"
+
+https://www.w3schools.com/js/js_const.asp

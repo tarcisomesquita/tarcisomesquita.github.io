@@ -1,0 +1,166 @@
+# dd if=/dev/zero of=tbl.bin bs=512 skip=0 seek=0 count=$((2*10))  conv=notrunc,fsync
+
+# USB 2.0 escrita com 7 MB/s
+# sudo dd if=/dev/zero of=/dev/sda bs=2M oflag=sync status=progress
+
+DD(1)
+GNU coreutils 8.23
+November 2014
+
+SYNOPSIS
+   dd [OPERAND]...
+   dd OPTION
+
+DESCRIPTION
+   Copy a file according to the operands.
+
+   bs=BYTES
+      read and write up to BYTES bytes at a time
+
+   cbs=BYTES
+      convert BYTES bytes at a time
+
+   conv=CONVS
+      convert the file as per the comma separated symbol list
+
+   count=N
+      copy only N input blocks
+
+   if=FILE
+      read from FILE instead of stdin
+
+   iflag=FLAGS
+      read as per the comma separated symbol list
+
+   of=FILE
+      write to FILE instead of stdout
+
+   oflag=FLAGS
+      write as per the comma separated symbol list
+
+   seek=N skip N obs-sized blocks at start of output
+
+   skip=N skip N ibs-sized blocks at start of input
+
+   status=WHICH
+      WHICH info to suppress outputting to stderr; 'noxfer' suppresses transfer stats, 'none' suppresses all
+
+   N and BYTES may be followed by the following multiplicative suffixes: c =1, w =2, b =512, kB =1000, K =1024, MB =1000*1000, M =1024*1024, xM =M GB =1000*1000*1000, G =1024*1024*1024, and so on for T, P, E, Z, Y.
+
+   Each CONV symbol may be:
+
+   notrunc
+      do not truncate the output file
+
+   fdatasync
+      physically write output file data before finishing
+
+   fsync  likewise, but also write metadata
+
+   Each FLAG symbol may be:
+
+   direct use direct I/O for data
+
+   dsync  use synchronized I/O for data
+
+   sync   likewise, but also for metadata
+
+   fullblock
+      accumulate full blocks of input (iflag only)
+
+   nonblock
+      use non-blocking I/O
+
+   noatime
+      do not update access time
+
+   nocache
+      discard cached data
+
+   noctty do not assign controlling terminal from file
+
+   nofollow
+      do not follow symlinks
+
+   Sending a USR1 signal to a running 'dd' process makes it print I/O statistics to standard error and then resume copying.
+
+      $ dd if=/dev/zero of=/dev/null& pid=$!
+      $ kill -USR1 $pid; sleep 1; kill $pid
+
+      18335302+0 records in 18335302+0 records out 9387674624 bytes (9.4 GB) copied, 34.6279 seconds, 271 MB/s
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+notebook lenovo
+sudo lshw
+     *-cpu
+          product: Intel(R) Core(TM) i5-8265U CPU @ 1.60GHz
+          clock: 100MHz
+
+             slot: L1 Cache
+             size: 256KiB
+
+             slot: L2 Cache
+             size: 1MiB
+
+             slot: L3 Cache
+             size: 6MiB
+
+    *-memory
+             description: SODIMM DDR4 Synchronous 2400 MHz (0.4 ns)
+        *-pci:2
+          *-nvme
+                logical name: /dev/nvme0
+
+
+dd if=/dev/zero of=/dev/null status=progress
+(52 GB, 49 GiB) copied, 29.5511 s, 1.8 GB/s
+
+dd if=/dev/zero of=/dev/null bs=2M status=progress
+(707 GB, 658 GiB) copied, 30.5144 s, 23.2 GB/s
+
+cat /dev/zero | dd of=/dev/null bs=2M status=progress
+(128 GB, 119 GiB) copied, 30.0761 s, 4.3 GB/s
+
+dd if=/dev/zero bs=2M status=progress > /dev/null
+(705 GB, 656 GiB) copied, 30.2786 s, 23.3 GB/s
+
+dd bs=2M status=progress >/dev/null </dev/zero
+(703 GB, 655 GiB) copied, 30.2823 s, 23.2 GB/s
+
+dd bs=2M status=progress </dev/zero >/dev/null
+(704 GB, 655 GiB) copied, 30.2532 s, 23.3 GB/s
+
+dd if=/dev/zero bs=2M status=progress | dd bs=2M > /dev/null
+(92 GB, 85 GiB) copied, 30.2536 s, 3.0 GB/s
+
+mkfifo teste
+dd if=teste bs=2M >/dev/null
+...
+dd if=/dev/zero of=teste bs=2M status=progress
+(93 GB, 86 GiB) copied, 30.2664 s, 3.1 GB/s
+
+sudo dd if=/dev/nvme0n1p5 bs=2M status=progress > /dev/null
+(8.2 GB, 7.6 GiB) copied, 30.3297 s, 269 MB/s
+
+sudo dd if=/dev/zero bs=2M oflag=sync status=progress > /media/lubuntu/ARQ/teste.bin
+(10 GB, 9.5 GiB) copied, 30.3288 s, 336 MB/s
+
+nc -n -l -p 9090 >/dev/null
+...
+dd if=/dev/zero bs=2M status=progress | nc -n 127.0.0.1 9090
+(66 GB, 62 GiB) copied, 30.2741 s, 2.2 GB/s
+
+nc -n -l -p 9090 | dd bs=2M status=progress >/dev/null
+...
+dd if=/dev/zero bs=2M | nc -n 127.0.0.1 9090
+(34 GB, 32 GiB) copied, 30.3588 s, 1.1 GB/s
+
+mkfifo teste
+for ((;;)); do cat teste | nc -n -l -p 9090 >teste; done
+...
+dd if=/dev/zero bs=2M status=none | nc -n 127.0.0.1 9090 | dd bs=2M status=progress > /dev/null
+(34 GB, 32 GiB) copied, 30.4455 s, 1.1 GB/s
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

@@ -1,0 +1,67 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+<body>
+
+
+<script language="JavaScript">
+
+console.log((new Date()).getTime() + " ms")
+
+<!-- Hiding
+today = new Date()
+document.write("A hora agora é: ",today.getHours(),":",today.getMinutes(),". ")
+document.write("A data é: ", today.getDate(),"/",today.getMonth()+1,"/",today.getYear());
+// end hiding contents -->
+</script>
+
+
+<br><br>
+
+<script language="JavaScript">
+<!-- Hiding
+docCreated= new Date(96,0,13,10,50,0) // Date(year, month, day, hours, minutes, seconds, milliseconds)
+                                      // Date(milliseconds) //milliseconds since 1970/01/01
+                                      // Date(dateString) // Date("October 13, 1975 11:13:00")
+document.write("Criado às: ", docCreated.getHours(),":" ,docCreated.getMinutes(),". ")
+document.write("Na data: ", docCreated.getDate(), "/", docCreated.getMonth()+1, "/", docCreated.getYear());
+// end hiding contents -->
+</script>
+
+<pre>
+getDate           Dia da semana (0=Domingo).
+getDay            Dia do mês.
+getHours          Horas (0 a 23).
+getMinutes        Minutos (0 a 59).
+getMonth          Mês do ano (0=janeiro).
+getSeconds        Segundos (0 a 59).
+getTime           Milissegundos desde 1 de janeiro de 1990 (00:00:00).
+getTimezoneOffset Diferença de fuso horário em minutos para o GMT.
+getYear           2 digitos do ano até 1999. Após 2000, 4 dígitos.
+
+alert(Date.parse("Nov 23, 1975 GMT"));
+o resultado será 185932800000 milissegundos contados desde 1 de janeiro de 1970.
+
+setDate    Dia da semana (0 para Domingo).
+setHours   Horas (0 a 23).
+setMinutes Minutos (0 a 59).
+setMonth   Mês do ano.
+setSeconds Segundos (0 a 59).
+setTime    Milissegundos de 1 de janeiro de 1990.
+setYear    Ano.
+
+alert(data.toGMTString());
+O resultado, será a criação de uma string no formato: Fri, 21 Sep 2001 20:53:44 UTC
+
+alert(data.toLocaleString()); O resultado esperado, será similar ao formato: 09/21/2001 17:58:03
+
+
+</pre>
+
+</body>
+</html>
+
+

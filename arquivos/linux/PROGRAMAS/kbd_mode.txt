@@ -1,0 +1,16 @@
+KBD_MODE(1)
+6 Apr 1994
+
+SYNOPSIS
+kbd_mode [ -a | -u | -k | -s ]
+
+DESCRIPTION
+Without argument, kbd_mode prints the current keyboard mode (RAW, MEDIUMRAW or XLATE).  With argument, it sets the keyboard mode as indicated:
+-s: scancode mode (RAW),
+-k: keycode mode (MEDIUMRAW),
+-a: ASCII mode (XLATE),
+-u: UTF-8 mode (UNICODE).
+
+SEE ALSO
+loadkeys(1)
+

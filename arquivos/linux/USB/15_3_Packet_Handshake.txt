@@ -1,0 +1,6 @@
+
+Sync > PID     > EOP
+       8 bits
+
+Used for ACK, NAK, STALL and NYET packets. This is the packet format used in the status stage of a transaction, when required.
+

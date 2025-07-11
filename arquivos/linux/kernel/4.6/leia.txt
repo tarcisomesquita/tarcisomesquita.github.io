@@ -1,0 +1,88 @@
+> General setup > Initial RAM filesystem and RAM disk (initramfs/initrd) support
+(/home/ubuntu/Desktop/initramfs.cpio)
+
+> Processor type and features > EFI stub support
+
+rm /home/ubuntu/Desktop/initramfs.cpio
+cd /home/ubuntu/Desktop/initrd
+find . -print | cpio --quiet -R 0:0 -o -H newc > ../initramfs.cpio
+cd -
+
+make -j 4 bzImage
+VBoxManage controlvm efi poweroff
+rm /media/ubuntu/EFI/EFI/BOOT/bootx64.efi 
+#rm /media/ubuntu/EFI/casper/vmlinuz.efi
+sudo sync
+cp arch/x86/boot/bzImage /media/ubuntu/EFI/EFI/BOOT/bootx64.efi
+#cp arch/x86/boot/bzImage /media/ubuntu/EFI/casper/vmlinuz.efi
+sudo sync
+VBoxManage startvm "efi"
+
+Only a single cpio file may be specified in
+CONFIG_INITRAMFS_SOURCE and directory and file names are not allowed in
+combination with a cpio archive.
+
+linux-4.6$ scripts/gen_initramfs_list.sh ../initrd/ > ../teste.txt 
+linux-4.6$ usr/gen_init_cpio ../teste.txt > ../initramfs.cpio 
+
+IMAGE BUILDING method
+
+The kernel build process can also build an early userspace image from
+source parts rather than supplying a cpio archive.  This method provides
+a way to create images with root-owned files even though the image was
+built by an unprivileged user.
+
+The image is specified as one or more sources in
+CONFIG_INITRAMFS_SOURCE.  Sources can be either directories or files -
+cpio archives are *not* allowed when building from sources.
+
+A source file must be directives in the format required by the
+usr/gen_init_cpio utility (run 'usr/gen_init_cpio --help' to get the
+file format).  The directives in the file will be passed directly to
+usr/gen_init_cpio.
+
+
+As a technical note, when directories and files are specified, the
+entire CONFIG_INITRAMFS_SOURCE is passed to
+scripts/gen_initramfs_list.sh.  This means that CONFIG_INITRAMFS_SOURCE
+can really be interpreted as any legal argument to
+gen_initramfs_list.sh.  If a directory is specified as an argument then
+the contents are scanned, uid/gid translation is performed, and
+usr/gen_init_cpio file directives are output.  If a directory is
+specified as an argument to scripts/gen_initramfs_list.sh then the
+contents of the file are simply copied to the output.  All of the output
+directives from directory scanning and file contents copying are
+processed by usr/gen_init_cpio.
+
+See also 'scripts/gen_initramfs_list.sh -h'.
+
+
+
+
+
+
+
+
+When switching another root device, initrd would pivot_root and then
+    umount the ramdisk.  But initramfs is rootfs: you can neither pivot_root
+    rootfs, nor unmount it.  Instead delete everything out of rootfs to
+    free up the space (find -xdev / -exec rm '{}' ';'), overmount rootfs
+    with the new root (cd /newmount; mount --move . /; chroot .), attach
+    stdin/stdout/stderr to the new /dev/console, and exec the new init.
+
+
+  gcc -static hello.c -o init
+  echo init | cpio -o -H newc | gzip > test.cpio.gz
+  # Testing external initramfs using the initrd loading mechanism.
+  qemu -kernel /boot/vmlinuz -initrd test.cpio.gz /dev/zero
+
+
+When debugging a normal root filesystem, it's nice to be able to boot with
+"init=/bin/sh".  The initramfs equivalent is "rdinit=/bin/sh", and it's
+just as useful.
+
+init/initramfs.c
+
+
+linux-4.6/Documentation/early-userspace/buffer-format.txt
+

@@ -1,0 +1,19 @@
+ip addr
+ou
+ip address
+The ip addr command displays addresses and their properties, adds new addresses and deletes old ones.
+
+ip addr { add | del } IFADDR dev STRING
+ip addr { show | flush } [ dev STRING ] [ label PATTERN ]
+
+# ip addr list
+# ip addr list  dev eth0
+# ip addr add   192.168.253.200/24 dev eth0
+# ip addr add   192.168.99.37/24 brd + dev eth0 label eth0:0
+# ip addr del   192.168.253.200/24 dev eth0
+# ip addr show  dev eth1
+# ip addr flush dev eth0
+
+dois ips na mesma interface
+sudo ip address add    dev wlp2s0 local 192.168.0.240/24 label wlp2s0:240
+sudo ip address delete dev wlp2s0 local 192.168.0.240/24 label wlp2s0:240

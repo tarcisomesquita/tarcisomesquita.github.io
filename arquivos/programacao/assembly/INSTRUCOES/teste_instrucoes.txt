@@ -1,0 +1,75 @@
+echo -n -e \\xBE\\x00\\x10\\x40\\x00 > teste_instrucoes.bin #    mov esi,0x00401000
+echo -n -e \\x41\\xC7\\xC0\\x11\\x22\\x33\\x44\\x90\\x90\\x90\\x90 >> teste_instrucoes.bin #    
+echo -n -e \\x41\\xB8\\x11\\x22\\x33\\x44\\x55\\x66\\x77\\x88\\x90 >> teste_instrucoes.bin #    
+
+reg to memory            0100 0RXB : 1000 100w : mod reg r/m
+echo -n -e \\x44\\x89\\x00 > teste_instrucoes.bin #    
+echo -n -e \\x90\\x90\\x90\\x90\\x90\\x90\\x90\\x90\\x90 >> teste_instrucoes.bin #    
+
+echo -n -e \\x48\\xb8\\x11\\x22\\x33\\x44\\x55\\x66\\x77\\x88 > teste_instrucoes.bin #    
+echo -n -e \\xB8\\xE7\\x00\\x00\\x00 >> teste_instrucoes.bin #    mov eax,0x000000E7
+echo -n -e \\x48\\xa3\\x00\\x10\\x40\\x00\\x00\\x00\\x00\\x00 >> teste_instrucoes.bin #    
+echo -n -e \\xBA\\x08\\x00\\x00\\x00 >> teste_instrucoes.bin #    mov edx,0x00000008
+echo -n -e \\xBE\\x00\\x10\\x40\\x00 >> teste_instrucoes.bin #    mov esi,0x00401000
+echo -n -e \\xBF\\x01\\x00\\x00\\x00 >> teste_instrucoes.bin #    mov edi,0x00000001
+echo -n -e \\xB8\\x01\\x00\\x00\\x00 >> teste_instrucoes.bin #    mov eax,0x00000001
+echo -n -e \\x0F\\x05                >> teste_instrucoes.bin #    syscall
+
+echo -n -e \\xBF\\x01\\x00\\x00\\x00 >> teste_instrucoes.bin #    mov edi,0x00000001
+echo -n -e \\xB8\\xE7\\x00\\x00\\x00 >> teste_instrucoes.bin #    mov eax,0x000000E7
+echo -n -e \\x0F\\x05                >> teste_instrucoes.bin #    syscall
+
+
+
+dd if=teste_instrucoes.bin of=teste_instrucoes bs=1 seek=$((0xb0)) conv=notrunc
+objdump -D --target binary -m i386 -M x86-64 -M intel_syntax  --start-address=$((0xb0)) --stop-address=$((0xf8)) teste_instrucoes
+
+./teste_instrucoes | hexdump -C
+
+echo -n -e \\x48\\xA3\\x00\\x10\\x40\\x00\\x00\\x00\\x00\\x00\\x90\\x90 > t.bin; ./ndisasm -b 64 t.bin 
+00000000  48A3001040000000  mov [qword 0x401000],rax
+         -0000
+0000000A  90                nop
+0000000B  90                nop
+
+echo -n -e \\xA3\\x90\\x90\\x90\\x90\\x90\\x90\\x90\\x90\\x90\\x90 > t.bin; ./ndisasm -b 64 t.bin 
+00000000  A390909090909090  mov [qword 0x9090909090909090],eax
+         -90
+00000009  90                nop
+0000000A  90                nop
+
+echo -n -e \\x04\\x90\\x90 > t.bin
+./ndisasm -b 64 t.bin 
+00000000  0490              add al,0x90
+00000002  90                nop
+
+echo -n -e \\x05\\x90\\x90\\x90\\x90\\x90 > t.bin
+./ndisasm -b 64 t.bin 
+00000000  0590909090        add eax,0x90909090
+00000005  90                nop
+
+
+echo -n -e \\xC7\\x05\\x80\\x70\\x60\\x50\\x40\\x30\\x20\\x10\\x90 > t.bin; ./ndisasm -b 64 t.bin 
+00000000  C705807060504030  mov dword [rel 0x5060708a],0x10203040
+         -2010
+0000000A  90                nop
+
+echo -n -e \\xC7\\x06\\x00\\x10\\x40\\x00\\x90 > t.bin; ./ndisasm -b 64 t.bin 
+00000000  C70600104000      mov dword [rsi],0x401000
+00000006  90                nop
+
+objdump -D --target binary -m i386 -M x86-64 -M intel_syntax  --start-address=$((0xb0)) --stop-address=$((0xf8)) teste_instrucoes
+      b0:       48 c7 c0 00 10 40 00    mov    rax,0x401000
+      b7:       48 b8 08 07 06 05 04    movabs rax,0x102030405060708
+      be:       03 02 01 
+      c1:       b8 44 33 22 11          mov    eax,0x11223344
+      c6:       be 00 10 40 00          mov    esi,0x401000
+      cb:       67 48 89 06             mov    QWORD PTR [esi],rax
+      cf:       ba 08 00 00 00          mov    edx,0x8
+      d4:       be 00 10 40 00          mov    esi,0x401000
+      d9:       bf 01 00 00 00          mov    edi,0x1
+      de:       b8 01 00 00 00          mov    eax,0x1
+      e3:       0f 05                   syscall 
+      e5:       bf 01 00 00 00          mov    edi,0x1
+      ea:       b8 e7 00 00 00          mov    eax,0xe7
+      ef:       0f 05                   syscall 

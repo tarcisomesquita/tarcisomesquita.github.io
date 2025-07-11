@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+	<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    		<script type="text/javascript">var NREUMQ=NREUMQ||[];NREUMQ.push(["mark","firstbyte",new Date().getTime()]);</script>
+<title>How to Write a Linux USB Device Driver | Linux Journal</title>
+	</head>
+
+
+	<body class="">
+
+
+
+      <p>Please Note, this article was written on 2001, now (jun-2005) a lot of changes has been done on Linux kernel 2.6.x.... just keep it in mind.</p>
+
+
+						<div id="main"><h2>How to Write a Linux USB Device Driver</h2></div>																		<div id="content">
+				<div id="node-4786" class="node">
+			    <span class="submitted">Mon, 10/01/2001 - 01:00 — <a href="/user/800887" title="View user profile.">Greg Kroah-Hartman</a></span>
+		<div class="content clear-block box-flat">
+	<div>
+		</div>
+			<div class="article" lang="en"><div class="simplesect" lang="en"><div class="titlepage"><a name="N0xa50890.0xb44bc8"></a></div>
+<p>USB skeleton can be found at drivers/usb/usb-skeleton.c in the kernel source tree.</p>
+<p>the concept of USB urbs, which are essential to USBdrivers.</p>
+<p>The first thing a Linux USB driver needs to do is register itself with the Linux USB subsystem, giving it some information
+about which devices the driver supports and which functions to call when a device supported by the driver is inserted or removed from
+the system. All of this information is passed to the USB subsystem
+in the usb_driver structure. The skeleton driver declares a
+usb_driver as:</p>
+<pre class="programlisting">
+static struct usb_driver skel_driver = {
+     name:        "skeleton",
+     probe:       skel_probe,
+     disconnect:  skel_disconnect,
+     fops:        &amp;skel_fops,
+     minor:       USB_SKEL_MINOR_BASE,
+     id_table:    skel_table,
+};
+</pre><p>The variable name is a string that describes the driver. It
+is used in informational messages printed to the system log. The
+probe and disconnect function pointers are called when a device
+that matches the information provided in the id_table variable is
+either seen or removed.
+</p><p>The fops and minor variables are optional. Most USB drivers
+hook into another kernel subsystem, such as the SCSI, network or
+TTY subsystem. These types of drivers register themselves with the
+other kernel subsystem, and any user-space interactions are
+provided through that interface. But for drivers that do not have a
+matching kernel subsystem, such as MP3 players or scanners, a
+method of interacting with user space is needed. The USB subsystem
+provides a way to register a minor device number and a set of
+file_operations function pointers that enable this user-space
+interaction. The skeleton driver needs this kind of interface, so
+it provides a minor starting number and a pointer to its
+file_operations functions.</p><p>The USB driver is then registered with a call to
+usb_register, usually in the driver's init function, as shown in
+Listing 1.</p><p><a href="/files/linuxjournal.com/linuxjournal/articles/047/4786/4786l1.html">Listing 1. Registering the USB
+Driver</a></p><p>When the driver is unloaded from the system, it needs to
+unregister itself with the USB subsystem. This is done with the
+usb_unregister function:</p><pre class="programlisting">
+static void __exit usb_skel_exit(void)
+{
+   /* deregister this driver with the USB subsystem */
+   usb_deregister(&amp;skel_driver);
+}
+module_exit(usb_skel_exit);
+</pre><p>To enable the linux-hotplug system to load the driver
+automatically when the device is plugged in, you need to create a
+MODULE_DEVICE_TABLE. The following code tells the hotplug scripts
+that this module supports a single device with a specific vendor
+and product ID:
+<pre class="programlisting">
+/* table of devices that work with this driver */
+static struct usb_device_id skel_table [] = {
+    { USB_DEVICE(USB_SKEL_VENDOR_ID,
+      USB_SKEL_PRODUCT_ID) },
+    { }                      /* Terminating entry */
+};
+MODULE_DEVICE_TABLE (usb, skel_table);
+</pre>
+
+
+There are other macros that can be used in describing a
+usb_device_id for drivers that support a whole class of USB
+drivers. See usb.h for more information on this.
+</p><p>When a device is plugged into the USB bus that matches the
+device ID pattern that your driver registered with the USB core,
+the probe function is called. The usb_device structure, interface
+number and the interface ID are passed to the function:</p><pre class="programlisting">
+static void * skel_probe(struct usb_device *dev,
+unsigned int ifnum, const struct usb_device_id *id)
+</pre><p>The driver now needs to verify that this device is actually
+one that it can accept. If not, or if any error occurs during
+initialization, a NULL value is returned from the probe function.
+Otherwise a pointer to a private data structure containing the
+driver's state for this device is returned. That pointer is stored
+in the usb_device structure, and all callbacks to the driver pass
+that pointer.
+</p><p>In the skeleton driver, we determine what end points are
+marked as bulk-in and bulk-out. We create buffers to hold the data
+that will be sent and received from the device, and a USB urb to
+write data to the device is initialized. Also, we register the
+device with the devfs subsystem, allowing users of devfs to access
+our device. That registration looks like the following:</p><pre class="programlisting">
+/* initialize the devfs node for this device
+   and register it */
+sprintf(name, "skel%d", skel-&gt;minor);
+skel-&gt;devfs = devfs_register
+              (usb_devfs_handle, name,
+               DEVFS_FL_DEFAULT, USB_MAJOR,
+               USB_SKEL_MINOR_BASE + skel-&gt;minor,
+               S_IFCHR | S_IRUSR | S_IWUSR |
+               S_IRGRP | S_IWGRP | S_IROTH,
+               &amp;skel_fops, NULL);
+</pre><p>If the devfs_register function fails, we do not care, as the
+devfs subsystem will report this to the user.
+</p><p>Conversely, when the device is removed from the USB bus, the
+disconnect function is called with the device pointer. The driver
+needs to clean any private data that has been allocated at this
+time and to shut down any pending urbs that are in the USB system.
+The driver also unregisters itself from the devfs subsystem with
+the call:</p><pre class="programlisting">
+/* remove our devfs node */
+devfs_unregister(skel-&gt;devfs);
+</pre><p>Now that the device is plugged into the system and the driver
+is bound to the device, any of the functions in the file_operations
+structure that were passed to the USB subsystem will be called from
+a user program trying to talk to the device. The first function
+called will be open, as the program tries to open the device for
+I/O. Within the skeleton driver's open function we increment the
+driver's usage count if it is a module with a call to
+MODULE_INC_USE_COUNT. With this macro call, if the driver is
+compiled as a module, the driver cannot be unloaded until a
+corresponding MODULE_DEC_USE_COUNT macro is called. We also
+increment our private usage count and save off a pointer to our
+internal structure in the file structure. This is done so that
+future calls to file operations will enable the driver to determine
+which device the user is addressing. All of this is done with the
+following code:
+<pre class="programlisting">
+/* increment our usage count for the module */
+MOD_INC_USE_COUNT;
+++skel-&gt;open_count;
+/* save our object in the file's private structure */
+file-&gt;private_data = skel;
+</pre>
+
+
+After the open function is called, the read and write functions are
+called to receive and send data to the device. In the skel_write
+function, we receive a pointer to some data that the user wants to
+send to the device and the size of the data. The function
+determines how much data it can send to the device based on the
+size of the write urb it has created (this size depends on the size
+of the bulk out end point that the device has). Then it copies the
+data from user space to kernel space, points the urb to the data
+and submits the urb to the USB subsystem (see Listing 2).
+</p><p><a href="/files/linuxjournal.com/linuxjournal/articles/047/4786/4786l2.html">Listing 2. The skel_write
+Function</a></p><p>When the write urb is filled up with the proper information
+using the FILL_BULK_URB function, we point the urb's completion
+callback to call our own skel_write_bulk_callback function. This
+function is called when the urb is finished by the USB subsystem.
+The callback function is called in interrupt context, so caution
+must be taken not to do very much processing at that time. Our
+implementation of skel_write_bulk_callback merely reports if the
+urb was completed successfully or not and then returns.</p><p>The read function works a bit differently from the write
+function in that we do not use an urb to transfer data from the
+device to the driver. Instead we call the usb_bulk_msg function,
+which can be used to send or receive data from a device without
+having to create urbs and handle urb completion callback functions.
+We call the usb_bulk_msg function, giving it a buffer into which to
+place any data received from the device and a timeout value. If the
+timeout period expires without receiving any data from the device,
+the function will fail and return an error message (see Listing
+3).</p><p><a href="/files/linuxjournal.com/linuxjournal/articles/047/4786/4786l3.html">Listing 3. The usb_bulk_msg
+Function</a></p><p>The usb_bulk_msg function can be very useful for doing single
+reads or writes to a device; however, if you need to read or write
+constantly to a device, it is recommended to set up your own urbs
+and submit them to the USB subsystem.</p><p>When the user program releases the file handle that it has
+been using to talk to the device, the release function in the
+driver is called. In this function we decrement the module usage
+count with a call to MOD_DEC_USE_COUNT (to match our previous call
+to MOD_INC_USE_COUNT). We also determine if there are any other
+programs that are currently talking to the device (a device may be
+opened by more than one program at one time). If this is the last
+user of the device, then we shut down any possible pending writes
+that might be currently occurring. This is all done with:</p><pre class="programlisting">
+/* decrement our usage count for the device */
+--skel-&gt;open_count;
+if (skel-&gt;open_count &lt;= 0) {
+   /* shutdown any bulk writes that might be
+      going on */
+   usb_unlink_urb (skel-&gt;write_urb);
+   skel-&gt;open_count = 0;
+}
+/* decrement our usage count for the module */
+MOD_DEC_USE_COUNT;
+</pre><p>One of the more difficult problems that USB drivers must be
+able to handle smoothly is the fact that the USB device may be
+removed from the system at any point in time, even if a program is
+currently talking to it. It needs to be able to shut down any
+current reads and writes and notify the user-space programs that
+the device is no longer there (see Listing 4).
+</p><p><a href="/files/linuxjournal.com/linuxjournal/articles/047/4786/4786l4.html">Listing 4. The skel_disconnect
+Function</a></p><p>If a program currently has an open handle to the device, we
+only null the usb_device structure in our local structure, as it
+has now gone away. For every read, write, release and other
+functions that expect a device to be present, the driver first
+checks to see if this usb_device structure is still present. If
+not, it releases that the device has disappeared, and a -ENODEV
+error is returned to the user-space program. When the release
+function is eventually called, it determines if there is no
+usb_device structure and if not, it does the cleanup that the
+skel_disconnect function normally does if there are no open files
+on the device (see Listing 5).</p><p><a href="/files/linuxjournal.com/linuxjournal/articles/047/4786/4786l5.html">Listing 5. Cleanup</a></p><p>This usb-skeleton driver does not have any examples of
+interrupt or isochronous data being sent to or from the device.
+Interrupt data is sent almost exactly as bulk data is, with a few
+minor exceptions. Isochronous data works differently with
+continuous streams of data being sent to or from the device. The
+audio and video camera drivers are very good examples of drivers
+that handle isochronous data and will be useful if you also need to
+do this.</p><p>Writing Linux USB device drivers is not a difficult task as
+the usb-skeleton driver shows. This driver, combined with the other
+current USB drivers, should provide enough examples to help a
+beginning author create a working driver in a minimal amount of
+time. The linux-usb-devel mailing list archives also contain a lot
+of helpful information.</p><p><a href="/files/linuxjournal.com/linuxjournal/articles/047/4786/4786s1.html">Resources</a></p></div></div>
+<div class="authorblurb"><p><span class="bold"><b>Greg
+      Kroah-Hartman</b></span> is one of the Linux kernel USB developers.
+      His free software is being used by more people than any
+      closed-source projects he has ever been paid to develop.</p></div><div class="links"><div class="item-list"><ul class="pager"><li class="pager-current first">1</li>
+<li class="pager-item"><a href="/article/4786?page=0,1" title="Go to page 2" class="active">2</a></li>
+<li class="pager-next"><a href="/article/4786?page=0,1" title="Go to next page" class="active">next ›</a></li>
+<li class="pager-last last"><a href="/article/4786?page=0,1" title="Go to last page" class="active">last »</a></li>
+</ul></div></div>	</div>
+	<div class="clear-block">
+		<div class="meta">
+						<div class="terms"></div>
+					</div>
+				<div class="links"></div>
+			</div>
+</div>
+<div id="comments"><h2 class="comments">Comments</h2><form action="/article/4786"  accept-charset="UTF-8" method="post" id="comment-controls">
+<div><div class="box">
+
+  <h2>Comment viewing options</h2>
+
+  <div class="content"><div class="container-inline"><input type="hidden" name="form_build_id" id="form-449c01593470e90af11ca95c9f260e10" value="form-449c01593470e90af11ca95c9f260e10"  />
+<input type="hidden" name="form_id" id="edit-comment-controls" value="comment_controls"  />
+<div class="form-item" id="edit-mode-wrapper">
+ <select name="mode" class="form-select" id="edit-mode" ><option value="1">Flat list - collapsed</option><option value="2">Flat list - expanded</option><option value="3">Threaded list - collapsed</option><option value="4" selected="selected">Threaded list - expanded</option></select>
+</div>
+<div class="form-item" id="edit-order-wrapper">
+ <select name="order" class="form-select" id="edit-order" ><option value="1" selected="selected">Date - newest first</option><option value="2">Date - oldest first</option></select>
+</div>
+<div class="form-item" id="edit-comments-per-page-wrapper">
+ <select name="comments_per_page" class="form-select" id="edit-comments-per-page" ><option value="10">10 comments per page</option><option value="30">30 comments per page</option><option value="50" selected="selected">50 comments per page</option><option value="70">70 comments per page</option><option value="90">90 comments per page</option><option value="150">150 comments per page</option><option value="200">200 comments per page</option><option value="250">250 comments per page</option><option value="300">300 comments per page</option></select>
+</div>
+<button value="Save settings" name="op" id="edit-submit"  class="form-submit button-submit"><span>Save settings</span></button> 
+</div><div class="description">Select your preferred way to display the comments and click "Save settings" to activate your changes.</div></div>
+</div>
+
+</div></form>
+<a id="comment-349776"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Sun, 03/21/2010 - 09:07 — Anonymous</span>
+  
+  
+  <strong><a href="/article/4786#comment-349776" class="active">Try to download Chapter 13: USB of Linux Device Drivers </a></strong>
+
+    <div class="content">
+      <p><a href="http://lwn.net/images/pdf/LDD3/ch13.pdf" title="http://lwn.net/images/pdf/LDD3/ch13.pdf">http://lwn.net/images/pdf/LDD3/ch13.pdf</a></p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-341993"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Mon, 08/24/2009 - 18:45 — Anonymous (not verified)</span>
+  
+  
+  <strong><a href="/article/4786#comment-341993" class="active">Not Necessarily a Good Thing</a></strong>
+
+    <div class="content">
+      <p>"His free software is being used by more people than any closed-source projects he has ever been paid to develop."</p>
+<p>No disrespect to Greg, but that's not necessarily a good tagline to go by.  My first reading of that implied that his code is so bad he had to give it away...or that his closed-source projects were unusable.</p>
+<p>Perhaps you should try "Greg's software is widely used in the open source community."</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-335125"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Tue, 03/31/2009 - 07:40 — Anonymous (not verified)</span>
+  
+  
+  <strong><a href="/article/4786#comment-335125" class="active">Sample code for linux usb device driver</a></strong>
+
+    <div class="content">
+      <p>Dear Sir,</p>
+<p>I am a student of Computer Engineering, i am studying linux at present and need a linux code for my college code does any body has such code a sample test code for the pen drive....</p>
+<p>Regards<br />
+Rahul</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-350506"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Wed, 04/07/2010 - 13:44 — Anonymous</span>
+  
+  
+  <strong><a href="/article/4786#comment-350506" class="active">You can refer to Essential</a></strong>
+
+    <div class="content">
+      <p>You can refer to Essential Linux Device Drivers writtennn by Sreekrishnan Venkateswaran. Its a very good book with lots of code examples.</p>
+<p><a href="http://www.amazon.com/Essential-Device-Drivers-Sreekrishnan-Venkateswaran/dp/0132396556" title="http://www.amazon.com/Essential-Device-Drivers-Sreekrishnan-Venkateswaran/dp/0132396556">http://www.amazon.com/Essential-Device-Drivers-Sreekrishnan-Venkateswara...</a>. </p>
+<p>-- Alakesh</p>
+          </div>
+
+  </div>
+
+  </div>
+</div><a id="comment-128031"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Tue, 01/10/2006 - 06:01 — vishy@honeywell (not verified)</span>
+  
+  
+  <strong><a href="/article/4786#comment-128031" class="active">Using the devfs_fs_kernel.h</a></strong>
+
+    <div class="content">
+      <p>Hi,</p>
+<p>I went thru a few comments on the devfs_fs_kernel.h .  This header file is included by most of the FS c files .. so only if the CONFIG_DEVFS_FS is enabled(made y) will the method do something. Otherwise the method returns 0 or NULL based on the return type of the func. Thus if a device is to be registered using the DEVFS make sure that the CONFIG_DEVFS_FS is set which causes the right method to be called.</p>
+<p>rgds<br />
+vishy</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-889"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Mon, 03/29/2004 - 02:00 — Anonymous</span>
+  
+  
+  <strong><a href="/article/4786#comment-889" class="active">Re: Kernel Korner: How to Write a Linux USB Device Driver</a></strong>
+
+    <div class="content">
+      <p>I found in kernel2.4.18,the devfs_register() is defined as:<br />
+static inline devfs_handle_t devfs_register (devfs_handle_t dir,<br />
+const char *name,<br />
+unsigned int flags,<br />
+unsigned int major,<br />
+unsigned int minor,<br />
+umode_t mode,<br />
+void *ops, void *info)<br />
+{<br />
+return NULL;<br />
+}</p>
+<p>file is :devfs_fs_kernel.h<br />
+How can I finish register a device file?</p>
+          </div>
+
+  </div>
+
+  </div>
+<a id="comment-885"></a>
+<div class="comment comment-published odd">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Sun, 09/01/2002 - 01:00 — Anonymous</span>
+  
+  
+  <strong><a href="/article/4786#comment-885" class="active">Re: Kernel Korner: How to Write a Linux USB Device Driver</a></strong>
+
+    <div class="content">
+      <p>good article.</p>
+<p>How about "how to write a file system driver" for linux?</p>
+          </div>
+
+  </div>
+
+  </div>
+<div class="indented"><a id="comment-886"></a>
+<div class="comment comment-published even">
+
+  <div class="clear-block">
+
+  
+      <span class="submitted">Fri, 06/20/2003 - 01:00 — Anonymous</span>
+  
+  
+  <strong><a href="/article/4786#comment-886" class="active">Re: Kernel Korner: How to Write a Linux USB Device Driver</a></strong>
+
+    <div class="content">
+      <p>I found in kernel2.4.18,the devfs_register() is defined as:<br />
+static inline devfs_handle_t devfs_register (devfs_handle_t dir,<br />
+					     const char *name,<br />
+					     unsigned int flags,<br />
+					     unsigned int major,<br />
+					     unsigned int minor,<br />
+					     umode_t mode,<br />
+					     void *ops, void *info)<br />
+{<br />
+    return NULL;<br />
+}</p>
+<p>file is :devfs_fs_kernel.h<br />
+How can I finish register a device file?</p>
+          </div>
+
+
+</body>
+</html>

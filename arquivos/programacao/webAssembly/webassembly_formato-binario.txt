@@ -1,0 +1,14 @@
+O Firefox, no Debugger, exibe a representação textual de arquivo wasm inserido em uma página web.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+https://webassembly.github.io/wabt/demo/wat2wasm/
+Explica os bytes de wasm
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+shortest possible wasm module:
+(module)
+
+0000000: 0061 736d              ; WASM_BINARY_MAGIC
+0000004: 0100 0000              ; WASM_BINARY_VERSION

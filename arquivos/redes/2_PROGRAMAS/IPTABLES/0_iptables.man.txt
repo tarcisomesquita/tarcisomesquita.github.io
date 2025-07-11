@@ -1,0 +1,17 @@
+IPTABLES(8)
+http://www.netfilter.org/.
+Mar 09, 2002
+
+SYNOPSIS
+
+iptables [-t table] -I chain [rulenum] rule-specification [options]
+iptables -t filter -I OUTPUT 2 -o eth0 -j DROP
+
+DESCRIPTION
+Iptables is used to set up, maintain, and inspect the tables of IPv4 packet filter rules in the Linux kernel.
+Several different tables may be defined.
+Each table contains a number of built-in chains and may also contain user-defined chains.
+Each chain is a list of rules which can match a set of packets.
+Each rule specifies what to do with a packet that matches.
+What to do is called a 'target', which may be a jump to a user-defined chain in the same table.
+

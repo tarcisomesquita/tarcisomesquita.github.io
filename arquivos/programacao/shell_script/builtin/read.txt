@@ -1,0 +1,20 @@
+
+read [-p prompt] [-r] variable [...]
+
+-p faz com que prompt seja escrito terminal e especifica a entrada como sendo o standard input.
+
+A line is read from the standard input and the trailing newline is deleted.
+The line is split and the pieces are assigned to the variables in order.
+
+At least one variable must be specified. If there are more pieces than variables, the remaining pieces are assigned to the last variable.  If there are more variables than pieces, the remaining variables are assigned the null string.
+
+The read builtin will indicate success unless EOF is encountered on input, in which case failure is returned.
+
+By default, unless the -r option is specified, the backslash "\" acts as an escape character, causing the following character to be treated literally. If a backslash is followed by a newline, thebackslash and the newline will be deleted.
+
+Exemplo:
+read -p "Isso eh um teste: " N M O
+echo $N
+echo $M
+echo $O
+

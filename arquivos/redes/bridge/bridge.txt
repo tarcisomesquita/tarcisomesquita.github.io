@@ -1,0 +1,142 @@
+# /etc/init.d/NetworkManager stop
+# apt-get install bridge-utils
+
+PORTS
+Each bridge has a number of ports attached to it. Network traffic coming in on any of these ports will be forwarded to the other ports transparently.
+In a bridge packets are forwarded based on Ethernet address, rather than IP address (like a router).
+
+SYNTAX
+   brctl [command]
+
+commands:
+   addbr           <bridgename>                 add bridge
+   delbr           <bridgename>                 delete bridge
+   addif           <bridgename> <device>        add interface to bridge
+   delif           <bridgename> <device>        delete interface from bridge
+   setageing       <bridgename> <time>          set ageing time
+   setbridgeprio   <bridgename> <prio>          set bridge priority
+   setfd           <bridgename> <time>          set bridge forward delay
+   sethello        <bridgename> <time>          set hello time
+   setmaxage       <bridgename> <time>          set max message age
+   setpathcost     <bridgename> <port> <cost>   set path cost
+   setportprio     <bridgename> <port> <prio>   set port priority
+   show                                         show a list of bridges
+   showmacs        <bridgename>                 show a list of mac addrs
+   showstp         <bridgename>                 show bridge stp info
+   stp             <bridgename> {on|off}        turn stp on/off
+
+Sample setup
+# /etc/init.d/network-manager stop
+# rfkill list
+# rfkill unblock 1
+echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+sudo bash -c 'echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6'
+iptables -t raw -I PREROUTING -j LOG --log-prefix "PRE: "
+iptables -t nat -I POSTROUTING -j LOG --log-prefix "POST: "
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+# modprobe --verbose bridge
+# ifconfig eth0 down
+# ifconfig eth1 down
+# ifconfig eth2 down
+# ifconfig eth0 hw ether AA:BB:CC:DD:EE:FF
+
+sudo dpkg -i /media/ubuntu/SD/SD/redes/4_sniffer_monitorar-trafego-da-rede/bridge-utils_1.5-9ubuntu1_amd64.deb
+
+# brctl addbr br0
+# brctl addif br0 eth0
+# brctl addif br0 eth1
+# brctl addif br0 eth2
+# ifconfig eth0 0.0.0.0 promisc up
+# ifconfig eth1 0.0.0.0 promisc up
+# ifconfig eth2 0.0.0.0 promisc up
+/sbin/wpa_supplicant -d wext -i wlan0 -c /etc/wpa_supplicant.conf -B
+
+brctl setfd br0 0
+brctl stp br0 off
+
+# ifconfig br0 up
+
+iptables -t raw -I PREROUTING -j LOG --log-prefix "PRE: "
+iptables -t nat -I POSTROUTING -j LOG --log-prefix "POST: "
+PRE: IN=br0 OUT= PHYSIN=eth0 MAC=ff:ff:ff:ff:ff:ff:60:eb:69:e1:f3:86:08:00 SRC=192.168.7.25 DST=255.255.255.255 LEN=328 TOS=0x00 PREC=0x00 TTL=128 ID=985 PROTO=UDP SPT=68 DPT=67 LEN=308 
+939.405790] POST: IN= OUT=br0 PHYSIN=eth0 PHYSOUT=wlan0 SRC=192.168.7.25 DST=255.255.255.255 LEN=328 TOS=0x00 PREC=0x00 TTL=128 ID=985 PROTO=UDP SPT=68 DPT=67 LEN=308 
+
+Optionally you can configure the virtual interface mybridge to take part in your network.
+# ifconfig br0 200.1.2.3 netmask 255.255.255.0 up
+# route add default gw 200.1.2.254 dev br0
+
+If you want your bridge to automatically get its IP address from the ADSL modem via DHCP (or a similar configuration), do this:
+# dhclient br0
+
+Bridge restrictions:
+    * All devices share the same maximum packet size (MTU). The bridge doesn't fragment packets.
+    * Devices must look like Ethernet. i.e have 6 byte source and destination address.
+    * Support promiscuous operation. The bridge needs to be able to receive all network traffic, not just traffic destined for its own address.
+    * Allow source address spoofing. The bridge must be able to send data over network as if it came from another host.
+
+Many wireless cards don't allow spoofing of the source address.
+drivers for wireless cards available at www.linux-wlan.com
+Doing full bridging of wireless (802.11) requires supporting  WDS
+
+Enable bridging in the kernel compilation: "networking -> 802.1d Ethernet Bridging" to either yes or module
+
+brctl delbr br0  # The network interface corresponding to the bridge must be down before it can be deleted!
+
+brctl show br0  # will show some information on the bridge and its attached ports.
+
+# brctl showmacs br0
+ port no mac addr                is local?       ageing timer
+   1     00:00:4c:9f:0b:ae       no                17.84
+   1     00:00:4c:9f:0b:d2       yes                0.00
+   2     00:00:4c:9f:0b:d3       yes                0.00
+   1     00:02:55:1a:35:09       no                53.84
+   1     00:02:55:1a:82:87       no                11.53
+  ...
+
+The ageing time is the number of seconds a MAC address will be kept in the forwarding database after having received a packet
+from this MAC address.
+
+AGEING
+brctl setageingtime <brname> <time> # sets the ethernet (MAC) address ageing time, in seconds.
+brctl setgcint <brname> <time>      # bridge  will check the forwarding database for timed out entries every <time> seconds.
+Setting ageing time to zero makes all entries permanent.
+
+STP
+Spanning Tree Protocol is used for finding the shortest path between two ethernets and for eliminating loops from the topology.
+Bridges communicate with  each other by sending and receiving BPDUs (Bridge Protocol Data Units).
+These BPDUs can be recognised by an ethernet destination address of 01:80:c2:00:00:00.
+
+message: retransmitting tcn bpdu
+Topology Change Notification Bridge Protocol Data Unit. There is probably another switch (or Linux bridge) nearby that isn't complying to the rules of the spanning tree protocol.
+
+When the topology of a bridged local area network changes (somebody unplugs a cable between two bridges), the bridge which detects this sends a topology change notification to the root bridge. The root bridge will respond to this by setting a 'topology changed' bit in the hello packets it sends out for the next X seconds (X usually being 30). This way, all bridges will learn of the topology change, so that they can take measures like timing out learned MAC entries faster for example.
+If a bridge does not find the 'topology changed' bit set in the hello packets received (which in essence serves as the 'acknowledgment' of the topology change notification), it concludes that the topology change notification was lost. So it will retransmit it.
+
+
+Each interface is associated with a port (number) in the STP code. Each has a priority and a cost, that is used to decide which is the shortest path to forward a packet. The lowest cost path is always used unless the other path is down.
+
+brctl  setbridgeprio  <bridgename> <priority>
+The priority value is an unsigned 16-bit quantity (a number between 0  and 65535).
+Lower priority values are ’better’. The lowest is the root.
+
+brctl setfd <bridgename> <time>. For the first <time> seconds after an interface joins a bridge, it won't send anything. This is because if the bridge is being used to discover other bridges and not create loops.
+brctl sethello <bridgename> <time>. Every <time> seconds a hello packet is sent out by the Root Bridge to communicate information about the topology throughout the entire Bridged Local Area Network.
+brctl setmaxage <bridgename> <time>. If after <time> seconds a another bridge in the spanning tree does not send out a hello packet, it is assumed to be dead.
+brctl setpathcost <bridgename> <port> <cost> sets the port cost of the port <port> to <cost>. Faster interfaces should have lower costs.
+brctl  setportprio  <bridgename>  <port>  <priority>. The priority value is an unsigned  8-bit  quantity (a number between 0 and 255).
+
+
+Transparent Proxy/Webcache
+Firefox > Edit > Preferences > General > "Connection Settings" > "Manual Proxy Configuration" and enter the IP address of your bridge. The port is 3128, unless you have changed it.
+
+# ebtables -t broute -A BROUTING -p IPv4 --ip-protocol 6 --ip-destination-port 80 -j redirect --redirect-target ACCEPT
+Packets passing through the bridge going to port 80 will be redirected to the local machine, instead of being bridged.
+
+# iptables -t nat -A PREROUTING -i br0 -p tcp --dport 80 -j REDIRECT --to-port 3128
+Redirect those packets to local port 3128, so squid can take care of them.
+
+redirect for other machine
+ebtables -t broute -A BROUTING -p IPv4 --ip-protocol 6 --ip-destination-port 80 -j redirect --redirect-target ACCEPT
+iptables -t nat -A PREROUTING -i br0 -p tcp --source ! 192.168.1.10/255.255.255.255 --dport 80 -j DNAT --to-destination 192.168.1.10:8080
+

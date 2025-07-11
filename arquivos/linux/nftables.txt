@@ -1,0 +1,5 @@
+
+iptables (filtragem IP), arptables (filtragem ARP) e ebtables (filtragem MAC/bridge-firewall)
+nftables substitui todas essas ferramentas
+
+man nft

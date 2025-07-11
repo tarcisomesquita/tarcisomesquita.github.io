@@ -1,0 +1,9 @@
+
+sudo iptables -t nat    -I OUTPUT -p tcp --dport 443 -s 127.0.0.1 -j ACCEPT
+sudo iptables -t filter -I INPUT  -p tcp --dport 443 -s 127.0.0.1 -j ACCEPT
+
+tcpdump -n -vvv -r https2.pcap
+sudo nc -vv -n -l -p 443
+wget https://127.0.0.1
+
+

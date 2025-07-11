@@ -1,0 +1,54 @@
+
+Instruction Prefixes
+
+   Instruction prefixes are divided into four groups, each with a set of allowable prefix codes. For each instruction, it is only useful to include up to one prefix code from each of the four groups (Groups 1, 2, 3, 4). Groups 1 through 4 may be placed in any order relative to each other.
+
+•   Group 1
+    — Lock and repeat prefixes:
+         •   LOCK prefix is encoded using F0H
+         •   REPNE/REPNZ prefix is encoded using F2H.
+             Repeat-Not-Zero prefix applies only to string and input/output instructions.
+         •   REP or REPE/REPZ is encoded using F3H.
+             Repeat prefix applies only to string and input/output instructions.
+
+•   Group 2
+    — Segment override prefixes:
+         •   2EH—CS segment override (use with any branch instruction is reserved)
+         •   36H—SS segment override prefix (use with any branch instruction is reserved)
+         •   3EH—DS segment override prefix (use with any branch instruction is reserved)
+         •   26H—ES segment override prefix (use with any branch instruction is reserved)
+         •   64H—FS segment override prefix (use with any branch instruction is reserved)
+         •   65H—GS segment override prefix (use with any branch instruction is reserved)
+    — Branch hints:
+         •   2EH—Branch not taken (used only with Jcc instructions)
+         •   3EH—Branch taken (used only with Jcc instructions)
+
+•   Group 3
+         •   Operand-size override prefix is encoded using 66H
+
+•   Group 4
+         •   67H—Address-size override prefix
+
+
+The LOCK prefix (F0H) forces an operation that ensures exclusive use of shared memory in a multiprocessor environment.
+See “LOCK—Assert LOCK# Signal Prefix” in Chapter 3, “Instruction Set Reference, A-M,”.
+
+Repeat prefixes (F2H, F3H) cause an instruction to be repeated for each element of a string.
+Use these prefixes only with string and I/O instructions (MOVS, CMPS, SCAS, LODS, STOS, INS, and OUTS).
+
+Some instructions may use F2H,F3H as a mandatory prefix to express distinct functionality. A mandatory prefix generally should be placed after other optional prefixes (exception to this is discussed in Section 2.2.1, “REX Prefixes”)
+Branch hint prefixes (2EH, 3EH) allow a program to give a hint to the processor about the most likely code path for a branch. Use these prefixes only with conditional branch instructions (Jcc). Other use of branch hint prefixes and/or other undefined pcodes with Intel 64 or IA-32 instructions is reserved; such use may cause unpredictable behavior.
+
+The operand-size override prefix allows a program to switch between 16- and 32-bit operand sizes. Either size can be the default; use of the prefix selects the non-default size.
+
+Some SSE2/SSE3/SSSE3/SSE4 instructions and instructions using a three-byte
+sequence of primary opcode bytes may use 66H as a mandatory prefix to express
+distinct functionality. A mandatory prefix generally should be placed after other
+optional prefixes (exception to this is discussed in Section 2.2.1, “REX Prefixes”)
+Other use of the 66H prefix is reserved; such use may cause unpredictable behavior.
+The address-size override prefix (67H) allows programs to switch between 16- and
+32-bit addressing. Either size can be the default; the prefix selects the non-default
+size. Using this prefix and/or other undefined opcodes when operands for the instruc-
+tion do not reside in memory is reserved; such use may cause unpredictable
+behavior.
+

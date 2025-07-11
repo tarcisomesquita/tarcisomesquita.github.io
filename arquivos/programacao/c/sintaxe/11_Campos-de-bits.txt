@@ -1,0 +1,37 @@
+Campos de Bits
+
+São um tipo especial de estrutura que podem ser usados para manipular bits específicos dentro de um byte. São úteis quando a memória disponível é limitada ou quando se trabalha em interface com o hardware. Os membros de campos de bits são sempre inteiros sem sinal.
+
+extern int printf(const char *, ...);
+
+int main() {
+  struct bdata {
+    unsigned dia: 5;
+    unsigned mes: 4;
+    unsigned ano: 15;
+  };
+  
+  struct bdata x = { 20, 10, 2021};
+  printf("%lu\n", sizeof(x));
+  printf("%d %d %d\n", x.dia, x.mes, x.ano);
+  
+  return 0;
+}
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+extern int printf(const char *, ...);
+
+int main() {
+  typedef struct {
+    unsigned a: 1;
+    signed   b: 3;
+    unsigned c: 3;
+  } amostra;
+  
+  amostra x = { 1, 7, 7};
+  printf("%lu\n", sizeof(x));
+  printf("%d %d %d\n", x.a, x.b, x.c);
+  
+  return 0;
+}

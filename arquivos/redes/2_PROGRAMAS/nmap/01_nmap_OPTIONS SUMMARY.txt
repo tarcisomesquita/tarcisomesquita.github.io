@@ -1,0 +1,10 @@
+
+OPTIONS SUMMARY
+           Nmap 4.76 ( http://nmap.org )
+           Usage: nmap [Scan Type(s)] [Options] {target specification}
+
+           EXAMPLES:
+             nmap -v -A scanme.nmap.org
+             nmap -v -sP 192.168.0.0/16 10.0.0.0/8
+             nmap -v -iR 10000 -PN -p 80
+

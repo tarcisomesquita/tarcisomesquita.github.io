@@ -1,0 +1,104 @@
+
+Read Keyboard Input (00h)
+
+wait until a keystroke arrives
+
+for function keys and ALT keys the ASCII code returned is zero
+
+Input Parameters:
+       AH - 00h, indicating the Read Keyboard Input Function.
+
+Output Parameters:
+       AH - Scan code of the returned keystroke.
+       AL - ASCII code for the returned keystroke.
+
+
+
+// int console_getkey (void)
+// "INT 16H Function 00H" to read character from keyboard
+//  Return:      %ah = keyboard scan code
+//         %al = ASCII character
+
+.globl console_getkey
+console_getkey:
+   push   %ebp
+   
+   call   prot_to_real
+   .code16
+   
+   int   $0x16
+   
+   movw   %ax, %dx               // real_to_prot uses %eax
+   call   translate_keycode
+   call   remap_ascii_char
+   
+   data32   call   real_to_prot
+   .code32
+   
+   movw   %dx, %ax
+   
+   pop   %ebp
+   ret
+
+   .code16
+
+
+translation_table:
+   .word   KEY_LEFT, 2
+   .word   KEY_RIGHT, 6
+   .word   KEY_UP, 16
+   .word   KEY_DOWN, 14
+   .word   KEY_HOME, 1
+   .word   KEY_END, 5
+   .word   KEY_DC, 4
+   .word   KEY_BACKSPACE, 8
+   .word   KEY_PPAGE, 7
+   .word   KEY_NPAGE, 3
+   .word   0
+
+translate_keycode:
+   pushw   %bx
+   pushw   %si
+   
+   movw   $(translation_table), %si
+   
+1:   lodsw
+   /* check if this is the end */
+   testw   %ax, %ax
+   jz   2f
+   /* load the ascii code into %ax */
+   movw   %ax, %bx
+   lodsw
+   /* check if this matches the key code */
+   cmpw   %bx, %dx
+   jne   1b
+   /* translate %dx, if successful */
+   movw   %ax, %dx
+   
+2:   popw   %si
+   popw   %bx
+   ret
+
+
+// remap_ascii_char remaps the ascii code %dl to another if the code is contained in ASCII_KEY_MAP.
+remap_ascii_char:
+   pushw   %si
+   
+   movw   $(ascii_key_map), %si
+1:
+   lodsw
+   /* check if this is the end */
+   testw   %ax, %ax
+   jz   2f
+   /* check if this matches the ascii code */
+   cmpb   %al, %dl
+   jne   1b
+   /* if so, perform the mapping */
+   movb   %ah, %dl
+2:
+   /* restore %si */
+   popw   %si
+   
+   ret
+   
+

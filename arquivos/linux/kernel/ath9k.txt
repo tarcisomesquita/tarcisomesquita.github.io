@@ -1,0 +1,13 @@
+ath9k
+
+Networking  --->
+  Wireless  --->
+    <M> Improved wireless configuration API
+    <M> Generic IEEE 802.11 Networking Stack (mac80211)
+
+Device Drivers  --->
+  [*] Network device support  --->
+        Wireless LAN  --->
+          Atheros Wireless Cards ---->
+            <M>   Atheros 802.11n wireless cards support
+

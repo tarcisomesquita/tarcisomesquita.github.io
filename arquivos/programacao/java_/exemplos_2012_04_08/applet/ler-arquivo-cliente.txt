@@ -1,0 +1,6 @@
+    * When launched by using JNLP, sandbox applets can also perform the following operations:
+          o They can open, read, and save files on the client.
+          o They can access the shared system-wide clipboard.
+          o They can access printing functions.
+          o They can store data on the client, decide how applets should be downloaded and cached, and much more. See JNLP API for more information about developing applets by using the JNLP API.
+

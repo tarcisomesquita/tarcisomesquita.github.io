@@ -1,0 +1,67 @@
+
+CALL instruction pushes the address in the EIP register onto the current stack and put in EIP the address of the function called.
+
+call 0x7c00
+equivale à:
+push IP
+mov IP,0x7c00
+
+Returning from a called procedure, the RET instruction pops the return-instruction pointer from the stack back into the EIP register.
+
+If the EBP register is loaded with the stack pointer immediately following a procedure call, it should point to the return instruction pointer on the stack.
+
+
+CALL – Call Procedure (in same segment)
+ direct                                  1110 1000 : full displacement
+ register indirect                       1111 1111 : 11 010 reg
+ memory indirect                         1111 1111 : mod 010 r/m
+CALL – Call Procedure (in other segment)
+ direct                                  1001 1010 : unsigned full offset, selector
+ indirect                                1111 1111 : mod 011 r/m
+
+near call: in same segment
+far call: in other segment
+
+
+PASSING PARAMETERS
+A calling procedure can thus pass up to six parameters to the called procedure by copying the parameters into any of General-Purpose registers (except the ESP and EBP registers) prior to executing the CALL instruction.
+
+Pode-se armazenar os parâmetros na memória e passar o endereço para o procedimento.
+
+Pode-se usar a pilha, que pode ser de acordo com as convenções abaixo.
+
+Pascal Calling Convention,
+
+1. The caller passes parameters to the callee by pushing them onto the stack
+   in left to right order, and then calls the function. Thus, the calling se-
+   quence for a function fun(A, B, C) will be
+         push  A
+         push  B
+         push  C
+         call  fun
+2. The callee is responsible for removing the parameters from the stack at
+   the time the function is returning. This is accomplished by the hardware
+   instruction
+         ret x
+   where x is the number of bytes occupied by all the parameters on the
+   stack.
+
+
+C calling convention,
+
+1. The caller passes parameters to the callee by pushing them onto the stack
+   in right to left order, and then calls the function. Upon the function’s
+   return, the caller removes the previously pushed parameters from the stack
+   by adding to the stack pointer a number equal to the total number of bytes of memory occupied by the parameters. For
+   example, to call the function fun(A, B, C) the caller would execute the
+   following calling sequence:
+         push C
+         push B
+         push A
+         call fun
+         add $12, %esp
+2. The callee returns by executing a simple
+         ret
+   instruction. It is the responsibility of the caller to remove the parameters
+   from the stack.
+

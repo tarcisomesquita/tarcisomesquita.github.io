@@ -1,0 +1,762 @@
+
+5.1.9
+I/O Instructions
+These instructions move data between the processor’s I/O ports and a register or memory.
+IN Read from a port
+OUT Write to a port
+INS/INSB Input string from port/Input byte string from port
+INS/INSW Input string from port/Input word string from port
+INS/INSD Input string from port/Input doubleword string from port
+OUTS/OUTSB Output string to port/Output byte string to port
+OUTS/OUTSW Output string to port/Output word string to port
+OUTS/OUTSD Output string to port/Output doubleword string to port
+
+7.3.10
+I/O Instructions
+The IN (input from port to register), INS (input from port to string), OUT (output from register to port), and OUTS
+(output string to port) instructions move data between the processor’s I/O ports and either a register or memory.
+The register I/O instructions (IN and OUT) move data between an I/O port and the EAX register (32-bit I/O), the
+AX register (16-bit I/O), or the AL (8-bit I/O) register. The I/O port being read or written to is specified with an
+immediate operand or an address in the DX register.
+The block I/O instructions (INS and OUTS) instructions move blocks of data (strings) between an I/O port and
+memory. These instructions operate similar to the string instructions (see Section 7.3.9, “String Operations”). The
+ESI and EDI registers are used to specify string elements in memory and the repeat prefix (REP) is used to repeat
+the instructions to implement block moves. The assembler recognizes the following alternate mnemonics for these
+instructions: INSB (input byte), INSW (input word), and INSD (input doubleword), and OUTSB (output byte),
+OUTSW (output word), and OUTSD (output doubleword).
+The INS and OUTS instructions use an address in the DX register to specify the I/O port to be read or written to.
+7.3.11
+I/O Instructions in 64-Bit Mode
+For I/O instructions to and from memory, the differences in 64-bit mode are:
+•
+• The source operand is specified by RSI or DS:ESI, depending on the address size attribute of the operation.
+• Operation on 64-bit data is not encodable and REX prefixes are silently ignored.
+The destination operand is specified by RDI or DS:EDI, depending on the address size attribute of the
+operation.
+7-20 Vol. 1
+
+
+CHAPTER 16
+INPUT/OUTPUT
+I/O ports are created in system hardware by circuity that decodes the control, data, and address pins on the processor.
+I/O port can be an input port, an output port, or a bidirectional port.
+
+16.1
+I/O PORT ADDRESSING
+I/O ports can be mapped so that they appear in the I/O address space or the physical-memory address space (memory mapped I/O) or both.
+
+Accessing I/O ports through memory-mapped I/O is handled with the processor’s general purpose move and string instructions, with protection provided through segmentation or paging.
+
+One benefit of using the I/O address space is that writes to I/O ports are guaranteed to be completed before the next instruction in the instruction stream is executed. Thus, I/O writes to control system hardware cause the hardware to be set to its new state before any other instructions are executed.
+
+16.3
+I/O ADDRESS SPACE
+The processor’s I/O address space is separate and distinct from the physical-memory address space. The I/O
+address space consists of 2 16 (64K) individually addressable 8-bit I/O ports, numbered 0 through FFFFH. I/O port
+addresses 0F8H through 0FFH are reserved. Do not assign I/O ports to these addresses. The result of an attempt
+to address beyond the I/O address space limit of FFFFH is implementation-specific; see the Developer’s Manuals for
+specific processors for more details.
+Any two consecutive 8-bit ports can be treated as a 16-bit port, and any four consecutive ports can be a 32-bit port.
+In this manner, the processor can transfer 8, 16, or 32 bits to or from a device in the I/O address space. Like words
+in memory, 16-bit ports should be aligned to even addresses (0, 2, 4, ...) so that all 16 bits can be transferred in a
+Vol. 1 16-1INPUT/OUTPUT
+single bus cycle. Likewise, 32-bit ports should be aligned to addresses that are multiples of four (0, 4, 8, ...). The
+processor supports data transfers to unaligned ports, but there is a performance penalty because one or more
+extra bus cycle must be used.
+The exact order of bus cycles used to access unaligned ports is undefined and is not guaranteed to remain the same
+in future IA-32 processors. If hardware or software requires that I/O ports be written to in a particular order, that
+order must be specified explicitly. For example, to load a word-length I/O port at address 2H and then another word
+port at 4H, two word-length writes must be used, rather than a single doubleword write at 2H.
+Note that the processor does not mask parity errors for bus cycles to the I/O address space. Accessing I/O ports
+through the I/O address space is thus a possible source of parity errors.
+16.3.1
+Memory-Mapped I/O
+I/O devices that respond like memory components can be accessed through the processor’s physical-memory
+address space (see Figure 16-1). When using memory-mapped I/O, any of the processor’s instructions that refer-
+ence memory can be used to access an I/O port located at a physical-memory address. For example, the MOV
+instruction can transfer data between any register and a memory-mapped I/O port. The AND, OR, and TEST
+instructions may be used to manipulate bits in the control and status registers of a memory-mapped peripheral
+device.
+When using memory-mapped I/O, caching of the address space mapped for I/O operations must be prevented.
+With the Pentium 4, Intel Xeon, and P6 family processors, caching of I/O accesses can be prevented by using
+memory type range registers (MTRRs) to map the address space used for the memory-mapped I/O as uncacheable
+(UC). See Chapter 11, “Memory Cache Control” in the Intel® 64 and IA-32 Architectures Software Developer’s
+Manual, Volume 3A, for a complete discussion of the MTRRs.
+The Pentium and Intel486 processors do not support MTRRs. Instead, they provide the KEN# pin, which when held
+inactive (high) prevents caching of all addresses sent out on the system bus. To use this pin, external address
+decoding logic is required to block caching in specific address spaces.
+Physical Memory
+FFFF
+EPROM
+I/O Port
+I/O Port
+I/O Port
+RAM
+0
+Figure 16-1. Memory-Mapped I/O
+All the IA-32 processors that have on-chip caches also provide the PCD (page-level cache disable) flag in page table
+and page directory entries. This flag allows caching to be disabled on a page-by-page basis. See “Page-Directory
+and Page-Table Entries” in Chapter 4 of in the Intel® 64 and IA-32 Architectures Software Developer’s Manual,
+Volume 3A.
+16-2 Vol. 1INPUT/OUTPUT
+16.4
+I/O INSTRUCTIONS
+The processor’s I/O instructions provide access to I/O ports through the I/O address space. (These instructions
+cannot be used to access memory-mapped I/O ports.) There are two groups of I/O instructions:
+• Those that transfer a single item (byte, word, or doubleword) between an I/O port and a general-purpose
+register
+• Those that transfer strings of items (strings of bytes, words, or doublewords) between an I/O port and memory
+The register I/O instructions IN (input from I/O port) and OUT (output to I/O port) move data between I/O ports
+and the EAX register (32-bit I/O), the AX register (16-bit I/O), or the AL (8-bit I/O) register. The address of the I/O
+port can be given with an immediate value or a value in the DX register.
+The string I/O instructions INS (input string from I/O port) and OUTS (output string to I/O port) move data
+between an I/O port and a memory location. The address of the I/O port being accessed is given in the DX register;
+the source or destination memory address is given in the DS:ESI or ES:EDI register, respectively.
+When used with the repeat prefix REP, the INS and OUTS instructions perform string (or block) input or output
+operations. The repeat prefix REP modifies the INS and OUTS instructions to transfer blocks of data between an I/O
+port and memory. Here, the ESI or EDI register is incremented or decremented (according to the setting of the DF
+flag in the EFLAGS register) after each byte, word, or doubleword is transferred between the selected I/O port and
+memory.
+See the references for IN, INS, OUT, and OUTS in Chapter 3 and Chapter 4 of the Intel® 64 and IA-32 Architectures
+Software Developer’s Manual, Volumes 2A & 2B, for more information on these instructions.
+16.5
+PROTECTED-MODE I/O
+When the processor is running in protected mode, the following protection mechanisms regulate access to I/O
+ports:
+•
+When accessing I/O ports through the I/O address space, two protection devices control access:
+— The I/O privilege level (IOPL) field in the EFLAGS register
+— The I/O permission bit map of a task state segment (TSS)
+•
+When accessing memory-mapped I/O ports, the normal segmentation and paging protection and the MTRRs
+(in processors that support them) also affect access to I/O ports. See Chapter 5, “Protection” and Chapter 11,
+“Memory Cache Control” in the Intel® 64 and IA-32 Architectures Software Developer’s Manual, Volume 3A,
+for a complete discussion of memory protection.
+The following sections describe the protection mechanisms available when accessing I/O ports in the I/O address
+space with the I/O instructions.
+16.5.1
+I/O Privilege Level
+In systems where I/O protection is used, the IOPL field in the EFLAGS register controls access to the I/O address
+space by restricting use of selected instructions. This protection mechanism permits the operating system or exec-
+utive to set the privilege level needed to perform I/O. In a typical protection ring model, access to the I/O address
+space is restricted to privilege levels 0 and 1. Here, the kernel and the device drivers are allowed to perform I/O,
+while less privileged device drivers and application programs are denied access to the I/O address space. Applica-
+tion programs must then make calls to the operating system to perform I/O.
+The following instructions can be executed only if the current privilege level (CPL) of the program or task currently
+executing is less than or equal to the IOPL: IN, INS, OUT, OUTS, CLI (clear interrupt-enable flag), and STI (set
+interrupt-enable flag). These instructions are called I/O sensitive instructions, because they are sensitive to the
+IOPL field. Any attempt by a less privileged program or task to use an I/O sensitive instruction results in a general-
+protection exception (#GP) being signaled. Because each task has its own copy of the EFLAGS register, each task
+can have a different IOPL.
+Vol. 1 16-3INPUT/OUTPUT
+The I/O permission bit map in the TSS can be used to modify the effect of the IOPL on I/O sensitive instructions,
+allowing access to some I/O ports by less privileged programs or tasks (see Section 16.5.2, “I/O Permission Bit
+Map”).
+A program or task can change its IOPL only with the POPF and IRET instructions; however, such changes are privi-
+leged. No procedure may change the current IOPL unless it is running at privilege level 0. An attempt by a less priv-
+ileged procedure to change the IOPL does not result in an exception; the IOPL simply remains unchanged.
+The POPF instruction also may be used to change the state of the IF flag (as can the CLI and STI instructions);
+however, the POPF instruction in this case is also I/O sensitive. A procedure may use the POPF instruction to change
+the setting of the IF flag only if the CPL is less than or equal to the current IOPL. An attempt by a less privileged
+procedure to change the IF flag does not result in an exception; the IF flag simply remains unchanged.
+16.5.2
+I/O Permission Bit Map
+The I/O permission bit map is a device for permitting limited access to I/O ports by less privileged programs or
+tasks and for tasks operating in virtual-8086 mode. The I/O permission bit map is located in the TSS (see
+Figure 16-2) for the currently running task or program. The address of the first byte of the I/O permission bit map
+is given in the I/O map base address field of the TSS. The size of the I/O permission bit map and its location in the
+TSS are variable.
+Task State Segment (TSS)
+Last byte of
+bitmap must be
+followed by a
+byte with all
+bits set.
+I/O map base
+must not
+exceed DFFFH.
+31
+24 23
+0
+1 1 1 1 1 1 1 1
+I/O Permission Bit Map
+I/O Map Base
+64H
+0
+Figure 16-2. I/O Permission Bit Map
+Because each task has its own TSS, each task has its own I/O permission bit map. Access to individual I/O ports
+can thus be granted to individual tasks.
+If in protected mode and the CPL is less than or equal to the current IOPL, the processor allows all I/O operations
+to proceed. If the CPL is greater than the IOPL or if the processor is operating in virtual-8086 mode, the processor
+checks the I/O permission bit map to determine if access to a particular I/O port is allowed. Each bit in the map
+corresponds to an I/O port byte address. For example, the control bit for I/O port address 29H in the I/O address
+space is found at bit position 1 of the sixth byte in the bit map. Before granting I/O access, the processor tests all
+the bits corresponding to the I/O port being addressed. For a doubleword access, for example, the processors tests
+the four bits corresponding to the four adjacent 8-bit port addresses. If any tested bit is set, a general-protection
+exception (#GP) is signaled. If all tested bits are clear, the I/O operation is allowed to proceed.
+Because I/O port addresses are not necessarily aligned to word and doubleword boundaries, the processor reads
+two bytes from the I/O permission bit map for every access to an I/O port. To prevent exceptions from being gener-
+ated when the ports with the highest addresses are accessed, an extra byte needs to be included in the TSS imme-
+diately after the table. This byte must have all of its bits set, and it must be within the segment limit.
+It is not necessary for the I/O permission bit map to represent all the I/O addresses. I/O addresses not spanned by
+the map are treated as if they had set bits in the map. For example, if the TSS segment limit is 10 bytes past the
+16-4 Vol. 1INPUT/OUTPUT
+bit-map base address, the map has 11 bytes and the first 80 I/O ports are mapped. Higher addresses in the I/O
+address space generate exceptions.
+If the I/O bit map base address is greater than or equal to the TSS segment limit, there is no I/O permission map,
+and all I/O instructions generate exceptions when the CPL is greater than the current IOPL.
+16.6
+ORDERING I/O
+When controlling I/O devices it is often important that memory and I/O operations be carried out in precisely the
+order programmed. For example, a program may write a command to an I/O port, then read the status of the I/O
+device from another I/O port. It is important that the status returned be the status of the device after it receives
+the command, not before.
+When using memory-mapped I/O, caution should be taken to avoid situations in which the programmed order is
+not preserved by the processor. To optimize performance, the processor allows cacheable memory reads to be
+reordered ahead of buffered writes in most situations. Internally, processor reads (cache hits) can be reordered
+around buffered writes. When using memory-mapped I/O, therefore, it is possible that an I/O read might be
+performed before the memory write of a previous instruction. The recommended method of enforcing program
+ordering of memory-mapped I/O accesses with the Pentium 4, Intel Xeon, and P6 family processors is to use the
+MTRRs to make the memory mapped I/O address space uncacheable; for the Pentium and Intel486 processors,
+either the KEN# pin or the PCD flags can be used for this purpose (see Section 16.3.1, “Memory-Mapped I/O”).
+When the target of a read or write is in an uncacheable region of memory, memory reordering does not occur
+externally at the processor’s pins (that is, reads and writes appear in-order). Designating a memory mapped I/O
+region of the address space as uncacheable insures that reads and writes of I/O devices are carried out in program
+order. See Chapter 11, “Memory Cache Control” in the Intel® 64 and IA-32 Architectures Software Developer’s
+Manual, Volume 3A, for more information on using MTRRs.
+Another method of enforcing program order is to insert one of the serializing instructions, such as the CPUID
+instruction, between operations. See Chapter 8, “Multiple-Processor Management” in the Intel® 64 and IA-32
+Architectures Software Developer’s Manual, Volume 3A, for more information on serialization of instructions.
+It should be noted that the chip set being used to support the processor (bus controller, memory controller, and/or
+I/O controller) may post writes to uncacheable memory which can lead to out-of-order execution of memory
+accesses. In situations where out-of-order processing of memory accesses by the chip set can potentially cause
+faulty memory-mapped I/O processing, code must be written to force synchronization and ordering of I/O opera-
+tions. Serializing instructions can often be used for this purpose.
+When the I/O address space is used instead of memory-mapped I/O, the situation is different in two respects:
+• The processor never buffers I/O writes. Therefore, strict ordering of I/O operations is enforced by the
+processor. (As with memory-mapped I/O, it is possible for a chip set to post writes in certain I/O ranges.)
+• The processor synchronizes I/O instruction execution with external bus activity (see Table 16-1).
+Table 16-1. I/O Instruction Serialization
+Instruction Being
+Executed
+Processor Delays Execution of ... Until Completion of ...
+Current Instruction? Pending Stores?
+Next Instruction?
+IN Yes Yes
+INS Yes Yes
+REP INS Yes Yes
+Current Store?
+OUT Yes Yes Yes
+OUTS Yes Yes Yes
+REP OUTS Yes Yes Yes
+Vol. 1 16-5INPUT/OUTPUT
+
+
+
+IN—Input from Port
+Opcode Instruction Op/
+En 64-Bit
+Mode Compat/ Description
+Leg Mode
+E4 ib IN AL, imm8 I Valid Valid Input byte from imm8 I/O port address into
+AL.
+E5 ib IN AX, imm8 I Valid Valid Input word from imm8 I/O port address into
+AX.
+E5 ib IN EAX, imm8 I Valid Valid Input dword from imm8 I/O port address into
+EAX.
+EC IN AL,DX NP Valid Valid Input byte from I/O port in DX into AL.
+ED IN AX,DX NP Valid Valid Input word from I/O port in DX into AX.
+ED IN EAX,DX NP Valid Valid Input doubleword from I/O port in DX into
+EAX.
+Instruction Operand Encoding
+Op/En Operand 1 Operand 2 Operand 3 Operand 4
+I imm8 NA NA NA
+NP NA NA NA NA
+Description
+Copies the value from the I/O port specified with the second operand (source operand) to the destination operand
+(first operand). The source operand can be a byte-immediate or the DX register; the destination operand can be
+register AL, AX, or EAX, depending on the size of the port being accessed (8, 16, or 32 bits, respectively). Using the
+DX register as a source operand allows I/O port addresses from 0 to 65,535 to be accessed; using a byte imme-
+diate allows I/O port addresses 0 to 255 to be accessed.
+When accessing an 8-bit I/O port, the opcode determines the port size; when accessing a 16- and 32-bit I/O port,
+the operand-size attribute determines the port size. At the machine code level, I/O instructions are shorter when
+accessing 8-bit I/O ports. Here, the upper eight bits of the port address will be 0.
+This instruction is only useful for accessing I/O ports located in the processor’s I/O address space. See Chapter 16,
+“Input/Output,” in the Intel® 64 and IA-32 Architectures Software Developer’s Manual, Volume 1, for more infor-
+mation on accessing I/O ports in the I/O address space.
+This instruction’s operation is the same in non-64-bit modes and 64-bit mode.
+Operation
+IF ((PE = 1) and ((CPL > IOPL) or (VM = 1)))
+THEN (* Protected mode with CPL > IOPL or virtual-8086 mode *)
+IF (Any I/O Permission Bit for I/O port being accessed = 1)
+THEN (* I/O operation is not allowed *)
+#GP(0);
+ELSE ( * I/O operation is allowed *)
+DEST ← SRC; (* Read from selected I/O port *)
+FI;
+ELSE (Real Mode or Protected Mode with CPL ≤ IOPL *)
+DEST ← SRC; (* Read from selected I/O port *)
+FI;
+Flags Affected
+None.
+IN—Input from Port
+Vol. 2A 3-401INSTRUCTION SET REFERENCE, A-M
+Protected Mode Exceptions
+#GP(0) If the CPL is greater than (has less privilege) the I/O privilege level (IOPL) and any of the
+corresponding I/O permission bits in TSS for the I/O port being accessed is 1.
+#UD If the LOCK prefix is used.
+Real-Address Mode Exceptions
+#UD
+If the LOCK prefix is used.
+Virtual-8086 Mode Exceptions
+#GP(0) If any of the I/O permission bits in the TSS for the I/O port being accessed is 1.
+#PF(fault-code) If a page fault occurs.
+#UD If the LOCK prefix is used.
+Compatibility Mode Exceptions
+Same exceptions as in protected mode.
+64-Bit Mode Exceptions
+#GP(0) If the CPL is greater than (has less privilege) the I/O privilege level (IOPL) and any of the
+corresponding I/O permission bits in TSS for the I/O port being accessed is 1.
+#UD If the LOCK prefix is used.
+
+
+
+INS/INSB/INSW/INSD—Input from Port to String
+Opcode Instruction Op/
+En 64-Bit
+Mode Compat/ Description
+Leg Mode
+6C INS m8, DX NP Valid Valid Input byte from I/O port specified in DX into
+memory location specified in ES:(E)DI or RDI.*
+6D INS m16, DX NP Valid Valid Input word from I/O port specified in DX into
+memory location specified in ES:(E)DI or RDI. 1
+6D INS m32, DX NP Valid Valid Input doubleword from I/O port specified in DX
+into memory location specified in ES:(E)DI or
+RDI. 1
+6C INSB NP Valid Valid Input byte from I/O port specified in DX into
+memory location specified with ES:(E)DI or
+RDI. 1
+6D INSW NP Valid Valid Input word from I/O port specified in DX into
+memory location specified in ES:(E)DI or RDI. 1
+6D INSD NP Valid Valid Input doubleword from I/O port specified in DX
+into memory location specified in ES:(E)DI or
+RDI. 1
+NOTES:
+* In 64-bit mode, only 64-bit (RDI) and 32-bit (EDI) address sizes are supported. In non-64-bit mode, only 32-bit (EDI) and 16-bit (DI)
+address sizes are supported.
+Instruction Operand Encoding
+Op/En Operand 1 Operand 2 Operand 3 Operand 4
+NP NA NA NA NA
+Description
+Copies the data from the I/O port specified with the source operand (second operand) to the destination operand
+(first operand). The source operand is an I/O port address (from 0 to 65,535) that is read from the DX register. The
+destination operand is a memory location, the address of which is read from either the ES:DI, ES:EDI or the RDI
+registers (depending on the address-size attribute of the instruction, 16, 32 or 64, respectively). (The ES segment
+cannot be overridden with a segment override prefix.) The size of the I/O port being accessed (that is, the size of
+the source and destination operands) is determined by the opcode for an 8-bit I/O port or by the operand-size attri-
+bute of the instruction for a 16- or 32-bit I/O port.
+At the assembly-code level, two forms of this instruction are allowed: the “explicit-operands” form and the “no-
+operands” form. The explicit-operands form (specified with the INS mnemonic) allows the source and destination
+operands to be specified explicitly. Here, the source operand must be “DX,” and the destination operand should be
+a symbol that indicates the size of the I/O port and the destination address. This explicit-operands form is provided
+to allow documentation; however, note that the documentation provided by this form can be misleading. That is,
+the destination operand symbol must specify the correct type (size) of the operand (byte, word, or doubleword),
+but it does not have to specify the correct location. The location is always specified by the ES:(E)DI registers,
+which must be loaded correctly before the INS instruction is executed.
+The no-operands form provides “short forms” of the byte, word, and doubleword versions of the INS instructions.
+Here also DX is assumed by the processor to be the source operand and ES:(E)DI is assumed to be the destination
+operand. The size of the I/O port is specified with the choice of mnemonic: INSB (byte), INSW (word), or INSD
+(doubleword).
+After the byte, word, or doubleword is transfer from the I/O port to the memory location, the DI/EDI/RDI register
+is incremented or decremented automatically according to the setting of the DF flag in the EFLAGS register. (If the
+DF flag is 0, the (E)DI register is incremented; if the DF flag is 1, the (E)DI register is decremented.) The (E)DI
+register is incremented or decremented by 1 for byte operations, by 2 for word operations, or by 4 for doubleword
+operations.
+INS/INSB/INSW/INSD—Input from Port to String
+Vol. 2A 3-405INSTRUCTION SET REFERENCE, A-M
+The INS, INSB, INSW, and INSD instructions can be preceded by the REP prefix for block input of ECX bytes, words,
+or doublewords. See “REP/REPE/REPZ /REPNE/REPNZ—Repeat String Operation Prefix” in Chapter 4 of the Intel®
+64 and IA-32 Architectures Software Developer’s Manual, Volume 2B, for a description of the REP prefix.
+These instructions are only useful for accessing I/O ports located in the processor’s I/O address space. See Chapter
+16, “Input/Output,” in the Intel® 64 and IA-32 Architectures Software Developer’s Manual, Volume 1, for more
+information on accessing I/O ports in the I/O address space.
+In 64-bit mode, default address size is 64 bits, 32 bit address size is supported using the prefix 67H. The address
+of the memory destination is specified by RDI or EDI. 16-bit address size is not supported in 64-bit mode. The
+operand size is not promoted.
+Operation
+IF ((PE = 1) and ((CPL > IOPL) or (VM = 1)))
+THEN (* Protected mode with CPL > IOPL or virtual-8086 mode *)
+IF (Any I/O Permission Bit for I/O port being accessed = 1)
+THEN (* I/O operation is not allowed *)
+#GP(0);
+ELSE (* I/O operation is allowed *)
+DEST ← SRC; (* Read from I/O port *)
+FI;
+ELSE (Real Mode or Protected Mode with CPL IOPL *)
+DEST ← SRC; (* Read from I/O port *)
+FI;
+Non-64-bit Mode:
+IF (Byte transfer)
+THEN IF DF = 0
+THEN (E)DI ← (E)DI + 1;
+ELSE (E)DI ← (E)DI – 1; FI;
+ELSE IF (Word transfer)
+THEN IF DF = 0
+THEN (E)DI ← (E)DI + 2;
+ELSE (E)DI ← (E)DI – 2; FI;
+ELSE (* Doubleword transfer *)
+THEN IF DF = 0
+THEN (E)DI ← (E)DI + 4;
+ELSE (E)DI ← (E)DI – 4; FI;
+FI;
+FI;
+FI64-bit Mode:
+IF (Byte transfer)
+THEN IF DF = 0
+THEN (E|R)DI ← (E|R)DI + 1;
+ELSE (E|R)DI ← (E|R)DI – 1; FI;
+ELSE IF (Word transfer)
+THEN IF DF = 0
+THEN (E)DI ← (E)DI + 2;
+ELSE (E)DI ← (E)DI – 2; FI;
+ELSE (* Doubleword transfer *)
+THEN IF DF = 0
+THEN (E|R)DI ← (E|R)DI + 4;
+ELSE (E|R)DI ← (E|R)DI – 4; FI;
+3-406 Vol. 2A
+INS/INSB/INSW/INSD—Input from Port to StringINSTRUCTION SET REFERENCE, A-M
+FI;
+FI;
+Flags Affected
+None.
+Protected Mode Exceptions
+#GP(0)
+If the CPL is greater than (has less privilege) the I/O privilege level (IOPL) and any of the
+corresponding I/O permission bits in TSS for the I/O port being accessed is 1.
+If the destination is located in a non-writable segment.
+If an illegal memory operand effective address in the ES segments is given.
+#PF(fault-code) If a page fault occurs.
+#AC(0) If alignment checking is enabled and an unaligned memory reference is made while the
+current privilege level is 3.
+#UD If the LOCK prefix is used.
+Real-Address Mode Exceptions
+#GP
+If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
+#SS If a memory operand effective address is outside the SS segment limit.
+#UD If the LOCK prefix is used.
+Virtual-8086 Mode Exceptions
+#GP(0) If any of the I/O permission bits in the TSS for the I/O port being accessed is 1.
+#PF(fault-code) If a page fault occurs.
+#AC(0) If alignment checking is enabled and an unaligned memory reference is made.
+#UD If the LOCK prefix is used.
+Compatibility Mode Exceptions
+Same exceptions as in protected mode.
+64-Bit Mode Exceptions
+#SS(0) If a memory address referencing the SS segment is in a non-canonical form.
+#GP(0) If the CPL is greater than (has less privilege) the I/O privilege level (IOPL) and any of the
+corresponding I/O permission bits in TSS for the I/O port being accessed is 1.
+If the memory address is in a non-canonical form.
+#PF(fault-code) If a page fault occurs.
+#AC(0) If alignment checking is enabled and an unaligned memory reference is made while the
+current privilege level is 3.
+#UD If the LOCK prefix is used.
+
+
+OUT—Output to Port
+Opcode* Instruction Op/
+En 64-Bit
+Mode Compat/ Description
+Leg Mode
+E6 ib OUT imm8, AL I Valid Valid E7 ib OUT imm8, AX I Valid Valid Output word in AX to I/O port address imm8.
+E7 ib OUT imm8, EAX I Valid Valid Output doubleword in EAX to I/O port address
+imm8.
+EE OUT DX, AL NP Valid Valid Output byte in AL to I/O port address in DX.
+EF OUT DX, AX NP Valid Valid Output word in AX to I/O port address in DX.
+EF OUT DX, EAX NP Valid Valid Output doubleword in EAX to I/O port address
+in DX.
+Output byte in AL to I/O port address imm8.
+NOTES:
+* See IA-32 Architecture Compatibility section below.
+Instruction Operand Encoding
+Op/En Operand 1 Operand 2 Operand 3 Operand 4
+I imm8 NA NA NA
+NP NA NA NA NA
+Description
+Copies the value from the second operand (source operand) to the I/O port specified with the destination operand
+(first operand). The source operand can be register AL, AX, or EAX, depending on the size of the port being
+accessed (8, 16, or 32 bits, respectively); the destination operand can be a byte-immediate or the DX register.
+Using a byte immediate allows I/O port addresses 0 to 255 to be accessed; using the DX register as a source
+operand allows I/O ports from 0 to 65,535 to be accessed.
+The size of the I/O port being accessed is determined by the opcode for an 8-bit I/O port or by the operand-size
+attribute of the instruction for a 16- or 32-bit I/O port.
+At the machine code level, I/O instructions are shorter when accessing 8-bit I/O ports. Here, the upper eight bits
+of the port address will be 0.
+This instruction is only useful for accessing I/O ports located in the processor’s I/O address space. See Chapter 16,
+“Input/Output,” in the Intel® 64 and IA-32 Architectures Software Developer’s Manual, Volume 1, for more infor-
+mation on accessing I/O ports in the I/O address space.
+This instruction’s operation is the same in non-64-bit modes and 64-bit mode.
+IA-32 Architecture Compatibility
+After executing an OUT instruction, the Pentium ® processor ensures that the EWBE# pin has been sampled active
+before it begins to execute the next instruction. (Note that the instruction can be prefetched if EWBE# is not active,
+but it will not be executed until the EWBE# pin is sampled active.) Only the Pentium processor family has the
+EWBE# pin.
+OUT—Output to Port
+Vol. 2B 4-17INSTRUCTION SET REFERENCE, N-Z
+Operation
+IF ((PE = 1) and ((CPL > IOPL) or (VM = 1)))
+THEN (* Protected mode with CPL > IOPL or virtual-8086 mode *)
+IF (Any I/O Permission Bit for I/O port being accessed = 1)
+THEN (* I/O operation is not allowed *)
+#GP(0);
+ELSE ( * I/O operation is allowed *)
+DEST ← SRC; (* Writes to selected I/O port *)
+FI;
+ELSE (Real Mode or Protected Mode with CPL ≤ IOPL *)
+DEST ← SRC; (* Writes to selected I/O port *)
+FI;
+Flags Affected
+None.
+Protected Mode Exceptions
+#GP(0) If the CPL is greater than (has less privilege) the I/O privilege level (IOPL) and any of the
+corresponding I/O permission bits in TSS for the I/O port being accessed is 1.
+#UD If the LOCK prefix is used.
+Real-Address Mode Exceptions
+#UD
+If the LOCK prefix is used.
+Virtual-8086 Mode Exceptions
+#GP(0) If any of the I/O permission bits in the TSS for the I/O port being accessed is 1.
+#PF(fault-code) If a page fault occurs.
+#UD If the LOCK prefix is used.
+Compatibility Mode Exceptions
+Same as protected mode exceptions.
+64-Bit Mode Exceptions
+Same as protected mode exceptions.
+
+
+OUTS/OUTSB/OUTSW/OUTSD—Output String to Port
+Opcode* Instruction Op/
+En 64-Bit
+Mode Compat/ Description
+Leg Mode
+6E OUTS DX, m8 NP Valid Valid Output byte from memory location specified
+in DS:(E)SI or RSI to I/O port specified in DX**.
+6F OUTS DX, m16 NP Valid Valid Output word from memory location specified
+in DS:(E)SI or RSI to I/O port specified in DX**.
+6F OUTS DX, m32 NP Valid Valid Output doubleword from memory location
+specified in DS:(E)SI or RSI to I/O port specified
+in DX**.
+6E OUTSB NP Valid Valid Output byte from memory location specified
+in DS:(E)SI or RSI to I/O port specified in DX**.
+6F OUTSW NP Valid Valid Output word from memory location specified
+in DS:(E)SI or RSI to I/O port specified in DX**.
+6F OUTSD NP Valid Valid Output doubleword from memory location
+specified in DS:(E)SI or RSI to I/O port specified
+in DX**.
+NOTES:
+* See IA-32 Architecture Compatibility section below.
+** In 64-bit mode, only 64-bit (RSI) and 32-bit (ESI) address sizes are supported. In non-64-bit mode, only 32-bit (ESI) and 16-bit (SI)
+address sizes are supported.
+Instruction Operand Encoding
+Op/En Operand 1 Operand 2 Operand 3 Operand 4
+NP NA NA NA NA
+Description
+Copies data from the source operand (second operand) to the I/O port specified with the destination operand (first
+operand). The source operand is a memory location, the address of which is read from either the DS:SI, DS:ESI or
+the RSI registers (depending on the address-size attribute of the instruction, 16, 32 or 64, respectively). (The DS
+segment may be overridden with a segment override prefix.) The destination operand is an I/O port address (from
+0 to 65,535) that is read from the DX register. The size of the I/O port being accessed (that is, the size of the source
+and destination operands) is determined by the opcode for an 8-bit I/O port or by the operand-size attribute of the
+instruction for a 16- or 32-bit I/O port.
+At the assembly-code level, two forms of this instruction are allowed: the “explicit-operands” form and the “no-
+operands” form. The explicit-operands form (specified with the OUTS mnemonic) allows the source and destination
+operands to be specified explicitly. Here, the source operand should be a symbol that indicates the size of the I/O
+port and the source address, and the destination operand must be DX. This explicit-operands form is provided to
+allow documentation; however, note that the documentation provided by this form can be misleading. That is, the
+source operand symbol must specify the correct type (size) of the operand (byte, word, or doubleword), but it
+does not have to specify the correct location. The location is always specified by the DS:(E)SI or RSI registers,
+which must be loaded correctly before the OUTS instruction is executed.
+The no-operands form provides “short forms” of the byte, word, and doubleword versions of the OUTS instructions.
+Here also DS:(E)SI is assumed to be the source operand and DX is assumed to be the destination operand. The size
+of the I/O port is specified with the choice of mnemonic: OUTSB (byte), OUTSW (word), or OUTSD (doubleword).
+After the byte, word, or doubleword is transferred from the memory location to the I/O port, the SI/ESI/RSI
+register is incremented or decremented automatically according to the setting of the DF flag in the EFLAGS register.
+(If the DF flag is 0, the (E)SI register is incremented; if the DF flag is 1, the SI/ESI/RSI register is decremented.)
+The SI/ESI/RSI register is incremented or decremented by 1 for byte operations, by 2 for word operations, and by
+4 for doubleword operations.
+OUTS/OUTSB/OUTSW/OUTSD—Output String to Port
+Vol. 2B 4-19INSTRUCTION SET REFERENCE, N-Z
+The OUTS, OUTSB, OUTSW, and OUTSD instructions can be preceded by the REP prefix for block input of ECX bytes,
+words, or doublewords. See “REP/REPE/REPZ /REPNE/REPNZ—Repeat String Operation Prefix” in this chapter for a
+description of the REP prefix. This instruction is only useful for accessing I/O ports located in the processor’s I/O
+address space. See Chapter 16, “Input/Output,” in the Intel® 64 and IA-32 Architectures Software Developer’s
+Manual, Volume 1, for more information on accessing I/O ports in the I/O address space.
+In 64-bit mode, the default operand size is 32 bits; operand size is not promoted by the use of REX.W. In 64-bit
+mode, the default address size is 64 bits, and 64-bit address is specified using RSI by default. 32-bit address using
+ESI is support using the prefix 67H, but 16-bit address is not supported in 64-bit mode.
+IA-32 Architecture Compatibility
+After executing an OUTS, OUTSB, OUTSW, or OUTSD instruction, the Pentium processor ensures that the EWBE#
+pin has been sampled active before it begins to execute the next instruction. (Note that the instruction can be
+prefetched if EWBE# is not active, but it will not be executed until the EWBE# pin is sampled active.) Only the
+Pentium processor family has the EWBE# pin.
+For the Pentium 4, Intel ® Xeon ® , and P6 processor family, upon execution of an OUTS, OUTSB, OUTSW, or OUTSD
+instruction, the processor will not execute the next instruction until the data phase of the transaction is complete.
+Operation
+IF ((PE = 1) and ((CPL > IOPL) or (VM = 1)))
+THEN (* Protected mode with CPL > IOPL or virtual-8086 mode *)
+IF (Any I/O Permission Bit for I/O port being accessed = 1)
+THEN (* I/O operation is not allowed *)
+#GP(0);
+ELSE (* I/O operation is allowed *)
+DEST ← SRC; (* Writes to I/O port *)
+FI;
+ELSE (Real Mode or Protected Mode or 64-Bit Mode with CPL ≤ IOPL *)
+DEST ← SRC; (* Writes to I/O port *)
+FI;
+Byte transfer:
+IF 64-bit mode
+Then
+IF 64-Bit Address Size
+THEN
+IF DF = 0
+THEN RSI ← RSI RSI + 1;
+ELSE RSI ← RSI or – 1;
+FI;
+ELSE (* 32-Bit Address Size *)
+IF DF = 0
+THEN
+ESI ← ESI + 1;
+ELSE
+ESI ← ESI – 1;
+FI;
+FI;
+ELSE
+IF DF = 0
+THEN
+(E)SI ← (E)SI + 1;
+ELSE (E)SI ← (E)SI – 1;
+FI;
+FI;
+Word transfer:
+IF 64-bit mode
+4-20 Vol. 2B
+OUTS/OUTSB/OUTSW/OUTSD—Output String to PortINSTRUCTION SET REFERENCE, N-Z
+Then
+IF 64-Bit Address Size
+THEN
+IF DF = 0
+THEN RSI ← RSI RSI + 2;
+ELSE RSI ← RSI or – 2;
+FI;
+ELSE (* 32-Bit Address Size *)
+IF DF = 0
+THEN
+ESI ← ESI + 2;
+ELSE
+ESI ← ESI – 2;
+FI;
+FI;
+ELSE
+IF DF = 0
+THEN
+(E)SI ← (E)SI + 2;
+ELSE (E)SI ← (E)SI – 2;
+FI;
+FI;
+Doubleword transfer:
+IF 64-bit mode
+Then
+IF 64-Bit Address Size
+THEN
+IF DF = 0
+THEN RSI ← RSI RSI + 4;
+ELSE RSI ← RSI or – 4;
+FI;
+ELSE (* 32-Bit Address Size *)
+IF DF = 0
+THEN
+ESI ← ESI + 4;
+ELSE
+ESI ← ESI – 4;
+FI;
+FI;
+ELSE
+IF DF = 0
+THEN
+(E)SI ← (E)SI + 4;
+ELSE (E)SI ← (E)SI – 4;
+FI;
+FI;
+Flags Affected
+None.
+Protected Mode Exceptions
+#GP(0)
+If the CPL is greater than (has less privilege) the I/O privilege level (IOPL) and any of the
+corresponding I/O permission bits in TSS for the I/O port being accessed is 1.
+If a memory operand effective address is outside the limit of the CS, DS, ES, FS, or GS
+segment.
+If the segment register contains a NULL segment selector.
+#PF(fault-code) If a page fault occurs.
+#AC(0) If alignment checking is enabled and an unaligned memory reference is made while the
+current privilege level is 3.
+OUTS/OUTSB/OUTSW/OUTSD—Output String to Port
+Vol. 2B 4-21INSTRUCTION SET REFERENCE, N-Z
+#UD
+If the LOCK prefix is used.
+Real-Address Mode Exceptions
+#GP
+If a memory operand effective address is outside the CS, DS, ES, FS, or GS segment limit.
+#SS If a memory operand effective address is outside the SS segment limit.
+#UD If the LOCK prefix is used.
+Virtual-8086 Mode Exceptions
+#GP(0) If any of the I/O permission bits in the TSS for the I/O port being accessed is 1.
+#PF(fault-code) If a page fault occurs.
+#AC(0) If alignment checking is enabled and an unaligned memory reference is made.
+#UD If the LOCK prefix is used.
+Compatibility Mode Exceptions
+Same as for protected mode exceptions.
+64-Bit Mode Exceptions
+#SS(0) If a memory address referencing the SS segment is in a non-canonical form.
+#GP(0) If the CPL is greater than (has less privilege) the I/O privilege level (IOPL) and any of the
+corresponding I/O permission bits in TSS for the I/O port being accessed is 1.
+#PF(fault-code) If a page fault occurs.
+#AC(0) If alignment checking is enabled and an unaligned memory reference is made while the
+current privilege level is 3.
+#UD If the LOCK prefix is used.
+If the memory address is in a non-canonical form.
+4-22 Vol. 2B
+
+
+REP/REPE/REPZ/REPNE/REPNZ—Repeat String Operation Prefix
+Opcode Instruction
+Op/
+En
+64-Bit
+Mode
+Compat/ Description
+Leg Mode
+F3 6C REP INS m8, DX NP Valid Valid Input (E)CX bytes from port DX into ES:[(E)DI].
+F3 6C REP INS m8, DX NP Valid N.E. Input RCX bytes from port DX into [RDI].
+F3 6D REP INS m16, DX NP Valid Valid Input (E)CX words from port DX into ES:[(E)DI.]
+F3 6D REP INS m32, DX NP Valid Valid Input (E)CX doublewords from port DX into
+ES:[(E)DI].
+
+F3 6E REP OUTS DX, r/m8 NP Valid Valid Output (E)CX bytes from DS:[(E)SI] to port DX.
+F3 REX.W 6E REP OUTS DX, r/m8* NP Valid N.E. Output RCX bytes from [RSI] to port DX.
+F3 6F REP OUTS DX, r/m16 NP Valid Valid Output (E)CX words from DS:[(E)SI] to port DX.
+F3 6F REP OUTS DX, r/m32 NP Valid Valid Output (E)CX doublewords from DS:[(E)SI] to
+port DX.
+
+
+Table B-15. General Purpose Instruction Formats and Encodings for 64-Bit Mode (Contd.)
+IN – Input From Port
+fixed port 1110 010w : port number
+variable port 1110 110w
+
+OUT – Output to Port
+fixed port 1110 011w : port number
+variable port 1110 111w
+OUTS – Output to DX Port
+output to DX Port
+0110 111w
+
+

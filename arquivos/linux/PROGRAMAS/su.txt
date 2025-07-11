@@ -1,0 +1,8 @@
+
+You can also use su to do things as other users.
+
+su fdavis -c "less /home/fdavis/my_ideas"
+
+and you will now be asked for fdavis' password. 
+
+

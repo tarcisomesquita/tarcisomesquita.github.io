@@ -1,0 +1,12 @@
+
+define variaveis locais dentro de uma funcao
+
+exemplo
+check_minkver()
+{
+	local curversion initdir DPKG_ARCH minversion cm_x tmp
+
+	curversion="${1}"
+	initdir="${2}"
+        return
+}

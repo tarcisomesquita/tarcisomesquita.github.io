@@ -1,0 +1,103 @@
+one beacon packet from an 802.11 access point:
+
+analysis:
+
+802.11 control packet/beacon (type 8)
+	fixed initial hdr: 24 bytes
+		management frame (control)
+		no ds flags set
+		3 mac addresses
+			dst: ff ff ff ff ff ff (bcast)
+			src: agere AP (unicast)
+			bss id: agere AP (same addr as src)
+	wireless lan mgmt. frame (run on part), 68-24 = 44 bytes
+		fixed params: 12 bytes
+		tagged params: 32 bytes
+
+	fixed params part:
+		timestamp: 8 bytes
+		beacon interval: 2 bytes (.1 sec)
+		capability info: 2 bytes
+			ESS
+			no point coordination
+	tagged parameters part: (TLV structure, with byte for T,
+		byte for L)
+		1. SSID parameter tag (0)
+		len: 8
+		data, essid string: xyzzyium
+
+		2. supported rates (speed): 1
+		len: 4
+		data, 1/2/5.5/11 mbits
+
+		3. DS parameter set (value = 3)
+		len: 1
+		data, current channel 1
+
+		4. TIM, traffic indication map: (5)
+		len: 4
+		data, DTIM count 0, DTIM period 1, bitmap (????) 
+			value in hex: 00 01 00 00
+
+		unknown tag at this point or garbage?
+	 
+--------------------------------------------------------------
+details:
+Frame 1 (61 on wire, 61 captured)
+    Arrival Time: Mar  7, 2002 19:28:56.750804000
+    Time delta from previous packet: 0.000000000 seconds
+    Time relative to first packet: 0.000000000 seconds
+    Frame Number: 1
+    Packet Length: 61 bytes
+    Capture Length: 61 bytes
+IEEE 802.11
+    Type/Subtype: Beacon frame (8)
+    Frame Control: 0x0080
+        Version: 0
+        Type: Management frame (0)
+        Subtype: 8
+        Flags: 0x0
+            DS status: Not leaving DS or network is operating in AD-HOC mode (To DS: 0  From DS: 0) (0x00)
+            .... .0.. = Fragments: No fragments
+            .... 0... = Retry: Frame is not being retransmitted
+            ...0 .... = PWR MGT: STA will stay up
+            ..0. .... = More Data: No data buffered
+            .0.. .... = WEP flag: WEP is disabled
+            0... .... = Order flag: Not strictly ordered
+    Duration: 0
+    Destination address: ff:ff:ff:ff:ff:ff (ff:ff:ff:ff:ff:ff)
+    Source address: 00:50:18:05:d0:f8 (00:50:18:05:d0:f8)
+    BSS Id: 00:50:18:05:d0:f8 (00:50:18:05:d0:f8)
+    Fragment number: 0
+    Sequence number: 2827
+IEEE 802.11 wireless LAN management frame
+    Fixed parameters (12 bytes)
+        Timestamp: 0x000004CA3C13F150
+        Beacon Interval: 0.092160 [Seconds]
+        Capability Information: 0x0001
+            .... ...1 = ESS capabilities: Transmitter is an AP
+            .... ..0. = IBSS status: Transmitter belongs to a BSS
+            ...0 .... = Privacy: AP/STA cannot support WEP
+            ..0. .... = Short Preamble: Short preamble not allowed
+            .0.. .... = PBCC: PBCC modulation not allowed
+            0... .... = Channel Agility: Channel agility not in use
+            CFP participation capabilities: No point coordinator at AP (0x0000)
+    Tagged parameters (25 bytes)
+        Tag Number: 0 (SSID parameter set)
+        Tag length: 8
+        Tag interpretation: xyzzyium
+        Tag Number: 1 (Supported Rates)
+        Tag length: 4
+        Tag interpretation: Supported rates: 1.0(B) 2.0(B) 5.5(B) 11.0(B) [Mbit/sec]
+        Tag Number: 3 (DS Parameter set)
+        Tag length: 1
+        Tag interpretation: Current Channel: 1
+        Tag Number: 5 ((TIM) Traffic Indication Map)
+        Tag length: 4
+        Tag interpretation: DTIM count 0, DTIM period 1, Bitmap control 0x0, (Bitmap suppressed)
+
+0000  80 00 00 00 ff ff ff ff ff ff 00 50 18 05 d0 f8   ...........P....
+0010  00 50 18 05 d0 f8 b0 b0 50 f1 13 3c ca 04 00 00   .P......P..<....
+0020  5a 00 01 00 00 08 XX YY ZZ ZZ YY 69 75 6d 01 04   Z.....xyzzyium..
+0030  82 84 8b 96 03 01 01 05 04 00 01 00 00            .............   
+

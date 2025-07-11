@@ -1,0 +1,273 @@
+Os ponteiros são um tipo especial de variável em C que ao invés de conter valores armazena endereços de memória.
+
+Declarações de ponteiros são precedidas do símbolo * (asterisco), como no exemplo:
+  long *var;
+
+Variáveis ponteiro não podem ser usadas antes de serem inicializadas, isto é, enquanto não apontarem para um endereço de memória válido.
+Podemos atribuir o endereço de outra variável ou então alocar memória dinamicamente para ela.
+exemplo:
+  char a;
+  var = &a;
+
+Para trabalhar com ponteiros utilizamos 2 operadores unários especiais:
+Operador 	Função
+&               (Endereço de) Retorna o endereço de memória onde está armazenada uma variável.
+*               (Valor apontado por) Valor armazenado no endereço referenciado por um ponteiro.
+
+extern int printf(char *, ...);
+
+int main() {
+  int variavel, *ponteiro;
+  
+  variavel = 10;
+  ponteiro = &variavel;
+  printf("\n%d %d", variavel, *ponteiro);
+  
+  *ponteiro = 50;
+  printf("\n%d %d\n", variavel, *ponteiro);
+  
+  return 0;
+}
+
+
+
+extern int printf(char *, ...); 
+
+int main() {
+  int x, y, *px, *py;
+  
+  x = 100;
+  px = &x;   /* px tem o endereco de x */
+  py = px;   /* py tem o endereco de x */
+  y = *py;   /* y vale 100, pois recebe o conteúdo de x, através do  ponteiro py */
+  printf("\n%d %d\n", x, y);
+  
+  return 0;
+}
+
+
+OPERAÇÕES COM PONTEIROS
+
+Pode-se fazer somas e subtrações com um ponteiro. Incrementar um ponteiro que aponta para um elemento de um vetor fará com que ele passe a apontar para o próximo elemento, e decrementá-lo fará com que ele aponte para o elemento anterior.
+
+Ponteiros void podem apontar para qualquer tipo de dado, mas não se pode fazer operações com ponteiros void.
+
+Um ponteiro, após inicializado, pode ser usado como se fosse um vetor do tipo de dados que foi declarado. Sempre que um vetor aparece em um programa sem um subscrito (índice), apenas o nome, é assumido o endereço do primeiro elemento deste vetor.
+
+
+extern int printf(char *, ...); 
+
+int main() {
+  char frase[] = "teste";
+  char *p;
+  register int i;
+  
+  printf("%s\n", frase);
+  
+  printf("Usando o indice\n");
+  p = frase;   // Mesmo que p = &frase[0];
+  for(i=0; p[i] != '\0'; i++) printf("%c\n", p[i]);
+  
+  printf("Incrementando o ponteiro\n");
+  while(*p != '\0') {
+    printf("%c\n", *p);
+    p++;
+  }
+  
+  return 0;
+}
+
+
+Supondo que  
+
+char *q, a;
+int *p, x;
+
+se
+
+q = &a; 
+p = &x;
+
+e ainda que
+
+o endereço de a é 100
+os endereços de x são 101/102
+
+então q++ --> q "apontará" para o endereço 101
+p++ --> p "apontará" para o endereço 103
+
+
+Exemplo: Inverter os elementos de uma string, usando ponteiros.
+//#include<stdio.h>
+int printf(char *, ...); 
+char *gets(char *);
+
+//#include<stdlib.h>
+typedef unsigned int size_t;
+
+//#include<string.h>
+size_t strlen(const char *);
+
+int main() {
+   char str[80],*p;
+   int i;
+   printf("Digite uma palavra: ");
+   gets(str);
+   p = str;
+   for(i = strlen(str) - 1;i>=0;i--)
+      printf("%c",*(p+i));
+   printf("\n\n");
+   return 0;
+}
+
+
+Exemplo: Uso de Ponteiros e String em mesma variável
+//#include<stdio.h>
+int printf(char *, ...); 
+
+char *p = "Imprimindo Algo\n";
+
+int main() {
+  int i;
+  
+  printf("%s\n - por ponteiro...\n\n",p);
+  
+  for (i=0; p[i]; i++) printf("%c", p[i]);
+  printf("\n - por caracteres em ponteiro \n");
+  
+  return 0;
+}
+
+
+Matriz de Ponteiros e Indexação Múltipla
+São válidas expressões como as que seguem abaixo:
+int *x[10];
+x[2] = &valor;
+ .
+ .
+ .
+printf("%d",*x[2]);
+
+ou
+
+// #include<stdio.h>  // = = = = = = = = = = = = = = = = = = = = = = = = = = =
+struct _IO_FILE;
+typedef struct _IO_FILE FILE;
+extern struct _IO_FILE *stdout;	
+extern int fprintf(FILE *saida, const char *string_com_formatos, ...);
+
+int main(int argc, char **argv) {
+  unsigned char x;
+  unsigned long int n, *p,**q;
+  
+  x = 'T';
+  p = &x;
+  q = &p;
+  
+  fprintf(stdout,"\n**q = %c\n\n",**q);
+  
+  
+  n = &q;
+  fprintf(stdout," &q = %08lX\n", n);
+  
+  n = q;
+  fprintf(stdout,  "  q = %08lX\n", n);
+  
+  n = *q;
+  fprintf(stdout,  " *q = %08lX\n", n);
+  
+  n = **q;
+  fprintf(stdout,  "**q = %08lX\n\n", n);
+  
+ 
+  fprintf(stdout,  "fprintf = %08lX\n\n", fprintf);
+  
+  return 0;
+}
+
+
+
+// #inclde<stdio.h>  // = = = = = = = = = = = = = = = = = = = = = = = = = = =
+struct _IO_FILE;
+typedef struct _IO_FILE FILE;
+extern struct _IO_FILE *stdout;	
+extern int fprintf(FILE *saida, const char *string_com_formatos, ...);
+
+int main(int argc, char **argv)
+{
+   unsigned long int n;
+
+   n = (long unsigned int)&argv;
+   fprintf(stdout,  "\n&argv = %08lX\n\n", n);
+   
+   n = (long unsigned int)argv;
+   fprintf(stdout,  "  argv = %08lX\n", n);
+
+   argv++;
+
+   fprintf(stdout,  "argv++\n");
+
+   n = (long unsigned int)argv;
+   fprintf(stdout,  "  argv = %08lX\n", n);
+   
+   n = (long unsigned int)*argv;
+   fprintf(stdout,  " *argv = %08lX\n", n);
+
+   n = (long unsigned int)**argv;
+   fprintf(stdout,  "**argv = %08lX\n\n", n);
+   
+   
+   n = (long unsigned int)argv[0];
+   fprintf(stdout,  " argv[0] = %08lX\n", n);
+   
+   n = (long unsigned int)*argv[0];
+   fprintf(stdout,  "*argv[0] = %08lX\n\n", n);
+
+   
+   n = (long unsigned int)argv[1];
+   fprintf(stdout,  " argv[1] = %08lX\n", n);
+   
+   n = (long unsigned int)*argv[1];
+   fprintf(stdout,  "*argv[1] = %08lX\n\n", n);
+
+
+   n = (long unsigned int)*(argv[0]+1);
+   fprintf(stdout,  "*(argv[0]+1) = %08lX\n", n);
+
+   n = (long unsigned int)*(argv[0]+2);
+   fprintf(stdout,  "*(argv[0]+2) = %08lX\n", n);
+
+   n = (long unsigned int)*(argv[0]+3);
+   fprintf(stdout,  "*(argv[0]+3) = %08lX\n\n", n);
+
+   return(0);
+}
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+static void syntax_err_report(const char *filename, long err, int line_num) {
+   fprintf(stderr, "Syntax error in mke2fs config file (%s, line #%d)\n\t%s\n", filename, line_num, error_message(err));
+   exit(1);
+}
+
+typedef void (*ponteiroParaFuncao)(const char *file, long err, int line_num);
+
+static ponteiroParaFuncao syntax_err_cbt = 0x00000000;
+
+// Begin the profile parser
+ponteiroParaFuncao profile_set_syntax_err_cbt(ponteiroParaFuncao hook) {
+  ponteiroParaFuncao old;
+  
+  old = syntax_err_cbt;
+  syntax_err_cbt = hook;
+  
+  return old;
+}
+
+int main() {
+  profile_set_syntax_err_cbt(syntax_err_report);
+  
+  return 0;
+}
+

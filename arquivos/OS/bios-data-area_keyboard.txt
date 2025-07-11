@@ -1,0 +1,97 @@
+When power is applied to the computer, the BIOS Data Area is created at memory location 0040:0000h with a typical size of 255 bytes.
+
+
+17h 	22 	Int 16h 	1 byte 	Keyboard shift flags 1
+  	  	  	  	Bit 7 indicates if Insert is on or off
+  	  	  	  	0b = Insert off
+  	  	  	  	1b = Insert on
+  	  	  	  	Bit 6 indicates if CapsLock is on or off
+  	  	  	  	0b = CapsLock off
+  	  	  	  	1b - CapsLock on
+  	  	  	  	Bit 5 indicates if NumLock is on or off
+  	  	  	  	0b = NumLock off
+  	  	  	  	1b = NumLock on
+  	  	  	  	Bit 4 indicates if ScrollLock is on or off
+  	  	  	  	0b = ScrollLock off
+  	  	  	  	1b = ScrollLock on
+  	  	  	  	Bit 3 indicates if the Alt key is up or down
+  	  	  	  	0b = Alt key is up
+  	  	  	  	1b = Alt key is down
+  	  	  	  	Bit 2 indicates if the Control key is up or down
+  	  	  	  	0b = Control key is up
+  	  	  	  	1b = Control key is down
+  	  	  	  	Bit 1 indicates if the Left Shift key is up or down
+  	  	  	  	0b = Left Shift key is up
+  	  	  	  	1b = Left Shift key is down
+  	  	  	  	Bit 0 indicates if the Right Shift key is up or down
+  	  	  	  	0b = Right Shift key is up
+  	  	  	  	1b = Right Shift key is down
+18h 	23 	Int 16h 	1 byte 	Keyboard shift flags 2
+  	  	  	  	Bit 7 indicates if the Insert key is up or down
+  	  	  	  	0b = Insert key is up
+  	  	  	  	1b = Insert key is down
+  	  	  	  	Bit 6 indicates if the CapsLock key is up or down
+  	  	  	  	0b = CapsLock is key is up
+  	  	  	  	1b = CapsLock key is down
+  	  	  	  	Bit 5 indicates if the NumLock key is up or down
+  	  	  	  	0b = NumLock key is up
+  	  	  	  	1b = Numlock key is down
+  	  	  	  	Bit 4 indicates if the ScrollLock key is up or down
+  	  	  	  	0b = ScrollLock key is up
+  	  	  	  	1b = ScrollLock key is down
+  	  	  	  	Bit 3 indicates if the Pause key is active or inactive
+  	  	  	  	0b = pause key is inactive
+  	  	  	  	1b = Pause key is active
+  	  	  	  	Bit 2 indicates if the SysReg key is up or down
+  	  	  	  	0b = SysReg key is up
+  	  	  	  	1b = SysReg key is down
+  	  	  	  	Bit 1 indicates if the Left Alt key is up or down
+  	  	  	  	0b = Left Alt key is up
+  	  	  	  	1b = Left Alt key is down
+  	  	  	  	Bit 0 indicates if the Right Alt key is up or down
+  	  	  	  	0b = Right Alt key is up
+  	  	  	  	1b = Right Alt key is down
+19h 	24 	Int 09h 	1 byte 	Alt Numpad work area
+1Ah 	26 	Int 16h 	2 bytes 	Pointer to the address of the next character in the keyboard buffer
+1Ch 	28 	Int 16h 	2 bytes 	Pointer to the address of the last character in he keyboard buffer
+1Eh 	60 	Int 16h 	32 bytes 	Keyboard buffer
+
+
+71h 	113 	Int 16h 	1 byte 	Keyboard Ctrl-Break flag
+
+
+80h 	129 	Int 16h 	2 bytes 	Starting address of keyboard buffer
+82h 	131 	Int 16h 	2 bytes 	Ending address of keyboard buffer
+
+
+96h 	150 	Int 16h 	1 byte 	Keyboard status flags 3
+  	  	  	  	Bit 7, 1b = reading two byte keyboard ID in progress
+  	  	  	  	Bit 6, 1b = last code was first ID character
+  	  	  	  	Bit 5, 1b = forced Numlock on
+  	  	  	  	Bit 4 indicates presence of 101/102 key keyboard
+  	  	  	  	0b = present
+  	  	  	  	1b = not present
+  	  	  	  	Bit 3 indicates right alt key active
+  	  	  	  	0b = not active
+  	  	  	  	1b = active
+  	  	  	  	Bit 2 indicates right control key active
+  	  	  	  	0b = not active
+  	  	  	  	1b = active
+  	  	  	  	Bit 1, 1b = last scancode was E0h
+  	  	  	  	Bit 0, 1b = last scancode was E1h
+97h 	151 	Int 16h 	1 byte 	Keyboard status flags 4
+  	  	  	  	Bit 7, 1b = keyboard transmit error
+  	  	  	  	Bit 6, 1b = LED update in progress
+  	  	  	  	Bit 5, 1b = re-send code received
+  	  	  	  	Bit 4, 1b = acknowledge code received
+  	  	  	  	Bit 3, 1b = reserved
+  	  	  	  	Bit 2 indicates CapsLock LED state
+  	  	  	  	0b = CapsLock LED off
+  	  	  	  	1b = CapsLock LED on
+  	  	  	  	Bit 1 indicates NumLock LED state
+  	  	  	  	0b = NumLock LED off
+  	  	  	  	1b = NumLock LED on
+  	  	  	  	Bit 0 indicates ScrollLock LED state
+  	  	  	  	0b = ScrollLock LED off
+  	  	  	  	1b = ScrollLock LED on
+

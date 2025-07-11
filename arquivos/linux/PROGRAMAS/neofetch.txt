@@ -1,0 +1,22 @@
+lubuntu@lubuntu:~$ neofetch
+           `-mddhhhhhhhhhddmss`             lubuntu@lubuntu 
+        ./mdhhhhhhhhhhhhhhhhhhhhhh.         ---------------                                                                           
+     :mdhhhhhhhhhhhhhhhhhhhhhhhhhhhm`       OS: Lubuntu 22.04 LTS x86_64                                                              
+   :ymhhhhhhhhhhhhhhhyyyyyyhhhhhhhhhy:      Host: 81S9 Lenovo IdeaPad S145-15IWL                                                      
+  `odhyyyhhhhhhhhhy+-````./syhhhhhhhho`     Kernel: 5.15.0-25-generic                                                                 
+ `hhy..:oyhhhhhhhy-`:osso/..:/++oosyyyh`    Uptime: 15 days, 17 hours, 12 mins                                                        
+ dhhs   .-/syhhhhs`shhhhhhyyyyyyyyyyyyhs    Packages: 1782 (dpkg), 7 (snap)                                                           
+:hhhy`  yso/:+syhy/yhhhhhshhhhhhhhhhhhhh:   Shell: bash 5.1.16                                                                        
+hhhhho. +hhhys++oyyyhhhhh-yhhhhhhhhhhhhhs   Resolution: 1366x768                                                                      
+hhhhhhs-`/syhhhhyssyyhhhh:-yhhhhhhhhhhhhh   DE: LXQt 0.17.1                                                                           
+hhhhhhs  `:/+ossyyhyyhhhhs -yhhhhhhhhhhhh   WM: Openbox                                                                               
+hhhhhhy/ `syyyssyyyyhhhhhh: :yhhhhhhhhhhs   Theme: Arc-Darker [GTK3]                                                                  
+:hhhhhhyo:-/osyhhhhhhhhhhho  ohhhhhhhhhh:   Icons: Adwaita [GTK3]                                                                     
+ sdhhhhhhhyyssyyhhhhhhhhhhh+  +hhhhhhhhs    Terminal: qterminal                                                                       
+ `shhhhhhhhhhhhhhhhhhhhhhy+` .yhhhhhhhh`    Terminal Font: Noto Mono 13                                                               
+  +sdhhhhhhhhhhhhhhhhhyo/. `/yhhhhhhhd`     CPU: Intel i5-8265U (8) @ 3.900GHz                                                        
+   `:shhhhhhhhhh+---..``.:+yyhhhhhhh:       GPU: NVIDIA GeForce MX110                                                                 
+     `:mdhhhhhh/.syssyyyyhhhhhhhd:`         GPU: Intel Device 3ea1                                                                    
+        `+smdhhh+shhhhhhhhhhhhdm`           Memory: 4710MiB / 7830MiB                                                                 
+           `sNmdddhhhhhhhddm-`                                                                                                        
+                                                                    

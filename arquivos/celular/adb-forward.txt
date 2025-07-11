@@ -1,0 +1,15 @@
+http://sourceforge.net/projects/androidforensics-netcat/files/
+adb push nc /dev/Examiner_Folder/nc
+adb forward tcp:9999 tcp:9999
+
+cel:
+dd if=/dev/block/mmcblk0p34 bs=512 conv=notrunc,noerror,sync | /dev/Examiner_Folder/nc –l –p 9999
+
+computer:
+nc 127.0.0.1 9999 > data_partition.img
+
+
+
+$ adb shell 'stty raw && dd if=/dev/block/mmcblk0p23' > ~/userdata.img
+If stty raw is not used all LF will be translated to CRLF
+

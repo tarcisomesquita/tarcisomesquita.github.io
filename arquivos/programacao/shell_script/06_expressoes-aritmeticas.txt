@@ -1,0 +1,46 @@
+Expressões aritméticas
+O shell também sabe fazer contas. A construção usada para indicar uma expressão
+aritmética é "$((...))", com dois parênteses.
+   prompt$  echo $((2*3))
+   6
+   prompt$  echo $((2*3-2/2+3))
+   8
+   prompt$  NUM=44
+   prompt$  echo $((NUM*2))
+   88
+   prompt$  NUM=$((NUM+1))
+   prompt$  echo $NUM
+   45
+
+if expr "$INSTALL_VER" "<" "1.6.0" > /dev/null 2>&1 ; then
+  echo lalaa
+fi
+
+$ expr 2 + 2
+4
+
+
+$ echo 2+2 | bc -l
+4
+
+
+$ a=1
+$ b=2
+$ let c=a+b
+$ echo $c
+
+
+Operações
++   soma
+-   subtração
+*   multiplicação
+**  potenciação
+/   divisão
+%   resto
+&   E
+|   OU
+<<  shift
+>>  shift
+
+
+

@@ -1,0 +1,57 @@
+modprobe ahci
+modprobe sd_mod
+modprobe usb_storage
+modprobe ehci_pci
+
+timeout -t 15 -s 9 syslogd -O log.txt
+timeout -t 15 -s 9 klogd
+
+modprobe bridge
+modprobe br_netfilter
+modprobe e100
+modprobe r8152
+echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6 
+ip6tables -I OUTPUT -j DROP
+ip6tables -I INPUT -j DROP
+ip6tables -I FORWARD -j DROP
+
+iptables -I INPUT   -j DROP
+iptables -I FORWARD -j ACCEPT
+iptables -I OUTPUT  -j DROP
+
+arptables -I OUTPUT  -j DROP
+arptables -I FORWARD -j ACCEPT
+arptables -I INPUT   -j DROP
+arptables -n -v -L
+cat /proc/net/dev
+
+ifconfig
+ifconfig eth0 down
+ifconfig eth1 down
+brctl addbr br0
+brctl addif br0 eth0
+brctl addif br0 eth1
+ifconfig eth0 0.0.0.0 hw ether 14:cc:20:fd:44:70 promisc up
+ifconfig eth1 0.0.0.0 hw ether 14:cc:20:fd:44:71 promisc up
+brctl setfd br0 0
+brctl stp br0 off
+ifconfig br0 0.0.0.0 hw ether 14:cc:20:fd:44:72 promisc up
+
+tcpdump -i eth0 -w cap.pcap -C 100 -W 10 -U &
+cat /proc/net/dev | sed ":A; s/  / /; tA" | cut -d" " -f2,3,4,11,12
+
+#for N in $(seq 0 7) ; do echo $N; cp cap.pcap$N /media/1/; sync; done
+
+#mkdir /media
+#mount -t vfat /dev/sda1 /media
+
+#sync
+#umount  /media/
+#rmmod    usb_storage
+#modprobe usb_storage
+
+#date -s "201610121213"
+#hwclock -w
+
+#Feb 10 00:30:02 (none) user.info kernel: [ 1704.724178] bridge: automatic filtering via arp/ip/ip6tables has been deprecated. Update your scripts to load br_netfilter if you need this.
+

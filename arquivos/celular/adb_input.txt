@@ -1,0 +1,22 @@
+/system/bin/input é o shellscript abaixo:
+export CLASSPATH=/system/framework/input.jar
+exec /system/bin/app_process /system/bin com.android.commands.input.Input touchscreen tap 617 381
+
+adb shell input touchscreen tap 617 381    # Na tela inicial clica em "Mensagens"
+adb shell input touchscreen swipe 50 200 50 800 1000
+adb shell input touchscreen text "+55019982909659"    # Entra número do telefone
+
+adb shell input keyevent 22 22 66
+
+Usage: input [<source>] <command> [<arg>...]
+
+The sources are: 
+      keyboard
+      touchscreen
+
+The commands and default sources are:
+      text <string> (Default: touchscreen)
+      keyevent [--longpress] <key code number or name> ... (Default: keyboard)
+      tap <x> <y> (Default: touchscreen)
+      swipe <x1> <y1> <x2> <y2> [duration(ms)] (Default: touchscreen)
+

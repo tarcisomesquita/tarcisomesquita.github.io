@@ -1,0 +1,46 @@
+<html>
+<body>
+
+
+<script>
+// program
+
+function ExeFileFormatTest()
+{
+	this.main = function()
+	{
+		new ExeFileLoader().initialize();
+	}
+}
+
+// classes
+
+function ExeFileLoader()
+{
+	// do nothing
+}
+{
+	ExeFileLoader.prototype.initialize = function()
+	{
+
+		var inputFileChooser = document.createElement("input");
+		inputFileChooser.type = "file";
+		inputFileChooser.addEventListener("change", this.loadFileAndDisplay);
+		document.body.appendChild(inputFileChooser);
+	}
+
+	ExeFileLoader.prototype.loadFileAndDisplay = function(event)
+	{
+		var fileSpecified = event.target.files[0];			   
+		ExeFile.readFromFile(fileSpecified);
+	}
+}
+
+
+new ExeFileFormatTest().main();
+
+</script>
+
+
+</body>
+</html>

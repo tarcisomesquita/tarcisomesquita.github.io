@@ -1,0 +1,16 @@
+Protected mode is 32-bit.
+
+precisa ativar A20 para acessar memória acima de 1MB.
+
+as primeiras 32 interrupções são reservadas para excepções geradas pelo CPU.
+
+To enter protected mode, the Global Descriptor Table (GDT) must first be created with a minimum of three entries: a null descriptor, a code segment descriptor and data segment descriptor. In an IBM-compatible machine, the A20 line (21st address line) also must be enabled
+
+; enter protected mode (set PE bit)
+mov EBX, CR0
+or EBX, PE_BIT
+mov CR0, EBX
+
+; clear prefetch queue; (using far jump instruction jmp)
+jmp CLEAR_LABEL
+CLEAR_LABEL:

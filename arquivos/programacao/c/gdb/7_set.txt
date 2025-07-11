@@ -1,0 +1,96 @@
+
+set variable VAR = EXP
+
+Evaluate expression EXP and assign result to variable VAR
+
+VAR may be a debugger "convenience" variable (names starting with $), a register (a few standard names starting with $), or an actual variable in the program being debugged.
+
+EXP is any valid expression.
+
+Use "set variable" for variables with names identical to set subcommands.
+
+With a subcommand, this command modifies parts of the gdb environment.
+You can see these environment settings with the "show" command.
+
+List of set subcommands:
+
+set annotate -- Set annotation_level
+set architecture -- Set architecture of target
+set args -- Set argument list to give program being debugged when it is started
+set auto-solib-add -- Set autoloading of shared library symbols
+set backtrace -- Set backtrace specific variables
+set breakpoint -- Breakpoint specific settings
+set can-use-hw-watchpoints -- Set debugger's willingness to use watchpoint hardware
+set case-sensitive -- Set case sensitivity in name search
+set charset -- Set the host and target character sets
+set check -- Set the status of the type/range checker
+set coerce-float-to-double -- Set coercion of floats to doubles when calling functions
+set complaints -- Set max number of complaints about incorrect symbols
+set confirm -- Set whether to confirm potentially dangerous operations
+set cp-abi -- Set the ABI used for inspecting C++ objects
+set debug -- Generic command for setting gdb debugging flags
+set debug-file-directory -- Set the directory where separate debug symbols are searched for
+set debugvarobj -- Set varobj debugging
+set demangle-style -- Set the current C++ demangling style
+set detach-on-fork -- Set whether gdb will detach the child of a fork
+set disassembly-flavor -- Set the disassembly flavor
+set editing -- Set editing of command lines as they are typed
+set endian -- Set endianness of target
+set environment -- Set environment variable value to give the program
+set exec-done-display -- Set notification of completion for asynchronous execution commands
+set extension-language -- Set mapping between filename extension and source language
+set follow-fork-mode -- Set debugger response to a program call of fork or vfork
+set gnutarget -- (Set the current BFD target
+set height -- Set number of lines gdb thinks are in a page
+set history -- Generic command for setting command history parameters
+set host-charset -- Set the host character set
+set inferior-tty -- Set terminal for future runs of program being debugged
+set input-radix -- Set default input radix for entering numbers
+set language -- Set the current source language
+set listsize -- Set number of source lines gdb will list by default
+set logging -- Set logging options
+set max-user-call-depth -- Set the max call depth for user-defined commands
+set mem -- Memory regions settings
+set opaque-type-resolution -- Set resolution of opaque struct/class/union types (if set before loading symbols)
+set osabi -- Set OS ABI of target
+set output-radix -- Set default output radix for printing of values
+set overload-resolution -- Set overload resolution in evaluating C++ functions
+set pagination -- Set state of pagination
+set print -- Generic command for setting how things print
+set prompt -- Set gdb's prompt
+set radix -- Set default input and output number radices
+set remote -- Remote protocol specific variables
+set remoteaddresssize -- Set the maximum size of the address (in bits) in a memory packet
+set remotebaud -- Set baud rate for remote serial I/O
+set remotebreak -- Set whether to send break if interrupted
+set remotecache -- Set cache use for remote targets
+set remoteflow -- Set use of hardware flow control for remote serial I/O
+set remotelogbase -- Set numerical base for remote session logging
+set remotelogfile -- Set filename for remote session recording
+set remotetimeout -- Set timeout limit to wait for target to respond
+set remotewritesize -- Set the maximum number of bytes per memory write packet (deprecated)
+set scheduler-locking -- Set mode for locking scheduler during execution
+set serial -- Set default serial/parallel port configuration
+set solib-absolute-prefix -- Set an alternate system root
+set solib-search-path -- Set the search path for loading non-absolute shared library symbol files
+set step-mode -- Set mode of the step operation
+set stop-on-solib-events -- Set stopping for shared library events
+set struct-convention -- Set the convention for returning small structs
+set substitute-path -- Usage: set substitute-path FROM TO
+set symbol-reloading -- Set dynamic symbol table reloading multiple times in one run
+set sysroot -- Set an alternate system root
+set target-charset -- Set the target character set
+set tdesc -- Set target description specific variables
+set trace-commands -- Set tracing of GDB CLI commands
+set trust-readonly-sections -- Set mode for reading from readonly sections
+set tui -- TUI configuration variables
+set unwindonsignal -- Set unwinding of stack if a signal is received while in a call dummy
+set variable -- Evaluate expression EXP and assign result to variable VAR
+set verbose -- Set verbosity
+set watchdog -- Set watchdog timer
+set width -- Set number of characters gdb thinks are in a line
+set write -- Set writing into executable and core files
+
+Type "help set" followed by set subcommand name for full documentation.
+Type "apropos word" to search for commands related to "word".
+

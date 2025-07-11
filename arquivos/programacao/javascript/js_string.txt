@@ -1,0 +1,3 @@
+console.log(String.fromCharCode(0x2a02).charCodeAt(0).toString(16))
+UTF-16
+new Blob(['I\'m a string']).size

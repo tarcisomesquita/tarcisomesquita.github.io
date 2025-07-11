@@ -1,0 +1,167 @@
+PS1="$ "
+rm /home/ubuntu/Desktop/*
+rm -rf /home/ubuntu/.mozilla
+
+timedatectl set-timezone America/Sao_Paulo
+
+cd /home/ubuntu/Desktop/
+gsettings set org.gnome.settings-daemon.plugins.power lid-close-ac-action 'nothing'
+gsettings set org.gnome.desktop.session idle-delay uint32 0
+
+gsettings set org.gnome.desktop.media-handling autorun-never true
+gsettings set org.gnome.desktop.media-handling autorun-x-content-start-app "[]"
+gsettings set org.gnome.desktop.media-handling automount-open false
+gsettings set org.gnome.desktop.media-handling automount false
+gsettings set com.canonical.indicator.sound global-mute true
+gsettings set com.canonical.indicator.sound preferred-media-players "[]"
+
+gsettings set com.canonical.unity.webapps preauthorized-domains "[]"
+gsettings set org.gnome.desktop.background picture-options 'none'
+gsettings set org.gnome.desktop.background color-shading-type 'solid'
+gsettings set org.gnome.desktop.background primary-color '#6666bbbbffff'
+gsettings set org.gnome.libgnomekbd.keyboard layouts "['pt', 'br', 'br\tdvorak', 'br\tnativo']"
+gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'br')]"
+gsettings set com.canonical.Unity.Launcher favorites "['unity://running-apps', 'unity://expo-icon', 'unity://devices']"
+gsettings set com.canonical.Unity integrated-menus true
+sudo bash -c 'echo 400 > /sys/class/backlight/intel_backlight/brightness'
+sudo bash -c  'echo "America/Sao_Paulo" >  /etc/timezone'
+# sudo dpkg-reconfigure --frontend noninteractive tzdata
+# sudo ntpdate a.ntp.br
+
+sudo /etc/init.d/network-manager stop
+#sudo bash -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+#sudo bash -c "echo 1 > /proc/sys/net/ipv4/conf/all/forwarding"
+
+sudo rfkill block all
+
+if [ "" ] ; then
+sudo bash -c '
+while true ; do
+nc -vv -l 127.0.1.2 80 &
+wait $(pidof nc)
+done'
+fi
+
+sudo bash -c 'echo "
+127.0.0.1 localhost
+127.0.1.1 max
+127.0.1.2 dnat
+" > /etc/hosts'
+
+sudo ip6tables -t filter -P INPUT   DROP
+sudo ip6tables -t filter -P FORWARD DROP
+sudo ip6tables -t filter -P OUTPUT  DROP
+sudo iptables  -t filter -P INPUT   DROP
+sudo iptables  -t filter -P FORWARD DROP
+sudo iptables  -t filter -P OUTPUT  DROP
+
+sudo iptables -t filter -F INPUT
+sudo iptables -t filter -I INPUT -j DROP
+sudo iptables -t filter -I INPUT -m state --state NEW,INVALID                                   -j DROP
+sudo iptables -t filter -I INPUT                                                                -j LOG --log-prefix "NEW: " --log-level info
+sudo iptables -t filter -I INPUT -d 127.0.1.1                                                   -j ACCEPT
+sudo iptables -t filter -I INPUT -d 127.0.0.1                                                   -j ACCEPT
+sudo iptables -t filter -I INPUT -p udp --sport 53  -s 192.168.0.1 -m state --state ESTABLISHED -j ACCEPT
+sudo iptables -t filter -I INPUT -p udp --sport 53  -s 192.168.1.1 -m state --state ESTABLISHED -j ACCEPT
+sudo iptables -t filter -I INPUT -p tcp --sport 443                -m state --state ESTABLISHED -j ACCEPT
+
+sudo iptables -t filter -F OUTPUT
+sudo iptables -t filter -I OUTPUT -j DROP
+sudo iptables -t filter -I OUTPUT -d 127.0.0.1                -j ACCEPT   -m comment --comment "local"
+
+#sudo iptables -t nat -I OUTPUT -p tcp -j DNAT --to 127.0.1.2:80        -m comment --comment "DNAT"
+
+sudo ifconfig enp0s25 down
+sudo ifconfig enp0s25 192.168.0.12 hw ether 00:98:67:76:5:32 promisc up
+sudo route add default gw 192.168.0.1 dev enp0s25
+
+sudo bash -c 'echo "nameserver 192.168.0.1" > /etc/resolv.conf'
+sudo bash -c 'echo "nameserver 192.168.1.1" >> /etc/resolv.conf'
+sudo bash -c 'tcpdump -U -i enp0s25 -C 100 -w "$(date +'%Y-%m-%d_%H-%M')".pcap &'
+
+
+#sudo bash -c "echo 1 > /sys/bus/pci/rescan"                             # powerup placas
+
+#sudo lshw -numeric > lshw.txt 
+
+for DEVICE in $(find /sys/devices/pci0000\:00 -type f -name device -print ); do 
+  if [ "$(cat $DEVICE 2>/dev/null)" == "0x0036" ] ; then
+    echo "QCA9565 / AR9565 Wireless Network Adapter" ; 
+    sudo bash -c "echo 1 > $(dirname $DEVICE)/remove";
+  fi
+  
+  if [ "$(cat $DEVICE 2>/dev/null)" == "0x8136" ] ; then
+    echo "RTL8101E/RTL8102E PCI Express Fast Ethernet controller" ; 
+    #sudo bash -c "echo 1 > $(dirname $DEVICE)/remove";
+  fi
+  
+  if [ "$(cat $DEVICE 2>/dev/null)" == "0x9c03" ] ; then
+    echo "SATA Controller 1 [AHCI mode]" ; 
+    #sudo bash -c "echo 1 > $(dirname $DEVICE)/remove";
+  fi
+  
+  if [ "$(cat $DEVICE 2>/dev/null)" == "0x0a0c" ] ; then
+    echo "Haswell-ULT HD Audio Controller" ; 
+    #sudo bash -c "echo 1 > $(dirname $DEVICE)/remove";
+  fi
+  
+  if [ "$(cat $DEVICE 2>/dev/null)" == "0x9c20" ] ; then
+    echo "HD Audio Controller" ; 
+    #sudo bash -c "echo 1 > $(dirname $DEVICE)/remove";
+  fi
+  
+  if [ "$(cat $DEVICE 2>/dev/null)" == "0x9c43" ] ; then
+    echo "LPC Controller (ISA bridge)" ; 
+    sudo bash -c "echo 1 > $(dirname $DEVICE)/remove";
+  fi
+  
+  if [ "$(cat $DEVICE 2>/dev/null)" == "0x9c22" ] ; then
+    echo "Series SMBus Controller" ; 
+    sudo bash -c "echo 1 > $(dirname $DEVICE)/remove";
+  fi
+  
+  if [ "$(cat $DEVICE 2>/dev/null)" == "0x9c10" ] ; then
+    echo "PCI Express Root Port 1" ; 
+    sudo bash -c "echo 1 > $(dirname $DEVICE)/remove"; # QCA9565 / AR9565 Wireless Network Adapter [168C:0036]
+  fi
+  
+  if [ "$(cat $DEVICE 2>/dev/null)" == "0x9c14" ] ; then
+    echo "PCI Express Root Port 3" ; 
+    sudo bash -c "echo 1 > $(dirname $DEVICE)/remove";
+  fi
+  
+  if [ "$(cat $DEVICE 2>/dev/null)" == "0x9c16" ] ; then
+    echo "PCI Express Root Port 4" ; 
+    #sudo bash -c "echo 1 > $(dirname $DEVICE)/remove"; # RTL8101E/RTL8102E PCI Express Fast Ethernet controller [10EC:8136]
+  fi
+  
+  #if [ "$(cat $DEVICE 2>/dev/null)" == "0x9c18" ] ; then
+    #echo "PCI Express Root Port 5" ; 
+    #sudo bash -c "echo 1 > $(dirname $DEVICE)/remove"; # GF117M [GeForce 610M/710M/820M / GT 620M/625M/630M/720M] [10DE:1140]
+  #fi
+done
+
+for DEVICE in $(find /sys/devices/pci0000\:00 -type f -name idProduct -print ); do 
+  if [ "$(cat $DEVICE 2>/dev/null)" == "0036" ] ; then
+    echo "Atheros Communications, Inc." ; 
+    sudo bash -c "echo 1 > $(dirname $DEVICE)/remove";
+  fi
+  
+  if [ "$(cat $DEVICE 2>/dev/null)" == "0129" ] ; then
+    echo "Realtek Semiconductor Corp. RTS5129 Card Reader Controller" ; 
+    sudo bash -c "echo 1 > $(dirname $DEVICE)/remove";
+  fi
+  
+  if [ "$(cat $DEVICE 2>/dev/null)" == "670b" ] ; then
+    echo "Microdia webcam" ; 
+    sudo bash -c "echo 1 > $(dirname $DEVICE)/remove";
+  fi
+done
+
+lspci -vmm -nn | egrep '^Device'
+lsusb
+
+sudo mount -o remount,noatime /media/ubuntu/SD/
+
+# sudo sync && sudo umount /media/lubuntu/T && sudo bash -c "echo 1 > $(dirname $(find /sys/devices/ -name idProduct -exec grep -l 0736 '{}' \;))/remove"
+

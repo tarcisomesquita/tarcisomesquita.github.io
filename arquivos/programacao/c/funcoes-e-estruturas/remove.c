@@ -1,0 +1,1 @@
+remove()Apaga o arquivo

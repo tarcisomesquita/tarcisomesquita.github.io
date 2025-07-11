@@ -1,0 +1,85 @@
+SNMP is the protocol that allows an SNMP manager (the controller) to control an SNMP agent (the controlee) by exchanging SNMP messages. An SNMP message is a packet sent over UDP/IP to port 161.
+
+O software de gerência de redes não segue o modelo cliente-servidor convencional pois para as operações GET e SET a estação de gerenciamento se comporta como cliente e o dispositivo de rede a ser analisado ou monitorado se comporta como servidor, enquanto que na operação TRAP ocorre o oposto, pois no envio de alarmes é o dispositivo gerenciado que toma iniciativa da comunicação. Por conta disso, os sistemas de gerência de redes evitam os termos 'cliente' e 'servidor' e optam por usar "gerente" para a aplicação que roda na estação de gerenciamento e "agente" para a aplicação que roda no dispositivo de rede.
+
+Especifica (na versão 1) quatro pacote de unidades de dados (PDU):
+
+    GET, usado para retirar um pedaço de informação de gerenciamento.
+    GETNEXT, usado interativamente para retirar sequências de informação de gerenciamento.
+    GETBULK, usado para retirar informações de um grupo de objetos.
+    SET, usado para fazer uma mudança no subsistema gerido.
+    TRAP, usado para reportar uma notificação ou para outros eventos assíncronos sobre o subsistema gerido.
+
+
+
+ SNMP decode
+
+302B            SEQUENCE (LEN = 43)
+0201 00                 Version 1
+0404 55544D43           Community = UTMC
+A320                    SetRequestPDU (context constructed 3) (Len = 32)
+0204 023712FB                   REQID = 0X023712FB
+0201 00                         Error = NONE
+0201 00                         ErrIndex = 0
+3012                            SEQUENCE (LEN = 18)
+3010                                    SEQUENCE (LEN = 16)
+060B 512C010401010401010100                     OID = 2.1.44.1.4.1.1.4.1.1.1.0
+0201 01                                         Integer = 1
+
+
+    The destination port will either be 161 (query) or 162 (trap). 
+
+How Traps are Generated
+Traps are generated when a condition has been met on the SNMP agent. These conditions are defined in the Management Information Base (MIB) provided by the vendor. The administrator then defines thresholds, or limits to the conditions, that are to generate a trap. Conditions range from preset thresholds to a restart. After the condition has been met the SNMP agent then forms an SNMP packet that specifies the following:
+SNMP Version: v1 or v2
+
+Community: Community name of the SNMP agent (defined on the agent)
+
+PDU TYPE: SNMPvX Trap (4)
+
+Enterprise: Corporation or organization that originated the trap, such as .1.3.6.1.4.1.x
+
+Agent Address: IP address of the SNMP agent
+
+Generic Trap Type: Cold Start, Link Up, Enterprise, etc.
+
+Specific Trap Type: When Generic is set to Enterprise a specific trap ID s identified
+
+Timestamp: The value of object sysUpTime when the event occurred
+
+Object x Value x: OID of the trap and the current value
+The above packet is sent to the SNMP trap host, or manager, through UDP port 162.
+
+Packet Format:
+
+    ------------------------------------------------------
+   | Version | Community |  TRAP PDU |
+    ------------------------------------------------------
+				
+
+Trap PDU Format:
+
+    ----------------------------------------------------------------------
+   | PDU TYPE | Enterprise | Agent IP | GEN trap | Spec Trap | Time Stame |
+    ----------------------------------------------------------------------
+
+    ------------------
+   |OBJ 1 Val 1| .....| |-Variable Bindings-|
+    ------------------
+				
+
+NOTE: The Trap PDU Format above is all one packet and has been wrapped for readability.
+Where is all of this information stored?
+All of the values that SNMP reports are dynamic and are not stored in any file or registry key. However, the information needed to get the specified values is stored in the Management Information Base (MIB). This information ranges from Object IDs (OIDs) to Protocol Data Units (PDUs). The MIBs must be located at both the agent and the manager to work effectively.
+Glossary
+Manager: Third-party software used to configure thresholds and monitor SNMP information.
+
+MIB: Management Information Base. A database that defines the PDUs and OIDs.
+
+OID: Object Identifier. This is a unique ID # that is used to identify system objects; for instance, .1.3.6.1.4.1.311 identifies the Microsoft enterprise.
+
+PDU: Protocol Data Unit. PDUs are the building blocks of SNMP messages.
+
+Trap host: Manager responsible for monitoring SNMP traps.
+
+

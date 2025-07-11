@@ -1,0 +1,184 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Autocompletar</title>
+
+<style>
+body {
+   margin: 0px;
+   padding: 0px;
+   background-color: #EEEEEE;
+   
+   font-family: "monospace", "sans-serif";
+   color: black;
+   font-size: 10pt;
+   text-align: justify;
+   line-height: 16pt;
+   
+   overflow: hidden;
+}
+
+p {
+   margin: 0px;
+   padding: 0px;
+}
+
+table tr {
+   margin: 0px;
+   padding: 0px;
+   height: 100%;
+   margin: 0px;
+   padding: 0px;
+}
+
+td {
+   vertical-align: middle;
+   font-size: 10pt;
+   line-height: 15px;
+   padding-left: 10px;
+   padding-right: 10px;
+}
+
+.barra {
+   background-color: #AAAAFF;
+   
+   width: 100%;
+   height: 20px;
+   margin: 0px;
+   
+   border-style: solid;
+   border-color: #5555FF;
+   border-width: 0px;
+   border-bottom-width: 1px;
+}
+
+.entrada {
+   width: 95%;
+   margin-left: 2.5%;
+   margin-right: 2.5%;
+   resize: none;
+   white-space: nowrap;
+   display: block;
+   
+   overflow-x: hidden;
+   vertical-align: middle;
+      
+   text-overflow: clip;
+   height: 30px;
+
+   max-height: 30px;
+   position: static;
+   
+   border: 1px solid gray;
+   padding: 3px;
+   
+   font-family: "monospace", "sans-serif";
+   color: black;
+   font-size: 10pt;
+   text-align: start;
+   line-height: 16pt;
+}
+
+.sugestoes {
+   z-index: 2;
+   
+   background-color: #FFFFFF;
+   
+   width: 95%;
+   margin-left: 2.5%;
+   margin-right: 2.5%;
+   resize: vertical;
+   
+   border: 1px solid #AAAAFF;
+   box-shadow: 0px 3px 2px 3px rgba(170, 170, 256, 0.4);
+}
+
+.saida {
+   background-color: #FFFFFF;
+   
+   width: 95%;
+   margin-left: 2.5%;
+   margin-right: 2.5%;
+
+   height: 40%;
+   margin-top: 2.5%;
+   margin-bottom: 2.5%;
+
+   overflow: auto;
+   
+   border: 1px solid gray;
+   padding: 3px;
+}
+
+</style>
+
+<script>
+var tamanho_i = 0;
+function entrada(frase) {
+   tamanho_f = frase.length;
+   if (tamanho_f != tamanho_i) {
+      tamanho_i = tamanho_f;
+      if (tamanho_f == 0) { 
+         document.getElementById('sugestoes').style.visibility = "hidden";
+         document.getElementById('saida').innerHTML = "";
+         return;
+      }
+      else {
+         document.getElementById("sugestoes").style.visibility="visible";
+      }
+   }
+   else {
+      return;
+   }
+   
+   
+   conexao = new XMLHttpRequest();
+   conexao.onreadystatechange = function() {
+      var n, texto1, texto2;
+      if (conexao.readyState == 4 && conexao.status == 200) {
+         n = conexao.responseText.indexOf("</option><p>")+9;
+         texto1 = conexao.responseText.substring(0, n);
+         texto2 = conexao.responseText.substring(n, conexao.responseText.length);
+         
+         document.getElementById('sugestoes').innerHTML = "<select style='width:100%;' size=10 onchange='selecionado(this.value)'>" + texto1 + "</select>";
+         document.getElementById('saida').innerHTML = texto2;
+         
+         //document.getElementById('txtHint').innerHTML = conexao.responseText;
+      }
+   }
+   var num = new Number(84);
+   
+   var url = location.href + "f=" + num.toPrecision(1) + frase;  // url tem que ser idêntica à da página carregada
+   conexao.open("GET", url, true);
+   conexao.send();
+   
+   //document.getElementById('sugestoes').innerHTML = "<p>" + frase + "</p>";
+}
+
+function selecionado(frase_sugerida) {
+   document.getElementById('entrada').value = frase_sugerida;
+   entrada(frase_sugerida);
+}
+
+</script>
+
+</head>
+<body>
+
+<div id="" style="" class="barra">
+<table><tr><td>Arquivos</td><td>Desenvolvedor</td><td>Ajuda</td></tr></table>
+</div>
+<br>
+
+<p style="margin-left: 2.5%;">Digite um trecho de uma frase:</p>
+<textarea id="entrada" class="entrada" autofocus="autofocus" wrap="off" style="" name="" value="" onKeyUp="entrada(this.value)"></textarea>
+
+<div id="sugestoes" style="" class="sugestoes">
+</div>
+
+<div id="saida" style="" class="saida">
+</div>
+
+</body>
+<html>
+

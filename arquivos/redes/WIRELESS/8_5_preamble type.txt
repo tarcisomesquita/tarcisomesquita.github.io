@@ -1,0 +1,8 @@
+
+Preamble Type: O preâmbulo é um tempo de espera e sincronismo que precede a transmissão de cada frame.
+The Preamble defines the length of the CRC block (Cyclic Redundancy Check is a technique for detecting data transmission errors)
+
+tempo de espera
+preâmbulo longo: 192 microssegundos
+preâmbulo curto: 96 microssegundos
+

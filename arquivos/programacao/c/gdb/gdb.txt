@@ -1,0 +1,265 @@
+
+show environment [varname ]
+
+set environment varname [=value ]
+
+unset environment varname
+
+
+     Debugging an Already-running Process
+attach process-id
+          This command attaches to a running process—one that was started outside
+          gdb. (info files shows your active targets.) The command takes as argument
+          a process ID. The usual way to find out the process-id of a Unix process is with
+          the ps utility, or with the ‘jobs -l’ shell command.
+
+       When you have finished debugging the attached process, you can use the detach
+detach command to release it from gdb control. Detaching the process continues its
+   execution. 
+
+     Kill the child process in which your program is running under gdb.
+kill
+
+
+
+gdb lets you run and debug multiple programs in a single session.
+gdb represents the state of each program execution with an object called an inferior.
+info inferiors
+
+   To switch focus between inferiors, use the inferior command:
+inferior infno
+
+   You can get multiple executables into a debugging session via the add-inferior and
+clone-inferior commands.
+To remove inferiors from the debugging session use the remove-inferior command.
+
+add-inferior [ -copies n ] [ -exec executable ]
+clone-inferior [ -copies n ] [ infno ]
+remove-inferior infno
+
+kill inferior infno
+
+stepi
+stepi arg
+          Execute one machine instruction, then stop and return to the debugger.
+si
+          It is often useful to do ‘display/i $pc’ when stepping by machine instructions.
+          This makes gdb automatically display the next instruction to be executed, each
+          time your program stops.
+
+nexti
+nexti arg
+          Execute one machine instruction, but if it is a function call, proceed until the
+ni
+          function returns.
+          An argument is a repeat count, as in next.
+
+
+edit number
+          Edit the current source file with number as the active line number.
+edit function
+          Edit the file containing function at the beginning of its definition.
+
+   You can customize gdb to use any editor you want1 . By default, it is ‘/bin/ex’, but you
+can change this by setting the environment variable EDITOR before using gdb. For example,
+to configure gdb to use the vi editor, you could use these commands with the sh shell:
+      EDITOR=/usr/bin/vi
+      export EDITOR
+      gdb ...
+
+
+
+
+9.6 Source and Machine Code
+    You can use the command info line to map source lines to program addresses (and
+vice versa), and the command disassemble to display a range of addresses as machine
+instructions. You can use the command set disassemble-next-line to set whether to
+disassemble next source line when execution stops. When run under gnu Emacs mode, the
+info line command causes the arrow to point to the line specified. Also, info line prints
+addresses in symbolic form as well as hex.
+info line linespec
+              Print the starting and ending addresses of the compiled code for source line
+              linespec. You can specify source lines in any of the ways documented in unde-
+              fined [Specify Location], page undefined .
+    For example, we can use info line to discover the location of the object code for the
+first line of function m4_changequote:
+       (gdb) info line m4_changequote
+       Line 895 of "builtin.c" starts at pc 0x634c and ends at 0x6350.
+We can also inquire (using *addr as the form for linespec) what source line covers a par-
+ticular address:
+       (gdb) info line *0x63ff
+       Line 926 of "builtin.c" starts at pc 0x63e4 and ends at 0x6404.
+    After info line, the default address for the x command is changed to the starting
+address of the line, so that ‘x/i’ is sufficient to begin examining the machine code (see un-
+defined [Examining Memory], page undefined ). Also, this address is saved as the value
+of the convenience variable $_ (see undefined [Convenience Variables], page undefined ).
+94                                                                       Debugging with gdb
+disassemble
+disassemble /m
+disassemble /r
+             This specialized command dumps a range of memory as machine instructions. It
+             can also print mixed source+disassembly by specifying the /m modifier and print
+             the raw instructions in hex as well as in symbolic form by specifying the /r. The
+             default memory range is the function surrounding the program counter of the
+             selected frame. A single argument to this command is a program counter value;
+             gdb dumps the function surrounding this value. When two arguments are given,
+             they should be separated by a comma, possibly surrounded by whitespace. The
+             arguments specify a range of addresses to dump, in one of two forms:
+             start,end
+                          the addresses from start (inclusive) to end (exclusive)
+             start,+length
+                          the addresses from start (inclusive) to start +length (exclusive).
+             When 2 arguments are specified, the name of the function is also printed (since
+             there could be several functions in the given range).
+             The argument(s) can be any expression yielding a numeric value, such as
+             ‘0x32c4’, ‘&main+10’ or ‘$pc - 8’.
+             If the range of memory being disassembled contains current program counter,
+             the instruction at that location is shown with a => marker.
+   The following example shows the disassembly of a range of addresses of HP PA-RISC
+2.0 code:
+      (gdb) disas 0x32c4, 0x32e4
+      Dump of assembler code from 0x32c4 to 0x32e4:
+          0x32c4 <main+204>:        addil 0,dp
+          0x32c8 <main+208>:        ldw 0x22c(sr0,r1),r26
+          0x32cc <main+212>:        ldil 0x3000,r31
+          0x32d0 <main+216>:        ble 0x3f8(sr4,r31)
+          0x32d4 <main+220>:        ldo 0(r31),rp
+          0x32d8 <main+224>:        addil -0x800,dp
+          0x32dc <main+228>:        ldo 0x588(r1),r26
+          0x32e0 <main+232>:        ldil 0x3000,r31
+      End of assembler dump.
+   Here is an example showing mixed source+assembly for Intel x86, when the program is
+stopped just after function prologue:
+      (gdb) disas /m main
+      Dump of assembler code   for function main:
+      5        {
+          0x08048330 <+0>:     push    %ebp
+          0x08048331 <+1>:     mov     %esp,%ebp
+          0x08048333 <+3>:     sub     $0x8,%esp
+          0x08048336 <+6>:     and     $0xfffffff0,%esp
+          0x08048339 <+9>:     sub     $0x10,%esp
+      6          printf ("Hello.\n");
+      => 0x0804833c <+12>:     movl    $0x8048440,(%esp)
+          0x08048343 <+19>:    call    0x8048284 <puts@plt>
+Chapter 9: Examining Source Files                                                          95
+       7         return 0;
+       8       }
+          0x08048348 <+24>:   mov    $0x0,%eax
+          0x0804834d <+29>:   leave
+          0x0804834e <+30>:   ret
+       End of assembler dump.
+    Here is another example showing raw instructions in hex for AMD x86-64,
+       (gdb) disas /r 0x400281,+10
+       Dump of assembler code from 0x400281 to 0x40028b:
+          0x0000000000400281: 38 36 cmp      %dh,(%rsi)
+          0x0000000000400283: 2d 36 34 2e 73 sub      $0x732e3436,%eax
+          0x0000000000400288: 6f      outsl %ds:(%rsi),(%dx)
+          0x0000000000400289: 2e 32 00        xor     %cs:(%rax),%al
+       End of assembler dump.
+    Some architectures have more than one commonly-used set of instruction mnemonics or
+other syntax.
+    For programs that were dynamically linked and use shared libraries, instructions that
+call functions or branch to locations in the shared libraries might show a seemingly bogus
+location—it’s actually a location of the relocation table. On some architectures, gdb might
+be able to resolve these to actual function names.
+set disassembly-flavor instruction-set
+             Select the instruction set to use when disassembling the program via the
+             disassemble or x/i commands.
+             Currently this command is only defined for the Intel x86 family. You can set
+             instruction-set to either intel or att. The default is att, the AT&T flavor
+             used by default by Unix assemblers for x86-based targets.
+show disassembly-flavor
+             Show the current setting of the disassembly flavor.
+set disassemble-next-line
+show disassemble-next-line
+             Control whether or not gdb will disassemble the next source line or instruction
+             when execution stops. If ON, gdb will display disassembly of the next source
+             line when execution of the program being debugged stops. This is in addition
+             to displaying the source line itself, which gdb always does if possible. If the
+             next source line cannot be displayed for some reason (e.g., if gdb cannot find
+             the source file, or there’s no line info in the debug info), gdb will display
+             disassembly of the next instruction instead of showing the next source line. If
+             AUTO, gdb will display disassembly of next instruction only if the source line
+             cannot be displayed. This setting causes gdb to display some feedback when
+             you step through a function with no line info or whose source file is unavailable.
+             The default is OFF, which means never display the disassembly of the next line
+             or instruction.
+96
+
+
+10.12 Registers
+   You can refer to machine register contents, in expressions, as variables with names
+starting with ‘$’. The names of registers are different for each machine; use info registers
+to see the names used on your machine.
+info registers
+            Print the names and values of all registers except floating-point and vector
+            registers (in the selected stack frame).
+info all-registers
+            Print the names and values of all registers, including floating-point and vector
+            registers (in the selected stack frame).
+info registers regname ...
+            Print the relativized value of each specified register regname. As discussed in
+            detail below, register values are normally relative to the selected stack frame.
+            regname may be any register name valid on the machine you are using, with or
+            without the initial ‘$’.
+118                                                                               Debugging with gdb
+    gdb has four “standard” register names that are available (in expressions) on most
+machines—whenever they do not conflict with an architecture’s canonical mnemonics for
+registers. The register names $pc and $sp are used for the program counter register and
+the stack pointer. $fp is used for a register that contains a pointer to the current stack
+frame, and $ps is used for a register that contains the processor status. For example, you
+could print the program counter in hex with
+        p/x $pc
+or print the instruction to be executed next with
+        x/i $pc
+or add four to the stack pointer2 with
+        set $sp += 4
+    Whenever possible, these four standard register names are available on your machine
+even though the machine has different canonical mnemonics, so long as there is no conflict.
+The info registers command shows the canonical names. For example, on the SPARC,
+info registers displays the processor status register as $psr but you can also refer to it
+as $ps; and on x86-based machines $ps is an alias for the eflags register.
+    gdb always considers the contents of an ordinary register as an integer when the register
+is examined in this way. Some machines have special registers which can hold nothing but
+floating point; these registers are considered to have floating point values. There is no way
+to refer to the contents of an ordinary register as floating point value (although you can
+print it as a floating point value with ‘print/f $regname ’).
+    Some registers have distinct “raw” and “virtual” data formats. This means that the data
+format in which the register contents are saved by the operating system is not the same
+one that your program normally sees. For example, the registers of the 68881 floating point
+coprocessor are always saved in “extended” (raw) format, but all C programs expect to work
+with “double” (virtual) format. In such cases, gdb normally works with the virtual format
+only (the format that makes sense for your program), but the info registers command
+prints the data in both formats.
+    Some machines have special registers whose contents can be interpreted in several differ-
+ent ways. For example, modern x86-based machines have SSE and MMX registers that can
+hold several values packed together in several different formats. gdb refers to such registers
+in struct notation:
+        (gdb) print $xmm1
+        $1 = {
+          v4_float = {0, 3.43859137e-038, 1.54142831e-044, 1.821688e-044},
+          v2_double = {9.92129282474342e-303, 2.7585945287983262e-313},
+          v16_int8 = "\000\000\000\000\3706;\001\v\000\000\000\r\000\000",
+          v8_int16 = {0, 0, 14072, 315, 11, 0, 13, 0},
+          v4_int32 = {0, 20657912, 11, 13},
+          v2_int64 = {88725056443645952, 55834574859},
+          uint128 = 0x0000000d0000000b013b36f800000000
+        }
+  2
+    This is a way of removing one word from the stack, on machines where stacks grow downward in memory
+    (most machines, nowadays). This assumes that the innermost stack frame is selected; setting $sp is not
+    allowed when other stack frames are selected. To pop entire frames off the stack, regardless of machine
+    architecture, use return; see undefined [Returning from a Function], page undefined .
+Chapter 10: Examining Data                                                                119
+To set values of such registers, you need to tell gdb which view of the register you wish to
+change, as if you were assigning value to a struct member:
+        (gdb) set $xmm1.uint128 = 0x000000000000000000000000FFFFFFFF
+    Normally, register values are relative to the selected stack frame (see undefined [Se-
+lecting a Frame], page undefined ). This means that you get the value that the register
+would contain if all stack frames farther in were exited and their saved registers restored.
+In order to see the true contents of hardware registers, you must select the innermost frame
+(with ‘frame 0’).
+    However, gdb must deduce where registers are saved, from the machine code generated
+by your compiler. If some registers are not saved, or if gdb is unable to locate the saved
+registers, the selected stack frame makes no difference.
+

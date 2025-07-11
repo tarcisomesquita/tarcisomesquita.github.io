@@ -1,0 +1,51 @@
+
+Função 0EH
+
+Input:
+AH = 0x0E
+AL = Caracter a exibir
+BH = Pagina de vídeo onde o caracter será exibido
+BL = Cor a usar (apenas em modo grafico)
+
+Output:
+Exibe o caracter na tela e atualiza a posição do cursor.
+
+
+Exemplo:
+
+7C00 B8540E        MOV     AX,0E54 ; 0x54 é a letra T 
+7C03 BB0100        MOV     BX,0001
+7C06 CD10          INT     10
+7C08 EBFE          JMP     7C09
+
+ = = = = = = = =
+
+[list -]
+
+; Para criar o arquivo: 
+; ./nasm -f bin -o 0_imp_caracter.bin 0_imp_caracter.asm
+; ./nasm -f bin -l 0_imp_caracter.lst 0_imp_caracter.asm
+
+BITS   16
+ORG    0x7C00
+
+[list +]
+;               54 é a letra T 
+   MOV     AX,0x0E54
+   MOV     BX,0x0001
+   INT     0x10
+aqui:
+   JMP     aqui
+
+ = = = = = = = = =
+
+Exemplo para imprimir os caracteres do código ASCII:
+
+7C00 B8000E        MOV     AX,0E00 
+7C03 BB0100        MOV     BX,0001
+7C06 CD10          INT     10
+7C08 3CFF          CMP     AL,FF  ; se iguais, ZF = 1
+7C0A 0401          ADD     AL,01
+7C0C 75F8          JNZ     7C06   ; se ZF = 0, JMP  7C06
+7C0E EBFE          JMP     7C0E
+

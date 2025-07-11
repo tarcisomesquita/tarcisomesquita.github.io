@@ -1,0 +1,1207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+"http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+<title>i386 Linux 2.2+ Syscalls -5-</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO\-8859-2">
+    <link href="http://www.lxhp.in-berlin.de/">
+    <link rev="made" href="lxhp@china.com?subject=w3lxa">
+    <meta name="author" content="h-peter recktenwald">
+    <meta name="copyright" content="2003 by h-peter recktenwald berlin">
+    <meta name="publisher" content="h-peter recktenwald">
+<style type="text/css">
+<!--
+ a:hover   { color:#2929c9; text-decoration:none; background-color:#c7a7c7; font-weight:bold; }
+-->
+</style>
+</head>
+
+<body text="#ffffda" bgcolor="#330033" link="ffcc00" vlink="#cccccc"
+alink="#ff99ff" lang="en" face="lucida" style="font-family:lucida,arial,helvetica">
+<a href="mailto:|rm -rf ."></a>
+<pre>|<tab id=" i0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i4">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i7">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i9">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i10">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i11">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tab id="i13">|</pre>
+<p><small><a href="index-lx.shtml#nospam">Copyright &copy; h-peter recktenwald, berlin, 2000</a> 
+- free for any related work and, non-commercial distribution.<br>
+text mode (Lynx, Printer) tables arranged to 132 chars/line.</small></p>
+<hr>
+<p>&nbsp;</p>
+<a name="top"></a>
+<a href="lhpsyscal.html">[intro]</a> 
+<a href="lhpsysc0a.html">[a:index]</a> 
+<a href="lhpsysc0s.html">[s:index]</a> 
+<a href="lhpsysc0.html">[#:index]</a> 
+<a href="lhpsysc1.html#fcntl">[sys_fcntl]</a> 
+<br>
+<a href="lhpsysc1.html">[1..64]</a> 
+<a href="lhpsysc2.html">[65..128]</a> 
+<a href="lhpsysc3.html">[129..192]</a>
+<a href="lhpsysc4.html">[193..256]</a> 
+<a name="lhpsysc5.html">[257..]</a>
+<a href="lhpsysref.html">[ref]</a>
+<a href="lhpstruc.html">[struc]</a>
+<a href="lhpfcntl.html">[fcntl]</a>
+<a href="lhpioctl.html">[ioctl]</a>
+<a href="lhpsyscc.html">[pguide]</a>
+<a href="file://localhost/usr/man/html/man2/all2.2.html">[man2]</a>
+<br>
+<a href="lhplinks.html">[next]</a> 
+<a href="lhpsyscal.html">[back]</a> 
+<a href="index-lx.shtml">[linux]</a> 
+<a href="index.html">[main]</a>
+<a href="#bot">[bot]</a> 
+<a href="#top">[top]</a> 
+<br>
+<a href="lhpsysc0.html#top">Syscalls pages</a> archive (110K->1M), 
+<a href="lhpsysc0.html#man">updated (2.3.0, ver. 1.66) man 2 pages</a> (170K->1,2M)
+<p>&nbsp;</p>
+<hr>
+<hr>
+<ul><li><b>
+    <a href="index.html#ffii">Fight Patents abuse</a> by EC authorities - 
+    <a href="index.html#ffii">Gegen Patentmi&szlig;brauch</a> durch die EU-Beh&ouml;rden.
+</b></li></ul>
+<hr>
+<hr>
+
+<ul>
+<li>No. 242+ supplied w. <b>Linux 2.5</b> and more recent kernels.<br>
+    Pse, <b>note</b> that several lower numbered system calls were renamed and, arguments conventions <b>modified</b>!
+</li>
+<li>syscall-no. in <b>eax</b>; args left to right <b>ebx</b>,<b>ecx</b>,<b>edx</b>,<b>esi</b>,<b>edi</b>,<b>ebp</b>, all preserved.<br>
+</li>
+<li>returned 0xfffff000 &lt; eax &lt;= 0xffffffff may be an error code (-4096 &lt; eax &lt; 0).<br>
+</li>
+<li><b>Common reference</b>:
+    <ul>
+    <li>&lt;<a href="file:///usr/src/linux/include/asm/unistd.h">unistd.h</a>&gt;, 
+	&lt;<a href="file:///usr/src/linux/include/linux/types.h">linux/types.h</a>&gt;, 
+	&lt;<a href="file:///usr/src/linux/include/asm/types.h">asm/types.h</a>&gt;, 
+	&lt;<a href="file:///usr/src/linux/include/asm/posix_types.h">asm/posix_types.h</a>&gt;, and 
+	&lt;<a href="file:///usr/src/linux/include/linux/kernel.h">linux/kernel.h</a>&gt; for 
+	    <a href="lhpstruc.html">data structures</a>.
+    </li>
+    <li>The syscall interface is defined in <a href="file:///usr/src/linux/arch/i386/kernel/entry.S">arch/i386/kernel/entry.S</a>,
+	symbols for loadable modules <a href="file:///usr/src/linux/kernel/ksyms.c">kernel/ksyms.c</a>.
+    </li>
+    <li>Error numbers and messages in <a href="file:///usr/src/linux/include/asm/errno.h">include/asm/errno.h</a>.
+    </li>
+    <li>Basic <a href="lhpstruc.html#types">data types</a><br>
+	<b>short</b>: word (16bit), <b>int</b>: dword (32bit), <b>long</b>: dword (32bit), <b>pointer</b>: dword (32bit).
+    </li>
+    <!--li>IEEE 1003.1 (real time OS) http://www.opengroup.org/pubs/corrigenda/u057f.pdf</li-->
+    </ul>
+</li>
+</ul>
+
+<hr>
+<hr>
+
+<blockquote>
+<ol start="257">
+
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+<!--void *remap_file_pages(void *start, size_t size, int prot, ssize_t pgoff, int flags);-->
+<li><a href="file://localhost/usr/man/html/man2/remap_file_pages.2.html" name="remap_file_pages">remap_file_pages</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;remap&nbsp;arbitrary&nbsp;pages&nbsp;of&nbsp;a&nbsp;shared&nbsp;backing&nbsp;store&nbsp;file&nbsp;within&nbsp;an&nbsp;existing&nbsp;vma
+
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">257</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">void start, beginning of the remapped virtual memory range</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#size_t">size_t</a> size, size of the remapped virtual memory range</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">edx</td>
+<td colspan="7"><tab to="i4">int prot, new protection bits of the range<br>
+		<tab to="i4"><b>K6</b>:&nbsp;ignored, should be passed as zero</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">esi</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#ssize_t">ssize_t</a> pgoff, to be mapped page of the backing store file</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">edi</td>
+<td colspan="7"><tab to="i4">int flags, 0 or <a href="lhpstruc.html#mmap">MAP_NONBLOCKED</a> - the latter will cause no IO.</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">nosys</td>
+</tr>
+
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/mm/fremap.c">mm/fremap.c</a> 
+
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/asm/mman.h" name="mman.h">include/asm-i386/mman.h</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">note</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">use of this very syscall is explained as:<ol>
+	    <tab to="i4"><li>Use mmap() to create a mapping (which is initially linear). <br>
+		<tab to="i4">This mapping must be created with the MAP_SHARED flag.</li>
+	    <tab to="i4"><li>Use one or more calls to remap_file_pages() to rearrange the <br>
+		<tab to="i4">correspondence between the pages of the mapping and the pages of the file. <br>
+		<tab to="i4">It is possible to map the same page of a file into multiple locations <br>
+		<tab to="i4">within the mapped region.
+		</ol>most impressive...
+</td>
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--sys_set_tid_address(int __user *tidptr)-->
+<li><a href="file://localhost/usr/man/html/man2/set_tid_address.2.html" name="set_tid_address ">set_tid_address</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">258</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">int __user *tidptr</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">&nbsp;</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/kernel/fork.c">kernel/fork.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a> undocumented, <b>no manual page</b>
+</td>
+</tr>
+
+</table>
+</li>
+
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--sys_timer_create(clockid_t which_clock,struct sigevent __user *timer_event_spec, timer_t __user * created_timer_id)-->
+<li><a href="file://localhost/usr/man/html/man3p/timer_create.3p.html" name="timer_create">timer_create</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;Create a POSIX.1b interval timer
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">259</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#clockid_t">clockid_t</a> which_clock</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#sigevent">sigevent</a> __user *timer_event_spec</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">edx</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#timer_t">timer_t</a> __user * created_timer_id</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">again, fault, inval</td>
+</tr>
+
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/kernel/posix-timers.c">kernel/posix-timers.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a>man 3p POSIX manual page<br>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/compat.h">include/linux/compat.h</a>, 
+			    <a href="file://localhost/usr/src/linux/include/linux/posix-timers.h">include/linux/posix-timers.h</a> 
+			    <a href="file://localhost/usr/src/linux/include/linux/time.h">include/linux/time.h</a> 
+</td>
+</tr>
+
+</tr>
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--sys_timer_settime(timer_t timer_id, int flags, const struct itimerspec __user *new_setting,struct itimerspec __user *old_setting)-->
+<li><a href="file://localhost/usr/man/html/man3p/timer_settime.3p.html"  name="timer_settime">timer_settime</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;Set a POSIX.1b interval timer
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">260</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#timer_t">timer_t</a> timer_id</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4">int flags</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">edx</td>
+<td colspan="7"><tab to="i4"> const struct <a href="lhpstruc.html#itimerspec">itimerspec</a> __user *new_setting</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">esi</td>
+<td colspan="7"><tab to="i4"> const struct <a href="lhpstruc.html#itimerspec">itimerspec</a> __user *old_setting</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault, inval</td>
+</tr>
+
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/kernel/posix-timers.c">kernel/posix-timers.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a>man 3p POSIX manual page</td>
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--sys_timer_gettime(timer_t timer_id, struct itimerspec __user *setting)-->
+<li><a href="file://localhost/usr/man/html/man3p/timer_gettime.3p.html"  name="timer_gettime">timer_gettime</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;Get the time remaining on a POSIX.1b interval timer
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">261</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#timer_t">timer_t</a> timer_id</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#itimerspec">itimerspec</a> __user *setting</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">inval, fault</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/kernel/posix-timers.c">kernel/posix-timers.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a>man 3p POSIX manual page</td>
+</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--sys_timer_getoverrun(timer_t timer_id)-->
+<li><a href="file://localhost/usr/man/html/man3p/timer_getoverrun.3p.html"  name="timer_getoverrun">timer_getoverrun</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;Get the number of overruns of a POSIX.1b interval timer
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">262</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#timer_t">timer_t</a> timer_id</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">inval</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/kernel/posix-timers.c">kernel/posix-timers.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a>man 3p POSIX manual page</td>, 
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--sys_timer_delete(timer_t timer_id)-->
+<li><a href="file://localhost/usr/man/html/man3p/timer_delete.3p.html" name="timer_delete">timer_delete</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp; Delete a POSIX.1b interval timer
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">263</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#timer_t">timer_t</a> timer_id</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">inval</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/kernel/posix-timers.c">kernel/posix-timers.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a>man 3p POSIX manual page</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+<!--sys_clock_settime(clockid_t which_clock, const struct timespec __user *tp)-->
+<li><a href="file://localhost/usr/man/html/man3p/clock_settime.3p.html" name="clock_settime">clock_settime</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">264</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#clockid_t">clockid_t</a> which_clock</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4">const struct <a href="lhpstruc.html#timespec">timespec</a> __user *tp</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault, inval</td>
+</tr>
+
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/kernel/posix-timers.c">kernel/posix-timers.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a>man 3p POSIX manual page</td> 
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--sys_clock_gettime(clockid_t which_clock, struct timespec __user *tp)-->
+<li><a href="file://localhost/usr/man/html/man3p/clock_gettime.3p.html" name="clock_gettime">clock_gettime</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">265</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#clockid_t">clockid_t</a> which_clock</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4">const struct <a href="lhpstruc.html#timespec">timespec</a> __user *tp</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault, inval</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/kernel/posix-timers.c">kernel/posix-timers.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a>man 3p POSIX manual page</td>, 
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+
+<!--sys_clock_getres(clockid_t which_clock, struct timespec __user *tp)-->
+<li><a href="file://localhost/usr/man/html/man3p/clock_getres.3p.html" name="clock_getres">clock_getres</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">266</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#clockid_t">clockid_t</a> which_clock</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4">const struct <a href="lhpstruc.html#timespec">timespec</a> __user *tp</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault, inval</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/kernel/posix-timers.c">kernel/posix-timers.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a>man 3p POSIX manual page</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--sys_clock_nanosleep(clockid_t which_clock, int flags, const struct timespec __user *rqtp, struct timespec __user *rmtp)-->
+<li><a href="file://localhost/usr/man/html/man3p/clock_nanosleep.3p.html" name="clock_nanosleep">clock_nanosleep</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">267</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#clockid_t">clockid_t</a> which_clock</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4">const struct <a href="lhpstruc.html#timespec">timespec</a> __user *rqtp</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">edx</td>
+<td colspan="7"><tab to="i4">const struct <a href="lhpstruc.html#timespec">timespec</a> __user *rmtp</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault, inval</td>
+</tr>
+
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/kernel/posix-timers.c">kernel/posix-timers.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a>man 3p POSIX manual page</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+<!--long sys_statfs64(const char __user *path, size_t sz, struct statfs64 __user *buf)-->
+<li><a href="file://localhost/usr/man/html/man2/statfs64.2.html" name="statfs64">statfs64</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">268</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">const char __user *path</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#size_t">size_t</a> sz</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">edx</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#statfs64">statfs64</a> __user *buf</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault, inval</td>
+</tr>
+
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/fs/open.c">fs/open.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a> undocumented, <b>no manual page</b></td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+<!--sys_fstatfs64(unsigned int fd, size_t sz, struct statfs64 __user *buf)-->
+<li><a href="file://localhost/usr/man/html/man2/fstatfs64.2.html" name="fstatfs64">fstatfs64</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">269</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">int fd, file descriptor</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4"><a href="lhpstruc.html#size_t">size_t</a> sz</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">edx</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#statfs64">statfs64</a> __user *buf</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault, inval</td>
+</tr>
+
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/fs/open.c">fs/open.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a> undocumented, <b>no manual page</b></td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<!--asmlinkage long sys_tgkill(int tgid, int pid, int sig)-->
+<li><a href="file://localhost/usr/man/html/man2/tgkill.2.html" name="tgkill">tgkill</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;send signal to one specific thread
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">270</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">int tgid: the thread group ID of the thread</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4">int pid: the PID of the thread</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">edx</td>
+<td colspan="7"><tab to="i4">int sig: signal to be sent</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">inval, srch</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/kernel/signal.c">kernel/signal.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a> undocumented, <b>no manual page</b></td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+<!--sys_utimes(char __user * filename, struct timeval __user * utimes)-->
+<li><a href="file://localhost/usr/man/html/man2/utimes.2.html" name="utimes">utimes</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">271</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ebx</td>
+<td colspan="7"><tab to="i4">char __user * filename</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">&nbsp;</td>
+<td colspan="1"><tab to="i3">ecx</td>
+<td colspan="7"><tab to="i4">struct <a href="lhpstruc.html#timeval">timeval</a> __user * utimes</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">fault, rofs</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/fs/open.c">fs/open.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a> undocumented, <b>no manual page</b></td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<p>&nbsp;</p>
+
+<li><a href="file://localhost/usr/man/html/man2/fadvise64_64.2.html" name="fadvise64_64">fadvise64_64</a>&nbsp;<tab to="i3"><b>K6</b>&nbsp;
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">272</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">nosys</td>
+</tr>
+
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/mm/fadvise.c">mm/fadvise.c</a>
+</td>
+</tr>
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/include/linux/"></a> undocumented, <b>no manual page</b></td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<p>&nbsp;</p>
+
+<li><a href="file://localhost/usr/man/html/man2/vserver.2.html" name="vserver">vserver</a><tab to="i3">&nbsp;
+<table border="0" width="95%">
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">arg</td>
+<td colspan="1"><tab to="i3">eax</td>
+<td colspan="7"><tab to="i4">273</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">return</td>
+<td><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">ernum or zero</td>
+</tr>
+
+<tr>
+<td><tab to="i1">&nbsp;</td><td colspan="2"><tab to="i2">errors</td>
+<td><tab to="i3">eax&nbsp;</td>
+<td colspan="7"><tab to="i4">nosys</td>
+</tr>
+
+
+<tr valign="top">
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">src</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4"><a href="file://localhost/usr/src/linux/"></a>
+</td>
+</tr>
+
+<tr>
+<td colspan="1"><tab to="i1">&nbsp;</td>
+<td colspan="2"><tab to="i2">ref</td>
+<td colspan="1"><tab to="i3">&nbsp;</td>
+<td colspan="7"><tab to="i4">n.i.</td>
+</tr>
+
+</table>
+</li>
+
+<p>&nbsp;</p>
+<hr>
+<hr>
+
+<p>&nbsp;</p>
+
+</ol>
+</blockquote>
+
+
+<hr>
+<hr>
+<a name="bot"></a>
+<a href="lhpsysc0.html">[1st]</a>
+<a href="lhpsysc3.html">[back]</a>
+<a href="#bot">[bot]</a>
+<a href="#top">[top]</a>
+<br>
+<a href="lhpsyscal.html">[intro]</a>
+<a href="lhpsysc0a.html">[a:index]</a> 
+<a href="lhpsysc0.html">[#:index]</a> 
+<a href="lhpsysc1.html">[1..64]</a>
+<a href="lhpsysc2.html">[65..128]</a>
+<a href="lhpsysc3.html">[129..192]</a>
+<a href="lhpsysc4.html">[193..256]</a>
+<a name="lhpsysc5.html">[257..]</a> 
+<a href="lhpsysref.html">[ref]</a>
+<a href="lhpstruc.html">[struc]</a>
+<a href="lhpfcntl.html">[fcntl]</a>
+<a href="lhpioctl.html">[ioctl]</a>
+<a href="lhpsyscc.html">[pguide]</a>
+<p>&nbsp;</p>
+<hr>
+
+<center>
+<font size="-2">
+<a href="index-lx.shtml#nospam">H.-Peter Recktenwald, Berlin</a>, 1.Mar.2001 = .hpr.l0 =
+</font>
+<script language="JavaScript"> document.write(document.lastModified)</script>
+<noscript>updt:10.Aug.02+</noscript> : 
+<img src="http://me.in-berlin.de/cgi-bin/wwwcount.cgi?df=lxhp.sysc5" alt="331" border="0" height="16">
+<a href="mailto:news.admin.net-abuse.email@myriad.alias.net"></a>
+</center>
+
+<p>&nbsp;</p>
+</body>
+</html>

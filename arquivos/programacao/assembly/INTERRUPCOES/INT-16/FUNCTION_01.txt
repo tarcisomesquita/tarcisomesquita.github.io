@@ -1,0 +1,15 @@
+
+Return Keyboard Status (01h)
+
+if a keystroke is waiting to be read the zero flag (ZF) is set
+
+this function returns a copy of it but does not remove it from the typeahead buffer
+
+Input Parameters:
+        AH - 01h, indicating the Return Keyboard Status Function.
+
+Output Parameters:
+        ZF - Clear if character ready, else set if not.
+        AH - Scan code of the returned keystroke.
+        AL - ASCII code for the returned keystroke.
+

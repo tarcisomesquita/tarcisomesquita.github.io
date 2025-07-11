@@ -1,0 +1,12 @@
+
+Fragmentation Threshold (Fragmentation Length): Esta opção determina o tamanho máximo de frame que será transmitido pelo ponto de acesso. Qualquer pacote maior do que o valor definido será fragmentado e enviado em frames separados.
+(byte, range: 256~2346, default: 2346, even number only)
+
+Frames maiores resultam em mais erros de transmissão quando há interferência, ou quando o sinal está fraco. Nessas situações, reduzir o threshold para 1024 ou mesmo 512 bytes torna a transmissão mais estável (já que reduz o volume de frames corrompidos e torna as retransmissões mais rápidas), mas, em compensação, reduz a taxa máxima de transmissão da rede.
+
+É importante enfatizar que ajustar esta opção no ponto de acesso ajusta a fragmentação apenas para as transmissões originadas dele, as estações precisam ser configuradas de forma independente.
+
+
+Com 3 canais não intereferentes e um throughput de 11 Mbps para cada canal, dá um total de 33 Mbps. O real é a metade, 16,5 Mbps.
+A interferência entre canais reduz o throughput de toda a rede.
+

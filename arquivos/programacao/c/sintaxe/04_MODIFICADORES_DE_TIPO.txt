@@ -1,0 +1,21 @@
+
+MODIFICADORES DE TIPO
+* Quanto ao sinal (podem ser usados com char ou int e não se aplica a ponteiros):
+   * signed : A variável pode receber valores negativos ou positivos. Padrão.
+   * unsigned : A variável somente pode receber valores positivos.
+* Quanto ao tamanho (podem ser usados com int.):
+   * short : Formato curto (2 bytes). Padrão para compiladores de 16 bits
+   * long : Formato longo (4 bytes). Padrão para compiladores de 32 bits.
+
+Tipo                   Tamanho   Intervalo
+unsigned char          1         0 a 255
+signed   char          1         -128 a 127
+unsigned short int     2         0 a 65535
+signed   short int     2         -32768 a 32767
+unsigned long  int     4         0 a 4294967295
+signed   long  int     4         -2147483648 a +2147483647
+signed long long int   8         -9223372036854775808 a 9223372036854775807
+float                  4         3.4E-38 a 3.4E+38      ( 7 casas decimais)
+double                 8         1.7E-308 a 1.7E+308    (15 casas decimais)
+long double            10        3.4E-4932 a 1.1E+4932  (17 casas decimais)
+void                   -         Nenhum valor

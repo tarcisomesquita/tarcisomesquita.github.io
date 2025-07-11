@@ -1,0 +1,16 @@
+
+ PUSH – Push Operand onto the Stack
+   register                                      1111 1111 : 11 110 reg
+   register (alternate encoding)                 0101 0 reg
+   memory                                        1111 1111 : mod 110 r/m
+   immediate                                     0110 10s0 : immediate data
+ PUSH – Push Segment Register onto the
+ Stack
+   segment register CS,DS,ES,SS                  000 sreg2 110
+   segment register FS,GS                        0000 1111: 10 sreg3 000
+
+CX = 001
+BP = 101
+FF F5 ou 55   pushl %ebp
+FF F1 ou 51   pushl %ecx
+

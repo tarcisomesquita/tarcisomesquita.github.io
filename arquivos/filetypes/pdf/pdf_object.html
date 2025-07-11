@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>object pdf</title>
+
+</head>
+
+<body>
+<object type="application/pdf" id="output" style="width: 100%;">
+
+
+<script>
+var pdf_file_string = "%PDF-1.4\n\
+%üüüü\n\
+\n\
+1 0 obj\n\
+<<\n\
+  /Type /Catalog\n\
+  /Pages 2 0 R\n\
+>>\n\
+endobj\n\
+\n\
+2 0 obj\n\
+<<\n\
+  /Type /Pages\n\
+  /Kids [3 0 R]\n\
+  /Count 1\n\
+>>\n\
+endobj\n\
+\n\
+3 0 obj\n\
+<<\n\
+  /Type /Page\n\
+  /Parent 2 0 R\n\
+  /MediaBox [ 0 0 595.28 841.89 ]\n\
+  /Contents 6 0 R\n\
+  /Resources\n\
+  <<\n\
+    /Font\n\
+    <<\n\
+      /F1 4 0 R\n\
+      /F2 5 0 R\n\
+    >>\n\
+  >>\n\
+>>\n\
+endobj\n\
+\n\
+4 0 obj\n\
+<<\n\
+  /Type /Font\n\
+  /Subtype /Type1\n\
+  /BaseFont /Helvetica\n\
+  /Encoding /WinAnsiEncoding\n\
+>>\n\
+endobj\n\
+\n\
+5 0 obj\n\
+<<\n\
+  /Type /Font\n\
+  /Subtype /Type1\n\
+  /BaseFont /Helvetica,Bold\n\
+  /Encoding /WinAnsiEncoding\n\
+>>\n\
+endobj\n\
+\n\
+6 0 obj\n\
+<<\n\
+  /Length 4579\n\
+>>\n\
+stream\n\
+% Cabeçalho\n\
+BT\n\
+  156 756 Td\n\
+  /F1 14 Tf\n\
+  (TECRETARIA DE ESTADO DA EDUCAÇÃO) Tj\n\
+  23 -24 Td\n\
+  /F1 12 Tf\n\
+  (DIRETORIA REGIONAL CAMPINAS LESTE) Tj\n\
+   ET\n\
+endstream\n\
+endobj\n\
+\n\
+% precisa ajeitar os offsets\n\
+xref\n\
+0 8\n\
+0000000000 65535 f\n\
+0000000009 00000 n\n\
+0000000084 00000 n\n\
+0000000137 00000 n\n\
+0000000188 00000 n\n\
+0000000410 00000 n\n\
+0000005045 00000 n\n\
+0000005077 00000 n\n\
+0000005200 00000 n\n\
+\n\
+trailer <<\n\
+   /Size 8\n\
+   /Root 1 0 R\n\
+>>\n\
+\n\
+startxref 5357\n\
+%%EOF";
+
+document.getElementById("output").style['min-height'] = window.innerHeight + 'px';
+
+document.getElementById("output").data = "data:application/pdf;base64," + btoa(pdf_file_string);
+
+alert("Enviado");
+</script>
+
+</body>
+</html>
+

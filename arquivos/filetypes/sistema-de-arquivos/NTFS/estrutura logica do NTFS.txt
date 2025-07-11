@@ -1,0 +1,49 @@
+MFT (Master File Table) armazena as localizações de todos os arquivos e diretórios.
+
+Cada entrada de arquivo ou diretório no MFT possui 2 KB, onde são armazenados o nome do arquivo e seus atributos. Sobra então uma pequena área de dados, geralmente de 1500 bytes (pode ser maior ou menor, dependendo do espaço ocupado pelo nome e pelos atributos do arquivo) que é usada para guardar o início do arquivo.
+
+Caso o arquivo seja muito pequeno, ele poderá ser armazenado diretamente na entrada no MFT. Caso contrário, serão armazenados apenas os números dos clusters ocupados pelo arquivo.
+
+Em alguns casos, não é possível armazenar nem mesmo os atributos do arquivo no MFT, neste caso, os atributos serão gravados em clusters vagos do HD e a MFT conterá apenas entradas que apontam para eles. Pode parecer estranho que um arquivo possa ter mais de 2 KB só de atributos, mas no NTFS os atributos do arquivo vão muito além dos atributos de arquivo, diretório, oculto, etc.
+
+Os atributos do arquivo incluem seu nome, versão, nome MS-DOS (o nome simplificado com 8 caracteres e extensão), mas, principalmente incluem as permissões do arquivo, quais usuários do sistema poderão acessa-lo ou não, e ainda um espaço reservado para auditoria, que permite armazenar informações sobre quais operações envolvendo o arquivo devem ser gravadas para que seja possível realizar uma auditoria, caso necessário.
+
+Em seguida, temos a questão das permissões de acesso, uma parte importante da configuração de um servidor, ou de qualquer máquina que vá ser utilizada por diversos usuários.
+
+
+
+O NTFS inclui também recursos que reduzem de forma significativa a fragmentação do sistema de arquivos. Quando existe um volume considerável de espaço em disco, o sistema reserva até 15% do espaço da partição para armazenar o MFT e as entradas referentes aos atributos dos arquivos, de forma que todas as informações possam ser gravadas em setores contínuos. Os próprios arquivos são salvos de forma inteligente, com o sistema dando preferência a áreas onde ele pode ser gravado seqüencialmente, sem fragmentação.
+
+Concluindo, temos o LFS (Log File Service), que é o principal responsável pela tolerância à falhas do sistema NTFS. Tolerância a falhas neste caso significa não perder dados ou estruturas do sistema de arquivos quando o sistema travar, ou houver qualquer outro imprevisto, ou que, pelo menos, o estrago seja o menor possível.
+
+primeiro cluster inicia no setor 0.
+
+Volume Size 	      NTFS Cluster Size
+   7 MiB -  512 MiB   512 bytes
+ 513 MiB - 1024 MiB   1 kiB
+1025 MiB -    2 GiB   2 kiB
+   2 GiB -    2 TiB   4 kiB
+
+
+NTFS Volume Components
+NTFS Boot Sector
+	Contains the BIOS parameter block that stores information about the layout of the volume and the file system structures, as well as the boot code that loads Windows Server 2003.
+
+Master File Table
+	Contains the information necessary to retrieve files from the NTFS partition, such as the attributes of a file.
+
+File System Data
+	Stores data that is not contained within the Master File Table.
+
+Master File Table Copy
+	Includes copies of the records essential for the recovery of the file system if there is a problem with the original copy.
+
+
+Offset    Length         Name
+0x00        3 bytes      Jump instruction
+0x03        8 bytes      OEM ID  'NTFS'
+0x0B       25 bytes      BPB
+0x24       48 bytes      Extended BPB
+0x54      426 bytes      Bootstrap code
+0x01FE      2 bytes      End of sector marker
+

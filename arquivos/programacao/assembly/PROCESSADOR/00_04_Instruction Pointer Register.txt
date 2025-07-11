@@ -1,0 +1,10 @@
+
+EIP
+Instruction Pointer
+
+number that points to the offset (endereço) of the next instruction.
+
+You cannot directly change the contents of IP or CS. They can only be changed by JMP, CALL, or RET.
+
+CS:EIP
+

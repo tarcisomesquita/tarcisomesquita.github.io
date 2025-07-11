@@ -1,0 +1,5 @@
+
+receptor = ( (condição) ? verdadeiro : falso) 
+Ex. 
+NomeSexo = ((VarSexo == "M") ? "Masculino" : "Feminino") 
+

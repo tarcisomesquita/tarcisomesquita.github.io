@@ -1,0 +1,66 @@
+
+WPA2/AES
+/etc/network/interfaces
+auto wlan0
+iface wlan0 inet static
+  address 192.168.1.10
+  gateway 192.168.1.1
+  network 192.168.1.0
+  dns-nameservers 192.168.1.1
+  netmask 255.255.255.0
+  broadcast 192.168.1.255
+  wpa-ssid <NETWORK_NAME>
+  wpa-ap-scan 2
+  wpa-proto RSN
+  wpa-pairwise AES
+  wpa-group AES
+  wpa-key-mgmt WPA-PSK
+  wpa-psk <ASCII_ACCESS_KEY>
+ou
+auto wlan0
+iface wlan0 inet dhcp
+  wpa-ssid <NETWORK_NAME>
+  wpa-ap-scan 2
+  wpa-proto RSN
+  wpa-pairwise AES
+  wpa-group AES
+  wpa-key-mgmt WPA-PSK
+  wpa-psk <ASCII_ACCESS_KEY>
+
+
+auto lo
+iface lo inet loopback
+
+auto wlan0
+iface wlan0 inet dchp
+   wpa-driver wext
+   wpa-ssid <my network name>
+   wpa-ap-scan 2
+   wpa-proto RSN
+   wpa-pairwise CCMP
+   wpa-group CCMP
+   wpa-key-mgmt WPA-PSK
+   wpa-psk <my network password>
+sudo iwlist auth
+
+
+iwconfig wlan0 mode managed
+iwpriv wlan0 set AuthMode=WPA2PSK
+iwpriv wlan0 set EncrypType=AES
+iwconfig wlan0 essid "my ESSID"
+
+iwpriv wlan0 set WPAPSK="my psk ascii passphrase"
+iwconfig wlan0 essid "my ESSID"
+
+
+    wireless-essid Home
+    wireless-mode ad-hoc
+
+Example of multiple keys:
+
+    wireless-key1 0123-4567-89ab-cdef
+    wireless-key2 12345678
+    wireless-key3 s:password
+    wireless-defaultkey 2
+    wireless-keymode open
+

@@ -1,0 +1,45 @@
+#VBoxManage modifyvm "Linux" --nic1 intnet --intnet1 "Link1" --nictype1 82540EM --cableconnected1 on --nicpromisc1 allow-all --nicspeed1 10000 --macaddress1 080027FD4472
+
+#timeout -t 15 -s 9 nc -l -p 80
+
+syslogd -O log.txt
+klogd 
+
+modprobe sd_mod
+modprobe usb_storage
+modprobe ehci-pci
+modprobe ext4
+modprobe bridge
+modprobe br_netfilter
+modprobe e100
+modprobe r8152
+echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6 
+
+ip6tables -I OUTPUT  -j DROP
+ip6tables -I INPUT   -j DROP
+ip6tables -I FORWARD -j DROP
+iptables  -I INPUT   -j DROP
+iptables  -I OUTPUT  -j DROP
+iptables  -I FORWARD -j ACCEPT
+iptables -n -v -L
+arptables -I INPUT   -j DROP
+arptables -I OUTPUT  -j DROP
+arptables -I FORWARD -j ACCEPT
+arptables -n -v -L
+ip6tables -n -v -L
+
+ifconfig eth0 down
+ifconfig eth1 down
+brctl addbr br0
+brctl addif br0 eth0
+brctl addif br0 eth1
+ifconfig eth0 0.0.0.0 hw ether 14:cc:20;fd:44:70 promisc up
+ifconfig eth0 0.0.0.0 hw ether 14:cc:20:fd:44:70 promisc up
+ifconfig eth1 0.0.0.0 hw ether 14:cc:20:fd:44:71 promisc up
+brctl setfd br0 0
+brctl stp br0 off
+ifconfig br0 0.0.0.0 hw ether 14:cc:20:fd:44:72 up
+ifconfig
+tcpdump -i eth0 -w cap.pcap -C 100 -W 10 -U &
+cat /proc/net/dev | sed ":A; s/  / /; tA" | cut -d" " -f2,3,4,11,12
+

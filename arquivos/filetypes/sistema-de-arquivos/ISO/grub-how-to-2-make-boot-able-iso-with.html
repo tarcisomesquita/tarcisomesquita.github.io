@@ -1,0 +1,3410 @@
+<img src="Iso9660directoryTree.png" width="640" height="363" border="0"><br>
+<br>
+<img src="1.png" width="640" height="338" border="0"><br>
+<br>
+<br>
+A Volume is basically a file system which has its root directories and files underneath it. Multiple volumes could be co-located in one CD-ROM, and you can choose which volume to load when you read the CD-ROM. A volume's metadata &nbsp;is kept in "Volume Descriptor", among them the most critical are the size of volume and the start address of root directory, all in unit of sector (2048 bytes). &nbsp;So when we mount a volume in a CD-ROM, we locate the volume descriptor, and we can find pointer to root directory entry, and then we can find all dir/files under root directory. &nbsp;That is easy.<br>
+<br>
+<h3>
+1.3 &nbsp;Boot-able CD-ROM (El Torito)</h3>
+<div>
+<br></div>
+<div>
+The vanilla ISO 9660 is not boot-able. It is a plain file system. &nbsp; The El Torito extension to ISO 9660 is to make clever trick to original CD-ROM and store the boot loader code somewhere in the CD-ROM, without interfering with original contents. &nbsp; El Torito extension introduce a special volume into ISO 9660 called "Boot Record Volume", and it contains all the information for how to locate the boot loader codes. An El Torito conscious BIOS will search for this "Boot Record Volume" when boot from CD-ROM, and load the boot-loader code into 0x7c00, just like it did to hard disk booting. &nbsp;Boot record volume are invisible in file directory when you mount an ISO 9660 file systems. &nbsp;Only normal volumes are visible.&nbsp;</div>
+<div>
+<br></div>
+<div>
+<br></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="Screenshot+from+2013-06-14+17%253A35%253A18.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img src="2.png" width="640" height="458" border="0"></a></div>
+<div>
+<br></div>
+<div>
+<br></div>
+<div>
+<h3>
+</h3>
+</div>
+<div>
+<br></div>
+<div>
+<br></div>
+<div>
+As illustrated by diagram above, BIOS will first search for a Boot Record Volume in sector 17, if found, it will follow the pointer in it to locate start sector of "Boot Catalog". &nbsp;In the Boot Catalog, there might be information for multiple boot loaders called "Boot Entry". In each Boot Entry, you have pointer to start sector and size of each boot loader image. &nbsp;After BIOS gathers these information, it will load the boot loader image into 0x7c00, set the cd rom disk number into register DL, &nbsp; and transfer control to boot loader code. &nbsp;From register DL, boot loader can choose to load whatever more information from CD-ROM, and begin its booting process. Such boot process is called "no emulation" booting. &nbsp;It is very straight forward. &nbsp;The other boot process is called "emulated booting", where BIOS will emulated a floppy or hard disk, and put boot image into it, so some legacy boot loader can read more information from these emulated devices. &nbsp;Nowadays, almost all boot iso is in "no-emulate" mode. &nbsp;So we don't bother to talk about legacy "emulated mode".&nbsp;</div>
+<div>
+<br>
+<br>
+<br>
+<div>
+<h3>
+1.4 &nbsp;isohybrid&nbsp;</h3>
+</div>
+<div>
+Many Linux distributions use ISO as media. &nbsp;If you want to install the distribution in a real machine, it is still inconvenient. &nbsp;How many people have a cdrom in their computer? Even they have one, few people could ensure it could still burn cd-rom or read cd-rom. You also need CD-RW in hand to finish this process. This process, if not&nbsp;unbearable, &nbsp;at least is quite a hassle. &nbsp;Some distribution provide tools to convert an installation ISO to an USB stick. In Ubuntu, you have a tool called &nbsp;"Startup disk creator". &nbsp;It is good enough already, but could it be better?&nbsp;</div>
+<div>
+<br></div>
+<div>
+That is why isohybrid comes to life. &nbsp;It is still an ISO file, after burned, &nbsp;it could be booted from a CD drive &nbsp;to install distribution. &nbsp;In the "System Area" of this ISO, a hard disk image is flashed into it. This area is 16 sectors (32K), &nbsp;big enough to embed a boot loader into it. &nbsp;A CD-ROM drive will ignore these sectors. &nbsp;In the embedded hard disk image, there is MBR, partition table, just like any other hard disk. The boot code there understands ISO 9660 file system, and with some hard coded information in it beforehand , it can boot the distribution installer in the ISO 9660 file system. When you dump this ISO file into an USB disk using "dd" or other tools, &nbsp;with the help of this embedded hard disk image, you can get a boot-able USB stick. &nbsp;Wow!&nbsp;</div>
+<div>
+<br></div>
+<div>
+<br></div>
+<div>
+<br></div>
+<div>
+</div>
+</div>
+<h2>
+&nbsp;2. Boot-able CD-ROM Case Study</h2>
+<div>
+<br></div>
+<div>
+To make a boot-able CD-ROM, we need:</div>
+<div>
+<br></div>
+<div>
+a. A CD-ROM conscious boot loader;</div>
+<div>
+b. An ISO generating tools understanding ISO 9660 and El Torito extension, so &nbsp;boot record volume, boot catalog entry will be generated automatically for us. &nbsp;</div>
+<div>
+<br></div>
+<h3>
+2.1 &nbsp;"grub-mkrescue" analysis</h3>
+<div>
+GRUB is CD-ROM conscious. &nbsp;It has a initial boot image call "cdboot.img", which could be first loaded by BIOS from cdrom, and continue the boot process. &nbsp;Grub also has modules "iso9660.mod" to handle iso 9660 file system.<br>
+<br>
+Grub has a utility to create rescue ISO image called "grub-mkrescue". It will create a isohybrid image. &nbsp;When booted from it, you will have a bare bone grub shell. &nbsp;You can of course add a config file into it, or even add a OS, so it will become a fully functional boot able OS. "grub-mkrescue" is a shell script. Let us trace it to see what happened during its execution.<br>
+<br>
+<br></div>
+<div>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b>bash -x /usr/bin/grub-mkrescue -o grub.iso</b></span><br>
+<div>
+<br></div>
+<br>
+From the trace, we can &nbsp;identify &nbsp;key points:<br>
+<br>
+<br>
+<b><span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># all *.lst are text files, with various configuration files for grub's own use</span></b><br>
+<b><span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span></b>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ pkglib_DATA=moddep.lst command.lst fs.lst partmap.lst parttool.lst handler.lst video.lst crypto.lst terminal.lst</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b># "grub-mkrescue" will call these external utils</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ grub_mkimage=/usr/bin/<b>grub-mkimage</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ xorriso=<b>xorriso</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ diet=no</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ . /usr/share/grub/<b>grub-mkconfig_lib</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ grub_mkrelpath=/usr/bin/<b>grub-mkrelpath</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ output_image=grub.iso</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b># generate a tmp dir "iso9660_dir", to store generated files under "boot/grub"</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ mktemp -d /tmp/tmp.XXXXXXXXXX</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ <b>iso9660_dir</b>=<b>/tmp/tmp.Q2JZTGv5zr</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ mkdir -p /tmp/tmp.Q2JZTGv5zr/boot/grub</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ input_dir=/usr/lib/grub/i386-pc</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ platform=i386-pc</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ mkdir -p /tmp/tmp.Q2JZTGv5zr/boot/grub/i386-pc&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b># copy all modules (*.mod) file under /usr/lib/grub/i386-pc to "iso9660_dir"</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ test -f /usr/lib/grub/i386-pc/915resolution.mod</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ cp -f /usr/lib/grub/i386-pc/915resolution.mod /tmp/tmp.Q2JZTGv5zr/boot/grub/i386-pc/</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">........</span><br>
+<span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;">+ test -f /usr/lib/grub/i386-pc/zfs.mod</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ cp -f /usr/lib/grub/i386-pc/zfs.mod /tmp/tmp.Q2JZTGv5zr/boot/grub/i386-pc/</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ test -f /usr/lib/grub/i386-pc/zfscrypt.mod</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ cp -f /usr/lib/grub/i386-pc/zfscrypt.mod /tmp/tmp.Q2JZTGv5zr/boot/grub/i386-pc/</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ test -f /usr/lib/grub/i386-pc/zfsinfo.mod</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ cp -f /usr/lib/grub/i386-pc/zfsinfo.mod /tmp/tmp.Q2JZTGv5zr/boot/grub/i386-pc/</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b># copy all "*.o", "*.lst" under /usr/lib/grub/i386-pc to "iso9660_dir"</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ test -f /usr/lib/grub/i386-pc/efiemu32.o</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ cp -f /usr/lib/grub/i386-pc/efiemu32.o /tmp/tmp.Q2JZTGv5zr/boot/grub/i386-pc/</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ test -f /usr/lib/grub/i386-pc/efiemu64.o</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ cp -f /usr/lib/grub/i386-pc/efiemu64.o /tmp/tmp.Q2JZTGv5zr/boot/grub/i386-pc/</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ test -f /usr/lib/grub/i386-pc/moddep.lst</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ cp -f /usr/lib/grub/i386-pc/moddep.lst /tmp/tmp.Q2JZTGv5zr/boot/grub/i386-pc/</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ test -f /usr/lib/grub/i386-pc/command.lst</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">........</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ test -f /usr/lib/grub/i386-pc/terminal.lst</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ cp -f /usr/lib/grub/i386-pc/terminal.lst /tmp/tmp.Q2JZTGv5zr/boot/grub/i386-pc/</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b># copy all locales related file (grub.mo) to "iso9660_dir"</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ mkdir -p /tmp/tmp.Q2JZTGv5zr/boot/grub/locale</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ test -f /usr/share/locale/aa/LC_MESSAGES/grub.mo</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ test -f /usr/share/locale/ace/LC_MESSAGES/grub.mo</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">.....</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ test -f /usr/share/locale/af/LC_MESSAGES/grub.mo</span><br>
+<span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;">+ test -f /usr/share/locale/am/LC_MESSAGES/grub.mo</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b># generate a string base on current date/time, use it as the "</b></span><b style="font-family: 'Courier New', Courier, monospace; font-size: small;">modification-date" when generating iso</b><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ date -u +%Y-%m-%d-%H-%M-%S-00</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ iso_uuid=2013-06-14-16-47-03-00</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ sed -e s/-//g</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ echo 2013-06-14-16-47-03-00</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ grub_mkisofs_arguments= <b>--modification-date=2013061416470300</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># generate two tmp file "load_cfg"/"core_img"</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ mktemp /tmp/tmp.XXXXXXXXXX</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ <b>load_cfg</b>=/tmp/tmp.jDmvqbBmk6</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ mktemp /tmp/tmp.XXXXXXXXXX</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ <b>core_img</b>=/tmp/tmp.1WMFfKMPMX</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b># all the partition types listed in partmap.lst ensure there will be corresponding modules to handle them in "load_cfg". This config file will be embedded into grub image to act as an early configuration.</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ cat /usr/lib/grub/i386-pc/partmap.lst</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ echo insmod part_acorn</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ echo insmod part_amiga</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">....</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ echo insmod part_plan</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ echo insmod part_sun</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ echo insmod part_sunpc</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b># generate a core image with "load_cfg" as early config, for i386-pc platform, adding iso9660/biosdisk modules into core image, and finally store into "core_img" tmp file</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b><br></b></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ /usr/bin/grub-mkimage -O i386-pc -d /usr/lib/grub/i386-pc/ -o /tmp/tmp.1WMFfKMPMX -c /tmp/tmp.jDmvqbBmk6 --prefix=/boot/grub iso9660 biosdisk</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b># concatenate "cdboot.img" with "core_img" to form the final "eltorito.img". this is the boot image for iso9660.</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ cat /usr/lib/grub/i386-pc/cdboot.img /tmp/tmp.1WMFfKMPMX &gt;&nbsp;</span><span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;">boot/grub/i386-pc/<b>eltorito.img</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<b style="font-family: 'Courier New', Courier, monospace; font-size: small;"># concatenate "boot.img" with "core_img" to form the embedded isohybrid "embed_img". This is the boot image for usb disk boot, which will reside in "system area" in CD-rom.</b><br>
+<b style="font-family: 'Courier New', Courier, monospace; font-size: small;"><br></b>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ mktemp /tmp/tmp.XXXXXXXXXX</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ <b>embed_img</b>=/tmp/tmp.4gVnPr2tCf</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ cat /usr/lib/grub/i386-pc/boot.img /tmp/tmp.1WMFfKMPMX &gt;&nbsp;</span><span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;">/tmp/tmp.4gVnPr2tCf</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># generate the ISO hybrid image with xorriso.&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># "-as mkisofs" emulate the behavior of "mkisofs". xorriso is the Swiss knife for #handling iso/cd, it can also emulate other cd utils like #"genisoimage","cdrecord","wodim",etc.&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># "-b " &nbsp;boot image</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># "--embedded-boot" &nbsp;hard disk image for isohybrid</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># "-r " use&nbsp;</span><span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Rock Ridge extension</span>.&nbsp;<span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;">all files in "iso9660_dir" marked "read only" owned, by "root", then added into iso</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># "-no-emul-boot" &nbsp;no emulation boot mode</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># "--sort-weight" &nbsp;the higher the weight, the corresponding files will be flashed with lower LBA, a.k.a near to the beginning sectors of CD-ROM. So files under "/boot" will be put before file directly under "/".&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">#"</span><span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;">--protective-msdos-label" &nbsp;generate a partition table in embedded hard disk image so that other normal disk partition tool will think this disk could not be manipulated.</span><br>
+<span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;">#"</span><span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;">-boot-info-table" &nbsp;patch an "</span><span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;">EL TORITO BOOT INFORMATION TABLE" into "</span><span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;">eltorito.img".&nbsp;</span><br>
+<br>
+<pre>     When the -<b>boot-info-table</b>  option  is  given,  <b>mkisofs</b>  will
+     modify the boot file specified by the -<b>b</b> option by inserting
+     a 56-byte "boot information table" at offset 8 in the  file.
+     This  modification is done in the source filesystem, so make
+     sure you use a copy if this file is  not  easily  recreated!
+     This file contains pointers which may not be easily or reli-
+     ably obtained at boot time.
+
+     The format of this table is as follows; all integers are  in
+     section 7.3.1 ("little endian") format.
+
+       Offset    Name           Size      Meaning
+        8        bi_pvd         4 bytes   LBA of primary volume descriptor
+       12        bi_file        4 bytes   LBA of boot file
+       16        bi_length      4 bytes   Boot file length in bytes
+       20        bi_csum        4 bytes   32-bit checksum
+       24        bi_reserved    40 bytes  Reserved</pre>
+<br>
+<span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;"># "-graft-points" &nbsp;</span><span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Allow to use graft points for filenames. If this option</span><br>
+<pre>          is  used,  all  filenames are checked for graft points.
+          The filename is divided at the  first  unescaped  equal
+          sign.  All  occurrences of '\\' and '=' characters must
+          be escaped with '\\' if -<i>graft</i>-<i>points</i> has  been  specified.</pre>
+<span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ <b>xorriso</b> -report_about HINT -as mkisofs -graft-points --modification-date=2013061416470300 -b boot/grub/i386-pc/eltorito.img -no-emul-boot -boot-info-table --embedded-boot /tmp/tmp.4gVnPr2tCf --protective-msdos-label -o grub.iso -r /tmp/tmp.Q2JZTGv5zr --sort-weight 0 / --sort-weight 1 /boot</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">xorriso 1.2.4 : RockRidge filesystem manipulator, libburnia project.</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">+ exit 0</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">luke@luke-ubuntu:~/test$&nbsp;</span><br>
+<br>
+<br>
+<br>
+For the detail explanation on xorriso parameters, please refter to <a href="http://www.gnu.org/software/xorriso/man_1_xorriso.html" target="_blank">xorriso man page</a> and <a href="http://cdrecord.berlios.de/private/man/mkisofs-2.0.html" target="_blank">mkisofs man page.&nbsp;</a><br>
+<br>
+<h3>
+2.2 &nbsp;Home-brewed "grub-mkrescue"&nbsp;</h3>
+<div>
+Now we know how "grub-mkrescue" works. Let us make a isohybrid grub rescue image ourselves.&nbsp;</div>
+<div>
+<br></div>
+<div>
+<br></div>
+<div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ mkdir -p rescue/iso/boot/grub/i386-pc/</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ cp -r /usr/lib/grub/i386-pc/* &nbsp;rescue/iso/boot/grub/i386-pc/</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ rm rescue/iso/boot/grub/i386-pc/*.img</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ cat &gt; rescue/load_cfg &lt;&lt;EOF</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&gt; insmod part_acorn</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&gt; insmod part_amiga</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&gt; insmod part_apple</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&gt; insmod part_bsd</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&gt; insmod part_dvh</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&gt; insmod part_gpt</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&gt; insmod part_msdos</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&gt; insmod part_plan</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&gt; insmod part_sun</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&gt; insmod part_sunpc</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&gt; EOF</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ grub-mkimage -O i386-pc -d /usr/lib/grub/i386-pc/ -o rescue/core.img -c rescue/load_cfg &nbsp;--prefix=/boot/grub iso9660 biosdisk</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ cat /usr/lib/grub/i386-pc/cdboot.img rescue/core.img &gt; rescue/iso/boot/grub/i386-pc/eltorito.img</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ cat /usr/lib/grub/i386-pc/boot.img rescue/core.img &gt; rescue/embedded.img&nbsp;</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ xorriso -report_about HINT -as mkisofs -graft-points --modification-date=2013061416470300 -b boot/grub/i386-pc/eltorito.img -no-emul-boot -boot-info-table --embedded-boot /home/luke/rescue/embedded.img --protective-msdos-label -o grub.iso -r /home/luke/rescue/iso --sort-weight 0 / --sort-weight 1 /boot</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">xorriso 1.2.4 : RockRidge filesystem manipulator, libburnia project.</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ file grub.iso</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">grub.iso: # ISO 9660 CD-ROM filesystem data 'ISOIMAGE &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;' (bootable)</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ isoinfo -d -i grub.iso</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">CD-ROM is in ISO 9660 format</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">System id:&nbsp;</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Volume id: ISOIMAGE</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Volume set id:&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Volume set sequence number is: 1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Logical block size is: 2048</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Volume size is: 1491</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">El Torito VD version 1 found, boot catalog is in sector 41</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">NO Joliet present</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Rock Ridge signatures version 1 found</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Eltorito validation header:</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; Hid 1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; Arch 0 (x86)</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Publisher id:&nbsp;</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Data preparer id: XORRISO-1.2.4 2012.07.20.130001, LIBISOBURN-1.2.4, LIBISOFS-1.2.6, LIBBURN-1.2.4</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Application id:&nbsp;</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Copyright File id:&nbsp;</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Abstract File id:&nbsp;</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Bibliographic File id:&nbsp;</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Volume set size is: 1</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Volume set sequence number is: 1</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Logical block size is: 2048</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Volume size is: 1491</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">El Torito VD version 1 found, boot catalog is in sector 41</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">NO Joliet present</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Rock Ridge signatures version 1 found</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Eltorito validation header:</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; Hid 1</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; Arch 0 (x86)</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; ID ''</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; Key 55 AA</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; Eltorito defaultboot header:</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; Bootid 88 (bootable)</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; Boot media 0 (No Emulation Boot)</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; Load segment 0</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; Sys type 0</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; <b>Nsect 4</b></span></div>
+<div>
+<b><span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; Bootoff &nbsp;2A 42</span></b><br>
+<b><span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span></b></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ fdisk -l grub.iso</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Disk grub.iso: 3 MB, 3053568 bytes</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">59 heads, 12 sectors/track, 8 cylinders, total 5964 sectors</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Units = sectors of 1 * 512 = 512 bytes</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Sector size (logical/physical): 512 bytes / 512 bytes</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">I/O size (minimum/optimal): 512 bytes / 512 bytes</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Disk identifier: 0x00000000</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp;Device Boot &nbsp; &nbsp; &nbsp;Start &nbsp; &nbsp; &nbsp; &nbsp; End &nbsp; &nbsp; &nbsp;Blocks &nbsp; Id &nbsp;System</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">grub.iso1 &nbsp; * &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 1 &nbsp; &nbsp; &nbsp; &nbsp;5963 &nbsp; &nbsp; &nbsp; &nbsp;2981+ &nbsp;cd &nbsp;Unknown</span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ qemu -cdrom grub.iso</span></div>
+<div>
+<br></div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="Screenshot+from+2013-06-15+22:53:44.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img src="Screenshot+from+2013-06-15+22:53:44.png" width="640" height="358" border="0"></a></div>
+<div>
+<br></div>
+<div>
+<br></div>
+<div>
+<br></div>
+<div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ qemu -hda grub.iso</span></div>
+<div>
+<br></div>
+</div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="Screenshot+from+2013-06-15+22:57:40.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img src="Screenshot+from+2013-06-15+22:57:40.png" width="640" height="358" border="0"></a></div>
+<div>
+<br></div>
+<div>
+<br></div>
+<br>
+So far so good. &nbsp;The generated is really a isohybrid image, and work both as CD-ROM and hard disk under QEMU.<br>
+<br>
+<h3>
+2.3 &nbsp;Interaction between cdboot.img and xorriso</h3>
+Reference code: &nbsp;grub-2.00/grub-core/boot/i386/pc/cdboot.S<br>
+<br>
+The only task of cdboot.img is to load core.img in CD-ROM and transfer control to it. &nbsp;But how could cdboot.img know where is the starting sector of core.img in CD-ROM? <br>
+<br>
+In boot.img case, when it is installed into MBR, "grub-install" check the start LBA of boot partition and flashed this value into boot.img in the address of &nbsp;"GRUB_BOOT_MACHINE_KERNEL_SECTOR" (0x5c). &nbsp;It is the similar case in cd booting. &nbsp;The &nbsp;CD burner will hard coded a &nbsp;56 byte "<b>boot-info-table" </b>&nbsp;into cdboot.img starting at offset 0x8, as code in cdboot.S shows:<br>
+<br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><span class="Apple-tab-span" style="white-space: pre;"> </span>. = start + 8</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">bi_pvd:</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><span class="Apple-tab-span" style="white-space: pre;"> </span>.long 0<span class="Apple-tab-span" style="white-space: pre;">  </span>/* LBA of primary volume descriptor. &nbsp;*/</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b>bi_file</b>:</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><span class="Apple-tab-span" style="white-space: pre;"> </span>.long 0<span class="Apple-tab-span" style="white-space: pre;">  </span>/* <b>LBA of boot file</b>. */</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b>bi_length</b>:</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><span class="Apple-tab-span" style="white-space: pre;"> </span>.long 0<span class="Apple-tab-span" style="white-space: pre;">  </span>/* <b>Length of boot file</b>. */</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">bi_csum:</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><span class="Apple-tab-span" style="white-space: pre;"> </span>.long 0<span class="Apple-tab-span" style="white-space: pre;">  </span>/* Checksum of boot file */</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">bi_reserved:</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><span class="Apple-tab-span" style="white-space: pre;"> </span>.space (10*4)<span class="Apple-tab-span" style="white-space: pre;"> </span>/* Reserved */</span><br>
+<div>
+<br></div>
+<br>
+<br>
+cdboot.img will just use bi_file/bi_length, directly load cdrom boot image into memory and transfer control to it.<br>
+<br>
+Let us verify this in generated grub.iso.<br>
+<br>
+<br>
+<span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;">$ isoinfo -d -i grub.iso</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">CD-ROM is in ISO 9660 format</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">......</span><br>
+<b><span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Logical block size is: 2048</span></b><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Volume size is: 1491</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">El Torito VD version 1 found, <b>boot catalog is in sector 41</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">NO Joliet present</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b>Rock Ridge signatures</b> version 1 found</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Eltorito validation header:</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; Hid 1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; Arch 0 (x86)￼</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; ID ''</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; Key 55 AA</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; Eltorito defaultboot header:</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; Bootid 88 (bootable)</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; Boot media 0 (No Emulation Boot)</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; Load segment 0</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; Sys type 0</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; <b>Nsect 4</b></span><br>
+<b><span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; Bootoff 2A 42</span></b><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span><span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ dd if=grub.iso of=cdboot.img <b>bs=2048 </b>count=1 <b>skip=42</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span><span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ hexedit cdboot.img</span><br>
+<div>
+<br></div>
+<br>
+<br>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://4.bp.blogspot.com/-Q7SJKw0luX4/Ub0au1oKvYI/AAAAAAAAALw/HYDTSYE-oxc/s1600/Screenshot+from+2013-06-16+09:53:34.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img src="http://4.bp.blogspot.com/-Q7SJKw0luX4/Ub0au1oKvYI/AAAAAAAAALw/HYDTSYE-oxc/s640/Screenshot+from+2013-06-16+09:53:34.png" width="640" height="384" border="0"></a></div>
+<br>
+<br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ ls -l rescue/iso/boot/grub/i386-pc/eltorito.img&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">-rw-rw-r-- 1 luke luke <b>27880</b> Jun 15 22:35 rescue/iso/boot/grub/i386-pc/eltorito.img</span><br>
+<div>
+<br></div>
+<br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ isoinfo -l -i grub.iso | grep -i eltorito.img</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">---------- &nbsp; 0 &nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <b>27880</b> Jun 15 2013 [ &nbsp; &nbsp; <b>42</b> 00] &nbsp;ELTORITO.IMG;1</span><br>
+<div>
+<br></div>
+<br>
+<br>
+From the output of isoinfo, we can see the boot image start at logical sector (2048 byte per sector) 0x2A (42d), and and BIOS will load 4 (Nsect) &nbsp;virtual/emulated sectors (512 byte) &nbsp;into memory 0x7c00. That is 2048 bytes loaded into 0x7c00. &nbsp; So we "dd" from grub.iso using 2048 byte block size and skipping &nbsp;42 sectors from start. The first 512 bytes is our actual cdboot.img. &nbsp; In &nbsp;offset 0xc (bi_file), we have a &nbsp;word "0x2A" (starting sector). In offset 0x10 (bi_length), we have a word "0x6CEB" (27880d). &nbsp;That is exactly the length of generated eltorito.img.<br>
+<br>
+Since eltorito.img is burned into ISO-9660 file system, &nbsp;you can see the "Boot image" start sector 0x2A (42d) is exactly the position marked by ISO file system, as "isoinfo -l " shows. <br>
+<br>
+<br>
+Everything matches.<br>
+<br>
+You might wonder in xorriso operation, why eltorito.img must reside in iso9660_dir and be burned into CD-ROM as a normal file, if not the xorriso might complain it could not find the image under "boot/grub/i386-pc". &nbsp;In theory, this boot image could reside outside of iso 9660 file system. With the help of "boot-info-table", knowing the offset(bi_file) &nbsp;and size(bi_length) &nbsp;of boot image, &nbsp;cdboot.img could load eltorito.img into memory and transfer to it. &nbsp; cdboot.img does not need to know anything about iso 9660.<br>
+<br>
+For other boot loaders, they might be not so lucky to have access the "boot-info-table" provided by cd burner. &nbsp;They must access the iso 9660 file system, find out the offset of eltorito.img. Since the specification does not tell boot loader the size of eltorito.img, &nbsp;only the sectors loaded into memory (Nsect), the boot-loader need to scan through the iso 9660 to identify a file with offset sector identical to the offset value in boot entry, then it know the size of this file, then it can load eltorito.img into memory. That is why in no-emulate boot mode, xorriso demands you to put eltorito.img into iso 9660 file system to ensure maximum portability for various boot loaders.<br>
+<br>
+<br>
+<br>
+<h3>
+2.4 &nbsp;Interaction between embedded.img and xorriso</h3>
+The embedded image for isohybrid is boot.img+core.img, and its size is 27880 bytes too. This is not a coincidence. &nbsp;Both boot.img and cdboot.img are 512 bytes, and they are concatenated to the same core.img. <br>
+<br>
+<br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ fdisk -l grub.iso</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Disk grub.iso: 3 MB, <b>3053568</b> bytes</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">59 heads, 12 sectors/track, 8 cylinders, total <b>5964 sectors</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Units = sectors of 1 * 512 = 512 bytes</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Sector size (logical/physical): 512 bytes / 512 bytes</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">I/O size (minimum/optimal): 512 bytes / 512 bytes</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Disk identifier: 0x00000000</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp;Device Boot &nbsp; &nbsp; &nbsp;Start &nbsp; &nbsp; &nbsp; &nbsp; End &nbsp; &nbsp; &nbsp;Blocks &nbsp; Id &nbsp;System</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">grub.iso1 &nbsp; * &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 1 &nbsp; &nbsp; &nbsp; &nbsp;<b>5963</b> &nbsp; &nbsp; &nbsp; &nbsp;2981+ &nbsp;<b>cd</b> &nbsp;Unknown</span><br>
+<div>
+<br></div>
+<br>
+<br>
+Via &nbsp;option&nbsp;<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">"</span><span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;">--protective-msdos-label" </span><span style="font-family: inherit;">, xorriso generates a partition table in embedded.img. It a only one partition with type code "cd", which does not corresponding to any system type. This partition is marked as "boot-able" and &nbsp;have 5963 sectors(</span>~3M) which is the total size of grub.iso minus MBA sector. <br>
+<br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ dd if=grub.iso of=embedded.img bs=512 count=1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ hexedit embedded.img&nbsp;</span><br>
+<br>
+<br>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://2.bp.blogspot.com/-1vLl-dfvXqc/Ub08gFxMoWI/AAAAAAAAAMA/nW16H3u-sp8/s1600/Screenshot+from+2013-06-16+12:17:44.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img src="http://2.bp.blogspot.com/-1vLl-dfvXqc/Ub08gFxMoWI/AAAAAAAAAMA/nW16H3u-sp8/s640/Screenshot+from+2013-06-16+12:17:44.png" width="640" height="384" border="0"></a></div>
+<br>
+<br>
+<br>
+In this embedded image, the "kernel_sector" value in offset 0x5c &nbsp;has the default value (0x01), which is right for current situation, since core.img follow boot.img without any gap. &nbsp;Xorriso won't touch this field since it has no information about the internal structure of an embedded image.<br>
+<br>
+<br>
+<h3>
+2.5 &nbsp;An interlude : &nbsp;El Torito boot with hard disk emulation</h3>
+Once upon a time, I wanted to update my Thinkpad T400 bios to newest version. Since I don't have Windows OS, I choose to download a boot-able ISO from Lenovo support site (<a href="http://download.lenovo.com/ibmdl/pub/pc/pccbbs/mobiles/7uuj49uc.iso" target="_blank">link here</a>). &nbsp;When I mounted this iso, &nbsp;I got a empty iso 9660 file system. &nbsp;It really shocked me when I &nbsp;encountered such a "weird" thing. &nbsp; The iso file is 33M in size. Where it hide all those stuff? &nbsp;Why bother to render them invisible to the harmless users like me?<br>
+<br>
+It turned out that this iso file use hard disk emulation boot. &nbsp;All the files are in the embedded hard disk image, but not in the iso 9660 file system.<br>
+<br>
+<br>
+<br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ isoinfo -l -i 7uuj49uc.iso&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Directory listing of /</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">d--------- &nbsp; 0 &nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2048 Oct 17 2012 [ &nbsp; &nbsp; 21 02] &nbsp;.&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">d--------- &nbsp; 0 &nbsp; &nbsp;0 &nbsp; &nbsp;0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2048 Oct 17 2012 [ &nbsp; &nbsp; 21 02] &nbsp;..&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span><span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ isoinfo -d -i 7uuj49uc.iso&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">CD-ROM is in ISO 9660 format</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">System id:&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Volume id: 7uuj49us</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Volume set id:&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Publisher id:&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Data preparer id:&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Application id: NERO BURNING ROM</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Copyright File id:&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Abstract File id:&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Bibliographic File id:&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Volume set size is: 1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Volume set sequence number is: 1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Logical block size is: 2048</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Volume size is: 16563</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">El Torito VD version 1 found, boot catalog is in sector 20</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">CD-ROM uses ISO 9660:1999 relaxed format</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">NO Joliet present</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">NO Rock Ridge present</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Eltorito validation header:</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; Hid 1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; Arch 0 (x86)</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; ID 'NERO BURNING ROM'</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; Key 55 AA</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; Eltorito defaultboot header:</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; Bootid 88 (bootable)</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; Boot media 4 (<b>Hard Disk Emulation</b>)</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; Load segment 7C0</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; Sys type 6</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; <b>Nsect 1</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b>&nbsp; &nbsp; &nbsp; &nbsp;Bootoff 18 24</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><b><br></b></span><span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ dd if=7uuj49uc.iso of=bios.img bs=2048 skip=24</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">16539+0 records in</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">16539+0 records out</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">33871872 bytes (34 MB) copied, 0.121594 s, 279 MB/s</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span><span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ ll -h bios.img</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">-rw-rw-r-- 1 luke luke 33M Jun 16 12:58 bios.img</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">luke@luke-ubuntu:~$ fdisk -l bios.img</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Disk bios.img: 33 MB, 33871872 bytes</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">64 heads, 32 sectors/track, 32 cylinders, total 66156 sectors</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Units = sectors of 1 * 512 = 512 bytes</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Sector size (logical/physical): 512 bytes / 512 bytes</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">I/O size (minimum/optimal): 512 bytes / 512 bytes</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Disk identifier: 0x00000000</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp;Device Boot &nbsp; &nbsp; &nbsp;Start &nbsp; &nbsp; &nbsp; &nbsp; End &nbsp; &nbsp; &nbsp;Blocks &nbsp; Id &nbsp;System</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">bios.img1 &nbsp; * &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;32 &nbsp; &nbsp; &nbsp; 65535 &nbsp; &nbsp; &nbsp; 32752 &nbsp; &nbsp;4 &nbsp;FAT16 &lt;32M</span><br>
+<div>
+<br>
+<br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ sudo mount -t vfat -o loop,offset=16384 bios.img /mnt/bios</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">luke@luke-ubuntu:~$ ls /mnt/bios</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">AUTOEXEC.BAT &nbsp;CONFIG.SYS &nbsp;HIMEM.SYS &nbsp; IBMDOS.COM &nbsp; &nbsp;WINA20.386</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">COMMAND.COM &nbsp; FLASH &nbsp; &nbsp; &nbsp; IBMBIO.COM &nbsp;RAMDRIVE.SYS</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">luke@luke-ubuntu:~$ sudo umount /mnt/bios</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">luke@luke-ubuntu:~$ sudo dd if=bios.img of=/dev/sdc</span><br>
+<br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ sudo partprobe /dev/sdc</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ fdisk -l /dev/sdc</span><br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp;Device Boot &nbsp; &nbsp; &nbsp;Start &nbsp; &nbsp; &nbsp; &nbsp; End &nbsp; &nbsp; &nbsp;Blocks &nbsp; Id &nbsp;System</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">/dev/sdc1 &nbsp; * &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;32 &nbsp; &nbsp; &nbsp; 65535 &nbsp; &nbsp; &nbsp; 32752 &nbsp; &nbsp;4 &nbsp;FAT16 &lt;32M</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span><span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ sudo mount /dev/sdc1 /mnt/bios</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ ls /mnt/bios</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">AUTOEXEC.BAT &nbsp;CONFIG.SYS &nbsp;HIMEM.SYS &nbsp; IBMDOS.COM &nbsp; &nbsp;WINA20.386</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">COMMAND.COM &nbsp; FLASH &nbsp; &nbsp; &nbsp; IBMBIO.COM &nbsp;RAMDRIVE.SYS</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ sudo umount /mnt/bios</span><br>
+<br>
+<div>
+<br></div>
+<div>
+With a hard disk image in hand, &nbsp;I can flash it directly to an USB stick, boot from USB, and finish my BIOS update. &nbsp;That is one of the good thing about hard disk emulation in boot-able ISO.&nbsp;</div>
+<div>
+<br></div>
+</div>
+<br>
+<h3>
+3. Tools of Trade: xorriso</h3>
+<h3>
+3.1 &nbsp;xorriso</h3>
+<br>
+xorriso is feature rich for handling ISO. For casual &nbsp;user, its learning curve is unfairly deep. &nbsp;That is why we often use "mkisofs","genisoimage","cdrecore","wodim", and might never heard of xorriso. &nbsp;That is also why xorriso provide emulation of these tools so facilitate the adoption. &nbsp;All and all, it is still a complex tool.<br>
+<br>
+Xorriso provides flexibility&nbsp;&nbsp;for a hacker, especially when you are dealing boot-able CD-ROM. &nbsp; We will focus on generating boot-able ISO file anew in a one-pass process.<br>
+<br>
+xorriso has the concept of input device and output device. &nbsp;Input device is used to import an existing ISO file system as edting base. &nbsp;You can add/modify/delete contents to this image, and finally output &nbsp;resulting image to output device. For gererating a new ISO file, we will use:<br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">xorriso -outdev &nbsp;output.iso &nbsp;-blank as_needed ...........</span><br>
+<br>
+<br>
+xorriso differentiate files inside ISO and outside of it, using terms of "disk_path" and "iso_rr_path". &nbsp;"disk_path" refers to files/paths &nbsp;in your hard disk, "iso_rr_path" refers to files/paths in ISO file system. &nbsp;To add files into ISO, we use "map" command:<br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">xorriso -outdev output.iso &nbsp;-blank as_needed -map &nbsp;/path/on/disk1 &nbsp;/path/on/iso1 &nbsp; \</span><br>
+<span style="font-family: 'Courier New', Courier, monospace; font-size: x-small;">-map &nbsp;/path/on/disk2 &nbsp;/path/on/iso2</span><br>
+<br>
+All files under /path/on/disk (disk_path) will be added into /path/on/iso (iso_rr_path) when iso is generated. &nbsp; You can have multiple "-map".<br>
+<br>
+To add boot image, We use "-boot_image":<br>
+<br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp;-boot_image "any"|"isolinux"|"grub"</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"discard"|"keep"|"patch"|"show_status"|bootspec|"next"</span><br>
+<div>
+<br>
+In xorriso man page, we have:<br>
+<br>
+" &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <span style="font-family: inherit;">Each -boot_image command has two parameters: type and setting. More than</span><br>
+<span style="font-family: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; one &nbsp;-boot_image &nbsp;command &nbsp;may &nbsp;be used to define the handling of one or</span><br>
+<span style="font-family: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; more boot images. Sequence matters.</span><br>
+<div>
+<span style="font-family: inherit;"><br></span></div>
+<span style="font-family: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Types isolinux and grub care for <b>known peculiarities</b>. &nbsp;Type any makes no</span><br>
+<span style="font-family: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; assumptions about the origin of the boot images.</span><br>
+<span style="font-family: inherit;"><br></span>
+<span style="font-family: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; El &nbsp;Torito &nbsp;boot images of any type can be newly inserted, or discarded,</span><br>
+<span style="font-family: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; or patched, or kept unaltered. &nbsp;Whether to patch or to keep &nbsp;depends &nbsp;on</span><br>
+<span style="font-family: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; whether the boot images contain boot info tables.</span><br>
+<span style="font-family: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; A &nbsp;boot &nbsp;info &nbsp;table &nbsp;needs to be patched when the boot image gets newly</span><br>
+<span style="font-family: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; introduced into the ISO image or if an existing &nbsp;image &nbsp;gets &nbsp;relocated.</span><br>
+<span style="font-family: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; This &nbsp;is &nbsp;automatically &nbsp;done if type "isolinux" or "grub" is given, but</span><br>
+<span style="font-family: inherit;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; not with "any".</span></div>
+<div>
+"</div>
+<br>
+If we use type "grub", &nbsp;xorriso have prior knowledge of how GRUB work, so it will setup left parameters accordingly. &nbsp;To help you understand what is going on under the hood, we will use type "any" and specify all left parameters explicitly.<br>
+<br>
+Since we always create new iso file, we don't care about "discard|keep|patch".<br>
+<br>
+The boot-spec deals with all the details of El Torito specification. &nbsp; Below we make a boot-able CD-ROM with "no-emulate" type, &nbsp;and make it &nbsp;isohybrid by adding an "MBR" based embedded into "system-area" (sector 0-15, 32k). &nbsp; <br>
+<br>
+<div>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># output to grub.iso</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">outdev grub.iso &nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># clean grub.iso to make sure it is empty</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">blank as_needed &nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># add path ./rescue/iso (disk_path) into iso 9660 under path / (iso_rr_path)</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">map ./rescue/iso/ &nbsp; / &nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># add a boot image. the bin_path must be iso_rr_path, that means eltorito.img must be included in iso 9660</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any &nbsp;bin_path=/boot/grub/i386-pc/eltorito.img &nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">#we use no emulation boot type</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any emul_type=no_emulation &nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">#patch a boot_info_table into this boot image, which is mandatory for grub cdboot.img</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any boot_info_table=on &nbsp;&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># add isohybrid image into cd-rom. This image is in disk_path, which means it is not burned into iso 9660 file system.&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any system_area=/home/luke/rescue/embedded.img &nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># add a protective partition table into this image</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any partition_table=on &nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">#all below options are optional. You dont need to specify them. the default values are good enough</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">#how many bytes should BIOS load from eltorito.img. default value is 2048 byte (one iso 9660 sector, 4 virtual (hard disk) sectors.</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot-image any load_size=2048</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">#generate a boot catalog file and save it into /boot/boot.cat (iso_rr_path)</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any cat_path=/boot/boot.cat &nbsp;&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">#this boot image is for PC platform.&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any platform_id=00 &nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">#an id for this boot loader</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any id_string=grubiso &nbsp;&nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"># a select criteria for this bootloader</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any sel_crit=00 &nbsp; &nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">commit &nbsp;</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">end</span></div>
+<div>
+<br></div>
+<div>
+<br></div>
+<div>
+You copy/paste above command text and save to a file, i.e. "xorriso.opt", and invoke it like:<br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">xorriso -options_from_file &nbsp;xorriso.opt</span></div>
+<div>
+<br></div>
+<div>
+<br>
+In the xorriso.opt file, &nbsp;lines begin with "#" and empty lines are ignored. &nbsp;Please ensure there are no quotation mark(single and double , aka "/'), even in comment line. because they are treated by xorriso as "quoted input". <br>
+<br>
+Now we have grub.iso, do some verification, as we always should:<br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">isoinfo -d -i grub.iso</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">fdisk -l grub.iso</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">qemu &nbsp; -cdrom grub.iso</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">qemu &nbsp; -hda &nbsp; grub.iso</span><br>
+<br>
+<br>
+<h3>
+3.1 &nbsp;hard disk emulation boot</h3>
+<div>
+We have seen a example of hard disk emulation boot in Lenovo BIOS update ISO. We could create one of our own.&nbsp;</div>
+<div>
+<br></div>
+<div>
+<br></div>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ dd if=/dev/zero of=hard.img bs=32M count=1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ fdisk hard.img</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ fdisk -l hard.img</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Units = sectors of 1 * 512 = 512 bytes</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">sector size (logical/physical): 512 bytes / 512 bytes</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">I/O size (minimum/optimal): 512 bytes / 512 bytes</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Disk identifier: 0x69667ffe</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">&nbsp; &nbsp;Device Boot &nbsp; &nbsp; &nbsp;Start &nbsp; &nbsp; &nbsp; &nbsp; End &nbsp; &nbsp; &nbsp;Blocks &nbsp; Id &nbsp;Sys</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">hard.img1 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2048 &nbsp; &nbsp; &nbsp; 65535 &nbsp; &nbsp; &nbsp; 31744 &nbsp; 83 &nbsp;Linux</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ &nbsp;losetup -f hard.img</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ losetup -a</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">/dev/loop0: [0803]:2757819 (/home/luke/hard.img)</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ sudo partprobe /dev/loop0</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">[sudo] password for luke:</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ blkid /dev/loop0p1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ ls /dev/loop0p1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">/dev/loop0p1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ sudo mkfs.ext4 /dev/loop0p1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ mkdir /mnt/diskimage</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ sudo mount /dev/loop0p1 /mnt/diskimage/</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ sudo grub-install --boot-directory=/mnt/diskimage/boot <b>--modules="part_msdos"</b> /dev/loop0</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Installation finished. No error reported.</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ ls /mnt/diskimage/boot/grub/i386-pc/</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ cat /mnt/diskimage/boot/grub/i386-pc/load.cfg</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">search.fs_uuid 37ba14b2-1f62-438e-8bf0-7fd0a5200dda root</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">set prefix=($root)/boot/grub</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ blkid /dev/loop0p1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">/dev/loop0p1: UUID="37ba14b2-1f62-438e-8bf0-7fd0a5200dda" TYPE="ext4"</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ sudo umount /dev/loop0p1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ sudo losetup -d /dev/loop0</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ sudo partprobe /dev/loop0</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">Warning: Error fsyncing/closing /dev/loop0: Input/output error</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ blkid /dev/loop0p1</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ losetup -a</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">$ qemu hard.img</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+</div>
+<div>
+<br></div>
+<div>
+Now We have a boot-able GRUB hard disk image. &nbsp;grub-install has difficulty identifying the partition table type of a loop back device, since "grub-probe -t partmap &nbsp;-d /dev/loop0" will give empty results. &nbsp;As a result, grub-install does not include a "part_msdos" module into core.img since it does not know which partition module should be inserted. &nbsp;grub-install do extra work to identify the file system uuid &nbsp;and embedded an early config file "load.cfg" into core.img.<br>
+<br>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">search.fs_uuid <b>37ba14b2-1f62-438e-8bf0-7fd0a5200dda</b> root</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">set prefix=($root)/boot/grub</span></div>
+<br>
+and hope core.img will be able to find "/boot/grub" file in that file system. &nbsp;This extra baby-sitting does not work since grub could not even understand the partition map without the help of "part_msdos" module. That is why we need to&nbsp;manually add "<b style="font-family: 'Courier New', Courier, monospace; font-size: small;">--modules="part_msdos" </b><span style="font-family: inherit;">to enforce module installation.&nbsp;</span><br>
+<span style="font-family: inherit;"><br></span>
+<span style="font-family: inherit;">Now we have a workable hard disk image.</span><br>
+<span style="font-family: inherit;"><br></span>
+<span style="font-family: inherit;">GRUB does not support boot in emulated mode. &nbsp;To test our understanding of hard disk emulate boot, we can reuse the hard disk image extracted from Lenovo BIOS iso. &nbsp;We first copy the bios.img into iso 9660, then add a hard disk emulate boot entry into ISO.</span><br>
+<span style="font-family: inherit;"><br></span>
+<span style="font-family: inherit;"><br></span><span style="font-family: Courier New, Courier, monospace; font-size: x-small;">xorriso -options_from_file &nbsp;hard.opt</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">cat hard.opt</span><br>
+<span style="font-family: inherit;"><br></span>
+<br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">outdev grub.iso</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">blank as_needed</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">map ./rescue/iso/ /</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any system_area=/home/luke/rescue/iso/embedded.img</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any partition_table=on</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any bin_path=/boot/grub/i386-pc/<b>bios.img</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any <b>emul_type=hard_disk</b></span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any id_string=harddisk</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any cat_path=/boot/boot.cat</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any platform_id=00</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any id_string=grubiso</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">boot_image any sel_crit=99</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">commit</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">end</span><br>
+<div style="font-family: inherit;">
+<br></div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;">qemu &nbsp;-cdrom grub.iso</span><br>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<br>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="http://1.bp.blogspot.com/-7TS6qezrK3k/Ub__ws9XP_I/AAAAAAAAAMQ/clNhq0M3fUY/s1600/Screenshot+from+2013-06-18+14:35:29.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img src="http://1.bp.blogspot.com/-7TS6qezrK3k/Ub__ws9XP_I/AAAAAAAAAMQ/clNhq0M3fUY/s640/Screenshot+from+2013-06-18+14:35:29.png" width="640" height="358" border="0"></a></div>
+<span style="font-family: Courier New, Courier, monospace; font-size: x-small;"><br></span>
+<span style="font-family: inherit;"><br></span>
+<br>
+<span style="font-family: inherit;"><br></span>
+<span style="font-family: inherit;">Now we know about Grub and ISO. We will use our knowledge to explore more interesting topics like live iso/usb, in coming posts. &nbsp; Happy GRUB.&nbsp;</span><br>
+<span style="font-family: inherit;"><br></span></div>
+</div>
+  <div class="article-footer">
+    
+<div class="publish-info">
+  
+    Posted <abbr class="time published" title="2013-06-18T07:10:00.001Z" itemprop="datePublished">18th June 2013</abbr> by <a class="url fn" href="http://www.blogger.com/profile/02803161337032674571" rel="author" itemprop="author">Luke Luo</a>
+  
+  
+</div>
+
+    
+
+
+    
+    <div class="labels" itemprop="keywords">
+      Labels: <a class="label" href="https://lukeluo.blogspot.com/search/label/El%20Torito" target="_self">El Torito</a> <a class="label" href="https://lukeluo.blogspot.com/search/label/grub" target="_self">grub</a> <a class="label" href="https://lukeluo.blogspot.com/search/label/ISO%209660" target="_self">ISO 9660</a> <a class="label" href="https://lukeluo.blogspot.com/search/label/isohybrid" target="_self">isohybrid</a> <a class="label" href="https://lukeluo.blogspot.com/search/label/live%20ISO" target="_self">live ISO</a> 
+    </div>
+    
+    
+    
+<div class="share-controls  delay" data-defer="" data-delay="1000">
+
+<span data-href="http://twitter.com/share" class="share-twitter twitter-share-button  delay" data-url="https://lukeluo.blogspot.com/2013/06/grub-how-to-2-make-boot-able-iso-with.html" data-count="" data-size="" data-text="GRUB2 How To (2) :  Make boot-able ISO with  xorriso"><iframe allowtransparency="true" scrolling="no" src="//platform.twitter.com/widgets/tweet_button.html?url=https%3A%2F%2Flukeluo.blogspot.com%2F2013%2F06%2Fgrub-how-to-2-make-boot-able-iso-with.html&amp;count=horizontal&amp;text=GRUB2%20How%20To%20(2)%20%3A%20%20Make%20boot-able%20ISO%20with%20%20xorriso&amp;size=medium" frameborder="0"></iframe></span>
+
+
+<span class="share-facebook  delay" data-url="http://lukeluo.blogspot.com/2013/06/grub-how-to-2-make-boot-able-iso-with.html" data-count="" data-layout="" data-text="GRUB2 How To (2) :  Make boot-able ISO with  xorriso"><iframe allowtransparency="true" scrolling="no" src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Flukeluo.blogspot.com%2F2013%2F06%2Fgrub-how-to-2-make-boot-able-iso-with.html&amp;send=false&amp;layout=button_count&amp;action=like&amp;show_faces=false&amp;colorscheme=light" frameborder="0"></iframe></span>
+
+</div>
+
+    
+  </div>
+
+  
+
+  
+  
+    
+<div class="comments" data-defer="">
+  <div class="comments-header toggle-switch">
+    
+<span class="bubble  comments-count " title="2 comments">
+  <span class="bubble-content">2</span>
+  <span class="bubble-tail"></span>
+</span>
+
+    <h3>
+    View comments
+    
+    </h3>
+  </div>
+  
+<div class="comments-wrapper blogger-comments toggle-container" data-itemid="3209423729469606288" style="display: block;">
+  <div class="comments-content"><div id="bc_1_1C" kind="c"><div id="bc_1_1CT"><div id="bc_1_0T" class="comment-thread" kind="r" t="0" u="0"><ol id="bc_1_0TB"><li id="bc_1_2B" class="comment" kind="b"><div class="avatar-image-container"><img src="http://4.bp.blogspot.com/-Vwa_XbBzDvM/VE9_eD7GzLI/AAAAAAAAAeY/xQFQASF5x1E/s1600/*"></div><div id="c3676864181096344646" class="comment-block"><div id="bc_1_2M" class="comment-header" kind="m"><cite class="user"><a rel="nofollow" href="https://www.blogger.com/profile/15854577004906186207">Mateusz Łoskot</a></cite><span class="icon user"></span><span class="datetime secondary-text"><a rel="nofollow" href="https://lukeluo.blogspot.com/2013/06/grub-how-to-2-make-boot-able-iso-with.html?showComment=1376605614946#c3676864181096344646">August 15, 2013 at 3:26 PM</a></span></div><p id="bc_1_2MC" class="comment-content">Luke, big thanks for the detailed steps for preparation of booteable USB with the T400 ISO. It's been of great help!<br><br>I think I'll copy those bits (credited, of course) to ThinkWiki, if you don't mind.</p><span id="bc_1_2MN" class="comment-actions secondary-text" kind="m"><a kind="i" href="javascript:;" target="_self" o="r">Reply</a><span class="item-control blog-admin pid-1704977967"><a o="d" target="_self" href="https://www.blogger.com/delete-comment.g?blogID=2951825909130301289&amp;postID=3676864181096344646">Delete</a></span></span></div><div id="bc_1_2BR" class="comment-replies"></div><div id="bc_1_2B_box" class="comment-replybox-single"></div></li><li id="bc_1_3B" class="comment" kind="b"><div class="avatar-image-container"><img src="https://img1.blogblog.com/img/b36-rounded.png"></div><div id="c7592811353174176566" class="comment-block"><div id="bc_1_3M" class="comment-header" kind="m"><cite class="user"><a rel="nofollow" href="https://www.blogger.com/profile/02803161337032674571">Luke Luo</a></cite><span class="icon user"></span><span class="datetime secondary-text"><a rel="nofollow" href="https://lukeluo.blogspot.com/2013/06/grub-how-to-2-make-boot-able-iso-with.html?showComment=1379295793221#c7592811353174176566">September 15, 2013 at 6:43 PM</a></span></div><p id="bc_1_3MC" class="comment-content">Sure. Glad it is helpful to you. </p><span id="bc_1_3MN" class="comment-actions secondary-text" kind="m"><a kind="i" href="javascript:;" target="_self" o="r">Reply</a><span class="item-control blog-admin pid-239419374"><a o="d" target="_self" href="https://www.blogger.com/delete-comment.g?blogID=2951825909130301289&amp;postID=7592811353174176566">Delete</a></span></span></div><div id="bc_1_3BR" class="comment-replies"></div><div id="bc_1_3B_box" class="comment-replybox-single"></div></li></ol><div id="bc_1_0I" class="continue" kind="ci" style="display: none;"><a href="javascript:;" target="_self">Add comment</a></div><div id="bc_1_0T_box" class="comment-replybox-thread"><iframe class="comments-replybox" data-src="https://www.blogger.com/comment-iframe.g?blogID=2951825909130301289&amp;postID=3209423729469606288" src="https://www.blogger.com/comment-iframe.g?blogID=2951825909130301289&amp;postID=3209423729469606288" frameborder="0"></iframe></div><div id="bc_1_0L" class="loadmore" kind="rb" style="display: none;"><a href="javascript:;" target="_self">Load more</a></div></div></div></div></div>
+  <div class="comments-footer">
+    
+  </div>
+</div>
+
+</div>
+
+  
+  
+</div>
+
+  
+
+      
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<div id="header-container">
+  <div id="header" class="header">
+    <div class="header-bar">
+      
+<span class="title" onclick="$('html,body').stop().animate({'scrollTop': 0})">
+  <a href="/" target="_self"><h1 title="l think, therefore l am">l think, therefore l am</h1></a>
+  
+</span>
+<input type="text" id="search" autocomplete="off" placeholder="Search">
+
+      
+    </div>
+    <div class="header-drawer sticky open">
+      
+      <div id="views" class="tabs">
+        <span class="menu-heading">Sidebar<span class="indicator"></span></span>
+        <ul>
+          
+          <li class="Classic"><span class="menu-background"></span><a class="menu-item" href="?view=classic" target="_self" data-view-name="classic">Classic</a></li>
+          
+          <li class="Flipcard"><span class="menu-background"></span><a class="menu-item" href="?view=flipcard" target="_self" data-view-name="flipcard">Flipcard</a></li>
+          
+          <li class="Magazine"><span class="menu-background"></span><a class="menu-item" href="?view=magazine" target="_self" data-view-name="magazine">Magazine</a></li>
+          
+          <li class="Mosaic"><span class="menu-background"></span><a class="menu-item" href="?view=mosaic" target="_self" data-view-name="mosaic">Mosaic</a></li>
+          
+          <li class="Sidebar"><span class="menu-background"></span><a class="menu-item current" href="?view=sidebar" target="_self" data-view-name="sidebar">Sidebar</a></li>
+          
+          <li class="Snapshot"><span class="menu-background"></span><a class="menu-item" href="?view=snapshot" target="_self" data-view-name="snapshot">Snapshot</a></li>
+          
+          <li class="Timeslide"><span class="menu-background"></span><a class="menu-item" href="?view=timeslide" target="_self" data-view-name="timeslide">Timeslide</a></li>
+          
+        </ul>
+      </div>
+      
+      
+      <div class="blog-admin admin-controls" style="">
+        <a class="new-post" href="https://www.blogger.com/post-edit.g?blogID=2951825909130301289&amp;from=pencil" target="_self" title="New post"></a>
+        <a class="dashboard" href="https://www.blogger.com/home" target="_self" title="Dashboard"></a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  (function($) {
+    // Make the pages switch between tabs and menu as needed
+    var pages = $('#pages');
+    var tabs = pages.length ? pages : $('#views'); // If no pages, views will be tabs, same resizing applies.
+    if (tabs.length) {
+      function onResize(e) {
+        tabs.removeClass('menu').addClass('tabs');
+        var taken = 0;
+        tabs.parent().children().each(function() {
+          taken += $(this).outerWidth();
+        });
+        var overflowing = tabs.parent().width() < (taken + 50); // Add a buffer for safety.
+        overflowing ? tabs.removeClass('tabs').addClass('menu') : tabs.addClass('tabs');
+      }
+      $(window).resize(onResize);
+      onResize(); // Resize immediately.
+
+      // Mark a page as selected when it is open.
+      var rePage = new RegExp('.*/p(/[^/]+.html$)');
+      $(blogger.ui()).bind('select clearselection', function(e, item) {
+        pages.find('.menu-item').each(function(){
+          var current = false;
+          if (item) {
+            var us = rePage.exec($(this).attr('href'));
+            var them = rePage.exec(item.url);
+            current = !!(us && them && (us[1] == them[1]));
+          }
+          $(this).toggleClass('current', current);
+        });
+      });
+    }
+  })(jQuery);
+</script>
+
+
+
+
+<div id="main" class="hfeed" tabindex="0">
+  <div id="sidebar" style="top: 100px;">
+    <div class="items"><div class="item hentry selected" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="2939477971678796558">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2015/11/how-to-debug-system-package-under.html" rel="bookmark" itemprop="url">How to debug system package under ArchLinux</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="3058721808554694921">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2015/09/how-to-bootstrap-different-linux.html" rel="bookmark" itemprop="url">How to Bootstrap different Linux Distribution Under Arch Linux</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="7924840286284744018">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2015/04/dell-r720-idrac7-firmware-update.html" rel="bookmark" itemprop="url">DELL R720 iDRAC7 firmware update totally in Linux environment</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="5559669641638775491">
+  
+  <img class="thumbnail" src="http://4.bp.blogspot.com/-FJdy-m-lwm0/VSM6L9ZvIyI/AAAAAAAACQY/Jq4_J6wIs9s/s30-p/gitk51.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2015/04/dell-r710-idrac6-setup-with-ssh-console.html" rel="bookmark" itemprop="url">DELL R710 iDRAC6 setup with ssh console</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="3788331306304968499">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2015/04/the-best-way-to-configure-network.html" rel="bookmark" itemprop="url">The best way to configure network interface ever in Arch Linux</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry  has-comments" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="8116140980277194056">
+  
+  <img class="thumbnail" src="http://4.bp.blogspot.com/-PFI9kqPtvsA/VPaZ343UyUI/AAAAAAAACL4/lV5J5Tu8-Qk/s30-p/gitk41.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2015/03/ec2-linux-server-setup-archlinuxssh.html" rel="bookmark" itemprop="url">Ec2 linux server setup: ArchLinux+ssh dynamic forward + l2tp/ipsec + dnscrypt-wrapper</a>
+    
+  </h3>
+  
+  
+  
+
+  
+<span class="bubble  comments-count light" title="1 comment">
+  <span class="bubble-content">1</span>
+  <span class="bubble-tail"></span>
+</span>
+
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="6492639810770779106">
+  
+  <img class="thumbnail" src="http://1.bp.blogspot.com/-1-boXJEq6X0/U70TEvjqRxI/AAAAAAAABtw/LvBQDJV-QMY/s30-p/gitk20.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/07/linux-virtual-console6-shell-command.html" rel="bookmark" itemprop="url">Linux Virtual Console(6): Shell command composition and  dispatch</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="8601249766214976771">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/07/dnscrypt-proxy-in-archlinux.html" rel="bookmark" itemprop="url">dnscrypt-proxy  in Archlinux</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="8704973128667985004">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/06/git-as-i-understand-9-patch.html" rel="bookmark" itemprop="url">Git as I understand (9): Patch</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry file_descriptor socat" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="2596645140871385201">
+  
+  <img class="thumbnail" src="http://2.bp.blogspot.com/-qpQt5GAoeqY/UuYdYRfm5NI/AAAAAAAABVM/vtZMN7IUKcg/s30-p/socat.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/06/linux-virtual-console5-socat-bridging.html" rel="bookmark" itemprop="url">Linux Virtual Console(5): socat the bridging software</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="5182028045058290960">
+  
+  <img class="thumbnail" src="http://2.bp.blogspot.com/-0v7tBnrb7cE/U6KE-gSAWzI/AAAAAAAABrc/Of-CNKrw8eM/s30-p/gitk16.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/06/git-as-i-understand-8-subtree-and.html" rel="bookmark" itemprop="url">Git as I understand (8): Subtree and Submodule</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="8382003756746047052">
+  
+  <img class="thumbnail" src="http://3.bp.blogspot.com/-Yh5iOYTth3A/U6fhWafzqRI/AAAAAAAABs0/xujlkjiYFjQ/s30-p/gitk19.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/06/git-as-i-understand-6-search.html" rel="bookmark" itemprop="url">Git as I understand (6): Search</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="5211099053005105724">
+  
+  <img class="thumbnail" src="http://3.bp.blogspot.com/-AQ79JDnCUhU/U5awfWY3KeI/AAAAAAAABqE/U_hJ4qlP3aM/s30-p/gitk13.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/06/git-as-i-understand-7-special-case-for.html" rel="bookmark" itemprop="url">Git as I understand (7): Special case for merge point</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="3981225153542480477">
+  
+  <img class="thumbnail" src="http://3.bp.blogspot.com/-B_XlI0pKJxM/U4v6t9nhRSI/AAAAAAAABoc/CMBY6FmLIV8/s30-p/gitk12.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/06/git-as-i-understand-5-remote-repository.html" rel="bookmark" itemprop="url">Git as I understand (5): Remote Repository and Collaboration </a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="9040883549282754396">
+  
+  <img class="thumbnail" src="http://4.bp.blogspot.com/-YoxvROR5XJY/U36PQTaTv-I/AAAAAAAABmE/Hvg6THnEBqY/s30-p/gitk1.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/06/git-as-i-understand-4-working.html" rel="bookmark" itemprop="url">Git as I understand (4): working tree,index,HEAD,branch,commit and local work flow</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="1525397616926041009">
+  
+  <img class="thumbnail" src="http://3.bp.blogspot.com/-YChDkmURPRM/U4m2JmQ4vpI/AAAAAAAABms/VDbNXs99-Ww/s30-p/gitk5.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/05/git-as-i-understand-3-diff-and-merge.html" rel="bookmark" itemprop="url">Git as I understand (3): diff and merge</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="5245926798336246016">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/05/git-as-i-understand-2-reference.html" rel="bookmark" itemprop="url">Git as I understand (2): reference</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="4252033671941809850">
+  
+  <img class="thumbnail" src="http://3.bp.blogspot.com/-oTTBFjrGOss/U3o0WiOIGgI/AAAAAAAABl0/R0iBmXY-s6U/s30-p/gitk.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/05/git-as-i-understand-1-content.html" rel="bookmark" itemprop="url">Git as I understand (1): Content-Addressable Object Model</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="8074770978666602777">
+  
+  <img class="thumbnail" src="http://3.bp.blogspot.com/-hVsmwDlwDEc/U2GUDDO9q0I/AAAAAAAABlA/slDKLE7j8S8/s30-p/IE+win8.PNG" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/04/mac-book-pro-113-linux-customization-9.html" rel="bookmark" itemprop="url">Mac book pro 11.3 Linux customization (9): Win 8.1, A side step </a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="3028600918574013100">
+  
+  <img class="thumbnail" src="http://2.bp.blogspot.com/-3wTfZ7G2IEg/U1jVyAi5W2I/AAAAAAAABjo/YukNeyDTIZw/s30-p/sound.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/04/mac-book-pro-113-linux-customization-8.html" rel="bookmark" itemprop="url">Mac book pro 11.3 Linux customization (8): i3 Window Manager</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="5256180280315938869">
+  
+  <img class="thumbnail" src="http://2.bp.blogspot.com/-EvVOup6M90s/U038rU1y14I/AAAAAAAABiE/cnZ3FnuYElM/s30-p/cpufreq.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/04/mac-book-pro-113-linux-customization-7_21.html" rel="bookmark" itemprop="url">Mac book pro 11.3 Linux customization (7)-B: Power Management Under Linux</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="8401022389886598380">
+  
+  <img class="thumbnail" src="http://2.bp.blogspot.com/-FVtuCFLap-I/U0P4_e6GFmI/AAAAAAAABew/lCvtw9Xu6Ag/s30-p/Screen+Shot+2014-04-08+at+21.25.13.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/04/mac-book-pro-113-linux-customization-7.html" rel="bookmark" itemprop="url">Mac book pro 11.3 Linux customization (7)-A: Power Management Under OS X</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="1600546776422095579">
+  
+  <img class="thumbnail" src="http://1.bp.blogspot.com/-tckcwnHAXDs/U0Cl8tZxFEI/AAAAAAAABdY/zA5l6E2Fu0w/s30-p/Screen+Shot+2014-04-06+at+8.45.59.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/04/mac-book-pro-113-linux-customization-6.html" rel="bookmark" itemprop="url">Mac book pro 11.3 Linux customization (6): Graphic Stack</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="2041697542551508267">
+  
+  <img class="thumbnail" src="http://2.bp.blogspot.com/-jKzzjm7nS6M/Uz6D0i7SnFI/AAAAAAAABcE/rkAcidu2JAw/s30-p/dimension.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/04/mac-book-pro-113-linux-customization-5.html" rel="bookmark" itemprop="url">Mac book pro 11.3 Linux customization (5): Trackpad under X windows</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="8142320364512464976">
+  
+  <img class="thumbnail" src="http://3.bp.blogspot.com/-eSYrzImicrU/UzwFW66MqoI/AAAAAAAABaY/MXr4RTW3pZA/s30-p/pc104.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/04/mac-book-pro-113-linux-customization-4.html" rel="bookmark" itemprop="url">Mac book pro 11.3 Linux customization (4): keyboard under X windows</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="8666433607626743231">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/04/mac-book-pro-113-linux-customization-3.html" rel="bookmark" itemprop="url">Mac book pro 11.3 Linux customization (3): keyboard under Linux Virtual Console</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="8450068820909257674">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/04/mac-book-pro-113-linux-customization-2.html" rel="bookmark" itemprop="url">Mac book pro 11.3 Linux customization (2): grub and hardware </a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="204659882994245061">
+  
+  <img class="thumbnail" src="http://3.bp.blogspot.com/-c2LLth6zSjg/UyFtdPcrk5I/AAAAAAAABY0/XhzpDUT7UUM/s30-p/Screen+Shot+2014-03-13+at+16.32.44.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/04/mac-book-pro-113-linux-customization-1.html" rel="bookmark" itemprop="url">Mac book pro 11.3 Linux customization (1): basic installation</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry build linux_kernel make" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="2516935519445096816">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/02/linux-from-scratch-for-cubietruck-c9.html" rel="bookmark" itemprop="url">Linux From Scratch for Cubietruck -- C9 : Linux kernel build recipes</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry gnu_make tips" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="2751831000991615612">
+  
+  <img class="thumbnail" src="http://3.bp.blogspot.com/-aiWc-WfrI_8/UuscE4Z4-vI/AAAAAAAABVs/OALyGNbpnhw/s30-p/make1.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/02/linux-from-scratch-for-cubietruck-c10.html" rel="bookmark" itemprop="url">Linux From Scratch for Cubietruck -- C10 : GNU make tips</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry bare_metal gcc qemu tool_chain" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="5697438587670982635">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/02/linux-from-scratch-for-cubietruck-c8.html" rel="bookmark" itemprop="url">Linux From Scratch for Cubietruck -- C8 : Bare Metal tool chain</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry cross_compiler gcc toolchain" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="7836205525543947161">
+  
+  <img class="thumbnail" src="http://3.bp.blogspot.com/--GU2EFBu_Jc/UtkmGU3S_sI/AAAAAAAABSU/CqZ8klDOhps/s30-p/grub.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/01/linux-from-scratch-for-cubietruck-c7.html" rel="bookmark" itemprop="url">Linux From Scratch for Cubietruck -- C7 :  GCC tool chain building--target tool chain (A-B-B)--&gt;(B-B-C)</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry cross_compiler gcc toolchain" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="1397328917018890835">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/01/linux-from-scratch-for-cubietruck-c6.html" rel="bookmark" itemprop="url">Linux From Scratch for Cubietruck -- C6 : GCC tool chain building--upgrade host tool chain (A-A-A)--&gt;(A-A-B)--&gt;(A-B-B)</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry cross_compiler gcc toolchain" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="2930742133027514122">
+  
+  <img class="thumbnail" src="http://4.bp.blogspot.com/-RlegB_Zov1o/Us7Ns8SQlxI/AAAAAAAABQ8/njK7Mib1exc/s30-p/crossgcc.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/01/linux-from-scratch-for-cubietruck-c4.html" rel="bookmark" itemprop="url">Linux From Scratch for Cubietruck -- C4 :  GCC  Configuration options</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry cross_compiler gcc toolchain" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="4412253658709738606">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/01/linux-from-scratch-for-cubietruck-c5.html" rel="bookmark" itemprop="url">Linux From Scratch for Cubietruck -- C5 :  GCC tool chain building--build machine tool chain (A-A-A)</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry autotools bootstrap gcc toolchain" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="189694233977591679">
+  
+  <img class="thumbnail" src="http://4.bp.blogspot.com/-lvSBPQcKA6s/UvWHrLXmwaI/AAAAAAAABXU/HNj8vG8XYqw/s30-p/autotool.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/01/linux-from-scratch-for-cubietruck-c3.html" rel="bookmark" itemprop="url">Linux From Scratch for Cubietruck -- C3 : Portable Application and GCC Build System (Autotools)</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry abi gcc machine_triplet toolchain" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="6036935352789649012">
+  
+  <img class="thumbnail" src="http://3.bp.blogspot.com/-KpOhTuhM8_w/UsApA06Q_bI/AAAAAAAAAdQ/g0gljDToak0/s30-p/gcc.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/01/linux-from-scratch-for-cubietruck-c2.html" rel="bookmark" itemprop="url">Linux From Scratch for Cubietruck -- C2 : hosted environment introduction</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry gcc toolchain" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="8466348075858905790">
+  
+  <img class="thumbnail" src="http://2.bp.blogspot.com/-T9oC06AITAo/Ur0ZR0QyN7I/AAAAAAAAAco/-yGX28tuoXo/s30-p/freestanding.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/01/linux-from-scratch-for-cubietruck-c1.html" rel="bookmark" itemprop="url">Linux From Scratch for Cubietruck -- C1 : toolchain introduction</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry a20 armv7a cortexa7 cubietruck" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="7396297725043199780">
+  
+  <img class="thumbnail" src="http://2.bp.blogspot.com/-2TCVpo7OdCc/UrgB37dWnsI/AAAAAAAAAaU/Iauv91s2qUU/s30-p/snapshot1.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/01/linux-from-scratch-for-cubietruck-b.html" rel="bookmark" itemprop="url">Linux From Scratch for Cubietruck -- B : Hardware</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry cubietruck" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="819842430567262845">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/01/linux-from-scratch-for-cubietruck.html" rel="bookmark" itemprop="url">Linux From Scratch for Cubietruck -- A : Introduction</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry bash io_redirect pipe" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="9127881818651945914">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/01/linux-virtual-console4-bash-io.html" rel="bookmark" itemprop="url">Linux Virtual Console(4): Bash io redirection under the hood</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry archive bash pipe" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="8661238130359198835">
+  
+  <img class="thumbnail" src="http://1.bp.blogspot.com/-JyCVU4WZo7A/UuKLVp_Q3_I/AAAAAAAABU8/R8crwZ-nZ-8/s30-p/pipe.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2014/01/linux-virtual-console3-terminal-file.html" rel="bookmark" itemprop="url">Linux Virtual Console(3):  terminal, file descriptor, command line argument/options, pipe, filter, conditional test, and file archive utility</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry regular_expression" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="4334529403515601319">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2013/12/regular-expression-memorandum.html" rel="bookmark" itemprop="url">Regular Expression: A memorandum </a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry automatic linux script softether has-comments" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="4858096242235112592">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2013/11/automatic-scripts-to-bring-up-softether.html" rel="bookmark" itemprop="url">Automatic Scripts to Bring up SoftEther VPN under Linux</a>
+    
+  </h3>
+  
+  
+  
+
+  
+<span class="bubble  comments-count light" title="2 comments">
+  <span class="bubble-content">2</span>
+  <span class="bubble-tail"></span>
+</span>
+
+
+
+</div><div class="item hentry git github gnomekeyring ssh" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="4058535341113769501">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2013/11/github-via-ssh-use-case-for-gnome.html" rel="bookmark" itemprop="url">Github via SSH: a use case for gnome-keyring under console environment</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry dbus gnomekeyring networkmanager nmapplet nmcli wmii x_windows" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="8612943516180810966">
+  
+  <img class="thumbnail" src="http://3.bp.blogspot.com/-i1GSeyfCQpY/Uon06JWplWI/AAAAAAAAAYY/fBTvD6Sy_Kc/s30-p/D-Feet+D-Bus+debugger_004.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2013/11/linux-virtual-console3-wmii.html" rel="bookmark" itemprop="url">Linux Virtual Console(3): WMII Customization</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry gdm3 gnome3 startx x_windows xinit xsession" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="152726947736675859">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2013/11/linux-virtual-console2-desktop.html" rel="bookmark" itemprop="url">Linux Virtual Console(2):  Desktop Environment Start up Sequence</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry console pty terminal x_windows" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="7413438210582937633">
+  
+  <img class="thumbnail" src="http://1.bp.blogspot.com/-VVhJK-tBagY/Un9ewnWiyiI/AAAAAAAAAXc/2uFjaqeUIQU/s30-p/console.jpg" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2013/11/linux-virtual-console-1-from-users.html" rel="bookmark" itemprop="url">Linux Virtual Console (1) : From User's Perspective</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div><div class="item hentry linux softether vpn has-comments" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="5569496577589588872">
+  
+  <img class="thumbnail" src="http://1.bp.blogspot.com/-4CkQiIw5-mI/Un2rVJCBuwI/AAAAAAAAAWg/Wl-9N265M3g/s30-p/1.jpg" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2013/11/how-to-set-up-softehter-vpn-client.html" rel="bookmark" itemprop="url">How to set up Softehter VPN Client under Linux: Via vpngate.net</a>
+    
+  </h3>
+  
+  
+  
+
+  
+<span class="bubble  comments-count light" title="2 comments">
+  <span class="bubble-content">2</span>
+  <span class="bubble-tail"></span>
+</span>
+
+
+
+</div><div class="item hentry debug gdb gdbserver grub jtag qemu symbol vmware" itemscope="" itemtype="http://schema.org/BlogPosting" data-id="2921359174351652595">
+  
+  <img class="thumbnail" src="http://3.bp.blogspot.com/-qxLZ8V92yHQ/UdU_AuWTesI/AAAAAAAAAUY/Mt46SFZgsfI/s30-p/Screenshot+from+2013-07-01+21:40:19.png" style="width: 30px; height: 30px;">
+  
+  
+  <h3 class="title entry-title" itemprop="name">
+    
+
+
+
+
+    
+    
+    <a href="https://lukeluo.blogspot.com/2013/07/grub-how-to-7-debugging.html" rel="bookmark" itemprop="url">GRUB2 How To (7): Debugging</a>
+    
+  </h3>
+  
+  
+  
+
+
+</div></div>
+  </div>
+  <div id="content"><div class="article hentry  " itemscope="" itemtype="http://schema.org/BlogPosting">
+  
+  
+  <meta itemprop="blogId" content="2951825909130301289">
+  <meta itemprop="postId" content="2939477971678796558">
+
+  
+  <div class="article-header">
+
+
+<a class="ribbon date " title="27th November 2015" href="https://lukeluo.blogspot.com/2015/11/how-to-debug-system-package-under.html" itemprop="url">
+
+
+  <div class="top ribbon-piece">Nov</div>
+  <div class="bottom ribbon-piece">27</div>
+  <div class="tail">
+    <div class="left ribbon-piece"></div>
+    <div class="right ribbon-piece"></div>
+  </div>
+
+</a>
+
+
+
+<h1 class="title entry-title" itemprop="name">
+  
+  
+  <a href="https://lukeluo.blogspot.com/2015/11/how-to-debug-system-package-under.html" rel="bookmark" itemprop="url" data-item-type="post" data-id="2939477971678796558">
+
+
+
+How to debug system package under ArchLinux</a>
+  
+  
+
+<span class="blog-admin"><a class="edit" href="https://www.blogger.com/post-edit.g?blogID=2951825909130301289&amp;postID=2939477971678796558&amp;from=pencil" target="_self" title="Edit"></a></span>
+
+
+</h1>
+</div>
+  <div class="article-content entry-content" itemprop="articleBody">In our projects, we use open source software extensively. &nbsp;Now and then we need to look into these open source software to either gain more through understanding on how they work internally or just to fix some nasty bugs involving these packages themselves.<br>
+<br>
+I will use "libuv" as an example to show how to do this.<br>
+<br>
+Here is the default install of libuv:<br>
+<br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><span style="background-color: white;">[luke@rmbp ~]$ pacman -Qi libuv &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br>Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: libuv
+<br>Version &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 1.7.5-1
+<br>Description &nbsp;&nbsp;&nbsp;: Multi-platform support library with a focus on asynchronous I/O
+<br>Architecture &nbsp;&nbsp;: x86_64
+<br>URL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: https://github.com/libuv/libuv
+<br>Licenses &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: custom
+<br>Groups &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: None
+<br>Provides &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: None
+<br>Depends On &nbsp;&nbsp;&nbsp;&nbsp;: glibc
+<br>Optional Deps &nbsp;: None
+<br>Required By &nbsp;&nbsp;&nbsp;: libuv-debug &nbsp;nodejs
+<br>Optional For &nbsp;&nbsp;: None
+<br>Conflicts With : None
+<br>Replaces &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: None
+<br>Installed Size : 338.00 KiB
+<br>Packager &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Massimiliano Torromeo &lt;massimiliano.torromeo@gmail.com&gt;
+<br>Build Date &nbsp;&nbsp;&nbsp;&nbsp;: Mon 12 Oct 2015 03:23:11 PM CST
+<br>Install Date &nbsp;&nbsp;: Fri 27 Nov 2015 11:18:52 AM CST
+<br>Install Reason : Installed as a dependency for another package
+<br>Install Script : No
+<br>Validated By &nbsp;&nbsp;: Signature</span><br>
+<br>
+First, we need to grab the "PKGBUILD" &nbsp;from Archlinux ABS (archlinux build system):<br>
+<br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><span style="background-color: white;">[luke@rmbp ~]$ <b>cat /etc/abs.conf
+</b></span><br>#
+<br># /etc/abs.conf
+<br>#
+<br>
+<br># the top-level directory of all your PKGBUILDs
+<br>[ "$ABSROOT" = "" ] &amp;&amp; ABSROOT="/var/abs/"
+<br>
+<br>#
+<br># Server to sync from
+<br>#
+<br><b>SYNCSERVER="rsync.archlinux.org"
+</b><br>
+<br>#
+<br># The architecture to fetch abs for
+<br># Either i686 or x86_64
+<br>#
+<br>ARCH="x86_64"
+<br>
+<br>#
+<br># Pacman mirror list used for syncing via tarball
+<br>#
+<br>MIRRORLIST="/etc/pacman.d/mirrorlist"
+<br>
+<br>#
+<br># REPOS to be parsed by abs (in this order)
+<br># &nbsp;&nbsp;(prefix a repo with a ! to disable it)
+<br>#
+<br># Note: If a repo is removed, it is still fetched!
+<br># Repos must be preceded with a ! to prevent fetching
+<br>#
+<br><b>REPOS=(core extra community multilib !testing !community-testing !multilib-testing
+<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;!staging !community-staging !gnome-unstable !kde-unstable)</b></span><br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><b><br></b></span>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><span style="background-color: white;">[luke@rmbp ~]$ <b>sudo abs
+</b></span><br>==&gt; Starting ABS sync...
+<br>receiving file list ... done
+<br>
+<br>sent 176 bytes &nbsp;received 551,767 bytes &nbsp;84,914.31 bytes/sec
+<br>total size is 18,936,210 &nbsp;speedup is 34.31</span><br>
+<br>
+Next we copy and grab libuv "PKGBUILD" to our build directory:<br>
+<br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><span style="background-color: white;">[luke@rmbp ~]$ cp -r /var/abs/community/libuv &nbsp;&nbsp;/tmp/
+</span><br>[luke@rmbp ~]$ cd /tmp/libuv
+<br>[luke@rmbp libuv]$ ls
+<br>PKGBUILD</span><br>
+<br>
+Next we need to make sure "/etc/makepkg.conf" have debug build configured:<br>
+<br>
+<span style="background-color: white;"><span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;">[luke@rmbp tmp]$ cat /etc/makepkg.conf</span></span><br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;">.....<br>
+</span><br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><span style="background-color: white;">OPTIONS=(<b>strip</b> docs !libtool !staticlibs emptydirs zipman purge</span><br> !upx <b>debug</b>)</span><br>
+<span style="color: #5454ff; font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><b>......</b></span><span style="background-color: white; font-family: monospace;">
+</span><br>
+Here I enable both the "strip" and "debug" options, so makepkg will build two packages at the same time. One without debuginfo and one with debuginfo.<br>
+<br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><span style="background-color: white;">[luke@rmbp libuv]$ makepkg -s</span><br>
+<span style="background-color: white;">[luke@rmbp libuv]$ ls
+</span><br><b>libuv-1.7.5-1-x86_64.pkg.tar.xz &nbsp;libuv-debug-1.7.5-1-x86_64.pkg.tar.xz</b> &nbsp;PKGBUILD
+<br>libuv-1.7.5.tar.gz &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="background-color: white; color: #5454ff; font-weight: bold;">pkg</span><span style="background-color: white;"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="background-color: white; color: #5454ff; font-weight: bold;">src</span><span style="background-color: white;">
+</span></span><br>
+<br>
+We need to install both packages into system to replace the canonical one:<br>
+<br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><span style="background-color: white;">[luke@rmbp libuv]$ sudo pacman -U libuv-1.7.5-1-x86_64.pkg.tar.xz libuv-debug-1.7.5</span><br>-1-x86_64.pkg.tar.xz<br>
+</span><br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><span style="background-color: white;">[luke@rmbp libuv]$ pacman -Qi libuv
+</span><br>Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: libuv
+<br>Version &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 1.7.5-1
+<br>Description &nbsp;&nbsp;&nbsp;: Multi-platform support library with a focus on asynchronous I/O
+<br>Architecture &nbsp;&nbsp;: x86_64
+<br>URL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: https://github.com/libuv/libuv
+<br>Licenses &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: custom
+<br>Groups &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: None
+<br>Provides &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: None
+<br>Depends On &nbsp;&nbsp;&nbsp;&nbsp;: glibc
+<br>Optional Deps &nbsp;: None
+<br>Required By &nbsp;&nbsp;&nbsp;: libuv-debug &nbsp;nodejs
+<br>Optional For &nbsp;&nbsp;: None
+<br>Conflicts With : None
+<br>Replaces &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: None
+<br>Installed Size : 346.00 KiB
+<br>Packager &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Unknown Packager
+<br>Build Date &nbsp;&nbsp;&nbsp;&nbsp;: Fri 27 Nov 2015 11:36:26 AM CST
+<br>Install Date &nbsp;&nbsp;: Fri 27 Nov 2015 11:38:07 AM CST
+<br>Install Reason : Installed as a dependency for another package
+<br>Install Script : No
+<br>Validated By &nbsp;&nbsp;: None
+<br>
+<br>[luke@rmbp libuv]$ pacman -Qi libuv-debug
+<br>Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: libuv-debug
+<br>Version &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 1.7.5-1
+<br>Description &nbsp;&nbsp;&nbsp;: Detached debugging symbols for libuv
+<br>Architecture &nbsp;&nbsp;: x86_64
+<br>URL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: https://github.com/libuv/libuv
+<br>Licenses &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: custom
+<br>Groups &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: None
+<br>Provides &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: None
+<br>Depends On &nbsp;&nbsp;&nbsp;&nbsp;: libuv=1.7.5-1
+<br>Optional Deps &nbsp;: None
+<br>Required By &nbsp;&nbsp;&nbsp;: None
+<br>Optional For &nbsp;&nbsp;: None
+<br>Conflicts With : None
+<br>Replaces &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: None
+<br>Installed Size : 517.00 KiB
+<br>Packager &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Unknown Packager
+<br>Build Date &nbsp;&nbsp;&nbsp;&nbsp;: Fri 27 Nov 2015 11:36:26 AM CST
+<br>Install Date &nbsp;&nbsp;: Fri 27 Nov 2015 11:38:07 AM CST
+<br>Install Reason : Explicitly installed
+<br>Install Script : No
+<br>Validated By &nbsp;&nbsp;: None</span><br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><br></span>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><span style="background-color: white;">[luke@rmbp libuv]$ <b>pacman -Ql libuv-debug
+</b></span><br>libuv-debug /usr/
+<br>libuv-debug /usr/lib/
+<br>libuv-debug /usr/lib/debug/
+<br>libuv-debug /usr/lib/debug/.build-id/
+<br>libuv-debug /usr/lib/debug/.build-id/71/
+<br>libuv-debug /usr/lib/debug/.build-id/71/363132f0b7f90a9351bcb095b4373c1650e78a
+<br>libuv-debug /usr/lib/debug/.build-id/71/363132f0b7f90a9351bcb095b4373c1650e78a.debu<br>g
+<br>libuv-debug /usr/lib/debug/usr/
+<br>libuv-debug /usr/lib/debug/usr/lib/
+<br>libuv-debug /usr/lib/debug/usr/lib/libuv.so.1.0.0.debug</span><br>
+<br>
+GDB can locate the related debug info in a separate debug packages via the so called "build-id" mechanism when we need to debug "libuv". &nbsp;Here is the link to explain how GDB can accomplish this:<br>
+<br>
+<h3 class="section">
+18.2 Debugging Information in Separate Files</h3>
+https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html<br>
+<br>
+<br>
+Now it is time to begin a simple debug session. Here is the simple test file:<br>
+<br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><span style="background-color: white;">[luke@rmbp tmp]$ cat main.c
+</span><br>#include &lt;stdio.h&gt;
+<br>#include &lt;uv.h&gt;
+<br>
+<br>int64_t counter = 0;
+<br>
+<br>void wait_for_a_while(uv_idle_t* handle) {
+<br> &nbsp;&nbsp;&nbsp;counter++;
+<br>
+<br> &nbsp;&nbsp;&nbsp;if (counter &gt;= 10e6)
+<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uv_idle_stop(handle);
+<br>}
+<br>
+<br>int main() {
+<br> &nbsp;&nbsp;&nbsp;uv_idle_t idler;
+<br>
+<br> &nbsp;&nbsp;&nbsp;uv_idle_init(uv_default_loop(), &amp;idler);
+<br> &nbsp;&nbsp;&nbsp;uv_idle_start(&amp;idler, wait_for_a_while);
+<br>
+<br> &nbsp;&nbsp;&nbsp;printf("Idling...\n");
+<br> &nbsp;&nbsp;&nbsp;uv_run(uv_default_loop(), UV_RUN_DEFAULT);
+<br>
+<br> &nbsp;&nbsp;&nbsp;uv_loop_close(uv_default_loop());
+<br> &nbsp;&nbsp;&nbsp;return 0;
+<br>}
+<br>[luke@rmbp tmp]$ gcc $(pkg-config --cflags --libs libuv) -g -o idle &nbsp;main.c &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>[luke@rmbp tmp]$ ./idle
+<br>Idling...</span>
+<br>
+<br>
+We build test program with "-g" and execute it. All works fine. &nbsp;Now let us load it within GDB:<br>
+<br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><span style="background-color: white;">[luke@rmbp tmp]$ gdb idle
+</span><br>........<br><b>Reading symbols from idle...done.
+</b><br>(gdb) l
+<br>1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#include &lt;stdio.h&gt;
+<br>2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#include &lt;uv.h&gt;
+<br>3
+<br>4 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int64_t counter = 0;
+<br>5
+<br>6 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void wait_for_a_while(uv_idle_t* handle) {
+<br>7 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;counter++;
+<br>8
+<br>9 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (counter &gt;= 10e6)
+<br>10 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uv_idle_stop(handle);
+<br>(gdb) b main
+<br>Breakpoint 1 at 0xad3: file main.c, line 13.
+<br>(gdb) r
+<br>Starting program: /tmp/idle <br>[Thread debugging using libthread_db enabled]
+<br>Using host libthread_db library "/usr/lib/libthread_db.so.1".
+<br>
+<br>Breakpoint 1, main () at main.c:13
+<br>13 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int main() {
+<br>(gdb) n
+<br>16 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uv_idle_init(uv_default_loop(), &amp;idler);
+<br>(gdb) s
+<br>uv_default_loop () at src/uv-common.c:563
+<br>563 &nbsp;&nbsp;&nbsp;&nbsp;<b>src/uv-common.c: No such file or directory.
+</b><br>(gdb) </span>
+<br>
+We can see gdb can locate symbol from our "idle" exec since it is compiled with "-g". &nbsp;GDB can also display the source file of "idle" since we have "main.c" in the current directory. &nbsp;When we try to step into source code of libuv itself, GDB complains that "src/uv-common.c" not found. &nbsp;We need to tell gdb where to locate libuv's source files via setting variable "directories":<br>
+<br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><span style="background-color: white;">(gdb) set directories /tmp/myuv/src/libuv-1.7.5/src/
+</span><br>.deps/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;heap-inl.h &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;libuv_la-fs-poll.lo &nbsp;&nbsp;&nbsp;&nbsp;libuv_la-inet.o &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;libuv_la-uv-common.lo &nbsp;&nbsp;libuv_la-version.o &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unix/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;version.c &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>.dirstamp &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inet.c &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;libuv_la-fs-poll.o &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;libuv_la-threadpool.lo &nbsp;libuv_la-uv-common.o &nbsp;&nbsp;&nbsp;queue.h &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uv-common.c &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;win/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>fs-poll.c &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.libs/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;libuv_la-inet.lo &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;libuv_la-threadpool.o &nbsp;&nbsp;libuv_la-version.lo &nbsp;&nbsp;&nbsp;&nbsp;threadpool.c &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;uv-common.h &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>(gdb) set directories /tmp/myuv/src/libuv-1.7.5/
+<br>(gdb) show directories
+<br>Source directories searched: /tmp/myuv/src/libuv-1.7.5:$cdir:$cwd
+<br>(gdb) s
+<br>566 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (uv_loop_init(&amp;default_loop_struct))
+<br>(gdb) n
+<br>569 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default_loop_ptr = &amp;default_loop_struct;</span><br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><span style="background-color: white;">(gdb) where
+</span><br>#0 &nbsp;uv_default_loop () at src/uv-common.c:569
+<br>#1 &nbsp;0x0000555555554ae7 in main () at main.c:16</span><br>
+<br>
+This time GDB locate the libuv source files and we are good to continue our debugging.<br>
+<br>
+You can create a ".gdbinit" file under your home directory, and put setup commands there to save you some typing:<br>
+<br>
+<span style="font-family: &quot;courier new&quot; , &quot;courier&quot; , monospace; font-size: x-small;"><span style="background-color: white;">[luke@rmbp ~]$ cat ~/.gdbinit &nbsp;</span><br>set directories /tmp/myuv/src/libuv-1.7.5/
+<br>[luke@rmbp ~]$ gdb
+<br><br>(gdb) show directories
+<br>Source directories searched: /tmp/myuv/src/libuv-1.7.5:$cdir:$cwd
+<br>(gdb) </span><br>
+<br>
+<br>
+Here comes the end of this small post. &nbsp;Enjoy!<br>
+<br>
+<br></div>
+  <div class="article-footer">
+    
+<div class="publish-info">
+  
+    Posted <abbr class="time published" title="2015-11-27T04:18:00.000Z" itemprop="datePublished">27th November 2015</abbr> by <a class="url fn" href="http://www.blogger.com/profile/02803161337032674571" rel="author" itemprop="author">Luke Luo</a>
+  
+  
+</div>
+
+    
+
+
+    
+    
+    
+<div class="share-controls  delay" data-defer="" data-delay="1000">
+
+<span data-href="http://twitter.com/share" class="share-twitter twitter-share-button  delay" data-url="https://lukeluo.blogspot.com/2015/11/how-to-debug-system-package-under.html" data-count="" data-size="" data-text="How to debug system package under ArchLinux"><iframe allowtransparency="true" scrolling="no" src="//platform.twitter.com/widgets/tweet_button.html?url=https%3A%2F%2Flukeluo.blogspot.com%2F2015%2F11%2Fhow-to-debug-system-package-under.html&amp;count=horizontal&amp;text=How%20to%20debug%20system%20package%20under%20ArchLinux&amp;size=medium" frameborder="0"></iframe></span>
+
+
+<span class="share-facebook  delay" data-url="http://lukeluo.blogspot.com/2015/11/how-to-debug-system-package-under.html" data-count="" data-layout="" data-text="How to debug system package under ArchLinux"><iframe allowtransparency="true" scrolling="no" src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Flukeluo.blogspot.com%2F2015%2F11%2Fhow-to-debug-system-package-under.html&amp;send=false&amp;layout=button_count&amp;action=like&amp;show_faces=false&amp;colorscheme=light" frameborder="0"></iframe></span>
+
+</div>
+
+    
+  </div>
+
+  
+
+  
+  
+    
+<div class="comments" data-defer="">
+  <div class="comments-header toggle-switch">
+    
+<span class="bubble  comments-count " title="0 comments">
+  <span class="bubble-content">0</span>
+  <span class="bubble-tail"></span>
+</span>
+
+    <h3>
+    
+    Add a comment
+    </h3>
+  </div>
+  
+<div class="comments-wrapper blogger-comments toggle-container" data-itemid="2939477971678796558" style="display: block;">
+  <div class="comments-content"><div id="bc_0_1C" kind="c"><div id="bc_0_1CT"><div id="bc_0_0T" class="comment-thread" kind="r" t="0" u="0"><ol id="bc_0_0TB"></ol><div id="bc_0_0I" class="continue" kind="ci" style="display: none;"><a href="javascript:;" target="_self">Add comment</a></div><div id="bc_0_0T_box" class="comment-replybox-thread"><iframe class="comments-replybox" data-src="https://www.blogger.com/comment-iframe.g?blogID=2951825909130301289&amp;postID=2939477971678796558" src="https://www.blogger.com/comment-iframe.g?blogID=2951825909130301289&amp;postID=2939477971678796558" frameborder="0"></iframe></div><div id="bc_0_0L" class="loadmore loaded" kind="rb" style="display: none;"><a href="javascript:;" target="_self">No more comments</a></div></div></div></div></div>
+  <div class="comments-footer">
+    
+  </div>
+</div>
+
+</div>
+
+  
+  
+</div></div>
+</div>
+
+
+<div id="gadget-dock" class=""><div class="gadget-item" data-gadget-id="0">
+<div class="gadget-menu">
+    <div class="gadget-icons">
+      <img class="gadget-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAMAAADzapwJAAAAOVBMVEUAAAD///////////////////////////////////////+0tLRdXV03NzdQUFDz8/OCgoLm5uba2tpH+D6LAAAACnRSTlMAYJ8w799AzyCvT73IhwAAAHZJREFUeF6NzNsOwyAMBNE1kLQdkt7+/2MrEauAlUrdx2NrJOEjaRy7b3ToPDj7wO6R3Z3hmyJG/mZv/I7cuZ7xE5sinqmks8ibS+BKX/JI6z7w2RTZXg2XHNpb4+ztMDu4r8ICt8bh0yial4tJWss6s+XjatIHHJAOzO96uu0AAAAASUVORK5CYII=">
+      <img class="gadget-icon-selected" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAMAAADzapwJAAAAOVBMVEUAAAA3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3NzeCgoLa2tr////m5uZERES0tLRQUFBdXV0qcSKbAAAACnRSTlMAYJ8w799AzyCvT73IhwAAAHZJREFUeF6NzNsOwyAMBNE1kLQdkt7+/2MrEauAlUrdx2NrJOEjaRy7b3ToPDj7wO6R3Z3hmyJG/mZv/I7cuZ7xE5sinqmks8ibS+BKX/JI6z7w2RTZXg2XHNpb4+ztMDu4r8ICt8bh0yial4tJWss6s+XjatIHHJAOzO96uu0AAAAASUVORK5CYII=">
+    </div>
+    <span class="gadget-title">Popular Posts</span>
+  </div>
+  <div class="gadget-container">
+    <div class="gadget">
+      <span class="gadget-title">Popular Posts</span>
+      <div class="gadget-content"><div class="PopularPosts   hide-snippet   hide-thumbnail   ">
+    <ul>
+      
+        
+ <li>
+    <div class="PopularPosts-content">
+    
+      <div class="PopularPosts-thumbnail">
+        <a href="https://lukeluo.blogspot.com/2013/11/how-to-set-up-softehter-vpn-client.html" target="_blank">
+          <img alt="How to set up Softehter VPN Client under Linux: Vi..." src="//1.bp.blogspot.com/-4CkQiIw5-mI/Un2rVJCBuwI/AAAAAAAAAWg/Wl-9N265M3g/s72-c/1.jpg" width="72" height="72" border="0">
+        </a>
+      </div>
+    
+      <div class="PopularPosts-title">
+        <a href="https://lukeluo.blogspot.com/2013/11/how-to-set-up-softehter-vpn-client.html">How to set up Softehter VPN Client under Linux: Vi...</a>
+      </div>
+      <div class="PopularPosts-snippet">
+        Update: &nbsp;I create another script for this under Archlinux.   https://github.com/lukeluo/linux-debian7-admin/tree/master/archlinux/home/luke/...
+      </div>
+    </div>
+    <div style="clear:both;"></div>
+  </li>
+
+      
+        
+ <li>
+    <div class="PopularPosts-content">
+    
+      <div class="PopularPosts-title">
+        <a href="https://lukeluo.blogspot.com/2015/11/how-to-debug-system-package-under.html">How to debug system package under ArchLinux</a>
+      </div>
+      <div class="PopularPosts-snippet">
+        In our projects, we use open source software extensively. &nbsp;Now and then we need to look into these open source software to either gain more ...
+      </div>
+    </div>
+    <div style="clear:both;"></div>
+  </li>
+
+      
+        
+ <li>
+    <div class="PopularPosts-content">
+    
+      <div class="PopularPosts-thumbnail">
+        <a href="https://lukeluo.blogspot.com/2013/06/grub-how-to6-pxe-boot.html" target="_blank">
+          <img alt="GRUB2 How To (6): PXE Boot" src="//2.bp.blogspot.com/-xwdWN3vmHIk/UcwUZbiCfJI/AAAAAAAAARg/og33pYCQiyc/s72-c/pxe.png" width="72" height="72" border="0">
+        </a>
+      </div>
+    
+      <div class="PopularPosts-title">
+        <a href="https://lukeluo.blogspot.com/2013/06/grub-how-to6-pxe-boot.html">GRUB2 How To (6): PXE Boot</a>
+      </div>
+      <div class="PopularPosts-snippet">
+        Grub has support for PXE boot. &nbsp;It has a script "grub-mknetdir" to prepare a directory for TFTP server. Let us trace it to see wha...
+      </div>
+    </div>
+    <div style="clear:both;"></div>
+  </li>
+
+      
+        
+ <li>
+    <div class="PopularPosts-content">
+    
+      <div class="PopularPosts-title">
+        <a href="https://lukeluo.blogspot.com/2015/04/the-best-way-to-configure-network.html">The best way to configure network interface ever i...</a>
+      </div>
+      <div class="PopularPosts-snippet">
+        I have a laptop which has both Ether link and wireless link, just as any other laptop. In the past years, I have used Network Manager, netct...
+      </div>
+    </div>
+    <div style="clear:both;"></div>
+  </li>
+
+      
+        
+ <li>
+    <div class="PopularPosts-content">
+    
+      <div class="PopularPosts-thumbnail">
+        <a href="https://lukeluo.blogspot.com/2013/06/grub-how-to-4-memdisk-and-loopback.html" target="_blank">
+          <img alt="GRUB2 How To (4):  memdisk and loopback device" src="//3.bp.blogspot.com/-PCGK8BUgH2I/UcQ9ld6iw9I/AAAAAAAAAOc/Yj6XWygHXk8/s72-c/Screenshot+from+2013-06-21+19:45:55.png" width="72" height="72" border="0">
+        </a>
+      </div>
+    
+      <div class="PopularPosts-title">
+        <a href="https://lukeluo.blogspot.com/2013/06/grub-how-to-4-memdisk-and-loopback.html">GRUB2 How To (4):  memdisk and loopback device</a>
+      </div>
+      <div class="PopularPosts-snippet">
+         1. grub-mkimage options: &nbsp;--config &nbsp;and --memdisk   How these two options work? &nbsp; According to man page:      &nbsp;  &nbsp; &nbsp; &nbsp;-c, --config=FILE   &nbsp;...
+      </div>
+    </div>
+    <div style="clear:both;"></div>
+  </li>
+
+      
+        
+ <li>
+    <div class="PopularPosts-content">
+    
+      <div class="PopularPosts-thumbnail">
+        <a href="https://lukeluo.blogspot.com/2013/06/grub-how-to-2-make-boot-able-iso-with.html" target="_blank">
+          <img alt="GRUB2 How To (2) :  Make boot-able ISO with  xorri..." src="//2.bp.blogspot.com/-O2eAw68J_98/UbrcQrw6jiI/AAAAAAAAAK4/ner4AHDkWUM/s72-c/Screenshot+from+2013-06-14+17:02:32.png" width="72" height="72" border="0">
+        </a>
+      </div>
+    
+      <div class="PopularPosts-title">
+        <a href="https://lukeluo.blogspot.com/2013/06/grub-how-to-2-make-boot-able-iso-with.html">GRUB2 How To (2) :  Make boot-able ISO with  xorri...</a>
+      </div>
+      <div class="PopularPosts-snippet">
+        There are many tools to make boot-able ISO already. &nbsp;Some tools are good at some aspects, but lack supports for other features. Some tools o...
+      </div>
+    </div>
+    <div style="clear:both;"></div>
+  </li>
+
+      
+        
+ <li>
+    <div class="PopularPosts-content">
+    
+      <div class="PopularPosts-title">
+        <a href="https://lukeluo.blogspot.com/2015/09/how-to-bootstrap-different-linux.html">How to Bootstrap different Linux Distribution Unde...</a>
+      </div>
+      <div class="PopularPosts-snippet">
+        Nowadays I use "systemd-nspawn" to boot containers to construct testing environment. &nbsp; We can leverage "pacman/pacstrap"...
+      </div>
+    </div>
+    <div style="clear:both;"></div>
+  </li>
+
+      
+        
+ <li>
+    <div class="PopularPosts-content">
+    
+      <div class="PopularPosts-thumbnail">
+        <a href="https://lukeluo.blogspot.com/2014/07/linux-virtual-console6-shell-command.html" target="_blank">
+          <img alt="Linux Virtual Console(6): Shell command compositio..." src="//1.bp.blogspot.com/-1-boXJEq6X0/U70TEvjqRxI/AAAAAAAABtw/LvBQDJV-QMY/s72-c/gitk20.png" width="72" height="72" border="0">
+        </a>
+      </div>
+    
+      <div class="PopularPosts-title">
+        <a href="https://lukeluo.blogspot.com/2014/07/linux-virtual-console6-shell-command.html">Linux Virtual Console(6): Shell command compositio...</a>
+      </div>
+      <div class="PopularPosts-snippet">
+        1. Background   Under Unix/Linux, sooner or later, you will have requirement to compose many shell commands and dispatch them to execute in ...
+      </div>
+    </div>
+    <div style="clear:both;"></div>
+  </li>
+
+      
+        
+ <li>
+    <div class="PopularPosts-content">
+    
+      <div class="PopularPosts-title">
+        <a href="https://lukeluo.blogspot.com/2015/04/dell-r720-idrac7-firmware-update.html">DELL R720 iDRAC7 firmware update totally in Linux ...</a>
+      </div>
+      <div class="PopularPosts-snippet">
+        1. download firmware   wget http://downloads.dell.com/FOLDER02881013M/1/iDRAC-with-Lifecycle-Controller_Firmware_FM1PC_WN64_2.10.10.10_A00.E...
+      </div>
+    </div>
+    <div style="clear:both;"></div>
+  </li>
+
+      
+        
+ <li>
+    <div class="PopularPosts-content">
+    
+      <div class="PopularPosts-thumbnail">
+        <a href="https://lukeluo.blogspot.com/2013/06/grub-how-to-3-uefi-and-gpt.html" target="_blank">
+          <img alt="GRUB2 How To (3) :  UEFI and GPT" src="//1.bp.blogspot.com/-tPab5qmzQtA/UcA0UhjIsSI/AAAAAAAAAMg/qywAIdGneBQ/s72-c/Screenshot+from+2013-06-18+18:19:24.png" width="72" height="72" border="0">
+        </a>
+      </div>
+    
+      <div class="PopularPosts-title">
+        <a href="https://lukeluo.blogspot.com/2013/06/grub-how-to-3-uefi-and-gpt.html">GRUB2 How To (3) :  UEFI and GPT</a>
+      </div>
+      <div class="PopularPosts-snippet">
+        UEFI (Extensible Extensible Firmware Interface) is the new generation of BIOS. &nbsp;GPT (GUID Partition Table) is the only supported disk partit...
+      </div>
+    </div>
+    <div style="clear:both;"></div>
+  </li>
+
+      
+    </ul>
+  </div></div>
+    </div>
+  </div></div><div class="gadget-item" data-gadget-id="1">
+<div class="gadget-menu">
+    <div class="gadget-icons">
+      <img class="gadget-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAAgUlEQVQ4y6XTwQ3AIAgFUEZyhI7gCIzuCGzwe9HWKhgo/2SUvBBFgi8XGQFAtBQ3AxEAxYPUvlkj0Iy05cDdUbQTFYrciQlpSCQCoGSRt6O+SEHUW8pAMm44A/H83n8gBrBNXwTi54mVMfZA/Bk241OdIF5qyYwBsVJHx0yQaMBAblcXSj0+j7awAAAAAElFTkSuQmCC">
+      <img class="gadget-icon-selected" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAARCAYAAAA7bUf6AAAAgklEQVQ4jaXSAQrAIAgAQJ8U9IE9YU/w6T2hH7gVWxPR0BlIUXJYBrVWcsQBxiAiAJHcDKTfUTzIOTbHHIE40vhBpKJoJSoUeRMT0pBITCiLfBU9ixQ0kJKE+tvSDIT8b/yBcD6s+GQRCFeL5XBC6woq4oCQ55rIBkKZt0UE1DXgRS6+HFtDSeJYlgAAAABJRU5ErkJggg==">
+    </div>
+    <span class="gadget-title">Labels</span>
+  </div>
+  <div class="gadget-container">
+    <div class="gadget">
+      <span class="gadget-title">Labels</span>
+      <div class="gadget-content"><ul class="gadget-label gadget-label-cloud gadget-label-show-freq-numbers">
+  
+  
+<li class="gadget-label-item gadget-label-size-5">
+  <a href="https://lukeluo.blogspot.com/search/label/gcc">gcc</a><span class="gadget-label-count">8</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-5">
+  <a href="https://lukeluo.blogspot.com/search/label/toolchain">toolchain</a><span class="gadget-label-count">7</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-4">
+  <a href="https://lukeluo.blogspot.com/search/label/grub">grub</a><span class="gadget-label-count">5</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-4">
+  <a href="https://lukeluo.blogspot.com/search/label/cross%20compiler">cross compiler</a><span class="gadget-label-count">4</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-4">
+  <a href="https://lukeluo.blogspot.com/search/label/qemu">qemu</a><span class="gadget-label-count">4</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-3">
+  <a href="https://lukeluo.blogspot.com/search/label/X%20windows">X windows</a><span class="gadget-label-count">3</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-3">
+  <a href="https://lukeluo.blogspot.com/search/label/ubuntu">ubuntu</a><span class="gadget-label-count">3</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-2">
+  <a href="https://lukeluo.blogspot.com/search/label/Linux">Linux</a><span class="gadget-label-count">2</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-2">
+  <a href="https://lukeluo.blogspot.com/search/label/SoftEther">SoftEther</a><span class="gadget-label-count">2</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-2">
+  <a href="https://lukeluo.blogspot.com/search/label/UEFI">UEFI</a><span class="gadget-label-count">2</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-2">
+  <a href="https://lukeluo.blogspot.com/search/label/bash">bash</a><span class="gadget-label-count">2</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-2">
+  <a href="https://lukeluo.blogspot.com/search/label/cubietruck">cubietruck</a><span class="gadget-label-count">2</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-2">
+  <a href="https://lukeluo.blogspot.com/search/label/debug">debug</a><span class="gadget-label-count">2</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-2">
+  <a href="https://lukeluo.blogspot.com/search/label/gdb">gdb</a><span class="gadget-label-count">2</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-2">
+  <a href="https://lukeluo.blogspot.com/search/label/gnome-keyring">gnome-keyring</a><span class="gadget-label-count">2</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-2">
+  <a href="https://lukeluo.blogspot.com/search/label/gpt">gpt</a><span class="gadget-label-count">2</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-2">
+  <a href="https://lukeluo.blogspot.com/search/label/iso">iso</a><span class="gadget-label-count">2</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-2">
+  <a href="https://lukeluo.blogspot.com/search/label/isohybrid">isohybrid</a><span class="gadget-label-count">2</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-2">
+  <a href="https://lukeluo.blogspot.com/search/label/pipe">pipe</a><span class="gadget-label-count">2</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/A20">A20</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/Console">Console</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/DHCP">DHCP</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/El%20Torito">El Torito</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/Gnome3">Gnome3</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/ISO%209660">ISO 9660</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/JTAG">JTAG</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/Network-Manager">Network-Manager</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/PXE">PXE</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/Regular%20Expression">Regular Expression</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/TFTP">TFTP</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/VPN">VPN</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/Xsession">Xsession</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/abi">abi</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/archive">archive</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/armv7-A">armv7-A</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/automatic">automatic</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/autotools">autotools</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/bare%20metal">bare metal</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/bios">bios</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/bootable%20usb">bootable usb</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/bootstrap">bootstrap</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/build">build</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/cortexA7">cortexA7</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/dbus">dbus</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/debootstrap">debootstrap</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/efi">efi</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/file%20descriptor">file descriptor</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/gdbserver">gdbserver</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/gdm3">gdm3</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/git">git</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/github">github</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/gnu%20make">gnu make</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/io%20redirect">io redirect</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/isolinux">isolinux</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/linux%20kernel">linux kernel</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/live%20ISO">live ISO</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/loopback">loopback</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/machine%20triplet">machine triplet</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/make">make</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/memdisk">memdisk</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/nm-applet">nm-applet</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/nmcli">nmcli</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/pty">pty</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/script">script</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/socat">socat</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/ssh">ssh</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/startx">startx</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/symbol">symbol</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/terminal">terminal</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/tips">tips</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/tool%20chain">tool chain</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/uuid">uuid</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/vmware">vmware</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/winVblock">winVblock</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/windows%20xp">windows xp</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/wmii">wmii</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+  
+<li class="gadget-label-item gadget-label-size-1">
+  <a href="https://lukeluo.blogspot.com/search/label/xinit">xinit</a><span class="gadget-label-count">1</span>
+</li>
+
+  
+</ul></div>
+    </div>
+  </div></div><div class="gadget-item" data-gadget-id="2">
+<div class="gadget-menu">
+    <div class="gadget-icons">
+      <img class="gadget-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAgMAAACdGdVrAAAACVBMVEX///8AAAD///9+749PAAAAAnRSTlMAAHaTzTgAAAAwSURBVHherYyxCQAwCAR/yhTZy8ZeC6c0BETU1msOjucBeyBF54s1FHEs5fZYWb12TL8307RAxVQAAAAASUVORK5CYII=">
+      <img class="gadget-icon-selected" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAgMAAACdGdVrAAAACVBMVEX///8AAAAzMzMTx/ayAAAAAnRSTlMAAHaTzTgAAAAwSURBVHherYyxCQAwCAR/yhTZy8ZeC6c0BFS09pqD43nAHijR+WINZZxLuTN2Vq8dTL8301DjA9oAAAAASUVORK5CYII=">
+    </div>
+    <span class="gadget-title">Blog Archive</span>
+  </div>
+  <div class="gadget-container">
+    <div class="gadget">
+      <span class="gadget-title">Blog Archive</span>
+      <div class="gadget-content"><div class="blogarchive-tree blogarchive-expanded">
+  <ul class="blogarchive-dates">
+  
+  
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2015/">15</a><span class="blogarchive-post-count">6</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2015/11/">Nov</a><span class="blogarchive-post-count">1</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+  
+<li class="blogarchive-post">
+  <a href="https://lukeluo.blogspot.com/2015/11/how-to-debug-system-package-under.html">How to debug system package under ArchLinux</a>
+</li>
+
+
+
+  </ul>
+</li>
+
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2015/09/">Sep</a><span class="blogarchive-post-count">1</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+
+  </ul>
+</li>
+
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2015/04/">Apr</a><span class="blogarchive-post-count">3</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+
+  </ul>
+</li>
+
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2015/03/">Mar</a><span class="blogarchive-post-count">1</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+
+  </ul>
+</li>
+
+  
+  
+
+
+  </ul>
+</li>
+
+  
+  
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2014/">14</a><span class="blogarchive-post-count">36</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2014/07/">Jul</a><span class="blogarchive-post-count">2</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+
+  </ul>
+</li>
+
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2014/06/">Jun</a><span class="blogarchive-post-count">7</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+
+  </ul>
+</li>
+
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2014/05/">May</a><span class="blogarchive-post-count">3</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+
+  </ul>
+</li>
+
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2014/04/">Apr</a><span class="blogarchive-post-count">10</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+
+  </ul>
+</li>
+
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2014/02/">Feb</a><span class="blogarchive-post-count">3</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+
+  </ul>
+</li>
+
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2014/01/">Jan</a><span class="blogarchive-post-count">11</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+
+  </ul>
+</li>
+
+  
+  
+
+
+  </ul>
+</li>
+
+  
+  
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2013/">13</a><span class="blogarchive-post-count">16</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2013/12/">Dec</a><span class="blogarchive-post-count">1</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+
+  </ul>
+</li>
+
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2013/11/">Nov</a><span class="blogarchive-post-count">6</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+
+  </ul>
+</li>
+
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2013/07/">Jul</a><span class="blogarchive-post-count">1</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+
+  </ul>
+</li>
+
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2013/06/">Jun</a><span class="blogarchive-post-count">7</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+
+  </ul>
+</li>
+
+  
+    
+<li class="blogarchive-date blogarchive-collapsed">
+  <div class="blogarchive-title">
+    <a href="https://lukeluo.blogspot.com/2013/05/">May</a><span class="blogarchive-post-count">1</span>
+  </div>
+  <ul class="blogarchive-dates">
+  
+  
+
+
+  </ul>
+</li>
+
+  
+  
+
+
+  </ul>
+</li>
+
+  
+  </ul>
+</div></div>
+    </div>
+  </div></div><div class="gadget-item" data-gadget-id="3">
+<div class="gadget-menu">
+    <div class="gadget-icons">
+      <img class="gadget-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAB40lEQVRIx7XWwWoTURQG4Lst0jTiolRa2qW4sAWhbrsTBJ8h2bpKNkUUBKGL2idQfIgGuhNsLW7UTaiPYTFpN92Y1s/NmTSEzGSmpj8MAzPnP//cc/97zqRUACyggX30cIlB3C/j2X7E1HJyJBSKtNGPZJ/wAg8xh3lsYhtHEdNDq7QQVnGCP3iJO2kKsIId/AruaqEQ1mMVh7iXKgJL6OIM6xOFYiV9fMTddENgEQchtjpJqIvDNAPEPn6PnNdCIxv/oIBcx7FrHKNeEL+B32hhaOE+3kz5ylGRodgUzl64sZbQxMU0d8lHfYobL9BI6OBribpXFgreZ3RSuONVCaHKpQvea/QT/uJJCUIlM4zwnuIqE6pVsG69jMDYubrKaj+fbglYzoQusVkQuIa30cPGcRLv1gr4zzOhHrZzgpo4Nx3naObk2M3MsI+jipYubXV8y+zdiM6wMgOhrQlGGKCZUIvy7dyC0Ic4pwvZgxZOsTQWuFXxqo9wH8fwbI+PiZNo64szsPT92Jtu0eA7wNx/inzJ9r1olJ/hJzZuIPIoWlP+KB9bWTeG1t4kN+a0mffhsO4op8zvVivceIEfeIdnkXQ5TvxujOxBHNp25f+6CKrFOetEza/Grn68aw4tnCP0D7HegqWQsg0fAAAAAElFTkSuQmCC">
+      <img class="gadget-icon-selected" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAB8klEQVRIx7XWT0uUURTH8buVcJxoIYaiy2iRwgds6y4Ieg3OttW4kSgIAhfmKyh6ETPgLkiTNtVmsJeR5OjGTWpPm/MM0zjz/DE9cHng3nPO93nu/d1znpQKDDNYRwfHuMB5PC9irhM+jXE5sixLWZYVQjbQj2Qf8RwPMYVprGIT++FzjHZlEBZxiN94gTupxLCALfyM2MVCEJbjK/ZwL9U0zKGHEyzH3L+g+JI+PuBuuqZhFrsBWxwH6mEv3YDFOX6LnAlXDv5BQXATB8hiHKBZ4L+CX2hjIOE+Xpe85TBkACuJ2Qk1NhJaOCtT1xhIPpolajzDekIXXyrse21QxH1CN4U6XlYA1d66iHuFfsIfPK4QUEsMQ3FPcJmDGjWk26wCGLlXl/neT6dbMsznoAusFjgu4U3UsNEzOoy1pYL4ZznoGJsTnFo4LVBcPk7RmpBjOxdDB/s1JV1Z6viay3s9KsPCDYDWxgjhHK2ERmzf1i2A3sc9nckn2jjC3IjjWs3RHIoVzXNjUL1j4TDK+uwNSPp+nE2vqPHtYuo/IZ/zc78CGmrlJ/iBlWtAHkVpGrTysp+TXjStnXFqnFBm3oXCesMxVX632qHGM3zHWzyNpPNx47ejZZ/Hpd0YzVMKClgj7lk39vxyZPRjrTWQ8ATQX2/rqVTnkWAqAAAAAElFTkSuQmCC">
+    </div>
+    <span class="gadget-title">About Me</span>
+  </div>
+  <div class="gadget-container">
+    <div class="gadget">
+      <span class="gadget-title">About Me</span>
+      <div class="gadget-content"><div class="profile">
+  
+    
+    
+      
+<dl class="profile-data">
+  
+  <dt class="profile-name">
+  <a href="https://www.blogger.com/profile/02803161337032674571" class="profile-name-link g-profile" rel="author" style="background-image: url('//www.blogger.com/img/logo-16.png');" data-gapiscan="true" data-gapiattached="true">Luke Luo</a>
+  </dt>
+  
+  
+  
+  
+  
+  
+  <dd class="profile-aboutme"></dd>
+  
+</dl>
+
+    
+  
+</div></div>
+    </div>
+  </div></div></div>
+
+
+
+<div id="loading">
+  <span>Loading</span>
+</div>
+
+
+
+
+
+<div id="attribution-container"><div class="attribution">Dynamic Views theme. Powered by <a href="https://www.blogger.com" target="_blank">Blogger</a>.</div></div>

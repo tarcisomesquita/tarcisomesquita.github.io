@@ -1,0 +1,26 @@
+
+objdump also is disassembler.
+
+ndisasm -b {16|32|64} filename
+
+16-bit mode by default.
+
+-h help
+
+-o declare a different origin for the file you are disassembling
+   numeric formats:
+      decimal by default, 
+      begins with 0x or ends in H it's hex
+      ends in Q it's octal
+      ends in B it's binary
+      
+      To disassemble a .COM file:
+      ndisasm -o100h filename.com
+      in files .com the instructions begin in 0x100
+
+-e skips a header on the file, by ignoring the first N bytes.
+
+-k have two comma-separated numeric arguments, the first is an assembly offset and the second is a number of bytes to skip. 
+
+https://sourceforge.net/projects/nasm/
+

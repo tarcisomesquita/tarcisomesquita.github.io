@@ -1,0 +1,216 @@
+
+<HTML>
+<HEAD>
+<TITLE>
+6.828 / Fall 2014
+</TITLE>
+<META HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" href="css/labs.css" type="text/css" />
+
+</HEAD>
+
+<BODY BGCOLOR=#ffffff TEXT=#000000>
+
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">6.828: Operating System Engineering</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+	    <li><a href="schedule.html">Schedule</a></li>
+	    <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Class<span class="caret"></span></a>
+	      <ul class="dropdown-menu" role="menu">
+                <li><a href="overview.html">Overview</a></li>
+                <li><a href="general.html">Administrivia</a></li>
+		<li><a href="classes.html">Related classes</a></li>
+		<li><a href="http://pdos.csail.mit.edu/6.828/2012">6.828 2012</a></li>
+	      </ul>
+	    </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Labs<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+		<li><a href="tools.html">Tools</a></li>
+		<li><a href="labguide.html">Lab guide</a></li>
+                <li><a href="labs/lab1">Lab 1</a></li>
+                <li><a href="labs/lab2">Lab 2</a></li>
+                <li><a href="labs/lab3">Lab 3</a></li>
+		<li><a href="labs/lab4">Lab 4</a></li>
+		<li><a href="labs/lab5">Lab 5</a></li>
+		<li><a href="labs/lab6">Lab 6</a></li>
+		<li><a href="labs/lab7">Lab 7</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">xv6<span class="caret"></span></a>
+	      <ul class="dropdown-menu" role="menu">
+		<li><a href="xv6.html">xv6</a></li>
+		<li><a href="xv6/xv6-rev8.pdf">xv6 printout</a></li>
+		<li><a href="xv6/book-rev8.pdf">xv6 book</a></li>
+	      </ul>
+	    </li>
+	    <li><a href="reference.html">References</a></li>
+	    <li><a href="https://piazza.com/class/hxbtuy99afz46m">Piazza</a></li>
+          </ul>
+	  <ul class="nav navbar-nav navbar-right">
+	    <p class="navbar-text">2014</p>
+	  </ul>
+        </div>
+      </div>
+    </div>
+
+
+<div class="container">
+
+
+
+ 
+
+<style type='text/css'>
+.l {
+	margin-left: 4em;
+}
+</style>
+
+<script type='text/javascript'>
+function unfoldinstrux(unfold) {
+  var e = document.getElementById("installinstrux");
+  e.className = unfold ? "foldo" : "foldc";
+}
+</script>
+
+<H1>
+Tools Used in 6.828
+</H1>
+
+<h2 id="chain">Compiler Toolchain</h2>
+
+<p>You'll need a compiler toolchain that generates code for   32-bit Intel architectures ("x86" architectures) in the ELF binary format. 
+
+<h3>Test Your Compiler Toolchain</h3>
+
+<pre class='samp'>
+% <span class='type'>objdump -i</span>
+</pre>
+
+<p>The second line should say <tt>elf32-i386</tt>.</p>
+
+<pre class='samp'>
+% <span class='type'>gcc -m32 -print-libgcc-file-name</span>
+</pre>
+
+<p>The command should print something like
+  <tt>/usr/lib/gcc/i486-linux-gnu/<i>version</i>/libgcc.a</tt> or
+  <tt>/usr/lib/gcc/x86_64-linux-gnu/<i>version</i>/32/libgcc.a</tt>
+
+<p>If both these commands succeed, you're all set, and
+  don't need to compile your own toolchain.</p>
+
+<div class='note'>
+<p>If the <span class='type'>gcc</span> command fails, you may need to
+  install a development environment.  On Ubuntu Linux, try this:</p>
+
+<pre class='samp'>
+% <span class='type'>sudo apt-get install -y build-essential gdb</span>
+</pre>
+
+<p>On 64-bit machines, you may need to install a 32-bit support
+  library.  The symptom is that linking fails with error messages
+  like "<tt>__udivdi3</tt> not found" and "<tt>__muldi3</tt> not
+  found".  On Ubuntu Linux, try this to fix the problem:</p>
+
+<pre class='samp'>
+% <span class='type'>sudo apt-get install gcc-multilib</span>
+</pre>
+
+<h3>Using a Virtual Machine</h3>
+<p>Sugere usar o <tt>ubuntu-10.04.1-desktop-i386.iso</tt>. </p>
+
+</div>
+
+<h2 id="qemu">QEMU Emulator</h2>
+
+<p><a href="http://www.nongnu.org/qemu/">QEMU</a> is a modern and fast
+PC emulator.  QEMU version 1.7.0 is set up on Athena for x86 machines
+in the 6.828 locker (<tt>add -f 6.828</tt>)</p>
+
+<p>Unfortunately, QEMU's debugging facilities, while powerful, are
+somewhat immature, so we highly recommend you use our patched version
+of QEMU instead of the stock version that may come with your
+distribution.  The version installed on Athena is already patched.
+To build your own patched version of QEMU:</p>
+
+<!-- Note to staff:
+
+     Some of the QEMU patches were applied upstream and should appear
+     in releases post-0.15.
+-->
+
+<ol>
+<li> Clone the IAP 6.828 QEMU git repository
+ <code>git clone https://github.com/geofft/qemu.git -b 6.828-1.7.0</code></li>
+<li> On Linux, you may need to install the SDL development libraries to
+get a graphical VGA window. On Debian/Ubuntu, this is the
+libsdl1.2-dev package.</li>
+<li> Configure the source code
+
+<ol>
+<li>Linux:
+<code>./configure --disable-kvm [--prefix=PFX] [--target-list=&quot;i386-softmmu x86_64-softmmu&quot;]</code></li>
+<li>OS X:
+<code>./configure --disable-kvm --disable-sdl [--prefix=PFX] [--target-list=&quot;i386-softmmu x86_64-softmmu&quot;]</code>
+The <code>prefix</code> argument specifies where to install QEMU; without it
+QEMU will install to <code>/usr/local</code> by default. The <code>target-list</code>
+argument simply slims down the architectures QEMU will build support
+for.</li>
+</ol></li>
+<li> Run <code>make &amp;&amp; make install</code></li>
+</ol>
+
+
+<!-- End Page Content -->
+
+<hr>
+
+<font style="font-size: 12px;">
+<p>Questions or comments regarding 6.828?  Send e-mail to the TAs at
+<A
+HREF="mailto:6.828-staff@pdos.csail.mit.edu"><I>6.828-staff@pdos.csail.mit.edu</I></A>.
+
+<p><a rel="license" href="http://creativecommons.org/licenses/by/3.0/us/"><img
+alt="Creative Commons License" style="border-width:0"
+src="http://i.creativecommons.org/l/by/3.0/us/88x31.png" ></a> <B><A HREF="#top">Top</A></B> //
+<B><A HREF="index.html">6.828 home</A></B> // 
+<i>Last updated Monday, 15-Sep-2014 07:40:33 EDT</i>
+</font>
+
+</div>
+
+<script src="js/jquery-1.10.2.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+</BODY>
+</HTML>
+ 
+
+<!--  LocalWords:  Cygwin cygwin Toolchain Linuxes BSDs toolchain gcc ld jos cd
+ -->
+<!--  LocalWords:  objdump conf GCCPREFIX linux binutils libstdc GNUmakefile sh
+ -->
+<!--  LocalWords:  Bochs athena scp username bochs prebuilt wget xzvf
+ -->
+<!--  LocalWords:  disasm
+ -->

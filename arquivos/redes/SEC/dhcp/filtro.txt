@@ -1,0 +1,36 @@
+iptables -t filter -p tcp -j TCPOPTSTRIP --strip-options wscale,mss,sack-permitted,sack,timestamp,md5
+
+iptables -t filter -I FORWARD -c 0 0 -i eth0 ! --mac-source fc:b0:c4:62:ce:f4 -j DROP
+iptables -t raw -I PREROUTING -c 0 0 -i eth0 ! --mac-source fc:b0:c4:62:ce:f4 -j DROP -m comment --comment "Para ARP?"
+
+-m
+physdev
+This module matches on the bridge port input and output devices enslaved to a bridge device.
+[!] --physdev-in name
+Name of a bridge port via which a packet is received (only for packets entering the INPUT, FORWARD and PREROUTING chains).
+If the interface name ends in a "+", then any interface which begins with this name will match.
+
+[!] --physdev-out name
+Name of a bridge port via which a packet is going to be sent (for packets entering the FORWARD, OUTPUT and POSTROUTING chains).
+If the interface name ends in a "+", then any interface which begins with this name will match.
+Note that in the nat and mangle OUTPUT chains one cannot match on the bridge output port, however one can in the filter OUTPUT chain.
+
+[!] --physdev-is-in
+Matches if the packet has entered through a bridge interface.
+
+[!] --physdev-is-out
+Matches if the packet will leave through a bridge interface.
+
+[!] --physdev-is-bridged
+Matches if the packet is being bridged and therefore is not being routed.
+This is only useful in the FORWARD and POSTROUTING chains.
+
+
+pkttype
+This module matches the link-layer packet type.
+
+[!] --pkt-type {unicast|broadcast|multicast}
+
+
+enviar um ping request com um ip desconhecido, faz com que a máquina envie um arp request em broadcast. (Um modo de descobrir todas as máquinas presentes na rede.)
+

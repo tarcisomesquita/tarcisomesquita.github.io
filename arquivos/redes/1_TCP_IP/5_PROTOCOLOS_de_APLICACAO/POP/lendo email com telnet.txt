@@ -1,0 +1,54 @@
+É possivel verificar sua caixa de Email apenas usando um terminal de Telnet  do Windows, Linux ou qualquer outro sistema operacional que tenha este recurso e esteja conectado na internet ...
+
+Por exemplo no windows, vá :
+
+iniciar->excecutar->cmd
+para abrir o prompt do Ms-Dos
+
+então digite:
+
+telnet pop.provedor.com.br 110
+para se conectar no servidor
+
+telnet=programa para se conectar com o servidor pop
+pop.provedor.com.br= servidor pop ( ex: pop3.estadao.com.br,pop3.ig.com.br, pop.bol.com.br,pop.yahoo.mail.com etc)
+110=porta de escuta do servidor pop, geralmente a porta 110 é o padrão para este tipo de serviço , mas pode pode ser modificada a gosto do provedor , por isso verifique as configurações exatas de seu servidor, para depois não reclamar que não está conseguindo se conectar
+
+Para logar na sua conta, use os comandos user e pass. Por exemplo, login fred senha 123
+
+user fred
++OK------------>mesagem que aparece na tela que servidor recebeu os dados
+
+pass 123
++OK
+
+Em seguida usaremos os comandos list, retr e dele para, respectivamente, lista, ler e deletar as mensagens. Continuando na conexão assim, nossa seqüencia para listar as mensagens, ler a mensagem 3 e em seguida apagar mensagem 1 :
+
+list
++OK
+1 1212
+2 1624
+3 3045
+
+Neste caso temos três mensagens e o tamanho delas em kb
+
+
+retr 3
++OK 3045 octets
+< código fonte da mensagem >
+
+Agora com esse comando vemos o código fonte da mensagem 3 , se ele foi escrita somente em ascii é possivel ler seu contéudo , se foi em Html veremos o código em Html, se tiver um documento anexado também é possivel ver seu conteúdo em caracteres especiais ...
+
+dele 1
++OK Message 1 has been deleted.
+Seta para deletar mensagem 1 , quando saír da caixa de emails
+
+quit
+saí da caixa de emails
+
+Caso queira também mandar emails em vez de somente visualizar , leia o link :
+
+http://www.forum-invasao.com.br/novo/vi ... ?t=8525069
+
+Flw !!!
+

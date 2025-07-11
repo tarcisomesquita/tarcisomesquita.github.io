@@ -1,0 +1,23 @@
+
+248966_Optization Reference Manual.pdf
+Apendice C
+
+Latency — The number of clock cycles that are required for the execution core to complete the execution of all of the μops that form an instruction.
+
+Throughput — The number of clock cycles required to wait before the issue ports are free to accept the same instruction again. For many instructions, the throughput of an instruction can be significantly less than its latency.
+
+Instruction latency and throughput data are presented in Table C-2 through Table C-12.
+
+Instruction latency and throughput for different processor microarchitectures are in separate columns.
+
+Separate sets of instruction latency and throughput are shown in the columns for CPUID
+signature 0xF2n and 0xF3n. The column represented by 0xF3n also applies to Intel
+processors with CPUID signature 0xF4n and 0xF6n. The notation 0xF2n represents
+the hex value of the lower 12 bits of the EAX register reported by CPUID instruction
+with input value of EAX = 1; ‘F’ indicates the family encoding value is 15, ‘2’ indicates
+the model encoding is 2, ‘n’ indicates it applies to any value in the stepping encoding.
+
+Intel Core Solo and Intel Core Duo processors are represented by 06_0EH.
+
+veja tabela C12a na pagina 480
+

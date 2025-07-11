@@ -1,0 +1,51 @@
+2 gateways:
+192.168.254.1 na eth0 (criei uma tabela de roteamento chamada link1)
+192.168.253.1 na eth2 (criei uma tabela de roteamento chamada link2)
+
+a eth1 e a placa que fica virada para lan e seu ip é 10.0.0.1
+
+
+# LIBERA OS MAC ADDRESS DOS GATEWAYS
+iptables -A FORWARD -m mac --mac-source 00:0B:23:03:AB:B2 -j ACCEPT
+iptables -A FORWARD -m mac --mac-source 00:E0:4C:E0:0B:50 -j ACCEPT
+iptables -A FORWARD -m mac --mac-source 00:E0:7D:83:35:9E -j ACCEPT
+iptables -A FORWARD -m mac --mac-source 00:E0:7D:D9:3D:7C -j ACCEPT
+
+# Mascara as saidas para os dois Gateways
+echo 1 > /proc/sys/net/ipv4/ip_forward
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+iptables -t nat -A POSTROUTING -o eth2 -j MASQUERADE
+
+# LIBERA OS MAC ADDRESS E SEUS RESPECTIVOS IPS
+iptables -A FORWARD -m mac --mac-source 00:40:F4:DD:2F:DB -s 10.0.0.3 -j ACCEPT
+iptables -A FORWARD -m mac --mac-source 00:40:F4:DD:2F:DC -s 10.0.0.2 -j ACCEPT
+
+# Marca os pacotes "PREOROUTING e OUTPUT"
+iptables -t mangle -A PREROUTING -i eth1 -s 10.0.0.2 -j MARK --set-mark 1
+iptables -t mangle -A PREROUTING -i eth1 -s 10.0.0.3 -j MARK --set-mark 2
+iptables -t mangle -A OUTPUT -s 10.0.0.2 -j MARK --set-mark 1
+iptables -t mangle -A OUTPUT -s 10.0.0.3 -j MARK --set-mark 2
+
+# (marcados com 1-> table link1 = ADSL1) (marcados com 2-> table link2 = ADSL2)
+ip rule add fwmark 1 table link1 prio 20
+ip rule add fwmark 2 table link2 prio 20
+
+# Crias as rotas para as respectivas tabelas de rotas
+ip route add default via 192.168.254.1 dev eth0 table link1
+ip route add default via 192.168.253.1 dev eth2 table link2
+
+# LIMPA tabela de roteamento CACHE
+ip route flush cache
+
+# NEGA O RESTANTE DOS MAC ADDRESS
+iptables -A FORWARD -m mac --mac-source ! FF:FF:FF:FF:FF:FF -j DROP
+
+lembre-se de remover o gateway padrao da tabela main pois se nao remover dá problema, eu penei por conta disso.
+
+comando para remover é 
+ip route dev default via "ip do gateway padrao" dev "dispositivo tipo eth0 eth1" table main
+
+antes de rodar esse script vc temque criar as tabelas de rotas dentro de /etc/iproute2/ip_tables criando da seguinte forma
+200 link1
+201 link2
+

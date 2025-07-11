@@ -1,0 +1,11 @@
+
+# ifconfig eth0 192.168.0.1 netmask 255.255.255.0 up
+
+# ifconfig eth0:1 172.16.12.78 netmask 255.255.255.0 up
+
+Em conexões PPP discadas, o endereço é obtido como fruto da negociação com o servidor do provedor de acesso. 
+
+DHCP ?
+
+GATEWAY: use o comando route
+

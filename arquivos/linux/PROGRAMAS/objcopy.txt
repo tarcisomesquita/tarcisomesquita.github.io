@@ -1,0 +1,55 @@
+OBJCOPY(1)
+binutils-2.18.90
+2008-09-10
+
+objcopy -O binary stage2.exec stage2
+
+objcopy [-O bfdname|--output-target=bfdname] infile [outfile]
+
+DESCRIPTION
+The GNU objcopy utility copies the contents of an object file to another.
+
+objcopy can be used to generate a raw binary file by using an output target of binary (e.g., use -O binary).
+All symbols and relocation information will be discarded.  The memory dump will start at the load address.
+may be helpful to use -S to remove sections containing debugging information.
+In some cases -R will be useful to remove sections which contain information that is not needed by the binary file.
+
+OPTIONS
+infile
+outfile
+    The input and output files, respectively.
+
+-O bfdname
+--output-target=bfdname
+    Write the output file using the object format bfdname.
+
+-j sectionname
+--only-section=sectionname
+    Copy only the named section from the input file to the output file.
+
+-R sectionname
+--remove-section=sectionname
+    Remove any section named sectionname from the output file.
+
+-S
+--strip-all
+    Do not copy relocation and symbol information from the source file.
+
+-g
+--strip-debug
+    Do not copy debugging symbols or sections from the source file.
+
+-G symbolname
+--keep-global-symbol=symbolname
+    Keep only symbol symbolname global.
+
+-x
+--discard-all
+    Do not copy non-global symbols from the source file.
+
+--set-start val
+    Set the start address of the new file to val.  Not all object file formats support setting the start address.
+
+--info
+    Display a list showing all architectures and object formats available.
+

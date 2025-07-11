@@ -1,0 +1,183 @@
+<html><head><title>C Language Examples of IPv4 and IPv6 Raw Sockets for Linux</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta name="description" content="C language examples of IPv4 and IPv6 raw internet sockets for linux.">
+<meta name="keywords" content="C language, example, IPv4, IPv6, raw socket, PF_PACKET, SOCK_RAW, SOCK_DGRAM, ancillary data, linux, network programming">
+<meta name="title" content="C language examples of IPv4 and IPv6 raw internet sockets for linux.">
+</head>
+<body>
+
+<p align="center"><font size="5"><u>C Language Examples of IPv4 and IPv6 Raw Sockets for Linux</u><br></font></p><font size="5">
+<p align="left"><font size="3"><br>
+
+I have recently been investigating raw socket programming in C for linux
+ and I decided to provide a collection of routines I have prepared.<br><br>
+
+Rather than use command-line arguments, each example has hard-coded 
+values, so you need to modify each example to your preferences.<br><br>
+
+You must run these as root to obtain raw sockets.<br><br>
+
+<b>IPv4</b><br><br>
+
+There are three subcategories depending on the <i>Domain</i>, <i>Type</i>, and <i>Protocol</i> arguments I chose to pass to socket(). There are other possible combinations.<br><br>
+
+1.  sd = socket (AF_INET, SOCK_RAW, IPPROTO_RAW);<br>
+    The kernel fills out layer 2 (data link) information (MAC addresses) for us.<br><br>
+
+2.  sd = socket (PF_PACKET, SOCK_RAW, htons (ETH_P_ALL));<br>
+    We provide layer 2 (data link) information. i.e., we specify ethernet frame header<br>
+    with MAC addresses.<br><br>
+
+3.  sd = socket (PF_PACKET, SOCK_DGRAM, htons (ETH_P_ALL));<br>
+    We provide a "cooked" packet with destination MAC address in struct sockaddr_ll.<br><br>
+
+TCP, ICMP, and UDP examples are provided for each.<br><br>
+
+With IPv4 raw sockets you can edit all values within the IP header, and 
+if you're using option 1 above, you specify that the IP header is 
+included by using setsockopt() and the IP_HDRINCL flag. Or you can use 
+options 2 or 3 above and send ethernet frames if you know the target 
+node's MAC address (if it's local), or MAC address of the router the 
+frames will be routed through.<br><br>
+
+To learn a link-local router or link-local node's MAC address, you must 
+use the Address Resolution Protocol (ARP). I have included an example 
+which sends an ARP request ethernet frame as well as an example that 
+receives an ARP reply ethernet frame.<br><br>
+
+Some router discovery routines are also included.<br><br>
+
+Cases using sd = socket (AF_INET, SOCK_RAW, IPPROTO_RAW);<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/tcp4.c">tcp4.c</a> SYN packet (an example with no TCP data)<br>
+<a href="http://www.pdbuchan.com/rawsock/get4.c">get4.c</a> HTTP GET (an example with TCP data)<br>
+<a href="http://www.pdbuchan.com/rawsock/icmp4.c">icmp4.c</a><br>
+<a href="http://www.pdbuchan.com/rawsock/udp4.c">udp4.c</a><br><br>
+
+Cases using sd = socket (PF_PACKET, SOCK_RAW, htons (ETH_P_ALL));<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/tcp4_ll.c">tcp4_ll.c</a> SYN packet (an example with no TCP data<br>
+<a href="http://www.pdbuchan.com/rawsock/get4_ll.c">get4_ll.c</a> HTTP GET (an example with TCP data)<br>
+<a href="http://www.pdbuchan.com/rawsock/icmp4_ll.c">icmp4_ll.c</a><br>
+<a href="http://www.pdbuchan.com/rawsock/udp4_ll.c">udp4_ll.c</a><br><br>
+
+Cases using sd = socket (PF_PACKET, SOCK_DGRAM, htons (ETH_P_ALL));<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/tcp4_cooked.c">tcp4_cooked.c</a> SYN packet (an example with no TCP data)<br>
+<a href="http://www.pdbuchan.com/rawsock/get4_cooked.c">get4_cooked.c</a> HTTP GET (an example with TCP data)<br>
+<a href="http://www.pdbuchan.com/rawsock/icmp4_cooked.c">icmp4_cooked.c</a><br>
+<a href="http://www.pdbuchan.com/rawsock/udp4_cooked.c">udp4_cooked.c</a><br><br>
+
+Send an ARP request ethernet frame:<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/arp.c">arp.c</a><br><br>
+
+Receive an ARP reply ethernet frame:<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/receive_arp.c">receive_arp.c</a><br><br>
+
+Send a router solicitation:<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/rs4.c">rs4.c</a><br><br>
+
+Send a router advertisement:<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/ra4.c">ra4.c</a><br><br>
+
+Receive a router advertisement:<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/receive_ra4.c">receive_ra4.c</a><br><br>
+
+</font></p><hr size="1" width="100%"><font size="3">
+
+<b>IPv6</b><br><br>
+
+In IPv6 there is no equivalent to using setsockopt() with the IP_HDRINCL
+ flag (holy snap, that's annoying). Without doing something special, you
+ can only change the hop limit and traffic class values in the IP 
+header.<br><br>
+
+To change the hop limit you must use the ancillary data method. For 
+traffic class you can use either the ancillary data method or a call to 
+setsockopt() with option level IPPROTO_IPV6 and option name IPV6_TCLASS.
+ Note that changes made to the properties of the socket with 
+setsockopt() will remain in effect for all packets sent through the 
+socket, whereas ancillary data is associated with a particular packet.<br><br>
+
+If we wish to have the ability to change any parameter in the IPv6 
+header, we need to have the source and destination MAC addresses 
+available. In this case we have options 2 and 3 (above) available to us.<br><br>
+
+The Neighbor Discovery process is used to obtain the MAC address of a 
+link-local target node, or MAC address of a link-local router the frames
+ will be routed through. First we send a Neighbor Solicitation with our 
+MAC address to the target node/router, and then it replies with a 
+Neighbor Advertisement that contains its MAC address. The neighbor 
+solicitation is sent to the target/router's <i>solicited-node multicast address</i>.<br><br>
+
+I have not provided any examples of extension headers.<br><br>
+
+For the transition to IPv6 from IPv4, a mechanism of tunneling IPv6 over
+ IPv4 (6to4) has been established. I include some 6to4 examples as well.<br><br>
+
+Ancillary data method:<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/icmp6_ancillary1.c">icmp6_ancillary1.c</a>  (changes 1 parameter)<br><br>
+<a href="http://www.pdbuchan.com/rawsock/icmp6_ancillary2.c">icmp6_ancillary2.c</a>  (changes 2 parameters)<br><br>
+
+Send a neighbor solicitation:<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/ns.c">ns.c</a><br><br>
+
+Send a neighbor advertisement (this doesn't respond to a solicitation, 
+it just sends an advertisement for the joy of seeing it on Wireshark):<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/na.c">na.c</a><br><br>
+
+Receive a neighbor advertisement and extract lots of info including MAC address:<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/receive_ns.c">receive_ns.c</a><br><br>
+
+Send a router solicitation:<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/rs6.c">rs6.c</a><br><br>
+
+Send a router advertisement:<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/ra6.c">ra6.c</a><br><br>
+
+Receive a router advertisement:<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/receive_ra6.c">receive_ra6.c</a><br><br>
+
+Cases using sd = socket (PF_PACKET, SOCK_RAW, htons (ETH_P_ALL));<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/tcp6_ll.c">tcp6_ll.c</a> SYN packet (an example with no TCP data)<br>
+<a href="http://www.pdbuchan.com/rawsock/get6_ll.c">get6_ll.c</a> HTTP GET (an example with TCP data)<br>
+<a href="http://www.pdbuchan.com/rawsock/icmp6_ll.c">icmp6_ll.c</a><br>
+<a href="http://www.pdbuchan.com/rawsock/udp6_ll.c">udp6_ll.c</a><br><br>
+
+Cases using sd = socket (PF_PACKET, SOCK_DGRAM, htons (ETH_P_ALL));<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/tcp6_cooked.c">tcp6_cooked.c</a> SYN packet (an example with no TCP data)<br>
+<a href="http://www.pdbuchan.com/rawsock/get6_cooked.c">get6_cooked.c</a> HTTP GET (an example with TCP data)<br>
+<a href="http://www.pdbuchan.com/rawsock/icmp6_cooked.c">icmp6_cooked.c</a><br>
+<a href="http://www.pdbuchan.com/rawsock/udp6_cooked.c">udp6_cooked.c</a><br><br>
+
+Tunneling IPv6 over IPv4 (6to4):<br><br>
+
+<a href="http://www.pdbuchan.com/rawsock/tcp6_6to4.c">tcp6_6to4.c</a> SYN packet (an example with no TCP data)<br>
+<a href="http://www.pdbuchan.com/rawsock/get6_6to4.c">get6_6to4.c</a> HTTP GET (an example with TCP data)<br>
+<a href="http://www.pdbuchan.com/rawsock/icmp6_6to4.c">icmp6_6to4.c</a><br>
+<a href="http://www.pdbuchan.com/rawsock/udp6_6to4.c">udp6_6to4.c</a><br><br>
+
+<hr size="1" width="100%">
+
+<p align="center"><font size="2">P. David Buchan<br>February 26, 2012<br><a href="mailto:pdbuchan@yahoo.com">pdbuchan@yahoo.com</a></font></p><font size="2">
+
+
+
+<script language="JavaScript" src="rawsock_arquivos/whv2_001.js"></script><script language="javascript">geovisit();</script><img style="display: none;" src="rawsock_arquivos/visit.gif" border="0">
+<noscript><img src="http://visit.webhosting.yahoo.com/visit.gif?us1333657221" alt="setstats" border="0" width="1" height="1"></noscript></font></font></font></body></html>
+<!-- text below generated by server. PLEASE REMOVE -->
+<!-- Counter/Statistics data collection code -->

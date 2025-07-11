@@ -1,0 +1,337 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 99.1 release (March 30, 1999)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Standard Device Requests</TITLE>
+<META NAME="description" CONTENT="Standard Device Requests">
+<META NAME="keywords" CONTENT="usbdoc">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v99.1 release">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="usbdoc.css">
+
+<LINK REL="previous" HREF="node20.html">
+<LINK REL="up" HREF="node19.html">
+<LINK REL="next" HREF="node22.html">
+</HEAD>
+
+<BODY ><!doctype html public "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="de">
+<meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+<link REL="STYLESHEET" HREF="/zope/style.css" type="text/css">
+<script language="JavaScript"><!-- 
+  if(top.frames.length > 0) top.location.href=self.location; 
+  //--></script>
+</head>
+<body bgcolor="#FFFFFF" TOPMARGIN="1" LEFTMARGIN="3" MARGINWIDTH="3" MARGINHEIGHT="1">
+<a name=top></a>
+<!-- Kopfzeile mit Logos -->
+<center>
+<table width="100%" border="0" cellpadding="4" cellspacing="4">
+<tr>
+
+<td align="left" valign="middle">
+<a href="http://www.lrr.in.tum.de/"><img src="http://www.lrr.in.tum.de/zope/images/lrr_tum_logo_png" alt="LRR-TUM-Logo" height="74" width="67" border="0" />
+</a>
+</td>
+<td align="center" valign="middle">
+<a href="http://www.in.tum.de" target="_intum">
+<font COLOR="#A1A1A1" size=+2>Department of</font> <font COLOR="#0075CF" size=+2>Informatics</font></a><br>
+<a href="http://www.tum.de" taget="_blank">
+<font COLOR="#BFBFBF">Technische Universit&auml;t M&uuml;nchen</font></a><br>
+<font COLOR="#0075CF" size=+1> Informatik X: Rechnertechnik und Rechnerorganisation / Parallelrechnerarchitektur</font><br>
+
+<a href="http://www.lrr.in.tum.de/zope/people/bode"><font
+COLOR="#0075CF" size=-1>Prof. Dr. Arndt Bode</font></a>
+<font COLOR="#0075CF" size=-1>,</font>
+<a href="http://www.lrr.in.tum.de/zope/people/gerndt"><font
+COLOR="#0075CF" size=-1>Prof. Dr. Hans Michael Gerndt</font></a>
+</td>
+<td align="right" valign="middle">
+<a href="http://www.lrr.in.tum.de/zope/abacus"><img src="http://www.lrr.in.tum.de/zope/abakus50x50.gif" alt="abakus50x50.gif" height="51" width="50" border="0" /></a>
+</td>
+</tr>
+</table>
+</center>
+<!-- Ende Kopfzeile -->
+<!--Begin Horizontal Navigation-->
+<center>
+<table border="0" width="100%" cellpadding="2" cellspacing="2" bgcolor="FFFFFF">
+
+<tr>
+<td nowrap align="center" valign="middle"><font size="+1">
+&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope">Home</a>&nbsp;
+
+							|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/address">Addresses</a>&nbsp;
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/people">Staff</a>&nbsp;
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/research">Research</a>&nbsp;
+
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/lectures">Lectures</a>&nbsp;
+											</font></td></tr>
+<!--End Horizontal Navigation-->
+<tr><td bgcolor="#dddddd">
+<table width=100% border=0>
+<tr>
+<td align=left>
+
+                
+            
+</td>
+<td align=right>
+<a href="http://www.lrr.in.tum.de/zope/search">Search</a>&nbsp;
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</center>
+<!-- Ende Header -->
+
+<!--Navigation Panel-->
+<A NAME="tex2html382"
+ HREF="node22.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next_motif.gif"></A> 
+<A NAME="tex2html376"
+ HREF="node19.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_motif.gif"></A> 
+<A NAME="tex2html372"
+ HREF="node20.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="previous_motif.gif"></A> 
+<A NAME="tex2html378"
+ HREF="node2.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents_motif.gif"></A> 
+<A NAME="tex2html380"
+ HREF="node34.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html383"
+ HREF="node22.html">USB Transfers</A>
+<B> Up:</B> <A NAME="tex2html377"
+ HREF="node19.html">Configuring USB Devices</A>
+<B> Previous:</B> <A NAME="tex2html373"
+ HREF="node20.html">Descriptor Data Structures</A>
+ &nbsp <B>  <A NAME="tex2html379"
+ HREF="node2.html">Contents</A></B> 
+ &nbsp <B>  <A NAME="tex2html381"
+ HREF="node34.html">Index</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION10052200000000000000">
+Standard Device Requests</A>
+</H3>
+To query or set a particular configuration or alternate setting there exist a
+number functions. These commonly used functions setup standard
+device requests (control transfers for a specified device:
+
+<P>
+
+<UL>
+<LI><TT> int&nbsp;usb_set_configuration(struct&nbsp;usb_device&nbsp;*dev,&nbsp;int&nbsp;configuration);</TT>
+
+<P>
+ 
+<A NAME="225"></A>
+To activate a particular configuration use this function.
+<BR>
+The argument is
+of
+<BR> <TT> 0&nbsp;&lt;=&nbsp;configuration&nbsp;&lt;&nbsp;dev-&gt;descriptor.bNumConfigurations</TT>.
+<BR>
+Configuration 0 is selected by default after the device is attached to the
+bus.
+
+<P>
+ </LI>
+<LI><TT> int usb_set_interface(struct usb_device *dev, int interface, int
+alternate);</TT>
+
+<P>
+ 
+<A NAME="228"></A>
+This function activates an alternate setting of a specified interface. The
+argument <TT> interface</TT> is of 
+<BR>
+<TT> 0&nbsp;&lt;=&nbsp;interface&nbsp;&lt;&nbsp;dev-&gt;actconfig-&gt;bNumInterfaces</TT>.
+<BR>
+The argument <TT> alternate</TT> is of
+<BR>
+<TT> 0&nbsp;&lt;=&nbsp;alternate&nbsp;&lt;&nbsp;dev-&gt;actconfig-&gt;interface[interface].num_altsetting</TT>
+
+<P>
+ </LI>
+<LI><TT> int&nbsp;usb_get_device_descriptor(struct&nbsp;usb_device&nbsp;*dev);</TT>
+
+<P>
+ 
+<A NAME="234"></A>
+This function rereads the complete descriptor tree from a particular device. It
+is called automatically whenever a device is attached to the bus or it may be
+called whenever a USB descriptor has changed.
+
+<P>
+ </LI>
+<LI><TT> int&nbsp;usb_get_descriptor(struct&nbsp;usb_device&nbsp;*dev, unsigned&nbsp;char&nbsp;desctype, unsigned&nbsp;char&nbsp;descindex, void&nbsp;*buf, int&nbsp;size);</TT>
+
+<P>
+ 
+<A NAME="236"></A>
+Single USB descriptors can be read as raw data from a device. This function can
+be used to parse extended or vendor specific descriptors. The arguments <TT> 
+desctype</TT> and <TT> descindex</TT> are documented in [<A
+ HREF="node33.html#usbspec11">4</A>] section 9.4.3
+and 9.5.
+
+<P>
+ </LI>
+<LI><TT> int&nbsp;usb_get_string(struct&nbsp;usb_device&nbsp;*dev, unsigned&nbsp;short&nbsp;langid,
+unsigned&nbsp;char&nbsp;index, void&nbsp;*buf, int&nbsp;size);</TT>
+
+<P>
+ 
+<A NAME="241"></A>
+If a device, configuration or interface descriptor references a string index
+value (see [<A
+ HREF="node33.html#usbspec11">4</A>] section 9.6.5) this function can be used to retrieve
+the string descriptor. According to the specification USB strings are coded as
+Unicode. If successful the function returns 0 otherwise an error code is
+returned.
+
+<P>
+ </LI>
+<LI><TT> int&nbsp;usb_string(struct&nbsp;usb_device&nbsp;*dev, int&nbsp;index, char&nbsp;*buf, size_t&nbsp;size);</TT>
+
+<P>
+ 
+<A NAME="244"></A>
+This function simplifies <TT> usb_get_string</TT> by converting Unicode strings
+into ASCII strings. 
+
+<P>
+ </LI>
+<LI><TT> int&nbsp;usb_get_status(struct&nbsp;usb_device&nbsp;*dev, int&nbsp;type, int&nbsp;target,
+void&nbsp;*data);</TT>
+
+<P>
+ 
+<A NAME="247"></A>
+This USB control request is documented in [<A
+ HREF="node33.html#usbspec11">4</A>] section 9.4.5.
+
+<P>
+ </LI>
+<LI><TT> int&nbsp;usb_clear_halt(struct&nbsp;usb_device&nbsp;*dev, int&nbsp;pipe);</TT>
+
+<P>
+ 
+<A NAME="250"></A>
+If an endpoint is stalled (see [<A
+ HREF="node33.html#usbspec11">4</A>] chapter 8.4.4) call this
+function to clear the STALL condition. STALL indicates that a function is
+unable to transmit or receive data, or that a control pipe request is not
+supported. The argument <TT> endpoint</TT> defines a pipe handle.
+
+<P>
+ </LI>
+<LI><TT> int&nbsp;usb_get_protocol(struct&nbsp;usb_device&nbsp;*dev, int&nbsp;ifnum);</TT>
+
+<P>
+ 
+<A NAME="254"></A>
+This HID USB control request is documented in [<A
+ HREF="node33.html#hidspec">6</A>] section 7.2.5.
+
+<P>
+ </LI>
+<LI><TT> int&nbsp;usb_set_protocol(struct&nbsp;usb_device&nbsp;*dev, int&nbsp;protocol, int
+ifnum);</TT>
+<A NAME="257"></A>
+This HID USB control request is documented in [<A
+ HREF="node33.html#hidspec">6</A>] section 7.2.6.
+
+<P>
+ </LI>
+<LI><TT> int&nbsp;usb_get_report(struct&nbsp;usb_device&nbsp;*dev, unsigned&nbsp;char&nbsp;type,
+unsigned&nbsp;char&nbsp;id, int&nbsp;ifnum, void&nbsp;*buf, int&nbsp;size);</TT>
+
+<P>
+ 
+<A NAME="260"></A>
+This HID USB control request is documented in [<A
+ HREF="node33.html#hidspec">6</A>] section 7.2.1
+
+<P>
+ </LI>
+<LI><TT> int&nbsp;usb_set_idle(struct&nbsp;usb_device&nbsp;*dev, int&nbsp;ifnum, int&nbsp;duration, int&nbsp;report_id);</TT>
+
+<P>
+ 
+<A NAME="263"></A>
+This HID USB control request is documented in [<A
+ HREF="node33.html#hidspec">6</A>] section 7.2.4
+
+<P></LI>
+</UL>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html382"
+ HREF="node22.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next_motif.gif"></A> 
+<A NAME="tex2html376"
+ HREF="node19.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_motif.gif"></A> 
+<A NAME="tex2html372"
+ HREF="node20.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="previous_motif.gif"></A> 
+<A NAME="tex2html378"
+ HREF="node2.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents_motif.gif"></A> 
+<A NAME="tex2html380"
+ HREF="node34.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html383"
+ HREF="node22.html">USB Transfers</A>
+<B> Up:</B> <A NAME="tex2html377"
+ HREF="node19.html">Configuring USB Devices</A>
+<B> Previous:</B> <A NAME="tex2html373"
+ HREF="node20.html">Descriptor Data Structures</A>
+ &nbsp <B>  <A NAME="tex2html379"
+ HREF="node2.html">Contents</A></B> 
+ &nbsp <B>  <A NAME="tex2html381"
+ HREF="node34.html">Index</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Detlef Fliegl</I>
+<BR><I>2001-01-08</I>
+</ADDRESS>
+  <table class="changed" align="right">
+    <tr>
+	<td>
+		(none)
+	</td>
+      <td>
+        <a href="javascript:{var a='arch',b='mailbode.in.tum.de';location='mailto:'+a+'@'+b}">Webmaster</a>
+      </td>
+    </tr>
+
+  </table>
+
+</body></html>
+</BODY>
+</HTML>

@@ -1,0 +1,18 @@
+volume up + home + power
+
+"installing update"
+"no command"
+
+espere 20 s.
+
+Reboot system now
+Reboot to bootloader
+Apply update from ADB
+Apply update from SD card
+Wipe data/factory reset
+Wipe cache partition
+Mount /system
+View recovery logs
+Run graphics test
+Power off
+

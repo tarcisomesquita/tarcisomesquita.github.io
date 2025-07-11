@@ -1,0 +1,24 @@
+mkdir t_app
+cd t_app/
+npm init
+package.json será gerado
+
+cat package.json
+{
+  "name": "t_app",
+  "version": "1.0.0",
+  "description": "npm app teste",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["npm", "teste"],
+  "author": "tarcisomesquita",
+  "license": "CC-BY-4.0",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
+
+
+npm install express

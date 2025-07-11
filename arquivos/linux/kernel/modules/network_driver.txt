@@ -1,0 +1,2 @@
+O arquivo te funções do kernel que pode se útil.
+

@@ -1,0 +1,12 @@
+client sends a DHCPDISCOVER message, then the server sends a DHCPOFFER, then the client sends a DHCPREQUEST, then the server sends a DHCPACK.
+
+If the client thinks it has a valid lease and sends a DHCPREQUEST to initiate or renew that  lease.
+The server can send a:
+DHCPNAK tell the client it should stop using the address
+DHCPACK tell the client to go ahead and use the address for a while.
+
+the client releases its lease by sending a DHCPRELEASE message
+
+before allocating IP to clients, send  an  ICMP  Echo request  message  to  the IP address being allocated.
+If no ICMP Echo reply is received within a second, the address is assumed to  be  free.
+

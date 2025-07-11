@@ -1,0 +1,430 @@
+sudo kill `pidof NetworkManager`
+sudo ifconfig wlan0 down
+sudo iwconfig wlan0 mode monitor
+sudo ifconfig wlan0 up
+sudo tcpdump -i wlan0 -w wlan.pcap -s 0
+
+fiz o celular da fernanda conectar ao roteador HALL
+tentei acessar o site da escola, mas parece que o servidor estava offline
+desliguei o wireless do celular
+
+$ sudo iwlist wlan0 scanning
+wlan0     Scan completed :
+Cell 01 - Address: 64:87:D7:F5:17:9E
+ESSID:"WLADEVIC"
+Channel:6
+Quality=49/100  Signal level:-79 dBm  Noise level=-95 dBm
+IE: WPA Version 1
+    Group Cipher : TKIP
+    Pairwise Ciphers (2) : CCMP TKIP
+    Authentication Suites (1) : PSK
+Extra: Last beacon: 1216ms ago
+
+Cell 03 - Address: 00:03:2F:37:20:06
+ESSID:"pergentina"
+Mode:Master
+Channel:6
+Frequency:2.437 GHz (Channel 6)
+Quality=31/100  Signal level:-90 dBm  Noise level=-95 dBm
+IE: WPA Version 1
+    Group Cipher : TKIP
+    Pairwise Ciphers (1) : TKIP
+    Authentication Suites (1) : PSK
+Extra: Last beacon: 1140ms ago
+
+Cell 03 - Address: 00:1C:F0:85:E2:D4
+ESSID:"AdB"
+Mode:Master
+Channel:6
+Frequency:2.437 GHz (Channel 6)
+Quality=40/100  Signal level:-85 dBm  Noise level=-95 dBm
+IE: WPA Version 1
+    Group Cipher : TKIP
+    Pairwise Ciphers (2) : TKIP CCMP
+    Authentication Suites (1) : PSK
+IE: IEEE 802.11i/WPA2 Version 1
+    Group Cipher : TKIP
+    Pairwise Ciphers (2) : TKIP CCMP
+    Authentication Suites (1) : PSK
+Extra: Last beacon: 1260ms ago
+
+Cell 03 - Address: C8:3A:35:4A:18:10
+ESSID:"newlaundry"
+Mode:Master
+Channel:6
+Frequency:2.437 GHz (Channel 6)
+Quality=33/100  Signal level:-89 dBm  Noise level=-95 dBm
+IE: IEEE 802.11i/WPA2 Version 1
+    Group Cipher : TKIP
+    Pairwise Ciphers (2) : CCMP TKIP
+    Authentication Suites (1) : PSK
+IE: WPA Version 1
+    Group Cipher : TKIP
+    Pairwise Ciphers (2) : CCMP TKIP
+    Authentication Suites (1) : PSK
+Extra: Last beacon: 1220ms ago
+
+Cell 01 - Address: 94:44:52:1C:AE:E4
+ESSID:"belkin.3ee4"
+Mode:Master
+Channel:6
+Frequency:2.437 GHz (Channel 6)
+Quality=37/100  Signal level:-87 dBm  Noise level=-95 dBm
+Encryption key:on
+IE: Unknown: 000B62656C6B696E2E33656534
+IE: Unknown: 010882848B962430486C
+IE: Unknown: 030106
+IE: Unknown: 2A0100
+IE: Unknown: 2F0100
+IE: IEEE 802.11i/WPA2 Version 1
+    Group Cipher : CCMP
+    Pairwise Ciphers (1) : CCMP
+    Authentication Suites (1) : PSK
+IE: WPA Version 1
+    Group Cipher : CCMP
+    Pairwise Ciphers (1) : CCMP
+    Authentication Suites (1) : PSK
+Extra: Last beacon: 1200ms ago
+
+Cell 02 - Address: 00:1E:E5:75:BA:A9
+ESSID:"rede"
+Mode:Master
+Channel:11
+Frequency:2.462 GHz (Channel 11)
+Quality=42/100  Signal level:-84 dBm  Noise level=-95 dBm
+IE: WPA Version 1
+    Group Cipher : TKIP
+    Pairwise Ciphers (1) : TKIP
+    Authentication Suites (1) : PSK
+Bit Rates:1 Mb/s; 2 Mb/s; 5.5 Mb/s; 11 Mb/s; 18 Mb/s
+          24 Mb/s; 36 Mb/s; 54 Mb/s; 6 Mb/s; 9 Mb/s
+          12 Mb/s; 48 Mb/s
+Extra:tsf=0000007f8c567185
+Extra: Last beacon: 976ms ago
+
+Cell 03 - Address: DE:51:C5:36:96:FC
+ESSID:"wifi"
+Mode:Ad-Hoc
+Channel:10
+Frequency:2.457 GHz (Channel 10)
+Quality=33/100  Signal level:-89 dBm  Noise level=-95 dBm
+Encryption key:on
+IE: Unknown: 000477696669
+IE: Unknown: 010882848B960C121824
+IE: Unknown: 03010A
+IE: Unknown: 06020000
+IE: Unknown: 2A0100
+IE: IEEE 802.11i/WPA2 Version 1
+    Group Cipher : CCMP
+    Pairwise Ciphers (1) : CCMP
+    Authentication Suites (1) : PSK
+IE: Unknown: 32043048606C
+IE: Unknown: DD0900037F01010000FF7F
+Bit Rates:1 Mb/s; 2 Mb/s; 5.5 Mb/s; 11 Mb/s; 6 Mb/s
+          9 Mb/s; 12 Mb/s; 18 Mb/s; 24 Mb/s; 36 Mb/s
+          48 Mb/s; 54 Mb/s
+Extra:tsf=00000002b202326f
+Extra: Last beacon: 1152ms ago
+
+
+There are several types of Ethernet frames:
+
+    * 802.11—A standard for wireless local area networks (LANs), often paired with an Ethernet backbone.
+
+802.11 header
+Nome               Bytes
+Frame Control      (2)
+Duration ID        (2)
+Addr 1             (6)
+Addr 2             (6)
+Addr 3             (6)
+Sequence Control   (2)
+Addr 4             (6)
+Frame Body         (0-2312)
+CRC                (4)
+
+2013/03/01  20:29:19.94119  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Pcap_Packet_Header:
+ts_sec:           0x51310F9F      ; number of seconds elapsed since 00:00:00 on January 1, 1970
+ts_usec:          0x00016FA7      ; tempo em microsegundos
+incl_len:              00076      ; quantidade de bytes capturados
+orig_len:              00293      ; quantidade de bytes que o pacote possuia
+
+00000080              00 00 18 00  6E 48 00 00 00 02 6C 09  |    ....nH....l.|
+00000090  A0 00 D4 A1 02 00 00 00  00 00 00 00 80 00 00 00  |................|
+000000A0  FF FF FF FF FF FF F0 7D  68 E7 68 E6 F0 7D 68 E7  |.......}h.h..}h.|
+000000B0  68 E6 50 B2 5E 61 6B 32  52 00 00 00 64 00 31 04  |h.P.^ak2R...d.1.|
+000000C0  00 04 48 41 4C 4C 01 08  82 84 8B 96 12 24 48 6C  |..HALL.......$Hl|
+000000D0   ||
+
+
+BSS (basic service set) is a set of stations controlled by a single AP.
+BSA (Basic Service Area) é uma célula BSS.
+ESS (Extended service set) is a set of one or more interconnected BSS
+– ESSID: network name
+– BSSID: MAC address of AP
+
+     9 ou 18          6          34          14 (ethernet)  20                                         4          tamanho em bytes
+ +-------------+------------+------------+------------+-----------+------------+-----------------+-------------+
+ |PHY preamble | PHY header | MAC header | LLC header | IP header | TCP header | Aplication data | MAC trailer |
+ +-------------+------------+------------+------------+-----------+------------+-----------------+-------------+
+   802.11 frame
+
+All protocols in 802 family use LLC (Logical Link Control)
+Ex. bluetooth 802.15
+
+
+ +--------------+--------------+---------+-------------+
+ | DSAP address | SSAP address | Control | Information |
+ +--------------+--------------+---------+-------------+
+    LLC frame structure
+
+DSAP (destination service access point)
+SSAP (source service access point)
+
+Physical layer
+2.4 GHz uses OFDM 802.11g
+OFDM (Orthogonal Frequency Division Multiplexing).
+
+Source   --RTS-->  Destination
+            SIFS (Short Interframe Space)
+Source  <--CTS--   Destination
+            SIFS (Short Interframe Space)
+Source   --Data->  Destination
+            SIFS (Short Interframe Space)
+Source  <--ACK--   Destination
+
+         2                 2              6                     6             4        tamanho em bytes
+ +---------------+--------------+------------------+---------------------+-----+
+ | Frame control | Duration RTS | Receiver address | Transmitter address | CRC |
+ +---------------+--------------+------------------+---------------------+-----+
+      RTS frame structure
+
+         2                 2              6              4        tamanho em bytes
+ +---------------+--------------+------------------+-----+
+ | Frame control | Duration CTS | Receiver address | CRC |
+ +---------------+--------------+------------------+-----+
+      CTS frame structure
+
+A estrutura do pacote ACK parece ser a mesma do pacote CTS.
+
+         2          ?      ?              6              4        tamanho em bytes
+ +---------------+-----+-------+---------------------+-----+
+ | Frame control | AID | BSSID | Transmitter address | CRC |
+ +---------------+-----+-------+---------------------+-----+
+      PS Poll frame structure
+
+FCS (Frame Check Sequence) = 32-bit CRC
+A unidade da duração é um microsegundo
+RTS time = T = data_tim + CTS_time + ACK_time + 3 * SIFS
+CTS time = T = data_tim + ACK_time + 2 * SIFS = (Duration in RTS) – SIFS – CTS_time
+
+         2               2             6               6               6                 6                 6         0-2312            4   tamanho em bytes
+ +---------------+-------------+---------------+---------------+---------------+------------------+---------------+------------+----------------------+
+ | Frame Control | Duration ID | MAC address 1 | MAC address 2 | MAC address 3 | Sequence control | MAC address 4 | Frame body | Frame Check Sequence |
+ +---------------+-------------+---------------+---------------+---------------+------------------+---------------+------------+----------------------+
+      MAC frame structure
+
+If two wireless LAN users are sending packets to one another but each is using a different access point, the 802.11 MAC address of both access points and both clients will be present in the four address fields.
+
+
+       2        2       4       1     1      1      1       1       1     1      1     tamanho em bits
+ +----------+------+---------+----+------+------+-------+-------+------+-----+-------+
+ | Protocol | Type | Subtype | To | From | More | Retry | Power | More | WEP | Order |
+ | version  |      |         | DS | DS   | Frag |       | mgmt  | Data |     |       |
+ +----------+------+---------+----+------+------+-------+-------+------+-----+-------+
+      Frame Control structure
+
+Protocol Version provides the current version of the 802.11 protocol used. Receiving STAs use this value to determine if the version of the protocol of the received frame is supported.
+- zero for 802.11 standard
+
+Type and Subtype determines the function of the frame. There are three different frame type fields: control, data, and management. There are multiple subtype fields for each frame type . Each subtype determines the specific function to perform for its associated frame type.
+
+To DS and From DS indicates whether the frame is going to or exiting from the DS (distributed system), and is only used in data type frames of STAs associated with an AP.
+
+More Fragments indicates whether more fragments of the frame, either data or management type, are to follow.
+
+Retry indicates whether or not the frame, for either data or management frame types, is being retransmitted.
+
+Power Management indicates whether the sending STA is in active mode or power-save mode.
+
+More Data indicates to a STA in power-save mode that the AP has more frames to send. It is also used for APs to indicate that additional broadcast/multicast frames are to follow.
+
+WEP indicates whether or not encryption and authentication are used in the frame. It can be set for all data frames and management frames, which have the subtype set to authentication.
+
+Order indicates that all received data frames must be processed in order.
+
+
+Duration/ID Field
+This field is used for all control type frames, except with the subtype of Power Save (PS) Poll, to indicate the remaining duration needed to receive the next frame transmission. When the sub-type is PS Poll, the field contains the association identity (AID) of the transmitting STA.
+
+
+Address Fields
+Depending upon the frame type, the four address fields will contain a combination of the following address types:
+  - BSS Identifier (BSSID). BSSID uniquely identifies each BSS. When the frame is from an STA in an infrastructure BSS, the BSSID is the MAC address of the AP. When the frame is from a STA in an IBSS, the BSSID is the randomly generated, locally administered MAC address of the STA that initiated the IBSS.
+  - Destination Address (DA). DA indicates the MAC address of the final destination to receive the frame.
+  - Source Address (SA). SA indicates the MAC address of the original source that initially created and transmitted the frame.
+  - Receiver Address (RA). RA indicates the MAC address of the next immediate STA on the wireless medium to receive the frame.
+  - Transmitter Address (TA). TA indicates the MAC address of the STA that transmitted the frame onto the wireless medium.
+
+
+Sequence Control
+The Sequence Control field contains two subfields, the Fragment Number field and the Sequence Number field, as shown in the following figure.
+
+       12         4      tamanho em bits
+ +----------+----------+
+ | Sequence | Fragment |
+ | Number   | Number   |
+ +----------+----------+
+  Sequence Control Field
+
+ - Sequence Number indicates the sequence number of each frame. The sequence number is the same for each frame sent for a fragmented frame; otherwise, the number is incremented by one until reaching 4095, when it then begins at zero again.
+ - Fragment Number indicates the number of each frame sent of a fragmented frame. The initial value is set to 0 and then incremented by one for each subsequent frame sent of the fragmented frame.
+
+
+Frame Body
+The frame body contains the data or information included in either management type or data type frames.
+
+Order   Information
+1       Timestamp
+2       Beacon interval
+3       Capability Information
+4       SSID
+5       Supported Rates
+6       FH Parameter set
+7       DS Parameter set
+8       CF Parameter set
+9       IBSS Parameter set
+10      TIM
+
+
+Frame Check Sequence
+The transmitting STA uses a cyclic redundancy check (CRC) over all the fields of the MAC header and the frame body field to generate the FCS value. The receiving STA then uses the same CRC calculation to determine its own value of the FCS field to verify whether or not any errors occurred in the frame during the transmission.
+
+
+
+Authenticator is the logical LAN port on a wireless AP through which wireless clients in infrastructure mode gain access to other wireless clients and the wired network.
+Supplicant is the logical LAN port on a wireless LAN network adapter that requests access to the other wireless clients and the wired network by associating with and then authenticating itself to an authenticator.
+
+To provide a standard authentication mechanism for IEEE 802.1X, the Extensible Authentication Protocol (EAP) was chosen.
+
+
+Type          Type          Subtype    Message
+(2 bits)      Description   (4 bits)   Description
+                   
+00            Management    0000         Association request
+00            Management    0001         Association response
+00            Management    0010         Reassociation request
+00            Management    0011         Reassociation response
+00            Management    0100         Probe request
+00            Management    0101         Probe response
+00            Management    0110         Reserved
+00            Management    0111         Reserved
+00            Management    1000         Beacon
+00            Management    1001         Announcement traffic indication message (ATIM) (used for sleep mode operations)
+00            Management    1010         Disassociation
+00            Management    1011         Authentication
+00            Management    1100         Deauthentication
+00            Management    1101         Reserved
+00            Management    1111         Reserved
+
+01            Control       0000-1001    Reserved
+01            Control       1010         PS Poll (Power Save)
+01            Control       1011         RTS     (Request To Send)
+01            Control       1100         CTS     (Clear To Send)
+01            Control       1101         ACK     (Acknowledgment)
+01            Control       1110         CF End  (Contention Free)
+01            Control       1111         CF End + CF Ack
+
+10            Data          0000         Data
+10            Data          0001         Data + CF Ack
+10            Data          0010         Data + CF Poll
+10            Data          0011         Data + CF Ack + CF Poll
+10            Data          0100         Null function (no data)
+10            Data          0101         CF Ack (no data)
+10            Data          0110         CF Poll (no data)
+10            Data          0111         CF Ack + CF Poll (no data)
+10            Data          1000-1111    Reserved
+
+11            Reserved      0000-1111    Reserved
+
+
+To DS   From DS   Address 1   Address 2   Address 3   Address 4   Commentary
+0       0         DA          SA          BSSID       -           Transmission between stations in the same BSS
+0       1         DA          BSSID       SA          -           Transmission from AP to station
+1       0         BSSID       SA          DA          -           Transmission from statin to AP
+1       1         RA          TA          DA          SA          Trasmissão de uma estação para outra estação conectada a outro AP
+
+DA = Destination MAC Address
+SA = Source MAC Address
+TA = Transmitter MAC Address  (MAC Address do AP que transmite)
+RA = Receiver MAC Address     (MAC Address do AP que recebe)
+
+
+Registration
+• Beacons sent periodically (every 100ms) by AP to establish time sync. (TSF) and maintain connectivity or associations
+   – contains BSS-ID used to identify the AP and network, traffic indication map (for sleep mode), power management, roaming
+   – RSS measurements are based on the beacon message
+• Mobiles send “requests” and APs “responses”
+• Only after registering can mobiles send/receive DATA
+
+MS = Mobile Station
+• MS has 2 modes
+  – Active mode (AM)
+  – power-save (PS) mode
+• MS enters power-save (PS) mode
+  – Notify AP with “Power Management bit” in
+    Frame Control field
+  – PS mode MSs listen for beacons periodically
+• MS enters active mode
+  – The MS sends a power-save poll (PS-Poll) frame
+    to the AP and goes active
+
+
+Authentication
+STA send an authentication frame containing its identity to the access point.
+AP responds with an authentication frame indicating acceptance (or rejection). With the optional shared key authentication, AP responds with an authentication frame containing challenge text. The radio NIC must send back an encrypted version of the challenge text (using its WEP key).
+
+Deauthentication frame: A station sends a deauthentication frame to another station if it wishes to terminate secure communications.
+
+Association request frame:
+A NIC begins the association process by sending an association request to an access point. This frame carries information about the NIC (e.g., supported data rates) and the SSID of the network it wishes to associate with. If accepted, AP reserves memory space and establishes an association ID for the NIC.
+
+Association response frame:
+An access point sends an association response frame containing an acceptance or rejection notice to the radio NIC requesting association.
+If AP accepts the connection, the frame includes information regarding the association, such as association ID and supported data rates.
+
+Reassociation request frame:
+If a radio NIC roams away from the currently associated access point and finds another access point having a stronger beacon signal, the radio NIC will send a reassociation frame to the new access point. The new access point then coordinates the forwarding of data frames that may still be in the buffer of the previous access point waiting for transmission to the radio NIC.
+
+Reassociation response frame:
+An access point sends a reassociation response frame containing an acceptance or rejection notice to the radio NIC requesting reassociation. Similar to the association process, the frame includes information regarding the association, such as association ID and supported data rates.
+
+Disassociation frame: A station sends a disassociation frame to another station if it wishes to terminate the association. For example, a radio NIC that is shut down gracefully can send a disassociation frame to alert the access point that the NIC is powering off. The access point can then relinquish memory allocations and remove the radio NIC from the association table.
+
+
+    Beacon frame: The access point periodically sends a beacon frame to announce its presence and relay information, such as timestamp, SSID, and other parameters regarding the access point to radio NICs that are within range. Radio NICs continually scan all 802.11 radio channels and listen to beacons as the basis for choosing which access point is best to associate with.
+
+
+    Probe request frame: A station sends a probe request frame when it needs to obtain information from another station. For example, a radio NIC would send a probe request to determine which access points are within range.
+
+
+    Probe response frame: A station will respond with a probe response frame, containing capability information, supported data rates, etc., when after it receives a probe request frame.
+
+Control Frames
+
+802.11 control frames assist in the delivery of data frames between stations. The following are common 802.11 control frame subtypes:
+
+    Request to Send (RTS) frame: The RTS/CTS function is optional and reduces frame collisions present when hidden stations have associations with the same access point. A station sends a RTS frame to another station as the first phase of a two-way handshake necessary before sending a data frame.
+
+
+    Clear to Send (CTS) frame: A station responds to a RTS with a CTS frame, providing clearance for the requesting station to send a data frame. The CTS includes a time value that causes all other stations (including hidden stations) to hold off transmission of frames for a time period necessary for the requesting station to send its frame. This minimizes collisions among hidden stations, which can result in higher throughput if you implement it properly.
+
+
+    Acknowledgement (ACK) frame: After receiving a data frame, the receiving station will utilize an error checking processes to detect the presence of errors. The receiving station will send an ACK frame to the sending station if no errors are found. If the sending station doesn't receive an ACK after a period of time, the sending station will retransmit the frame.
+
+Data Frames
+
+Of course the main purpose of having a wireless LAN is to transport data. 802.11 defines a data frame type that carries packets from higher layers, such as web pages, printer control data, etc., within the body of the frame. When viewing 802.11 data frames with a packet analyzer, you can generally observe the contents of the frame body to see what packets that the 802.11 data frames are transporting. 
+

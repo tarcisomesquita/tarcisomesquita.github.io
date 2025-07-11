@@ -1,0 +1,201 @@
+
+# stat nameoffile
+
+set acess and modify time, but upgrade change time
+touch -a -m -d '2022-08-20 23:02:10.002001000 -0300' teste.txt
+
+show sector occupied by file
+sudo filefrag -v -b1 /media/lubuntu/ARQ/teste.txt
+ ext:     logical_offset:        physical_offset: length:   expected: flags:
+   0:        0..    4095: 2181259264..2181263359:   4096:             last,eof
+sudo dd if=/dev/nvme0n1p5 bs=1 skip=2181259264 count=10 status=none
+
+stat /media/lubuntu/ARQ/T_2022-06-19/linux_2022-06-16/util.txt
+  File: /media/lubuntu/ARQ/T_2022-06-19/linux_2022-06-16/util.txt
+  Size: 7513            Blocks: 16         IO Block: 4096   regular file
+Device: 10305h/66309d   Inode: 2098378     Links: 1
+
+sudo debugfs -R "stat <2098378>" /dev/nvme0n1p5
+Inode: 2098378   Type: regular    Mode:  0664   Flags: 0x80000
+Generation: 1047464397    Version: 0x00000000:00000001
+User:   999   Group:   999   Project:     0   Size: 7513
+File ACL: 0
+Links: 1   Blockcount: 16
+Fragment:  Address: 0    Number: 0    Size: 0
+ ctime: 0x62af92fc:16264e38 -- Sun Jun 19 18:19:56 2022
+ atime: 0x63018ede:526b7da0 -- Sat Aug 20 22:48:14 2022
+ mtime: 0x62af92fc:16264e38 -- Sun Jun 19 18:19:56 2022
+crtime: 0x60b3b247:22e089bc -- Sun May 30 12:41:59 2021
+Size of extra inode fields: 32
+Inode checksum: 0xd657b288
+EXTENTS:
+(0-1):26890243-26890244
+
+
+Divide the partition byte offset by the block size to determine the block offset, in this case 8951424 / 4096 = 2185
+
+Run the following command to find out what inode occupies that block:
+
+user@host:~$ sudo debugfs -R "icheck 2185" /dev/sda1
+debugfs 1.41.11 (14-Mar-2010)
+Block   Inode number
+2185    123456 
+
+then the following command to find out what the filename is for that inode:
+
+user@host:~$ sudo debugfs -R "ncheck 123456" /dev/sda1
+debugfs 1.41.11 (14-Mar-2010)
+Inode   Pathname
+123456  /tmp/some-filename.txt
+
+
+mount | grep /dev/nvme0n1p5
+/dev/nvme0n1p5 on /media/lubuntu/ARQ type ext4 (rw,nosuid,nodev,relatime,errors=remount-ro,uhelper=udisks2)
+lubuntu@lubuntu:~$ sudo mount -o remount,noatime /media/lubuntu/ARQ
+lubuntu@lubuntu:~$ mount | grep /dev/nvme0n1p5
+/dev/nvme0n1p5 on /media/lubuntu/ARQ type ext4 (rw,nosuid,nodev,noatime,errors=remount-ro,uhelper=udisks2)
+lubuntu@lubuntu:~$ sudo mount -o remount,relatime /media/lubuntu/ARQ
+
+
+
+STAT(1)
+
+NAME
+       stat - display file or file system status
+
+SYNOPSIS
+       stat [OPTION] FILE...
+
+DESCRIPTION
+       Display file or file system status.
+
+       -L, --dereference
+              follow links
+
+       -f, --file-system
+              display file system status instead of file status
+
+       -c  --format=FORMAT
+              use the specified FORMAT instead of the default; output a newline after each use of FORMAT
+
+       --printf=FORMAT
+              like  --format, but interpret backslash escapes, and do not output a mandatory trailing newline.  If you want a newline, include \n in FOR‐
+              MAT.
+
+       -t, --terse
+              print the information in terse form
+
+       --help display this help and exit
+
+       --version
+              output version information and exit
+
+       The valid format sequences for files (without --file-system):
+
+       %a     Access rights in octal
+
+       %A     Access rights in human readable form
+
+       %b     Number of blocks allocated (see %B)
+
+       %B     The size in bytes of each block reported by %b
+
+       %C     SELinux security context string
+
+       %d     Device number in decimal
+
+       %D     Device number in hex
+
+       %f     Raw mode in hex
+
+       %F     File type
+
+       %g     Group ID of owner
+
+       %G     Group name of owner
+
+       %h     Number of hard links
+
+       %i     Inode number
+
+       %n     File name
+
+       %N     Quoted file name with dereference if symbolic link
+
+       %o     I/O block size
+
+       %s     Total size, in bytes
+
+       %t     Major device type in hex
+
+       %T     Minor device type in hex
+
+       %u     User ID of owner
+
+       %U     User name of owner
+
+       %x     Time of last access
+
+       %X     Time of last access as seconds since Epoch
+
+       %y     Time of last modification
+
+       %Y     Time of last modification as seconds since Epoch
+
+       %z     Time of last change
+
+       %Z     Time of last change as seconds since Epoch
+
+       Valid format sequences for file systems:
+
+       %a     Free blocks available to non-superuser
+
+       %b     Total data blocks in file system
+
+       %c     Total file nodes in file system
+
+       %d     Free file nodes in file system
+
+       %f     Free blocks in file system
+
+       %C     SELinux security context string
+
+       %i     File System ID in hex
+
+       %l     Maximum length of filenames
+
+       %n     File name
+
+       %s     Block size (for faster transfers)
+
+       %S     Fundamental block size (for block counts)
+
+       %t     Type in hex
+
+       %T     Type in human readable form
+
+       NOTE: your shell may have its own version of stat, which usually supersedes the version described here.  Please refer to your  shell’s  documenta‐
+       tion for details about the options it supports.
+
+AUTHOR
+       Written by Michael Meskes.
+
+REPORTING BUGS
+       Report bugs to <bug-coreutils@gnu.org>.
+
+COPYRIGHT
+       Copyright © 2008 Free Software Foundation, Inc.  License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+       This is free software: you are free to change and redistribute it.  There is NO WARRANTY, to the extent permitted by law.
+
+SEE ALSO
+       stat(2)
+
+       The full documentation for stat is maintained as a Texinfo manual.  If the info and stat programs are properly installed at your site, the command
+
+              info stat
+
+       should give you access to the complete manual.
+
+
+
+GNU coreutils 6.9.92.4-f088d-dirty                                     January 2008                                                               STAT(1)

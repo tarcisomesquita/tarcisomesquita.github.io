@@ -1,0 +1,11 @@
+
+Alguns exemplos para configurar o tipo de mídia que sua interface está utilizando. Alguns tipos: auto, 10base2, 10baseT, 100baseT, 1000baseT, entre outros tipos...
+
+Alterando o tipo da mídia:
+
+# ifconfig eth0 media 10baseT
+
+OBS: Sua interface deve suportar o tipo de mídia que você quer configurar. Algumas interfaces de rede não suportam essa mudança e irá aparecer a seguinte mensagem de erro:
+
+"port: SIOCSIFMAP: Operation not supported"
+

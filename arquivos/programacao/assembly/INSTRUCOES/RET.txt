@@ -1,0 +1,30 @@
+
+RET – Return from Procedure (to same segment)
+ no argument                          1100 0011
+ adding immediate to SP               1100 0010 : 16-bit displacement
+RET – Return from Procedure (to other segment)
+ intersegment                         1100 1011
+ adding immediate to SP               1100 1010 : 16-bit displacement
+
+C3 h = 1100 0011 b
+
+
+RET simply pops the value at the top of the stack into the IP. It is the programmer’s responsibility to make sure that when the ret
+instruction is being executed, the value at the top of the stack is the return
+address that was pushed by the corresponding call.
+
+RET x, acts like ret, but in addition, it discards x number of bytes from the stack after popping the return address into the IP.
+This is used to clear the stack of parameters passed during the function call.
+
+
+
+Opcode Instruction 64-Bit Compat/  Description
+                   Mode   Leg Mode
+C3     RET         Valid  Valid    Near return to calling procedure.
+CB     RET         Valid  Valid    Far return to calling procedure.
+C2 iw  RET imm16   Valid  Valid    Near return to calling procedure and pop
+                                   imm16 bytes from stack.
+CA iw  RET imm16   Valid  Valid    Far return to calling procedure and pop
+                                   imm16 bytes from stack.
+
+

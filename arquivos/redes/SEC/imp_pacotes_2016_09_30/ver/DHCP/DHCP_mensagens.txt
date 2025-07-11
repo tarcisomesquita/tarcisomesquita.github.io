@@ -1,0 +1,351 @@
+
+DHCP RFC 2131 
+DHCPv6 RFC 3315
+
+Um cliente envia um pacote UDP em broadcast com um pedido DHCP
+
+
+   0                   1                   2                   3
+   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |     op (1)    |   htype (1)   |   hlen (1)    |   hops (1)    |
+   +---------------+---------------+---------------+---------------+
+   |                            xid (4)                            |
+   +-------------------------------+-------------------------------+
+   |           secs (2)            |           flags (2)           |
+   +-------------------------------+-------------------------------+
+   |                          ciaddr  (4)                          |
+   +---------------------------------------------------------------+
+   |                          yiaddr  (4)                          |
+   +---------------------------------------------------------------+
+   |                          siaddr  (4)                          |
+   +---------------------------------------------------------------+
+   |                          giaddr  (4)                          |
+   +---------------------------------------------------------------+
+   |                                                               |
+   |                          chaddr  (16)                         |
+   |                                                               |
+   |                                                               |
+   +---------------------------------------------------------------+
+   |                                                               |
+   |                          sname   (64)                         |
+   +---------------------------------------------------------------+
+   |                                                               |
+   |                          file    (128)                        |
+   +---------------------------------------------------------------+
+   |                                                               |
+   |                          options (variable)                   |
+   +---------------------------------------------------------------+
+
+                  Figure 1:  Format of a DHCP message
+
+   FIELD      OCTETS       DESCRIPTION
+   -----      ------       -----------
+
+   op            1  Message op code / message type.
+                    1 = BOOTREQUEST, 2 = BOOTREPLY
+   htype         1  Hardware address type, see ARP section in "Assigned
+                    Numbers" RFC; e.g., '1' = 10mb ethernet.
+   hlen          1  Hardware address length (e.g.  '6' for 10mb
+                    ethernet).
+   hops          1  Client sets to zero, optionally used by relay agents
+                    when booting via a relay agent.
+   xid           4  Transaction ID, a random number chosen by the
+                    client, used by the client and server to associate
+                    messages and responses between a client and a
+                    server.
+   secs          2  Filled in by client, seconds elapsed since client
+                    began address acquisition or renewal process.
+   flags         2  Flags (see figure 2).
+   ciaddr        4  Client IP address; only filled in if client is in
+                    BOUND, RENEW or REBINDING state and can respond
+                    to ARP requests.
+   yiaddr        4  'your' (client) IP address.
+   siaddr        4  IP address of next server to use in bootstrap;
+                    returned in DHCPOFFER, DHCPACK by server.
+   giaddr        4  Relay agent IP address, used in booting via a
+                    relay agent.
+   chaddr       16  Client hardware address.
+   sname        64  Optional server host name, null terminated string.
+   file        128  Boot file name, null terminated string; "generic"
+                    name or null in DHCPDISCOVER, fully qualified
+                    directory-path name in DHCPOFFER.
+   options     var  Optional parameters field.  See the options
+                    documents for a list of defined options.
+
+           Table 1:  Description of fields in a DHCP message
+
+   The 'options' field is now variable length. A DHCP client must be
+   prepared to receive DHCP messages with an 'options' field of at least
+   length 312 octets.  This requirement implies that a DHCP client must
+   be prepared to receive a message of up to 576 octets, the minimum IP
+
+
+                                    1 1 1 1 1 1
+                0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
+                +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+                |B|             MBZ             |
+                +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+                B:  BROADCAST flag
+
+                MBZ:  MUST BE ZERO (reserved for future use)
+
+                Figure 2:  Format of the 'flags' field
+
+
+   Message         Use
+   -------         ---
+
+   DHCPDISCOVER -  Client broadcast to locate available servers.
+
+   DHCPOFFER    -  Server to client in response to DHCPDISCOVER with
+                   offer of configuration parameters.
+
+   DHCPREQUEST  -  Client message to servers either (a) requesting
+                   offered parameters from one server and implicitly
+                   declining offers from all others, (b) confirming
+                   correctness of previously allocated address after,
+                   e.g., system reboot, or (c) extending the lease on a
+                   particular network address.
+
+   DHCPACK      -  Server to client with configuration parameters,
+                   including committed network address.
+
+   DHCPNAK      -  Server to client indicating client's notion of network
+                   address is incorrect (e.g., client has moved to new
+                   subnet) or client's lease as expired
+
+   DHCPDECLINE  -  Client to server indicating network address is already
+                   in use.
+
+   DHCPRELEASE  -  Client to server relinquishing network address and
+                   cancelling remaining lease.
+
+   DHCPINFORM   -  Client to server, asking only for local configuration
+                   parameters; client already has externally configured
+                   network address.
+
+                          Table 2:  DHCP messages
+
+
+1. The client broadcasts a DHCPDISCOVER message on its local physical
+      subnet.
+   2. Each server may respond with a DHCPOFFER message that includes an
+      available network address in the 'yiaddr' field (and other
+      configuration parameters in DHCP options).
+
+3 The client broadcasts a DHCPREQUEST message
+     that MUST include the 'server identifier' option to indicate which
+     server it has selected, and that MAY include other options
+     specifying desired configuration values.  The 'requested IP
+     address' option MUST be set to the value of 'yiaddr' in the
+     DHCPOFFER message from the server.  This DHCPREQUEST message is
+     broadcast and relayed through DHCP/BOOTP relay agents.  To help
+     ensure that any BOOTP relay agents forward the DHCPREQUEST message
+     to the same set of DHCP servers that received the original
+     DHCPDISCOVER message, the DHCPREQUEST message MUST use the same
+     value in the DHCP message header's 'secs' field and be sent to the
+     same IP broadcast address as the original DHCPDISCOVER message.
+
+4 The server selected in the DHCPREQUEST message commits the
+     binding for the client to persistent storage and responds with a
+     DHCPACK message containing the configuration parameters for the
+     requesting client.
+     If the selected server is unable to satisfy the DHCPREQUEST message
+     (e.g., the requested network address has been allocated), the
+     server SHOULD respond with a DHCPNAK message.
+
+5  If the client detects that the
+     address is already in use (e.g., through the use of ARP), the
+     client MUST send a DHCPDECLINE message to the server and restarts
+     the configuration process.  The client SHOULD wait a minimum of ten
+     seconds before restarting the configuration process to avoid
+     excessive network traffic in case of looping.
+
+  6. The client may choose to relinquish its lease on a network address
+     by sending a DHCPRELEASE message to the server.  The client
+     identifies the lease to be released with its 'client identifier',
+     or 'chaddr' and network address in the DHCPRELEASE message. If the
+     client used a 'client identifier' when it obtained the lease, it
+     MUST use the same 'client identifier' in the DHCPRELEASE message.
+
+
+   A client acquires a lease for a network address for a fixed period of
+   time (which may be infinite).  Throughout the protocol, times are to
+   be represented in units of seconds.  The time value of 0xffffffff is
+   reserved to represent "infinity".
+
+Field      DHCPOFFER            DHCPACK             DHCPNAK
+-----      ---------            -------             -------
+'op'       BOOTREPLY            BOOTREPLY           BOOTREPLY
+'htype'    (From "Assigned Numbers" RFC)
+'hlen'     (Hardware address length in octets)
+'hops'     0                    0                   0
+'xid'      'xid' from client    'xid' from client   'xid' from client
+           DHCPDISCOVER         DHCPREQUEST         DHCPREQUEST
+           message              message             message
+'secs'     0                    0                   0
+'ciaddr'   0                    'ciaddr' from       0
+                                DHCPREQUEST or 0
+'yiaddr'   IP address offered   IP address          0
+           to client            assigned to client
+'siaddr'   IP address of next   IP address of next  0
+           bootstrap server     bootstrap server
+'flags'    'flags' from         'flags' from        'flags' from
+           client DHCPDISCOVER  client DHCPREQUEST  client DHCPREQUEST
+           message              message             message
+'giaddr'   'giaddr' from        'giaddr' from       'giaddr' from
+           client DHCPDISCOVER  client DHCPREQUEST  client DHCPREQUEST
+           message              message             message
+'chaddr'   'chaddr' from        'chaddr' from       'chaddr' from
+           client DHCPDISCOVER  client DHCPREQUEST  client DHCPREQUEST
+           message              message             message
+'sname'    Server host name     Server host name    (unused)
+           or options           or options
+'file'     Client boot file     Client boot file    (unused)
+           name or options      name or options
+'options'  options              options
+
+Option                    DHCPOFFER    DHCPACK            DHCPNAK
+------                    ---------    -------            -------
+Requested IP address      MUST NOT     MUST NOT           MUST NOT
+IP address lease time     MUST         MUST (DHCPREQUEST) MUST NOT
+                                       MUST NOT (DHCPINFORM)
+Use 'file'/'sname' fields MAY          MAY                MUST NOT
+DHCP message type         DHCPOFFER    DHCPACK            DHCPNAK
+Parameter request list    MUST NOT     MUST NOT           MUST NOT
+Message                   SHOULD       SHOULD             SHOULD
+Client identifier         MUST NOT     MUST NOT           MAY
+Vendor class identifier   MAY          MAY                MAY
+Server identifier         MUST         MUST               MUST
+Maximum message size      MUST NOT     MUST NOT           MUST NOT
+All others                MAY          MAY                MUST NOT
+
+           Table 3:  Fields and options used by DHCP servers
+
+Field      DHCPDISCOVER          DHCPREQUEST           DHCPDECLINE,
+           DHCPINFORM                                  DHCPRELEASE
+-----      ------------          -----------           -----------
+'op'       BOOTREQUEST           BOOTREQUEST           BOOTREQUEST
+'htype'    (From "Assigned Numbers" RFC)
+'hlen'     (Hardware address length in octets)
+'hops'     0                     0                     0
+'xid'      selected by client    'xid' from server     selected by
+                                 DHCPOFFER message     client
+'secs'     0 or seconds since    0 or seconds since    0
+           DHCP process started  DHCP process started
+'flags'    Set 'BROADCAST'       Set 'BROADCAST'       0
+           flag if client        flag if client
+           requires broadcast    requires broadcast
+           reply                 reply
+'ciaddr'   0 (DHCPDISCOVER)      0 or client's         0 (DHCPDECLINE)
+           client's              network address       client's network
+           network address       (BOUND/RENEW/REBIND)  address
+           (DHCPINFORM)                                (DHCPRELEASE)
+'yiaddr'   0                     0                     0
+'siaddr'   0                     0                     0
+'giaddr'   0                     0                     0
+'chaddr'   client's hardware     client's hardware     client's hardware
+           address               address               address
+'sname'    options, if           options, if           (unused)
+           indicated in          indicated in
+           'sname/file'          'sname/file'
+           option; otherwise     option; otherwise
+           unused                unused
+'file'     options, if           options, if           (unused)
+           indicated in          indicated in
+           'sname/file'          'sname/file'
+           option; otherwise     option; otherwise
+           unused                unused
+'options'  options               options               (unused)
+
+Option                     DHCPDISCOVER  DHCPREQUEST      DHCPDECLINE,
+                           DHCPINFORM                     DHCPRELEASE
+------                     ------------  -----------      -----------
+Requested IP address       MAY           MUST (in         MUST
+                           (DISCOVER)    SELECTING or     (DHCPDECLINE),
+                           MUST NOT      INIT-REBOOT)     MUST NOT
+                           (INFORM)      MUST NOT (in     (DHCPRELEASE)
+                                         BOUND or
+                                         RENEWING)
+IP address lease time      MAY           MAY              MUST NOT
+                           (DISCOVER)
+                           MUST NOT
+                           (INFORM)
+Use 'file'/'sname' fields  MAY           MAY              MAY
+DHCP message type          DHCPDISCOVER/ DHCPREQUEST      DHCPDECLINE/
+                           DHCPINFORM                     DHCPRELEASE
+Client identifier          MAY           MAY              MAY
+Vendor class identifier    MAY           MAY              MUST NOT
+Server identifier          MUST NOT      MUST (after      MUST
+                                         SELECTING)
+                                         MUST NOT (after
+                                         INIT-REBOOT,
+                                         BOUND, RENEWING
+                                         or REBINDING)
+Parameter request list     MAY           MAY              MUST NOT
+Maximum message size       MAY           MAY              MUST NOT
+Message                    SHOULD NOT    SHOULD NOT       SHOULD
+Site-specific              MAY           MAY              MUST NOT
+All others                 MAY           MAY              MUST NOT
+
+             Table 5:  Fields and options used by DHCP clients
+
+
+
+
+DHCPDISCOVER - Broadcast de cliente à procura de servidores DHCP disponíveis.
+DHCPOFFER - Resposta do(s) servidor(es) a um DHCPDISCOVER disponibilizando-se para oferecer(em) um endereço IP e outros parâmetros.
+DHCPREQUEST - Mensagem de um cliente para o servidor seleccionado:
+    Pedindo os parâmetros oferecidos por um servidor;
+    Verificando um endereço atribuído previamente após uma mudança na rede (um reboot, por exemplo);
+    Pedindo uma extensão do “aluguer” de um endereço.
+DHCPACK - Resposta do servidor, contendo o end. IP e mais parâmetros.
+DHCPNACK - Resposta negativa do servidor.
+DHCPDECLINE - Mensagem do cliente, indicando que o endereço que lhe é oferecido já se encontra em uso.
+DHCPRELEASE - Mensagem do cliente, cancelando o que resta do “aluguer” e libertando o end. IP.
+DHCPINFORM - Mensagem de um cliente que já tem um endereço IP, pedindo outros parâmetros de configuração ao servidor DHCP.
+
+Sequencia:
+DHCPDISCOVER ->
+<- DHCPOFFER
+DHCPREQUEST ->
+<- DHCPACK
+
+
+Formato do pacote:
+ 
+Nome                      Tamanho(Bytes)
+Code  . . . . . . . . . . (1)
+HWtype  . . . . . . . . . (1)
+Length  . . . . . . . . . (1)
+Hops  . . . . . . . . . . (1)
+Transaction ID  . . . . . (4)
+seconds . . . . . . . . . (2)
+flags . . . . . . . . . . (2)
+Client IP address . . . . (4)
+Your IP address . . . . . (4)
+Server IP address . . . . (4)
+Router IP address . . . . (4)
+Client hardware address . (16)
+Server host name  . . . . (64)
+Boot file name  . . . . . (128)
+Options . . . . . . . . . (312)
+
+Code              – 1 = Request; 2 = Reply
+Hwtype            – Tipo de Hardware. Por exemplo, Ethernet (1) ou IEEE802 (6).
+Length            – Comprimento do endereço de Hardware.
+Hops              – O cliente coloca este campo a 0. Cada router que entrega a mensagem a outro servidor incrementa-o.
+Transaction ID    – Fazer corresponder o Request com o Reply.
+Seconds           – Indicação do cliente, de quantos segundos já decorreram desde que o seu processo de boot se iniciou.
+Flags             – bit mais significativo – Indicação de Broadcast.
+Client IP address – Preenchido pelo Cliente com o seu end. IP ou 0.0.0.0;
+Server IP address – Preenchido pelo Servidor.
+Your IP address   – Preenchido pelo Servidor se o campo anterior era 0.0.0.0;
+Client Hard. Add. – Preenchido pelo Cliente.
+Router IP address – Endereço do BOOTP Relay Agent.
+Server Host name  – Hostname do Servidor (Opcional).
+Boot file name    – Na resposta (DHCPOFFER), o servidor preenche este campo com o “path” para o ficheiro de Boot.
+
+

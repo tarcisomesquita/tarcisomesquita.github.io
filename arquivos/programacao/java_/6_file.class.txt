@@ -1,0 +1,2 @@
+
+é um arquivo binário, o qual contém o bytecode que a JVM ( Java Virtual Machine, ou máquina vritual do java ) lê e executa.

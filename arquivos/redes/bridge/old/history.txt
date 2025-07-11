@@ -1,0 +1,104 @@
+   1 modprobe ahci
+   3 timeout -t 15 -s 9 syslogd -O log.txt
+   4 timeout -t 15 -s 9 klogd
+
+   8 modprobe sd_mod
+   9 modprobe usb_storage
+  10 modprobe ehci_pci
+  11 modprobe bridge
+  12 modprobe br_netfilter
+  13 modprobe e100
+  14 modprobe r8152
+  15 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6 
+
+  17 mkdir /media
+  18 mount -t vfat /dev/sda1 /media
+
+  20 umount /media/
+  21 rmmod usb_storage
+
+  23 modprobe usb_storage
+
+  24 ip6tables -I OUTPUT -j DROP
+  25 ip6tables -I INPUT -j DROP
+  26 ip6tables -I FORWARD -j DROP
+  27 iptables -I FORWARD -j DROP
+  28 iptables -I INPUT -j DROP
+  29 iptables -I OUTPUT -j DROP
+  30 iptables -n -v -L
+  31 ip6tables -n -v -L
+  32 arptables -I OUTPUT -j DROP
+  33 arptables -I INPUT -j DROP
+  34 arptables -I FORWARD -j DROP
+  35 arptables -n -v -L
+  36 cat /proc/net/dev
+  37 ifconfig
+  38 ifconfig eth0 down
+  39 ifconfig eth1 down
+  40 brctl addbr br0
+  41 brctl addif br0 eth0
+  42 brctl addif br0 eth1
+  43 ifconfig eth0 0.0.0.0 hw ether 14:cc:20:fd:44:70 promisc up
+  44 ifconfig eth1 0.0.0.0 hw ether 14:cc:20:fd:44:71 promisc up
+  45 brctl setfd br0 0
+  46 brctl stp br0 off
+  47 ifconfig br0 0.0.0.0 hw ether 14:cc:20:fd:44:72 up
+  48 ifconfig
+  49 tcpdump -i eth0 -w cap.pcap -C 100 -W 10 -U &
+  50 cat /proc/net/dev | sed ":A; s/  / /; tA" | cut -d" " -f2,3,4,11,12
+  56 ifconfig eth1 down
+  57 brctl addif br0 eth1
+  58 ifconfig eth1 0.0.0.0 hw ether 14:cc:20:fd:44:71 promisc up
+  60 cat /proc/net/dev | sed ":A; s/  / /; tA" | cut -d" " -f2,3,4,11,12
+  63 cat /proc/net/dev | sed ":A; s/  / /; tA" | cut -d" " -f2,3,4,11,12
+  66 cat /proc/net/dev | sed ":A; s/  / /; tA" | cut -d" " -f2,3,4,11,12
+  69 cat /proc/net/dev | sed ":A; s/  / /; tA" | cut -d" " -f2,3,4,11,12
+  70 ifconfig br0 down
+  71 ifconfig br0 up
+
+  81 ifconfig eth1 down
+  82 brctl addif br0 eth1
+  83 ifconfig eth1 0.0.0.0 hw ether 14:cc:20:fd:44:71 promisc up
+  84 brctl show
+  85 ifconfig br0 up
+  86 cat /proc/net/dev | sed ":A; s/  / /; tA" | cut -d" " -f2,3,4,11,12
+  87 ls -lh
+  88 cat /proc/net/dev | sed ":A; s/  / /; tA" | cut -d" " -f2,3,4,11,12
+  89 mount -t vfat /dev/sda1 /media
+  90 ls /media
+  91 ls
+  92 cp cap.pcap0 /media/
+  93 ls /media
+  94 sync
+  95 umount  /media/
+  96 rmmod usb_storage
+  97 modprobe usb_storage
+  98 cat /proc/net/dev | sed ":A; s/  / /; tA" | cut -d" " -f2,3,4,11,12
+
+ 102 iptables -t filter -I FORWARD -j ACCEPT
+ 105 arptables -I FORWARD -j ACCEPT
+
+ 110 modprobe bridge
+ 111 brctl show
+ 112 iptables -n -v -L
+ 113 history|grep tcpdump
+ 114 tcpdump -i eth1 -w capeth1.pcap -C 100 -W 2 -U &
+ 115 ls -lh
+ 116 ls -l *.pcap
+ 117 ls -l *.pcap0
+ 118 cat /proc/net/dev | sed ":A; s/  / /; tA" | cut -d" " -f2,3,4,11,12
+ 119 ifconfig
+ 120 ifconfig br0 promisc up
+ 121 ifconfig
+ 122 cat /proc/net/dev | sed ":A; s/  / /; tA" | cut -d" " -f2,3,4,11,12
+
+ 132 modprobe usb_storage
+ 133 mount -t vfat /dev/sda1 /media
+
+
+ 151 iptables -n -v -L
+ 152 arptables -n -v -L
+
+date -s "201610121213"
+hwclock -w
+

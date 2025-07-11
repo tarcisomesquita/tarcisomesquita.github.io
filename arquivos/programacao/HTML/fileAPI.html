@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="pt" dir="ltr" itemscope itemtype="http://schema.org/Article">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Um recurso para desenvolvedores que já desejem utilizar HTML5, incluindo informações sobre recursos específicos e quando utilizá-los em seus aplicativos.">
+<meta name="keywords" content="html5,html 5,html5 demos,html5 examples,javascript,css3,notifications,geolocation,web workers,apppcache,file api,filereader,indexeddb,offline,audio,video,drag and drop,chrome,sse,mobile">
+<meta itemprop="name" content="HTML5 Rocks - Ler arquivos em JavaScript usando as APIs do arquivo">
+<meta itemprop="description" content="Guia para iniciantes sobre o uso de APIs File/FileList/FileReader para processar e ler arquivos binários em JavaScript.">
+<meta itemprop="image" content="/static/images/html5rocks-logo-wings.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+<title>Ler arquivos locais em JavaScript - HTML5 Rocks</title>
+<script type='text/javascript'>window.mod_pagespeed_start = Number(new Date());</script><link rel="shortcut icon" href="/favicon.ico">
+<link rel="alternate" type="application/rss+xml" title="RSS HTML5 Rocks" href="http://feeds.feedburner.com/html5rocks">
+<link rel="publisher" href="https://plus.google.com/111395306401981598462">
+<link rel="stylesheet" media="all" href="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/css/I.base.min.css.pagespeed.cf.ZTDoRjEwUf.css">
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300,400,400italic,600,800|Source+Code+Pro" rel="stylesheet">
+<link rel="apple-touch-icon" href="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/images/identity/HTML5_Badge_64.png.pagespeed.ce.S0LMUsq9YG.png" width="64" height="64">
+<link rel="apple-touch-icon-precomposed" href="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/images/identity/HTML5_Badge_64.png.pagespeed.ce.S0LMUsq9YG.png" width="64" height="64">
+<script src="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/js/modernizr.custom.82437.js.pagespeed.jm.H7yOhhnYd0.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script defer src="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/js/jquery.scrollTo-min.js.pagespeed.jm.Hz5PYAgnCz.js"></script>
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5-els.js"></script>
+  <![endif]-->
+<style>.example{padding:10px;border:1px solid #ccc}#drop_zone{border:2px dashed #bbb;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;padding:25px;text-align:center;font:20pt bold,"Vollkorn";color:#bbb}.thumb{height:75px;border:1px solid #000;margin:10px 5px 0 0}#progress_bar{margin:10px 0;padding:3px;border:1px solid #000;font-size:14px;clear:both;opacity:0;-o-transition:opacity 1s linear;-moz-transition:opacity 1s linear;-webkit-transition:opacity 1s linear}#progress_bar.loading{opacity:1}#progress_bar .percent{background-color:#9cf;height:auto;width:0}#byte_content{margin:5px 0;max-height:100px;overflow-y:auto;overflow-x:hidden}#byte_range{margin-top:5px}</style>
+<link rel="dns-prefetch" href="//apis.google.com"><link rel="dns-prefetch" href="//platform.twitter.com"></head>
+<body data-href="tutorials-file-dndfiles" onload="" class="pattern-bg"><noscript><meta HTTP-EQUIV="refresh" content="0;url='http://www.html5rocks.com/pt/tutorials/file/dndfiles/?ModPagespeed=noscript'" /><style><!--table,div,span,font,p{display:none} --></style><div style="display:block">Please click <a href="http://www.html5rocks.com/pt/tutorials/file/dndfiles/?ModPagespeed=noscript">here</a> if you are not redirected within a few seconds.</div></noscript>
+<header class="main">
+<a id="home_horns" href="/pt/"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAyCAYAAABGQBuoAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NEU2NTFGRTQwNjE0MTFFMTg0RjdERTE0MzFDQTlGQjQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NEU2NTFGRTUwNjE0MTFFMTg0RjdERTE0MzFDQTlGQjQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4MUQyMTY2QjA2MTMxMUUxODRGN0RFMTQzMUNBOUZCNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4MUQyMTY2QzA2MTMxMUUxODRGN0RFMTQzMUNBOUZCNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgNr19cAAAJFSURBVHja7FfrUcMwDE56/U/YIGxQJsBMQJmg6QTQCRomKBukGzBCywTpBikTpEwQJE4CxbFTOzF3cIfudM7Jsb5I1itRJKhpmhlw1XzTDjiJQhAqAq6JM+CcQUIBzEmhErJPkFAAHWUIpoOe0aFIT85nplEgQrfCUgjRGmTLIBbQ/X0FBTE+N5NABsxofYrj+ISMzygIBWClXwOwpvyo6K7QxwXLcN920DWK8JK3wCkpewBOSIaUeecBPKb0la2SIWSP+lktSVUrKiUA1aSaDpViTUyh2yebGCzBkMP6cwS+gpC7hnVJoZiFuGRWfgvKcY1gRV+fyO+DAS5oZeUnzapkVB2Rfjb0CC7j/ndAQixSB8uXcz9o7bnSlJQfe5SjRfewdxjinSklz7JHOdJ+bKm40eRzWleGTF1oFZQznQOkc8GcmZklADjRCq7xIgml7MVYGSgyShuIKGwVvZfbZIYPK6WSss8Sz7BXer0KCkJ66s5MFQLEVG37QPKByguXKU/2AuXg88oUTeeAJKGCVNtPheLKZLVLy3wGfgO+s+xjlr9iSfceM33vwfT+j48tsenCRIkepxzo7092LlG050HWgXY+harx+YWinGiR1w8IvL/RmoyklW3qcAEwdS6dkjGXzIffab2Mu7S3WTfkH63WKwIijHERTxlbw9aCppJB7U6SEvJMvLvjKBPNvxVFPonGc9MGaz41dOXtYIsFuRhF5OiCTWneZ4EXgEdz8gbgyXvD7ZMyNxM/g0aA/3J9lj4EGABt/PzEJtkxBQAAAABJRU5ErkJggg==" alt="HTML5 Rocks" width="24" height="50"></a>
+<h1 id="title">
+<a href="/pt/" title="HTML5 Rocks">HTML5 Rocks</a>
+</h1>
+<nav>
+<ul>
+<li><a class="home" href="/pt/" rel="home">Página inicial</a></li>
+<li><a href="/pt/tutorials/" class="tutorials">Postagens &amp; Tutoriais</a></li>
+<li id="features_show"><a href="#features">Características do HTML5</a></li>
+<li><a href="/pt/slides" class="slides">Slides</a></li>
+<li><a href="/pt/resources" class="resources">Recursos</a></li>
+<li><a class="why" href="/pt/why">Por que HTML5?</a></li>
+<li><a href="/pt/profiles" class="profiles">Quem somos</a></li>
+<li><a href="https://github.com/html5rocks/www.html5rocks.com/blob/master/CONTRIBUTING.md" target="_blank">Contribuir</a></li>
+<li id="search_show">
+<a href="#search_form">
+Pesquisa
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjM0OTMyOUNEN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjM0OTMyOUREN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFNzMzOTM2MUQ3OTkxMUUwQkMwRkMyMDAyM0M2NzQwNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFNzMzOTM2MkQ3OTkxMUUwQkMwRkMyMDAyM0M2NzQwNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pj/umaQAAACdSURBVHjanFLbDQMhDAtMwAiM0lFuBEa4DW4ERmk7ASPQDRghTSSfRKvAPSz5J45D5ODJADM/hE/+RRUuNIKKaGzCDUNSNyhbpgixCIOhZ+jrSIiTjfTl5v/qang55z40xlsYvCEEugqEcbSqplutcBrCiZNw0ugU+zm0cQWreY7OVHC7DDN39WVmCmcDyZdNMBbzGx3AiYnu4CvAALKABcbyDrXxAAAAAElFTkSuQmCC" width="14" height="14" alt="">
+</a>
+</li>
+</ul>
+</nav>
+<div class="subheader search" style="display: none;" id="search_form">
+<div class="search">
+<form action="/pt/search" id="cse-search-box" role="search">
+<img id="search_hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAdCAYAAABWk2cPAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjM0OTMyQTREN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjM0OTMyQTVEN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGMzQ5MzJBMkQ3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGMzQ5MzJBM0Q3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Ps3igWgAAAFzSURBVHjazJfPSsNAEMZ3EygoBAoepD0VBA+Cp76AvoCvkWfK0+gLeBI8FISc2lMhsFBBCPGbMKGrZP/qNh342LKdzI/Z7OxOpPCwruvmGEgX0OWIywH6hBopZeOKJx2wJYYraCb87QvaA74NggJG2dwEwsbgH4AfnFAAKbOV+D+rAd4boQmAo+BMAxaJgGQrjn+EYiJPCNTBuZ7ptWXTrKHCM3DB/mM2Y46QTL+HcoPzM7SDSkg5gBW0gB4NPi30lnHR55ZgJQeqLBnrwNISizjzAWqzjQP8G7hxxOuhPu/LBA4F9s9kjqW1gZcRwH6JaSOtA7f+rZatCgT+PBxOaVlkllRCTzxWPB8EbSOAtKRbHkPBbeYoeBNweEZFgBVBm0igiAQ3kxyDUmtLFgbHB+jV8zUMB/6L4f8dtTFSu9ru/tie+LQv74D2G0nQD7rdE5dnzZxjnWJCJQTXHP9MGrPJWtDJmu3knxUIePJb5luAAQDWPZwf40bkcAAAAABJRU5ErkJggg==" width="29" height="29" alt="">
+<label><span>Pesquisa:</span><input type="search" name="q" id="q" autocomplete="off" placeholder="HTML5 Rocks"/></label>
+</form>
+</div>
+</div>
+<div class="subheader features" style="display: none;" id="features" tabindex="0">
+<div class="features">
+<img id="features_hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAdCAYAAABWk2cPAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RjM0OTMyQTREN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RjM0OTMyQTVEN0FEMTFFMEJDMEZDMjAwMjNDNjc0MDciPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpGMzQ5MzJBMkQ3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGMzQ5MzJBM0Q3QUQxMUUwQkMwRkMyMDAyM0M2NzQwNyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Ps3igWgAAAFzSURBVHjazJfPSsNAEMZ3EygoBAoepD0VBA+Cp76AvoCvkWfK0+gLeBI8FISc2lMhsFBBCPGbMKGrZP/qNh342LKdzI/Z7OxOpPCwruvmGEgX0OWIywH6hBopZeOKJx2wJYYraCb87QvaA74NggJG2dwEwsbgH4AfnFAAKbOV+D+rAd4boQmAo+BMAxaJgGQrjn+EYiJPCNTBuZ7ptWXTrKHCM3DB/mM2Y46QTL+HcoPzM7SDSkg5gBW0gB4NPi30lnHR55ZgJQeqLBnrwNISizjzAWqzjQP8G7hxxOuhPu/LBA4F9s9kjqW1gZcRwH6JaSOtA7f+rZatCgT+PBxOaVlkllRCTzxWPB8EbSOAtKRbHkPBbeYoeBNweEZFgBVBm0igiAQ3kxyDUmtLFgbHB+jV8zUMB/6L4f8dtTFSu9ru/tie+LQv74D2G0nQD7rdE5dnzZxjnWJCJQTXHP9MGrPJWtDJmu3knxUIePJb5luAAQDWPZwf40bkcAAAAABJRU5ErkJggg==" width="29" height="29" alt="">
+<h2>Recursos</h2>
+<ul>
+<li>
+<a href="/pt/features/offline" class="offline">
+<h3>Off-line</h3>
+</a>
+</li>
+<li>
+<a href="/pt/features/storage" class="storage">
+<h3>Armazenamento</h3>
+</a>
+</li>
+<li>
+<a href="/pt/features/connectivity" class="connectivity">
+<h3>Conectividade</h3>
+</a>
+</li>
+<li>
+<a href="/pt/features/file_access" class="file_access">
+<h3>Acesso a arquivos</h3>
+</a>
+</li>
+<li>
+<a href="/pt/features/semantics" class="semantics">
+<h3>Semântica</h3>
+</a>
+</li>
+<li>
+<a href="/pt/features/multimedia" class="multimedia">
+<h3>Áudio/vídeo</h3>
+</a>
+</li>
+<li>
+<a href="/pt/features/graphics" class="graphics">
+<h3>3D/Gráficos</h3>
+</a>
+</li>
+<li>
+<a href="/pt/features/presentation" class="presentation">
+<h3>Apresentação</h3>
+</a>
+</li>
+<li>
+<a href="/pt/features/performance" class="performance">
+<h3>Desempenho</h3>
+</a>
+</li>
+<li>
+<a href="/pt/features/nuts_and_bolts" class="nuts_and_bolts">
+<h3>Aspectos Básicos</h3>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</header>
+<a class="watermark" href="/"></a>
+<nav class="paginator home">
+<ul class="home">
+<li><a class="next" href="/pt/mobile">Móvel</a></li>
+</ul>
+<ul class="mobile">
+<li><a class="previous" href="/pt/">Página inicial</a></li>
+<li><a class="next" href="/pt/gaming">Jogos</a></li>
+</ul>
+<ul class="gaming">
+<li><a class="previous" href="/pt/mobile">Móvel</a></li>
+<li><a class="next" href="/pt/business">Empresa</a></li>
+</ul>
+<ul class="business">
+<li><a class="previous" href="/pt/gaming">Jogos</a></li>
+</ul>
+</nav>
+<nav class="paginator features">
+<ul class="offline">
+<li><a class="next" href="/pt/features/storage">Armazenamento</a></li>
+</ul>
+<ul class="storage">
+<li><a class="previous" href="/pt/features/offline">Off-line</a></li>
+<li><a class="next" href="/pt/features/connectivity">Conectividade</a></li>
+</ul>
+<ul class="connectivity">
+<li><a class="previous" href="/pt/features/storage">Armazenamento</a></li>
+<li><a class="next" href="/pt/features/file_access">Acesso a arquivos</a></li>
+</ul>
+<ul class="file_access">
+<li><a class="previous" href="/pt/features/connectivity">Conectividade</a></li>
+<li><a class="next" href="/pt/features/semantics">Semântica</a></li>
+</ul>
+<ul class="semantics">
+<li><a class="previous" href="/pt/features/file_access">Acesso a arquivos</a></li>
+<li><a class="next" href="/pt/features/multimedia">Áudio/vídeo</a></li>
+</ul>
+<ul class="multimedia">
+<li><a class="previous" href="/pt/features/semantics">Semântica</a></li>
+<li><a class="next" href="/pt/features/graphics">3D/Gráficos</a></li>
+</ul>
+<ul class="graphics">
+<li><a class="previous" href="/pt/features/multimedia">Áudio/vídeo</a></li>
+<li><a class="next" href="/pt/features/presentation">Apresentação</a></li>
+</ul>
+<ul class="presentation">
+<li><a class="previous" href="/pt/features/graphics">3D/Gráficos</a></li>
+<li><a class="next" href="/pt/features/performance">Desempenho</a></li>
+</ul>
+<ul class="performance">
+<li><a class="previous" href="/pt/features/presentation">Apresentação</a></li>
+<li><a class="next" href="/pt/features/nuts_and_bolts">Aspectos Básicos</a></li>
+</ul>
+<ul class="nuts_and_bolts">
+<li><a class="previous" href="/pt/features/performance">Desempenho</a></li>
+</ul>
+</nav>
+<div class="outline_nav_toggle deactivated">
+<img class="show" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUJFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQUNFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBOUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBQUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pprl4SwAAAIcSURBVHjazFfNasJAEI6ptiIGBCUQbfAWxWu96EUfwAY8tg+gD1A8F+99gfoA9ijoA9he9GKvIt5EMRJyEFKKDQidlaSIyW5iYkgHhiyZzX4zk/nbEOWAJpNJGh4V4DudGYttn8Bz4EGxWJw7OTfkALQBXKPOIwTeASXeXYEDcEMH9kLIG21QYu0IHECRS1+BBeoypAI3rX4F7TMwpcdHF86uEsF9AD6mZ1BAsHQ7CJ7g8WB3wmazia1Wq7imaWHjXSaTUbPZrOpAAQn4EX6B+geuR3Wf9NVisWBGo9HtdruNWckjkci+UCjI5XJ5baMAyoLOMfgLPKq43cPhkJ/NZqwT3yYSie96vT6PRqN7QgCKyHpat/ps4FwuR7VaLdN+5JleryfsdrsrQgDWjICrkFzt1OJTBcbjcZqw5d4ArxIKDec2tJHSoMQ1RiygtKZxqYU+lGWZ8ZJb0+k0RRALNKZJUMvlkvGa2JIkxUngYWxNVNUbYy2KokmeSqUObCWDlKQURbGtfDQVIGEtZxjmx1j3++b6g1ItmUxaypw2HFpPehPxPK96tYzjuC9Sz6f1xm9VqTSWZT0pAOVWsQPHThtQAiW3wPl8XkYG4IAP5RUWH7gDUKdCh5wLjOp7qVQiNZhB4I3FAEdVrhtISw10mDhSoOvjGGUaJE8rXBOXeheg9ukEG+jo/L8uDRe8Lr0B6MD1Xc3vi+KvAAMAMUEG36eXLzcAAAAASUVORK5CYII=" alt="">
+<img class="hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUZFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQjBFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBREU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBRUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PlXiDkoAAAIdSURBVHjaxFfNasJAEN6sSkUIBOLBFktF0Junek+96wOU3tt76716tw/Q3msfQO8a8GhP3iKIpdJ6MBAIiEWE7shaos1m18SfD4ZFd2a/mc3szqyEBNHtdq/IAJKlsgmDSjufz7dF1pQESG/JcE1ERuL4JtIgTrz4IiekEN0TkVPkH+BEhTjx7jaJGcQlMtQDEiNq/0zX40dOFR/R7lElO9Bgku+ReIWyMxklB/EZGV55iTWbzUL9fl+xbftk9Z8syz+ZTMaKRqMLDrlN5IY48AU/wo6Jey9iINV1/XwwGKhu851OB6XTaVPTtE8PJ2TKU/6LnER9CYnBIh6Px7Fms5mdz+ch3r5GIpFFsVg0EonE1EPtDk7AKttLuyAGgB7og52HWsl51DSWVqvVuhAldjoAdh4qSz5Mt9z1W/d6PdWyrJiftAY7sGd9e+DFjHt6ieFwqAQ5Vxz7LPbK8NFoFIicYy+HRRaJx+NIVVVhUtM00WQy4ephdEQIRQ5RiESyLTC98lyRTCatIItz7G1Muw9XpFKpQOQcewPTQu8afS6XMxVFmfohBjuwZ0XtvF511iKFQuED7uttiEEf7DxUdGe2N1haUCCgUIg6IFhY6pv1vEa7U18lFSBQUhHtbstHbyYkl968tsd7Za2PW7vhaH9VPQQxs2/fQyP5j5j3aIA6X9nBo+GBEBtBnkulLZ2AxHrz/Vw6xEPxV4ABAB9p/+75XTbuAAAAAElFTkSuQmCC" alt="">
+<nav class="outline features">
+<h3>HTML5 Features</h3>
+<ul>
+<li class="offline">
+<a href="/pt/features/offline" class="section_title offline">Off-line</a>
+<ul>
+<li><a href="/pt/features/offline#intro">Introdução</a></li>
+<li><a href="/pt/features/offline#support">Suporte a navegadores</a></li>
+<li><a href="/pt/features/offline#updates">O que há de novo</a></li>
+<li><a href="/pt/features/offline#demos">Demonstrações</a></li>
+<li><a href="/pt/features/offline#in_the_wild">Em funcionamento</a></li>
+<li><a href="/pt/features/offline#resources">Recursos</a></li>
+</ul>
+</li>
+<li class="storage">
+<a href="/pt/features/storage" class="section_title storage">Armazenamento</a>
+<ul>
+<li><a href="/pt/features/storage#intro">Introdução</a></li>
+<li><a href="/pt/features/storage#support">Suporte a navegadores</a></li>
+<li><a href="/pt/features/storage#updates">O que há de novo</a></li>
+<li><a href="/pt/features/storage#demos">Demonstrações</a></li>
+<li><a href="/pt/features/storage#in_the_wild">Em funcionamento</a></li>
+<li><a href="/pt/features/storage#resources">Recursos</a></li>
+</ul>
+</li>
+<li class="connectivity">
+<a href="/pt/features/connectivity" class="section_title connectivity">Conectividade</a>
+<ul>
+<li><a href="/pt/features/connectivity#intro">Introdução</a></li>
+<li><a href="/pt/features/connectivity#support">Suporte a navegadores</a></li>
+<li><a href="/pt/features/connectivity#updates">O que há de novo</a></li>
+<li><a href="/pt/features/connectivity#demos">Demonstrações</a></li>
+<li><a href="/pt/features/connectivity#in_the_wild">Em funcionamento</a></li>
+<li><a href="/pt/features/connectivity#resources">Recursos</a></li>
+</ul>
+</li>
+<li class="file_access">
+<a href="/pt/features/file_access" class="section_title file_access">Acesso a arquivos</a>
+<ul>
+<li><a href="/pt/features/file_access#intro">Introdução</a></li>
+<li><a href="/pt/features/file_access#support">Suporte a navegadores</a></li>
+<li><a href="/pt/features/file_access#updates">O que há de novo</a></li>
+<li><a href="/pt/features/file_access#demos">Demonstrações</a></li>
+<li><a href="/pt/features/file_access#in_the_wild">Em funcionamento</a></li>
+<li><a href="/pt/features/file_access#resources">Recursos</a></li>
+</ul>
+</li>
+<li class="semantics">
+<a href="/pt/features/semantics" class="section_title semantics">Semântica</a>
+<ul>
+<li><a href="/pt/features/semantics#intro">Introdução</a></li>
+<li><a href="/pt/features/semantics#support">Suporte a navegadores</a></li>
+<li><a href="/pt/features/semantics#updates">O que há de novo</a></li>
+<li><a href="/pt/features/semantics#demos">Demonstrações</a></li>
+<li><a href="/pt/features/semantics#in_the_wild">Em funcionamento</a></li>
+<li><a href="/pt/features/semantics#resources">Recursos</a></li>
+</ul>
+</li>
+<li class="multimedia">
+<a href="/pt/features/multimedia" class="section_title multimedia">Áudio/vídeo</a>
+<ul>
+<li><a href="/pt/features/multimedia#intro">Introdução</a></li>
+<li><a href="/pt/features/multimedia#support">Suporte a navegadores</a></li>
+<li><a href="/pt/features/multimedia#updates">O que há de novo</a></li>
+<li><a href="/pt/features/multimedia#demos">Demonstrações</a></li>
+<li><a href="/pt/features/multimedia#in_the_wild">Em funcionamento</a></li>
+<li><a href="/pt/features/multimedia#resources">Recursos</a></li>
+</ul>
+</li>
+<li class="graphics">
+<a href="/pt/features/graphics" class="section_title graphics">3D/Gráficos</a>
+<ul>
+<li><a href="/pt/features/graphics#intro">Introdução</a></li>
+<li><a href="/pt/features/graphics#support">Suporte a navegadores</a></li>
+<li><a href="/pt/features/graphics#updates">O que há de novo</a></li>
+<li><a href="/pt/features/graphics#demos">Demonstrações</a></li>
+<li><a href="/pt/features/graphics#in_the_wild">Em funcionamento</a></li>
+<li><a href="/pt/features/graphics#resources">Recursos</a></li>
+</ul>
+</li>
+<li class="presentation">
+<a href="/pt/features/presentation" class="section_title presentation">Apresentação</a>
+<ul>
+<li><a href="/pt/features/presentation#intro">Introdução</a></li>
+<li><a href="/pt/features/presentation#support">Suporte a navegadores</a></li>
+<li><a href="/pt/features/presentation#updates">O que há de novo</a></li>
+<li><a href="/pt/features/presentation#demos">Demonstrações</a></li>
+<li><a href="/pt/features/presentation#in_the_wild">Em funcionamento</a></li>
+<li><a href="/pt/features/presentation#resources">Recursos</a></li>
+</ul>
+</li>
+<li class="performance">
+<a href="/pt/features/performance" class="section_title performance">Desempenho</a>
+<ul>
+<li><a href="/pt/features/performance#intro">Introdução</a></li>
+<li><a href="/pt/features/performance#updates">O que há de novo</a></li>
+<li><a href="/pt/features/performance#themes">Temas</a></li>
+<li><a href="/pt/features/performance#technologies">Tecnologias</a></li>
+<li><a href="/pt/features/performance#techniques">Técnicas</a></li>
+<li><a href="/pt/features/performance#tools">Ferramentas</a></li>
+<li><a href="/pt/features/performance#further_reading">Leituras complementares</a></li>
+</ul>
+</li>
+<li class="nuts_and_bolts">
+<a href="/pt/features/nuts_and_bolts" class="section_title nuts_and_bolts">Aspectos Básicos</a>
+<ul>
+<li><a href="/pt/features/nuts_and_bolts#intro">Introdução</a></li>
+<li><a href="/pt/features/nuts_and_bolts#support">Suporte a navegadores</a></li>
+<li><a href="/pt/features/nuts_and_bolts#updates">O que há de novo</a></li>
+<li><a href="/pt/features/nuts_and_bolts#demos">Demonstrações</a></li>
+<li><a href="/pt/features/nuts_and_bolts#in_the_wild">Em funcionamento</a></li>
+<li><a href="/pt/features/nuts_and_bolts#resources">Recursos</a></li>
+</ul>
+</li>
+</ul>
+</nav>
+</div>
+<div class="page current loaded" id="tutorials-file-dndfiles">
+<header class="tutorial clearfix pattern-bg-lighter">
+<hgroup>
+<h1>HTML5 Rocks</h1>
+<h2><a href="/pt/tutorials/">Tutoriais</a></h2>
+</hgroup>
+<section>
+<h1>Ler arquivos em JavaScript usando as APIs do arquivo</h1>
+<section class="byline">
+<a href="/profiles/#ericbidelman"><script>(function(){var d=null,e=window,f=document,g="documentElement",h="scrollTop",j="prototype",k="body",l="getAttribute",m="",n="1",p="data",q="img",r="load",s="number",t="on",u="onload",v="pagespeed_lazy_position",w="pagespeed_lazy_replaced_functions",x="pagespeed_lazy_src",y="position",z="relative",A="scroll",B="src";e.pagespeed=e.pagespeed||{};var C=e.pagespeed,D=function(a){this.a=[];this.i=0;this.b=!1;this.o=a;this.c=d;this.g=0;this.h=200;this.f=!1};
+D[j].s=function(){var a=0;typeof e.pageYOffset==s?a=e.pageYOffset:f[k]&&f[k][h]?a=f[k][h]:f[g]&&f[g][h]&&(a=f[g][h]);var b=e.innerHeight||f[g].clientHeight||f[k].clientHeight;return{top:a,bottom:a+b,height:b}};D[j].n=function(a){var b=a[l](v);if(b)return parseInt(b,0);var b=a.offsetTop,c=a.offsetParent;c&&(b+=this.n(c));b=Math.max(b,0);a.setAttribute(v,b);return b};D[j].r=function(a){var b=this.n(a);return{top:b,bottom:b+a.offsetHeight}};
+D[j].q=function(a,b){if(a.currentStyle)return a.currentStyle[b];if(f.defaultView&&f.defaultView.getComputedStyle){var c=f.defaultView.getComputedStyle(a,d);if(c)return c.getPropertyValue(b)}return a.style&&a.style[b]?a.style[b]:m};D[j].p=function(a){if(this.q(a,y)==z)return!0;if(!this.f&&(0==a.offsetHeight||0==a.offsetWidth))return!1;var b=this.s(),c=a.getBoundingClientRect();c?(a=c.top-b.height,b=c.bottom):(c=this.r(a),a=c.top-b.bottom,b=c.bottom-b.top);return a<=this.i&&0<=b+this.i};
+D[j].m=function(a){this.l(a);var b=this;e.setTimeout(function(){var c=a[l](x);if(c!=d)if((b.b||b.p(a))&&a.src.indexOf(-1!=b.o)){var i=a.parentNode,E=a.nextSibling;i&&i.removeChild(a);a.getAttribute=a.j;a.removeAttribute(u);a.removeAttribute(x);a.removeAttribute(w);i&&i.insertBefore(a,E);a.src=c}else b.a.push(a)},0)};D[j].loadIfVisible=D[j].m;D[j].u=function(){this.b=!0;this.d()};D[j].loadAllImages=D[j].u;D[j].d=function(){var a=this.a,b=a.length;this.a=[];for(var c=0;c<b;++c)this.m(a[c])};
+D[j].e=function(a,b){return a.a?a.a(b)!=d:a[l](b)!=d};D[j].v=function(){for(var a=f.getElementsByTagName(q),b=0;b<a.length;++b){var c=a[b];this.e(c,x)&&this.l(c)}};D[j].overrideAttributeFunctions=D[j].v;D[j].l=function(a){var b=this;this.e(a,w)||(a.j=a[l],a.getAttribute=function(a){a.toLowerCase()==B&&b.e(this,x)&&(a=x);return this.j(a)},a.setAttribute(w,n))};
+C.k=function(a,b,c){if(a.addEventListener)a.addEventListener(b,c,!1);else if(a.attachEvent)a.attachEvent(t+b,c);else{var i=a[t+b];a[t+b]=function(){c.call(this);i&&i.call(this)}}};C.t=function(a,b){var c=new D(b);C.lazyLoadImages=c;0!=b.indexOf(p)&&((new Image).src=b);C.k(e,r,function(){c.f=!0;e.setTimeout(function(){c.b=a;c.d()},200)});a||C.k(e,A,function(){if(!c.c){var a=c.h;(new Date).getTime()-c.g>c.h&&(a=0);c.c=e.setTimeout(function(){c.g=(new Date).getTime();c.d();c.c=d},a)}})};
+C.lazyLoadInit=C.t;})();
+
+pagespeed.lazyLoadInit(false, "//1-ps.googleusercontent.com/h/www.gstatic.com/psa/static/1.gif");
+</script><img pagespeed_lazy_src="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/images/profiles/75/xericbidelman.75.png.pagespeed.ic.LsUGBFI2PQ.jpg" itemprop="photo" alt="Eric Bidelman" title="Eric Bidelman" width="75" height="75" src="//1-ps.googleusercontent.com/h/www.gstatic.com/psa/static/1.gif" onload="pagespeed.lazyLoadImages.loadIfVisible(this);"></a>
+<hgroup>
+<h2>
+By <strong><a href="/profiles/#ericbidelman">Eric Bidelman</a></strong>
+</h2>
+</hgroup>
+<div class="date">
+<time pubdate>Publicado <strong>Jun. 18, 2010</strong></time>
+</div>
+</section>
+<aside id="html5badge">
+<a href="http://www.w3.org/html/logo/">
+<img pagespeed_lazy_src="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/images/identity/133x64xhtml5-badge-h-performance.png.pagespeed.ic.7XO3466l1J.png" width="133" height="64" alt="Este artigo tem tecnologia de desempenho e integração HTML5" title="Este artigo tem tecnologia de desempenho e integração HTML5" src="//1-ps.googleusercontent.com/h/www.gstatic.com/psa/static/1.gif" onload="pagespeed.lazyLoadImages.loadIfVisible(this);"/>
+</a>
+</aside>
+<section class="browser_support">
+<h2>Navegadores suportados:</h2>
+<span class="browsers">
+<span class="browser opera supported">
+<span class="browser_name">Opera</span>
+<span class="support">
+compatível
+</span>
+</span>
+<span class="browser ie supported">
+<span class="browser_name">IE</span>
+<span class="support">
+compatível
+</span>
+</span>
+<span class="browser safari supported">
+<span class="browser_name">Safari</span>
+<span class="support">
+compatível
+</span>
+</span>
+<span class="browser ff supported">
+<span class="browser_name">Firefox</span>
+<span class="support">
+compatível
+</span>
+</span>
+<span class="browser chrome supported">
+<span class="browser_name">Google Chrome</span>
+<span class="support">
+compatível
+</span>
+</span>
+</span>
+<div class="compatible-block">
+<p id="notcompatible" class="hidden">
+Seu navegador pode não ser compatível com todas as funcionalidades descritas neste artigo.
+</p>
+<p id="compatible" class="hidden">
+Your browser appears to support the functionality in this article.
+</p>
+</div>
+</section>
+<a href="#disqus_thread" data-disqus-identifier="http://www.html5rocks.com/tutorials/file/dndfiles/" class="disqus_comments">Deixar um comentário</a>
+</section>
+<span class="share">
+<ul>
+<li class="googleplus"><div class="g-plusone" data-size="medium" data-count="true" data-href="http://www.html5rocks.com/tutorials/file/dndfiles/"></div></li>
+<li class="facebook" data-url="http://www.html5rocks.com/tutorials/file/dndfiles/"></li>
+<li class="twitter"><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.html5rocks.com/tutorials/file/dndfiles/" data-lang="pt" data-related="ChromiumDev:News and announcements for developers from the Google Chrome team and makers of HTML5 Rocks.">Postar no Twitter</a></li>
+</ul>
+</span>
+</header>
+<article class="tutorial pattern-bg-lighter">
+<div class="outline_nav_toggle">
+<img class="show" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUJFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQUNFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBOUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBQUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pprl4SwAAAIcSURBVHjazFfNasJAEI6ptiIGBCUQbfAWxWu96EUfwAY8tg+gD1A8F+99gfoA9ijoA9he9GKvIt5EMRJyEFKKDQidlaSIyW5iYkgHhiyZzX4zk/nbEOWAJpNJGh4V4DudGYttn8Bz4EGxWJw7OTfkALQBXKPOIwTeASXeXYEDcEMH9kLIG21QYu0IHECRS1+BBeoypAI3rX4F7TMwpcdHF86uEsF9AD6mZ1BAsHQ7CJ7g8WB3wmazia1Wq7imaWHjXSaTUbPZrOpAAQn4EX6B+geuR3Wf9NVisWBGo9HtdruNWckjkci+UCjI5XJ5baMAyoLOMfgLPKq43cPhkJ/NZqwT3yYSie96vT6PRqN7QgCKyHpat/ps4FwuR7VaLdN+5JleryfsdrsrQgDWjICrkFzt1OJTBcbjcZqw5d4ArxIKDec2tJHSoMQ1RiygtKZxqYU+lGWZ8ZJb0+k0RRALNKZJUMvlkvGa2JIkxUngYWxNVNUbYy2KokmeSqUObCWDlKQURbGtfDQVIGEtZxjmx1j3++b6g1ItmUxaypw2HFpPehPxPK96tYzjuC9Sz6f1xm9VqTSWZT0pAOVWsQPHThtQAiW3wPl8XkYG4IAP5RUWH7gDUKdCh5wLjOp7qVQiNZhB4I3FAEdVrhtISw10mDhSoOvjGGUaJE8rXBOXeheg9ukEG+jo/L8uDRe8Lr0B6MD1Xc3vi+KvAAMAMUEG36eXLzcAAAAASUVORK5CYII=">
+<img class="hide" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAeCAYAAADU8sWcAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTAyRDZFQUZFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTAyRDZFQjBFOEVFMTFFMDg2NkJGNDlCNjE5NENEMzIiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MDJENkVBREU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5MDJENkVBRUU4RUUxMUUwODY2QkY0OUI2MTk0Q0QzMiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PlXiDkoAAAIdSURBVHjaxFfNasJAEN6sSkUIBOLBFktF0Junek+96wOU3tt76716tw/Q3msfQO8a8GhP3iKIpdJ6MBAIiEWE7shaos1m18SfD4ZFd2a/mc3szqyEBNHtdq/IAJKlsgmDSjufz7dF1pQESG/JcE1ERuL4JtIgTrz4IiekEN0TkVPkH+BEhTjx7jaJGcQlMtQDEiNq/0zX40dOFR/R7lElO9Bgku+ReIWyMxklB/EZGV55iTWbzUL9fl+xbftk9Z8syz+ZTMaKRqMLDrlN5IY48AU/wo6Jey9iINV1/XwwGKhu851OB6XTaVPTtE8PJ2TKU/6LnER9CYnBIh6Px7Fms5mdz+ch3r5GIpFFsVg0EonE1EPtDk7AKttLuyAGgB7og52HWsl51DSWVqvVuhAldjoAdh4qSz5Mt9z1W/d6PdWyrJiftAY7sGd9e+DFjHt6ieFwqAQ5Vxz7LPbK8NFoFIicYy+HRRaJx+NIVVVhUtM00WQy4ephdEQIRQ5RiESyLTC98lyRTCatIItz7G1Muw9XpFKpQOQcewPTQu8afS6XMxVFmfohBjuwZ0XtvF511iKFQuED7uttiEEf7DxUdGe2N1haUCCgUIg6IFhY6pv1vEa7U18lFSBQUhHtbstHbyYkl968tsd7Za2PW7vhaH9VPQQxs2/fQyP5j5j3aIA6X9nBo+GBEBtBnkulLZ2AxHrz/Vw6xEPxV4ABAB9p/+75XTbuAAAAAElFTkSuQmCC">
+<nav class="outline toc pattern-bg-lighter">
+<h3>Índice</h3>
+<ul><li><a href='#toc-introduction' onclick='$.scrollTo("#toc-introduction", 800, {offset: {top: -35}})'>Introdução</a></li><li><a href='#toc-selecting-files' onclick='$.scrollTo("#toc-selecting-files", 800, {offset: {top: -35}})'>Seleção de arquivos</a><ul><li><a href='#toc-selecting-files-input' onclick='$.scrollTo("#toc-selecting-files-input", 800, {offset: {top: -35}})'>Como utilizar a entrada de formulário para selecionar</a></li><li><a href='#toc-selecting-files-dnd' onclick='$.scrollTo("#toc-selecting-files-dnd", 800, {offset: {top: -35}})'>Como utilizar arrastar e soltar para selecionar</a></ul></li><li><a href='#toc-reading-files' onclick='$.scrollTo("#toc-reading-files", 800, {offset: {top: -35}})'>Como ler arquivos</a><ul><li><a href='#toc-slicing-files' onclick='$.scrollTo("#toc-slicing-files", 800, {offset: {top: -35}})'>Como dividir um arquivo</a></li><li><a href='#toc-monitoring-progress' onclick='$.scrollTo("#toc-monitoring-progress", 800, {offset: {top: -35}})'>Como monitorar o progresso de uma leitura</a></ul></li><li><a href='#toc-references' onclick='$.scrollTo("#toc-references", 800, {offset: {top: -35}})'>Referências</a></li></ul>
+<h3>Localizações</h3>
+<p>Este artigo está disponível também nos seguintes idiomas:</p>
+<ul>
+<li><a href="/zh/tutorials/file/dndfiles/">中文 (简体)</a></li>
+<li><a href="/de/tutorials/file/dndfiles/">Deutsch</a></li>
+<li><a href="/en/tutorials/file/dndfiles/">English</a></li>
+<li><a href="/es/tutorials/file/dndfiles/">Español</a></li>
+<li><a href="/ru/tutorials/file/dndfiles/">Pусский</a></li>
+<li><a href="/ja/tutorials/file/dndfiles/">日本語</a></li>
+</ul>
+</nav>
+</div>
+<section>
+<h2 id="toc-introduction">Introdução</h2>
+<p>O HTML5 finalmente fornece um formato padrão de interação com arquivos locais por meio da especificação da <a href="http://www.w3.org/TR/file-upload/">API de arquivos</a> (link em inglês). Como exemplo de seus recursos, a API de arquivos pode ser utilizada para criar uma visualização em miniatura das imagens ao serem enviadas para o servidor ou permitir que o aplicativo salve uma referência do arquivo quando o usuário estiver off-line. Além disso, você pode utilizar a lógica do lado do cliente para confirmar se o mimetype de um upload corresponde a sua extensão de arquivo ou restringir o tamanho de um upload.</p>
+<p>A especificação fornece diversas interfaces para acessar arquivos a partir de um sistema de arquivos "local":</p>
+<ol>
+<li><code>File</code> - um arquivo individual, oferece informações somente leitura como nome, tamanho de arquivo, mimetype e uma referência ao identificador de arquivo.</li>
+<li><code>FileList</code> - uma sequência tipo matriz de objetos <code>File</code>. Exemplos são <code>&lt;input type="file" multiple&gt;</code> ou arrastar um diretório ou arquivos a partir da área de trabalho.</li>
+<li><code>Blob</code> - permite o recorte de um arquivo em intervalos de bytes.</li>
+</ol>
+<p>Ao ser usada em conjunto com as estruturas de dados acima, a interface <a href="http://dev.w3.org/2006/webapi/FileAPI/#filereader-interface"><code>FileReader</code></a> pode ser utilizada para ler um arquivo de forma assíncrona por meio da manipulação de eventos do JavaScript. Assim, é possível monitorar o progresso da leitura, encontrar erros e determinar quando o carregamento é concluído. De várias maneiras, as APIs são semelhantes ao modelo de evento <code>XMLHttpRequest</code>.</p>
+<p>Observação: no momento da criação deste tutorial, as APIs necessárias para o uso de arquivos locais são compatíveis com o Google Chrome 6.0 e o Firefox 3.6. No caso do Firefox 3.6.3, o método <code>File.slice()</code> não é compatível.</p>
+<h2 id="toc-selecting-files">Seleção de arquivos</h2>
+<p>O primeiro passo é verificar se o navegador é totalmente compatível com a API de arquivos:</p>
+<pre class="prettyprint">// Check for the various File API support.
+if (window.File && window.FileReader && window.FileList && window.Blob) {
+  // Great success! All the File APIs are supported.
+} else {
+  alert('The File APIs are not fully supported in this browser.');
+}
+</pre>
+<p>Se seu aplicativo precisa somente de algumas dessas APIs, modifique o snippet de acordo.</p>
+<h3 id="toc-selecting-files-input">Como utilizar a entrada de formulário para selecionar</h3>
+<p>A forma mais direta de carregar um arquivo é utilizar o elemento padrão <code>&lt;input type="file"&gt;</code>. O JavaScript retorna a lista de objetos <code>File</code> selecionados como uma <code>FileList</code>. Este exemplo usa o atributo "multiple" para permitir a seleção de diversos arquivos de uma única vez:</p>
+<pre class="prettyprint">&lt;input type="file" id="files" name="files[]" multiple /&gt;
+&lt;output id="list"&gt;&lt;/output&gt;
+
+&lt;script&gt;
+  function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+
+    // files is a FileList of File objects. List some properties.
+    var output = [];
+    for (var i = 0, f; f = files[i]; i++) {
+      output.push('&lt;li&gt;&lt;strong&gt;', escape(f.name), '&lt;/strong&gt; (', f.type || 'n/a', ') - ',
+                  f.size, ' bytes, last modified: ',
+                  f.lastModifiedDate.toLocaleDateString(), '&lt;/li&gt;');
+    }
+    document.getElementById('list').innerHTML = '&lt;ul&gt;' + output.join('') + '&lt;/ul&gt;';
+  }
+
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+&lt;/script&gt;
+</pre>
+<p><strong>Exemplo</strong>: como utilizar a entrada de formulário para selecionar. Experimente!</p>
+<div class="example">
+<input type="file" id="files1" name="files1[]" multiple />
+<output id="file_list"></output>
+</div>
+<h3 id="toc-selecting-files-dnd">Como utilizar arrastar e soltar para selecionar</h3>
+<p>Outra técnica de carregamento de arquivos é a função nativa arrastar e soltar a partir da área de trabalho para o navegador. Podemos modificar ligeiramente o exemplo anterior para incluir compatibilidade com a função arrastar e soltar.</p>
+<pre class="prettyprint">&lt;div id="drop_zone">Drop files here&lt;/div&gt;
+&lt;output id="list"&gt;&lt;/output&gt;
+
+&lt;script&gt;
+  function handleFileSelect(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    var files = evt.dataTransfer.files; // FileList object.
+
+    // files is a FileList of File objects. List some properties.
+    var output = [];
+    for (var i = 0, f; f = files[i]; i++) {
+      output.push('&lt;li&gt;&lt;strong&gt;', escape(f.name), '&lt;/strong&gt; (', f.type || 'n/a', ') - ',
+                  f.size, ' bytes, last modified: ',
+                  f.lastModifiedDate.toLocaleDateString(), '&lt;/li&gt;');
+    }
+    document.getElementById('list').innerHTML = '&lt;ul&gt;' + output.join('') + '&lt;/ul&gt;';
+  }
+
+  function handleDragOver(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+  }
+
+  // Setup the dnd listeners.
+  var dropZone = document.getElementById('drop_zone');
+  dropZone.addEventListener('dragover', handleDragOver, false);
+  dropZone.addEventListener('drop', handleFileSelect, false);
+&lt;/script&gt;</pre>
+<p><strong>Exemplo</strong>: como utilizar arrastar e soltar para selecionar. Experimente!</p>
+<div class="example">
+<div id="drop_zone">Solte arquivos aqui</div>
+<output id="file_list2"></output>
+</div>
+<p>Observação: alguns navegadores tratam os elementos <code>&lt;input type="file"&gt;</code> como fins nativos onde os arquivos podem ser soltos. Tente arrastar arquivos para o campo "input" do exemplo anterior.</p>
+<h2 id="toc-reading-files">Como ler arquivos</h2>
+<p>Agora vem a parte divertida!</p>
+<p>Depois de obter uma referência de <code>File</code>, crie uma instância do objeto<a href="http://dev.w3.org/2006/webapi/FileAPI/#filereader-interface"><code>FileReader</code></a> para ler seu conteúdo na memória. Quando o carregamento for concluído, o evento <code>onload</code> será iniciado e seu atributo <code>result</code> poderá ser utilizado para acessar os dados do arquivo.</p>
+<p>O <code>FileReader</code> inclui quatro opções de leitura de arquivo de forma assíncrona:</p>
+<ul>
+<li><code>FileReader.readAsBinaryString(Blob|File)</code> - a propriedade <code>result</code> conterá os dados do arquivo/blob como uma sequência binária. Cada byte é representado por um número inteiro dentro do intervalo [0..255].</li>
+<li><code>FileReader.readAsBinaryString(Blob|File)</code> - a propriedade <code>result</code> conterá os dados do arquivo/blob como uma string de texto. Por padrão, a string é decodificada como 'UTF-8'. O uso do parâmetro opcional de codificação pode especificar um formato diferente.</li>
+<li><code>FileReader.readAsDataURL(Blob|File)</code> - a propriedade <code>result</code> conterá os dados do arquivo/blob codificados como um <a href="http://en.wikipedia.org/wiki/Data_URI_scheme">URL de dados</a>.</li>
+<li><code>FileReader.readAsArrayBuffer(Blob|File)</code> - a propriedade <code>result</code> conterá os dados do arquivo/blob codificados como um objeto <a href="https://cvs.khronos.org/svn/repos/registry/trunk/public/webgl/doc/spec/TypedArray-spec.html">ArrayBuffer</a>.</li>
+</ul>
+<p>Assim que um desses métodos for solicitado no objeto <code>FileReader</code>, <code>onloadstart</code>, <code>onprogress</code>, <code>onload</code>, <code>onabort</code>, <code>onerror</code> e <code>onloadend</code> poderão ser utilizados para acompanhar seu progresso.</p>
+<p>O exemplo abaixo filtra imagens selecionadas pelo usuário, solicita <code>reader.readAsDataURL()</code> no arquivo e renderiza uma miniatura ao configurar o atributo "src" como um URL de dados.</p>
+<pre class="prettyprint">&lt;style&gt;
+  .thumb {
+    height: 75px;
+    border: 1px solid #000;
+    margin: 10px 5px 0 0;
+  }
+&lt;/style&gt;
+
+&lt;input type="file" id="files" name="files[]" multiple /&gt;
+&lt;output id="list"&gt;&lt;/output&gt;
+
+&lt;script&gt;
+  function handleFileSelect(evt) {
+    var files = evt.target.files; // FileList object
+
+    // Loop through the FileList and render image files as thumbnails.
+    for (var i = 0, f; f = files[i]; i++) {
+
+      // Only process image files.
+      if (!f.type.match('image.*')) {
+        continue;
+      }
+
+      var reader = new FileReader();
+
+      // Closure to capture the file information.
+      reader.onload = (function(theFile) {
+        return function(e) {
+          // Render thumbnail.
+          var span = document.createElement('span');
+          span.innerHTML = ['&lt;img class="thumb" src="', e.target.result,
+                            '" title="', escape(theFile.name), '"/&gt;'].join('');
+          document.getElementById('list').insertBefore(span, null);
+        };
+      })(f);
+
+      // Read in the image file as a data URL.
+      reader.readAsDataURL(f);
+    }
+  }
+
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+&lt;/script&gt;</pre>
+<p><strong>Exemplo</strong>: como ler arquivos. Experimente!</p>
+<div class="example">
+<p>Experimente este exemplo com um diretório de imagens!</p>
+<input type="file" id="files3" name="files3[]" multiple /><br>
+<output id="thumbnails"></output>
+</div>
+<h3 id="toc-slicing-files">Como dividir um arquivo</h3>
+<p>Em alguns casos, a leitura integral de um arquivo na memória não é a melhor opção. Por exemplo, digamos que você queira criar um uploader de arquivos assíncrono. Uma forma possível de acelerar o processo de upload seria ler e enviar o arquivo em partes de diferentes intervalos de bytes. O componente servidor seria então responsável por reconstruir o conteúdo do arquivo na ordem correta.</p>
+<p>Felizmente, a interface <code>File</code> é compatível com um método de divisão que oferece compatibilidade com este uso. O método usa um byte inicial como primeiro argumento, um byte final como segundo e uma string de tipo de conteúdo opcional como terceiro. A semântica desse método foi modificada recentemente, por isso recebeu um prefixo do fornecedor:</p>
+<pre class="prettyprint">
+if (file.webkitSlice) {
+  var blob = file.webkitSlice(<var>startingByte</var>, <var>endindByte</var>);
+} else if (file.mozSlice) {
+  var blob = file.mozSlice(<var>startingByte</var>, <var>endindByte</var>);
+}
+reader.readAsBinaryString(blob);</pre>
+<p>O exemplo a seguir demonstra a leitura de pedaços de arquivo. É importante notar que este processo utiliza o evento <code>onloadend</code> e verifica <code>evt.target.readyState</code> em vez de utilizar o evento <code>onload</code>.</p>
+<pre class="prettyprint">&lt;style&gt;
+  #byte_content {
+    margin: 5px 0;
+    max-height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  #byte_range { margin-top: 5px; }
+&lt;/style&gt;
+
+&lt;input type="file" id="files" name="file" /&gt; Read bytes: 
+&lt;span class="readBytesButtons"&gt;
+  &lt;button data-startbyte="0" data-endbyte="4"&gt;1-5&lt;/button&gt;
+  &lt;button data-startbyte="5" data-endbyte="14"&gt;6-15&lt;/button&gt;
+  &lt;button data-startbyte="6" data-endbyte="7"&gt;7-8&lt;/button&gt;
+  &lt;button&gt;entire file&lt;/button&gt;
+&lt;/span&gt;
+&lt;div id="byte_range"&gt;&lt;/div&gt;
+&lt;div id="byte_content"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  function readBlob(opt_startByte, opt_stopByte) {
+
+    var files = document.getElementById('files').files;
+    if (!files.length) {
+      alert('Please select a file!');
+      return;
+    }
+
+    var file = files[0];
+    var start = parseInt(opt_startByte) || 0;
+    var stop = parseInt(opt_stopByte) || file.size - 1;
+
+    var reader = new FileReader();
+
+    // If we use onloadend, we need to check the readyState.
+    reader.onloadend = function(evt) {
+      if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+        document.getElementById('byte_content').textContent = evt.target.result;
+        document.getElementById('byte_range').textContent = 
+            ['Read bytes: ', start + 1, ' - ', stop + 1,
+             ' of ', file.size, ' byte file'].join('');
+      }
+    };
+
+    if (file.webkitSlice) {
+      var blob = file.webkitSlice(start, stop + 1);
+    } else if (file.mozSlice) {
+      var blob = file.mozSlice(start, stop + 1);
+    }
+    reader.readAsBinaryString(blob);
+  }
+  
+  document.querySelector('.readBytesButtons').addEventListener('click', function(evt) {
+    if (evt.target.tagName.toLowerCase() == 'button') {
+      var startByte = evt.target.getAttribute('data-startbyte');
+      var endByte = evt.target.getAttribute('data-endbyte');
+      readBlob(startByte, endByte);
+    }
+  }, false);
+&lt;/script&gt;</pre>
+<p><strong>Exemplo</strong>: como dividir um arquivo. Experimente!</p>
+<div class="example">
+<input type="file" id="file4" name="file4"/> Bytes de leitura: <span class="readBytesButtons">
+<button data-startbyte="0" data-endbyte="4">1-5</button>
+<button data-startbyte="5" data-endbyte="14">6-15</button>
+<button data-startbyte="6" data-endbyte="7">7-8</button>
+<button>arquivo inteiro</button>
+</span>
+<div id="byte_range"></div>
+<div id="byte_content"></div>
+</div>
+<h3 id="toc-monitoring-progress">Como monitorar o progresso de uma leitura</h3>
+<p>Uma das coisas legais que ganhamos de graça ao utilizar a manipulação assíncrona de eventos é a capacidade de monitorar o progresso da leitura do arquivo. Isso é útil para arquivos grandes, para encontrar erros e para descobrir quando uma leitura está concluída.</p>
+<p>Os eventos <code>onloadstart</code> e <code>onprogress</code> podem ser utilizados para monitorar o progresso de uma leitura.</p>
+<p>O exemplo abaixo demonstra a exibição de uma barra de progresso para monitorar o status de uma leitura. Para ver o indicador de progresso em ação, experimente usar um arquivo grande ou de um disco remoto.</p>
+<pre class="prettyprint">&lt;style&gt;
+  #progress_bar {
+    margin: 10px 0;
+    padding: 3px;
+    border: 1px solid #000;
+    font-size: 14px;
+    clear: both;
+    opacity: 0;
+    -moz-transition: opacity 1s linear;
+    -o-transition: opacity 1s linear;
+    -webkit-transition: opacity 1s linear;
+  }
+  #progress_bar.loading {
+    opacity: 1.0;
+  }
+  #progress_bar .percent {
+    background-color: #99ccff;
+    height: auto;
+    width: 0;
+  }
+&lt;/style&gt;
+
+&lt;input type="file" id="files" name="file" /&gt;
+&lt;button onclick="abortRead();"&gt;Cancel read&lt;/button&gt;
+&lt;div id="progress_bar"&gt;&lt;div class="percent"&gt;0%&lt;/div&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  var reader;
+  var progress = document.querySelector('.percent');
+
+  function abortRead() {
+    reader.abort();
+  }
+
+  function errorHandler(evt) {
+    switch(evt.target.error.code) {
+      case evt.target.error.NOT_FOUND_ERR:
+        alert('File Not Found!');
+        break;
+      case evt.target.error.NOT_READABLE_ERR:
+        alert('File is not readable');
+        break;
+      case evt.target.error.ABORT_ERR:
+        break; // noop
+      default:
+        alert('An error occurred reading this file.');
+    };
+  }
+
+  function updateProgress(evt) {
+    // evt is an ProgressEvent.
+    if (evt.lengthComputable) {
+      var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
+      // Increase the progress bar length.
+      if (percentLoaded &lt; 100) {
+        progress.style.width = percentLoaded + '%';
+        progress.textContent = percentLoaded + '%';
+      }
+    }
+  }
+
+  function handleFileSelect(evt) {
+    // Reset progress indicator on new file selection.
+    progress.style.width = '0%';
+    progress.textContent = '0%';
+
+    reader = new FileReader();
+    reader.onerror = errorHandler;
+    reader.onprogress = updateProgress;
+    reader.onabort = function(e) {
+      alert('File read cancelled');
+    };
+    reader.onloadstart = function(e) {
+      document.getElementById('progress_bar').className = 'loading';
+    };
+    reader.onload = function(e) {
+      // Ensure that the progress bar displays 100% at the end.
+      progress.style.width = '100%';
+      progress.textContent = '100%';
+      setTimeout("document.getElementById('progress_bar').className='';", 2000);
+    }
+
+    // Read in the image file as a binary string.
+    reader.readAsBinaryString(evt.target.files[0]);
+  }
+
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+&lt;/script&gt;</pre>
+<p><strong>Exemplo</strong>: como monitorar o progresso de uma leitura. Experimente!</p>
+<div class="example">
+<input type="file" id="file5" name="file5"/>
+<button onclick="example5.abortRead();">Cancelar leitura</button>
+<div id="progress_bar"><div class="percent">0%</div></div>
+<p><strong>Dica</strong>: para realmente ver o indicador de progresso em ação, experimente usar um arquivo grande ou um recurso em disco remoto.</p>
+</div>
+<h2 id="toc-references">Referências</h2>
+<ul>
+<li>Especificação de API <a href="http://www.w3.org/TR/file-upload/">de arquivos</a></li>
+<li>Especificação da interface <a href="http://www.w3.org/TR/file-upload/#dfn-filereader">FileReader</a></li>
+<li>Especificação de interface <a href="http://www.w3.org/TR/file-upload/#dfn-filereader">FileReader</a></li>
+<li>Especificação da interface <a href="http://www.w3.org/TR/file-upload/#dfn-fileerror">FileError</a></li>
+<li>Especificação de <a href="http://www.w3.org/TR/progress-events/#Progress">ProgressEvent</a></li>
+</ul>
+<script type="text/javascript" pagespeed_no_defer="">pagespeed.lazyLoadImages.overrideAttributeFunctions();</script><script>var get=function(id){return document.getElementById(id);}
+var example1=example1||{};example1.handleFileSelect=function(evt){var files=evt.target.files;var output=[];for(var i=0,f;f=files[i];i++){output.push('<li><strong>',escape(f.name),'</strong> (',f.type||'n/a',') - ',f.size,' bytes, last modified: ',f.lastModifiedDate?f.lastModifiedDate.toLocaleDateString():'n/a','</li>');}
+get('file_list').innerHTML='<ul>'+output.join('')+'</ul>';}
+get('files1').addEventListener('change',example1.handleFileSelect,false);var example2=example2||{};example2.onDragOver=function(evt){evt.stopPropagation();evt.preventDefault();evt.dataTransfer.dropEffect='copy';}
+example2.onDragFileDrop=function(evt){evt.stopPropagation();evt.preventDefault();var files=evt.dataTransfer.files;var output=[];for(var i=0,f;f=files[i];i++){output.push('<li><strong>',escape(f.name),'</strong> (',f.type||'n/a',') - ',f.size,' bytes, last modified: ',f.lastModifiedDate?f.lastModifiedDate.toLocaleDateString():'n/a','</li>');}
+get('file_list2').innerHTML='<ul>'+output.join('')+'</ul>';}
+get('drop_zone').addEventListener('dragover',example2.onDragOver,false);get('drop_zone').addEventListener('drop',example2.onDragFileDrop,false);var example3=example3||{};example3.handleFileSelect=function(evt){var files=evt.target.files;for(var i=0,f;f=files[i];i++){if(!f.type.match('image.*')){continue;}
+var reader=new FileReader();reader.onload=(function(theFile){return function(e){var span=document.createElement('span');span.innerHTML=['<img class="thumb" src="',e.target.result,'" title="',escape(theFile.name),'"/>'].join('');get('thumbnails').insertBefore(span,null);};})(f);reader.readAsDataURL(f);}}
+get('files3').addEventListener('change',example3.handleFileSelect,false);var example4=example4||{};example4.readBlob=function(opt_startByte,opt_stopByte){var files=get('file4').files;if(!files.length){alert('Please select a file!');return;}
+var file=files[0];var start=parseInt(opt_startByte)||0;var stop=parseInt(opt_stopByte)||file.size-1;var reader=new FileReader();reader.onloadend=function(evt){if(evt.target.readyState==FileReader.DONE){get('byte_content').textContent=evt.target.result;get('byte_range').textContent=['Read bytes: ',start+1,' - ',stop+1,' of ',file.size,' byte file'].join('');}};if(file.webkitSlice){var blob=file.webkitSlice(start,stop+1);}else if(file.mozSlice){var blob=file.mozSlice(start,stop+1);}
+reader.readAsBinaryString(blob);};document.querySelector('.readBytesButtons').addEventListener('click',function(evt){if(evt.target.tagName.toLowerCase()=='button'){var startByte=evt.target.getAttribute('data-startbyte');var stopByte=evt.target.getAttribute('data-endbyte');example4.readBlob(startByte,stopByte);}},false);function Example5(id){var reader_;var progress_=document.querySelector('.percent');var self=this;this.abortRead=function(){reader_.abort();};this.errorHandler=function(evt){switch(evt.target.error.code){case evt.target.error.NOT_FOUND_ERR:alert('File Not Found!');break;case evt.target.error.NOT_READABLE_ERR:alert('File is not readable');break;case evt.target.error.ABORT_ERR:break;default:alert('An error occurred reading this file.');};};this.updateProgress=function(evt){if(evt.lengthComputable){var percentLoaded=Math.round((evt.loaded/evt.total)*100);if(percentLoaded<100){progress_.style.width=percentLoaded+'%';progress_.textContent=percentLoaded+'%';}}};this.handleFileSelect=function(evt){progress_.style.width='0%';progress_.textContent='0%';reader_=new FileReader();reader_.onerror=self.errorHandler;reader_.onprogress=self.updateProgress;reader_.onabort=function(e){alert('File read cancelled');};reader_.onloadstart=function(e){get('progress_bar').className='loading';};reader_.onload=function(e){progress_.style.width='100%';progress_.textContent='100%';setTimeout("get('progress_bar').className='';",2000);}
+reader_.readAsBinaryString(evt.target.files[0]);};get(id).addEventListener('change',self.handleFileSelect,false);};var example5=new Example5('file5');</script>
+</section>
+</article>
+<section class="cc pattern-bg-lighter">
+<p>
+Salvo se <a href="http://code.google.com/policies.html#restrictions">observado</a> o contrário, o conteúdo desta página está licenciado de acordo com a <a href="http://creativecommons.org/licenses/by/3.0/">Licença da Atribuição 3.0 do Creative Commons</a>, e os exemplos de código estão licenciados de acordo com a <a href="http://www.apache.org/licenses/LICENSE-2.0">Licença do Apache 2.0</a>.
+</p>
+</section>
+<section class="disqus pattern-bg-lighter">
+<div id="disqus_thread"></div>
+<noscript>
+<p class="center">
+<strong>
+<a href="http://disqus.com/?ref_noscript">Ative o JavaScript para visualizar os comentários powered by Disqus.</a>
+</strong>
+</p>
+</noscript>
+<script>function _prettyPrint(){if(typeof customPrettyPrintLanguage!='undefined'){customPrettyPrintLanguage();}
+prettyPrint();}</script>
+<script async src="//apis.google.com/js/plusone.js"></script>
+<script async src="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/js/prettify.min.js.pagespeed.jm.JSZAUYYnh2.js" onload="_prettyPrint()"></script>
+<script async src="//platform.twitter.com/widgets.js"></script>
+<script>var disqus_shortname='html5rocks';var disqus_identifier='http://www.html5rocks.com/tutorials/file/dndfiles/';var disqus_url='http://www.html5rocks.com/tutorials/file/dndfiles/';var disqus_developer=0;var disqus_config=function(){var funky_language_code_mapping={'de':'de_inf','es':'es_ES','pt':'pt_EU','sr':'sr_CYRL','sv':'sv_SE','zh':'zh_HANT'};this.language=funky_language_code_mapping['pt']||'pt';};window.addEventListener('load',function(e){var c=document.createElement('script');c.type='text/javascript';c.src='http://'+disqus_shortname+'.disqus.com/count.js';var dsq=document.createElement('script');dsq.type='text/javascript';dsq.src='http://'+disqus_shortname+'.disqus.com/embed.js';var s=document.getElementsByTagName('script')[0],sp=s.parentNode;sp.insertBefore(c,s);sp.insertBefore(dsq,s);},false);var externLinks=document.querySelectorAll('article.tutorial a[href^="http"]:not([target])');for(var i=0,a;a=externLinks[i];++i){a.target='_blank';}</script>
+</section>
+</div>
+<script>(function(){$('#features_show a').click(function(){$('#search_hide').click();if($(this).hasClass('current')){$('.subheader.features').hide();$(this).removeClass('current');$('.watermark').css('top','30px');$('#features_show a').focus();}else{$('.main nav .current').removeClass('current');$(this).addClass('current');$('.subheader.features').show();$('.watermark').css('top','100px');$('#features').focus();}
+if(/#features$/.test(this.href))return false;});$('#features_hide').click(function(){$('#features_show').removeClass('current');$('.subheader.features').hide();$('.watermark').css('top','30px');$('#features_show a').focus();});if(window.applicationCache){window.applicationCache.addEventListener('updateready',function(e){if(window.applicationCache.status==window.applicationCache.UPDATEREADY){window.applicationCache.swapCache();if(confirm('Uma nova versão deste site está disponível. Carregar?')){window.location.reload();}}},false);}
+window.isCompatible=function(){voltar!!(window.File)&&!!(window.FileReader)&&!!(window.FileList)&&!!(window.Blob);};if(isCompatible()===false){document.getElementById('notcompatible').className='';}else if(isCompatible()===true){document.getElementById('compatible').className='';}
+if(/^\?utm_/.test(document.location.search)&&window.history.replaceState){window.history.replaceState({},'',document.location.href.replace(/\?utm_.*/,''));}
+if($(window).width()<'1200'&&$(window).width()>'1000'&&$('.toc').length){var top=$('.toc').offset().top-50;$(window).scroll(function(event){var y=$(this).scrollTop();if(y>=top){$('.toc').addClass('fixed').removeClass('bottom');}else{$('.toc').removeClass('fixed').removeClass('bottom');}});}})();</script>
+<script>var _gaq=_gaq||[];_gaq.push(['_setAccount','UA-15028909-1']);_gaq.push(['_setSiteSpeedSampleRate',50]);_gaq.push(['_trackPageview']);(function(){var ga=document.createElement('script');ga.type='text/javascript';ga.async=true;ga.src=('https:'==document.location.protocol?'https://ssl':'http://www')+'.google-analytics.com/ga.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})();</script>
+<script defer src="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/js/app.min.js.pagespeed.ce.IlL62AP3Y-.js"></script>
+<script defer src="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/js/search.min.js.pagespeed.ce.hdMERthVbk.js"></script>
+<script defer src="http://1-ps.googleusercontent.com/x/s.html5rocks-hrd.appspot.com/www.html5rocks.com/static/js/3rdpartyinit.min.js.pagespeed.ce.CGINL0KvzE.js"></script>
+<script>(function(){var c=window,e="",f="&",j="&b_cdr=",k="&b_cihrl=",l="&b_cii=",n="&b_cilrl=",p="&b_ncdl=",q="&b_ncii=",r="&b_ncini=",s="&b_ncl=",t="&exptid=",u="&ft=",v="&hft=",w="&htmlAt=",x="&ifr=0",y="&ifr=1",z="&nrp=",A="&r",B="&url=",C="=",D="?",E="beforeunload",F="ets=",G="load",H="load:",I="on",J="unload:";c.pagespeed=c.pagespeed||{};var K=c.pagespeed,L=function(a,b,d,g,h,i){this.f=a;this.a=b;this.c=d;this.d=g;this.b=h;this.g=i;this.h=e};K.beaconUrl=K.h;
+L.prototype.e=function(){var a=this.f,b=c.mod_pagespeed_start,d=Number(new Date)-b,a=a+(-1==a.indexOf(D)?D:f),a=a+F+(this.a==G?H:J),a=a+d,a=a+(A+this.a+C);c.performance?(d=c.performance.timing,b=d.navigationStart,a+=d.loadEventStart-b):a+=d;this.a==E&&c.mod_pagespeed_loaded||(a+=c.parent!=c?y:x,this.a==G&&(c.mod_pagespeed_loaded=!0,(d=c.mod_pagespeed_num_resources_prefetched)&&(a+=z+d),(d=c.mod_pagespeed_prefetch_start)&&(a+=w+(b-d))),K.panelLoader&&(b=K.panelLoader.getCsiTimings().time,a+=j+b.CRITICAL_DATA_RECEIVED+
+l+b.CRITICAL_IMAGES_INLINED+n+b.CRITICAL_IMAGES_LOW_RES_LOADED+k+b.CRITICAL_IMAGES_HIGH_RES_LOADED+p+b.NON_CACHEABLE_DATA_LOADED+s+b.NON_CRITICAL_LOADED,b=K.panelLoader.getCriticalImagesInfo(),a+=q+b.NUM_CRITICAL_IMAGES_INLINED+r+b.NUM_CRITICAL_IMAGES_NOT_INLINED),this.c!=e&&(a+=v+this.c),this.d!=e&&(a+=u+this.d),this.b!=e&&(a+=t+this.b),a+=B+encodeURIComponent(this.g),K.beaconUrl=a,(new Image).src=a)};
+K.i=function(a,b,d,g,h,i){var m=new L(a,b,d,g,h,i);c.addEventListener?c.addEventListener(b,function(){m.e()},!1):c.attachEvent(I+b,function(){m.e()})};K.addInstrumentationInit=K.i;})();
+
+pagespeed.addInstrumentationInit('http://1-ps.googleusercontent.com/beacon?org=67_1_dp', 'load', '', '838', '', 'http://www.html5rocks.com/pt/tutorials/file/dndfiles/');</script></body>
+</html>

@@ -1,0 +1,72 @@
+execve("/usr/sbin/tcpdump", ["tcpdump", "-i", "wlan0", "-e", "-s", "0", "-w", "teste.bin"], [/* 16 vars */]) = 0
+
+socket(PF_PACKET, SOCK_RAW, 768)        = 3
+ioctl(3, SIOCGIFINDEX, {ifr_name="lo", ifr_index=1}) = 0
+ioctl(3, SIOCGIFHWADDR, {ifr_name="wlan0", ifr_hwaddr=aa:bb:cc:dd:ee:ff}) = 0
+ioctl(3, SIOCGIFINDEX, {ifr_name="wlan0", ifr_index=4}) = 0
+bind(3, {sa_family=AF_PACKET, proto=0x03, if4, pkttype=PACKET_HOST, addr(0)={0, }, 20) = 0
+getsockopt(3, SOL_SOCKET, SO_ERROR, [0], [4]) = 0
+setsockopt(3, SOL_PACKET, PACKET_ADD_MEMBERSHIP, "\4\0\0\0\1\0\0\0\0\0\0\0\0\0\0\0"..., 16) = 0
+setsockopt(3, SOL_PACKET, 0x8 /* PACKET_??? */, [1], 4) = 0
+getsockopt(3, SOL_PACKET, 0xb /* PACKET_??? */, [28], [4]) = 0
+setsockopt(3, SOL_PACKET, 0xa /* PACKET_??? */, [1], 4) = 0
+setsockopt(3, SOL_PACKET, 0xc /* PACKET_??? */, [4], 4) = 0
+setsockopt(3, SOL_PACKET, PACKET_RX_RING, "\0\0\2\0\37\0\0\0@\0\1\0\37\0\0\0"..., 16) = 0
+mmap2(NULL, 4063232, PROT_READ|PROT_WRITE, MAP_SHARED, 3, 0) = 0xb7861000
+getgid32()                              = 0
+setgid32(0)                             = 0
+getuid32()                              = 0
+setuid32(0)                             = 0
+socket(PF_INET, SOCK_DGRAM, IPPROTO_IP) = 4
+ioctl(4, SIOCGIFADDR, {ifr_name="wlan0", ifr_addr={AF_INET, inet_addr("192.168.33.101")}}) = 0
+ioctl(4, SIOCGIFNETMASK, {ifr_name="wlan0", ifr_netmask={AF_INET, inet_addr("255.255.255.0")}}) = 0
+close(4)                                = 0
+
+munmap(0xb7f49000, 4096)                = 0
+rt_sigaction(SIGPIPE, {0x8097990, [], 0}, {SIG_DFL}, 8) = 0
+rt_sigaction(SIGTERM, {0x8097990, [], 0}, {SIG_DFL}, 8) = 0
+rt_sigaction(SIGINT, {0x8097990, [], 0}, {SIG_DFL}, 8) = 0
+rt_sigaction(SIGHUP, {0x8097990, [], 0}, {SIG_DFL}, 8) = 0
+setsockopt(3, SOL_SOCKET, SO_ATTACH_FILTER, "\1\0\0\0$\3\337\267"..., 8) = 0
+fcntl64(3, F_GETFL)                     = 0x2 (flags O_RDWR)
+fcntl64(3, F_SETFL, O_RDWR|O_NONBLOCK)  = 0
+recv(3, 0xbfd6a40b, 1, MSG_TRUNC)       = -1 EAGAIN (Resource temporarily unavailable)
+fcntl64(3, F_SETFL, O_RDWR)             = 0
+setsockopt(3, SOL_SOCKET, SO_ATTACH_FILTER, "\1\0\366\267X(\331\10"..., 8) = 0
+open("teste.bin", O_WRONLY|O_CREAT|O_TRUNC|O_LARGEFILE, 0666) = 4
+fstat64(4, {st_mode=S_IFREG|0644, st_size=0, ...}) = 0
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7f49000
+getuid32()                              = 0
+write(2, "tcpdump: "..., 9tcpdump: )             = 9
+write(2, "listening on wlan0, link-type EN1"..., 74listening on wlan0, link-type EN10MB (Ethernet), capture size 65535 bytes
+) = 74
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 0 (Timeout)
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 0 (Timeout)
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 1 ([{fd=3, revents=POLLIN}])
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 1 ([{fd=3, revents=POLLIN}])
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 0 (Timeout)
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 0 (Timeout)
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 0 (Timeout)
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 1 ([{fd=3, revents=POLLIN}])
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 1 ([{fd=3, revents=POLLIN}])
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 1 ([{fd=3, revents=POLLIN}])
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 1 ([{fd=3, revents=POLLIN}])
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 0 (Timeout)
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 0 (Timeout)
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 0 (Timeout)
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 1 ([{fd=3, revents=POLLIN}])
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 1 ([{fd=3, revents=POLLIN}])
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 1 ([{fd=3, revents=POLLIN}])
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 0 (Timeout)
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 0 (Timeout)
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 0 (Timeout)
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 1 ([{fd=3, revents=POLLIN}])
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 1 ([{fd=3, revents=POLLIN}])
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 1 ([{fd=3, revents=POLLIN}])
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 0 (Timeout)
+poll([{fd=3, events=POLLIN}], 1, 1000)  = 0 (Timeout)
+poll([{fd=3, events=POLLIN}], 1, 1000 <unfinished ...>
+16 packets captured
+16 packets received by filter
+0 packets dropped by kernel
+

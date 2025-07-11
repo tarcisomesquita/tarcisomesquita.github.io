@@ -1,0 +1,6 @@
+echo -e -n 'boot=casper toram lang=pt_BR locale=pt_BR keyboard-configuration/layoutcode?=br keyboard-configuration/modelcode?=abnt2\n\tinitrd\t/casper/initrd\n}\n                                                                                                                                                                                                                                                                                                                   ' | dd of=lu_2004.iso bs=1 seek=$((0xa1c12C)) count=452 conv=notrunc
+
+
+Deixa 4GiB no inicio
+Acrescenta 56 GiB ext4 ARQUIVOS
+echo -n -e \\x00\\x4b\\x82\\x0a\\x83\\xa0\\x88\\x98\\x00\\x08\\x80\\x00\\x00\\x00\\x00\\x07 | dd of=lu_2004.iso bs=1 seek=$((0x1de)) count=16 conv=notrunc

@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>document.getElementById.style.color</title>
+<script>
+function ChangeStyle() {
+   document.getElementById("p1").style.color = "blue";
+   document.getElementById("p1").style.fontFamily = "Arial";
+}
+</script>
+<script>
+var a = 1;
+function ChangeStyle() {
+   a++;
+   document.getElementById("p1").style.font-size = a + "px";
+}
+</script>
+
+</head>
+
+<body>
+<p id="p1">Hello world!</p>
+<input type="button" onclick="ChangeStyle()" value="Change style" />
+</body>
+</html> 
+

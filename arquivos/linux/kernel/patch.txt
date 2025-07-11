@@ -1,0 +1,3 @@
+baixar o patch em /usr/src/linux
+$ patch -p1 <nome-do-patch>.diff
+

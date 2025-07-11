@@ -1,0 +1,7 @@
+
+x = 1;
+loop1:
+x++;
+if (x<100) goto loop1;
+
+OBS.: não salta para fora duma função.

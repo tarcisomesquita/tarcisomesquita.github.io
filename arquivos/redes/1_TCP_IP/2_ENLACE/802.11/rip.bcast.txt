@@ -1,0 +1,82 @@
+RIP broadcast packet from wired router thru AP to wireless side.
+
+	note From DS flag bit
+
+Frame 241 (84 on wire, 84 captured)
+    Arrival Time: Mar  7, 2002 20:06:54.380579000
+    Time delta from previous packet: 0.092820000 seconds
+    Time relative to first packet: 18.373336000 seconds
+    Frame Number: 241
+    Packet Length: 84 bytes
+    Capture Length: 84 bytes
+IEEE 802.11
+    Type/Subtype: Data (32)
+    Frame Control: 0x0208
+        Version: 0
+        Type: Data frame (2)
+        Subtype: 0
+        Flags: 0x2
+            DS status: Frame is exiting DS (To DS: 0  From DS: 1) (0x02)
+            .... .0.. = Fragments: No fragments
+            .... 0... = Retry: Frame is not being retransmitted
+            ...0 .... = PWR MGT: STA will stay up
+            ..0. .... = More Data: No data buffered
+            .0.. .... = WEP flag: WEP is disabled
+            0... .... = Order flag: Not strictly ordered
+    Duration: 0
+    Destination address: ff:ff:ff:ff:ff:ff (ff:ff:ff:ff:ff:ff)
+    BSS Id: 00:50:18:05:d0:f8 (00:50:18:05:d0:f8)
+    Source address: 00:e0:d0:10:ad:9e (00:e0:d0:10:ad:9e)
+    Fragment number: 0
+    Sequence number: 626
+Logical-Link Control
+    DSAP: SNAP (0xaa)
+    IG Bit: Individual
+    SSAP: SNAP (0xaa)
+    CR Bit: Command
+    Control field: U, func = UI (0x03)
+        000. 00.. = Unnumbered Information
+        .... ..11 = Unnumbered frame
+    Organization Code: Encapsulated Ethernet (0x000000)
+    Type: IP (0x0800)
+Internet Protocol, Src Addr: 209.180.166.94 (209.180.166.94), Dst Addr: 209.180.166.95 (209.180.166.95)
+    Version: 4
+    Header length: 20 bytes
+    Differentiated Services Field: 0x00 (DSCP 0x00: Default; ECN: 0x00)
+        0000 00.. = Differentiated Services Codepoint: Default (0x00)
+        .... ..0. = ECN-Capable Transport (ECT): 0
+        .... ...0 = ECN-CE: 0
+    Total Length: 52
+    Identification: 0x6c62
+    Flags: 0x00
+        .0.. = Don't fragment: Not set
+        ..0. = More fragments: Not set
+    Fragment offset: 0
+    Time to live: 2
+    Protocol: UDP (0x11)
+    Header checksum: 0x5c30 (correct)
+    Source: 209.180.166.94 (209.180.166.94)
+    Destination: 209.180.166.95 (209.180.166.95)
+User Datagram Protocol, Src Port: router (520), Dst Port: router (520)
+    Source port: router (520)
+    Destination port: router (520)
+    Length: 32
+    Checksum: 0xdace (correct)
+Routing Information Protocol
+    Command: Response (2)
+    Version: RIPv2 (2)
+    Routing Domain: 0
+    IP Address: 216.161.87.0, Metric: 1
+        Address Family: IP (2)
+        Route Tag: 0
+        IP Address: 216.161.87.0 (216.161.87.0)
+        Netmask: 255.255.255.0 (255.255.255.0)
+        Next Hop: 0.0.0.0 (0.0.0.0)
+        Metric: 1
+
+0000  08 02 00 00 ff ff ff ff ff ff 00 50 18 05 d0 f8   ...........P....
+0010  00 e0 d0 10 ad 9e 20 27 aa aa 03 00 00 00 08 00   ...... '........
+0020  45 00 00 34 6c 62 00 00 02 11 5c 30 d1 b4 a6 5e   E..4lb....\0...^
+0030  d1 b4 a6 5f 02 08 02 08 00 20 da ce 02 02 00 00   ..._..... ......
+0040  00 02 00 00 d8 a1 57 00 ff ff ff 00 00 00 00 00   ......W.........
+0050  00 00 00 01                                       ....            

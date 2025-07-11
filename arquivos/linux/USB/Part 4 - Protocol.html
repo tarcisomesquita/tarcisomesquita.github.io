@@ -1,0 +1,2417 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>USB Made Simple - Part 4</title>
+<style>
+body {  font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: normal}
+</style>
+</head>
+
+<body>
+<table width="100%" border="0" cellpadding="2" cellspacing="0">
+  <tbody>
+  <tr>
+    <td></td>
+    <td></td>
+    <td width="86%"> 
+      <table width="100%" border="0" cellpadding="12" cellspacing="0">
+        <tbody>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="185"> 
+            <h2>Controlling a Device</h2>
+            <p>When you plug a USB device 
+              in, the host becomes aware (because of the pullup resistor on one 
+              data line), that a device has been plugged in.</p>
+            <p>The host now signals 
+              a USB Reset to the device, in order that it should start in a known 
+              state at the end of the reset. In this state the device responds 
+              to the default address 0. Until the device has been reset the host 
+              prevents data from being sent downstream from the port. It will 
+              only reset one device at a time, so there is no danger of two devices 
+              responding to address 0.</p>
+            <p>The host will now send 
+              a request to endpoint 0 of device address 0 to find out its maximum 
+              packet size. It can discover this by using the Get Descriptor (Device) 
+              command. This request is one which the device must respond to even 
+              on address 0.</p>
+            <p>Typically (i.e. with 
+              Windows) the host will now reset the device again. It then sends 
+              a Set Address request, with a unique address to the device at address 
+              0. After the request is completed, the device assumes the new address. 
+              (And at this point the host is now free to reset other recently 
+              plugged-in devices.)</p>
+            <p>Typically the host will 
+              now begin to quiz the device for as many details as it feels it 
+              needs. Some requests involved here are:</p>
+            <ul>
+              <li>Get Device Descriptor</li>
+              <li>Get Configuration 
+                Descriptor</li>
+              <li>Get String Descriptor</li>
+            </ul>
+            <p>At the moment the device 
+              is in an addressed but unconfigured state, and is only allowed to 
+              respond to standard requests. </p>
+            <p>Once the host feels it 
+              has a clear enough picture of what the device is, it will load a 
+              suitable device driver. </p>
+            <p>The device driver will 
+              then select a configuration for the device, by sending a Set Configuration 
+              request to the device.</p>
+            <p>The device is now in 
+              the configured state, and can start working as the device it was 
+              designed to be. From now on it may respond to device specific requests, 
+              in addition to the standard requests which it must continue to support.</p>
+          </td>
+          <td width="1%">&nbsp;</td>
+          <td width="51%">&nbsp;</td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="364"> 
+            <p>We can now see that there 
+              is a set of requests which a device must respond to, and need to 
+              look at the detailed means by which the requests are conveyed.</p>
+            <p>We saw in the last chapter 
+              that data is transfered in 4 different types of transfer:</p>
+            <ul>
+              <li>Control Transfers</li>
+              <li>Interrupt Transfers</li>
+              <li>Bulk Transfers</li>
+              <li>Isochronous Transfers</li>
+            </ul>
+            <p>The only transfer type 
+              available before the device has been configured is the Control Transfer. 
+              The only endpoint available at this time is the bidirectional Endpoint 
+              0.</p>
+          </td>
+          <td width="1%" height="364">&nbsp;</td>
+          <td width="51%" height="364">&nbsp;</td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc"> 
+            <h2>Configurations, Interfaces, 
+              and Endpoints.</h2>
+            <p>The device contains a 
+              number of descriptors (as shown to the right) which help to define 
+              what the device is capable of. We will examine these descriptors 
+              further down the page. For the moment we need to have an idea what 
+              the configurations, interfaces and endpoints are and how they fit 
+              together.</p>
+            <p> A 
+              device can have more than one <b>configuration</b>, though only 
+              one at a time, and to change configuration the whole device would 
+              have to stop functioning. Different configurations might be used, 
+              for example, to specify different current requirements, as the current 
+              required is defined in the configuration descriptor.</p>
+            <p>However it is not common 
+              to have more than one configuration. Windows standard drivers will 
+              always select the first configuration so there is not a lot of point.</p>
+            <p>A device can have one 
+              or more interfaces. Each <b>interface</b> can have a number of endpoints 
+              and represents a functional unit belonging to a particular class.</p>
+            <p>Each <b>endpoint</b> 
+              is a source or sink of data.</p>
+            <p>For example a VOIP phone 
+              might have one audio class interface with 2 endpoints for transferring 
+              audio in each direction, plus a HID interface with a single IN interrupt 
+              endpoint, for a built in keypad.</p>
+            <p>It is also possible to 
+              have alternative versions of an interface, and this is more common 
+              than multiple configurations. In the VOIP phone example, the audio 
+              class interface might offer an alternative with a different audio 
+              rate. It is possible to switch an interface to an alternate while 
+              the device remains configured.</p>
+            <p>&nbsp;</p>
+          </td>
+          <td width="1%">&nbsp;</td>
+          <td width="51%"><img src="Part%204%20-%20Protocol_arquivos/ums_g_desc_tree.gif" width="330" height="550"></td>
+        </tr>
+        <tr> 
+          <td colspan="3" height="15"> 
+            <hr size="1" noshade="noshade">
+          </td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="404"> 
+            <h2>The SETUP Packet</h2>
+            <p>The Standard requests 
+              are all conveyed using control transfers to endpoint 0. Remember 
+              that a control transfer starts with a SETUP transaction which conveys 
+              8 bytes. These 8 bytes define the request from the host. 
+            </p>
+            <p>The structure of bmRequestType 
+              makes it easy to use it to switch on when your firmware is trying 
+              to interpret the setup request. Essentially, when the SETUP arrives, 
+              you need to branch to the handler for the particular request, so 
+              for example bits 6:5 allow you to distinguish the mandatory standard 
+              commands, from any class or vendor commands you may have implemeted 
+              for you particular device.</p>
+            <p>Switching on bit 7 allows 
+              you to deal with IN and OUT direction requests in separate areas 
+              of the code.</p>
+          </td>
+          <td width="1%" height="404">&nbsp;</td>
+          <td width="51%" height="404"> 
+            <table width="100%" border="1" bordercolor="#000000" cellspacing="0">
+              <tbody><tr bgcolor="#0000ff"> 
+                <td> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Offset</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Field</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Size</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Value</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Description</div>
+                </td>
+              </tr>
+              <tr> 
+                <td height="71"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">0</div>
+                </td>
+                <td height="71"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bmRequestType</div>
+                </td>
+                <td height="71"> 
+                  <div align="center"><font size="-2">1</div>
+                </td>
+                <td height="71"> 
+                  <div align="center"><font size="-2">Bitmap</div>
+                </td>
+                <td height="78"> 
+                  <table width="100%" border="0" cellspacing="0">
+                    <tbody><tr> 
+                      <td bgcolor="#0000ff"><font size="-2"><font color="#ffffff" face="Arial, Helvetica, sans-serif">D7 
+                        Data direction</td>
+                    </tr>
+                    <tr> 
+                      <td><font size="-2">0 
+                        - Host-to-device<br>
+                        <font size="-2" face="Arial, Helvetica, sans-serif">1 
+                        - Device-to-host</td>
+                    </tr>
+                    <tr> 
+                      <td bgcolor="#0000ff"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">D6:5 
+                        Type</td>
+                    </tr>
+                    <tr> 
+                      <td><font size="-2" face="Arial, Helvetica, sans-serif">0 
+                        = Standard<br>
+                        1 = Class<br>
+                        2 = Vendor<br>
+                        3 = Reserved</td>
+                    </tr>
+                    <tr> 
+                      <td bgcolor="#0000ff"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">D4:0 
+                        Recipient</td>
+                    </tr>
+                    <tr> 
+                      <td><font size="-2" face="Arial, Helvetica, sans-serif">0 
+                        = Device<br>
+                        1 = Interface<br>
+                        2 = Endpoint<br>
+                        3 = Other<br>
+                        4-31 = Reserved</td>
+                    </tr>
+                  </tbody></table>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2">bRequest</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2">1</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2">Value</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2">Specific 
+                    Request </div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2">wValue</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2">2</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2">Value</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2">Use 
+                    varies according to request</div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">4</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2">wIndex</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2">Index 
+                    or Offset</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Use 
+                    varies according to request</div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">6</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2">wLength</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2">2</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2">Count</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-2">Number 
+                    of bytes to transfer if there is a data stage</div>
+                </td>
+              </tr>
+            </tbody></table>
+            <h5>The meaning of the 8 
+              bytes of the SETUP transaction data, which are divided into five 
+              named fields.</h5>
+          </td>
+        </tr>
+        <tr> 
+          <td colspan="3" height="15"> 
+            <hr size="1" noshade="noshade">
+          </td>
+        </tr>
+        <tr> 
+          <td colspan="3" height="310"> 
+            <p>Here is a table which 
+              contains all the standard requests which a host can send. The first 
+              5 columns are the SETUP transaction fields in order, and the last 
+              column describes any accompanying data stage data which will have 
+              the length <i>wLength</i>.</p>
+            <table width="100%" border="1" bordercolor="#000000" cellspacing="0">
+              <tbody><tr bgcolor="#0000ff"> 
+                <td> 
+                  <div align="center"><font size="-1" color="#ffffff">bmRequestType</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" color="#ffffff">bRequest</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" color="#ffffff">wValue</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" color="#ffffff">wIndex</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" color="#ffffff">wLength</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" color="#ffffff">Data</div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">00000000b<br>
+                    00000001b<br>
+                    00000010b</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">CLEAR_FEATURE<br>
+                    (1) </div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Feature 
+                    Selector </div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero<br>
+                    Interface<br>
+                    Endpoint</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">None</div>
+                </td>
+              </tr>
+              <tr> 
+                <td height="27"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">10000000b</div>
+                </td>
+                <td height="27"> 
+                  <div align="center"> <font size="-1" face="Arial, Helvetica, sans-serif">GET_CONFIGURATION<br>
+                    (8) </div>
+                </td>
+                <td height="27"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero</div>
+                </td>
+                <td height="27"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero</div>
+                </td>
+                <td height="27"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">One</div>
+                </td>
+                <td height="27"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Configuration 
+                    Value </div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">10000000b</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">GET_DESCRIPTOR<br>
+                    (6) </div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Descriptor 
+                    Type (H) and Descriptor Index (L)</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero 
+                    or Language ID</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Descriptor 
+                    Length </div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Descriptor<font size="-1"></div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">10000001b</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">GET_INTERFACE<br>
+                    (10) </div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Interface</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">One</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1">Alternate 
+                    Interface </div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">10000000b<br>
+                    10000001b<br>
+                    10000010b</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">GET_STATUS<br>
+                    (0) </div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero<br>
+                    Interface<br>
+                    Endpoint</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Two</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1">Device, 
+                    Interface or Endpoint Status</div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">00000000b</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">SET_ADDRESS<br>
+                    (5) </div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Device 
+                    Address </div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">None<font size="-1"></div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">00000000b</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">SET_CONFIGURATION<br>
+                    (9) </div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Configuration 
+                    Value</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">None<font size="-1"></div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">00000000b</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">SET_DESCRIPTOR<br>
+                    (7) </div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Descriptor 
+                    Type (H) and Descriptor Index (L)</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero 
+                    or Language ID</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Descriptor 
+                    Length</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Descriptor<font size="-1"></div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">00000000b<br>
+                    00000001b<br>
+                    00000010b</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">SET_FEATURE<br>
+                    (3) </div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Feature 
+                    Selector</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero<br>
+                    Interface<br>
+                    Endpoint</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">None<font size="-1"></div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">00000001b</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">SET_INTERFACE<br>
+                    (11) </div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Alternate 
+                    Setting </div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Interface</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">None<font size="-1"></div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">10000010b</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">SYNCH_FRAME<br>
+                    (12) </div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Zero</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Endpoint</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Two</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1">Frame 
+                    Number </div>
+                </td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="350"> 
+            <h4>GET_DESCRIPTOR</h4>
+            <p>It is probable that this 
+              request (with the descriptor type set to <i>Device</i>) will be 
+              the first that will be received after USB reset. The host needs 
+              to know the max packet length in use by the control endpoint and 
+              this information is available in the 8th byte of the device descriptor.</p>
+            <p>Typically when the host 
+              is Windows, the device will receive the request with the required 
+              length <i>wLength</i> set to 64. The host will then input 1 packet, 
+              and then reset the device again. Whatever the value of the max packet 
+              length, the host now has the value of the 8th byte and knows what 
+              the packet size is for all future control transfers.</p>
+            <p>The second reset is probably 
+              to guarantee that the device does not get confused after not being 
+              allowed to complete the transmission of all 18 bytes of the device 
+              descriptor. </p>
+          </td>
+          <td width="1%" height="350">&nbsp;</td>
+          <td width="51%" height="350"> 
+            <table width="100%" border="1" bordercolor="#000000" cellspacing="0">
+              <tbody><tr> 
+                <td bgcolor="#0000ff"> 
+                  <div align="center"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Descriptor 
+                    Types</div>
+                </td>
+                <td bgcolor="#0000ff"> 
+                  <div align="center"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Value</div>
+                </td>
+                <td bgcolor="#0000ff"> 
+                  <div align="center"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Comments</div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Device</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1">&nbsp;</div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Configuration</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Request 
+                    for this also returns OTG, interface and endpoint descriptors</div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">String</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">3</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Qualified 
+                    by an index to specify which string is required</div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Interface</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">4</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Not 
+                    directly accessible</div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Endpoint</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">5</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Not 
+                    directly accessible</div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Device 
+                    Qualifier</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">6</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Only 
+                    for high speed capable devices </div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Other 
+                    Speed Configuration</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">7</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Only 
+                    for high speed capable devices</div>
+                </td>
+              </tr>
+              <tr> 
+                <td bgcolor="#cccccc"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Interface 
+                    Power</div>
+                </td>
+                <td bgcolor="#cccccc"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">8</div>
+                </td>
+                <td bgcolor="#cccccc"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Obsolete</div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">On-The-Go 
+                    (OTG)</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">9</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Not 
+                    directly accessible</div>
+                </td>
+              </tr>
+            </tbody></table>
+            <div align="center"><br>
+            </div>
+            <h5 align="center">Table 
+              of wValues use in Get Descriptor requests to select the required 
+              descriptor. </h5>
+          </td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="350"> 
+            <h4>Device Descriptor</h4>
+            <p>This descriptor will 
+              most likely be the first one fetched by the host. We should point 
+              out some important features.</p>
+            <h5>bLength and bDescriptorType</h5>
+            <p>All descriptors start 
+              with a single byte specifying the descriptor's length, and this 
+              is always followed by a single byte defining the descriptor type.</p>
+            <h5>bcdUSB</h5>
+            <p>The only valid version 
+              numbers are 0x0100 (USB1.0), 0x0110 (USB1.1) and 0x0200 (USB2.0). 
+              If you design a new device it should be identified as USB2.0 because 
+              that is the current specification.</p>
+            <h5>bDeviceClass, bDeviceSubClass 
+              and bDeviceProtocol</h5>
+            <p>This triplet of values 
+              is used to describe the class of the device in various ways as defined 
+              in the various class specification documents from the USB-IF.</p>
+            <h5>idVendor, idProduct 
+              and bcdDevice </h5>
+            <p>The combination of idVendor 
+              and idProduct (also known as the VID and PID) must be unique for 
+              the device. This means that the VID you use must be one issued by 
+              the USB-IF and which you have the right to use. You can either buy 
+              a VID from the USB-IF, or you may be able to acquire the right to 
+              use a VID from another manufacturer together with a particular PID 
+              which they have issued to you. If you use a VID/PID combination 
+              which is already in use then you will probably have major problems 
+              with your product in the field.</p>
+          </td>
+          <td width="1%" height="350">&nbsp;</td>
+          <td width="51%" height="350"> 
+            <table width="100%" border="1" bordercolor="#000000" cellspacing="0">
+              <tbody><tr bgcolor="#0000ff"> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Offset</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Field</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Size</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Value</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Description</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">0</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bLength</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">Size 
+                    of this descriptor in bytes</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bDescriptorType</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Constant</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">DEVICE 
+                    descriptor type (= 1)</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bcdUSB</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">BCD</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">USB 
+                    Spec release number</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">4</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bDeviceClass</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Class</div>
+                </td>
+                <td width="40%"> 
+                  <table width="100%" border="0" cellspacing="0">
+                    <tbody><tr> 
+                      <td bgcolor="#33ffff"><font size="-1"><font size="-2">Class 
+                        code assigned by USB-IF</td>
+                    </tr>
+                    <tr> 
+                      <td><font size="-2" face="Arial, Helvetica, sans-serif">00h 
+                        means each interface defines its own class</td>
+                    </tr>
+                    <tr> 
+                      <td><font size="-2" face="Arial, Helvetica, sans-serif">FFh 
+                        means vendor-defined class</td>
+                    </tr>
+                    <tr> 
+                      <td><font size="-2" face="Arial, Helvetica, sans-serif">Any 
+                        other value must be a class code</td>
+                    </tr>
+                  </tbody></table>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">5</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bDeviceSubClass</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">SubClass</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">SubClass 
+                    Code assigned by USB-IF</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">6</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bDeviceProtocol</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Protocol</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-1"><font size="-2"> 
+                    <font size="-2" face="Arial, Helvetica, sans-serif">Protocol 
+                    <font size="-2">Code assigned by USB-IF<font size="-2"></div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">7</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bMaxPacketSize0</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">Max 
+                    packet size for endpoint 0.<br>
+                    Must be 8, 16, 32 or 64</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">8</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">idVendor</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">ID</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">Vendor 
+                    ID - must be obtained from USB-IF</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">10</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">idProduct</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">ID</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">Product 
+                    ID - assigned by the manufacturer</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">12</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bcdDevice</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">BCD</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">Device 
+                    release number in binary coded decimal</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">14</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">iManufacturer</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Index</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">Index 
+                    of string descriptor describing manufacturer - set to 0 if 
+                    no string</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">15</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">iProduct</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Index</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-1"><font size="-2">Index 
+                    of string descriptor describing product - set to 0 if no string</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">16</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">iSerialNumber</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Index</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-1"><font size="-1"><font size="-2">Index 
+                    of string descriptor describing device serial number - set 
+                    to 0 if no string</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">17</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bNumConfigurations</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">Number 
+                    of possible configurations</div>
+                </td>
+              </tr>
+            </tbody></table>
+            <h4 align="center">Device 
+              Descriptor</h4>
+          </td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="705"> 
+            <h4>SET_ADDRESS</h4>
+            <p>After the host has determined 
+              the max packet size for endpoint 0, it is in a position to begin 
+              normal communications with the device. As mentioned above, there 
+              may be a second reset from the host. The host now needs to issue 
+              a SET_ADDRESS request to the device, so that each device on the 
+              bus has a unique address to respond to.</p>
+            <p>SET_ADDRESS is a simple, 
+              outward direction request in a control transfer with no data stage. 
+              The only useful information carried in the SETUP packet is the required 
+              address.</p>
+            <p>When implementing this 
+              request in firmware, you should note the following. All other requests 
+              must be actioned before the status stage in completed. But in the 
+              case of SET_ADDRESS, you should not change the device address until 
+              <b>after</b> the status stage. The status stage will not succeed 
+              unless the device is still responding to address 0 while it is taking 
+              place. The device then has 2ms to get ready to respond to the new 
+              address.</p>
+          </td>
+          <td width="1%" height="705">&nbsp;</td>
+          <td width="51%" height="705"> 
+            <table width="90%" border="1" bordercolor="#0000ff" cellpadding="5" cellspacing="0">
+              <tbody><tr> 
+                <td height="661"> 
+                  <h4><font size="-1" face="Arial, Helvetica, sans-serif">When 
+                    are requests valid?</h4>
+                  <p><font size="-1" face="Arial, Helvetica, sans-serif">The device 
+                    can be in one of three states which determine whether a particular 
+                    request is valid at the time.</p>
+                  <p><font size="-1" face="Arial, Helvetica, sans-serif">The states 
+                    are:</p>
+                  <h5><font size="-1" face="Arial, Helvetica, sans-serif">Default</h5>
+                  <p><font size="-1" face="Arial, Helvetica, sans-serif">After 
+                    reset but before receiving Set Address.</p>
+                  <p><font size="-1" face="Arial, Helvetica, sans-serif">In the 
+                    Default state, the only valid requests are Get Descriptor, 
+                    and Set Address. </p>
+                  <h5><font size="-1" face="Arial, Helvetica, sans-serif">Addressed</h5>
+                  <p><font size="-1" face="Arial, Helvetica, sans-serif">After 
+                    the device has been assigned an address via Set Address.</p>
+                  <p><font size="-1" face="Arial, Helvetica, sans-serif">Now the 
+                    device must recognise the following additional requests:</p>
+                  <ul>
+                    <li><font size="-1" face="Arial, Helvetica, sans-serif">Set 
+                      Configuration</li>
+                    <li><font size="-1" face="Arial, Helvetica, sans-serif">Get 
+                      Configuration</li>
+                    <li><font size="-1" face="Arial, Helvetica, sans-serif">Set 
+                      Feature</li>
+                    <li><font size="-1" face="Arial, Helvetica, sans-serif">Clear 
+                      Feature</li>
+                    <li><font size="-1" face="Arial, Helvetica, sans-serif">Get 
+                      Status</li>
+                    <li><font size="-1" face="Arial, Helvetica, sans-serif">Set 
+                      Descriptor (optional) </li>
+                  </ul>
+                  <h5><font size="-1" face="Arial, Helvetica, sans-serif">Configured</h5>
+                  <p><font size="-1" face="Arial, Helvetica, sans-serif">After 
+                    the host has sent Set Configuration with a non-zero value, 
+                    to select a configuration. The device is now operational.</p>
+                  <p><font size="-1" face="Arial, Helvetica, sans-serif">In the 
+                    Configured state, only Set Address is not a valid request. 
+                    Three further requests are restricted to Configured state 
+                    only:</p>
+                  <ul>
+                    <li><font size="-1" face="Arial, Helvetica, sans-serif">Get 
+                      Interface</li>
+                    <li><font size="-1" face="Arial, Helvetica, sans-serif">Set 
+                      Interface</li>
+                    <li><font size="-1" face="Arial, Helvetica, sans-serif">Synch 
+                      Frame</li>
+                  </ul>
+                  <b><font size="-2" color="#0000ff" face="Arial, Helvetica, sans-serif">Note 
+                  that this was only a brief overview. The specification gives 
+                  more detailed information, which you should read when implementing 
+                  a USB device.</b></td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="72"> 
+            <h3>Other Information Gathering 
+              Commands</h3>
+            <p>The host is likely to 
+              start using the GET_DESCRIPTOR request mentioned above, to fetch 
+              other information describing the device. A major piece of this information 
+              is the configuration descriptor.</p>
+          </td>
+          <td width="1%" height="72">&nbsp;</td>
+          <td width="51%" height="72"> 
+            <table width="90%" border="1" bordercolor="#00ff00" cellpadding="5" cellspacing="0">
+              <tbody><tr> 
+                <td> 
+                  <p>The actual descriptor 
+                    which is fetched by a GET_DESCRIPTOR request is determined 
+                    by the high byte of the wValue word in the SETUP data. 
+                  </p>
+                  <p>So the request 
+                    we call here 'Get Descriptor (Configuration)' is simply a 
+                    Get Descriptor request with the high byte of <i>wValue</i> 
+                    set to 2.</p>
+                </td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="218"> 
+            <h4>Get Descriptor (Configuration)</h4>
+            <p>The Get Descriptor (Configuration) 
+              warrants special explanation, because the request results in not 
+              just a Configuration Descriptor being returned, but also some or 
+              all of a number of other descriptors:</p>
+            <ul>
+              <li>Interface Descriptor</li>
+              <li>Endpoint Descriptor</li>
+              <li>OTG Descriptor</li>
+              <li>Class-specific Descriptors</li>
+              <li>Vendor-specific Descriptors</li>
+            </ul>
+            <p>A Get Configuration Descriptor 
+              fetches the descriptors for just one configuration depending on 
+              the descriptor index in wValue of the SETUP packet. Most devices 
+              only have one configuration, because built-in Windows drivers always 
+              select the first configuration.</p>
+            <p>The diagram opposite 
+              shows a typical set of Descriptors which is fetched. It starts with 
+              the configuration descriptor, and the vertical position shows the 
+              correct sequence, with the interfaces being dealt with in turn, 
+              each one followed by its own endpoints.</p>
+            <p>The position of class 
+              descriptors is defined in the appropriate class specification, and 
+              of course vendors descriptor positions would be up to the vendor 
+              concerned.</p>
+            <p>An OTG descriptor position 
+              is not defined but typically appears immediately after the configuration 
+              descriptor. </p>
+          </td>
+          <td width="1%" height="218">&nbsp;</td>
+          <td width="51%" height="218"><img src="Part%204%20-%20Protocol_arquivos/ums_g_desc_tree.gif" width="330" height="550"></td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="218"> 
+            <h4>Configuration Descriptor</h4>
+            <p>The configuration descriptor 
+              format is shown to the right.</p>
+            <p>The wTotalLegth value 
+              is important because it tells the host how many bytes are contained 
+              in this descriptor and all the descriptors which follow.</p>
+            <p>bNumInterfaces describes 
+              how many interfaces this configuration supports.</p>
+          </td>
+          <td width="1%" height="218">&nbsp;</td>
+          <td width="51%" height="218"> 
+            <table width="100%" border="1" bordercolor="#000000" cellspacing="0">
+              <tbody><tr bgcolor="#0000ff"> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Offset</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Field</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Size</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Value</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Description</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">0</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bLength</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"> 
+                  <div align="left"><font size="-1"><font size="-2">Size 
+                    of this descriptor in bytes</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bDescriptorType</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Constant</div>
+                </td>
+                <td width="40%"> 
+                  <div align="left"><font size="-1"><font size="-2">CONFIGURATION 
+                    descriptor type (= 2)</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2"><font size="-2">wTotalLength</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2"><font size="-2">2</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2"><font size="-2"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"> 
+                  <div align="left"><font size="-2"><font size="-2">Total 
+                    number of bytes in this descriptor and all the following descriptors.</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">4</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2"><font size="-2">bNumInterfaces</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2"><font size="-2">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2"><font size="-2"><font size="-2"><font size="-2"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"> 
+                  <div align="left"><font size="-2"><font size="-2">Number 
+                    of interfaces supported by this configuration</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">5</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2"><font size="-2">bConfigurationValue</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2"><font size="-2">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2"><font size="-2"><font size="-2"><font size="-2"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"> 
+                  <div align="left"><font size="-2"><font size="-2">Value 
+                    used by Set Configuration to select this configuration</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">6</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2"><font size="-2">iConfiguration</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2"><font size="-2">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2"><font size="-2">Index</div>
+                </td>
+                <td width="40%"> 
+                  <div align="left"><font size="-2"><font size="-1"><font size="-1"><font size="-2">Index 
+                    of string descriptor describing configuration - set to 0 if 
+                    no string</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%" height="24"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">7</div>
+                </td>
+                <td width="31%" height="24"> 
+                  <div align="center"><font size="-2"><font size="-2">bmAttributes</div>
+                </td>
+                <td width="7%" height="24"> 
+                  <div align="center"><font size="-2"><font size="-2">1</div>
+                </td>
+                <td width="10%" height="24"> 
+                  <div align="center"><font size="-2"><font size="-2">Bitmap</div>
+                </td>
+                <td width="40%" height="24"> 
+                  <div align="left"> <font size="-2"><font size="-2">D7: 
+                    Must be set to 1<br>
+                    D6: Self-powered<br>
+                    D5: Remote Wakeup<br>
+                    <font size="-2" face="Arial, Helvetica, sans-serif">D4...D0: 
+                    Set to 0</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">8</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2"><font size="-2">bMaxPower</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2"><font size="-2">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2"><font size="-2">mA</div>
+                </td>
+                <td width="40%"> 
+                  <div align="left"><font size="-2"><font size="-2">Maximum 
+                    current drawn by device in this configuration. In units of 
+                    2mA. So 50 means 100 mA.</div>
+                </td>
+              </tr>
+            </tbody></table>
+            <h4 align="center">Configuration 
+              Descriptor</h4>
+          </td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="218"> 
+            <h4>Interface Descriptor</h4>
+            <p>The interface descriptor 
+              format is shown to the right.</p>
+            <p>bAlternateSetting needs 
+              some explanation. An interface can have more than one variant, and 
+              these variants can be switched between, while other interfaces are 
+              still in operation. </p>
+            <p>For the first (and default) 
+              alternative bAlternateSetting is always 0. </p>
+            <p>To have a second interface 
+              variant, the default interface descriptor would be followed by its 
+              endpoint descriptors, which would then be followed by the alternative 
+              interface descriptor and then <i>its</i> endpoint descriptors.</p>
+            <h5>bInterfaceClass, bInterfaceSubClass 
+              and bInterfaceProtocol</h5>
+            <p>By defining the class, 
+              subclass and protocol in the interface, it is possible to have interfaces 
+              with different classes in the same device. This is referred to as 
+              a <b>composite</b> device.</p>
+            <p>&nbsp;</p>
+          </td>
+          <td width="1%" height="218">&nbsp;</td>
+          <td width="51%" height="218"> 
+            <table width="100%" border="1" bordercolor="#000000" cellspacing="0">
+              <tbody><tr bgcolor="#0000ff"> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Offset</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Field</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Size</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Value</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Description</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">0</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bLength</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"> <font size="-1"><font size="-2">Size 
+                  of this descriptor in bytes</td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bDescriptorType</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Constant</div>
+                </td>
+                <td width="40%"> <font size="-1"><font size="-2">INTERFACE 
+                  descriptor type (= 4)</td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bInterfaceNumber</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"><font size="-2" face="Arial, Helvetica, sans-serif">Number 
+                  identifying this interface. Zero-based value.</td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">3</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bAlternateSetting</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"><font size="-2" face="Arial, Helvetica, sans-serif">Value 
+                  used to select this alternate setting for this interface.</td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">4</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bNumEndpoints</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"><font size="-2" face="Arial, Helvetica, sans-serif">Number 
+                  of endpoints used by this interface. Doesn't include control 
+                  endpoint 0. </td>
+              </tr>
+              <tr> 
+                <td width="12%" height="96"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">5</div>
+                </td>
+                <td width="31%" height="96"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bInterfaceClass</div>
+                </td>
+                <td width="7%" height="96"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%" height="96"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Class</div>
+                </td>
+                <td width="40%" height="96"> 
+                  <table width="100%" border="0" cellspacing="0">
+                    <tbody><tr> 
+                      <td bgcolor="#33ffff"><font size="-1"><font size="-2">Class 
+                        code assigned by USB-IF</td>
+                    </tr>
+                    <tr> 
+                      <td><font size="-2" face="Arial, Helvetica, sans-serif">00h 
+                        is a reserved value</td>
+                    </tr>
+                    <tr> 
+                      <td><font size="-2" face="Arial, Helvetica, sans-serif">FFh 
+                        means vendor-defined class</td>
+                    </tr>
+                    <tr> 
+                      <td><font size="-2" face="Arial, Helvetica, sans-serif">Any 
+                        other value must be a class code</td>
+                    </tr>
+                  </tbody></table>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%" height="24"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">6</div>
+                </td>
+                <td width="31%" height="24"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bInterfaceSubClass</div>
+                </td>
+                <td width="7%" height="24"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%" height="24"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">SubClass</div>
+                </td>
+                <td width="40%"> <font size="-1"><font size="-2">SubClass 
+                  Code assigned by USB-IF</td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">7</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bInterfaceProtocol</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Protocol</div>
+                </td>
+                <td width="40%"> <font size="-1"><font size="-1"><font size="-2"> 
+                  <font size="-2" face="Arial, Helvetica, sans-serif">Protocol 
+                  <font size="-2">Code assigned by USB-IF<font size="-2"></td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">8</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">iInterface</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Index</div>
+                </td>
+                <td width="40%"><font size="-2"><font size="-1"><font size="-1"><font size="-2">Index 
+                  of string descriptor describing interface - set to 0 if no string</td>
+              </tr>
+            </tbody></table>
+            <h4 align="center">Interface 
+              Descriptor</h4>
+          </td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="685"> 
+            <h4>Endpoint Descriptor</h4>
+            <p>The endpoint descriptor 
+              format is shown to the right.</p>
+          </td>
+          <td width="1%" height="685">&nbsp;</td>
+          <td width="51%"> 
+            <table width="100%" border="1" bordercolor="#000000" cellspacing="0">
+              <tbody><tr bgcolor="#0000ff"> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Offset</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Field</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Size</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Value</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Description</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">0</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bLength</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"> <font size="-1"><font size="-2">Size 
+                  of this descriptor in bytes</td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bDescriptorType</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Constant</div>
+                </td>
+                <td width="40%"> <font size="-1"><font size="-2">ENDPOINT 
+                  descriptor type (= 5)</td>
+              </tr>
+              <tr> 
+                <td width="12%" height="115"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td width="31%" height="115"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bEndpointAddress</div>
+                </td>
+                <td width="7%" height="115"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%" height="115"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Endpoint</div>
+                </td>
+                <td width="40%" height="115"> 
+                  <p><font size="-2" face="Arial, Helvetica, sans-serif">The address 
+                    of this endpoint within the device.</p>
+                  <p><font size="-2" face="Arial, Helvetica, sans-serif">D7: Direction<br>
+                    0 = OUT, 1 = IN</p>
+                  <p><font size="-2" face="Arial, Helvetica, sans-serif">D6-D4: 
+                    Set to 0</p>
+                  <p><font size="-2" face="Arial, Helvetica, sans-serif">D3-D0: 
+                    Endpoint number</p>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%" height="209"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">3</div>
+                </td>
+                <td width="31%" height="209"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bmAttributes</div>
+                </td>
+                <td width="7%" height="209"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%" height="209"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Bitmap</div>
+                </td>
+                <td width="40%" height="209"> 
+                  <table width="100%" border="0" cellspacing="0">
+                    <tbody><tr> 
+                      <td bgcolor="#33ffff"><font size="-2" face="Arial, Helvetica, sans-serif">D1:0 
+                        Transfer Type</td>
+                    </tr>
+                    <tr> 
+                      <td><font size="-2" face="Arial, Helvetica, sans-serif">00 
+                        = Control<br>
+                        01 = Isochronous<br>
+                        10 = Bulk<br>
+                        11 = Interrupt</td>
+                    </tr>
+                    <tr> 
+                      <td height="25"> <font size="-2" face="Arial, Helvetica, sans-serif">The 
+                        following only apply to isochronous endpoints. Else set 
+                        to 0.</td>
+                    </tr>
+                    <tr> 
+                      <td bgcolor="#33ffff"><font size="-2" face="Arial, Helvetica, sans-serif">D3:2 
+                        Synchronisation Type</td>
+                    </tr>
+                    <tr> 
+                      <td><font size="-2" face="Arial, Helvetica, sans-serif">00 
+                        = No Synchronisation<br>
+                        01 = Asynchronous<br>
+                        10 = Adaptive<br>
+                        11 = Synchronous</td>
+                    </tr>
+                    <tr> 
+                      <td bgcolor="#33ffff"><font size="-2" face="Arial, Helvetica, sans-serif">D5:4 
+                        Usage Type</td>
+                    </tr>
+                    <tr> 
+                      <td><font size="-2" face="Arial, Helvetica, sans-serif">00 
+                        = Data endpoint<br>
+                        01 = Feedback endpoint<br>
+                        10 = Implicit feedback Data endpoint<br>
+                        11 = Reserved</td>
+                    </tr>
+                    <tr> 
+                      <td bgcolor="#33ffff"><font size="-2" face="Arial, Helvetica, sans-serif">D7:6 
+                        Reserved </td>
+                    </tr>
+                    <tr> 
+                      <td><font size="-2" face="Arial, Helvetica, sans-serif">Set 
+                        to 0 </td>
+                    </tr>
+                  </tbody></table>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%" height="44"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">4</div>
+                </td>
+                <td width="31%" height="44"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">wMaxPacketSize</div>
+                </td>
+                <td width="7%" height="44"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td width="10%" height="44"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%" height="44"><font size="-2" face="Arial, Helvetica, sans-serif">Maximum 
+                  packet size this endpoint can send or receive when this configuration 
+                  is selected </td>
+              </tr>
+              <tr> 
+                <td width="12%" height="49"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">6</div>
+                </td>
+                <td width="31%" height="49"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bInterval</div>
+                </td>
+                <td width="7%" height="49"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%" height="49"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%" height="49"><font size="-2" face="Arial, Helvetica, sans-serif">Interval 
+                  for polling endpoint for data transfers. Expressed in frames 
+                  (ms) for low/full speed or microframes (125us) for high speed. 
+                  </td>
+              </tr>
+            </tbody></table>
+            <h4 align="center">Endpoint 
+              Descriptor</h4>
+          </td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="296"> 
+            <h4>Get Descriptor (String)</h4>
+            <p>There are several strings 
+              which a host may request. The strings defined in the device descriptor 
+              are:</p>
+            <ul>
+              <li>Manufacturer String</li>
+              <li>Product String</li>
+              <li>Serial Number String</li>
+            </ul>
+            <p>These strings are optional. 
+              If not supported, the corresponding index in the device descriptor 
+              will be 0. Otherwise the host may use the specified index in a Get 
+              Descriptor (String) request to fetch the descriptor.</p>
+            <p>Get Descriptor (String), 
+              with a descriptor index of 0 in the low byte of wValue, is used 
+              to fetch a special string language descriptor. This contains a series 
+              of 2-byte sized language specifiers. In theory, if the language 
+              of your choice is supported in this list, you can use the index 
+              to this language ID to access the string descriptors in this language 
+              by specifying this in wIndex of the Get Descriptor (String) request. 
+              In practise, with Windows, you will have difficulties if you do 
+              not ensure that the first language specified is English (US).</p>
+          </td>
+          <td width="1%" height="296">&nbsp;</td>
+          <td width="51%" height="296"> 
+            <table width="100%" border="1" bordercolor="#000000" cellspacing="0">
+              <tbody><tr bgcolor="#0000ff"> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Offset</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Field</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Size</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Value</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Description</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">0</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bLength</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">Size 
+                    of this descriptor in bytes</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bDescriptorType</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Constant</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">STRING 
+                    descriptor type (= 3)</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">wLANGID[0]</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">LANGID 
+                    Code 0</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">...</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">...</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">...</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">...</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">...</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2 
+                    + x*2</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">wLANGID[x]</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">LANGID 
+                    Code x</div>
+                </td>
+              </tr>
+            </tbody></table>
+            <p align="center"><b>String 
+              Descriptor Zero<br>
+              </b>(Specifies 
+              supported string languages)</p>
+            <p align="center">&nbsp;</p>
+            <table width="100%" border="1" bordercolor="#000000" cellspacing="0">
+              <tbody><tr bgcolor="#0000ff"> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Offset</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Field</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Size</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Value</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-2" color="#ffffff" face="Arial, Helvetica, sans-serif">Description</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">0</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bLength</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">Size 
+                    of this descriptor in bytes</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bDescriptorType</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Constant</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">STRING 
+                    descriptor type (= 3)</div>
+                </td>
+              </tr>
+              <tr> 
+                <td width="12%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td width="31%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">bString</div>
+                </td>
+                <td width="7%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+                <td width="10%"> 
+                  <div align="center"><font size="-2" face="Arial, Helvetica, sans-serif">Number</div>
+                </td>
+                <td width="40%"> 
+                  <div align="center"><font size="-1"><font size="-2">UNICODE 
+                    encoded string</div>
+                </td>
+              </tr>
+            </tbody></table>
+            <p align="center"><b>String 
+              Descriptor</b></p>
+          </td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="158"> 
+            <h4>SET_CONFIGURATION</h4>
+            <p>When the host has got 
+              all the information it requires it loads a driver for the device 
+              based on the VID/PID combination in the device descriptor, or on 
+              the standard class defined there or in an interface descriptor.</p>
+            <p>The driver may also ask 
+              for the same or different information using Get Descriptor requests.</p>
+            <p>Eventually it will decide 
+              to <i>configure</i> the device using the SET_CONFIGURATION request. 
+              Usually ( when there is one configuration) the Set Configuration 
+              request will have wValue set to 1, which will select the first configuration. 
+              </p>
+            <p> Set Configuration can 
+              also be used, with wValue set to 0, to deconfigure the device.</p>
+          </td>
+          <td width="1%" height="158">&nbsp;</td>
+          <td width="51%" height="158"> 
+            <table width="90%" border="1" bordercolor="#0000ff" cellspacing="0">
+              <tbody><tr> 
+                <td height="374"> 
+                  <h4>A Configured Device</h4>
+                  <p>Once a device has 
+                    been configured, it is allowed to respond to other transfer 
+                    types than Control transfers.</p>
+                  <p>As we have seen, 
+                    the other transfer types are</p>
+                  <ul>
+                    <li>Interrupt Transfers</li>
+                    <li>Bulk Transfers</li>
+                    <li>Isochronous 
+                      Transfers</li>
+                  </ul>
+                  <p>As a result of 
+                    the information in the descriptors, the host will now know 
+                    what particular transfers on which particular endpoints the 
+                    device is prepared to support. There may now also be new class 
+                    or vendor-specific requests which may now be supported on 
+                    the control endpoint in addition to the standard requests.</p>
+                  <p>It is all these 
+                    additional transfers which perform the functionality that 
+                    the device was designed for.</p>
+                </td>
+              </tr>
+            </tbody></table>
+          </td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="85"> 
+            <h4>GET_CONFIGURATION</h4>
+            <p>This request compliments 
+              Set Configuration, and simply allows the host to determine which 
+              configuration it previously set.</p>
+          </td>
+          <td width="1%" height="85">&nbsp;</td>
+          <td width="51%" height="85">&nbsp;</td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="158"> 
+            <h4>SET_FEATURE<br>
+              CLEAR_FEATURE</h4>
+            <p>This pair of requests 
+              is used to control a small number of on-off features on a device, 
+              an interface or an endpoint.</p>
+            <p>A device has 5 possible 
+              features, an endpoint has one, and an interface actually has none 
+              at all. </p>
+            <p>The greyed out features 
+              shown in the table only apply to OTG devices.</p>
+            <h5>ENDPOINT_HALT</h5>
+            <p>Setting this feature 
+              will cause an endpoint to STALL any IN or OUT transactions.</p>
+            <h5>DEVICE_REMOTE_WAKEUP</h5>
+            <p>Setting this feature 
+              allows a device which is then suspended to use <b>resume</b> signalling 
+              to gain the host's attention.</p>
+          </td>
+          <td width="1%" height="158">&nbsp;</td>
+          <td width="51%" height="158"> 
+            <table width="100%" border="1" bordercolor="#000000" cellspacing="0">
+              <tbody><tr> 
+                <td bgcolor="#0000ff"> 
+                  <div align="center"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Feature 
+                    Selector </div>
+                </td>
+                <td bgcolor="#0000ff"> 
+                  <div align="center"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Recipient</div>
+                </td>
+                <td bgcolor="#0000ff"> 
+                  <div align="center"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Value</div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">ENDPOINT_HALT</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Endpoint</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1">0</div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">DEVICE_REMOTE_WAKEUP</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Device</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">1</div>
+                </td>
+              </tr>
+              <tr> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">TEST_MODE</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Device</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">2</div>
+                </td>
+              </tr>
+              <tr bgcolor="#cccccc"> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">B_HNP_ENABLE</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Device</div>
+                </td>
+                <td> 
+                  <div align="center">3</div>
+                </td>
+              </tr>
+              <tr bgcolor="#cccccc"> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">A_HNP_SUPPORT</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Device</div>
+                </td>
+                <td> 
+                  <div align="center">4</div>
+                </td>
+              </tr>
+              <tr bgcolor="#cccccc"> 
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">A_ALT_HNP_SUPPORT</div>
+                </td>
+                <td> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Device</div>
+                </td>
+                <td> 
+                  <div align="center">5</div>
+                </td>
+              </tr>
+            </tbody></table>
+            <div align="center"><br>
+            </div>
+            <h5 align="center">Table 
+              of wValues used in Set Feature and Clear Feature requests. </h5>
+          </td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="158"> 
+            <h4>GET_STATUS</h4>
+            <p> This request is used 
+              to fetch status bits from a device, an interface or an endpoint. 
+              In each case the request fetches 16 bits (2 bytes). The tables to 
+              the right show the status bits which are currently implemented.</p>
+            <p>Note that Remote Wakeup 
+              and Halt status bits can both be controlled by the host using Set.Clear 
+              Feature requests, but the Self-powered bit is only controlled by 
+              the device. </p>
+          </td>
+          <td width="1%" height="158">&nbsp;</td>
+          <td width="51%" height="158"> 
+            <table width="100%" border="1" bordercolor="#000000" cellspacing="0">
+              <tbody><tr bgcolor="#0000ff"> 
+                <td width="27%"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Status 
+                  Bit</td>
+                <td width="26%"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Purpose</td>
+                <td width="47%"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Comment</td>
+              </tr>
+              <tr> 
+                <td width="27%"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">D0</div>
+                </td>
+                <td width="26%"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Self 
+                    Powered </div>
+                </td>
+                <td width="47%"><font size="-1" face="Arial, Helvetica, sans-serif">Set 
+                  to 1 by the device when it is self-powered</td>
+              </tr>
+              <tr> 
+                <td width="27%"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">D1</div>
+                </td>
+                <td width="26%"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Remote 
+                    Wakeup </div>
+                </td>
+                <td width="47%"><font size="-1" face="Arial, Helvetica, sans-serif">Set 
+                  to 1 if the device has been enabled to signal remote wakeup.</td>
+              </tr>
+              <tr bgcolor="#cccccc"> 
+                <td width="27%"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">D2 
+                    - D15</div>
+                </td>
+                <td width="26%"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">reserved</div>
+                </td>
+                <td width="47%"><font size="-1" face="Arial, Helvetica, sans-serif">Must 
+                  be set to 0</td>
+              </tr>
+            </tbody></table>
+            <h5 align="center">Device 
+              Status Bits</h5>
+            <table width="100%" border="1" bordercolor="#000000" cellspacing="0">
+              <tbody><tr bgcolor="#0000ff"> 
+                <td width="27%"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Status 
+                  Bit</td>
+                <td width="26%"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Purpose</td>
+                <td width="47%"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Comment</td>
+              </tr>
+              <tr bgcolor="#cccccc"> 
+                <td width="27%"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">D0 
+                    - D15</div>
+                </td>
+                <td width="26%"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">reserved</div>
+                </td>
+                <td width="47%"><font size="-1" face="Arial, Helvetica, sans-serif">Must 
+                  be set to 0</td>
+              </tr>
+            </tbody></table>
+            <h5 align="center">Interface 
+              Status Bits</h5>
+            <table width="100%" border="1" bordercolor="#000000" cellspacing="0">
+              <tbody><tr bgcolor="#0000ff"> 
+                <td width="27%"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Status 
+                  Bit</td>
+                <td width="26%"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Purpose</td>
+                <td width="47%"><font size="-1" color="#ffffff" face="Arial, Helvetica, sans-serif">Comment</td>
+              </tr>
+              <tr> 
+                <td width="27%"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">D0</div>
+                </td>
+                <td width="26%"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">Halt</div>
+                </td>
+                <td width="47%"><font size="-1" face="Arial, Helvetica, sans-serif">Set 
+                  to 1 when endpoint is halted</td>
+              </tr>
+              <tr bgcolor="#cccccc"> 
+                <td width="27%"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">D1 
+                    - D15</div>
+                </td>
+                <td width="26%"> 
+                  <div align="center"><font size="-1" face="Arial, Helvetica, sans-serif">reserved</div>
+                </td>
+                <td width="47%"><font size="-1" face="Arial, Helvetica, sans-serif">Must 
+                  be set to 0</td>
+              </tr>
+            </tbody></table>
+            <h5 align="center">Endpoint 
+              Status Bits</h5>
+          </td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="158"> 
+            <h4>SET_INTERFACE<br>
+              GET_INTERFACE</h4>
+            <p>Once a device has been 
+              configured the host may use Set Interface to select an alternative 
+              interface to a particular default interface. It can use the Get 
+              Interface to determine which interface alternative it previous set 
+              for a particular interface.</p>
+          </td>
+          <td width="1%" height="158">&nbsp;</td>
+          <td width="51%" height="158">&nbsp;</td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="158"> 
+            <h4>SYNCH_FRAME</h4>
+            <p>This is used with some 
+              isochronous transfer where the transfer size varies with the frame. 
+              See USB 2.0 specification for more details.</p>
+          </td>
+          <td width="1%" height="158">&nbsp;</td>
+          <td width="51%" height="158">&nbsp;</td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="158"> 
+            <h4>SET_DESCRIPTOR</h4>
+            <p>This Standard request 
+              is optional and not often used. It allows the host to specify a 
+              new set of values for a given descriptor. It is hard to imagine 
+              when this might be of value.</p>
+          </td>
+          <td width="1%" height="158">&nbsp;</td>
+          <td width="51%" height="158">&nbsp;</td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="77"> 
+            <h2>Summary</h2>
+            <p>We have looked at the 
+              set of standard requests which a device must support to become operational.</p>
+          </td>
+          <td width="1%">&nbsp;</td>
+          <td width="51%">&nbsp;</td>
+        </tr>
+        <tr> 
+          <td width="48%" bgcolor="#ffffcc" height="45"> 
+            <h2>Coming up...</h2>
+            <p>Next we will examine 
+              the complete enumeration and start of operation of a specific device.</p>
+          </td>
+          <td width="1%" height="43">&nbsp;</td>
+          <td width="51%" height="43"><a href="http://www.usbmadesimple.co.uk/ums_5.htm"><b>Forward</b></a></td>
+        </tr>
+        <tr>
+          <td width="48%" bgcolor="#ffffcc" height="45"> 
+            <div align="right"><font size="-2" face="Arial, Helvetica, sans-serif">Copyright 
+              \A9 2006-2008 MQP Electronics Ltd</div>
+          </td>
+          <td width="1%" height="43">&nbsp;</td>
+          <td width="51%" height="43">&nbsp;</td>
+        </tr>
+        <tr> 
+          <td colspan="3" height="45"> 
+            <div align="right">
+              <div align="right"><font size="-2" face="Arial, Helvetica, sans-serif">ADVERTISEMENT 
+              </div>
+              <table width="100%" border="1" bordercolor="#0000ff" cellspacing="0">
+                <tbody><tr> 
+                  <td height="148"> 
+                    <table width="100%" border="0" cellspacing="0">
+                      <tbody><tr> 
+                        <td width="59%"> 
+                          <h5>Packet-Master 
+                            USB Bus Analysers and Generators from MQP Electronics</h5>
+                        </td>
+                        <td width="1%">&nbsp;</td>
+                        <td width="40%"> 
+                          <div align="right"><a href="http://www.mqp.com/usbdev.htm"><font color="#ff0000" face="Arial, Helvetica, sans-serif">Special 
+                            Offer</a></div>
+                        </td>
+                      </tr>
+                      <tr> 
+                        <td width="59%"> <a href="http://www.mqp.com/usbdev.htm"><img src="Part%204%20-%20Protocol_arquivos/usb12_500_gp_400.jpg" width="400" border="0" height="229"></a></td>
+                        <td width="1%">&nbsp;</td>
+                        <td width="40%"> 
+                          <ul>
+                            <li>Radically 
+                              cut development time</li>
+                            <li>Intuitive 
+                              graphical interface</li>
+                            <li>Detailed 
+                              timing information</li>
+                            <li>Full 
+                              analysis of all standard events</li>
+                            <li>Results 
+                              can be printed</li>
+                            <li>Optional 
+                              class analysis modules</li>
+                          </ul>
+                          <div align="right"><a href="http://www.mqp.com/usbdev.htm">Click 
+                            for more information</a></div>
+                        </td>
+                      </tr>
+                    </tbody></table>
+                  </td>
+                </tr>
+              </tbody></table>
+            </div>
+            </td>
+        </tr>
+      </tbody></table>
+    </td>
+  </tr>
+</tbody></table>
+<div align="left"></div>
+</body></html>

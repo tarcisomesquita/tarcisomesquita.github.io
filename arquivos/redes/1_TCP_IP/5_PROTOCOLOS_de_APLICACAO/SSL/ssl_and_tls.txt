@@ -1,0 +1,36 @@
+ +---------------+-----------+----------+
+ | content type  |  version  |  length  |
+ +---------------+-----------+----------+                                             
+           Record Header
+
+
+After the header comes the message data. This is compressed by the compression algorithm that has been negotiated
+for the connection. However as no compression algorithms are specified for use with TLS or SSL, this is usually a
+null operation.
+
+The MAC is then calculated for the compressed data and appended to the record.
+ +-------------+--------------+
+ |  pad bytes  |  pad length  |
+ +-------------+--------------+
+            Record Pad
+
+If a block cipher is in effect for the connection then then a pad is added in order for the message size to be a multiple
+of the block size of the cipher. The pad consists of padding followed by a byte containing the length of the padding.
+The padding itself is also set to the value of the length of the padding. The padding may be any length up to 255
+bytes, so long as the length of the resulting record is a multiple of the block length of the cipher.
+As an example, if a record is 123 bytes long and the block length is 8 bytes, then a pad length of 4 would make the
+combined length of the record, padding and pad length 128 bytes, a multiple of the block length. 12, 20 and 252
+are examples of other valid pad lengths. The intention of allowing a range of pad values is to allow the length of the
+record to be obscured to some extent.
+
+ +--------------+--------------+--------------+--------------+--------------+
+ |      4       |      4       |      4       |      4       |      4       |
+ |  pad byte 1  |  pad byte 2  |  pad byte 3  |  pad byte 4  |  pad length  |
+ +--------------+--------------+--------------+--------------+--------------+
+                                  Record Pad
+
+If the NULL cipher or a stream cipher is in effect then padding is not needed. In practice this occurs during the initial handshake which is conducted in plain-text and if RC4[23, 12] are used.
+
+
+parei na página 8 em "4 Messages"
+

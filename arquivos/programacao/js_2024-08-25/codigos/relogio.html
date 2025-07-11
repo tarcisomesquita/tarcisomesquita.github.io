@@ -1,0 +1,95 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>relogio</title>
+</head>
+
+<script type="text/javascript">
+function clock(){
+   var time = new Date ();
+   var a_sec = (- Math.PI * time.getSeconds() / 30) + (Math.PI / 2);
+   var a_min = (- Math.PI * time.getMinutes() / 30) + (Math.PI / 2);
+   var a_hr  = (- Math.PI * time.getHours()   /  6) + (Math.PI / 2) - Math.PI * parseInt(time.getMinutes())/360;
+   for (i=0; i < 6; i++){
+      document.getElementById("sec" + (i+1)).style.bottom = (45 + i * 8 * Math.sin(a_sec)).toString() + "px";
+      document.getElementById("sec" + (i+1)).style.left   = (45 + i * 8 * Math.cos(a_sec)).toString() + "px";
+   }
+   for (i=0; i < 5; i++){
+      document.getElementById("min" + (i+1)).style.bottom = (45 + i * 8 * Math.sin(a_min)).toString() + "px";
+      document.getElementById("min" + (i+1)).style.left   = (45 + i * 8 * Math.cos(a_min)).toString() + "px";
+   }
+   for (i=0; i < 4; i++){
+      document.getElementById("hour" + (i+1)).style.bottom = (45 + i * 8 * Math.sin(a_hr)).toString() + "px";
+      document.getElementById("hour" + (i+1)).style.left   = (45 + i * 8 * Math.cos(a_hr)).toString() + "px";
+   }
+   setTimeout('clock()',500);
+}
+</script>
+<style type="text/css">
+div.dig, div.hour, div.min, div.sec{position:absolute;}
+div.hour, div.min, div.sec{
+   width:2px;
+   height:2px;
+   font-size:2px;
+   border-radius:1px;
+}
+div.dig{
+   width:14px;
+   height:12px;
+   font-family:arial,verdana,sans-serif;
+   font-size:10px;
+   color:#000000;
+   text-align:center;
+   vertical-align:center;
+}
+div.min {background:#0000FF;}
+div.hour{background:#000000;}
+div.sec {background:#FF0000;}
+</style>
+
+
+</head>
+<body onload="clock()">
+<div style="width:94px;height:92px;position:absolute;left:0px;top:0px;">
+   <div id="dig1" class="dig">1</div>
+   <div id="dig2" class="dig">2</div>
+   <div id="dig3" class="dig">3</div>
+   <div id="dig4" class="dig">4</div>
+   <div id="dig5" class="dig">5</div>
+   <div id="dig6" class="dig">6</div>
+   <div id="dig7" class="dig">7</div>
+   <div id="dig8" class="dig">8</div>
+   <div id="dig9" class="dig">9</div>
+   <div id="dig10" class="dig">10</div>
+   <div id="dig11" class="dig">11</div>
+   <div id="dig12" class="dig">12</div>
+
+   <div id="hour1" class="hour"></div>
+   <div id="hour2" class="hour"></div>
+   <div id="hour3" class="hour"></div>
+   <div id="hour4" class="hour"></div>
+
+   <div id="min1" class="min"></div>
+   <div id="min2" class="min"></div>
+   <div id="min3" class="min"></div>
+   <div id="min4" class="min"></div>
+   <div id="min5" class="min"></div>
+
+   <div id="sec1" class="sec"></div>
+   <div id="sec2" class="sec"></div>
+   <div id="sec3" class="sec"></div>
+   <div id="sec4" class="sec"></div>
+   <div id="sec5" class="sec"></div>
+   <div id="sec6" class="sec"></div>
+</div>
+<script>
+for (i=0; i < 12; ++i){
+   // centro = (40,40)
+   // raio = 40
+   document.getElementById("dig" + (i+1)).style.bottom = (40 + 40 * Math.sin((2 - i) * (Math.PI/6) ) ).toString() + "px";
+   document.getElementById("dig" + (i+1)).style.left   = (40 + 40 * Math.cos((2 - i) * (Math.PI/6) ) ).toString() + "px";
+}
+</script>
+
+</body>
+</html>

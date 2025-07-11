@@ -1,0 +1,2913 @@
+version 7.6, dated September 23, 2014. Nova versão a cada 6 meses.
+http://www.linuxfromscratch.org/lfs/errata/7.6/
+
+# no terminal ROOT
+dpkg -i /media/lubuntu/LU_14.10/archives/*.deb && \
+sync && \
+dpkg -i /media/lubuntu/LU_14.10/archives/gawk_1%3a4.1.1+dfsg-1_i386.deb && \
+sync && \
+mkdir -p /media/lubuntu/LU_14.10/LFS/lfs/sources && \
+mkdir -p /media/lubuntu/LU_14.10/LFS/lfs/tools && \
+ln -s /media/lubuntu/LU_14.10/LFS/lfs/tools / && \
+mkdir -p /mnt/ && \
+ln -s /media/lubuntu/LU_14.10/LFS/lfs /mnt/lfs && \
+export LFS=/mnt/lfs && \
+\
+groupadd lfs && \
+useradd -s /bin/bash -g lfs -m -k /dev/null lfs && \
+passwd lfs
+
+sync && \
+chown lfs $LFS && \
+chown lfs $LFS/tools && \
+chown lfs $LFS/sources && \
+chmod 0755 /media/lubuntu && \
+sync
+
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = ROOT FIM = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+su - lfs
+
+cat > ~/.bash_profile << "EOF"
+exec env -i HOME=$HOME TERM=$TERM PS1='\u:\w\$ ' /bin/bash
+EOF
+
+cat > ~/.bashrc << "EOF"
+set +h
+umask 022
+LFS=/mnt/lfs
+LC_ALL=POSIX
+LFS_TGT=$(uname -m)-lfs-linux-gnu
+PATH=/tools/bin:/bin:/usr/bin
+export LFS LC_ALL LFS_TGT PATH
+EOF
+
+source ~/.bash_profile
+
+cd $LFS/sources
+
+# = = = = = = = = = = = = = = = = = = = = = = = = = = = = = COMPILAR INÍCIO = = = = = = = = = = = = = = = = = =
+
+tar -x  -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/binutils-2.24.tar.bz2 && \
+sync  && \
+mkdir -vp $LFS/sources/binutils-build && \
+cd        $LFS/sources/binutils-build && \
+../binutils-2.24/configure     \
+    --prefix=/tools            \
+    --with-sysroot=$LFS        \
+    --with-lib-path=/tools/lib \
+    --target=$LFS_TGT          \
+    --disable-nls              \
+    --disable-werror && \
+sync  && \
+make && \
+sync  && \
+make install && \
+sync && \
+cd ..  && \
+rm -rf binutils-build  && \
+sync
+
+
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/linux-3.16.2.tar.xz  && \
+sync  && \
+cd linux-3.16.2/  && \
+make mrproper  && \
+sync  && \
+mkdir ./headers  && \
+make INSTALL_HDR_PATH=./headers headers_install  && \
+sync  && \
+mkdir -vp /tools/include && \
+cp -rv ./headers/include/* /tools/include  && \
+sync  && \
+cd ..   && \
+rm -rf linux-3.16.2/  && \
+sync
+
+
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/gcc-4.9.1.tar.bz2 && \
+cd    ./gcc-4.9.1 && \
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/mpfr-3.1.2.tar.xz && \
+mv -v mpfr-3.1.2 mpfr && \
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/gmp-6.0.0a.tar.xz && \
+mv -v gmp-6.0.0 gmp && \
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/mpc-1.0.2.tar.gz && \
+mv -v mpc-1.0.2 mpc && \
+\
+for file in $(find gcc/config/ -name linux64.h -o -name linux.h -o -name sysv4.h)
+do
+  cp -uv $file{,.orig}
+  sed -e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g'  -e 's@/usr@/tools@g' $file.orig > $file
+  echo '
+#undef STANDARD_STARTFILE_PREFIX_1
+#undef STANDARD_STARTFILE_PREFIX_2
+#define STANDARD_STARTFILE_PREFIX_1 "/tools/lib/"
+#define STANDARD_STARTFILE_PREFIX_2 ""' >> $file
+  touch $file.orig
+done && \
+\
+sed -i '/k prot/agcc_cv_libc_provides_ssp=yes' gcc/configure && \
+sed -i 's/if \((code.*))\)/if (\1 \&\& \!DEBUG_INSN_P (insn))/' gcc/sched-deps.c && \
+\
+cd .. && \
+\
+mkdir -vp $LFS/sources/gcc-build && \
+cd        $LFS/sources/gcc-build && \
+../gcc-4.9.1/configure                               \
+    --target=$LFS_TGT                                \
+    --prefix=/tools                                  \
+    --with-sysroot=$LFS                              \
+    --with-newlib                                    \
+    --without-headers                                \
+    --with-local-prefix=/tools                       \
+    --with-native-system-header-dir=/tools/include   \
+    --disable-nls                                    \
+    --disable-shared                                 \
+    --disable-multilib                               \
+    --disable-decimal-float                          \
+    --disable-threads                                \
+    --disable-libatomic                              \
+    --disable-libgomp                                \
+    --disable-libitm                                 \
+    --disable-libquadmath                            \
+    --disable-libsanitizer                           \
+    --disable-libssp                                 \
+    --disable-libvtv                                 \
+    --disable-libcilkrts                             \
+    --disable-libstdc++-v3                           \
+    --enable-languages=c,c++ && \
+\
+make && \
+sync && \
+make install && \
+sync && \
+cd .. && \
+rm -rf gcc-build/ && \
+sync
+
+
+cd        $LFS/sources && \
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/glibc-2.20.tar.xz && \
+mkdir -vp $LFS/sources/glibc-build && \
+cd        $LFS/sources/glibc-build && \
+\
+../glibc-2.20/configure                             \
+      --prefix=/tools                               \
+      --host=$LFS_TGT                               \
+      --build=$(../glibc-2.20/scripts/config.guess) \
+      --disable-profile                             \
+      --enable-kernel=3.16.0                        \
+      --with-headers=/tools/include                 \
+      libc_cv_forced_unwind=yes                     \
+      libc_cv_ctors_header=yes                      \
+      libc_cv_c_cleanup=yes && \
+sync && \
+make && \
+sync && \
+make install && \
+sync && \
+cd .. && \
+rm -rf glibc-build/ glibc-2.20/ && \
+sync && \
+echo "Teste após compilar glibc. Espera-se a dependência /tools/lib/ld-linux.so.2" > teste.txt && \
+echo 'extern int printf(char *, ...); int main(){ printf("\nHello world new!\n\n"); return 0;}' > dummy.c && \
+$LFS_TGT-gcc dummy.c && \
+readelf -l a.out | grep 'ld-linux.so.2' >> teste.txt && \
+rm -v  a.out
+
+
+mkdir -vp $LFS/sources/gcc-build && \
+cd        $LFS/sources/gcc-build && \
+../gcc-4.9.1/libstdc++-v3/configure \
+    --host=$LFS_TGT                 \
+    --prefix=/tools                 \
+    --disable-multilib              \
+    --disable-shared                \
+    --disable-nls                   \
+    --disable-libstdcxx-threads     \
+    --disable-libstdcxx-pch         \
+    --with-gxx-include-dir=/tools/$LFS_TGT/include/c++/4.9.1 && \
+sync && \
+make && \
+sync && \
+make install && \
+sync && \
+cd ..  && \
+rm -rf gcc-build/ && \
+sync
+
+
+mkdir -vp $LFS/sources/binutils-build && \
+cd        $LFS/sources/binutils-build && \
+sync && \
+CC=$LFS_TGT-gcc                \
+AR=$LFS_TGT-ar                 \
+RANLIB=$LFS_TGT-ranlib         \
+../binutils-2.24/configure     \
+    --prefix=/tools            \
+    --disable-nls              \
+    --disable-werror           \
+    --with-lib-path=/tools/lib \
+    --with-sysroot && \
+sync && \
+make && \
+sync && \
+make install && \
+sync && \
+\
+#  This tells the make program to remove all compiled files in the ld subdirectory.
+make -C ld clean   && \
+sync && \
+\
+#  This option rebuilds everything in the ld subdirectory. 
+make -C ld LIB_PATH=/usr/lib:/lib   && \
+sync  && \
+cp -v ld/ld-new /tools/bin && \
+sync && \
+cd ..  && \
+rm -rf binutils-build/ binutils-2.24/  && \
+sync
+
+
+cd        $LFS/sources/gcc-4.9.1  && \
+cat gcc/limitx.h gcc/glimits.h gcc/limity.h >  `dirname $($LFS_TGT-gcc -print-libgcc-file-name)`/include-fixed/limits.h  && \
+for file in $(find gcc/config -name linux64.h -o -name linux.h -o -name sysv4.h)
+do
+  cp -uv $file{,.orig}
+  sed -e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g'   -e 's@/usr@/tools@g' $file.orig > $file
+  echo '
+#undef STANDARD_STARTFILE_PREFIX_1
+#undef STANDARD_STARTFILE_PREFIX_2
+#define STANDARD_STARTFILE_PREFIX_1 "/tools/lib/"
+#define STANDARD_STARTFILE_PREFIX_2 ""' >> $file
+  touch $file.orig
+done  && \
+sed -i 's/if \((code.*))\)/if (\1 \&\& \!DEBUG_INSN_P (insn))/' gcc/sched-deps.c  && \
+sync   && \
+\
+mkdir -vp $LFS/sources/gcc-build && \
+cd                 $LFS/sources/gcc-build && \
+CC=$LFS_TGT-gcc                                      \
+CXX=$LFS_TGT-g++                                     \
+AR=$LFS_TGT-ar                                       \
+RANLIB=$LFS_TGT-ranlib                               \
+../gcc-4.9.1/configure                               \
+    --prefix=/tools                                  \
+    --with-local-prefix=/tools                       \
+    --with-native-system-header-dir=/tools/include   \
+    --enable-languages=c,c++                         \
+    --disable-libstdcxx-pch                          \
+    --disable-multilib                               \
+    --disable-bootstrap                              \
+    --disable-libgomp && \
+sync && \
+make && \
+sync && \
+make install && \
+sync && \
+ln -sv gcc /tools/bin/cc && \
+cd ..  && \
+rm -rf  gcc-build/ gcc-4.9.1/ && \
+sync  && \
+echo " " >> teste.txt && \
+echo "Teste após compilar o gcc pela segunda vez. Espera-se a dependência /tools/lib/ld-linux.so.2" >> teste.txt && \
+$LFS_TGT-gcc dummy.c && \
+readelf -l a.out | grep 'ld-linux.so.2' >> teste.txt && \
+rm -v  a.out
+
+
+cd                 $LFS/sources/  && \
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/tcl8.6.2-src.tar.gz  && \
+sync  && \
+mkdir -vp $LFS/sources/tcl-build  && \
+cd                 $LFS/sources/tcl-build  && \
+../tcl8.6.2/unix/configure   --prefix=/tools  && \
+sync  && \
+make  && \
+sync  && \
+TZ=UTC make test  && \
+sync  && \
+make install  && \
+sync  && \
+chmod -v u+w /tools/lib/libtcl8.6.so  && \
+make install-private-headers  && \
+sync  && \
+ln -sv tclsh8.6 /tools/bin/tclsh  && \
+cd ..   && \
+rm -rf tcl-build/ tcl8.6.2/ && \
+sync
+
+
+cd                 $LFS/sources/  && \
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/expect5.45.tar.gz  && \
+sync && \
+mkdir -vp $LFS/sources/expect-build  && \
+cd        $LFS/sources/expect-build  && \
+../expect5.45/configure --prefix=/tools       \
+            --with-tcl=/tools/lib \
+            --with-tclinclude=/tools/include  && \
+sync  && \
+make  && \
+sync  && \
+make test  && \
+sync  && \
+make SCRIPTS="" install  && \
+sync  && \
+cd ..   && \
+rm -rf expect-build/ expect5.45/  && \
+sync && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/dejagnu-1.5.1.tar.gz  && \
+sync && \
+mkdir -vp $LFS/sources/dejagnu-build  && \
+cd        $LFS/sources/dejagnu-build  && \
+../dejagnu-1.5.1/configure --prefix=/tools  && \
+sync  && \
+make install  && \
+sync  && \
+make check  && \
+sync  && \
+cd ..   && \
+rm -rf dejagnu-build/ dejagnu-1.5.1/  && \
+sync   && \
+
+
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/check-0.9.14.tar.gz && \
+sync && \
+cd check-0.9.14 && \
+cp -v configure{,.orig} && \
+sed 's:/usr/local/bin:/bin:' configure.orig > configure && \
+cd .. && \
+mkdir -vp $LFS/sources/check-build && \
+cd        $LFS/sources/check-build && \
+PKG_CONFIG= ../check-0.9.14/configure   --prefix=/tools && \
+sync && \
+make && \
+sync && \
+make check && \
+sync && \
+make install && \
+sync && \
+cd ..  && \
+rm -rf  check-build/ check-0.9.14/ && \
+sync  && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/ncurses-5.9.tar.gz && \
+sync && \
+mkdir -vp $LFS/sources/ncurses-build && \
+cd        $LFS/sources/ncurses-build && \
+../ncurses-5.9/configure --prefix=/tools \
+            --with-shared   \
+            --without-debug \
+            --without-ada   \
+            --enable-widec  \
+            --enable-overwrite && \
+sync && \
+make && \
+sync && \
+make install && \
+sync && \
+cd ..  && \
+rm -rf ncurses-build/ ncurses-5.9/ && \
+sync && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/bash-4.3.30.tar.gz && \
+sync  && \
+mkdir -vp $LFS/sources/bash-build  && \
+cd        $LFS/sources/bash-build  && \
+\
+ # Bash will use the malloc functions from Glibc which are more stable.
+../bash-4.3.30/configure --prefix=/tools --without-bash-malloc   && \
+sync  && \
+make  && \
+sync  && \
+make tests  && \
+sync  && \
+make install  && \
+sync  && \
+ln -sv bash /tools/bin/sh  && \
+cd ..  && \
+rm -rf bash-build/ bash-4.3.30/  && \
+sync   && \
+echo "TERMINEI BASH"
+
+
+cd $LFS/sources/   && \
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/bzip2-1.0.6.tar.gz   && \
+sync   && \
+cd bzip2-1.0.6/   && \
+make   && \
+sync   && \
+make PREFIX=/tools install   && \
+sync   && \
+cd ..   && \
+rm -rf  bzip2-1.0.6/  && \
+sync    && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/coreutils-8.23.tar.xz  && \
+sync  && \
+mkdir -vp $LFS/sources/coreutils-build  && \
+cd        $LFS/sources/coreutils-build  && \
+../coreutils-8.23/configure --prefix=/tools --enable-install-program=hostname  && \
+sync  && \
+make  && \
+sync  && \
+make RUN_EXPENSIVE_TESTS=yes check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf coreutils-build/ coreutils-8.23/  && \
+sync  && \
+echo "TERMINEI coreutils"
+
+
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/diffutils-3.3.tar.xz && \
+sync  && \
+chmod 0755 diffutils-3.3/configure && \
+mkdir -vp $LFS/sources/diffutils-build  && \
+cd                $LFS/sources/diffutils-build  && \
+../diffutils-3.3/configure --prefix=/tools  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..   && \
+rm -rf diffutils-build/ diffutils-3.3/  && \
+sync   && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/file-5.19.tar.gz && \
+sync  && \
+mkdir -vp $LFS/sources/file-build  && \
+cd                 $LFS/sources/file-build  && \
+../file-5.19/configure --prefix=/tools  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..   && \
+rm -rf  file-build/ file-5.19/ && \
+sync   && \
+echo "TERMINEI file"
+
+
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/findutils-4.4.2.tar.gz && \
+sync  && \
+mkdir -vp $LFS/sources/findutils-build  && \
+cd                $LFS/sources/findutils-build  && \
+../findutils-4.4.2/configure --prefix=/tools  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..   && \
+rm -rf findutils-build/ findutils-4.4.2/  && \
+sync  && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/gawk-4.1.1.tar.xz  && \
+sync  && \
+mkdir -vp $LFS/sources/gawk-build  && \
+cd                $LFS/sources/gawk-build  && \
+../gawk-4.1.1/configure --prefix=/tools  && \
+sync  && \
+make  && \
+sync  && \
+#make check  && \
+#sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf gawk-build/ gawk-4.1.1/ && \
+sync   && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/gettext-0.19.2.tar.xz && \
+sync  && \
+mkdir -vp $LFS/sources/gettext-build  && \
+cd                $LFS/sources/gettext-build  && \
+EMACS="no" ../gettext-0.19.2/gettext-tools/configure --prefix=/tools  --disable-shared  && \
+sync  && \
+make -C gnulib-lib  && \
+sync  && \
+make -C src msgfmt  && \
+sync  && \
+make -C src msgmerge  && \
+sync  && \
+make -C src xgettext  && \
+sync  && \
+cp -v src/{msgfmt,msgmerge,xgettext} /tools/bin  && \
+cd ..   && \
+rm -rf  gettext-build/ gettext-0.19.2/ && \
+sync   && \
+echo "TERMINEI gettext"
+
+
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/grep-2.20.tar.xz && \
+sync  && \
+chmod 0755 grep-2.20/configure && \
+mkdir -vp $LFS/sources/grep-build  && \
+cd                $LFS/sources/grep-build  && \
+../grep-2.20/configure --prefix=/tools  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..   && \
+rm -rf grep-build/ grep-2.20/  && \
+sync  && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/gzip-1.6.tar.xz && \
+sync  && \
+chmod 0755 gzip-1.6/configure && \
+mkdir -vp $LFS/sources/gzip-build  && \
+cd                 $LFS/sources/gzip-build  && \
+../gzip-1.6/configure --prefix=/tools  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..   && \
+rm -rf gzip-build/ gzip-1.6/  && \
+sync  && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/m4-1.4.17.tar.xz && \
+sync  && \
+mkdir -vp $LFS/sources/m4-build  && \
+cd        $LFS/sources/m4-build  && \
+../m4-1.4.17/configure --prefix=/tools  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf m4-build/ m4-1.4.17/ && \
+sync   && \
+echo "TERMINEI m4"
+
+
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/make-4.0.tar.bz2 && \
+sync  && \
+mkdir -vp $LFS/sources/make-build && \
+cd                $LFS/sources/make-build && \
+../make-4.0/configure --prefix=/tools --without-guile && \
+sync && \
+make && \
+sync && \
+make check && \
+sync && \
+make install && \
+sync && \
+cd ..  && \
+rm -rf make-build/ make-4.0/ && \
+sync && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/patch-2.7.1.tar.xz && \
+sync  && \
+mkdir -vp $LFS/sources/patch-build  && \
+cd                $LFS/sources/patch-build  && \
+../patch-2.7.1/configure --prefix=/tools  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf patch-build/ patch-2.7.1/ && \
+sync  && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/perl-5.20.0.tar.bz2  && \
+sync  && \
+cd perl-5.20.0/  && \
+sh Configure -des -Dprefix=/tools -Dlibs=-lm  && \
+sync  && \
+make  && \
+sync  && \
+cp -v perl cpan/podlators/pod2man /tools/bin  && \
+mkdir -pv /tools/lib/perl5/5.20.0  && \
+cp -Rv lib/* /tools/lib/perl5/5.20.0  && \
+sync  && \
+cd ..  && \
+rm -rf  perl-5.20.0/ && \
+sync  && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/sed-4.2.2.tar.bz2 && \
+sync  && \
+mkdir -vp $LFS/sources/sed-build && \
+cd                $LFS/sources/sed-build && \
+../sed-4.2.2/configure --prefix=/tools && \
+sync && \
+make && \
+sync && \
+make check && \
+sync && \
+make install && \
+sync && \
+cd .. && \
+rm -rf sed-build/ sed-4.2.2/ && \
+sync   && \
+echo "TERMINEI sed"
+
+
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/tar-1.28.tar.xz && \
+sync  && \
+mkdir -vp $LFS/sources/tar-build && \
+cd                $LFS/sources/tar-build && \
+../tar-1.28/configure --prefix=/tools && \
+sync && \
+make && \
+sync && \
+#make check && \
+#sync && \
+make install && \
+sync && \
+cd .. && \
+rm -rf tar-build/ tar-1.28/ && \
+sync   && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/texinfo-5.2.tar.xz && \
+sync  && \
+mkdir -vp $LFS/sources/texinfo-build && \
+cd                $LFS/sources/texinfo-build && \
+../texinfo-5.2/configure --prefix=/tools && \
+sync && \
+make && \
+sync && \
+make check && \
+sync && \
+make install && \
+sync && \
+cd .. && \
+rm -rf texinfo-build/ texinfo-5.2/ && \
+sync   && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/util-linux-2.25.1.tar.xz && \
+sync  && \
+mkdir -vp $LFS/sources/util-linux-build && \
+cd                $LFS/sources/util-linux-build && \
+../util-linux-2.25.1/configure --prefix=/tools                \
+            --without-python               \
+            --disable-makeinstall-chown    \
+            --without-systemdsystemunitdir \
+            PKG_CONFIG="" && \
+sync && \
+make && \
+sync && \
+make install && \
+sync && \
+cd .. && \
+rm -rf util-linux-build/ util-linux-2.25.1/ && \
+sync   && \
+\
+\
+tar -x -f /media/lubuntu/LU_14.10/LFS/lfs/sources_compactadas/xz-5.0.5.tar.xz && \
+sync  && \
+mkdir -vp $LFS/sources/xz-build && \
+cd                $LFS/sources/xz-build && \
+../xz-5.0.5/configure --prefix=/tools && \
+sync && \
+make && \
+sync && \
+make check && \
+sync && \
+make install && \
+sync && \
+cd .. && \
+rm -rf xz-build/ xz-5.0.5/ && \
+sync   && \
+echo "TERMINEI xz"
+
+# = = = = = = = = = = = = = = = = = = = = = = = = = = DESCOMPACTAR FIM = = = = = = = = = = = = = = = = = = = = = = =
+
+
+/usr/bin/strip --strip-debug         /tools/lib/*
+/usr/bin/strip --strip-unneeded /tools/{,s}bin/*   # warning: this command destroy static libs
+
+/bin/rm -rf /tools/{,share}/{info,man,doc}
+
+# = = = = = = = = = = = = = = = = = = = = = = TOOLS fim  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+# Building the LFS System 
+
+# deixe o lfs e mude para ROOT
+
+chown -R root:root $LFS/tools
+
+# AGORA faça BACKUP de TOOLS se quiser mantê-lo
+
+
+mkdir -pv $LFS/{dev,proc,sys,run}
+
+mknod -m 600 $LFS/dev/console c 5 1
+mknod -m 666 $LFS/dev/null c 1 3
+
+mount -v --bind /dev $LFS/dev
+mount -vt devpts devpts $LFS/dev/pts -o gid=5,mode=620   #  gid=5 is the group ID used later for the tty group.
+mount -vt proc proc $LFS/proc
+mount -vt sysfs sysfs $LFS/sys
+mount -vt tmpfs tmpfs $LFS/run
+
+if [ -h $LFS/dev/shm ]; then
+  mkdir -pv $LFS/$(readlink $LFS/dev/shm)
+fi
+
+# se instalar cada programa em um diretório, então os diretórios precisam ser inclusos em PATH, LD_LIBRARY_PATH, MANPATH, INFOPATH and CPPFLAGS.
+# ou usar
+# tar -x -f $pkg-$ver.tar.bz2
+# cd $pkg-$ver
+# ./configure --prefix=/usr
+# make
+# FAKEROOT=/usr/fakeroot/$pkg-$ver
+# make DESTDIR=$FAKEROOT install
+# cd $FAKEROOT
+# tar -c -f - . | ( cd / ; tar -x -f -)
+
+# para copiar o systema de um computador para outro, precisa modificar os arquivos:  /etc/hosts, /etc/fstab, /etc/passwd, /etc/group, /etc/shadow, /etc/ld.so.conf, /etc/sysconfig/rc.site, /etc/sysconfig/network, and /etc/sysconfig/ifconfig.eth0. 
+
+
+chroot "$LFS" /tools/bin/env -i \
+    HOME=/root                  \
+    TERM="$TERM"                \
+    PS1='\u:\w\$ '              \
+    PATH=/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
+    /tools/bin/bash --login +h
+
+
+mkdir -pv /{bin,boot,etc/{opt,sysconfig},home,lib,mnt,opt}
+mkdir -pv /{media/{floppy,cdrom},sbin,srv,var}
+install -dv -m 0750 /root
+install -dv -m 1777 /tmp /var/tmp
+mkdir -pv /usr/{,local/}{bin,include,lib,sbin,src}
+mkdir -pv /usr/{,local/}share/{color,dict,doc,info,locale,man}
+mkdir -v  /usr/{,local/}share/{misc,terminfo,zoneinfo}
+mkdir -v  /usr/libexec
+mkdir -pv /usr/{,local/}share/man/man{1..8}
+
+case $(uname -m) in
+ x86_64) ln -sv lib /lib64
+         ln -sv lib /usr/lib64
+         ln -sv lib /usr/local/lib64 ;;
+esac
+
+mkdir -v /var/{log,mail,spool}
+ln -sv /run /var/run
+ln -sv /run/lock /var/lock
+mkdir -pv /var/{opt,cache,lib/{color,misc,locate},local}
+
+
+# will be replaced by real files after
+ln -sv /tools/bin/{bash,cat,echo,pwd,stty} /bin
+ln -sv /tools/bin/perl /usr/bin
+ln -sv /tools/lib/libgcc_s.so{,.1} /usr/lib
+ln -sv /tools/lib/libstdc++.so{,.6} /usr/lib
+sed 's/tools/usr/' /tools/lib/libstdc++.la > /usr/lib/libstdc++.la
+ln -sv bash /bin/sh
+
+ln -sv /proc/self/mounts /etc/mtab
+
+cat > /etc/passwd << "EOF"
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/dev/null:/bin/false
+daemon:x:6:6:Daemon User:/dev/null:/bin/false
+messagebus:x:18:18:D-Bus Message Daemon User:/var/run/dbus:/bin/false
+nobody:x:99:99:Unprivileged User:/dev/null:/bin/false
+EOF
+
+cat > /etc/group << "EOF"
+root:x:0:
+bin:x:1:daemon
+sys:x:2:
+kmem:x:3:
+tape:x:4:
+tty:x:5:
+daemon:x:6:
+floppy:x:7:
+disk:x:8:
+lp:x:9:
+dialout:x:10:
+audio:x:11:
+video:x:12:
+utmp:x:13:
+usb:x:14:
+cdrom:x:15:
+adm:x:16:
+messagebus:x:18:
+systemd-journal:x:23:
+input:x:24:
+mail:x:34:
+nogroup:x:99:
+users:x:999:
+EOF
+
+exec /tools/bin/bash --login +h
+
+touch /var/log/{btmp,lastlog,wtmp}
+chgrp -v utmp /var/log/lastlog
+chmod -v 664  /var/log/lastlog
+chmod -v 600  /var/log/btmp
+
+# The /var/log/wtmp file records all logins and logouts. The /var/log/lastlog file records when each user last logged in. The /var/log/btmp file records the bad login attempts.
+# The /run/utmp file records the users that are currently logged in. This file is created dynamically in the boot scripts.
+
+cd sources/  && \
+\
+tar -x -f ../sources_compactadas/linux-3.16.2.tar.xz  && \
+sync  && \
+cd linux-3.16.2/  && \
+make mrproper  && \
+sync  && \
+mkdir ./headers  && \
+make INSTALL_HDR_PATH=./headers headers_install  && \
+sync  && \
+find ./headers/include \( -name .install -o -name ..install.cmd \) -delete && \
+cp -rv ./headers/include/* /usr/include && \
+sync  && \
+cd ../   && \
+rm -rf linux-3.16.2/  && \
+sync
+
+
+tar -x -f ../sources_compactadas/man-pages-3.72.tar.xz  && \
+sync  && \
+cd man-pages-3.72/  && \
+make install  && \
+sync  && \
+cd ../   && \
+rm -rf man-pages-3.72/  && \
+sync
+
+
+tar -x -f ../sources_compactadas/glibc-2.20.tar.xz  && \
+sync  && \
+cd glibc-2.20/   && \
+patch --verbose -Np1 -i ../../sources_compactadas/glibc-2.20-fhs-1.patch  && \
+sync  && \
+cd /sources  && \
+mkdir -v glibc-build  && \
+cd glibc-build  && \
+../glibc-2.20/configure    \
+    --prefix=/usr          \
+    --disable-profile      \
+    --enable-kernel=2.6.32 \
+    --enable-obsolete-rpc  && \
+sync  && \
+make  && \
+sync    && \
+#make check  && \
+#sync  && \
+touch /etc/ld.so.conf  && \
+make install  && \
+sync  && \
+cp -v ../glibc-2.20/nscd/nscd.conf /etc/nscd.conf  && \
+mkdir -pv /var/cache/nscd  && \
+echo TERMINEI
+
+mkdir -pv /usr/lib/locale
+localedef -i cs_CZ -f UTF-8 cs_CZ.UTF-8
+localedef -i de_DE -f ISO-8859-1 de_DE
+localedef -i de_DE@euro -f ISO-8859-15 de_DE@euro
+localedef -i de_DE -f UTF-8 de_DE.UTF-8
+localedef -i en_GB -f UTF-8 en_GB.UTF-8
+localedef -i en_HK -f ISO-8859-1 en_HK
+localedef -i en_PH -f ISO-8859-1 en_PH
+localedef -i en_US -f ISO-8859-1 en_US
+localedef -i en_US -f UTF-8 en_US.UTF-8
+localedef -i es_MX -f ISO-8859-1 es_MX
+localedef -i fa_IR -f UTF-8 fa_IR
+localedef -i fr_FR -f ISO-8859-1 fr_FR
+localedef -i fr_FR@euro -f ISO-8859-15 fr_FR@euro
+localedef -i fr_FR -f UTF-8 fr_FR.UTF-8
+localedef -i it_IT -f ISO-8859-1 it_IT
+localedef -i it_IT -f UTF-8 it_IT.UTF-8
+localedef -i ja_JP -f EUC-JP ja_JP
+localedef -i ru_RU -f KOI8-R ru_RU.KOI8-R
+localedef -i ru_RU -f UTF-8 ru_RU.UTF-8
+localedef -i tr_TR -f UTF-8 tr_TR.UTF-8
+localedef -i zh_CN -f GB18030 zh_CN.GB18030
+
+make localedata/install-locales
+
+cat > /etc/nsswitch.conf << "EOF"
+# Begin /etc/nsswitch.conf
+
+passwd: files
+group: files
+shadow: files
+
+hosts: files dns
+networks: files
+
+protocols: files
+services: files
+ethers: files
+rpc: files
+
+# End /etc/nsswitch.conf
+EOF
+
+
+tar -xf ../../sources_compactadas/tzdata2014g.tar.gz
+
+ZONEINFO=/usr/share/zoneinfo
+mkdir -pv $ZONEINFO/{posix,right}
+
+for tz in etcetera southamerica northamerica europe africa antarctica  \
+          asia australasia backward pacificnew systemv; do
+    zic -L /dev/null   -d $ZONEINFO       -y "sh yearistype.sh" ${tz}
+    zic -L /dev/null   -d $ZONEINFO/posix -y "sh yearistype.sh" ${tz}
+    zic -L leapseconds -d $ZONEINFO/right -y "sh yearistype.sh" ${tz}
+done
+
+cp -v zone.tab zone1970.tab iso3166.tab $ZONEINFO
+zic -d $ZONEINFO -p America/New_York
+unset ZONEINFO
+
+# determine the local time zone
+tzselect
+cp -v  /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+
+
+
+cat > /etc/ld.so.conf << "EOF"
+# Begin /etc/ld.so.conf
+/usr/local/lib
+/opt/lib
+
+EOF
+
+cat >> /etc/ld.so.conf << "EOF"
+# Add an include directory
+include /etc/ld.so.conf.d/*.conf
+
+EOF
+mkdir -pv /etc/ld.so.conf.d
+
+cd ../   && \
+rm -rf glibc-build/ glibc-2.20/  && \
+sync
+
+
+mv -v /tools/bin/{ld,ld-old}
+mv -v /tools/$(gcc -dumpmachine)/bin/{ld,ld-old}
+mv -v /tools/bin/{ld-new,ld}
+ln -sv /tools/bin/ld /tools/$(gcc -dumpmachine)/bin/ld
+
+gcc -dumpspecs | sed -e 's@/tools@@g'                   \
+    -e '/\*startfile_prefix_spec:/{n;s@.*@/usr/lib/ @}' \
+    -e '/\*cpp:/{n;s@$@ -isystem /usr/include@}' >      \
+    `dirname $(gcc --print-libgcc-file-name)`/specs
+
+echo 'main(){}' > dummy.c
+cc dummy.c -v -Wl,--verbose &> dummy.log
+readelf -l a.out | grep ': /lib'
+# o resultado deve ser: [Requesting program interpreter: /lib/ld-linux.so.2]
+
+grep -o '/usr/lib.*/crt[1in].*succeeded' dummy.log
+#The output of the last command should be:
+#/usr/lib/crt1.o succeeded
+#/usr/lib/crti.o succeeded
+#/usr/lib/crtn.o succeeded
+
+grep -B1 '^ /usr/include' dummy.log
+#This command should return the following output:
+##include <...> search starts here:
+#/usr/include
+
+grep 'SEARCH.*/usr/lib' dummy.log |sed 's|; |\n|g'
+#The output of the last command should be:
+#SEARCH_DIR("/usr/lib")
+#SEARCH_DIR("/lib");
+
+grep "/lib.*/libc.so.6 " dummy.log
+#The output of the last command (allowing for a lib64 directory on 64-bit hosts) should be:
+#attempt to open /lib/libc.so.6 succeeded
+
+grep found dummy.log
+#The output of the last command should be (allowing for platform-specific differences in dynamic linker name and a lib64 directory on 64-bit hosts):
+#found ld-linux.so.2 at /lib/ld-linux.so.2
+
+rm -v dummy.c a.out dummy.log
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/zlib-1.2.8.tar.xz  && \
+sync  && \
+cd zlib-1.2.8/  && \
+./configure --prefix=/usr  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+mv -v /usr/lib/libz.so.* /lib  && \
+ln -sfv ../../lib/$(readlink /usr/lib/libz.so) /usr/lib/libz.so  && \
+sync  && \
+cd ..  && \
+rm -rf zlib-1.2.8  && \
+sync  && \
+echo "TERMINEI zlib"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/file-5.19.tar.gz  && \
+sync  && \
+cd file-5.19/  && \
+./configure --prefix=/usr  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf file-5.19  && \
+sync  && \
+echo "TERMINEI file"
+
+
+# Verify that the PTYs are working properly inside the chroot environment by performing a simple test:
+expect -c "spawn ls"
+# This command should output the following: spawn ls
+# se isso nao acontecer, faça:
+#rm -fv etc/standards.info
+#sed -i.bak '/^INFO/s/standards.info //' etc/Makefile.in
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/binutils-2.24.tar.bz2  && \
+sync  && \
+cd binutils-2.24  && \
+patch -Np1 -i ../../sources_compactadas/binutils-2.24-load_gcc_lto_plugin_by_default-1.patch  && \
+patch -Np1 -i ../../sources_compactadas/binutils-2.24-lto_testsuite-1.patch  && \
+sync   && \
+cd ..  && \
+mkdir -v binutils-build  && \
+cd binutils-build/  && \
+../binutils-2.24/configure --prefix=/usr   \
+                           --enable-shared \
+                           --disable-werror  && \
+sync  && \
+make tooldir=/usr  && \
+sync  && \
+\
+# falhou DEJAGNU
+#make -k check  && \
+#sync  && \
+make tooldir=/usr install  && \
+sync  && \
+cd ..  && \
+rm -rf binutils-build/ binutils-2.24/  && \
+sync  && \
+echo "TERMINEI binutils"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/gmp-6.0.0a.tar.xz  && \
+sync  && \
+cd gmp-6.0.0/  && \
+./configure --prefix=/usr \
+            --enable-cxx  \
+            --docdir=/usr/share/doc/gmp-6.0.0a  && \
+sync  && \
+make  && \
+sync  && \
+make html  && \
+sync  && \
+make check 2>&1 | tee gmp-check-log  && \
+sync  && \
+awk '/tests passed/{total+=$2} ; END{print total}' gmp-check-log  && \
+make install  && \
+sync  && \
+make install-html  && \
+sync  && \
+cd ..  && \
+rm -rf gmp-6.0.0/  && \
+sync  && \
+echo "TERMINEI gmp"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/mpfr-3.1.2.tar.xz  && \
+sync  && \
+cd mpfr-3.1.2/  && \
+patch -Np1 -i ../../sources_compactadas/mpfr-3.1.2-upstream_fixes-2.patch  && \
+sync  && \
+./configure --prefix=/usr        \
+            --enable-thread-safe \
+            --docdir=/usr/share/doc/mpfr-3.1.2  && \
+sync  && \
+make  && \
+sync  && \
+make html  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+make install-html  && \
+sync  && \
+cd ..  && \
+rm -rf mpfr-3.1.2/  && \
+sync  && \
+echo "TERMINEI mpfr"
+# libmpfr Contains multiple-precision math functions. 
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/mpc-1.0.2.tar.gz  && \
+sync  && \
+cd mpc-1.0.2/  && \
+./configure --prefix=/usr --docdir=/usr/share/doc/mpc-1.0.2  && \
+sync  && \
+make  && \
+sync  && \
+make html  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+make install-html  && \
+sync  && \
+cd ..  && \
+rm -rf mpc-1.0.2/  && \
+sync  && \
+echo "TERMINEI mpc"
+# libmpc Contains complex math functions 
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/gcc-4.9.1.tar.bz2  && \
+sync  && \
+cd gcc-4.9.1/  && \
+sed -i 's/if \((code.*))\)/if (\1 \&\& \!DEBUG_INSN_P (insn))/' gcc/sched-deps.c  && \
+patch -Np1 -i ../../sources_compactadas/gcc-4.9.1-upstream_fixes-1.patch  && \
+sync  && \
+mkdir -v ../gcc-build  && \
+cd ../gcc-build  && \
+SED=sed                       \
+../gcc-4.9.1/configure        \
+     --prefix=/usr            \
+     --enable-languages=c,c++ \
+     --disable-multilib       \
+     --disable-bootstrap      \
+     --with-system-zlib  && \
+sync  && \
+make  && \
+sync  && \
+ulimit -s 32768  && \
+make -k check  && \
+sync  && \
+../gcc-4.9.1/contrib/test_summary  && \
+sync  && \
+make install  && \
+sync  && \
+ln -sv ../usr/bin/cpp /lib  && \
+ln -sv gcc /usr/bin/cc  && \
+install -v -dm755 /usr/lib/bfd-plugins  && \
+ln -sfv ../../libexec/gcc/$(gcc -dumpmachine)/4.9.1/liblto_plugin.so /usr/lib/bfd-plugins/  && \
+sync  && \
+cd ..  && \
+rm -rf gcc-build/ gcc-4.9.1/  && \
+sync  && \
+echo "TERMINEI gcc"
+
+
+echo 'main(){}' > dummy.c
+cc dummy.c -v -Wl,--verbose &> dummy.log
+
+readelf -l a.out | grep ': /lib'
+# output: [Requesting program interpreter: /lib/ld-linux.so.2]
+
+grep -o '/usr/lib.*/crt[1in].*succeeded' dummy.log
+#output:
+#/usr/lib/gcc/i686-pc-linux-gnu/4.9.1/../../../crt1.o succeeded
+#/usr/lib/gcc/i686-pc-linux-gnu/4.9.1/../../../crti.o succeeded
+#/usr/lib/gcc/i686-pc-linux-gnu/4.9.1/../../../crtn.o succeeded
+
+grep -B4 '^ /usr/include' dummy.log
+#output:
+##include <...> search starts here:
+# /usr/lib/gcc/i686-pc-linux-gnu/4.9.1/include
+# /usr/local/include
+# /usr/lib/gcc/i686-pc-linux-gnu/4.9.1/include-fixed
+# /usr/include
+
+grep 'SEARCH.*/usr/lib' dummy.log |sed 's|; |\n|g'
+#output:
+#SEARCH_DIR("/usr/i686-pc-linux-gnu/lib32")
+#SEARCH_DIR("/usr/local/lib32")
+#SEARCH_DIR("/lib32")
+#SEARCH_DIR("/usr/lib32")
+#SEARCH_DIR("/usr/i686-pc-linux-gnu/lib")
+#SEARCH_DIR("/usr/local/lib")
+#SEARCH_DIR("/lib")
+#SEARCH_DIR("/usr/lib");
+
+grep "/lib.*/libc.so.6 " dummy.log
+#output:
+#attempt to open /lib/libc.so.6 succeeded
+
+grep found dummy.log
+#output:
+#found ld-linux.so.2 at /lib/ld-linux.so.2
+
+rm -v dummy.c a.out dummy.log
+
+mkdir -pv /usr/share/gdb/auto-load/usr/lib
+mv -v /usr/lib/*gdb.py /usr/share/gdb/auto-load/usr/lib
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/bzip2-1.0.6.tar.gz  && \
+sync  && \
+cd bzip2-1.0.6/  && \
+patch -Np1 -i ../../sources_compactadas/bzip2-1.0.6-install_docs-1.patch  && \
+sync  && \
+sed -i 's@\(ln -s -f \)$(PREFIX)/bin/@\1@' Makefile  && \
+sed -i "s@(PREFIX)/man@(PREFIX)/share/man@g" Makefile  && \
+sync  && \
+make -f Makefile-libbz2_so  && \
+sync  && \
+make clean  && \
+sync  && \
+make  && \
+sync  && \
+make PREFIX=/usr install  && \
+sync  && \
+cp -v bzip2-shared /bin/bzip2  && \
+cp -av libbz2.so* /lib  && \
+ln -sv ../../lib/libbz2.so.1.0 /usr/lib/libbz2.so  && \
+rm -v /usr/bin/{bunzip2,bzcat,bzip2}  && \
+ln -sv bzip2 /bin/bunzip2  && \
+ln -sv bzip2 /bin/bzcat  && \
+sync  && \
+cd ..  && \
+rm -rf bzip2-1.0.6/  && \
+sync  && \
+echo "TERMINEI bzip"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/pkg-config-0.28.tar.gz  && \
+sync  && \
+cd pkg-config-0.28/  && \
+./configure --prefix=/usr         \
+            --with-internal-glib  \
+            --disable-host-tool   \
+            --docdir=/usr/share/doc/pkg-config-0.28 && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf pkg-config-0.28/  && \
+sync  && \
+echo "TERMINEI pkg-config"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/ncurses-5.9.tar.gz  && \
+sync  && \
+cd ncurses-5.9/  && \
+./configure --prefix=/usr           \
+            --mandir=/usr/share/man \
+            --with-shared           \
+            --without-debug         \
+            --enable-pc-files       \
+            --enable-widec && \
+sync  && \
+\
+# with non-wide-character
+#make distclean
+#./configure --prefix=/usr    \
+#            --with-shared    \
+#            --without-normal \
+#            --without-debug  \
+#            --without-cxx-binding
+#make sources libs
+#cp -av lib/lib*.so.5* /usr/lib
+make  && \
+sync  && \
+make install  && \
+sync  && \
+mv -v /usr/lib/libncursesw.so.5* /lib  && \
+ln -sfv ../../lib/$(readlink /usr/lib/libncursesw.so) /usr/lib/libncursesw.so  && \
+for lib in ncurses form panel menu ; do
+    rm -vf                    /usr/lib/lib${lib}.so
+    echo "INPUT(-l${lib}w)" > /usr/lib/lib${lib}.so
+    ln -sfv lib${lib}w.a      /usr/lib/lib${lib}.a
+    ln -sfv ${lib}w.pc        /usr/lib/pkgconfig/${lib}.pc
+done  && \
+ln -sfv libncurses++w.a /usr/lib/libncurses++.a  && \
+rm -vf                     /usr/lib/libcursesw.so  && \
+echo "INPUT(-lncursesw)" > /usr/lib/libcursesw.so  && \
+ln -sfv libncurses.so      /usr/lib/libcurses.so  && \
+ln -sfv libncursesw.a      /usr/lib/libcursesw.a  && \
+ln -sfv libncurses.a       /usr/lib/libcurses.a  && \
+#mkdir -v       /usr/share/doc/ncurses-5.9
+#cp -v -R doc/* /usr/share/doc/ncurses-5.9
+cd ..  && \
+rm -rf ncurses-5.9/  && \
+sync  && \
+echo "TERMINEI ncurses"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/attr-2.4.47.src.tar.gz  && \
+sync  && \
+cd attr-2.4.47/  && \
+sed -i -e 's|/@pkg_name@|&-@pkg_version@|' include/builddefs.in  && \
+./configure --prefix=/usr --bindir=/bin  && \
+sync  && \
+make  && \
+sync  && \
+make -j1 tests root-tests  && \
+sync  && \
+make install install-dev install-lib && \
+sync  && \
+chmod -v 755 /usr/lib/libattr.so  && \
+mv -v /usr/lib/libattr.so.* /lib  && \
+ln -sfv ../../lib/$(readlink /usr/lib/libattr.so) /usr/lib/libattr.so  && \
+sync  && \
+cd ..  && \
+rm -rf attr-2.4.47/  && \
+sync  && \
+echo "TERMINEI attr"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/acl-2.2.52.src.tar.gz  && \
+sync  && \
+cd acl-2.2.52/  && \
+sed -i -e 's|/@pkg_name@|&-@pkg_version@|' include/builddefs.in  && \
+sed -i "s:| sed.*::g" test/{sbits-restore,cp,misc}.test  && \
+sed -i -e "/TABS-1;/a if (x > (TABS-1)) x = (TABS-1);" libacl/__acl_to_any_text.c  && \
+./configure --prefix=/usr \
+            --bindir=/bin \
+            --libexecdir=/usr/lib  && \
+sync  && \
+make  && \
+sync  && \
+make install install-dev install-lib  && \
+sync  && \
+chmod -v 755 /usr/lib/libacl.so  && \
+mv -v /usr/lib/libacl.so.* /lib  && \
+ln -sfv ../../lib/$(readlink /usr/lib/libacl.so) /usr/lib/libacl.so  && \
+sync  && \
+cd ..  && \
+rm -rf acl-2.2.52/  && \
+sync  && \
+echo "TERMINEI acl"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/libcap-2.24.tar.xz  && \
+sync  && \
+cd libcap-2.24/  && \
+make && \
+sync  && \
+make RAISE_SETFCAP=no prefix=/usr install && \
+sync  && \
+chmod -v 755 /usr/lib/libcap.so && \
+mv -v /usr/lib/libcap.so.* /lib && \
+ln -sfv ../../lib/$(readlink /usr/lib/libcap.so) /usr/lib/libcap.so && \
+sync  && \
+cd ..  && \
+rm -rf libcap-2.24/  && \
+sync  && \
+echo "TERMINEI libcap"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/sed-4.2.2.tar.bz2  && \
+sync  && \
+cd sed-4.2.2/  && \
+./configure --prefix=/usr --bindir=/bin --htmldir=/usr/share/doc/sed-4.2.2  && \
+sync  && \
+make && \
+sync  && \
+make html  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+make -C doc install-html  && \
+sync  && \
+cd ..  && \
+rm -rf sed-4.2.2/  && \
+sync  && \
+echo "TERMINEI sed"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/shadow-4.2.1.tar.xz  && \
+sync  && \
+cd shadow-4.2.1/  && \
+\
+# Disable the installation of the groups program and its man pages, as Coreutils provides a better version
+sed -i 's/groups$(EXEEXT) //' src/Makefile.in  && \
+find man -name Makefile.in -exec sed -i 's/groups\.1 / /' {} \;  && \
+\
+# Instead of using the default crypt method, use the more secure SHA-512 method of password encryption
+sed -i -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD SHA512@' \
+       -e 's@/var/spool/mail@/var/mail@' etc/login.defs  && \
+\
+# Make a minor change to make the default useradd consistent with the LFS groups file:
+sed -i 's/1000/999/' etc/useradd  && \
+\
+sync  && \
+./configure --sysconfdir=/etc --with-group-name-max-length=32  && \
+sync  && \
+make  && \
+sync  && \
+make install  && \
+sync  && \
+mv -v /usr/bin/passwd /bin  && \
+sync  && \
+cd ..  && \
+rm -rf shadow-4.2.1/  && \
+sync  && \
+echo "TERMINEI shadow"
+
+# To enable shadowed passwords, run the following command:
+pwconv  && \
+\
+# To enable shadowed group passwords, run:
+grpconv  && \
+\
+# Choose a password for user root and set it by running:
+passwd root
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/psmisc-22.21.tar.gz  && \
+sync  && \
+cd psmisc-22.21/  && \
+./configure --prefix=/usr  && \
+sync  && \
+make  && \
+sync  && \
+make install  && \
+sync  && \
+mv -v /usr/bin/fuser   /bin  && \
+mv -v /usr/bin/killall /bin  && \
+sync  && \
+cd ..  && \
+rm -rf psmisc-22.21/  && \
+sync  && \
+echo "TERMINEI psmisc"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/procps-ng-3.3.9.tar.xz  && \
+sync  && \
+cd procps-ng-3.3.9/  && \
+./configure --prefix=/usr                           \
+            --exec-prefix=                          \
+            --libdir=/usr/lib                       \
+            --docdir=/usr/share/doc/procps-ng-3.3.9 \
+            --disable-static                        \
+            --disable-kill  && \
+sync  && \
+make  && \
+sync  && \
+sed -i -r 's|(pmap_initname)\\\$|\1|' testsuite/pmap.test/pmap.exp  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+mv -v /usr/bin/pidof /bin && \
+mv -v /usr/lib/libprocps.so.* /lib && \
+ln -sfv ../../lib/$(readlink /usr/lib/libprocps.so) /usr/lib/libprocps.so  && \
+sync  && \
+cd ..  && \
+rm -rf procps-ng-3.3.9/  && \
+sync  && \
+echo "TERMINEI procps-ng"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/e2fsprogs-1.42.12.tar.gz  && \
+sync  && \
+cd e2fsprogs-1.42.12/  && \
+mkdir -v build  && \
+cd build  && \
+LIBS=-L/tools/lib                    \
+CFLAGS=-I/tools/include              \
+PKG_CONFIG_PATH=/tools/lib/pkgconfig \
+../configure --prefix=/usr           \
+             --bindir=/bin           \
+             --with-root-prefix=""   \
+             --enable-elf-shlibs     \
+             --disable-libblkid      \
+             --disable-libuuid       \
+             --disable-uuidd         \
+             --disable-fsck  && \
+sync  && \
+make  && \
+sync  && \
+ln -sfv /tools/lib/lib{blk,uu}id.so.1 lib  && \
+make LD_LIBRARY_PATH=/tools/lib check  && \
+sync  && \
+make install  && \
+sync  && \
+make install-libs  && \
+sync  && \
+chmod -v u+w /usr/lib/{libcom_err,libe2p,libext2fs,libss}.a  && \
+gunzip -v /usr/share/info/libext2fs.info.gz  && \
+install-info --dir-file=/usr/share/info/dir /usr/share/info/libext2fs.info  && \
+makeinfo -o      doc/com_err.info ../lib/et/com_err.texinfo  && \
+install -v -m644 doc/com_err.info /usr/share/info  && \
+install-info --dir-file=/usr/share/info/dir /usr/share/info/com_err.info  && \
+sync  && \
+cd ..  && \
+cd ..  && \
+rm -rf e2fsprogs-1.42.12/  && \
+sync  && \
+echo "TERMINEI e2fsprogs"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/coreutils-8.23.tar.xz  && \
+sync  && \
+cd coreutils-8.23/  && \
+patch -Np1 -i ../../sources_compactadas/coreutils-8.23-i18n-1.patch  && \
+touch Makefile.in  && \
+FORCE_UNSAFE_CONFIGURE=1 ./configure \
+            --prefix=/usr            \
+            --enable-no-install-program=kill,uptime  && \
+sync  && \
+make  && \
+sync  && \
+make NON_ROOT_USERNAME=nobody check-root  && \
+sync  && \
+echo "dummy:x:1000:nobody" >> /etc/group  && \
+chown -Rv nobody .   && \
+su nobody -s /bin/bash \
+          -c "PATH=$PATH make RUN_EXPENSIVE_TESTS=yes check"  && \
+sed -i '/dummy/d' /etc/group  && \
+sync  && \
+make install  && \
+sync  && \
+\
+mv -v /usr/bin/{cat,chgrp,chmod,chown,cp,date,dd,df,echo} /bin  && \
+mv -v /usr/bin/{false,ln,ls,mkdir,mknod,mv,pwd,rm} /bin  && \
+mv -v /usr/bin/{rmdir,stty,sync,true,uname} /bin  && \
+mv -v /usr/bin/chroot /usr/sbin  && \
+mv -v /usr/share/man/man1/chroot.1 /usr/share/man/man8/chroot.8  && \
+sed -i s/\"1\"/\"8\"/1 /usr/share/man/man8/chroot.8  && \
+\
+mv -v /usr/bin/{head,sleep,nice,test,[} /bin  && \
+sync  && \
+cd ..  && \
+rm -rf coreutils-8.23/  && \
+sync  && \
+echo "TERMINEI coreutils"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/iana-etc-2.30.tar.bz2  && \
+sync  && \
+cd iana-etc-2.30/  && \
+make  && \
+sync  && \
+make install  && \
+sync  && \
+sync  && \
+cd ..  && \
+rm -rf iana-etc-2.30/  && \
+sync  && \
+echo "TERMINEI iana-etc"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/m4-1.4.17.tar.xz  && \
+sync  && \
+cd m4-1.4.17/  && \
+./configure --prefix=/usr  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf m4-1.4.17/  && \
+sync  && \
+echo "TERMINEI m4"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/flex-2.5.39.tar.bz2  && \
+sync  && \
+cd flex-2.5.39/  && \
+sed -i -e '/test-bison/d' tests/Makefile.in  && \
+sync  && \
+./configure --prefix=/usr --docdir=/usr/share/doc/flex-2.5.39  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+ln -sv flex /usr/bin/lex  && \
+sync  && \
+cd ..  && \
+rm -rf flex-2.5.39/  && \
+sync  && \
+echo "TERMINEI flex"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/bison-3.0.2.tar.xz  && \
+sync  && \
+cd bison-3.0.2/  && \
+./configure --prefix=/usr  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf bison-3.0.2/  && \
+sync  && \
+echo "TERMINEI bison"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/grep-2.20.tar.xz  && \
+sync  && \
+cd grep-2.20/  && \
+./configure --prefix=/usr  --bindir=/bin && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf grep-2.20/  && \
+sync  && \
+echo "TERMINEI grep"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/readline-6.3.tar.gz  && \
+sync  && \
+cd readline-6.3/  && \
+patch -Np1 -i ../../sources_compactadas/readline-6.3-upstream_fixes-2.patch  && \
+sync  && \
+sed -i '/MV.*old/d' Makefile.in  && \
+sed -i '/{OLDSUFF}/c:' support/shlib-install  && \
+sync  && \
+./configure --prefix=/usr --docdir=/usr/share/doc/readline-6.3  && \
+sync  && \
+make SHLIB_LIBS=-lncurses  && \
+sync  && \
+make SHLIB_LIBS=-lncurses install  && \
+sync  && \
+mv -v /usr/lib/lib{readline,history}.so.* /lib  && \
+ln -sfv ../../lib/$(readlink /usr/lib/libreadline.so) /usr/lib/libreadline.so  && \
+ln -sfv ../../lib/$(readlink /usr/lib/libhistory.so ) /usr/lib/libhistory.so  && \
+#install -v -m644 doc/*.{ps,pdf,html,dvi} /usr/share/doc/readline-6.3  && \
+sync  && \
+cd ..  && \
+rm -rf readline-6.3/  && \
+sync  && \
+echo "TERMINEI readline"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/bash-4.3.30.tar.gz  && \
+sync  && \
+cd bash-4.3.30/  && \
+./configure --prefix=/usr                    \
+            --bindir=/bin                    \
+            --docdir=/usr/share/doc/bash-4.3 \
+            --without-bash-malloc            \
+            --with-installed-readline  && \
+sync  && \
+make  && \
+sync  && \
+chown -Rv nobody .  && \
+su nobody -s /bin/bash -c "PATH=$PATH make tests"  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf bash-4.3.30/  && \
+sync  && \
+echo "TERMINEI bash"
+
+exec /bin/bash --login +h
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/bc-1.06.95.tar.bz2  && \
+sync  && \
+cd bc-1.06.95/  && \
+patch -Np1 -i ../../sources_compactadas/bc-1.06.95-memory_leak-1.patch  && \
+./configure --prefix=/usr           \
+            --with-readline         \
+            --mandir=/usr/share/man \
+            --infodir=/usr/share/info  && \
+sync  && \
+make  && \
+sync  && \
+echo "quit" | ./bc/bc -l Test/checklib.b  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf bc-1.06.95/  && \
+sync  && \
+echo "TERMINEI bc"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/libtool-2.4.2.tar.gz  && \
+sync  && \
+cd libtool-2.4.2/  && \
+./configure --prefix=/usr  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf libtool-2.4.2/  && \
+sync  && \
+echo "TERMINEI libtool"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/gdbm-1.11.tar.gz  && \
+sync  && \
+cd gdbm-1.11/  && \
+./configure --prefix=/usr  --enable-libgdbm-compat && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf gdbm-1.11/  && \
+sync  && \
+echo "TERMINEI gdbm"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/expat-2.1.0.tar.gz  && \
+sync  && \
+cd expat-2.1.0/  && \
+./configure --prefix=/usr  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+#install -v -dm755 /usr/share/doc/expat-2.1.0  && \
+#install -v -m644 doc/*.{html,png,css} /usr/share/doc/expat-2.1.0  && \
+#sync  && \
+cd ..  && \
+rm -rf expat-2.1.0/  && \
+sync  && \
+echo "TERMINEI expat"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/inetutils-1.9.2.tar.gz  && \
+sync  && \
+cd inetutils-1.9.2/  && \
+echo '#define PATH_PROCNET_DEV "/proc/net/dev"' >> ifconfig/system/linux.h   && \
+./configure --prefix=/usr  \
+            --localstatedir=/var   \
+            --disable-logger       \
+            --disable-whois        \
+            --disable-servers && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+mv -v /usr/bin/{hostname,ping,ping6,traceroute} /bin  && \
+mv -v /usr/bin/ifconfig /sbin  && \
+sync  && \
+cd ..  && \
+rm -rf inetutils-1.9.2/  && \
+sync  && \
+echo "TERMINEI inetutils"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/perl-5.20.0.tar.bz2  && \
+sync  && \
+cd perl-5.20.0/  && \
+echo "127.0.0.1 localhost $(hostname)" > /etc/hosts  && \
+export BUILD_ZLIB=False  && \
+export BUILD_BZIP2=0  && \
+sh Configure -des -Dprefix=/usr                 \
+                  -Dvendorprefix=/usr           \
+                  -Dman1dir=/usr/share/man/man1 \
+                  -Dman3dir=/usr/share/man/man3 \
+                  -Dpager="/usr/bin/less -isR"  \
+                  -Duseshrplib  && \
+sync  && \
+make  && \
+sync  && \
+make -k test  && \
+sync  && \
+make install  && \
+unset BUILD_ZLIB BUILD_BZIP2  && \
+sync  && \
+cd ..  && \
+rm -rf perl-5.20.0/  && \
+sync  && \
+echo "TERMINEI perl"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/XML-Parser-2.42_01.tar.gz  && \
+sync  && \
+cd XML-Parser-2.42_01/  && \
+perl Makefile.PL  && \
+sync  && \
+make  && \
+sync  && \
+make test  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf XML-Parser-2.42_01/  && \
+sync  && \
+echo "TERMINEI XML-Parser"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/autoconf-2.69.tar.xz  && \
+sync  && \
+cd autoconf-2.69/  && \
+./configure --prefix=/usr  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf autoconf-2.69/  && \
+sync  && \
+echo "TERMINEI autoconf"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/automake-1.14.1.tar.xz  && \
+sync  && \
+cd automake-1.14.1/  && \
+./configure --prefix=/usr --docdir=/usr/share/doc/automake-1.14.1 && \
+sync  && \
+make  && \
+sync  && \
+sed -i "s:./configure:LEXLIB=/usr/lib/libfl.a &:" t/lex-{clean,depend}-cxx.sh  && \
+make -j4 check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf automake-1.14.1/  && \
+sync  && \
+echo "TERMINEI automake"  && \
+\
+\
+cd /sources  && \
+tar -x -f ../sources_compactadas/diffutils-3.3.tar.xz  && \
+sync  && \
+cd diffutils-3.3/  && \
+sed -i 's:= @mkdir_p@:= /bin/mkdir -p:' po/Makefile.in.in  && \
+./configure --prefix=/usr  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf diffutils-3.3/  && \
+sync  && \
+echo "TERMINEI diffutils"  && \
+\
+\
+cd /sources  && \
+tar -x -f ../sources_compactadas/gawk-4.1.1.tar.xz  && \
+sync  && \
+cd gawk-4.1.1/  && \
+./configure --prefix=/usr  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+#mkdir -v /usr/share/doc/gawk-4.1.1  && \
+#cp    -v doc/{awkforai.txt,*.{eps,pdf,jpg}} /usr/share/doc/gawk-4.1.1  && \
+sync  && \
+cd ..  && \
+rm -rf gawk-4.1.1/  && \
+sync  && \
+echo "TERMINEI gawk"  && \
+\
+\
+cd /sources  && \
+tar -x -f ../sources_compactadas/findutils-4.4.2.tar.gz  && \
+sync  && \
+cd findutils-4.4.2/  && \
+./configure --prefix=/usr  --localstatedir=/var/lib/locate && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+mv -v /usr/bin/find /bin && \
+sed -i 's|find:=${BINDIR}|find:=/bin|' /usr/bin/updatedb && \
+sync  && \
+cd ..  && \
+rm -rf findutils-4.4.2/  && \
+sync  && \
+echo "TERMINEI findutils"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/gettext-0.19.2.tar.xz  && \
+sync  && \
+cd gettext-0.19.2/  && \
+./configure --prefix=/usr  --docdir=/usr/share/doc/gettext-0.19.2 && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf gettext-0.19.2/  && \
+sync  && \
+echo "TERMINEI gettext"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/intltool-0.50.2.tar.gz  && \
+sync  && \
+cd intltool-0.50.2/  && \
+./configure --prefix=/usr  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+# install -v -Dm644 doc/I18N-HOWTO /usr/share/doc/intltool-0.50.2/I18N-HOWTO \
+sync  && \
+cd ..  && \
+rm -rf intltool-0.50.2/  && \
+sync  && \
+echo "TERMINEI intltool"  && \
+\
+\
+cd /sources  && \
+tar -x -f ../sources_compactadas/gperf-3.0.4.tar.gz  && \
+sync  && \
+cd gperf-3.0.4/  && \
+./configure --prefix=/usr   --docdir=/usr/share/doc/gperf-3.0.4 && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf gperf-3.0.4/  && \
+sync  && \
+echo "TERMINEI gperf"  && \
+\
+\
+cd /sources  && \
+tar -x -f ../sources_compactadas/groff-1.22.2.tar.gz  && \
+sync  && \
+cd groff-1.22.2/  && \
+PAGE=A4 ./configure --prefix=/usr  && \
+sync  && \
+make  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf groff-1.22.2/  && \
+sync  && \
+echo "TERMINEI groff"  && \
+\
+\
+cd /sources  && \
+tar -x -f ../sources_compactadas/xz-5.0.5.tar.xz  && \
+sync  && \
+cd xz-5.0.5/  && \
+./configure --prefix=/usr  --docdir=/usr/share/doc/xz-5.0.5 && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+mv -v   /usr/bin/{lzma,unlzma,lzcat,xz,unxz,xzcat} /bin  && \
+mv -v /usr/lib/liblzma.so.* /lib  && \
+ln -svf ../../lib/$(readlink /usr/lib/liblzma.so) /usr/lib/liblzma.so  && \
+sync  && \
+cd ..  && \
+rm -rf xz-5.0.5/  && \
+sync  && \
+echo "TERMINEI xz"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/grub-2.00.tar.xz  && \
+sync  && \
+cd grub-2.00/  && \
+sed -i -e '/gets is a/d' grub-core/gnulib/stdio.in.h && \
+sync  && \
+./configure --prefix=/usr          \
+            --sbindir=/sbin        \
+            --sysconfdir=/etc      \
+            --disable-grub-emu-usb \
+            --disable-efiemu       \
+            --disable-werror && \
+sync  && \
+make  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf grub-2.00/  && \
+sync  && \
+echo "TERMINEI grub"  && \
+\
+\
+cd /sources  && \
+tar -x -f ../sources_compactadas/less-458.tar.gz  && \
+sync  && \
+cd less-458/  && \
+./configure --prefix=/usr --sysconfdir=/etc && \
+sync  && \
+make  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf less-458/  && \
+sync  && \
+echo "TERMINEI less"  && \
+\
+\
+cd /sources  && \
+tar -x -f ../sources_compactadas/gzip-1.6.tar.xz  && \
+sync  && \
+cd gzip-1.6/  && \
+./configure --prefix=/usr  --bindir=/bin && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+mv -v /bin/{gzexe,uncompress,zcmp,zdiff,zegrep} /usr/bin && \
+mv -v /bin/{zfgrep,zforce,zgrep,zless,zmore,znew} /usr/bin && \
+sync  && \
+sync  && \
+cd ..  && \
+rm -rf gzip-1.6/  && \
+sync  && \
+echo "TERMINEI gzip"  && \
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/iproute2-3.16.0.tar.xz  && \
+sync  && \
+cd iproute2-3.16.0/  && \
+sed -i '/^TARGETS/s@arpd@@g' misc/Makefile && \
+sed -i /ARPD/d Makefile && \
+sed -i 's/arpd.8//' man/man8/Makefile && \
+sync  && \
+make  && \
+sync  && \
+make DOCDIR=/usr/share/doc/iproute2-3.16.0 install  && \
+sync  && \
+cd ..  && \
+rm -rf iproute2-3.16.0/  && \
+sync  && \
+echo "TERMINEI " iproute2 && \
+\
+\
+cd /sources  && \
+tar -x -f ../sources_compactadas/kbd-2.0.2.tar.gz  && \
+sync  && \
+cd kbd-2.0.2/  && \
+patch -Np1 -i ../../sources_compactadas/kbd-2.0.2-backspace-1.patch  && \
+sync  && \
+sed -i 's/\(RESIZECONS_PROGS=\)yes/\1no/g' configure  && \
+sed -i 's/resizecons.8 //' docs/man/man8/Makefile.in  && \
+sync  && \
+PKG_CONFIG_PATH=/tools/lib/pkgconfig ./configure --prefix=/usr --disable-vlock  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+#mkdir -v       /usr/share/doc/kbd-2.0.2
+#cp -R -v docs/doc/* /usr/share/doc/kbd-2.0.2
+#sync  && \
+cd ..  && \
+rm -rf kbd-2.0.2/  && \
+sync  && \
+echo "TERMINEI kbd"  && \
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/kmod-18.tar.xz  && \
+sync  && \
+cd kmod-18/  && \
+./configure --prefix=/usr          \
+            --bindir=/bin          \
+            --sysconfdir=/etc      \
+            --with-rootlibdir=/lib \
+            --with-xz              \
+            --with-zlib && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+for target in depmod insmod modinfo modprobe rmmod; do
+  ln -sv ../bin/kmod /sbin/$target
+done  && \
+ln -sv kmod /bin/lsmod  && \
+sync  && \
+cd ..  && \
+rm -rf kmod-18/  && \
+sync  && \
+echo "TERMINEI kmod"  && \
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/libpipeline-1.3.0.tar.gz  && \
+sync  && \
+cd libpipeline-1.3.0/  && \
+PKG_CONFIG_PATH=/tools/lib/pkgconfig  ./configure --prefix=/usr   && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf libpipeline-1.3.0/  && \
+sync  && \
+echo "TERMINEI " libpipeline && \
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/make-4.0.tar.bz2  && \
+sync  && \
+cd make-4.0/  && \
+./configure --prefix=/usr   && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf make-4.0/  && \
+sync  && \
+echo "TERMINEI make" && \
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/patch-2.7.1.tar.xz  && \
+sync  && \
+cd patch-2.7.1/  && \
+./configure --prefix=/usr   && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf patch-2.7.1/  && \
+sync  && \
+echo "TERMINEI patch"  && \
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/sysklogd-1.5.tar.gz  && \
+sync  && \
+cd sysklogd-1.5/  && \
+sed -i '/Error loading kernel symbols/{n;n;d}' ksym_mod.c && \
+sync  && \
+make  && \
+sync  && \
+make BINDIR=/sbin install  && \
+sync  && \
+cd ..  && \
+rm -rf sysklogd-1.5/  && \
+sync  && \
+echo "TERMINEI sysklogd"
+
+cat > /etc/syslog.conf << EOF
+# Begin /etc/syslog.conf
+
+auth,authpriv.* -/var/log/auth.log
+*.*;auth,authpriv.none -/var/log/sys.log
+daemon.* -/var/log/daemon.log
+kern.* -/var/log/kern.log
+mail.* -/var/log/mail.log
+user.* -/var/log/user.log
+*.emerg *
+
+# End /etc/syslog.conf
+EOF
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/sysvinit-2.88dsf.tar.bz2  && \
+sync  && \
+cd sysvinit-2.88dsf/  && \
+patch -Np1 -i ../../sources_compactadas/sysvinit-2.88dsf-consolidated-1.patch  && \
+sync  && \
+make -C src  && \
+sync  && \
+make -C src install  && \
+sync  && \
+cd ..  && \
+rm -rf sysvinit-2.88dsf/  && \
+sync  && \
+echo "TERMINEI sysvinit"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/tar-1.28.tar.xz  && \
+sync  && \
+cd tar-1.28/  && \
+FORCE_UNSAFE_CONFIGURE=1  \
+./configure --prefix=/usr \
+            --bindir=/bin   && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+make -C doc install-html docdir=/usr/share/doc/tar-1.28  && \
+sync  && \
+cd ..  && \
+rm -rf tar-1.28/  && \
+sync  && \
+echo "TERMINEI tar"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/texinfo-5.2.tar.xz  && \
+sync  && \
+cd texinfo-5.2/  && \
+./configure --prefix=/usr   && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+make TEXMF=/usr/share/texmf install-tex && \
+sync  && \
+pushd /usr/share/info  && \
+rm -v dir  && \
+for f in *
+  do install-info $f dir 2>/dev/null
+done  && \
+popd  && \
+sync  && \
+cd ..  && \
+rm -rf texinfo-5.2/  && \
+sync  && \
+echo "TERMINEI texinfo"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/eudev-1.10.tar.gz  && \
+sync  && \
+cd eudev-1.10/  && \
+sed -r -i 's|/usr(/bin/test)|\1|' test/udev-test.pl && \
+BLKID_CFLAGS=-I/tools/include       \
+BLKID_LIBS='-L/tools/lib -lblkid'   \
+sync  && \
+./configure --prefix=/usr           \
+            --bindir=/sbin          \
+            --sbindir=/sbin         \
+            --libdir=/usr/lib       \
+            --sysconfdir=/etc       \
+            --libexecdir=/lib       \
+            --with-rootprefix=      \
+            --with-rootlibdir=/lib  \
+            --enable-split-usr      \
+            --enable-libkmod        \
+            --enable-rule_generator \
+            --enable-keymap         \
+            --disable-introspection \
+            --disable-gudev         \
+            --disable-gtk-doc-html  \
+            --with-firmware-path=/lib/firmware && \
+sync  && \
+make  && \
+mkdir -pv /lib/{firmware,udev}  && \
+mkdir -pv /lib/udev/rules.d  && \
+mkdir -pv /etc/udev/rules.d  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+tar -xvf ../../sources_compactadas/eudev-1.10-manpages.tar.bz2 -C /usr/share  && \
+sync  && \
+tar -xvf ../../sources_compactadas/udev-lfs-20140408.tar.bz2  && \
+sync  && \
+make -f udev-lfs-20140408/Makefile.lfs install  && \
+sync  && \
+cd ..  && \
+rm -rf eudev-1.10/  && \
+sync  && \
+echo "TERMINEI eudev"
+
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/util-linux-2.25.1.tar.xz  && \
+sync  && \
+cd util-linux-2.25.1/  && \
+mkdir -pv /var/lib/hwclock  && \
+sed -e 's/2^64/(2^64/' -e 's/E </E) <=/' -e 's/ne /eq /' \
+    -i tests/ts/ipcs/limits2  && \
+sync  && \
+./configure ADJTIME_PATH=/var/lib/hwclock/adjtime \
+            --docdir=/usr/share/doc/util-linx-2.25.1  && \
+sync  && \
+make  && \
+sync  && \
+chown -Rv nobody .  && \
+su nobody -s /bin/bash -c "PATH=$PATH make -k check"  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf util-linux-2.25.1/  && \
+sync  && \
+echo "TERMINEI util-linux"  && \
+\
+\
+cd /sources  && \
+tar -x -f ../sources_compactadas/man-db-2.6.7.1.tar.xz  && \
+sync  && \
+cd man-db-2.6.7.1/  && \
+./configure --prefix=/usr                          \
+            --docdir=/usr/share/doc/man-db-2.6.7.1 \
+            --sysconfdir=/etc                      \
+            --disable-setuid                       \
+            --with-browser=/usr/bin/lynx           \
+            --with-vgrind=/usr/bin/vgrind          \
+            --with-grap=/usr/bin/grap  && \
+sync  && \
+make  && \
+sync  && \
+make check  && \
+sync  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf man-db-2.6.7.1/  && \
+sync  && \
+echo "TERMINEI man-db"  && \
+\
+\
+cd /sources  && \
+tar -x -f ../sources_compactadas/vim-7.4.tar.bz2  && \
+sync  && \
+cd vim74/  && \
+echo '#define SYS_VIMRC_FILE "/etc/vimrc"' >> src/feature.h  && \
+./configure --prefix=/usr   && \
+sync  && \
+make  && \
+sync  && \
+make -j1 test  && \
+sync  && \
+make install  && \
+sync  && \
+ln -sv vim /usr/bin/vi && \
+for L in  /usr/share/man/{,*/}man1/vim.1; do
+    ln -sv vim.1 $(dirname $L)/vi.1
+done && \
+ln -sv ../vim/vim74/doc /usr/share/doc/vim-7.4 && \
+sync  && \
+cd ..  && \
+rm -rf vim74/  && \
+sync  && \
+echo "TERMINEI vim"
+
+cat > /etc/vimrc << "EOF"
+" Begin /etc/vimrc
+
+set nocompatible
+set backspace=2
+syntax on
+if (&term == "iterm") || (&term == "putty")
+  set background=dark
+endif
+
+" End /etc/vimrc
+EOF
+
+# Documentation for other available options can be obtained by running the following command:
+#vim -c ':options'
+
+#By default, Vim only installs spell files for the English language. To install spell files for your preferred language, download the *.spl and optionally, the *.sug files for your language and character encoding from ftp://ftp.vim.org/pub/vim/runtime/spell/ and save them to /usr/share/vim/vim74/spell/.
+#To use these spell files, some configuration in /etc/vimrc is needed, e.g.:
+#set spelllang=en,ru
+#set spell
+
+cd /sources  && \
+tar -x -f ../sources_compactadas/lfs-bootscripts-20140815.tar.bz2  && \
+sync  && \
+cd lfs-bootscripts-20140815/  && \
+make install  && \
+sync  && \
+cd ..  && \
+rm -rf lfs-bootscripts-20140815/  && \
+sync  && \
+echo "TERMINEI lfs-bootscripts"
+
+
+
+logout
+
+chroot $LFS /tools/bin/env -i            \
+    HOME=/root TERM=$TERM PS1='\u:\w\$ ' \
+    PATH=/bin:/usr/bin:/sbin:/usr/sbin   \
+    /tools/bin/bash --login
+
+/tools/bin/find /{,usr/}{bin,lib,sbin} -type f  -exec /tools/bin/strip --strip-debug '{}' ';'
+
+
+rm -rf /tmp/*
+rm -rf /tools
+
+#From now on, when reentering the chroot environment after exiting, use the following modified chroot command:
+chroot "$LFS" /usr/bin/env -i              \
+    HOME=/root TERM="$TERM" PS1='\u:\w\$ ' \
+    PATH=/bin:/usr/bin:/sbin:/usr/sbin     \
+    /bin/bash --login
+
+
+
+
+# = = = = = = = = = = = = = = = = = = = = = = fim COMO ROOT  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+# System Configuration and Bootscripts 
+
+ System V is the classic boot process that has been used in Unix and Unix-like systems such as Linux since about 1983. It consists of a small program, init, that sets up basic programs such as login (via getty) and runs a script. This script, usually named rc, controls the execution of a set of additional scripts that perform the tasks required to initialize the system.
+
+The init program is controlled by the /etc/inittab file and is organized into run levels that can be run by the user:
+
+
+0 — halt
+1 — Single user mode
+2 — Multiuser, without networking
+3 — Full multiuser mode
+4 — User definable
+5 — Full multiuser mode with display manager
+6 — reboot
+
+The usual default run level is 3 or 5. 
+
+Links that start with an S in the rc0.d and rc6.d directories will not cause anything to be started. They will be called with the parameter stop to stop something. The logic behind this is that when a user is going to reboot or halt the system, nothing needs to be started. The system only needs to be stopped. 
+
+the sysfs filesystem is mounted /sys
+The job of sysfs is to export a view of the system's hardware configuration to userspace processes.
+sysfs knows about the devices present on a system and what device numbers should be used for them.
+Drivers that have been compiled into the kernel directly register their objects with a sysfs (devtmpfs internally) as they are detected by the kernel. For drivers compiled as modules, this registration will happen when the module is loaded. Once the sysfs filesystem is mounted (on /sys), data which the drivers register with sysfs are available to userspace processes and to udevd for processing (including modifications to device nodes). 
+
+the devtmpfs is mounted in /dev
+Device files are created by the kernel by the devtmpfs filesystem. 
+Any driver that wishes to register a device node will go through the devtmpfs
+ A short time later, the kernel will send a uevent to udevd. Based on the rules specified in the files within the /etc/udev/rules.d, /lib/udev/rules.d, and /run/udev/rules.d directories, udevd will create additional symlinks to the device node, or change its permissions, owner, or group, or modify the internal udevd database entry (name) for that object. 
+
+Device drivers compiled as modules may have aliases built into them. Aliases are visible in the output of the modinfo program and are usually related to the bus-specific identifiers of devices supported by a module. For example, the snd-fm801 driver supports PCI devices with vendor ID 0x1319 and device ID 0x0801, and has an alias of “pci:v00001319d00000801sv*sd*bc04sc01i*”. For most devices, the bus driver exports the alias of the driver that would handle the device via sysfs. E.g., the /sys/bus/pci/devices/0000:00:0d.0/modalias file might contain the string “pci:v00001319d00000801sv00001319sd00001319bc04sc01i00”. The default rules provided with Udev will cause udevd to call out to /sbin/modprobe with the contents of the MODALIAS uevent environment variable (which should be the same as the contents of the modalias file in sysfs), thus loading all modules whose aliases match this string after wildcard expansion. 
+
+In the new naming scheme, typical network device names would then be something like enp5s0 or wlp3s0.
+The traditional naming scheme using eth0, eth1, etc can be restored by adding net.ifnames=0 on the kernel command line.
+
+ to find out which name was assigned to which network device:
+bash /lib/udev/init-net-rules.sh
+cat /etc/udev/rules.d/70-persistent-net.rules
+
+to see the values that the Udev scripts will use, find the corresponding directory under /sys (e.g., this can be /sys/block/hdd) and run a command similar to the following:
+udevadm test /sys/block/hdd
+
+For each with problem,  find the corresponding directory under /sys/class or /sys/block:
+udevadm info -a -p /sys/class/video4linux/video0
+ and  identify the device uniquely (usually, vendor and product IDs and/or serial numbers work)
+
+
+network script usually depends on the files in /etc/sysconfig/
+cd /etc/sysconfig/
+cat > ifconfig.eth0 << "EOF"
+ONBOOT=yes
+IFACE=eth0
+SERVICE=ipv4-static
+IP=192.168.1.2
+GATEWAY=192.168.1.1
+PREFIX=24
+BROADCAST=192.168.1.255
+EOF
+
+For more information see the ifup man page. 
+
+cat > /etc/resolv.conf << "EOF"
+# Begin /etc/resolv.conf
+
+domain teste.com.br
+nameserver 8.8.8.8
+nameserver 4.4.4.4
+
+# End /etc/resolv.conf
+EOF
+
+echo "<lfs>" > /etc/hostname
+
+cat > /etc/hosts << "EOF"
+# Begin /etc/hosts (network card version)
+
+127.0.0.1 localhost
+127.0.1.1 live
+
+#<192.168.1.1> <HOSTNAME.example.org> [alias1] [alias2 ...]
+
+# End /etc/hosts (network card version)
+EOF
+
+
+ During the kernel initialization, the first program that is run is either specified on the command line or, by default init. This program reads the initialization file /etc/inittab. Create this file with:
+cat > /etc/inittab << "EOF"
+# Begin /etc/inittab
+
+id:3:initdefault:
+
+si::sysinit:/etc/rc.d/init.d/rc S
+
+l0:0:wait:/etc/rc.d/init.d/rc 0
+l1:S1:wait:/etc/rc.d/init.d/rc 1
+l2:2:wait:/etc/rc.d/init.d/rc 2
+l3:3:wait:/etc/rc.d/init.d/rc 3
+l4:4:wait:/etc/rc.d/init.d/rc 4
+l5:5:wait:/etc/rc.d/init.d/rc 5
+l6:6:wait:/etc/rc.d/init.d/rc 6
+
+ca:12345:ctrlaltdel:/sbin/shutdown -t1 -a -r now
+
+su:S016:once:/sbin/sulogin
+
+1:2345:respawn:/sbin/agetty --noclear tty1 9600
+2:2345:respawn:/sbin/agetty tty2 9600
+3:2345:respawn:/sbin/agetty tty3 9600
+4:2345:respawn:/sbin/agetty tty4 9600
+5:2345:respawn:/sbin/agetty tty5 9600
+6:2345:respawn:/sbin/agetty tty6 9600
+
+# End /etc/inittab
+EOF
+
+
+
+The setclock is run via udev when the kernel detects the hardware capability upon boot.
+setclock script reads the time from the hardware clock. If the hardware clock is set to UTC, this script will convert the hardware clock's time to the local time using the /etc/localtime file.
+
+sudo hwclock --localtime --show 
+display what the current time and if the timezone is UTC
+if you are currently in the MST timezone, which is also known as GMT -0700, add seven hours to the local time. 
+
+Change the value of the UTC variable below to a value of 0 (zero) if the hardware clock is not set to UTC time. 
+cat > /etc/sysconfig/clock << "EOF"
+# Begin /etc/sysconfig/clock
+
+UTC=1
+
+# Set this to any options you might need to give to hwclock,
+# such as machine hardware clock type for Alphas.
+CLOCKPARAMS=
+
+# End /etc/sysconfig/clock
+EOF
+
+
+
+The console script reads the /etc/sysconfig/console file for configuration information.
+in doubt, look in the /usr/share/keymaps and /usr/share/consolefonts directories for valid keymaps and screen fonts.
+cat > /etc/sysconfig/console << "EOF"
+# Begin /etc/sysconfig/console
+
+KEYMAP="br-abnt2"
+FONT="lat0-16 -m 8859-15"
+
+# End /etc/sysconfig/console
+EOF
+
+
+
+The list of all locales supported by Glibc can be obtained by running the following command:
+locale -a
+LC_ALL=pt_BR.utf8 locale charmap
+
+cat > /etc/profile << "EOF"
+# Begin /etc/profile
+
+export LANG=pt_BR.UTF-8
+
+# End /etc/profile
+EOF
+
+
+/etc/inputrc file handles keyboard mapping for specific situations.
+/etc/inputrc used by everyone who logs in. If you later decide you need to override the defaults on a per-user basis, you can create a .inputrc file in the user's home directory
+info bash under the Readline Init File section. info readline is also a good source of information. 
+
+cat > /etc/inputrc << "EOF"
+# Begin /etc/inputrc
+# Modified by Chris Lynn <roryo@roryo.dynup.net>
+
+# Allow the command prompt to wrap to the next line
+set horizontal-scroll-mode Off
+
+# Enable 8bit input
+set meta-flag On
+set input-meta On
+
+# Turns off 8th bit stripping
+set convert-meta Off
+
+# Keep the 8th bit for display
+set output-meta On
+
+# none, visible or audible
+set bell-style none
+
+# All of the following map the escape sequence of the value
+# contained in the 1st argument to the readline specific functions
+"\eOd": backward-word
+"\eOc": forward-word
+
+# for linux console
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line
+"\e[5~": beginning-of-history
+"\e[6~": end-of-history
+"\e[3~": delete-char
+"\e[2~": quoted-insert
+
+# for xterm
+"\eOH": beginning-of-line
+"\eOF": end-of-line
+
+# for Konsole
+"\e[H": beginning-of-line
+"\e[F": end-of-line
+
+# End /etc/inputrc
+EOF
+
+
+ The /etc/fstab file is used by some programs to determine where file systems are to be mounted by default
+cat > /etc/fstab << "EOF"
+# Begin /etc/fstab
+
+# file system  mount-point  type     options             dump  fsck
+#                                                              order
+
+#/dev/<xxx>     /            <fff>    defaults            1     1
+#/dev/<yyy>     swap         swap     pri=1               0     0
+#proc           /proc        proc     nosuid,noexec,nodev 0     0
+#sysfs          /sys         sysfs    nosuid,noexec,nodev 0     0
+#devpts         /dev/pts     devpts   gid=5,mode=620      0     0
+
+overlayfs / overlayfs rw 0 0
+tmpfs /tmp tmpfs nosuid,nodev 0 0
+
+# End /etc/fstab
+EOF
+
+
+# = = = = = = = = = = = = = = = = = = = = = = KERNEL  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+make mrproper  && \
+echo "make mrproper CONCLUIDO" >> ../como_vai.txt && sync  && \
+#make defconfig  && \
+make LANG=pt_BR.UTF-8  LC_ALL= menuconfig  && \
+echo "make LANG=pt_BR.UTF-8  LC_ALL= menuconfig CONCLUIDO" >> ../como_vai.txt && sync  && \
+make  && \
+echo "make CONCLUIDO" >> ../como_vai.txt && sync  && \
+make modules_install  && \
+echo "make modules_install CONCLUIDO" >> ../como_vai.txt && sync  && \
+cp -v arch/x86/boot/bzImage /boot/vmlinuz-3.16.2-lfs-7.6  && \
+cp -v System.map /boot/System.map-3.16.2  && \
+cp -v .config /boot/config-3.16.2  && \
+#install -d /usr/share/doc/linux-3.16.2  && \
+#cp -r Documentation/* /usr/share/doc/linux-3.16.2  && \
+echo "cp CONCLUIDO" >> ../como_vai.txt && sync  && \
+echo "TERMINEI"
+
+install -v -m755 -d /etc/modprobe.d
+cat > /etc/modprobe.d/usb.conf << "EOF"
+# Begin /etc/modprobe.d/usb.conf
+
+install ohci_hcd /sbin/modprobe ehci_hcd ; /sbin/modprobe -i ohci_hcd ; true
+install uhci_hcd /sbin/modprobe ehci_hcd ; /sbin/modprobe -i uhci_hcd ; true
+
+# End /etc/modprobe.d/usb.conf
+EOF
+
+
+
+Ensure that an emergency boot disk is ready to “rescue” the computer if the computer becomes unusable (un-bootable).
+cd /tmp &&
+grub-mkrescue --output=grub-img.iso &&
+xorriso -as cdrecord -v dev=/dev/cdrw blank=as_needed grub-img.iso
+
+# deixei comentado por segurança
+#  grub-install /dev/sda
+# grub-install --root-directory=/media/lubuntu/LFS/ /dev/loop1
+
+cat > /boot/grub/grub.cfg << "EOF"
+# Begin /boot/grub/grub.cfg
+set default=0
+set timeout=5
+
+insmod ext2
+set root=(hd0,1)
+
+menuentry "GNU/Linux, Linux 3.16.2-lfs-7.6" {
+        linux   /boot/vmlinuz-3.16.2-lfs-7.6 root=/dev/sda1 ro
+}
+EOF
+
+
+echo 7.6 > /etc/lfs-release
+
+#file to show the status of your new system with respect to the Linux Standards Base (LSB). To create this file, run:
+cat > /etc/lsb-release << "EOF"
+DISTRIB_ID="Linux From Scratch"
+DISTRIB_RELEASE="7.6"
+DISTRIB_CODENAME="<your name here>"
+DISTRIB_DESCRIPTION="Linux From Scratch"
+EOF
+
+
+http://www.linuxfromscratch.org/cgi-bin/lfscounter.php
+
+
+
+
+
+    A text mode browser such as Lynx will allow you to easily view the BLFS book in one virtual terminal, while building packages in another.
+
+    The GPM package will allow you to perform copy/paste actions in your virtual terminals.
+
+    If you are in a situation where static IP configuration does not meet your networking requirements, installing a package such as dhcpcd or the client portion of dhcp may be useful.
+
+    Installing sudo may be useful for building packages as a non-root user and easily installing the resulting packages in your new system.
+
+    If you want to access your new system from a remote system within a comfortable GUI environment, install openssh and its prerequsite, openssl.
+
+    To make fetching files over the internet easier, install wget.
+
+    If one or more of your disk drives have a GUID partition table (GPT), either gptfdisk or parted will be useful.
+
+    Finally, a review of the following configuration files is also appropriate at this point.
+
+        /etc/bashrc
+
+        /etc/dircolors
+
+        /etc/fstab
+
+        /etc/hosts
+
+        /etc/inputrc
+
+        /etc/profile
+
+        /etc/resolv.conf
+
+        /etc/vimrc
+
+        /root/.bash_profile
+
+        /root/.bashrc
+
+        /etc/sysconfig/network
+
+        /etc/sysconfig/ifconfig.eth0
+
+
+
+logout
+
+umount -v $LFS/dev/pts
+umount -v $LFS/dev
+umount -v $LFS/run
+umount -v $LFS/proc
+umount -v $LFS/sys
+
+shutdown -r now
+
+ Bugs and security notices are reported regularly for all software. Since an LFS system is compiled from source, it is up to you to keep abreast of such reports. There are several online resources that track such reports, some of which are shown below:
+
+    CERT (Computer Emergency Response Team)
+    CERT has a mailing list that publishes security alerts concerning various operating systems and applications. Subscription information is available at http://www.us-cert.gov/cas/signup.html.
+
+    Bugtraq
+
+    Bugtraq is a full-disclosure computer security mailing list. It publishes newly discovered security issues, and occasionally potential fixes for them. Subscription information is available at http://www.securityfocus.com/archive.
+

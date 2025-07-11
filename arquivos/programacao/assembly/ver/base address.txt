@@ -1,0 +1,9 @@
+
+Base address
+is the lowest virtual address associated with the memory image of the program file.
+is calculated from three numbers: the memory load address, the maximum page size and the lowest virtual address of the program loadable segment.
+
+
+Virtual address and file offset for the System V architecture segments are congruent modulo 4kB (0x1000) or large power of 2. Because 4kB is the maximum page size, the files will be suitable for paging regardless of physical page size.
+
+Se o endereço não se encaixar em um multiplo de 4kB (0x1000), é preenchido com zeros, antes ou depois dos dados carregados para que a paginação ocorra.

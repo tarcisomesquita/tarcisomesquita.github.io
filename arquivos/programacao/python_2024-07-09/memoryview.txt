@@ -1,0 +1,131 @@
+>>> v = memoryview(b'abcefg')
+>>> v[1]
+98
+>>> v[-1]
+103
+>>> v[1:4]
+<memory at 0x7f3ddc9f4350>
+>>> bytes(v[1:4])
+b'bce'
+
+
+>>> import array
+>>> a = array.array('l', [-11111111, 22222222, -33333333, 44444444])
+>>> m = memoryview(a)
+>>> m[0]
+-11111111
+>>> m[-1]
+44444444
+>>> m[::2].tolist()
+[-11111111, -33333333]
+
+
+>>> data = bytearray(b'abcefg')
+>>> v = memoryview(data)
+>>> v.readonly
+False
+>>> v[0] = ord(b'z')
+>>> data
+bytearray(b'zbcefg')
+>>> v[1:4] = b'123'
+>>> data
+bytearray(b'z123fg')
+>>> v[2:3] = b'spam'
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: memoryview assignment: lvalue and rvalue have different structures
+>>> v[2:6] = b'spam'
+>>> data
+bytearray(b'z1spam')
+
+
+>>> m = memoryview(b"abc")
+>>> m.tobytes()
+b'abc'
+>>> bytes(m)
+b'abc'
+
+>>> m = memoryview(b"abc")
+>>> m.hex()
+'616263'
+
+>>> memoryview(b'abc').tolist()
+[97, 98, 99]
+>>> import array
+>>> a = array.array('d', [1.1, 2.2, 3.3])
+>>> m = memoryview(a)
+>>> m.tolist()
+[1.1, 2.2, 3.3]
+
+
+>>> m = memoryview(b'abc')
+>>> m.release()
+>>> m[0]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: operation forbidden on released memoryview object
+
+
+>>> import array
+>>> a = array.array('l', [1,2,3])
+>>> x = memoryview(a)
+>>> x.format
+'l'
+>>> x.itemsize
+8
+>>> len(x)
+3
+>>> x.nbytes
+24
+>>> y = x.cast('B')
+>>> y.format
+'B'
+>>> y.itemsize
+1
+>>> len(y)
+24
+>>> y.nbytes
+24
+
+
+Cast 1D/unsigned bytes to 1D/char:
+
+>>> b = bytearray(b'zyz')
+>>> x = memoryview(b)
+>>> x[0] = b'a'
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: memoryview: invalid value for format "B"
+>>> y = x.cast('c')
+>>> y[0] = b'a'
+>>> b
+bytearray(b'ayz')
+
+
+
+Cast 1D/unsigned char to 2D/unsigned long:
+
+>>> buf = struct.pack("L"*6, *list(range(6)))
+>>> x = memoryview(buf)
+>>> y = x.cast('L', shape=[2,3])
+>>> len(y)
+2
+>>> y.nbytes
+48
+>>> y.tolist()
+[[0, 1, 2], [3, 4, 5]]
+
+
+>>> import struct
+>>> buf = struct.pack("d"*12, *[1.5*x for x in range(12)])
+>>> x = memoryview(buf)
+>>> y = x.cast('d', shape=[3,4])
+>>> y.tolist()
+[[0.0, 1.5, 3.0, 4.5], [6.0, 7.5, 9.0, 10.5], [12.0, 13.5, 15.0, 16.5]]
+>>> len(y)
+3
+>>> y.nbytes
+96
+
+
+

@@ -1,0 +1,74 @@
+
+check if you're using upstart or sysvinit:
+$ /sbin/init --version
+
+SysVinit is runlevel-based and links from the /etc/rc?.d directories to the init scripts in /etc/init.d to start and stop system services.
+Upstart is event-based and use events in /etc/event.d to start and stop system services.
+
+init is the parent of all processes on the system, it is executed by the kernel and is responsible for starting all other processes.
+if init is executed as user process, (not have a process id 1), it will execute telinit and pass all arguments to that.
+
+Upstart packages:
+* upstart provides the Upstart init daemon and initctl utility.
+* upstart-logd provides the logd daemon and the job definition file for the logd service.
+* upstart-compat-sysv provides job definition files for the rc tasks as well as the reboot, runlevel, shutdown, and telinit utilities that provide compatibility with SysVinit.
+* startup-tasks provides job definition files for system startup tasks.
+* system-services provides job definition files for tty services.
+
+run /etc/event.d/rc-default, que dispara o processo de inicialização. 
+run /etc/rcS.d/, which sets up hardware and filesystems
+run /etc/rc2.d/, that have links to /etc/init.d that start or stop system services. runlevel 2, multiuser, is the default runlevel.
+first the targets whose names start with a K are executed, each with the single argument stop, followed by the scripts prefixed with an S, each with the single argument start.
+
+? In Debian systems, the initialisation script is /etc/init.d/rcS
+
+DEFINIÇÕES
+event is a change in state that init can be informed of. Exemplo: Removing and installing a hotplug or USB device (such as a printer) can trigger an event. You can also trigger an event manually by using the initctl emit command.
+
+job is a series of instructions that init reads. The instructions typically include a program (binary file or shell script) and the name of an event. The Upstart init daemon runs the program when the event is triggered.
+Each file in the /etc/event.d directory defines a job and usually has at least an event and a command. When the event is triggered, init executes the command. You can run and stop a job manually using the initctl start and stop commands, respectively. Jobs are divided into tasks and services.
+
+A task is a job that performs its work and returns to a waiting state when it is done.
+
+A service is a job that does not normally terminate by itself. For example, the logd daemon and the gettys are implemented as services.
+
+
+INITCTL
+
+The initctl (init control) utility allows a system administrator working with root privileges to communicate with the Upstart init daemon. This utility can start, stop, and report on jobs. For example, the initctl list command lists jobs and their state:
+
+$ sudo initctl list logd (stop) waiting rc-default (stop) waiting rc0 (stop) waiting ... tty5 (start) running, process 4720 tty6 (start) running, process 4727
+
+You can give the command initctl help (no hyphens before help) to display a list of initctl commands. Alternatively, you can give the command initctl list --help to display more information about the list command, or replace list with the initctl command you want more information about. The start, stop, and status utilities are links to initctl that run the initctl commands they are named for.
+
+See the initctl man page
+
+
+$ sudo initctl list myjob
+myjob (stop) waiting
+
+
+administrator-defined job uses the exec keyword to execute a shell command
+$ cat /etc/event.d/mudat start on runlevel 2
+exec echo "Entering multiuser mode on " $(date) > /tmp/mudat.out
+
+
+myjob example
+
+You can also define an event and set up a job that is triggered by that event. The myjob job definition file below defines a job that is triggered by the hithere event:
+
+$ cat /etc/event.d/myjob start on hithere script echo "Hi there, here I am!" > /tmp/myjob.out date >> /tmp/myjob.out end script
+
+The myjob file shows another way of executing commands: It includes two command lines between the script and end script keywords. These keywords always cause init to execute /bin/sh. These commands write a message and the date to the /tmp/myjob.out file. You can use the emit initctl command to trigger the job. Following, init displays the stages myjob goes through when you trigger it:
+
+$ sudo initctl emit hithere hithere myjob (start) waiting myjob (start) starting myjob (start) pre-start myjob (start) spawned, process 6064 myjob (start) post-start, (main) process 6064 myjob (start) running, process 6064 myjob (stop) running myjob (stop) stopping myjob (stop) killed myjob (stop) post-stop myjob (stop) waiting $ cat /tmp/myjob.out Hi there, here I am! Sat Jul 7 20:19:13 PDT 2007 $ sudo initctl list myjob myjob (stop) waiting
+
+In the preceding example, cat shows the output that myjob generates and initctl displays the status of the job. You can run the same job with the command initctl start myjob (or just start myjob).
+
+
+
+Specifying events with arguments
+start | stop on event [arg]
+where event is an event such as runlevel and arg is an optional argument. To stop a job when the system enters runlevel 2, specify stop on runlevel 2. You can also specify runlevel [235] to match runlevels 2, 3, and 5 or runlevel [!2] to match any runlevel except 2.
+
+

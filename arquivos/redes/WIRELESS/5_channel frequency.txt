@@ -1,0 +1,20 @@
+
+sudo iwlist wlan0 channel
+
+Canal   Freqüência nominal   Freqüência prática (22 MHz a largura de banda)
+1       2.412 GHz            2.401 a 2.423 GHz
+2       2.417 GHz            2.405 a 2.428 GHz
+3       2.422 GHz            2.411 a 2.433 GHz
+4       2.427 GHz            2.416 a 2.438 GHz
+5       2.432 GHz            2.421 a 2.443 GHz
+6       2.437 GHz            2.426 a 2.448 GHz
+7       2.442 GHz            2.431 a 2.453 GHz
+8       2.447 GHz            2.436 a 2.458 GHz
+9       2.452 GHz            2.441 a 2.463 GHz
+10      2.457 GHz            2.446 a 2.468 GHz
+11      2.462 GHz            2.451 a 2.473 GHz
+
+canais não interferentes são 1 6 11
+Técnica de transmissão DSSS (Direct Sequence Spread Spectrum). Os dados são transmitidos ao longo da banda inteira simultaneamente, ao invés de uma frequência a cada momento como no FHSS.
+
+

@@ -1,0 +1,30 @@
+The basic steps of a TLS 1.3 handshake are:
+- Client hello: The client sends a client hello message with the protocol version, the client random, and a list of cipher suites. Also includes the parameters that will be used for calculating the premaster secret.
+- Server generates master secret: At this point, the server has received the client random and the client's parameters and cipher suites. It already has the server random, since it can generate that on its own. Therefore, the server can create the master secret.
+Server hello and "Finished": The server hello includes the server’s certificate, digital signature, server random, and chosen cipher suite. Because it already has the master secret, it also sends a "Finished" message.
+Final steps and client "Finished": Client verifies signature and certificate, generates master secret, and sends "Finished" message.
+Secure symmetric encryption achieved
+
+(cliente)  1 – Envia a mensagem "Client Hello".
+   Specifying the highest TLS protocol version it supports, a random number, a list of suggested CipherSuites and suggested compression methods. If the client is attempting to perform a resumed handshake, it may send a session ID.
+
+(servidor) 2 – Resposta com um "Server Hello".
+   containing the chosen protocol version, a random number, CipherSuite and compression method from the choices offered by the client. To confirm or allow resumed handshakes the server may send a session ID.
+
+(servidor) 3 – Envia o "Server Certificate".
+(servidor) 4 – Envio (opcional) do "Server Key Exchange"
+(servidor) 5 – Envio (opcional) do "Certificate Request".
+(servidor) 6 – Envia a mensagem "Server Hello Done"
+(cliente)  7 – Envia o "Certificate Message" ou "No Certificate".
+
+(cliente)  8 – Envia a mensagem "Client Key Exchange".
+   contain a PreMasterSecret, public key, or nothing. (Again, this depends on the selected cipher.) This PreMasterSecret is encrypted using the public key of the server certificate.
+
+(cliente)  9 – Envia o "Certificate Verify".
+   The client and server then use the random numbers and PreMasterSecret to compute a common secret, called the "master secret".
+
+(cliente)  10 – Envia a mensagem "Change Cipher Spec".
+(cliente)  11 – Envia a mensagem "Client Finished".
+(servidor) 12 – Envia o seu "Change Cipher Spec".
+(servidor) 13 – Envia a mensagem "Server Finished".
+

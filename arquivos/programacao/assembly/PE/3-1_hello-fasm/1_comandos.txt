@@ -1,0 +1,46 @@
+
+cd ./
+
+xxd -g 1 hello-fasm_orig.exe | sed 's/^/;/; s/:/:\n/' | cut -c1-48 | sed 's/ /, 0x/g; s/^,/db/; s/;/; /' > hello-fasm_orig.asm
+
+./nasm  -f bin hello-fasm_orig.asm -o hello-fasm.exe
+diff -q -s hello-fasm_orig.exe hello-fasm.exe
+
+
+./prog_PE.elf hello-fasm_orig.exe
+
+
+./nasm -f bin hello-fasm.asm -o hello-fasm.exe
+
+./ndisasm -b 16 -e 0x40 -o 0x40 -p intel hello-fasm.exe | head -n 7 | sed 's/^\(.\{1,28\}\)\(.*\)$/\2                     \1/; s/ *$//; s/^\(.\{1,24\}\) */\1; /'
+
+xxd -g 1 hello-fasm.exe | sed 's/^/;/; s/:/:\n/' | cut -c1-48 | sed 's/ /, 0x/g; s/^,/db/; s/;/; /' > teste.txt
+
+
+./nasm -f bin hello-fasm.asm -o hello-fasm.exe
+diff -q -s hello-fasm_orig.exe hello-fasm.exe
+
+
+echo 'bits 64
+org 0x1200
+
+' > 4_SECTION_text.asm
+
+./ndisasm -b 64 -e 0x200 -o 0x1200 -p intel hello-fasm_orig.exe | head -n 41 | sed 's/^\(.\{1,28\}\)\(.*\)$/\2                     \1/; s/ *$//; s/^\(.\{1,24\}\) */\1; /' >> 4_SECTION_text2.asm
+
+echo '
+align   512,db 0          ; pad with 0s rather than NOPs
+' >> 4_SECTION_text.asm
+
+bits 64 ; talvez seja isso
+org  0x1000
+org  0x400000
+org  0x401000
+
+
+dd if=hello-fasm_orig.exe of=teste.bin bs=1 skip=$((0x200)) count=$((0x222 - 0x200))
+./ndisasm -b 64 -o 0x401000 -p intel teste.bin | head -n 41 | sed 's/^\(.\{1,28\}\)\(.*\)$/\2                         \1/; s/ *$//; s/^\(.\{1,28\}\) */\1; /'
+
+dd if=hello-fasm_orig.exe of=teste.bin bs=1 skip=$((0x25c)) count=$((0x289 - 0x25c))
+./ndisasm -b 64 -o 0x40105c -p intel teste.bin | head -n 41 | sed 's/^\(.\{1,28\}\)\(.*\)$/\2                         \1/; s/ *$//; s/^\(.\{1,28\}\) */\1; /'
+

@@ -1,0 +1,23 @@
+xxd -g 1 MsgBox-orig.exe | sed 's/^/ # /; s/://; s/^\(.\{11\}\)\(.\{48\}\)\(.*\)$/\2\1\3/; h; s/^\(.\{48\}\).*$/\1/; s/ /, 0x/g; s/^,/.byte/; x; s/^\(.\{48\}\)\(.*\)$/\2/; H; x; s/\n//' > MsgBox-orig.asm
+
+
+clear ; rm -f ./MsgBox.exe && as --64 -o MsgBox.o MsgBox-orig.asm && objcopy -O binary MsgBox.o MsgBox.exe
+diff -q -s MsgBox.exe MsgBox-orig.exe
+
+objdump -d -M intel --wide MsgBox.exe | tr '\t' ';' | sed '1,7d; s/^\([^;]*\);\([^;]*\);\([^;]*\)$/\3                              \1 \2/; s/^\(.\{1,33\}\) */\1# /; s/ *$//'
+
+push   0x0                       # 401000: 6a 00
+push   0x403000                  # 401002: 68 00 30 40 00
+push   0x40301e                  # 401007: 68 1e 30 40 00
+push   0x0                       # 40100c: 6a 00
+call   0x40101a                  # 40100e: e8 07 00 00 00
+push   0x0                       # 401013: 6a 00
+call   0x401020                  # 401015: e8 06 00 00 00
+jmp    DWORD PTR ds:0x402008     # 40101a: ff 25 08 20 40 00
+jmp    DWORD PTR ds:0x402000     # 401020: ff 25 00 20 40 00
+
+
+clear ; rm -f ./MsgBox.exe && as --64 -o MsgBox.o MsgBox.asm && objcopy -O binary MsgBox.o MsgBox.exe
+diff -q -s MsgBox.exe MsgBox-orig.exe
+
+

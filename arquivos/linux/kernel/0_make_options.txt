@@ -1,0 +1,46 @@
+make help
+
+make ARCH=ia64 CROSS_COMPILE=ia64-
+
+Cleaning targets:
+  clean		  - Remove most generated files but keep the config and enough build support to build external modules
+  mrproper	  - Remove all generated files + config + various backup files
+  distclean	  - mrproper + remove editor backup and patch files
+
+Configuration targets:
+  menuconfig	  - Update current config utilising a menu based program
+  allnoconfig	  - New config where all options are answered with no
+  localmodconfig  - Update current config disabling modules not loaded
+
+Other generic targets:
+* vmlinux	  - Build the bare kernel
+* modules	  - Build all modules
+  modules_install - Install all modules to INSTALL_MOD_PATH (default: /)
+  prepare         - Set up for building external modules
+  headers_install - Install sanitised kernel headers to INSTALL_HDR_PATH
+                    (default: /media/arq_blue/src/linux-2.6.28/usr)
+  make deb-pkg
+
+Documentation targets:
+ Linux kernel internal documentation in different formats:
+  htmldocs        - HTML
+
+Architecture specific targets (x86):
+* bzImage      - Compressed kernel image (arch/x86/boot/bzImage)
+  isoimage     - Create a boot CD-ROM image (arch/x86/boot/image.iso)
+                  bzdisk/fdimage*/isoimage also accept:
+                  FDARGS="..."  arguments for the booted kernel
+                  FDINITRD=file initrd for the booted kernel
+
+  i386_defconfig           - Build for i386
+  x86_64_defconfig         - Build for x86_64
+
+  make V=0|1 [targets] 0 => quiet build (default), 1 => verbose build
+  make V=2   [targets] 2 => give reason for rebuild of target
+  make O=dir [targets] Locate all output files in "dir", including .config
+  make C=1   [targets] Check all c source with $CHECK (sparse by default)
+  make C=2   [targets] Force check of all c source with $CHECK
+
+Execute "make" or "make all" to build all targets marked with [*] 
+For further info see the ./README file
+

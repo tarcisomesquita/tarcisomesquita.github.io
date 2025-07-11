@@ -1,0 +1,214 @@
+/*
+
+A01-P01
+sumário
+
+A01-P02
+paradigma de programação
+
+Imperativos
+Java: orientação a objetos
+C: procedural ou estrutural
+
+Declarativos
+Scala: funcional
+Prolog: lógico
+
+misto: java, python, php, c++, c#
+
+orientação o objetos é melhor para fazer manutenção
+
+função comprar
+cliente.comprar()
+
+A01-P03
+historia
+
+A01-P04
+compilado x interpretado
+
+melhor desempenho do compilado
+
+o código fonte é transformado em bytecode, que será lido pela máquina virtual
+
+jdk: para quem vai escrever código
+jre: para quem apenas executa programas
+
+garbage: libera memória que foi alocada e não é mais usada
+
+A01-P05
+IDE eclipse
+
+instalou e rodou hello world
+
+A01-P06
+variável, tipo
+
+atalho
+sysout ctrl+space
+copia linha: ctrl+alt+seta para baixo
+escreve import: ctrl+shft+o
+
+
+tudo é double
+float nota = 4.5f;
+
+		System.out.println("Idade = " + idade);
+		System.out.printf("Idade = %d\n", idade);
+
+package uninter;
+
+import java.util.Scanner;
+
+public class Principal {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		System.out.println("Hello world");
+		int idade = 10;
+		System.out.println("Idade = " + idade);
+		System.out.printf("Idade = %d\n", idade);
+
+		Scanner teclado = new Scanner(System.in);
+		idade = teclado.nextInt();
+		System.out.printf("Idade = %d\n", idade);
+		
+		if (idade < 18) {
+			System.out.printf("Acesso bloqueado\n");
+		}
+		else if (idade <  65) {
+			System.out.println("Adulto");
+		}
+		
+		
+		String nome = "Tarciso";
+		System.out.printf("Idade = %s\n", nome);
+		nome = teclado.next();
+		System.out.printf("Idade = %s\n", nome);
+		
+	}
+
+}
+
+while
+for
+array
+
+A07
+fecha projeto antigo e cria novo
+
+IMC = peso/altura²
+separador decimal: ponto no código, vírgula no console
+
+letras acentuadas no código foram impressas erradas
+
+trocou if else por operação ternária, isso reduziu a quantidade de linhas
+
+Java não manipula com arrays
+
+import java.util.ArrayList
+ArrayList<String> listaNomes = new ArrayList<String>();
+ArrayList<Integer> meagasena = new ArrayList<Integer>();
+
+listaNomes.add(nome);
+nome = listaNomes.geti();
+listaNomes.size();
+
+System.out.println(listaNomes);
+Collections.reverse(listaNomes);
+
+A02-P01
+Sumário
+
+A02-P02
+classes e atributos
+
+exemplo de classe: carro
+criou a classe alunos
+
+A02-P03
+criu um método
+
+A02-P04
+regras para nomes:
+pacote: letras minusculas
+classe: primeira letra maiúscula
+
+static
+método não associado a uma instância
+variável global
+
+static final double PI = 3.14;
+Carro.PI;
+
+static float milhasParaMetro(milhas)
+Carro.milhasParaMetro(2);
+
+A02-P05
+UML
+diagrama de classe
+
+┌────────────────┐
+│ aluno          │
+├────────────────┤
+│ nome: String   │
+│ cpf: String    │
+│ matricula: int │
+├────────────────┤
+│ void info()    │
+└────────────────┘
+
+relação de classes
+
+A02-P06
+construtores
+vazio sem parâmetros
+com parâmetros
+this
+
+A8
+criou classes e métodos
+
+escreveu o código principal como se as classes já existissem.
+
+O eclipse fez os construtores automaticamente.
+
+A03-P01
+Visibilidade
+Encapsulamento
+Collections
+Interator
+Classe localdate
+
+A03-P02
+Visibilidade
+mudou variáveis na classe Aluno e tentou acessá-las na classe Principal.
+Criou o pacote outro e tentou acessar a classe aluno.
+import empresa.Aluno;
+
+
+A03-P03
+Encapsulamento
+
+visibilidade no UML
++ público
+- privado
+# protegido
+
+
+apt-get install openjdk-17-jdk
+zip -Z bzip2 -r java_original.zip T_2023-06-06/
+ 
+
+wget -O A10.mp4 https://vod.grupouninter.com.br/2021/FEV/10202100033-A10.mp4
+for ((P=1; P<7; P++)); do
+  wget -O A04-P0${P}.mp4 https://vod.grupouninter.com.br/2021/FEV/10202100033-A04-P0${P}.mp4;
+done
+
+  #wget -O A01-P0${P}.mp3 https://aud.grupouninter.com.br/2022/JUN/10202201673-A01-P0${P}.mp3;
+
+wget -O A08.mp4 https://vod.grupouninter.com.br/2021/FEV/10202100033-A08.mp4
+wget -O A07.mp3 https://aud.grupouninter.com.br/2022/JUN/10202201673-A07.mp3
+
+wget -O python.mp4 https://vod.grupouninter.com.br/2022/FEV/10202200373.mp4
+*/

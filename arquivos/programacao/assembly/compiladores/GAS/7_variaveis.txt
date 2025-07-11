@@ -1,0 +1,59 @@
+x:                  .long 0x12
+y:                  .word 0x34
+b:                  .byte 1
+ch:                 .byte 'A'
+myArray:            .space 20
+.byte 64, 'A'         # inserts the bytes 0x40 0x41
+.byte 0x42            # inserts the byte 0x42
+.byte 0b1000011, 0104 # inserts the bytes 0x43 0x44
+.hword 0xAA55, 12345  # inserts the bytes 0x55 0xAA 0x39 0x30
+.2byte 0x55AA, -1     # inserts the bytes 0xAA 0x55 0xFF 0xFF
+.word  0xDEADBEEF     # inserts the bytes 0xEF 0xBE 0xAD 0xDE
+.4byte -42            # inserts the bytes 0xD6 0xFF 0xFF 0xFF
+.octa  0x123456789abcdef0123456789ABCDEF0 # A bignum.
+.float 0f-31415926535897932384626433832795028841971.693993751E-40  # ? - pi, a flonum.
+
+Strings
+Message:           .ascii    "Hello World\0"
+Message:           .asciz    "Hello World"
+
+\b  backspace;
+\n  newline;
+\r  carriage-Return;
+\t  horizontal Tab;
+\ digit digit digit
+    An octal character code.
+\x hex-digit hex-digit
+    A hex character code.
+\\  Represents one `\' character.
+\"  Represents one `"' character.
+
+A label can be any valid symbol, followed by a colon ":".
+A valid symbol is one that alphabetic characters A to Z and a to z, the digits 0 to 9, as well as "_", "." and "$".
+Note, however, that you cannot start a symbol with a digit.
+
+A comment is anything that follows a semicolon "#".
+C-style comments (using "/*" and "*/") are also allowed.
+
+You may write a statement on more than one line if you put a backslash (\) immediately in front of any newlines within the statement. 
+
+The following three lines are exactly identical, and set the value of adams to 42:
+             .equ     adams, (5 * 8) + 2
+             .set     adams, 0x2A
+    adams    =        0b00101010
+
+
+Within each section, there can be numbered subsections with values from 0 to 8192.
+.text 0     # The default subsection is text 0 anyway.
+.ascii "This lives in the first text subsection. *"
+.text 1
+.ascii "But this lives in the second text subsection."
+.data 0
+.ascii "This lives in the data section,"
+.ascii "in the first data subsection."
+.text 0
+.ascii "This lives in the first text section,"
+.ascii "immediately following the asterisk (*)."
+
+The special symbol `.' refers to the current address that as is assembling into. Thus, the expression `melvin: .long .' defines melvin to contain its own address. Assigning a value to . is treated the same as a .org directive. Thus, the expression `.=.+4' is the same as saying `.space 4'.
+

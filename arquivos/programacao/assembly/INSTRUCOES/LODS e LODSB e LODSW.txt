@@ -1,0 +1,36 @@
+
+LODS/LODSB/LODSW/LODSD Operand – Load String 1010 110w
+
+O endereco da memória esta em DS:(E)SI
+
+LODS mem
+Nao entendi.
+Serah que se DS:(E)SI=0 ele carrega diretamente da memoria?
+The explicit-operands form (specified with the LODS mnemonic) allows the source operand to be specified explicitly.
+
+
+LODSB
+Load byte at address DS:(E)SI into AL.
+
+LODSW
+Load word at address DS:(E)SI into AX.
+
+LODSD
+Load dword at address DS:(E)SI into EAX.
+
+After the byte, word, or doubleword is transferred from the memory location into the
+AL, AX, or EAX register, the (E)SI register is incremented or decremented automati-
+cally according to the setting of the DF flag in the EFLAGS register. (If the DF flag is
+0, the (E)SI register is incremented; if the DF flag is 1, the ESI register is decre-
+mented.) The (E)SI register is incremented or decremented by 1 for byte operations,
+by 2 for word operations, or by 4 for doubleword operations.
+
+
+The LODS, LODSB, LODSW, and LODSD instructions can be preceded by the REP
+prefix for block loads of ECX bytes, words, or doublewords. More often, however,
+these instructions are used within a LOOP construct because further processing of
+the data moved into the register is usually necessary before the next transfer can be
+made. 
+
+
+

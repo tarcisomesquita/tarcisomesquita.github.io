@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="utf-8">
+<title>minas</title>
+<meta name="description" content="Jogo de minas">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<style>
+body {
+  font-family: 'Open Sans', sans-serif;
+  color: #000000;
+  font-size: 20px;
+	
+  background-color: #e0e0e0;
+}
+
+table, td, th {
+  border: 1px solid black;
+}
+
+table { 
+  margin: auto;
+  border-collapse: collapse;
+}
+
+td {
+  text-align: center;
+  vertical-align: middle;
+  background-color: gray;
+	
+	width: 25px; 
+	height: 25px;
+	padding: 0px;
+}
+
+img {
+  display: block;
+  margin: 0 auto;
+}
+
+svg {
+  display: block;
+  margin: 0 auto;
+}
+
+</style>
+	
+</head>
+
+<body>
+
+<table id="table"></table>
+
+<script>
+/*
+criar tabela com tamanho definido de cada célula (6mm)
+desenho da bomba é um cículo preenchida de: 
+- vermelho, quando explodida
+- preto, quando localizada
+- verde, quando marcada
+- azul, quando marcada errada
+fundo da janela cinza
+ fundo branco quando coberto
+*/
+
+let maxX, maxY, maxNumBombs, maxCells;
+
+// maxX =  8; maxY =  8; maxNumBombs = 10; // Beginner
+// maxX = 32; maxY = 16; maxNumBombs = 99; // Expert
+maxX = 16; maxY = 16; maxNumBombs = 40; // Intermediate
+maxCells = maxX * maxY;
+
+function constructCell() {
+	this.isBomb = false;
+	this.isExposed = false;  // Is it open?
+	this.isFlagged = false;
+	this.isMarked = false;   // Used for recursive opening
+	this.neighborBombs = 0;
+}
+
+let cellArray = [];
+for (let l=0; l < maxCells; l++) cellArray[l] = new constructCell();
+
+function arrayIndexOf(x,y) {
+   return (y-1) * maxX + (x-1);
+}
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+let opened = 0;
+
+function openCell(x,y) {
+  with (cellArray[arrayIndexOf(x,y)]) {
+    if (isExposed) return;
+		
+		isExposed = true;
+		isMarked = false;
+	  opened++;
+		
+    document.getElementById(`x${x}y${y}`).style.backgroundColor = 'white';
+		
+    if (isBomb) {
+		  if (! dead && ! win) {
+        document.getElementById(`x${x}y${y}`).innerHTML = '<svg width="25px" height="25px"><circle cx="12.5" cy="12.5" r="8" fill="red"></svg>';
+        dead = true;
+  			openAll();
+			}
+			else
+			  document.getElementById(`x${x}y${y}`).innerHTML = '<svg width="25px" height="25px"><circle cx="12.5" cy="12.5" r="8" fill="black"></svg>';
+		}
+		else {
+		  if (isFlagged) document.getElementById(`x${x}y${y}`).innerHTML = '<svg width="25px" height="25px"><circle cx="12.5" cy="12.5" r="8" fill="blue"></svg>';
+			else if (neighborBombs === 1) document.getElementById(`x${x}y${y}`).innerHTML = '<span style="color: blue;  ">1</span>';
+			else if (neighborBombs === 2) document.getElementById(`x${x}y${y}`).innerHTML = '<span style="color: green; ">2</span>';
+			else if (neighborBombs === 3) document.getElementById(`x${x}y${y}`).innerHTML = '<span style="color: red;   ">3</span>';
+			else if (neighborBombs === 4) document.getElementById(`x${x}y${y}`).innerHTML = '<span style="color: orange;">4</span>';
+			else if (neighborBombs === 5) document.getElementById(`x${x}y${y}`).innerHTML = '<span style="color: maroon;">5</span>';
+			else if (neighborBombs === 6) document.getElementById(`x${x}y${y}`).innerHTML = '<span style="color: lime;  ">6</span>';
+			else if (neighborBombs === 7) document.getElementById(`x${x}y${y}`).innerHTML = '<span style="color: navy;  ">7</span>';
+			else if (neighborBombs === 8) document.getElementById(`x${x}y${y}`).innerHTML = '<span style="color: gray;  ">8</span>';
+			
+			if (opened == (maxCells - maxNumBombs)) {
+			  win = true;
+			  openAll();
+			}
+		}
+	}
+}
+
+function openAll() {
+  for (let x = 1; x <= maxX; x++) {
+    for (let y = 1; y <= maxY; y++) {
+      openCell(x,y);
+		}
+	} 
+}
+
+function openAllMarked() {
+  for (let x = 1; x <= maxX; x++) {
+    for (let y = 1; y <= maxY; y++) {
+		  if (cellArray[arrayIndexOf(x,y)].isMarked) openCell(x,y);
+		}
+  }
+}
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+function markCells(x, y) {
+  if (cellArray[arrayIndexOf(x,y)].isMarked) return;
+	cellArray[arrayIndexOf(x, y)].isMarked = true;
+  
+	if (cellArray[arrayIndexOf(x,y)].neighborBombs == 0) {
+	  if (checkBounds(x - 1, y)) markCells(x - 1, y);
+	  if (checkBounds(x + 1, y)) markCells(x + 1, y);
+		
+	  if (checkBounds(x - 1, y - 1)) markCells(x - 1, y - 1);
+	  if (checkBounds(x + 0, y - 1)) markCells(x + 0, y - 1);
+	  if (checkBounds(x + 1, y - 1)) markCells(x + 1, y - 1);
+		
+	  if (checkBounds(x - 1, y + 1)) markCells(x - 1, y + 1);
+	  if (checkBounds(x + 0, y + 1)) markCells(x + 0, y + 1);
+	  if (checkBounds(x + 1, y + 1)) markCells(x + 1, y + 1);
+	}
+}
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// Makes sure x,y coords are within the board.  Returns true or false.
+function checkBounds(x,y) {
+	return (1 <= x && x<=maxX ) && (1 <= y && y <= maxY);
+}
+
+function addNeighbor(x,y) {
+	if (! checkBounds(x,y)) return;
+	
+	with (cellArray[arrayIndexOf(x,y)]) ++neighborBombs;
+}
+
+// Makes sure there is no bomb for the first open cell.
+function firstClick(x,y) {
+  
+	// Impede que seja colocado bomba nas células ao redor do clique
+	for (let i = x-1; i <= x+1; i++) {
+		for (let j = y-1; j <= y+1; j++) {
+			if (checkBounds(i,j)) {
+				cellArray[arrayIndexOf(i,j)].isExposed = true;
+			}
+		}
+	}
+  
+	let i, j;
+	for (let k = 0; k < maxNumBombs; k++) {
+		let bombPlaced = false;
+		while (! bombPlaced) {
+			with (Math) {
+				i = floor(random() * maxX) + 1;
+				j = floor(random() * maxY) + 1;
+			}
+      
+			with (cellArray[arrayIndexOf(i,j)]) {
+				if ((! isBomb) && (! isExposed)) {
+					isBomb = true;
+					
+					for (let m = i-1; m <= i+1; m++) {
+						for (let n = j-1; n <= j+1; n++) {
+							addNeighbor(m,n);
+						}
+					}
+					bombPlaced = true;
+				} 
+				else bombPlaced = false;
+			}
+		}
+	}
+  
+	// Desfaz a exposição, pois cellClick vai lidar com o clique.
+	for (let i = x-1; i <= x+1; i++) {
+		for (let j = y-1; j <= y+1; j++) {
+			if (checkBounds(i,j)) {
+				cellArray[arrayIndexOf(i,j)].isExposed = false;
+			}
+		}
+	}
+	
+	isFirstClick = false;
+}
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+let dead = false; // Hit a bomb?
+let win = false;
+let isFirstClick = true;
+
+// Handles both left and right click.
+function cellClick(x,y,e) {
+	if (dead || win) return;
+	
+	if ((e != null) && (e.button != 2)) {
+    if (isFirstClick) firstClick(x,y);
+		
+		with (cellArray[arrayIndexOf(x,y)]) {
+  		if (! isFlagged) {
+				markCells(x, y);
+				openAllMarked();
+			}
+		}
+  }
+  else {
+	  if (isFirstClick) return;
+		
+		with (cellArray[arrayIndexOf(x,y)]) {
+			if (! isExposed) {
+				if (isFlagged) {
+					isFlagged = false;
+					document.getElementById(`x${x}y${y}`).innerHTML = '';
+				}
+				else {
+					isFlagged = true;
+				  document.getElementById(`x${x}y${y}`).innerHTML = '<svg width="25px" height="25px"><circle cx="12.5" cy="12.5" r="8" fill="green"></svg>';
+        }
+			}
+		}
+  }
+}
+
+
+let tableHtml = '';
+for (let y = maxY; y > 0; y--) {
+  tableHtml += '<tr>\n';
+  for (let x = 1; x <= maxX; x++) {
+	  tableHtml += `<td id="x${x}y${y}" onmouseup="cellClick(${x},${y}, event)"></td>\n`;
+	}
+  tableHtml += '</tr>\n';
+}
+table.innerHTML = tableHtml;
+
+// Disable the right click button's menu.
+function pressRightClick() { return false; } 
+document.oncontextmenu = pressRightClick;
+
+</script>
+
+</body>
+</html>

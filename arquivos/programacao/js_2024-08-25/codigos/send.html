@@ -1,0 +1,122 @@
+<html>
+<head>
+<script>
+
+function displayError() {
+   document.getElementById("err_url").value = document.location.href;
+   document.getElementById("err_form").style.display = "block";
+   document.getElementById("err_desc").focus();
+}
+
+function hideError() {
+   document.getElementById("err_form").style.display="none";
+}
+
+function sendErr() {
+   var err_url = document.getElementById("err_url").value;
+   var err_email = document.getElementById("err_email").value;
+   var err_desc = document.getElementById("err_desc").value;
+   var xmlhttp;
+   xmlhttp = new XMLHttpRequest();
+   xmlhttp.open("POST","/err_sup.asp",true); // mude AQUI
+   xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+   //xmlhttp.send("err_url=" + err_url + "&err_email=" + err_email + "&err_desc=" + escape(err_desc)); // trava se não estiver online
+   hideError();
+   document.getElementById("err_sent").style.display = "block";
+}
+
+function hideSent() {
+   document.getElementById("err_sent").style.display = "none";
+}
+
+</script>
+
+<style>
+#err_form, #err_sent {
+   color:#000000;
+   background-color:#f1f1f1;
+   border:1px solid #a4a4a4;
+   background-repeat:repeat-x;
+   padding:10px;
+   padding-bottom:0px;
+   width:95%;
+   z-index:1;
+   margin-left:auto;
+   margin-right:auto;
+   margin-top:10px;
+   display:none;
+   position:relative;
+}
+
+#err_form h2, #err_sent h2 {
+   margin-top:0px;	
+}
+
+#err_form label {
+   display:block;
+   margin-bottom:3px;
+}
+
+#err_form input {
+   border:1px solid gray;
+   width:590px;
+   height:30px;
+   display:block;
+   padding:4px;
+}
+
+#err_form textarea {
+   border:1px solid gray;
+   width:590px;
+   height:100px;
+   padding:4px;
+   display:block;
+}
+
+#err_form .submit input {
+   border:1px solid gray;
+   width:100px;
+   height:18px;
+   padding:0px;
+   padding-bottom:2px;
+}
+
+.err_close {
+   width:58px;
+   padding:0px;
+   position:absolute;
+   top:5px;
+   right:5px;
+   text-decoration:underline;
+   cursor:pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<div id="err_form" style="display:none">
+   <h2>Your suggestion:</h2>
+   <p><label for="err_email">Your E-mail (optional):</label> <input type="text" id="err_email" name="err_email" /></p>
+   <p><label for="err_url">Page address:</label> <input type="text" disabled="disabled" id="err_url" name="err_url" /></p>
+   <p><label for="err_desc">Description:</label> <textarea name="err_desc" id="err_desc" cols="92" rows="20"></textarea></p>
+   <p class="submit"><input type="button" value="Submit" onclick="sendErr()" /></p>
+   <div class="err_close" onclick="hideError()">Close [X]</div>
+</div>
+
+<div id="err_sent" style="display:none">
+   <h2>Thank you for your support.</h2>
+   <div class="err_close" onclick="hideSent()">Close [X]</div>
+</div>
+
+<button autofocus onclick="displayError();return false">REPORT ERROR</button><br />
+
+
+<script>
+for (x in document) document.write(x + "<BR>");
+</script>
+
+</body>
+</html>
+

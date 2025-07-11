@@ -1,0 +1,1 @@
+timeout -t 15 -s 9 syslogd -O log.txt

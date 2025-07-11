@@ -1,0 +1,45 @@
+
+TIMING AND PERFORMANCE
+       time is specified in milliseconds by default, though you can append 's', 'm', or 'h'.
+
+       --max-hostgroup numhosts
+           divide the target IP space into groups and then scanning one group at a time.
+           the user would not receive any reports (except for the updates offered in verbose mode) until the first group of hosts are completed.
+
+       --max-rtt-timeout time
+           how long it will wait for a probe response.
+           I generally do not set the maximum RTT below 100 ms, no matter what the ping times are. Nor do I exceed 1000 ms.
+
+       --max-retries numtries (Specify the maximum number of port scan probe retransmissions)
+           --max-retries 0 to prevent any retransmissions, though that is rarely recommended.
+           The default (with no -T template) is to allow ten retransmissions.
+
+       --host-timeout time (Give up on slow target hosts)
+           maximum amount of time you are willing to wait. Nmap may be scanning other hosts at the same time. A host that times out is skipped.
+
+       --scan-delay time; --max-scan-delay time
+           wait at least the given amount of time between each probe it sends to a given host. Useful in the case of rate limiting.
+
+       --min-rate number (Specify a minimum scanning rate)
+           guarantee that a scan will be finished by a certain time.
+           packet rate in packets per second.
+
+           retransmission will detect the network congestion caused by an
+           excessive scanning rate and increase the number of retransmissions
+
+       --max-rate number (Specify a maximum scanning rate)
+           --max-rate 0.1 for a slow scan of one packet every ten seconds.
+
+       -T paranoid|sneaky|polite|normal|aggressive|insane (Set a timing template)
+           trying to optimize the scan time. offers six timing templates. You can
+           specify them with the -T option and their number (0-5) or their name.
+           Normal mode (3) is the default and does nothing.
+           Aggressive mode (4) speeds scans up by making the assumption that you are on a reasonably fast and reliable network.
+           insane mode (5) assumes that you are on an extraordinarily fast network or are willing to sacrifice some accuracy for speed.
+
+           I would recommend always using -T4. Some people love -T5 though it is too aggressive for my taste.
+           While -T0 and -T1 may be useful for avoiding IDS alerts, they will take an extraordinarily long time to scan thousands of machines or ports.
+
+     -T4 does the equivalent of --max-rtt-timeout 1250                      --initial-rtt-timeout 500 --max-retries 6                    --max-scan-delay 10
+     -T5 does the equivalent of --max-rtt-timeout 300  --min-rtt-timeout 50 --initial-rtt-timeout 250 --max-retries 2 --host-timeout 15m --max-scan-delay 5
+

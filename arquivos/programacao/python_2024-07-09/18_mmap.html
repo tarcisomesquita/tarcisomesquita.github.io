@@ -1,0 +1,455 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+>
+
+<html>
+  <head><meta charset="UTF-8" />
+    <meta>
+    <meta>
+    <title>18.9. mmap — Memory-mapped file support &#8212; Python 3.6.5 documentation</title>
+    <link>
+    <link>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Python 3.6.5 documentation"
+>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    
+    <script></script>
+    <script></script>
+    
+    
+ 
+
+  </head><body>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="netdata.html" title="19. Internet Data Handling"
+>next</a> |</li>
+        <li>
+          <a href="signal.html" title="18.8. signal — Set handlers for asynchronous events"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>The Python Standard Library</a> &#187;</li>
+          <li><a>18. Interprocess Communication and Networking</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>    
+
+    <div>
+      <div>
+        <div>
+          <div>
+            
+  <div>
+<span></span><h1>18.9. <a><code><span>mmap</span></code></a> — Memory-mapped file support<a>¶</a></h1>
+<hr>
+<p>Memory-mapped file objects behave like both <a><code><span>bytearray</span></code></a> and like
+<a><span>file objects</span></a>.  You can use mmap objects in most places
+where <a><code><span>bytearray</span></code></a> are expected; for example, you can use the <a><code><span>re</span></code></a>
+module to search through a memory-mapped file.  You can also change a single
+byte by doing <code><span>obj[index]</span> <span>=</span> <span>97</span></code>, or change a subsequence by assigning to a
+slice: <code><span>obj[i1:i2]</span> <span>=</span> <span>b'...'</span></code>.  You can also read and write data starting at
+the current file position, and <code><span>seek()</span></code> through the file to different positions.</p>
+<p>A memory-mapped file is created by the <a><code><span>mmap</span></code></a> constructor, which is
+different on Unix and on Windows.  In either case you must provide a file
+descriptor for a file opened for update. If you wish to map an existing Python
+file object, use its <code><span>fileno()</span></code> method to obtain the correct value for the
+<em>fileno</em> parameter.  Otherwise, you can open the file using the
+<a><code><span>os.open()</span></code></a> function, which returns a file descriptor directly (the file
+still needs to be closed when done).</p>
+<div>
+<p>Note</p>
+<p>If you want to create a memory-mapping for a writable, buffered file, you
+should <a><code><span>flush()</span></code></a> the file first.  This is necessary to ensure
+that local modifications to the buffers are actually available to the
+mapping.</p>
+</div>
+<p>For both the Unix and Windows versions of the constructor, <em>access</em> may be
+specified as an optional keyword parameter. <em>access</em> accepts one of three
+values: <code><span>ACCESS_READ</span></code>, <code><span>ACCESS_WRITE</span></code>, or <code><span>ACCESS_COPY</span></code>
+to specify read-only, write-through or copy-on-write memory respectively.
+<em>access</em> can be used on both Unix and Windows.  If <em>access</em> is not specified,
+Windows mmap returns a write-through mapping.  The initial memory values for
+all three access types are taken from the specified file.  Assignment to an
+<code><span>ACCESS_READ</span></code> memory map raises a <a><code><span>TypeError</span></code></a> exception.
+Assignment to an <code><span>ACCESS_WRITE</span></code> memory map affects both memory and the
+underlying file.  Assignment to an <code><span>ACCESS_COPY</span></code> memory map affects
+memory but does not update the underlying file.</p>
+<p>To map anonymous memory, -1 should be passed as the fileno along with the length.</p>
+<dl>
+<dt>
+<em>class </em><code>mmap.</code><code>mmap</code><span>(</span><em>fileno</em>, <em>length</em>, <em>tagname=None</em>, <em>access=ACCESS_DEFAULT</em><span>[</span>, <em>offset</em><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p><strong>(Windows version)</strong> Maps <em>length</em> bytes from the file specified by the
+file handle <em>fileno</em>, and creates a mmap object.  If <em>length</em> is larger
+than the current size of the file, the file is extended to contain <em>length</em>
+bytes.  If <em>length</em> is <code><span>0</span></code>, the maximum length of the map is the current
+size of the file, except that if the file is empty Windows raises an
+exception (you cannot create an empty mapping on Windows).</p>
+<p><em>tagname</em>, if specified and not <code><span>None</span></code>, is a string giving a tag name for
+the mapping.  Windows allows you to have many different mappings against
+the same file.  If you specify the name of an existing tag, that tag is
+opened, otherwise a new tag of this name is created.  If this parameter is
+omitted or <code><span>None</span></code>, the mapping is created without a name.  Avoiding the
+use of the tag parameter will assist in keeping your code portable between
+Unix and Windows.</p>
+<p><em>offset</em> may be specified as a non-negative integer offset. mmap references
+will be relative to the offset from the beginning of the file. <em>offset</em>
+defaults to 0.  <em>offset</em> must be a multiple of the ALLOCATIONGRANULARITY.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<em>class </em><code>mmap.</code><code>mmap</code><span>(</span><em>fileno</em>, <em>length</em>, <em>flags=MAP_SHARED</em>, <em>prot=PROT_WRITE|PROT_READ</em>, <em>access=ACCESS_DEFAULT</em><span>[</span>, <em>offset</em><span>]</span><span>)</span></dt>
+<dd><p><strong>(Unix version)</strong> Maps <em>length</em> bytes from the file specified by the file
+descriptor <em>fileno</em>, and returns a mmap object.  If <em>length</em> is <code><span>0</span></code>, the
+maximum length of the map will be the current size of the file when
+<a><code><span>mmap</span></code></a> is called.</p>
+<p><em>flags</em> specifies the nature of the mapping. <code><span>MAP_PRIVATE</span></code> creates a
+private copy-on-write mapping, so changes to the contents of the mmap
+object will be private to this process, and <code><span>MAP_SHARED</span></code> creates a
+mapping that’s shared with all other processes mapping the same areas of
+the file.  The default value is <code><span>MAP_SHARED</span></code>.</p>
+<p><em>prot</em>, if specified, gives the desired memory protection; the two most
+useful values are <code><span>PROT_READ</span></code> and <code><span>PROT_WRITE</span></code>, to specify
+that the pages may be read or written.  <em>prot</em> defaults to
+<code><span>PROT_READ</span> <span>|</span> <span>PROT_WRITE</span></code>.</p>
+<p><em>access</em> may be specified in lieu of <em>flags</em> and <em>prot</em> as an optional
+keyword parameter.  It is an error to specify both <em>flags</em>, <em>prot</em> and
+<em>access</em>.  See the description of <em>access</em> above for information on how to
+use this parameter.</p>
+<p><em>offset</em> may be specified as a non-negative integer offset. mmap references
+will be relative to the offset from the beginning of the file. <em>offset</em>
+defaults to 0.  <em>offset</em> must be a multiple of the PAGESIZE or
+ALLOCATIONGRANULARITY.</p>
+<p>To ensure validity of the created memory mapping the file specified
+by the descriptor <em>fileno</em> is internally automatically synchronized
+with physical backing store on Mac OS X and OpenVMS.</p>
+<p>This example shows a simple way of using <a><code><span>mmap</span></code></a>:</p>
+<div><div><pre><span></span><span>import</span> <span>mmap</span>
+
+<span># write a simple example file</span>
+<span>with</span> <span>open</span><span>(</span><span>&quot;hello.txt&quot;</span><span>,</span> <span>&quot;wb&quot;</span><span>)</span> <span>as</span> <span>f</span><span>:</span>
+    <span>f</span><span>.</span><span>write</span><span>(</span><span>b</span><span>&quot;Hello Python!</span><span>\n</span><span>&quot;</span><span>)</span>
+
+<span>with</span> <span>open</span><span>(</span><span>&quot;hello.txt&quot;</span><span>,</span> <span>&quot;r+b&quot;</span><span>)</span> <span>as</span> <span>f</span><span>:</span>
+    <span># memory-map the file, size 0 means whole file</span>
+    <span>mm</span> <span>=</span> <span>mmap</span><span>.</span><span>mmap</span><span>(</span><span>f</span><span>.</span><span>fileno</span><span>(),</span> <span>0</span><span>)</span>
+    <span># read content via standard file methods</span>
+    <span>print</span><span>(</span><span>mm</span><span>.</span><span>readline</span><span>())</span>  <span># prints b&quot;Hello Python!\n&quot;</span>
+    <span># read content via slice notation</span>
+    <span>print</span><span>(</span><span>mm</span><span>[:</span><span>5</span><span>])</span>  <span># prints b&quot;Hello&quot;</span>
+    <span># update content using slice notation;</span>
+    <span># note that new content must have same size</span>
+    <span>mm</span><span>[</span><span>6</span><span>:]</span> <span>=</span> <span>b</span><span>&quot; world!</span><span>\n</span><span>&quot;</span>
+    <span># ... and read again using standard file methods</span>
+    <span>mm</span><span>.</span><span>seek</span><span>(</span><span>0</span><span>)</span>
+    <span>print</span><span>(</span><span>mm</span><span>.</span><span>readline</span><span>())</span>  <span># prints b&quot;Hello  world!\n&quot;</span>
+    <span># close the map</span>
+    <span>mm</span><span>.</span><span>close</span><span>()</span>
+</pre></div>
+</div>
+<p><a><code><span>mmap</span></code></a> can also be used as a context manager in a <a><code><span>with</span></code></a>
+statement:</p>
+<div><div><pre><span></span><span>import</span> <span>mmap</span>
+
+<span>with</span> <span>mmap</span><span>.</span><span>mmap</span><span>(</span><span>-</span><span>1</span><span>,</span> <span>13</span><span>)</span> <span>as</span> <span>mm</span><span>:</span>
+    <span>mm</span><span>.</span><span>write</span><span>(</span><span>b</span><span>&quot;Hello world!&quot;</span><span>)</span>
+</pre></div>
+</div>
+<div>
+<p><span>New in version 3.2: </span>Context manager support.</p>
+</div>
+<p>The next example demonstrates how to create an anonymous map and exchange
+data between the parent and child processes:</p>
+<div><div><pre><span></span><span>import</span> <span>mmap</span>
+<span>import</span> <span>os</span>
+
+<span>mm</span> <span>=</span> <span>mmap</span><span>.</span><span>mmap</span><span>(</span><span>-</span><span>1</span><span>,</span> <span>13</span><span>)</span>
+<span>mm</span><span>.</span><span>write</span><span>(</span><span>b</span><span>&quot;Hello world!&quot;</span><span>)</span>
+
+<span>pid</span> <span>=</span> <span>os</span><span>.</span><span>fork</span><span>()</span>
+
+<span>if</span> <span>pid</span> <span>==</span> <span>0</span><span>:</span>  <span># In a child process</span>
+    <span>mm</span><span>.</span><span>seek</span><span>(</span><span>0</span><span>)</span>
+    <span>print</span><span>(</span><span>mm</span><span>.</span><span>readline</span><span>())</span>
+
+    <span>mm</span><span>.</span><span>close</span><span>()</span>
+</pre></div>
+</div>
+<p>Memory-mapped file objects support the following methods:</p>
+<dl>
+<dt>
+<code>close</code><span>(</span><span>)</span><a>¶</a></dt>
+<dd><p>Closes the mmap. Subsequent calls to other methods of the object will
+result in a ValueError exception being raised. This will not close
+the open file.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>closed</code><a>¶</a></dt>
+<dd><p><code><span>True</span></code> if the file is closed.</p>
+<div>
+<p><span>New in version 3.2.</span></p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>find</code><span>(</span><em>sub</em><span>[</span>, <em>start</em><span>[</span>, <em>end</em><span>]</span><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>Returns the lowest index in the object where the subsequence <em>sub</em> is
+found, such that <em>sub</em> is contained in the range [<em>start</em>, <em>end</em>].
+Optional arguments <em>start</em> and <em>end</em> are interpreted as in slice notation.
+Returns <code><span>-1</span></code> on failure.</p>
+<div>
+<p><span>Changed in version 3.5: </span>Writable <a><span>bytes-like object</span></a> is now accepted.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>flush</code><span>(</span><span>[</span><em>offset</em><span>[</span>, <em>size</em><span>]</span><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>Flushes changes made to the in-memory copy of a file back to disk. Without
+use of this call there is no guarantee that changes are written back before
+the object is destroyed.  If <em>offset</em> and <em>size</em> are specified, only
+changes to the given range of bytes will be flushed to disk; otherwise, the
+whole extent of the mapping is flushed.</p>
+<p><strong>(Windows version)</strong> A nonzero value returned indicates success; zero
+indicates failure.</p>
+<p><strong>(Unix version)</strong> A zero value is returned to indicate success. An
+exception is raised when the call failed.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>move</code><span>(</span><em>dest</em>, <em>src</em>, <em>count</em><span>)</span><a>¶</a></dt>
+<dd><p>Copy the <em>count</em> bytes starting at offset <em>src</em> to the destination index
+<em>dest</em>.  If the mmap was created with <code><span>ACCESS_READ</span></code>, then calls to
+move will raise a <a><code><span>TypeError</span></code></a> exception.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>read</code><span>(</span><span>[</span><em>n</em><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>Return a <a><code><span>bytes</span></code></a> containing up to <em>n</em> bytes starting from the
+current file position. If the argument is omitted, <code><span>None</span></code> or negative,
+return all bytes from the current file position to the end of the
+mapping. The file position is updated to point after the bytes that were
+returned.</p>
+<div>
+<p><span>Changed in version 3.3: </span>Argument can be omitted or <code><span>None</span></code>.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>read_byte</code><span>(</span><span>)</span><a>¶</a></dt>
+<dd><p>Returns a byte at the current file position as an integer, and advances
+the file position by 1.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>readline</code><span>(</span><span>)</span><a>¶</a></dt>
+<dd><p>Returns a single line, starting at the current file position and up to the
+next newline.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>resize</code><span>(</span><em>newsize</em><span>)</span><a>¶</a></dt>
+<dd><p>Resizes the map and the underlying file, if any. If the mmap was created
+with <code><span>ACCESS_READ</span></code> or <code><span>ACCESS_COPY</span></code>, resizing the map will
+raise a <a><code><span>TypeError</span></code></a> exception.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>rfind</code><span>(</span><em>sub</em><span>[</span>, <em>start</em><span>[</span>, <em>end</em><span>]</span><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>Returns the highest index in the object where the subsequence <em>sub</em> is
+found, such that <em>sub</em> is contained in the range [<em>start</em>, <em>end</em>].
+Optional arguments <em>start</em> and <em>end</em> are interpreted as in slice notation.
+Returns <code><span>-1</span></code> on failure.</p>
+<div>
+<p><span>Changed in version 3.5: </span>Writable <a><span>bytes-like object</span></a> is now accepted.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>seek</code><span>(</span><em>pos</em><span>[</span>, <em>whence</em><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>Set the file’s current position.  <em>whence</em> argument is optional and
+defaults to <code><span>os.SEEK_SET</span></code> or <code><span>0</span></code> (absolute file positioning); other
+values are <code><span>os.SEEK_CUR</span></code> or <code><span>1</span></code> (seek relative to the current
+position) and <code><span>os.SEEK_END</span></code> or <code><span>2</span></code> (seek relative to the file’s end).</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>size</code><span>(</span><span>)</span><a>¶</a></dt>
+<dd><p>Return the length of the file, which can be larger than the size of the
+memory-mapped area.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>tell</code><span>(</span><span>)</span><a>¶</a></dt>
+<dd><p>Returns the current position of the file pointer.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>write</code><span>(</span><em>bytes</em><span>)</span><a>¶</a></dt>
+<dd><p>Write the bytes in <em>bytes</em> into memory at the current position of the
+file pointer and return the number of bytes written (never less than
+<code><span>len(bytes)</span></code>, since if the write fails, a <a><code><span>ValueError</span></code></a> will be
+raised).  The file position is updated to point after the bytes that
+were written.  If the mmap was created with <code><span>ACCESS_READ</span></code>, then
+writing to it will raise a <a><code><span>TypeError</span></code></a> exception.</p>
+<div>
+<p><span>Changed in version 3.5: </span>Writable <a><span>bytes-like object</span></a> is now accepted.</p>
+</div>
+<div>
+<p><span>Changed in version 3.6: </span>The number of bytes written is now returned.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>write_byte</code><span>(</span><em>byte</em><span>)</span><a>¶</a></dt>
+<dd><p>Write the integer <em>byte</em> into memory at the current
+position of the file pointer; the file position is advanced by <code><span>1</span></code>. If
+the mmap was created with <code><span>ACCESS_READ</span></code>, then writing to it will
+raise a <a><code><span>TypeError</span></code></a> exception.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+  <h4>Previous topic</h4>
+  <p><a href="signal.html"
+           >18.8. <code><span>signal</span></code> — Set handlers for asynchronous events</a></p>
+  <h4>Next topic</h4>
+  <p><a href="netdata.html"
+           >19. Internet Data Handling</a></p>
+  <div>
+    <h3>This Page</h3>
+    <ul>
+      <li><a>Report a Bug</a></li>
+      <li>
+        <a href="https://github.com/python/cpython/blob/3.6/Doc/library/mmap.rst"
+>Show Source
+        </a>
+      </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+      <div></div>
+    </div>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="netdata.html" title="19. Internet Data Handling"
+>next</a> |</li>
+        <li>
+          <a href="signal.html" title="18.8. signal — Set handlers for asynchronous events"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>The Python Standard Library</a> &#187;</li>
+          <li><a>18. Interprocess Communication and Networking</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>  
+    <div>
+    &copy; <a>Copyright</a> 2001-2018, Python Software Foundation.
+    <br>
+    The Python Software Foundation is a non-profit corporation.
+    <a>Please donate.</a>
+    <br>
+    Last updated on May 20, 2018.
+    <a>Found a bug</a>?
+    <br>
+    Created using <a>Sphinx</a> 1.7.4.
+    </div>
+
+  </body>
+</html>

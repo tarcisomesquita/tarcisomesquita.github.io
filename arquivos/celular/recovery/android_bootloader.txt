@@ -1,0 +1,16 @@
+Original Equipment Manufacturer (OEM).
+
+bootloaders check for hardware features and load the first part of the operating system into the device's memory.
+
+The encrypted bootloader locking out the user from customizing the firmware and software.
+
+Bootloading is typically a two-part process, utilizing a primary and a secondary bootloader.
+On most Android devices, the primary bootloader cannot be replaced. This is because the primary bootloader is hardcoded into an application-specific integrated circuit (ASIC) in the device. These hardcoded instructions load the secondary bootloader into memory and tell it where the memory, CPU and operating system are located and how they can be accessed.
+
+1. Special code in the boot read-only memory (ROM) locates the first-stage bootloader are loaded into memory. The boot ROM is an ASIC that has its code permanently programmed.
+2. The first-stage bootloader loads the second-stage bootloader after initializing some memory and getting the hardware ready.
+The bootloader checks to see if the security flag is on (S - ON). If it is on, then the bootloader will load only signed (official) kernels. If the security flag is off (S-OFF), then the bootloader no longer checks for signatures. Setting S-OFF also releases other security lock downs, making the entire file system writable and enabling other goodies, such as allowing you to install a custom recovery process on the device.
+This is the step in which you want your custom bootloader to be loaded.
+
+second-stage bootloader is the step in the boot process where the Fastboot protocol is enabled or disabled, this part of the code is frequently encrypted or otherwise locked down by OEMs.
+

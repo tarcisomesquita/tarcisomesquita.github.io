@@ -1,0 +1,21 @@
+
+Instrução CLI
+
+Proposito: Limpar o flag de interrupcao.
+
+Sintaxe:
+CLI
+
+esta instrucao desliga o flag de interrupcoes, desabilitando, deste modo,
+interrupcoes mascaraveis.
+
+uma interrupcao mascaravel e aquela cujas funcoes são desativadas quando IF=0.
+
+
+CLI – Clear Interrupt Flag 1111 1010
+
+1111 1010 b = FA h
+
+
+no affect on the generation of exceptions and NMI interrupts.
+

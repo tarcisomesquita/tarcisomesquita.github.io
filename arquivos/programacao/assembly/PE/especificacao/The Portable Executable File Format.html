@@ -1,0 +1,507 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-15">
+<title>The Portable Executable File Format - Abstract</title>
+</head><body bgcolor="#ffffff">
+
+
+<h4><font size="2" face="ARIAL">Data sections, .bss, .rdata,
+.data</font></h4>
+
+<p><font size="2" face="ARIAL">The .bss section represents
+uninitialized data for the application, including all variables
+declared as static within a function or source module.</font></p>
+
+<p><font size="2" face="ARIAL">The .rdata section represents
+read-only data, such as literal strings, constants, and debug
+directory information.</font></p>
+
+<p><font size="2" face="ARIAL">All other variables (except
+automatic variables, which appear on the stack) are stored in the
+.data section. Basically, these are application or module global
+variables.</font></p>
+
+<h4><font size="2" face="ARIAL">Resources section, .rsrc</font></h4>
+
+<p><font size="2" face="ARIAL">The .rsrc section contains
+resource information for a module. It begins with a resource
+directory structure like most other sections, but this section's
+data is further structured into a resource tree. The <b>IMAGE_RESOURCE_DIRECTORY</b>,
+shown below, forms the root and nodes of the tree.</font></p>
+
+<p><font size="2" face="ARIAL"><b>WINNT.H</b></font></p>
+
+<pre><font size="2" face="COURIER">typedef struct _IMAGE_RESOURCE_DIRECTORY {
+    ULONG   Characteristics;
+    ULONG   TimeDateStamp;
+    USHORT  MajorVersion;
+    USHORT  MinorVersion;
+    USHORT  NumberOfNamedEntries;
+    USHORT  NumberOfIdEntries;
+} IMAGE_RESOURCE_DIRECTORY, *PIMAGE_RESOURCE_DIRECTORY;
+</font></pre>
+
+<p><font size="2" face="ARIAL">Looking at the directory
+structure, you won't find any pointer to the next nodes. Instead,
+there are two fields, <i>NumberOfNamedEntries</i> and <i>NumberOfIdEntries</i>,
+used to indicate how many entries are attached to the directory.
+By <i>attached</i>, I mean the directory entries follow
+immediately after the directory in the section data. The named
+entries appear first in ascending alphabetical order, followed by
+the ID entries in ascending numerical order.</font></p>
+
+<p><font size="2" face="ARIAL">A directory entry consists of two
+fields, as described in the following <b>IMAGE_RESOURCE_DIRECTORY_ENTRY</b>
+structure:</font></p>
+
+<p><font size="2" face="ARIAL"><b>WINNT.H</b></font></p>
+
+<pre><font size="2" face="COURIER">typedef struct _IMAGE_RESOURCE_DIRECTORY_ENTRY {
+    ULONG   Name;
+    ULONG   OffsetToData;
+} IMAGE_RESOURCE_DIRECTORY_ENTRY, *PIMAGE_RESOURCE_DIRECTORY_ENTRY;
+</font></pre>
+
+<p><font size="2" face="ARIAL">The two fields are used for
+different things depending on the level of the tree. The <i>Name</i>
+field is used to identify either a type of resource, a resource
+name, or a resource's language ID. The <i>OffsetToData</i> field
+is always used to point to a sibling in the tree, either a
+directory node or a leaf node.</font></p>
+
+<p><font size="2" face="ARIAL">Leaf nodes are the lowest node in
+the resource tree. They define the size and location of the
+actual resource data. Each leaf node is represented using the
+following <b>IMAGE_RESOURCE_DATA_ENTRY</b> structure:</font></p>
+
+<p><font size="2" face="ARIAL"><b>WINNT.H</b></font></p>
+
+<pre><font size="2" face="COURIER">typedef struct _IMAGE_RESOURCE_DATA_ENTRY {
+    ULONG   OffsetToData;
+    ULONG   Size;
+    ULONG   CodePage;
+    ULONG   Reserved;
+} IMAGE_RESOURCE_DATA_ENTRY, *PIMAGE_RESOURCE_DATA_ENTRY;
+</font></pre>
+
+<p><font size="2" face="ARIAL">The two fields <i>OffsetToData</i>
+and <i>Size</i> indicate the location and size of the actual
+resource data. Since this information is used primarily by
+functions once the application has been loaded, it makes more
+sense to make the <i>OffsetToData</i> field a relative virtual
+address. This is precisely the case. Interestingly enough, all
+other offsets, such as pointers from directory entries to other
+directories, are offsets relative to the location of the root
+node.</font></p>
+
+<p><font size="2" face="ARIAL">To make all of this a little
+clearer, consider Figure 2.</font></p>
+
+<p><font size="2" face="ARIAL"><img src="The%20Portable%20Executable%20File%20Format_arquivos/pef2034c.gif" alt="[PE ResourceTree 12787 bytes ]" width="788" height="587"></font></p>
+
+<p><font size="2" face="ARIAL"><b>Figure 2. A simple resource
+tree structure</b></font></p>
+
+<p><font size="2" face="ARIAL">Figure 2 depicts a very simple
+resource tree containing only two resource objects, a menu, and a
+string table. Further, the menu and string table have only one
+item each. Yet, you can see how complicated the resource tree
+becomes--even with as few resources as this.</font></p>
+
+<p><font size="2" face="ARIAL">At the root of the tree, the first
+directory has one entry for each type of resource the file
+contains, no matter how many of each type there are. In Figure 2,
+there are two entries identified by the root, one for the menu
+and one for the string table. If there had been one or more
+dialog resources included in the file, the root node would have
+had one more entry and, consequently, another branch for the
+dialog resources.</font></p>
+
+<p><font size="2" face="ARIAL">The basic resource types are
+identified in the file WINUSER.H and are listed below:</font></p>
+
+<p><font size="2" face="ARIAL"><b>WINUSER.H</b></font></p>
+
+<pre><font size="2" face="COURIER">/*
+ * Predefined Resource Types
+ */
+#define RT_CURSOR           MAKEINTRESOURCE(1)
+#define RT_BITMAP           MAKEINTRESOURCE(2)
+#define RT_ICON             MAKEINTRESOURCE(3)
+#define RT_MENU             MAKEINTRESOURCE(4)
+#define RT_DIALOG           MAKEINTRESOURCE(5)
+#define RT_STRING           MAKEINTRESOURCE(6)
+#define RT_FONTDIR          MAKEINTRESOURCE(7)
+#define RT_FONT             MAKEINTRESOURCE(8)
+#define RT_ACCELERATOR      MAKEINTRESOURCE(9)
+#define RT_RCDATA           MAKEINTRESOURCE(10)
+#define RT_MESSAGETABLE     MAKEINTRESOURCE(11)
+</font></pre>
+
+<p><font size="2" face="ARIAL">At the top level of the tree, the
+MAKEINTRESOURCE values listed above are placed in the <i>Name</i>
+field of each type entry, identifying the different resources by
+type.</font></p>
+
+<p><font size="2" face="ARIAL">Each of the entries in the root
+directory points to a sibling node in the second level of the
+tree. These nodes are directories, too, each having their own
+entries. At this level, the directories are used to identify the
+name of each resource within a given type. If you had multiple
+menus defined in your application, there would be an entry for
+each one here at the second level of the tree.</font></p>
+
+<p><font size="2" face="ARIAL">As you are probably already aware,
+resources can be identified by name or by integer. They are
+distinguished in this level of the tree via the <i>Name</i> field
+in the directory structure. If the most significant bit of the <i>Name</i>
+field is set, the other 31 bits are used as an offset to an <b>IMAGE_RESOURCE_DIR_STRING_U</b>
+structure.</font></p>
+
+<p><font size="2" face="ARIAL"><b>WINNT.H</b></font></p>
+
+<pre><font size="2" face="COURIER">typedef struct _IMAGE_RESOURCE_DIR_STRING_U {
+    USHORT  Length;
+    WCHAR   NameString[ 1 ];
+} IMAGE_RESOURCE_DIR_STRING_U, *PIMAGE_RESOURCE_DIR_STRING_U;
+</font></pre>
+
+<p><font size="2" face="ARIAL">This structure is simply a 2-byte <i>Length</i>
+field followed by <i>Length</i> UNICODE characters.</font></p>
+
+<p><font size="2" face="ARIAL">On the other hand, if the most
+significant bit of the <i>Name</i> field is clear, the lower 31
+bits are used to represent the integer ID of the resource. Figure
+2 shows the menu resource as a named resource and the string
+table as an ID resource.</font></p>
+
+<p><font size="2" face="ARIAL">If there were two menu resources,
+one identified by name and one by resource, they would both have
+entries immediately after the menu resource directory. The named
+resource entry would appear first, followed by the
+integer-identified resource. The directory fields <i>NumberOfNamedEntries</i>
+and <i>NumberOfIdEntries</i> would each contain the value 1,
+indicating the presence of one entry.</font></p>
+
+<p><font size="2" face="ARIAL">Below level two, the resource tree
+does not branch out any further. Level one branches into
+directories representing each type of resource, and level two
+branches into directories representing each resource by
+identifier. Level three maps a one-to-one correspondence between
+the individually identified resources and their respective
+language IDs. To indicate the language ID of a resource, the <i>Name</i>
+field of the directory entry structure is used to indicate both
+the primary language and sublanguage ID for the resource. For the
+value 0x0409, 0x09 represents the primary language as
+LANG_ENGLISH, and 0x04 is defined as SUBLANG_ENGLISH_CAN for the
+sublanguage. The entire set of language IDs is defined in the
+file WINNT.H.</font></p>
+
+<p><font size="2" face="ARIAL">Since the language ID node is the
+last directory node in the tree, the <i>OffsetToData</i> field in
+the entry structure is an offset to a leaf node--the <b>IMAGE_RESOURCE_DATA_ENTRY</b>
+structure mentioned earlier.</font></p>
+
+<p><font size="2" face="ARIAL">Referring back to Figure 2, you
+can see one data entry node for each language directory entry.
+This node simply indicates the size of the resource data and the
+relative virtual address where the resource data is located.</font></p>
+
+<p><font size="2" face="ARIAL">One advantage to having so much
+structure to the resource data section, .rsrc, is that you can
+glean a great deal of information from the section without
+accessing the resources themselves. For example, you can find out
+how many there are of each type of resource, what resources--if
+any--use a particular language ID, whether a particular resource
+exists or not, and the size of individual types of resources. To
+demonstrate how to make use of this information, the following
+function shows how to determine the different types of resources
+a file includes:</font></p>
+
+<pre><font size="2" face="COURIER">int     WINAPI GetListOfResourceTypes (
+    LPVOID    lpFile,
+    HANDLE    hHeap,
+    char      **pszResTypes)
+{
+    PIMAGE_RESOURCE_DIRECTORY          prdRoot;
+    PIMAGE_RESOURCE_DIRECTORY_ENTRY    prde;
+    char                               *pMem;
+    int                                nCnt, i;
+
+
+    /* Get root directory of resource tree. */
+    if ((prdRoot = PIMAGE_RESOURCE_DIRECTORY)ImageDirectoryOffset
+           (lpFile, IMAGE_DIRECTORY_ENTRY_RESOURCE)) == NULL)
+        return 0;
+
+    /* Allocate enough space from heap to cover all types. */
+    nCnt = prdRoot-&gt;NumberOfIdEntries * (MAXRESOURCENAME + 1);
+    *pszResTypes = (char *)HeapAlloc (hHeap,
+                                      HEAP_ZERO_MEMORY,
+                                      nCnt);
+    if ((pMem = *pszResTypes) == NULL)
+        return 0;
+
+    /* Set pointer to first resource type entry. */
+    prde = (PIMAGE_RESOURCE_DIRECTORY_ENTRY)((DWORD)prdRoot +
+               sizeof (IMAGE_RESOURCE_DIRECTORY));
+
+    /* Loop through all resource directory entry types. */
+    for (i=0; i&lt;prdRoot-&gt;NumberOfIdEntries; i++)
+        {
+        if (LoadString (hDll, prde-&gt;Name, pMem, MAXRESOURCENAME))
+            pMem += strlen (pMem) + 1;
+
+        prde++;
+        }
+
+    return nCnt;
+}
+</font></pre>
+
+<p><font size="2" face="ARIAL">This function returns a list of
+resource type names in the string identified by <i>pszResTypes</i>.
+Notice that, at the heart of this function, <b>LoadString</b> is
+called using the <i>Name</i> field of each resource type
+directory entry as the string ID.of resource type strings whose
+IDs are defined the same as the type specifiers in the directory
+entries.It would be rather easy to expand on these functions or
+write new functions that extracted other information from this
+section.</font></p>
+
+<h4><font size="2" face="ARIAL">Export data section, .edata</font></h4>
+
+<p><font size="2" face="ARIAL">The .edata section contains export
+data for an application or DLL. When present, this section
+contains an export directory for getting to the export
+information.</font></p>
+
+<p><font size="2" face="ARIAL"><b>WINNT.H</b></font></p>
+
+<pre><font size="2" face="COURIER">typedef struct _IMAGE_EXPORT_DIRECTORY {
+    ULONG   Characteristics;
+    ULONG   TimeDateStamp;
+    USHORT  MajorVersion;
+    USHORT  MinorVersion;
+    ULONG   Name;
+    ULONG   Base;
+    ULONG   NumberOfFunctions;
+    ULONG   NumberOfNames;
+    PULONG  *AddressOfFunctions;
+    PULONG  *AddressOfNames;
+    PUSHORT *AddressOfNameOrdinals;
+} IMAGE_EXPORT_DIRECTORY, *PIMAGE_EXPORT_DIRECTORY;
+</font></pre>
+
+<p><font size="2" face="ARIAL">The <i>Name</i> field in the
+export directory identifies the name of the executable module. <i>NumberOfFunctions</i>
+and <i>NumberOfNames</i> fields indicate how many functions and
+function names are being exported from the module.</font></p>
+
+<p><font size="2" face="ARIAL">The <i>AddressOfFunctions</i>
+field is an offset to a list of exported function entry points.
+The <i>AddressOfNames</i> field is the address of an offset to
+the beginning of a null-separated list of exported function
+names. <i>AddressOfNameOrdinals</i> is an offset to a list of
+ordinal values (each 2 bytes long) for the same exported
+functions.</font></p>
+
+<p><font size="2" face="ARIAL">The three <i>AddressOf...</i>
+fields are relative virtual addresses into the address space of a
+process once the module has been loaded. Once the module is
+loaded, the relative virtual address should be added to the
+module base address to get the exact location in the address
+space of the process. Before the file is loaded, however, the
+address can be determined by subtracting the section header
+virtual address (<i>VirtualAddress</i>) from the given field
+address, adding the section body offset (<i>PointerToRawData</i>)
+to the result, and then using this value as an offset into the
+image file. The following example illustrates this technique:</font></p>
+
+<pre><font size="2" face="COURIER">int  WINAPI GetExportFunctionNames (
+    LPVOID    lpFile,
+    HANDLE    hHeap,
+    char      **pszFunctions)
+{
+    IMAGE_SECTION_HEADER       sh;
+    PIMAGE_EXPORT_DIRECTORY    ped;
+    char                       *pNames, *pCnt;
+    int                        i, nCnt;
+
+    /* Get section header and pointer to data directory 
+       for .edata section. */
+    if ((ped = (PIMAGE_EXPORT_DIRECTORY)ImageDirectoryOffset
+            (lpFile, IMAGE_DIRECTORY_ENTRY_EXPORT)) == NULL)
+        return 0;
+    GetSectionHdrByName (lpFile, &amp;sh, ".edata");
+
+    /* Determine the offset of the export function names. */
+    pNames = (char *)(*(int *)((int)ped-&gt;AddressOfNames -
+                               (int)sh.VirtualAddress   +
+                               (int)sh.PointerToRawData +
+                               (int)lpFile)    -
+                      (int)sh.VirtualAddress   +
+                      (int)sh.PointerToRawData +
+                      (int)lpFile);
+
+    /* Figure out how much memory to allocate for all strings. */
+    pCnt = pNames;
+    for (i=0; i&lt;(int)ped-&gt;NumberOfNames; i++)
+        while (*pCnt++);
+    nCnt = (int)(pCnt. pNames);
+
+    /* Allocate memory off heap for function names. */
+    *pszFunctions = HeapAlloc (hHeap, HEAP_ZERO_MEMORY, nCnt);
+
+    /* Copy all strings to buffer. */
+    CopyMemory ((LPVOID)*pszFunctions, (LPVOID)pNames, nCnt);
+
+    return nCnt;
+}
+</font></pre>
+
+<p><font size="2" face="ARIAL">Notice that in this function the
+variable <i>pNames</i> is assigned by determining first the
+address of the offset and then the actual offset location. Both
+the address of the offset and the offset itself are relative
+virtual addresses and must be translated before being used, as
+the function demonstrates. You could write a similar function to
+determine the ordinal values or entry points of the functions.</font></p>
+
+
+
+
+<h4><font size="2" face="ARIAL">Debug information section, .debug</font></h4>
+
+<p><font size="2" face="ARIAL">Debug information is initially
+placed in the .debug section. The PE file format also supports
+separate debug files (normally identified with a .DBG extension)
+as a means of collecting debug information in a central location.
+The debug section contains the debug information, but the debug
+directories live in the .rdata section mentioned earlier. Each of
+those directories references debug information in the .debug
+section. The debug directory structure is defined as an <b>IMAGE_DEBUG_DIRECTORY</b>,
+as follows:</font></p>
+
+<p><font size="2" face="ARIAL"><b>WINNT.H</b></font></p>
+
+<pre><font size="2" face="COURIER">typedef struct _IMAGE_DEBUG_DIRECTORY {
+    ULONG   Characteristics;
+    ULONG   TimeDateStamp;
+    USHORT  MajorVersion;
+    USHORT  MinorVersion;
+    ULONG   Type;
+    ULONG   SizeOfData;
+    ULONG   AddressOfRawData;
+    ULONG   PointerToRawData;
+} IMAGE_DEBUG_DIRECTORY, *PIMAGE_DEBUG_DIRECTORY;
+</font></pre>
+
+<p><font size="2" face="ARIAL">The section is divided into
+separate portions of data representing different types of debug
+information. For each one there is a debug directory described
+above. The different types of debug information are listed below:</font></p>
+
+<p><font size="2" face="ARIAL"><b>WINNT.H</b></font></p>
+
+<pre><font size="2" face="COURIER">#define IMAGE_DEBUG_TYPE_UNKNOWN          0
+#define IMAGE_DEBUG_TYPE_COFF             1
+#define IMAGE_DEBUG_TYPE_CODEVIEW         2
+#define IMAGE_DEBUG_TYPE_FPO              3
+#define IMAGE_DEBUG_TYPE_MISC             4
+</font></pre>
+
+<p><font size="2" face="ARIAL">The <i>Type</i> field in each
+directory indicates which type of debug information the directory
+represents. As you can see in the list above, the PE file format
+supports many different types of debug information, as well as
+some other informational fields. Of those, the <b>IMAGE_DEBUG_TYPE_MISC</b>
+information is unique. This information was added to represent
+miscellaneous information about the executable image that could
+not be added to any of the more structured data sections in the
+PE file format. This is the only location in the image file where
+the image name is sure to appear. If an image exports
+information, the export data section will also include the image
+name.</font></p>
+
+<p><font size="2" face="ARIAL">Each type of debug information has
+its own header structure that defines its data. Each of these is
+listed in the file WINNT.H. One nice thing about the <b>IMAGE_DEBUG_DIRECTORY</b>
+structure is that it includes two fields that identify the debug
+information. The first of these, <i>AddressOfRawData</i>, is the
+relative virtual address of the data once the file is loaded. The
+other, <i>PointerToRawData</i>, is an actual offset within the PE
+file, where the data is located. This makes it easy to locate
+specific debug information.</font></p>
+
+<p><font size="2" face="ARIAL">As a last example, consider the
+following function, which extracts the image name from the <b>IMAGE_DEBUG_MISC</b>
+structure:</font></p>
+
+<pre><font size="2" face="COURIER">int    WINAPI RetrieveModuleName (
+    LPVOID    lpFile,
+    HANDLE    hHeap,
+    char      **pszModule)
+{
+
+    PIMAGE_DEBUG_DIRECTORY    pdd;
+    PIMAGE_DEBUG_MISC         pdm = NULL;
+    int                       nCnt;
+
+    if (!(pdd = (PIMAGE_DEBUG_DIRECTORY)ImageDirectoryOffset
+               (lpFile, IMAGE_DIRECTORY_ENTRY_DEBUG)))
+        return 0;
+
+    while (pdd-&gt;SizeOfData)
+        {
+        if (pdd-&gt;Type == IMAGE_DEBUG_TYPE_MISC)
+            {
+            pdm = (PIMAGE_DEBUG_MISC)
+                ((DWORD)pdd-&gt;PointerToRawData + (DWORD)lpFile);
+
+            nCnt = lstrlen (pdm-&gt;Data)*(pdm-&gt;Unicode?2:1);
+            *pszModule = (char *)HeapAlloc (hHeap,
+                                            HEAP_ZERO_MEMORY,
+                                            nCnt+1;
+            CopyMemory (*pszModule, pdm-&gt;Data, nCnt);
+
+            break;
+            }
+
+        pdd ++;
+        }
+
+    if (pdm != NULL)
+        return nCnt;
+    else
+        return 0;
+}
+</font></pre>
+
+<p><font size="2" face="ARIAL">As you can see, the structure of
+the debug directory makes it relatively easy to locate a specific
+type of debug information. Once the <b>IMAGE_DEBUG_MISC</b>
+structure is located, extracting the image name is as simple as
+invoking the <b>CopyMemory</b> function.</font></p>
+
+<p><font size="2" face="ARIAL">As mentioned above, debug
+information can be stripped into separate .DBG files. The Windows
+NT SDK includes a utility called REBASE.EXE that serves this
+purpose. For example, in the following statement an executable
+image named TEST.EXE is being stripped of debug information:</font></p>
+
+<pre><font size="2" face="COURIER">rebase -b 40000 -x c:\samples\testdir test.exe
+</font></pre>
+
+<p><font size="2" face="ARIAL">The debug information is placed in
+a new file called TEST.DBG and located in the path specified, in
+this case c:\samples\testdir. The file begins with a single <b>IMAGE_SEPARATE_DEBUG_HEADER</b>
+structure, followed by a copy of the section headers that exist
+in the stripped executable image. Then the .debug section data
+follows the section headers. So, right after the section headers
+are the series of <b>IMAGE_DEBUG_DIRECTORY</b> structures and
+their associated data. The debug information itself retains the
+same structure as described above for normal image file debug
+information.</font></p>
+
+</body></html>

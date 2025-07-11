@@ -1,0 +1,216 @@
+INTERFACES(5)
+/etc/network/interfaces - network interface configuration for ifup and ifdown
+
+Lines starting with ‘#’ are ignored. Note that end-of-line comments are NOT supported.
+
+       auto lo eth0
+
+       iface lo inet loopback
+
+       iface eth0-home inet static
+            address 192.168.1.1
+            netmask 255.255.255.0
+            up flush-mail
+
+       iface eth0-work inet dhcp
+
+       iface eth1 inet dhcp
+
+       "auto" are used to identify the physical interfaces to be brought up when ifup is run with the -a option.
+
+IFACE OPTIONS
+       If the command fails then ifup aborts, prints an error message, and exits with status 0.
+       pre-up command
+       up command
+       post-up command
+       down command
+       pre-down command
+       post-down command
+
+       There exists for each of the above mentioned options a directory /etc/network/if-<option>.d/ the scripts in which are run (with no arguments)
+       using run-parts(8) after the option itself has been processed.
+
+       All of these commands have access to the following environment variables.
+       IFACE  physical name of the interface being processed
+       LOGICAL logical name of the interface being processed
+       ADDRFAM address family of the interface
+       METHOD method of the interface (e.g., static)
+       MODE   start if run from ifup, stop if run from ifdown
+       PHASE  as per MODE, but with finer granularity, distinguishing the pre-up, post-up, pre-down and post-down phases.
+       VERBOSITY indicates whether --verbose was used; set to 1 if so, 0 if not.
+       PATH   the command search path: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+       Additionally, all options given in an interface definition stanza are exported to the environment in upper case  with  "IF_"  prepended  and  with
+       hyphens converted to underscores and non-alphanumeric characters discarded.
+
+INET ADDRESS FAMILY
+   The loopback Method
+       This method may be used to define the IPv4 loopback interface.
+
+       Options
+              (No options)
+
+   The static Method
+       This method may be used to define ethernet interfaces with statically allocated IPv4 addresses.
+
+       Options
+              address address
+                     Address (dotted quad) required
+
+              netmask netmask
+                     Netmask (dotted quad) required
+
+              broadcast broadcast_address
+                     Broadcast address (dotted quad)
+
+              network network_address
+                     Network address (dotted quad) required for 2.0.x kernels
+
+              metric metric
+                     Routing metric for default gateway (integer)
+
+              gateway address
+                     Default gateway (dotted quad)
+
+              pointopoint address
+                     Address of other end point (dotted quad). Note the spelling of "point-to".
+
+              media type
+                     Medium type, driver dependent
+
+              hwaddress class address
+                     Hardware Address. class is one of ether, ax25, ARCnet or netrom. address is dependent on the above choice.
+
+              mtu size
+                     MTU size
+
+   The manual Method
+       This method may be used to define interfaces for which no configuration is done by default. Such interfaces can be configured manually by means of
+       up and down commands or /etc/network/if-*.d scripts.
+
+       Options
+              (No options)
+
+   The dhcp Method
+       This method may be used to obtain an address via DHCP with any of the tools: dhclient, pump, udhcpc, dhcpcd. (They have been listed in their order
+       of  precedence.)  If  you  have  a  complicated DHCP setup you should note that some of these clients use their own configuration files and do not
+       obtain their configuration information via ifup.
+
+       Options
+              hostname hostname
+                     Hostname to be requested (pump, dhcpcd, udhcpc)
+
+              leasehours leasehours
+                     Preferred lease time in hours (pump)
+
+              leasetime leasetime
+                     Preferred lease time in seconds (dhcpcd)
+
+              vendor vendor
+                     Vendor class identifier (dhcpcd)
+
+              client client
+                     Client identifier (dhcpcd, udhcpc)
+
+              hwaddress class address
+                     Hardware Address. class is one of ether, ax25, ARCnet or netrom. address is dependent on this choice.
+
+   The bootp Method
+       This method may be used to obtain an address via bootp.
+
+       Options
+              bootfile file
+                     Tell the server to use file as the bootfile.
+
+              server address
+                     Use the IP address address to communicate with the server.
+
+              hwaddr addr
+                     Use addr as the hardware address instead of whatever it really is.
+
+   The ppp Method
+       This method uses pon/poff to configure a PPP interface. See those commands for details.
+
+       Options
+              provider name
+                     Use name as the provider (from /etc/ppp/peers).
+
+   The wvdial Method
+       This method uses wvdial to configure a PPP interface. See that command for more details.
+
+       Options
+              provider name
+                     Use name as the provider (from /etc/ppp/peers).
+
+   The ipv4ll Method
+       This method uses avahi-autoipd to configure an interface with an IPv4 Link-Layer address (169.254.0.0/16 family). This method  is  also  known  as
+       "APIPA" or "IPAC", and often colloquially referred to as "Zeroconf address".
+
+       Options
+              (No options)
+
+INET6 ADDRESS FAMILY
+       This section documents the methods available in the inet6 address family.
+
+   The loopback Method
+       This method may be used to define the IPv6 loopback interface.
+
+       Options
+              (No options)
+
+   The static Method
+       This method may be used to define interfaces with statically assigned IPv6 addresses.
+
+       Options
+              address address
+                     Address (colon delimited) required
+
+              netmask mask
+                     Netmask (number of bits, eg 64) required
+
+              gateway address
+                     Default gateway (colon delimited)
+
+              media type
+                     Medium type, driver dependent
+
+              hwaddress class address
+                     Hardware Address. class is one of ether, ax25, ARCnet or netrom. address is dependent on this choice.
+
+              mtu size
+                     MTU size
+
+   The manual Method
+       This method may be used to define interfaces for which no configuration is done by default. Such interfaces can be configured manually by means of
+       up and down commands or /etc/network/if-*.d scripts.
+
+       Options
+              (No options)
+
+   The v4tunnel Method
+       This method may be used to setup an IPv6-over-IPv4 tunnel. It requires the ip command from the iproute package.
+
+       Options
+              address address
+                     Address (colon delimited)
+
+              netmask mask
+                     Netmask (number of bits, eg 64)
+
+              endpoint address
+                     Address of other tunnel endpoint (IPv4 dotted quad) required
+
+              local address
+                     Address of the local endpoint (IPv4 dotted quad)
+
+              gateway address
+                     Default gateway (colon delimited)
+
+              ttl time
+                     TTL setting
+
+ifupdown
+5 April 2004
+
+mac=$(/sbin/ifconfig eth0 | sed -n -e '/^.*HWaddr \([:[:xdigit:]]*\).*/{s//\1/;y/ABCDEF/abcdef/;p;q;}') ; echo $mac
+

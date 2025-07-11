@@ -1,0 +1,21 @@
+memory to reg              1000 101w : mod reg r/m
+memory to AL, AX, or EAX   1010 000w : full displacement
+
+Exemplo:
+
+A0 h = 1010 0000 b
+
+A0407C        MOV     AL,[0x7C40]
+
+
+8A h = 1000 1010 b
+
+8A 57 FC            mov dl,[bx-0x04]
+57 h = 01 010 111 b
+010 b = DL h
+111 b = R/M
+FC h = -0x04
+ 
+8A4610            mov al,[bp+0x10]
+
+8B7611            mov si,[bp+0x11]

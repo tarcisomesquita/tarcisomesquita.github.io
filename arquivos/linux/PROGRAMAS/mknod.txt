@@ -1,0 +1,21 @@
+sudo mknod -m 0660 /dev/loop8 b 7 8
+
+mknod Create the special file NAME of the given TYPE.
+
+mknod [OPTION]... NAME TYPE [MAJOR MINOR]
+
+-m, --mode=MODE
+   set file permission bits to MODE
+
+TYPE may be:
+   b      create a block (buffered) special file
+   c, u   create a character (unbuffered) special file
+   p      create a FIFO
+
+Both MAJOR and MINOR must be specified when TYPE is b, c, or u, and they must be omitted when TYPE is p.
+If MAJOR or MINOR begins with 0x or 0X, it is interpreted as hexadecimal; otherwise, if it begins with 0, as octal; otherwise, as decimal.
+
+SEE ALSO
+mknod(2)
+Full documentation at: <http://www.gnu.org/software/coreutils/mknod>
+

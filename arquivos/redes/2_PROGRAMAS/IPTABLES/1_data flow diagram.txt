@@ -1,0 +1,90 @@
+iptables -t raw    -F
+iptables -t mangle -F
+iptables -t nat    -F
+iptables -t filter -F
+
+iptables -t raw    -I PREROUTING -j LOG --log-prefix "PREROUTING_raw: "
+iptables -t mangle -I PREROUTING -j LOG --log-prefix "PREROUTING_mangle: "
+iptables -t nat    -I PREROUTING -j LOG --log-prefix "PREROUTING_nat: "
+
+iptables -t mangle -I INPUT -j LOG --log-prefix "INPUT_mangle: "
+iptables -t filter -I INPUT -j LOG --log-prefix "INPUT_filter: "
+
+iptables -t mangle -I FORWARD -j LOG --log-prefix "FORWARD_mangle: "
+iptables -t filter -I FORWARD -j LOG --log-prefix "FORWARD_filter: "
+
+iptables -t raw    -I OUTPUT -j LOG --log-prefix "OUTPUT_raw: "
+iptables -t mangle -I OUTPUT -j LOG --log-prefix "OUTPUT_mangle: "
+iptables -t nat    -I OUTPUT -j LOG --log-prefix "OUTPUT_nat: "
+iptables -t filter -I OUTPUT -j LOG --log-prefix "OUTPUT_filter: "
+
+iptables -t mangle -I POSTROUTING -j LOG --log-prefix "POSTROUTING_mangle: "
+iptables -t nat    -I POSTROUTING -j LOG --log-prefix "POSTROUTING_nat: "
+
+
+Data Flow Diagram
+
+      Incoming
+       Traffic
+          |
+          |
+          V
+     +----------+
+     |PREROUTING|
+     +----------+
+     |   raw    |  <--------------+
+     |  mangle  |                 |
+     |   nat    |                 |
+     +----------+                 |
+          |                       |
+          |                       |
+       Routing                    |
+    +- Decision -+                |
+    |            |                |
+    |            |                |
+    V            V                |
+  Local        Remote             |
+Destination   Destination         |
+    |            |                |
+    |            |                |
+    V            V                |
++--------+  +---------+           |
+| INPUT  |  | FORWARD |           |
++--------+  +---------+           |
+| mangle |  | mangle  |           |
+| filter |  | filter  |           |
++--------+  +---------+           |
+    |            |                |
+    |            |                |
+    V            |                |
+  Local          |                |
+ Machine         |                |
+    |            |                |
+    |            |                |
+    V            |                |
+ Routing         |                |
+ Decision        |                |
+    |            |                |
+    |            |                |
+    V            |                |
++--------+       |                |
+| OUTPUT |       |                |
++--------+       |                |
+|  raw   |       |                |
+| mangle |       |                |
+|  nat   |       |                |
+| filter |       |                |
++--------+       |                |
+    |            |                |
+    |      +-------------+        |
+    |      | POSTROUTING |      Local
+    +----> +-------------+ --> Traffic
+           |   mangle    |
+           |     nat     |
+           +-------------+
+                 |
+                 |
+                 V
+              Outgoing
+              Traffic
+

@@ -1,0 +1,65 @@
+tar -c initrd/ > initrd.tar && bzip2 -z --best initrd.tar
+
+http://www.bzip.org
+bzip2(1)
+version 1.0.4
+
+SYNOPSIS
+bzip2 [ OPTIONS ] [ filenames ...  ]
+bzip2recover filename
+
+
+DESCRIPTION
+bzip2 compresses files using the Burrows-Wheeler block sorting text compression algorithm, and Huffman coding.
+
+Each file is replaced by a compressed version of itself, with the name "original_name.bz2".
+Each compressed file has the same modification date, permissions, and, when possible, ownership as the corresponding original, so that these properties can be correctly restored at decompression time.
+
+bzip2 and bunzip2 will by default not overwrite existing files.  If you want this to happen, specify the -f flag.
+
+If no file names are specified, bzip2 compresses from standard input to standard output.
+
+bzip2 -d filename.bz2
+decompresses specified file.
+no filenames causes decompression from standard input to standard output.
+
+Return values: 0 for a normal exit, 1 for environmental problems (file not found, invalid flags, I/O errors, &c), 2 to indicate a corrupt compressed file, 3 for an internal consistency error (eg, bug) which caused bzip2 to panic.
+
+
+OPTIONS
+-c --stdout
+       Compress or decompress to standard output.
+
+-d --decompress
+
+-z --compress
+
+-t --test
+       Check integrity of the specified file(s), but don't decompress them.
+
+-f --force
+       Force overwrite of output files.  Normally, bzip2 will not overwrite existing output files.
+
+-k --keep
+       Keep (don't delete) input files during compression or decompression.
+
+-q --quiet
+       Suppress non-essential warning messages.
+
+-v --verbose
+       Further -v's increase the verbosity level.
+
+-1 (or --fast) to -9 (or --best)
+       Set the block size to 100 k, 200 k ..  900 k when compressing.
+
+
+MEMORY MANAGEMENT
+bzip2 compresses large files in blocks.  The block size affects both the compression ratio achieved, and the amount of memory needed for compression and decompression.  The flags -1 through -9 specify the block size to be 100,000 bytes through 900,000 bytes (the default) respectively.
+
+RECOVERING DATA FROM DAMAGED FILES
+bzip2recover is a simple program whose purpose is to search for blocks in .bz2 files, and write each block out into its own .bz2 file.  You can then use bzip2 -t to test the integrity of the resulting files, and decompress those which are undamaged.
+
+bzip2recover takes a single argument, the name of the damaged file, and writes a number of files "rec00001file.bz2", "rec00002file.bz2", etc, containing the  extracted  blocks.  The  output  filenames  are  designed  so  that the use of wildcards in subsequent processing -- for example, "bzip2 -dc  rec*file.bz2 > recovered_data" -- processes the files in the correct order.
+
+a damaged  block  cannot  be recovered.
+

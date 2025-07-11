@@ -1,0 +1,16 @@
+# rm /etc/localtime
+# ln -s /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+
+ntpdate a.ntp.br
+
+hwclock --show
+show hardware time in local time, even if you keep your Hardware Clock in UTC.
+
+hwclock −w
+sync the hardware clock to the software clock 
+date -s "201610121213"
+
+hwclock −s
+sync the software clock to the hardware clock
+
+código fonte: https://kernel.org/pub/linux/utils/util-linux/

@@ -1,0 +1,13 @@
+
+Instrução JNZ ou JNE
+
+Proposito: Salto condicional.
+
+
+Opcode   Instruction   64-Bit     Compat/      Description
+                       Mode       Leg Mode     
+                                                           
+75 cb    JNZ rel8      Valid      Valid        Jump short if not zero (ZF=0).
+
+
+o salto e feito se ZF esta desativado (ZF=0).

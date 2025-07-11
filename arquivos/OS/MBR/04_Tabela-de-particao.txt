@@ -1,0 +1,35 @@
+
+A tabela de partição vai do endereço 0000:01BE ao 0000:01FD
+
+lenght   content
+1        partition flag ou boot indicator (se for 80h, é a partição ativa, se 00h, não é)
+3        start CHS
+1        Partition byte (Descrição do tipo da partição)
+3        End CHS
+4        Start LBA (número do setor do início da partição)  stored as little-endian
+4        Partition Size (in sectors) stored as little-endian
+
+Veja o arquivo CHS_Decoding_Values.txt
+
+NOTE:
+For partitions which begin or end beyond the 1024th cylinder, the three CHS bytes should always be filled with: FE FF FF, ou seja CHS(1023, 254, 63).
+
+Partition byte
+Partition Type   ID Value
+0x04             FAT16 partition or logical drive (32,680–65,535 sectors or 16 MB–33 MB)
+0x05             Extended partition
+0x07             Installable File System (NTFS partition or logical drive)
+0x0B             FAT32 partition or logical drive
+0x0C             FAT32 (LBA) Usa o valor LBA em vez de CHS por que está além do CHS(1023, 254, 63)
+0x0F             Extended partition using BIOS INT 13h extensions (LBA)
+0x42             Dynamic volume
+0x83             Linux Ext2
+0x84             Power management hibernation partition
+0x87             Multidisk NTFS volume created by using Windows NT 4.0
+0xA0             Laptop hibernation partition
+
+Start LBA
+Starts counting from Absolute Sector 0
+can locate FFFF FFFFh sectors, that is exactly 2,048 GiB = 2TB
+
+https://en.wikipedia.org/wiki/Partition_type

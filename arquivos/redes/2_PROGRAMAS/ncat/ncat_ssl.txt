@@ -1,0 +1,35 @@
+
+ncat -C --ssl <server> 443
+
+By default the client will not do any server certificate verification, so it will not be detected if the server has the wrong certificate or no certificate at all. Use the --ssl-verify option to require verification of the certificate and matching of the domain name.
+
+ncat -C --ssl-verify <server> 443
+
+Verification is done using the ca-bundle.crt certificate bundle shipped with Ncat, plus whatever trusted certificates the operating system may provide. If you want to verify a connection to a server whose certificate isn't signed by one of the default certification authorities, use the --ssl-trustfile to name a file containing certificates you trust. The file must be in PEM format.
+
+ncat -C --ssl-verify --ssl-trustfile <custom-certs.pem> <server> 443
+
+Verification should be done whenever it is feasible. Even with encryption, an unverified connection is vulnerable to a man-in-the-middle attack. Ncat does not do certificate revocation checking.
+
+SSL connections depend on the client and server agreeing on a common ciphersuite: a combination of key exchange, symmetric cipher, and message integrity mechanism. The choice of which ciphersuites to offer (as a client) or accept (as a server) is a matter of choice between the greatest compatibility and the greatest security. The default set, expressed as an OpenSSL cipherlist, is ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH, a reasonable balance between the two ends of the spectrum. To set a different priority or initial choice, use the --ssl-ciphers option.
+
+      ncat --ssl-ciphers <HIGH:!aNULL:!eNULL> <server> 443
+    
+
+$ ncat -v --listen --ssl
+Ncat ( https://nmap.org/ncat )
+Generating a temporary 1024-bit RSA key. Use --ssl-key and --ssl-cert to use a permanent one.
+SHA-1 fingerprint: F0:13:BF:FB:2D:AA:76:88:22:60:3E:17:93:29:3E:0E:6B:92:C0:2F
+
+
+Using an existing certificate and key is recommended whenever possible because it allows for robust server authentication. Use the --ssl-cert and --ssl-key options to pass in PEM-encoded files. For testing purposes you can generate a self-signed certificate and private key. If you have OpenSSL installed, use this command:
+
+openssl req -new -x509 -keyout test-key.pem -out test-cert.pem.
+
+For purposes of certificate verification, the commonName in the certificate should match the fully qualified domain name of the host that will run the server. After generating the files, start the server:
+
+ncat --listen --ssl --ssl-cert test-cert.pem --ssl-key test-key.pem.
+
+To make a verified client connection, copy the test-cert.pem file somewhere where the client can access it, then run
+
+ncat --ssl-verify --ssl-trustfile test-cert.pem.

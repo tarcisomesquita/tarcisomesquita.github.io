@@ -1,0 +1,8 @@
+
+Sync > PID     > ADDR   > ENDP  > CRC5 > EOP
+       8 bits    7 bits   4 bits  5 bits
+
+Used for SETUP, OUT and IN packets.
+
+Address 0 is reserved for a device which has not yet had its address set.
+

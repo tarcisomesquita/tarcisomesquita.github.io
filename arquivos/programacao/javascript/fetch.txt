@@ -1,0 +1,170 @@
+for ((;;)) do (echo -n -e 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n'; cat index.html) | nc -v -N -n -l -p 8080; done
+
+tem que ter uma página carregada no navegador para usar o fetch
+
+fetch('index.html', {method: 'GET', mode: 'no-cors'}).then(response => console.log(response.status))
+fetch('index.html').then(response => console.log(response.statusText)) 
+
+fetch('http://localhost:8080/index.html').then(response => response.text()).then(dados => console.log(dados))
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+echo '{"2":[1,2,3],"a":"string"}' > t.json
+for ((;;)) do 
+  (echo -n -e "HTTP/1.1 200 OK\r\ncontent-type: application/json; charset=utf-8\r\ncontent-length:$(wc -c t.json | sed 's/ .*//')\r\nconnection: close\r\n\r\n"; cat t.json) | \
+  nc -v -N -n -l -p 9090; 
+done
+
+fetch('http://localhost:9090/t.json').then(response => response.text()).then(dados => console.log(dados))
+fetch('http://localhost:9090/t.json').then(response => response.json()).then(dados => console.log(JSON.stringify(dados, null, 2)))
+
+fetch('https://tarcisomesquita.github.io/know/base-de-estados/1.json').then(response => response.json()).then(dados => console.log(JSON.stringify(dados, null, 2)))
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+async function fetchEstado() {
+  try {
+    const response = await fetch('https://tarcisomesquita.github.io/know/base-de-estados/1.json');
+    if (! response.ok) throw new Error(`HTTP error: ${response.status}`);
+    
+    const data = await response.json();
+    return data;
+  }
+  catch (error) {
+    console.error(`Could not get products: ${error}`);
+  }
+}
+
+const promise = fetchEstado();
+promise.then((data) => console.log(JSON.stringify(data, null, 2)));
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+const fetchPromise1 = fetch('https://mdn.github.io/learning-area/javascript/apis/fetching-data/can-store/products.json');
+const fetchPromise2 = fetch('https://mdn.github.io/learning-area/javascript/apis/fetching-data/can-store/not-found');
+const fetchPromise3 = fetch('https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json');
+
+Promise.any([fetchPromise1, fetchPromise2, fetchPromise3])
+  .then((response) => {
+    console.log(`${response.url}: ${response.status}`);
+  })
+  .catch((error) => {
+    console.error(`Failed to fetch: ${error}`)
+  });
+
+we can't predict which fetch request will complete first.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+We can start operations at the same time and wait for them all to finish like this:
+
+Promise.all([func1(), func2(), func3()]).then(([result1, result2, result3]) => {
+  // use result1, result2 and result3
+});
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+let result;
+for (const f of [func1, func2, func3]) {
+  result = await f(result);
+}
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+wait(10 * 1000).then(() => console.log("10 seconds"))
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+fetch('t.png')
+.then((response) => {
+  console.log('response.type =', response.type);
+  console.log('response.url =', response.url);
+  console.log('response.userFinalURL =', response.useFinalURL);
+  console.log('response.status =', response.status);
+  console.log('response.ok =', response.ok);
+  console.log('response.statusText =', response.statusText);
+  console.log('response.headers =', response.headers);
+  
+  if (! response.ok) throw new Error(`HTTP error, status = ${response.status}`);
+  
+  return response.blob();
+})
+.then((myBlob) => {
+  const objectURL = URL.createObjectURL(myBlob);
+  myImage.src = objectURL;
+})
+.catch((error) => {
+  const p = document.createElement("p");
+  p.appendChild(document.createTextNode(`Error: ${error.message}`));
+  document.body.insertBefore(p, myImage);
+});
+
+
+//console.log(URL.createObjectURL(myBlob));
+document.getElementById('fundo').style.backgroundImage = `url(${URL.createObjectURL(myBlob)})`;
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+const listItem = document.createElement("li");
+
+const nameElement = document.createElement("strong");
+nameElement.textContent = product.Name;
+
+const priceElement = document.createElement("strong");
+priceElement.textContent = `£${product.Price}`;
+
+listItem.append(nameElement, `sdgd`)
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+response.arrayBuffer()() returns a promise resolved to an ArryBuffer (raw generic binary data)
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+async function fetchWithTimeout(resource, options = {}) {
+  const { timeout = 8000 } = options;
+  
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  const response = await fetch(resource, {
+    ...options,
+    signal: controller.signal  
+  });
+  clearTimeout(id);
+  return response;
+}
+
+async function loadGames() {
+  try {
+    const response = await fetchWithTimeout('/games', {
+      timeout: 6000
+    });
+    const games = await response.json();
+    return games;
+  } catch (error) {
+    // Timeouts if the request takes
+    // longer than 6 seconds
+    console.log(error.name === 'AbortError');
+  }
+}
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+fetch("products.json")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error, status = ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        for (const product of data.products) {
+          const listItem = document.createElement("li");
+          
+          const nameElement = document.createElement("strong");
+          nameElement.textContent = product.Name;
+          
+          const priceElement = document.createElement("strong");
+          priceElement.textContent = `£${product.Price}`;

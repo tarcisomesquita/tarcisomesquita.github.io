@@ -1,0 +1,45 @@
+
+cat "$filename"
+or
+with open("teste.txt",'r') as input:
+   for line in input:
+      print(line)
+
+-----------------------------------------------------------------------------------
+
+grep 'something'
+or
+import re
+with open("teste.txt",'r') as input:
+   for line in input:
+      print(re.findall(r'.*test.*', line))
+
+-----------------------------------------------------------------------------------
+
+cut -d',' -f2
+or
+with open("teste.txt",'r') as input:
+   for line in input:
+      print(line.split(',')[1])
+
+-----------------------------------------------------------------------------------
+
+sed -i "/test/s/$/AAA/" file
+or
+import re
+with open("teste.txt",'r') as input:
+   for line in input:
+      print(re.sub('(test)', r'\1AAA', line))
+
+-----------------------------------------------------------------------------------
+
+import os
+os.system('command')
+
+import subprocess
+child = subprocess.Popen('command',stdout=subprocess.PIPE,shell=True)
+output = child.communicate()[0]
+
+-----------------------------------------------------------------------------------
+
+

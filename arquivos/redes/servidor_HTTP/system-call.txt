@@ -1,0 +1,4 @@
+O fork() funciona razoavelmente bem para aplicações cliente/servidor, mas pelo fato de conexões Web serem tão curtas e frequentes, na maioria dos casos, o tempo gasto com a criação de um novo processo e o escalonamento entre múltiplos processos pode ser maior do que o gasto com o atendimento da conexão em si. Por esse motivo, servidores que se utilizam de threads, ao invés de processos, têm ganhado espaço. Uma forma de se evitar o atraso com a criação de processos é a adoção de um pool de processos criados a priori que ficam aguardando por novas requisições.
+
+usar as system call select (BSD) ou poll (System V) para checar se operações de I/O foram completadas apresenta um desempenho bastante superior
+

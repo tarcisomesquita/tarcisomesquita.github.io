@@ -1,0 +1,11 @@
+
+Select Video Page (05h)
+
+The Select Video Page video BIOS function is called to change the page of the video buffer that is displayed by the 6845 and mapped into its screen regen area (B000H for monochrome, or B800H for color).
+
+Input Parameters:
+        AH - 05h, indicating the Select Video Page Function.
+        AL - Page number, where 00h is the first page.
+Output Parameters:
+        none.
+

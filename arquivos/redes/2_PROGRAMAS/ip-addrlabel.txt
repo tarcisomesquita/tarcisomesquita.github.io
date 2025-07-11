@@ -1,0 +1,16 @@
+ip addrlabel { add | del } prefix PREFIX [ dev DEV ] [ label NUMBER ]
+
+ip addrlabel { list | flush }
+
+ip addrlabel add - add an address label the command adds an address label entry to the kernel.
+
+label NUMBER
+the label for the prefix.  0xffffffff is reserved.
+
+ip addrlabel del - delete an address label
+coincide with the arguments of ip addrlabel add but label is not required.
+
+ip addrlabel list - list address labels
+
+ip addrlabel flush - flush address labels
+

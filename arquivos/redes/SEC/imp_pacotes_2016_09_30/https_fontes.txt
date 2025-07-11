@@ -1,0 +1,51 @@
+tcpdump -n -r /media/ubuntu/DADOS/capturas/cel2.pcap port 443 and port 50424
+tcpdump -n -r /media/ubuntu/DADOS/capturas/cel2.pcap port 443 and port 35861
+tcpdump -n -r /media/ubuntu/DADOS/capturas/cel2.pcap port 443 and port 47803
+
+$ for FILE in $(find /media/ubuntu/DADOS/capturas -type f -name '*.pcap' -print) ; do tcpdump -n -r $FILE port 443 | egrep '\.443: Flags \[F\.\]|\.443: Flags \[S\]' ; echo $FILE ; done
+20:43:18.930123 IP 192.168.33.4.38193 > 173.194.118.73.443: Flags [S], seq 891680724, win 14600, options [mss 1460,sackOK,TS val 713608 ecr 0,nop,wscale 7], length 0
+20:43:22.910539 IP 192.168.33.4.38193 > 173.194.118.73.443: Flags [F.], seq 2830, ack 13891, win 380, options [nop,nop,TS val 713960 ecr 472043715], length 0
+
+20:44:37.491781 IP 192.168.33.4.50424 > 173.194.118.73.443: Flags [S], seq 1784248606, win 14600, options [mss 1460,sackOK,TS val 721484 ecr 0,nop,wscale 7], length 0
+20:44:38.485913 IP 192.168.33.4.50424 > 173.194.118.73.443: Flags [F.], seq 3102, ack 4978, win 225, options [nop,nop,TS val 721584 ecr 504705546], length 0
+
+20:44:37.787683 IP 192.168.33.4.52510 > 173.194.118.73.443: Flags [S], seq 231440143, win 14600, options [mss 1460,sackOK,TS val 721507 ecr 0,nop,wscale 7], length 0
+20:44:55.761473 IP 192.168.33.4.52510 > 173.194.118.73.443: Flags [F.], seq 6664, ack 8638, win 314, options [nop,nop,TS val 723312 ecr 1034095316], length 0
+
+20:44:38.396395 IP 192.168.33.4.33472 > 173.194.118.73.443: Flags [S], seq 2539435847, win 14600, options [mss 1460,sackOK,TS val 721575 ecr 0,nop,wscale 7], length 0
+20:44:55.761832 IP 192.168.33.4.33472 > 173.194.118.73.443: Flags [F.], seq 27311, ack 15890, win 469, options [nop,nop,TS val 723312 ecr 502910067], length 0
+
+20:44:39.577005 IP 192.168.33.4.35861 > 173.194.118.73.443: Flags [S], seq 1413434242, win 14600, options [mss 1460,sackOK,TS val 721690 ecr 0,nop,wscale 7], length 0
+20:44:40.291729 IP 192.168.33.4.35861 > 173.194.118.73.443: Flags [F.], seq 871, ack 4661, win 159, options [nop,nop,TS val 721765 ecr 472284027], length 0
+
+20:45:00.386235 IP 192.168.33.4.58786 > 173.194.118.73.443: Flags [S], seq 2972998079, win 14600, options [mss 1460,sackOK,TS val 723774 ecr 0,nop,wscale 7], length 0
+20:45:01.276210 IP 192.168.33.4.58786 > 173.194.118.73.443: Flags [F.], seq 1863, ack 4955, win 225, options [nop,nop,TS val 723863 ecr 510099724], length 0
+
+20:45:09.478037 IP 192.168.33.4.47803 > 173.194.118.73.443: Flags [S], seq 204213488, win 14600, options [mss 1460,sackOK,TS val 724683 ecr 0,nop,wscale 7], length 0
+20:45:10.504513 IP 192.168.33.4.47803 > 173.194.118.73.443: Flags [F.], seq 1863, ack 4954, win 225, options [nop,nop,TS val 724786 ecr 1034110096], length 0
+
+20:45:20.111224 IP 192.168.33.4.45032 > 173.194.42.148.443: Flags [S], seq 4039072606, win 14600, options [mss 1460,sackOK,TS val 725719 ecr 0,nop,wscale 7], length 0
+20:45:30.215730 IP 192.168.33.4.45032 > 173.194.42.148.443: Flags [F.], seq 1, ack 1, win 115, options [nop,nop,TS val 726756 ecr 262280895], length 0
+/media/ubuntu/DADOS/capturas/cel2.pcap
+
+13:41:22.820332 IP 192.168.33.2.51892 > 64.233.186.95.443: Flags [S], seq 2095974421, win 14600, options [mss 1460,sackOK,TS val 40430880 ecr 0,nop,wscale 8], length 0
+13:41:33.983397 IP 192.168.33.2.51892 > 64.233.186.95.443: Flags [F.], seq 1232, ack 24695, win 261, options [nop,nop,TS val 40431977 ecr 1117512072], length 0
+/media/ubuntu/DADOS/capturas/varios.pcap
+
+11:35:35.252914 IP 192.168.33.101.56576 > 63.245.217.44.443: Flags [S], seq 2416355118, win 5840, options [mss 1460,sackOK,TS val 3131827 ecr 0,nop,wscale 6], length 0
+11:35:41.766822 IP 192.168.33.101.56576 > 63.245.217.44.443: Flags [F.], seq 1007, ack 1747, win 161, options [nop,nop,TS val 3133456 ecr 1663363773], length 0
+/media/ubuntu/DADOS/capturas/wlan_2012_12_20.pcap
+
+13:02:52.250333 IP 177.28.27.14.51055 > 74.125.47.106.443: Flags [S], seq 3920040940, win 5840, options [mss 1460,sackOK,TS val 4495887 ecr 0,nop,wscale 2], length 0
+13:02:54.431071 IP 177.28.27.14.51055 > 74.125.47.106.443: Flags [F.], seq 1431, ack 2309, win 3632, options [nop,nop,TS val 4496105 ecr 423533210], length 0
+
+13:05:24.033133 IP 177.28.27.14.37200 > 173.194.42.47.443: Flags [F.], seq 909, ack 2831, win 3632, options [nop,nop,TS val 4511065 ecr 578312787], length 0
+13:05:25.903890 IP 177.28.27.14.37200 > 173.194.42.47.443: Flags [F.], seq 909, ack 2831, win 3632, options [nop,nop,TS val 4511253 ecr 578312787], length 0
+/media/ubuntu/DADOS/capturas/shark_dump_android_03-jan.pcap
+
+tcpdump -n -r /media/ubuntu/DADOS/capturas/shark_dump_android_03-jan.pcap port 443 and port 37200
+
+10:38:33.840845 IP 189.111.165.55.59644 > 63.245.217.44.443: Flags [S], seq 4022328697, win 5808, options [mss 1452,sackOK,TS val 5851630 ecr 0,nop,wscale 6], length 0
+10:38:39.770739 IP 189.111.165.55.59644 > 63.245.217.44.443: Flags [F.], seq 1007, ack 1747, win 160, options [nop,nop,TS val 5853113 ecr 1573501460], length 0
+/media/ubuntu/DADOS/capturas/ataque.pcap
+

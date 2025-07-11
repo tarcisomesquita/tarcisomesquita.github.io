@@ -1,0 +1,156 @@
+
+# auto lo
+# iface lo inet loopback
+
+# auto eth0
+# iface eth0 inet static
+#     address 192.168.0.42
+#     network 192.168.0.0
+#     netmask 255.255.255.0
+#     broadcast 192.168.0.255
+#     gateway 192.168.0.1
+
+# auto eth0
+# iface eth0 inet static
+#     address 192.168.1.42
+#     network 192.168.1.0
+#     netmask 255.255.255.128
+#     broadcast 192.168.1.0
+#     up route add -net 192.168.1.128 netmask 255.255.255.128 gw 192.168.1.2
+#     up route add default gw 192.168.1.200
+#     down route del default gw 192.168.1.200
+#     down route del -net 192.168.1.128 netmask 255.255.255.128 gw 192.168.1.2
+
+# ifup/down handles the ':' any differently.
+# 'ifdown eth0:1 ; ifup eth0; ifdown eth0'
+
+# auto eth0 eth0:1
+# iface eth0 inet static
+#     address 192.168.0.100
+#     network 192.168.0.0
+#     netmask 255.255.255.0
+#     broadcast 192.168.0.255
+#     gateway 192.168.0.1
+# iface eth0:1 inet static
+#     address 192.168.0.200
+#     network 192.168.0.0
+#     netmask 255.255.255.0
+
+# "pre-up" and "post-down" commands. if any fail, configuration (or deconfiguration) is aborted
+#
+# auto eth0
+# iface eth0 inet dhcp
+#     pre-up [ -f /etc/network/local-network-ok ]
+#
+# will allow you to only have eth0 brought up when the file 
+# /etc/network/local-network-ok exists.
+
+# auto eth0 eth1
+# iface eth0 inet static
+#     address 192.168.42.1
+#     netmask 255.255.255.0
+#     pre-up /path/to/check-mac-address.sh eth0 11:22:33:44:55:66
+#     pre-up /usr/local/sbin/enable-masq
+# iface eth1 inet dhcp
+#     pre-up /path/to/check-mac-address.sh eth1 AA:BB:CC:DD:EE:FF
+#     pre-up /usr/local/sbin/firewall
+
+#Em meu computador está em /usr/share/doc/ifupdown/examples/get-mac-address.sh
+
+# Two ethernet interfaces, one connected to a trusted LAN, the other to
+# the untrusted Internet, identified by MAC address rather than interface
+# name:
+#
+# auto eth0 eth1
+# mapping eth0 eth1
+#     script /path/to/get-mac-address.sh
+#     map 11:22:33:44:55:66 lan
+#     map AA:BB:CC:DD:EE:FF internet
+# iface lan inet static
+#     address 192.168.42.1
+#     netmask 255.255.255.0
+#     pre-up /usr/local/sbin/enable-masq $IFACE
+# iface internet inet dhcp
+#     pre-up /usr/local/sbin/firewall $IFACE
+
+# A PCMCIA interface for a laptop that is used in different locations:
+# (note the lack of an "auto" line for any of these)
+#
+# mapping eth0
+#    script /path/to/pcmcia-compat.sh
+#    map home,*,*,*                  home
+#    map work,*,*,00:11:22:33:44:55  work-wireless
+#    map work,*,*,01:12:23:34:45:50  work-static
+#
+# iface home inet dhcp
+# iface work-wireless bootp
+# iface work-static static
+#     address 10.15.43.23
+#     netmask 255.255.255.0
+#     gateway 10.15.43.1
+#
+# Note, this won't work unless you specifically change the file
+# /etc/pcmcia/network to look more like:
+#
+#     if [ -r ./shared ] ; then . ./shared ; else . /etc/pcmcia/shared ; fi
+#     get_info $DEVICE
+#     case "$ACTION" in
+#         'start')
+#             /sbin/ifup $DEVICE
+#             ;;
+#         'stop')
+#             /sbin/ifdown $DEVICE
+#             ;;
+#     esac
+#     exit 0
+
+# An alternate way of doing the same thing: (in this case identifying
+# where the laptop is is done by configuring the interface as various
+# options, and seeing if a computer that is known to be on each particular
+# network will respond to pings. The various numbers here need to be chosen
+# with a great deal of care.)
+#
+# mapping eth0
+#    script /path/to/ping-places.sh
+#    map 192.168.42.254/24 192.168.42.1 home
+#    map 10.15.43.254/24 10.15.43.1 work-wireless
+#    map 10.15.43.23/24 10.15.43.1 work-static
+#
+# iface home inet dhcp
+# iface work-wireless bootp
+# iface work-static static
+#     address 10.15.43.23
+#     netmask 255.255.255.0
+#     gateway 10.15.43.1
+#
+# Note that the ping-places script requires the iproute package installed,
+# and the same changes to /etc/pcmcia/network are required for this as for
+# the previous example.
+
+
+# Set up an interface to read all the traffic on the network. This 
+# configuration can be useful to setup Network Intrusion Detection
+# sensors in 'stealth'-type configuration. This prevents the NIDS
+# system to be a direct target in a hostile network since they have
+# no IP address on the network. Notice, however, that there have been
+# known bugs over time in sensors part of NIDS (for example see 
+# DSA-297 related to Snort) and remote buffer overflows might even be
+# triggered by network packet processing.
+# 
+# auto eth0
+# iface eth0 inet manual
+# 	up ifconfig $IFACE 0.0.0.0 up
+#       up ip link set $IFACE promisc on
+#       down ip link set $IFACE promisc off
+#       down ifconfig $IFACE down
+
+# Set up an interface which will not be allocated an IP address by
+# ifupdown but will be configured through external programs. This
+# can be useful to setup interfaces configured through other programs,
+# like, for example, PPPOE scripts.
+#
+# auto eth0
+# iface eth0 inet manual
+#       up ifconfig $IFACE 0.0.0.0 up
+#       up /usr/local/bin/myconfigscript
+#       down ifconfig $IFACE down

@@ -1,0 +1,16 @@
+
+SERVICE AND VERSION DETECTION
+       -sV (Version detection)
+
+       --allports (Don't exclude any ports from version detection)
+           skips TCP port 9100 because some printers simply print anything sent to that port
+
+       --version-all (Try every single probe)
+           An alias for --version-intensity 9, ensuring that every single probe is attempted against each port.
+
+OS DETECTION
+       -O (Enable OS detection)
+
+       --max-os-tries (Set the maximum number of OS detection tries against a target)
+           default, tries five times
+

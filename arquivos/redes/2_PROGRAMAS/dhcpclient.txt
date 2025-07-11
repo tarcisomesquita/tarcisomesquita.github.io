@@ -1,0 +1,22 @@
+
+comando para configurar uma placa via DHCP manualmente através dele é:
+
+# dhclient eth0
+(onde o eth0 é a interface a ser configurada)
+
+Ao usá-lo via terminal, ele mostra todos os passos da negociação, incluindo o endereço do servidor DHCP da rede e o IP recebido, como em:
+
+Listening on LPF/eth0/00:0f:b0:55:df:17
+Sending on LPF/eth0/00:0f:b0:55:df:17
+Sending on Socket/fallback
+DHCPDISCOVER on eth0 to 255.255.255.255 port 67 interval 5
+DHCPDISCOVER on eth0 to 255.255.255.255 port 67 interval 7
+DHCPOFFER from 10.67.3.2
+DHCPREQUEST on eth0 to 255.255.255.255 port 67
+DHCPACK from 10.67.3.2
+bound to 201.56.188.45 -- renewal in 5585 seconds.
+
+
+ liberar o IP 
+# dhclient -r eth0
+

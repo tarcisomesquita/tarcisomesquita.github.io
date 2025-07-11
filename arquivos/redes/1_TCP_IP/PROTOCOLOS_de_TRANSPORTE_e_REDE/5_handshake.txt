@@ -1,0 +1,13 @@
+
+Cliente: SYN (solicita conexão)
+Servidor: SYN ou RST
+Servidor: ACK (inicia a conexão)
+Cliente: ACK (confirma)
+Cliente: DATA (é enviado o pacote com a mensagem de texto)
+Servidor: OK (a confirmação, depois de verificar a integridade do pacote)
+Cliente: FYN (solicita o fechamento da conexão)
+Servidor: FYN (confirma)
+Cliente: FYN (confirma que recebeu a confirmação)
+
+No UDP não existe abertura de conexão, os pacotes são transmitidos diretamente.
+

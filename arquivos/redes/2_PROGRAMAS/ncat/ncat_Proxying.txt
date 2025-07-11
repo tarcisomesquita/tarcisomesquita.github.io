@@ -1,0 +1,21 @@
+Proxying
+
+Ncat can route its connections through a SOCKS 4 or HTTP proxy. A basic connection looks like
+
+ncat --proxy <proxyhost>[:<proxyport>] --proxy-type  { http  |   socks4 } <host> [<port>]
+
+--proxy-type may be omitted; it defaults to http. If <proxyport> is omitted, it defaults to the well-known port for the chosen proxy type: 1080 for SOCKS and 3128 for HTTP. An exception to this rule is when the proxy host is given by a IPv6 address; in this case the port is required because otherwise it would be ambiguous whether the digits after the last colon are the port number or part of the address.
+
+If the proxy server requires authentication, use the --proxy-auth option. Use --proxy-auth <username>:<password> for HTTP proxies and --proxy-auth <username> for SOCKS proxies.
+
+Ncat can act as a proxy server itself in listen mode. The only proxy type supported is http.
+
+ncat -l 3128 --proxy-type http
+ncat -l 3128 --proxy-type http --proxy-auth <user>:<pass>
+
+In listen mode the proxy port number is not automatically set and will be the default of 31337 unless specified. The proxy supports the GET, HEAD, and POST methods used in web browsing, as well as the CONNECT method that allows tunneling arbitrary TCP connections. (When Ncat connects as a client, it uses CONNECT.) Use --proxy-auth to make the server require authentication with a specific username and password.
+
+For HTTP, both the Basic and Digest authentication schemes are supported, as both a client and a server. Digest is more secure, so the Ncat client will use that in preference to Basic when it is available. The server offers both schemes to its clients. See RFC 2617, section 4 for security considerations of HTTP authentication. Basic sends credentials in the clear and Digest does not. Ncat's implementation of Digest authentication allows replay attacks for up to 10 seconds (replay and other attacks are always possible with Basic).
+[Warning]	Warning
+
+Ncat's HTTP proxy is designed to stay out of your way and help you make temporary network connections. It shouldn't be used as an everyday proxy exposed to the Internet. You can limit who connects using --allow, --deny, and --proxy-auth, but these are not strong forms of authentication. An unauthenticated proxy is dangerous because it may enable others to perform attacks or help them evade detection. The CONNECT capability is especially dangerous because it enables any kind of traffic, not just HTTP. 

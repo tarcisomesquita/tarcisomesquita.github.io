@@ -1,0 +1,50 @@
+the kernel executes /init as its first process. /init is not expected to exit. 
+If an init file is not found, the kernel invokes the linuxrc file as its startup script.
+
+sets up the console
+starts the udev daemon
+finds and mounts the "real" root filesystem
+
+init places the root file system at the root directory using the pivot_root system call
+init execs the /sbin/init (upstart on the new root filesystem), that takes PID 1
+the initrd file system is removed
+
+initramfs archive is linked into the linux kernel image.  (The directory linux-source/usr is devoted to generating this archive during the build.)
+initramfs is rootfs: you can neither pivot_root rootfs, nor unmount it.  Instead delete everything out of rootfs to free up the space (find -xdev / -exec rm '{}' ';'), overmount rootfs with the new root (cd /newmount; mount --move . /; chroot .), attach stdin/stdout/stderr to the new /dev/console, and exec the new init.
+klibc package introduced a program (utils/run_init.c) to do all this for you.
+Most other packages (such as busybox) have named this command "switch_root".
+tiny C library to statically link
+http://www.kernel.org/pub/linux/libs/klibc
+
+
+pivot_root is distributed with util-linux
+pivot_root system call moves the "current root" to a directory under the "new root", and puts the new root at its place.
+# mkdir /new-root
+# mount -o ro /dev/hda1 /new-root
+# cd /new-root
+# mkdir initrd
+# pivot_root . initrd
+initialize udev to provide /dev/console
+# exec chroot . /sbin/init <dev/console >dev/console 2>&1
+
+# umount /initrd
+# blockdev --flushbufs /dev/ram0
+
+It is also possible to use initrd with an NFS-mounted root, see the pivot_root(8) man page for details.
+
+
+# Testing external initramfs
+qemu -kernel /boot/vmlinuz -initrd test.cpio.gz /dev/zero
+www.qemu.org
+
+cpio archive format chosen by the kernel is simpler and cleaner (and thus easier to create and parse)
+cpio archive is created in usr/gen_init_cpio.c, and extracted in init/initramfs.c.
+
+Cpio is a file format that is simply a concatenation of files with headers.
+The cpio file format permits both ASCII and binary files. For portability, use ASCII. For a reduced file size, use the binary version.
+
+For the Linux kernel to support the initial RAM disk, the kernel must be compiled with the CONFIG_BLK_DEV_RAM and CONFIG_BLK_DEV_INITRD options.
+
+Initramfs is an instance of tmpfs.
+A system using initramfs as its root filesystem doesn't even need a single filesystem driver built into the kernel, because there are no block devices to interpret as filesystems. Just files living in memory.
+

@@ -1,0 +1,13 @@
+lynx --dump myfile.html > myfile.txt
+lynx --dump http://some.where.com/whatever.html > myfile.txt
+lynx --dump -width=1000000 -nonumbers att_iframe_name.html > myfile.txt
+
+lynx --dump -width=1000000 -nolist att_iframe_name.html > myfile.txt
+
+
+https://www.whatismybrowser.com/guides/the-latest-version/chrome
+
+lynx -dump -useragent 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36' http://www.saopaulo.sp.gov.br
+
+ver w3m.txt
+

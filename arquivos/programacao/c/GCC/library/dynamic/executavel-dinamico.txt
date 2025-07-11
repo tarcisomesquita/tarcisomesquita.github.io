@@ -1,0 +1,37 @@
+ldd file.elf
+	linux-gate.so.1 =>  (0xb7ffd000)
+	libc.so.6 => /lib/tls/i686/cmov/libc.so.6 (0xb7e8b000)
+	/lib/ld-linux.so.2 (0xb7ffe000)
+
+$ readelf -r file.elf
+identifica os itens que podem ser realocados dentro de um objeto
+
+linux-gate.so.1 ou linux-vdso.so.1 é uma biblioteca virtual ou um Objeto Compartilhado Dinâmico Virtual, que reside somente no espaço de endereço de cada programa.
+Esta biblioteca virtual permite que os programas do usuário acessem funções do sistema através dos meios mais rápidos disponíveis no processador em particular (sysenter).
+
+/lib/ld-linux.so.2 ou /lib64/ld-linux-x86-64.so.2 são executáveis.
+Ele é responsável pelo carregamento dinâmico usando as informações do cabeçalho.
+Ele faz vínculos dinâmicos para corrigir todos os ponteiros de endereço do executável e das bibliotecas carregadas, para que o programa seja executado. 
+ldd /bin/ln  é equivalente a /lib/ld-linux.so.2 --list /bin/ln ou /lib64/ld-linux-x86-64.so.2 --list /bin/ln
+/lib/ld-linux.so.2 tem dois arquivos de configuração, /etc/ld.so.conf
+
+Se você alterar ld.so.conf (ou adicionar novos arquivos incluídos a ld.so.conf.d), será preciso executar o comando ldconfig (como root) para criar novamente o arquivo ld.so.cache. 
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+vários programas podem usar uma biblioteca compartilhada simultaneamente; precisando então de apenas uma cópia da biblioteca na memória por vez. Com uma biblioteca estática, cada programa de execução tem sua própria cópia da biblioteca.
+
+Quando o kernel carrega a imagem ELF (o programa) na memória virtual do espaço do usuário, ele observa uma seção ELF chamada .interp, que indica o vinculador dinâmico que será usado (/lib/ld-linux.so)
+
+A relocação, feita pelo ld-linux.so, é manipulada por meio de um mecanismo indireto chamado Global Offset Table (GOT) e Procedure Linkage Table (PLT).
+
+a biblioteca pode inicializar dados internos e os preparar para uso. Esse código é definido na seção .init da imagem ELF.
+
+Quando a biblioteca está descarregada, ela também pode chamar uma função de término (definida como a seção .fini na imagem). 
+
+API de Dynamic Loading (DL). Na pasta "exemplo" essa biblioteca é usada no comando "gcc -o dlTest dlTest.c -ldl".
+// void *dlopen(const char *filename, int flag); // Opens dynamic library file and return handle
+// void *dlsym(void *handle, char *symbol);      // Return pointer to symbol (function name) of load point.
+// char *dlerror(void);                          // Returns string describing the last error.
+// int  dlclose (void *handle);                  // Close the dynamic library handle.
+

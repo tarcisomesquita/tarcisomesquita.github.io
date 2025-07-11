@@ -1,0 +1,771 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<base href="http://ebtables.netfilter.org/" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>ebtables &#8211; Real-life examples</title>
+
+
+<link href="_css/main.css" rel="stylesheet" type="text/css" media="screen" />
+<link rel="shortcut icon" href="_images/favicon.ico" type="image/x-icon" />
+<meta name="Description" content="Linux Ethernet bridge firewall tables" />
+<meta name="Keywords" content="Linux, networking, Ethernet, firewall, bridge, bridging firewall, stealth firewall, transparent firewall" />
+
+<script src="_js/tabs.js" type="text/javascript" ></script>
+</head>
+<body onload="init()">
+
+<div id="wrapper">
+<div id="wrapper2">
+<div class="menu-back">
+<div class="menu-shadow">
+<div class="menu">
+  <ul>
+	<li><a class="hide">About</a>
+      <ul>
+        <li><a href="index.html">Short description</a></li>
+        <li><a href="about/pronunciation.html">Pronunciation</a></li>
+        <li><a href="about/who.html">Who's behind ebtables?</a></li>
+        <li><a href="about/license.html">License</a></li>
+        <li><a href="about/code.html">About the code</a></li>
+      </ul>
+    </li>
+	<li><a class="hide">Downloads</a>
+      <ul>
+        <li><a href="downloads/latest.html">Latest release</a></li>
+        <li><a href="downloads/compilation.html">Source compilation</a></li>
+        <li><a href="downloads/git.html">Git repository</a></li>
+      </ul>
+    </li>
+	<li><a class="hide">Documentation</a>
+      <ul>
+        <li><a href="documentation/what.html">What</a></li>
+        <li><a href="documentation/features.html">Main features</a></li>
+        <li><a href="documentation/can.html">What can it do?</a></li>
+        <li><a href="documentation/cant.html">What can't it do?</a></li>
+        <li><a href="documentation/bridge-nf.html">What's bridge-netfilter?</a></li>
+        <li><a href="documentation/docs.html">Documents</a></li>
+        <li><a href="documentation/todo.html">Todo</a></li>
+        <li><a href="documentation/links.html">Links</a></li>
+      </ul>
+    </li>
+    <li><a class="hide">Examples</a>
+      <ul>
+        <li><a href="examples/basic.html">Basic examples</a></li>
+        <li><a href="examples/real.html">Real-life examples</a></li>
+      </ul>
+    </li>
+	<li><a class="hide">Contact</a>
+      <ul>
+        <li><a href="contact/lists.html" class="point">Mailing lists</a></li>
+        <li><a href="contact/webmaster.html" class="point">Webmaster</a></li>
+      </ul>
+    </li>
+  </ul>
+</div></div></div>
+
+<div id="content">
+<h1>Introduction</h1>
+<div class="paragraphs">
+<p>
+These example setups were given by ebtables users, and they are
+very much appreciated. If you have a configuration involving
+ebtables which you would like to share, please write a little
+story about it and send it to the
+<script type="text/javascript">
+<!--
+var string1 = "bdschuym";
+var string2 = "@pan";
+var string3 = "dora.be";
+var string4 = string1 + string2 + string3;
+document.write("<a href=" + "mail" + "to:" + string1 + string2 + string3 + ">");
+//-->
+</script>
+webmaster
+<script type="text/javascript">
+<!--
+document.write("</a>");
+//-->
+</script>
+so that it can be added here.
+</p>
+</div>
+<h1>Real-life examples</h1>
+<div class="paragraphs">
+<h2>Choose one of the examples below</h2>
+<ul id="tabs">
+<li><a href = "examples/real.html#example1">Linux brouting, MAC snat and MAC dnat all in one</a></li>
+<li><a href = "examples/real.html#example2">Filtering Appletalk 
+on a box not intended to be a bridge</a></li>
+<li><a href = "examples/real.html#example3">Transparent routing with Freeswan</a></li>
+<li><a href = "examples/real.html#example4">By-pass dns client bug on user's inexpensive routers</a></li>
+<li><a href = "examples/real.html#example5">Rate shaping</a></li>
+</ul>
+<script type="text/javascript">
+//<![CDATA[
+document.writeln("<p>You can also view all examples on <a href=\"examples/real.html#all\" id=\"alltabs\">one page</a>.</p>");
+//]]>
+</script>
+</div>
+<div class="tabContent" id="example1">
+<h3><a name="example1">Linux brouting, MAC snat and MAC dnat all in one</a></h3>
+<div class="paragraphs">
+<p>
+This setup and explanation was given by <em>Enrico Ansaloni</em>,
+who got things working together with <em>Alessandro Eusebi</em>.
+</p>
+<h4>Short description</h4>
+<p>
+Two 802.1Q VLANs, a HP 4000 M switch and a Linux bridge with iptables and ebtables.<br/>
+The HP switch is used for VLAN switching. The Linux bridge is used for bridging specific frames and for IP routing.<br/>
+Obviously good filtering is required to prevent duplicated traffic.
+</p>
+<h4>Enrico's story</h4>
+<p>
+Why I use the Linux bridge: I have to bridge the 2 VLANs to let DEC LAT traffic only
+go through, while IP traffic has to go under normal routing decisions:
+this is done with ebtables.<br/>
+The bridge has 2 IP addresses, one for each VLAN so that routing will
+work, in conjuction with iptables eventually to do some traffic
+shaping and internal control (allowed tcp ports from inside to
+outside etc.)
+</p>
+<h4>First try: assign the 2 IP addresses to the bridge device (br0)</h4>
+<p>
+The problem with the HP switch is that it doesn't allow the same MAC
+address in 2 different ports which is what happens when I connect the
+bridge which has 2 cables - it connects into 2 ports - and has 1 MAC
+address; this occurs even if the ports belong to different VLANs: to put
+it in another way, the HP VLAN implementation doesn't fully isolate
+VLANs but checks for MAC address consistency in the whole switch,
+regardless of VLAN settings... instead, the Cisco Catalyst series does
+that right but it costs 3 times more and my customer won't pay that much...
+</p>
+<h4>Second try: use ebtables MAC snat to give the two bridge IP addresses different MAC source addresses</h4>
+<p>
+so I decided I could try with MAC natting,
+and I set up ebtables like this:
+</p>
+<pre>
+ebtables -t nat -A POSTROUTING -o $INSIDE_IF_NAME -s $DMZ_IF_MAC \
+-j snat --to-source $INSIDE_IF_MAC
+ebtables -t nat -A PREROUTING -i $INSIDE_IF_NAME -d $INSIDE_IF_MAC \
+-j dnat --to-destination $DMZ_IF_MAC
+</pre>
+<p>
+As you can see, I'm tying to fool the switch into thinking the bridge
+has a different MAC address for each interface: the rule is correct, as
+I can see by capturing traffic with ethereal, but there's a problem:
+ebtables works at layer 2 only, thus correctly natting MAC address in
+the layer 2 ethernet frame; the switch now accepts the natted packets
+but the ARP packets are at layer 3 and they keep the original MAC
+address as from the linux kernel network stack, so the client's reply is
+wrong and never goes through...
+</p>
+<h4>Third try: use brouting + MAC snat + MAC dnat</h4>
+<p>
+As stated in the <a href="examples/basic.html">examples</a> section on the ebtables hp, I started with this:
+</p>
+<pre>
+***********************************************************
+Bridge table: broute
+
+Bridge chain: BROUTE
+Policy: ACCEPT
+nr. of entries: 4
+1. -p IPV4 -i eth0 -j DROP , count = 47959
+2. -p IPV4 -i eth1 -j DROP , count = 47
+3. -p ARP -i eth0 -j DROP , count = 371
+4. -p ARP -i eth1 -j DROP , count = 141
+***********************************************************
+</pre>
+<p>
+But this is not enough... With this rule, IP routing and ARP stuff is perfectly
+working for both networks (VLANs) and I can control IP stuff with iptables, but
+bridge isn't working yet... that's because of the duplicate MAC in different
+VLANs problem of the HP switch: when I use bridging, the same MAC address of the
+bridged client appears on two ports, one for each VLAN, and the switch
+automatically deactivates the first port! But I solved this issue with ebtables
+MAC NAT, like this:
+</p>
+<pre>
+***********************************************************
+Bridge table: nat
+
+Bridge chain: PREROUTING
+Policy: ACCEPT
+nr. of entries: 2
+1. -d 10:50:da:e7:18:51 -i eth1 -j dnat --to-dst 0:50:da:e7:18:51 --dnat-target ACCEPT, count = 1260
+2. -d 10:10:a4:9b:30:d -i eth0 -j dnat --to-dst 0:10:a4:9b:30:d --dnat-target ACCEPT, count = 1252
+
+Bridge chain: OUTPUT
+Policy: ACCEPT
+nr. of entries: 0
+
+Bridge chain: POSTROUTING
+Policy: ACCEPT
+nr. of entries: 2
+1. -s 0:50:da:e7:18:51 -o eth1 -j snat --to-src 10:50:da:e7:18:51 --snat-target ACCEPT, count = 1362
+2. -s 0:10:a4:9b:30:d -o eth0 -j snat --to-src 10:10:a4:9b:30:d --snat-target ACCEPT, count = 1346
+***********************************************************
+</pre>
+<p>
+The MAC addresses you see are two network client, one for each VLAN. When a
+client passes the bridge, I have to change his MAC (i change the first 00: with
+10:) in order to make the switch happy.<br/>
+I did a small script also, so you can specify a list of MAC addresses for each
+VLAN. Here's the script:
+</p>
+<pre>
+***********************************************************
+#!/bin/bash
+###############################################################
+# EBTables test script
+###############################################################
+# Binaries
+
+EBTABLES=/usr/local/sbin/ebtables
+###############################################################
+# Interface names
+
+INSIDE_IF_NAME=eth0
+DMZ_IF_NAME=eth1
+BRIDGE_IF_NAME=br0
+###############################################################
+# Bridge mac address list
+
+INSIDE_IF_MAC="00:04:76:14:74:99"
+DMZ_IF_MAC="00:01:03:e2:e9:4c"
+###############################################################
+# Client mac address list
+
+LAN_CLIENT_MACS="00:50:DA:E7:18:51 00:50:DA:E7:F1:A0 00:10:A4:9B:E8:21"
+DMZ_CLIENT_MACS="00:10:A4:9B:30:0D 00:01:03:E2:12:9C 00:50:DA:E7:11:2B"
+NEW_PREFIX="10:"
+###############################################################
+# Set default policy
+#
+$EBTABLES -P INPUT ACCEPT
+$EBTABLES -P OUTPUT ACCEPT
+$EBTABLES -P FORWARD ACCEPT
+# clear existing tables
+$EBTABLES -F
+$EBTABLES -t nat -F
+$EBTABLES -t broute -F
+
+################################################################
+# BRoute
+
+$EBTABLES -t broute -A BROUTE -p ipv4 -i $INSIDE_IF_NAME -j DROP
+$EBTABLES -t broute -A BROUTE -p ipv4 -i $DMZ_IF_NAME -j DROP
+$EBTABLES -t broute -A BROUTE -p arp -i $INSIDE_IF_NAME -j DROP
+$EBTABLES -t broute -A BROUTE -p arp -i $DMZ_IF_NAME -j DROP
+
+################################################################
+# Bridged clients
+
+for MAC in $LAN_CLIENT_MACS; do
+        NEW_MAC="${NEW_PREFIX}`echo ${MAC} | cut -f2- -d':'`"
+        $EBTABLES -t nat -A POSTROUTING -o $DMZ_IF_NAME -s $MAC -j snat --to-source $NEW_MAC
+        $EBTABLES -t nat -A PREROUTING -i $DMZ_IF_NAME -d $NEW_MAC -j dnat --to-destination $MAC
+done
+
+for MAC in $DMZ_CLIENT_MACS; do
+        NEW_MAC="${NEW_PREFIX}`echo ${MAC} | cut -f2- -d':'`"
+        $EBTABLES -t nat -A POSTROUTING -o $INSIDE_IF_NAME -s $MAC -j snat --to-source $NEW_MAC
+        $EBTABLES -t nat -A PREROUTING -i $INSIDE_IF_NAME -d $NEW_MAC -j dnat --to-destination $MAC
+done
+
+################################################################
+# END
+################################################################
+</pre>
+<p>
+I hope this can be useful to you or someone else... If you're so unlucky to have
+to deal with HP 4000 switches and their VLAN implementation :)
+</p>
+</div>
+</div>
+
+<div class="tabContent" id="example2">
+<h3><a name="example2">Filtering AppleTalk using ebtables</a></h3>
+<div class="paragraphs">
+<p>
+This setup and description was given by <em>Ashok Aiyar</em>. The original website
+where he posted this setup is no longer available but the website is archived
+<a href="http://web.archive.org/web/20021005010919/ebv.mimnet.northwestern.edu/~aiyar/appletalk-filter.html">here</a>.
+The contents were edited to bring the original text, which dates from the Linux 2.4 days, up-to-date.
+</p>
+<h4>Why filter AppleTalk?</h4>
+<p>There are many situations where it is appropriate to
+filter AppleTalk.  Here's one of them.  We tunnel/route
+AppleTalk between five networks using <a href=
+"http://netatalk.sourceforge.net">netatalk</a>.  There are very 
+similarly named Tektronix Phaser printers in two of these networks, 
+and often print jobs intended for one are unintentionally sent to 
+the other.  We would prefer for each of these Phasers to be visible
+only in the network in which it is located, and not in all five 
+networks.  Unlike <a href="http://www.cs.mu.oz.au/appletalk/cap.html">CAP</a>, 
+netatalk does not support filtering.  Therefore, on this page I describe 
+one method to add external filters to netatalk, on the basis of the MAC
+address associated with an AppleTalk object or node.</p>
+<p>There are pros and cons to filtering on the basis of 
+MAC addresses.  They have the advantage of being more robust because 
+AppleTalk node numbers can change with every reboot, while the MAC
+address will not.  They have the disadvantage of not being fine-grained;
+MAC-based filtering will block all the services associated with the filtered
+AppleTalk node.  In general, AppleTalk nodes in our networks are associated 
+with a single service.</p>
+<h4>Iptables versus Ebtables</h4>
+<p>The Linux <a href="http://www.netfilter.org">
+netfilter</a> code supports filtering of IPV4, IPV6 and DECnet packets 
+on the basis of MAC addresses.  However such filters do not apply to any 
+other type of ethernet frame.  So, an <code>iptables</code> rule such as:</p>
+<pre>
+iptables -I INPUT -m mac --mac-source TE:KP:HA:SE:R8:60 -j DROP
+</pre>
+<p>results in only IPV4, IPV6 and DECnet packets from that 
+source address being dropped.  More to the point, DDP and AARP packets 
+from the same source address are not dropped.  <a href=
+"http://ebtables.sf.net">Ebtables</a>
+appeared to be perfectly suited to filter Ethernet frames on the basis 
+of MAC address as well as ethernet protocol type.  However, it only
+supports bridge interfaces, and not regular Ethernet interfaces. 
+<a href="mailto:bart.de.schuymer@pandora.be">Bart De Schuymer</a>, the
+author of ebtables brought to my attention that a Linux bridge interface 
+can have just a single Ethernet interface.  Thanks to Bart's generous 
+advice, a working Ethernet filtering setup is described below.</p>
+<h4>Setting up Ebtables</h4>
+<p>To setup a bridge with a single interface, first create
+the bridge interface (br0).  Then add the relevant ethernet interface
+to the bridge.  Finally, assign to the bridge the IP address previously 
+assigned to the ethernet interface. The commands to do this are detailed 
+below:</p>
+<pre>
+brctl addbr br0             # create bridge interface
+brctl stp br0 off           # disable spanning tree protocol on br0
+brctl addif br0 eth0        # add eth0 to br0
+ifconfig br0 aaa.bbb.ccc.ddd netmask 255.255.255.0 broadcast aaa.bbb.ccc.255
+ifconfig eth0 0.0.0.0
+route add -net aaa.bbb.ccc.0 netmask 255.255.255.0 br0
+route add default gw aaa.bbb.ccc.1 netmask 0.0.0.0 metric 1 br0
+</pre>
+<p>Now network traffic will be routed through the br0 interface 
+rather than the underlying eth0.  <code>Atalkd</code> can be started to route 
+AppleTalk between br0 and any other desired interfaces.  Note that 
+<code>atalkd.conf</code> has to be modified so that the reference to eth0 is replaced 
+with br0.   For example, the <code>atalkd.conf</code> for PC1 shown on my <a href=
+"http://www.steubentech.com/~talon/appletalk.html">AppleTalk
+tunneling page</a> is modified to:</p>
+<pre>
+br0  -seed -phase 2 -net 2253  -addr 2253.102  -zone "Microbio-Immun"
+tap0 -seed -phase 2 -net 60000 -addr 60000.253 -zone "Microbio-Immun"
+tap1 -seed -phase 2 -net 60001 -addr 60001.253 -zone "Microbio-Immun"
+tap2 -seed -phase 2 -net 60002 -addr 60002.253 -zone "Microbio-Immun"
+tap3 -seed -phase 2 -net 60003 -addr 60003.253 -zone "Microbio-Immun"
+</pre>
+<p>Verify that AppleTalk routing is working, and then proceed 
+to set up Ethernet filters using <code>ebtables</code>. For this the MAC
+addresses of the AppleTalk nodes that are not to be routed must be
+known.  One simple method of discovering the MAC address is to send 
+the AppleTalk object a few <code>aecho</code> packets, and then read the
+MAC address from <code>/proc/net/aarp</code>.  A sample <code>ebtables</code> filter is 
+shown below:</p>
+<pre>
+ebtables -P INPUT ACCEPT
+ebtables -P FORWARD ACCEPT
+ebtables -P OUTPUT ACCEPT
+ebtables -A INPUT -p LENGTH -s TE:KP:HA:SE:R8:60 -j DROP
+</pre>
+<p>Currently, <code>ebtables</code> doesn't support filtering
+of 802.2 and 802.3 packets such as the DDP and AARP packets used by
+AppleTalk.  However all such packets can be dropped on the basis of
+the length field &#8211; if I understand Bart de Schuymer's explanation 
+correctly.  Therefore in the example above, all ethernet 802.2,
+802.3 packets from the node with the MAC address TE:KP:HA:SE:R8:60
+are dropped. This includes AppleTalk packets, but not IPV4, and ARP
+packets.  This node is left visible in the network in which it is 
+located, but not in any networks to which AppleTalk is routed.</p>
+<h4>Acknowledgements, Final Comments and Useful Links:</h4>
+<p>Bart de Schuymer's advice and patient explanations are
+greatly appreciated.  In my experience <code>atalkd</code> bound to the br0 
+interface is as stable as <code>atalkd</code> bound to the eth0 interface.  In
+addition the MAC address based filters described here work well for their
+intended purpose.  While this works, there is a performance penalty
+associated with receiving all IP traffic through br0 and not eth0.  This
+is because traffic destined for the bridge is queued twice (once more
+than normal) &#8211; that's a lot of overhead.  The ebtables <code>broute</code> table
+can be used to circumvent this and directly route the traffic entering
+the bridge port.  This way it will be queued only once, eliminating the
+performance penalty.  In the example above:</p>
+<pre>
+brctl addbr br0
+brctl stp br0 off
+brctl addif br0 eth0
+ifconfig br0 0.0.0.0
+ifconfig eth0 a.b.c.d netmask 255.255.255.0 broadcast a.b.c.255
+</pre>
+<p>The following two ebtables BROUTE table rules should be used:</p>
+<pre>
+ebtables -t broute -A BROUTING -p IPv4 -i eth0 --ip-dst a.b.c.d -j DROP
+ebtables -t broute -A BROUTING -p ARP -i eth0 -d MAC_of_eth0 -j DROP
+</pre>
+<p>Atalkd should still be bound to br0, thus allowing 
+AppleTalk to be filtered by ebtables.  As best as I can tell this
+configuration eliminates the performance penalty on IP traffic
+throughput.  Because we
+<a href="http://www.steubentech.com/~talon/appletalk.html">
+tunnel AppleTalk</a> through IP, this configuration removes any throughput
+penalties in using a bridge interface and ebtables to route AppleTalk.</p>
+</p>
+</div>
+</div>
+
+<div class="tabContent" id="example3">
+<h3><a name="example3">Transparent routing with Freeswan1</a></h3>
+<div class="paragraphs">
+<p>
+This setup was given by <em>Dominique Blas</em>.</p>
+<h4>Bridge/router configuration</h4>
+<pre>
+              br0 (192.168.100.254)
+           +-------------------------+
+           !                         !          192.168.100.253 +------------+
+-- eth0 ---+                         +- eth1 ---------/---------+   Router   +---> Internet
+  agency   !                         !            Cross         +------------+
+   LAN     +-----------+-------------+            Cable
+                       !
+                       !    ipsec0
+                       /    (192.168.100.254)
+                       !
+                       v
+          Corporate network (192.168.0.0/19)
+</pre>
+<ul>
+<li>eth0 and eth1 without any address.</li>
+<li>br0 is built upon eth0 and eth1.</li>
+<li>STP is off.</li>
+<li>ipsec0 defaults to br0's address.</li>
+<li>Default gateway is, of course, 192.168.100.253.</li>
+<li>When tunnel is established, route towards 192.168.0.0/19 is created
+by freeswan using interface ipsec0. Classical.</li>
+</ul>
+<h4>Stations configuration</h4>
+<ul>
+<li>Addressing scheme : 192.168.100.0/24.</li>
+<li>Default gateway is 192.168.100.253.</li>
+</ul>
+<h4>Now the challenge</h4>
+<ul>
+<li>Automatically inject packets, for which the destination address is within the corporate network addressing, to ipsec0.</li>
+<li>Keep the other packets going through eth1.</li>
+<li>That is: ping www.yahoo.com (Internet access through eth1) must respond, ping 192.168.0.33 (intranet access going through ipsec0) must answer.</li>
+</ul>
+<p>
+One can ask why being so complicated. It's enough to configure default gateway (or a list a subnet in the routing table) on the stations to point towards  the
+br0 address and the router will do its job routing toward intranet or towards Internet.<br/>
+Perfectly exact.
+</p>
+<p>
+Yes but imagine you have several dozens of such local stations without DHCP to manage their network configuration<br/>
+and you are thousands of miles away. You can simply send the machine, ask someone to plug it in the router and in the hub with the correct cables you've provided.<br/>
+That's all.
+</p>
+<h4>A solution</h4>
+<p>
+So
+</p>
+<pre>
+ebtables -t nat -A PREROUTING -i eth0 -p ipv4 --ip-dst 192.168.0.0/19 \
+-j dnat --to-dst  $MAC_ADDR_OF_IPSEC0 --dnat-target ACCEPT
+</pre>
+<p>
+actually works and is enough for the challenge.
+</p>
+<p>
+A notice on <code>$MAC_ADDR_Of_IPSEC0</code>.<br/>
+Since the rule is set before ipsec is launched the mac address of ipsec0 is not set at this time.
+This doesn't matter since ipsec0's mac address will be the same as that of the outbound interface that is equal to eth1's mac address.
+</p>
+<p>
+Hence this rule:
+</p>
+<pre>
+ebtables -t nat -A PREROUTING -i eth0 -p ipv4 --ip-dst 192.168.0.0/19 \
+-j dnat --to-dst $MAC_ADDR_OF_ETH1 --dnat-target  ACCEPT
+</pre>
+<p>
+Of course that's only the first step. One can then take into account a few other things:
+</p>
+<ul>
+<li>protecting eth1 at the ip level (via iptables) or at the mac level (anti spoofing via ebtables or iptables),</li>
+<li>protecting intranet from devices attempting to access the tunnel from eth1,</li>
+<li>be sure such mac address is associated with such ip address without using <code>arp -s</code>, using ebtables,</li>
+<li>etc, etc.</li>
+</ul>
+</div>
+</div>
+
+<div class="tabContent" id="example4">
+<h3><a name="example4">By-pass dns client bug on user's inexpensive routers</a></h3>
+<div class="paragraphs">
+<p>
+This example was given by <em>Mike Ireton</em>.
+</p>
+<h4>ebtables just saved our cookies big time. Here's how it did it:</h4>
+<p>
+We're a wireless isp and our wireless subscribers all have 
+inexpensive soho routers with fixed ip addresses. We recently had to 
+change out the hardware at one of our main towers (software upgrades, 
+faster cpu, etc etc) and as a result of doing this, we discovered that 
+numerous subscribers all of a sudden could not resolve dns. Everyone 
+continued to have ping and tcp connectivity, but dns wasn't resolving 
+for them. Rebooting their routers would solve the problem, but there's a 
+lot of subscribers who depend on this site and we coulnd't possibly call 
+them all. After looking over packet dumps, it appears that most of these 
+cheap soho routers have a very subtle bug which was responsable for the 
+problem - their dns requests were still bearing the old mac address of 
+the router, while test pings to them bore the new! (In effect, the 
+embedded dns client in the router was not re-arping for the gateway and 
+instead using an outdated cache). This is across several brands of 
+routers too. So the solution was to install ebtables mac address nat'ing 
+so that received frames destined for the old mac addresses would be 
+changed to the new address, thus solving the problem site wide.
+</p>
+</div>
+</div>
+
+<div class="tabContent" id="example5">
+<h3><a name="example5">Rate shaping</a></h3>
+<div class="paragraphs">
+<p>
+This example was given by <em>Dave Stahr</em> (dave&lt;at&gt;stewireless.com).
+</p>
+<h4>Goal</h4>
+<p>
+I'm running Fedora Core 3 with <code>bridge-utils-0.9.6-2</code> and
+<code>ebtables-v2.0.6</code> to rate shape bandwidth for
+our wireless subscribers, based on their MAC address. This bridge sits between our core wireless
+link and the switch connected to our servers and internet gateway.  A perl script runs out of
+cron that connects to our mysql database to create the traffic queues automatically.  I'm not
+including that here, but any programmer could figure out how to write their own suited to their
+own database, etc, or just write the config by hand for smaller networks.  We're running on a
+little 400mhz PentiumII with 128mb RAM and it doesn't even sweat.  We have around 500 customers,
+all rate shaped in their own individual queues. This could hypothetically support up to 20,000
+individual traffic queues.
+</p>
+<p>
+This is a very simple setup, but in trying to figure out how to do it, I found many unanswered
+posts on many web forums by people trying to do this.
+</p>
+<h4>Bridge configuration</h4>
+<p>
+This gives us the ability to log in to the bridge, as well as give the bridge the ability to
+connect out to our mysql database server, etc:
+</p>
+<pre>
+------------- ifcfg-br0 -------------
+DEVICE=br0
+ONBOOT=no
+BOOTPROTO=static
+IPADDR=192.168.111.11
+NETMASK=255.255.255.0
+
+----------- bridge_up.sh --------------------
+#!/bin/bash
+
+ifdown eth0
+ifdown eth1
+
+ifconfig eth0 0.0.0.0 up
+ifconfig eth1 0.0.0.0 up
+
+brctl addbr br0
+
+brctl addif br0 eth0
+brctl addif br0 eth1
+
+ifconfig br0 up
+
+----------- bridge_down.sh --------------------
+#!/bin/bash
+ 
+ifdown eth0
+ifdown eth1
+ifconfig br0 down
+brctl delbr br0
+</pre>
+<h4>The rate shaping part</h4>
+<p>
+We're using <code>tc</code> to do the deed. This is
+my first attempt at this, so I may be doing some things wrong, especially with the
+<code>tc</code> commands - BUT IT WORKS - so I figure, I'll fix it later. You can use
+<code>ebtables -L --Lc</code> to see your customer's usage. I dump this out hourly,
+adding the <code>-Z</code> option to zero the counters out, then have a perl script
+parse that output and dump it into a mysql table where I can make better use of it.
+</p>
+<pre>
+--------------------------- rateshape -----------------------
+#!/bin/bash
+#
+#  All Rates are in Kbits, so in order to gets Bytes divide by 8
+#  e.g. 25Kbps == 3.125KB/s
+#
+TC=/sbin/tc
+EBTABLES=/sbin/ebtables   # Location of ebtables
+ 
+cd /usr/local/bridge
+ 
+tc_start() {
+    $TC qdisc add dev eth0 root handle 1:0 cbq bandwidth 100Mbit avpkt 1000 mpu 64
+    $TC qdisc add dev eth1 root handle 1:0 cbq bandwidth 100Mbit avpkt 1000 mpu 64
+ 
+#Customer A
+#Two MACs: 00:0D:BD:A4:E1:C8 and 00:20:78:B0:25:7D
+#256kbps download speed
+${TC} class add dev eth0 parent 1:0 classid 1:1 cbq rate 256KBit allot 1514 prio 1 avpkt 1000 bounded
+${TC} filter add dev eth0 parent 1:0 protocol ip handle 1 fw flowid 1:1
+${EBTABLES} -A FORWARD -d 00:0D:BD:A4:E1:C8 -j mark --set-mark 1 --mark-target ACCEPT
+${EBTABLES} -A FORWARD -d 00:20:78:B0:25:7D -j mark --set-mark 1 --mark-target ACCEPT
+#128kbps upload speed
+${TC} class add dev eth1 parent 1:0 classid 1:1 cbq rate 128KBit allot 1514 prio 1 avpkt 1000 bounded
+${TC} filter add dev eth1 parent 1:0 protocol ip handle 1 fw flowid 1:1
+${EBTABLES} -A FORWARD -s 00:0D:BD:A4:E1:C8 -j mark --set-mark 1 --mark-target ACCEPT
+${EBTABLES} -A FORWARD -s 00:20:78:B0:25:7D -j mark --set-mark 1 --mark-target ACCEPT
+
+#Customer B
+#MAC Address: 00:0D:BD:A4:D6:54
+#800kbps download speed
+${TC} class add dev eth0 parent 1:0 classid 1:2 cbq rate 800KBit allot 1514 prio 1 avpkt 1000 bounded
+${TC} filter add dev eth0 parent 1:0 protocol ip handle 2 fw flowid 1:2
+${EBTABLES} -A FORWARD -d 00:0D:BD:A4:D6:54 -j mark --set-mark 2 --mark-target ACCEPT
+#64kbps upload speed
+${TC} class add dev eth1 parent 1:0 classid 1:2 cbq rate 64KBit allot 1514 prio 1 avpkt 1000 bounded
+${TC} filter add dev eth1 parent 1:0 protocol ip handle 2 fw flowid 1:2
+${EBTABLES} -A FORWARD -s 00:0D:BD:A4:D6:54 -j mark --set-mark 2 --mark-target ACCEPT
+
+#Customer C
+#MAC Address: 00:0A:5E:22:D1:A3
+#do not rate shape!
+${EBTABLES} -A FORWARD -s 00:0A:5E:22:D1:A3 -j ACCEPT
+${EBTABLES} -A FORWARD -d 00:0A:5E:22:D1:A3 -j ACCEPT
+
+#Block anything we didn't specify above.
+${EBTABLES} -A FORWARD -j DROP --log
+
+#&lt;my config has over 500 customers and over 1100 MAC addresses&gt;
+#Just keep incrementing the classid, handle, flowid, and mark values for each customer's
+#individual speed queues.
+}
+ 
+tc_stop() {
+ 
+    ./save_and_reset_counters
+ 
+    ${EBTABLES} -F
+ 
+    $TC qdisc del dev eth0 root
+    $TC qdisc del dev eth1 root
+}
+ 
+tc_restart() {
+ 
+    tc_stop
+    sleep 1
+    tc_start
+ 
+}
+ 
+tc_show() {
+ 
+    echo ""
+    echo "eth0"
+    $TC qdisc show dev eth0
+    $TC class show dev eth0
+    $TC filter show dev eth0
+    echo ""
+    echo "eth1"
+    $TC qdisc show dev eth1
+    $TC class show dev eth1
+}
+ 
+tc_stop() {
+ 
+    ./save_and_reset_counters
+ 
+    ${EBTABLES} -F
+ 
+    $TC qdisc del dev eth0 root
+    $TC qdisc del dev eth1 root
+}
+ 
+tc_restart() {
+ 
+    tc_stop
+    sleep 1
+    tc_start
+ 
+}
+ 
+tc_show() {
+ 
+    echo ""
+    echo "eth0"
+    $TC qdisc show dev eth0
+    $TC class show dev eth0
+    $TC filter show dev eth0
+    echo ""
+    echo "eth1"
+    $TC qdisc show dev eth1
+    $TC class show dev eth1
+    $TC filter show dev eth1
+ 
+}
+case "$1" in
+ 
+  start)
+ 
+    echo -n "Starting bandwidth shaping: "
+    tc_start
+    echo "done"
+    ;;
+ 
+  stop)
+ 
+    echo -n "Stopping bandwidth shaping: "
+    tc_stop
+    echo "done"
+    ;;
+ 
+  restart)
+ 
+    echo -n "Restarting bandwidth shaping: "
+    tc_restart
+    echo "done"
+    ;;
+ 
+  show)
+ 
+    tc_show
+    ;;
+ 
+  *)
+ 
+    echo "Usage: rateshape {start|stop|restart|show}"
+    ;;
+ 
+esac
+</pre>
+</div>
+</div>
+
+</div>
+<div id="footer">
+</div>
+</div>
+</div>
+</body>
+</html>
+

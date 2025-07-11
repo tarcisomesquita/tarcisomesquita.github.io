@@ -1,0 +1,159 @@
+
+
+Ver
+Figure 2-4. SIMD Extensions, Register Layouts, and Data Types
+Figure 2-3. Prefix Ordering in 64-bit Mode
+Table 2-4. REX Prefix Fields [BITS: 0100WRXB]
+
+
+In the 64-bit mode, applications may access:
+• 64-bit flat linear addressing
+• 8 additional general-purpose registers (GPRs)
+• 8 additional registers for streaming SIMD extensions (SSE, SSE2, SSE3 and SSSE3)
+• 64-bit-wide GPRs and instruction pointers
+• uniform byte-register addressing
+• fast interrupt-prioritization mechanism
+• a new instruction-pointer relative-addressing mode
+
+
+Os registradores de uso geral da arquitetura x86-64 são:
+
+RAX - registrador valor de retorno
+RBX - registrador base
+RCX - registrador contador
+RDX - registrador de dados
+
+RSI - registrador de índice da fonte dos dados
+RDI - registrador de índice do destino dos dados
+
+RBP - registrador ponteiro para a moldura de chamada de função
+RSP - registrador ponteiro para a pilha de execução
+
+R8 - registrador de dados
+R9 - registrador de dados
+R10 - registrador ponteiro para a moldura de chamada de função
+R11 - registrador de linking
+R12 - registrador de base
+R13 - registrador de base
+R14 - registrador de base
+R15 - registrador de base 
+
+IA-32 architecture provides 16 basic program execution registers
+
+The 32-bit general-purpose registers EAX, EBX, ECX, EDX, ESI, EDI, EBP, and ESP are ...
+EFLAGS (program status and control) register
+EIP (instruction pointer) register
+
+32 bits: EAX, EBX, ECX, EDX, ESI, EDI, EBP e ESP.
+16 bits: AX, BX, CX, DX, SI, DI, BP e SP.
+8 bits: AH, AL, BH, BL, CH, CL, DH e DL.
+
+• EAX — Accumulator for operands and results data
+• EBX — Pointer to data in the DS segment
+• ECX — Counter for string and loop operations
+• EDX — I/O pointer
+• ESI — Pointer to data in the segment pointed to by the DS register; source pointer for string operations
+• EDI — Pointer to data (or destination) in the segment pointed to by the ES register; destination pointer for string operations
+• ESP — Stack pointer (in the SS segment)
+• EBP — Pointer to data on the stack (in the SS segment)
+
+EAX
+Accumulator Register
+mostly used for calculations and for input/output.
+O “Acumulador” (ACC ou AX), geralmente recebe o resultado das operações efetuadas pela ULA.
+
+    SPECIAL USES OF AX:
+        Used as the destination of an IN (in port) 
+            ex: IN  AL,DX
+                IN  AX,DX
+
+        Source for the output for an OUT           
+            ex: OUT DX,AL
+                OUT DX,AX
+
+        Destination for LODS (grabs byte/word from [DS:SI] and INCreses SI)
+            ex: lodsb   (same as:   mov al,[ds:si] ; inc si )
+                lodsw   (same as:   mov ax,[ds:si] ; inc si ; inc si )
+
+        Source for STOS      (puts AX/AL into [ES:DI] and INCreses DI)
+            ex: stosb   (same as:   mov [es:di],al ; inc di )
+                stosw   (same as:   mov [es:di],ax ; inc di ; inc di )
+
+        Used for MUL, IMUL, DIV, IDIV
+
+
+EBX
+Base Register
+Only register that can be used as an index.
+Utilizado como base ou ponteiro.
+
+ECX
+Count Register
+Register used for the loop instruction.
+
+    SPECIAL USES OF CX:
+        Used in REP prefix to repeat an instruction CX number of times
+            ex: mov cx,10
+                mov ax,0
+                rep stosb ;this would write 10 zeros to [ES:DI] and increase
+                          ;DI by 10.
+        Used in LOOP
+            ex: mov cx,100
+            THELABEL:
+
+                ;do something that would print out 'HI'
+
+                loop THELABEL   ;this would print out 'HI' 100 times
+                                ;the loop is the same as: dec cx
+                                                          jne THELABAL
+
+
+
+EDX
+Data Register
+Used for input/output and by multiply and divide.
+
+    SPECIAL USES OF DX:
+        USED in word sized MUL, DIV, IMUL, IDIV as DEST for high word
+                or remainder
+
+            ex: mov bx,10
+                mov ax,5
+                mul bx  ;this multiplies BX by AX and puts the result 
+                        ;in DX:AX
+
+            ex: (continue from above)
+                div bx  ;this divides DX:AX by BX and put the result in AX and
+                        ;the remainder (in this case zero) in DX
+
+        Used as address holder for IN's, and OUT's (see ax's examples)
+
+
+SI
+Source Index
+Used by string operations as source
+DS:ESI endereco do inicio de um arrays (string) de memória.
+
+DI
+Destination Index
+Used by string operations as destination.
+Contém o endereço do offset da memória.
+
+SI e DI são chamados Index Registers e são usados em comandos que movem blocos de bytes de um lugar(SI) para outro(DI), são a fonte e o destino.
+
+
+ESP
+Stack Pointer
+Points to the offset that the stack is using.
+Ele aponta para o topo da pilha, não mexa com ele, à não ser que queira que o seu programa trave.
+SS:ESP endereço do topo da pilha.
+
+
+EBP
+Base Pointer
+Used to pass data to and from the stack.
+Usado geralmente em conjunto com SS, ele nos servirá para, por exemplo, passar argumentos para uma função, quando fizer operações com pilhas, use-o, pois dificilmente você fará besteira com ele.
+SS:EBP endereço base da pilha.
+
+
+

@@ -1,0 +1,62 @@
+# make menuconfig
+> "File systems" > "Miscellaneous file systems" > "Squashed filesystem" > M
+
+
+A command to know how much space is taken up by your system:
+sudo du -chs --exclude=/cdrom/* --exclude=/media/* --exclude=/dev/* --exclude=/tmp/* --exclude=/sys/* --exclude=/proc/* --exclude=/home/* /*
+
+Copy your filesystem to temporary directory
+DEST=/var/squashfs
+sudo mkdir -p ${DEST}
+sudo rsync -av --delete / ${DEST} --one-file-system \
+--exclude=/proc/* --exclude=/tmp/* --exclude=/dev/* \
+--exclude=/sys/* --exclude=/boot/* \
+--exclude=/home/* --exclude=/etc/mtab \
+--exclude=/live --exclude=${DEST}
+
+[ -n "$DEST" ] && sudo find ${DEST}/var/run ${DEST}/var/mail ${DEST}/var/spool ${DEST}/var/lock ${DEST}/var/backups ${DEST}/var/tmp -type f -exec rm {} \;
+
+Delete only OLD log files:
+[ -n "$DEST" ] && sudo find ${DEST}/var/log -type f -iregex '.*\.[0-9].*' -exec rm -v {} \;
+[ -n "$DEST" ] && sudo find ${DEST}/var/log -type f -iname '*.gz' -exec rm -v {} \;
+
+Clean current log files:
+[ -n "$DEST" ] && sudo find ${DEST}/var/log -type f | while read file; do echo -n '' | sudo tee $file; done
+
+Clean Package cache:
+[ -n "$DEST" ] && sudo rm -v ${DEST}/var/cache/apt/archives/*.deb
+
+8. Create the squashfs image
+sudo mksquashfs ${DEST} /live/filesystem.squashfs -noappend -always-use-fragments
+
+
+sudo unsquashfs -s /dev/loop0
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+# mksquashfs /home/user1 ro.fs
+# mkdir /home/rw.fs
+
+# mount -t squashfs ro.fs /mnt -o loop
+
+# cd /home
+# mount -t unionfs -o dirs=rw.fs=rw:/mnt=ro unionfs user1
+
+# cd /home/user1
+# touch file1
+# ls
+
+umount the unionfs and the squashfs file systems and list the content of /home/user1 and /home/rw.fs dir
+
+# cd ..
+# umount /home/user1
+# umount /mnt
+
+# ls /home/user1
+# ls /home/rw.fs 
+
+You can see that the new file1 was created in /home/rw.fs
+
+When you want to add the new created files to the stable and compressed squashed file system, you have to add them to the exsisting one.
+# mksquashfs /home/rw.fs /home/ro.fs
+

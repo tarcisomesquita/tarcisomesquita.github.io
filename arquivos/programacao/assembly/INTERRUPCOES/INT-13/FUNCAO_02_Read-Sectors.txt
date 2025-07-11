@@ -1,0 +1,24 @@
+
+Read Sectors (02h)
+
+Read a sector from the specified drive into a user-defined buffer.
+
+The read must not span a track or head boundary, and the buffer must not cross a 64KB DMA boundary in the physical address space.
+
+
+Input Parameters:
+AH - 02h, indicating the Read Sectors Function.
+AL - Number of sectors.
+CH - Bottom 8 bits of track number (0-based).
+CL - ttssssss, as follows:
+     tt = top two bits of 10-bit track number,
+     ssssss = 6-bit sector number (0-17).
+DH - Head number (0-based).
+DL - Drive number. (Bit 7 set for hard disks)
+ES:BX - Address of user buffer.
+
+Output Parameters:
+CF - Set if failure, else clear if success.
+AH - Disk status code (00h if success).
+AL - Number of sectors actually read.
+

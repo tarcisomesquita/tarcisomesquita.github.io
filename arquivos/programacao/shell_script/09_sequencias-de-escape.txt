@@ -1,0 +1,106 @@
+veja man console_codes
+
+
+Para usar cores a sequência de escape é "\e[<NUM>m" (os sinais '<' e '>' não entram!).
+o \e diz ao echo que o que vem depois é uma sequência de escape.
+
+#!/bin/bash
+# A variável $COLUMNS contém o número de colunas que o terminal está usando, e antes de executar este script você precisa exportá-la:
+# export COLUMNS
+
+[ -n $COLUMNS ] || {
+   echo Você precisa exportar a variável \"COLUMNS\":
+   echo "Tente \"export COLUMNS\" e tente executar novamente"
+   exit 1
+}
+
+POSICAO=$[ ( $COLUMNS - `expr length "$*"` ) / 2 ]
+# `expr length "$*"` retorna o número de caracteres digitados como parâmetros.
+
+echo -e "\e[${POSICAO}C\e[33;1m$*\e[0m" # imprime amarelinho no centro da linha
+
+
+
+   ,-------------,------------------------------------------------,
+   |   Código    |         O que faz                              |
+   |-------------|------------------------------------------------|
+   | \e[<N>A     | Move o cursor N linhas acima.                  |
+   |-------------|------------------------------------------------|
+   | \e[<N>B     | Move o cursor N linhas abaixo.                 |
+   |-------------|------------------------------------------------|
+   | \e[<N>C     | Move o cursor N colunas à direita.             |
+   |-------------|------------------------------------------------|
+   | \e[<N>D     | Move o cursor N colunas à esquerda.            |
+   |-------------|------------------------------------------------|
+   | \e[<N>E     | Move o cursor N linhas para baixo na coluna 1. |
+   |-------------|------------------------------------------------|
+   | \e[<N>F     | Move o cursor N linhas para cima na coluna 1.  |
+   |-------------|------------------------------------------------|
+   | \e[<N>G     | Coloca o cursor na linha N.                    |
+   |-------------|------------------------------------------------|
+   | \e[<L>;<C>H | Coloca o cursor na linha L e na coluna C.      |
+   |-------------|------------------------------------------------|
+   | \e[<N>I     | Move o cursor N tabulações à direita.          |
+   |-------------|------------------------------------------------|
+   |             | N=0  Apaga do cursor até o fim da tela;        |
+   | \e[<N>J     | N=1  Apaga do cursor até o início da tela;     |
+   |             | N=2  Apaga a tela toda.                        |
+   |-------------|------------------------------------------------|
+   |             | N=0  Apaga do cursor até fim da linha;         |
+   | \e[<N>K     | N=1  Apaga do cursor até o início da linha;    |
+   |             | N=2  Apaga a linha toda.                       |
+   |-------------|------------------------------------------------|
+   | \e[<N>L     | Adiciona N linhas em branco abaixo da atual.   |
+   |-------------|------------------------------------------------|
+   | \e[<N>M     | Apaga N linhas abaixo da atual.                |
+   |-------------|------------------------------------------------|
+   | \e[<N>P     | Apaga N caracteres a direita.                  |
+   |-------------|------------------------------------------------|
+   | \e[<N>S     | Move a tela N linhas para cima.                |
+   |-------------|------------------------------------------------|
+   | \e[<N>T     | Move a tela N linhas para baixo.               |
+   |-------------|------------------------------------------------|
+   | \e[<N>X     | Limpa N caracteres à direita (com espaços).    |
+   |-------------|------------------------------------------------|
+   | \e[<N>@     | Adiciona N espaços em branco.                  |
+   |-------------|------------------------------------------------|
+   | \e[s        | Salva a posição do cursor.                     |
+   |-------------|------------------------------------------------|
+   | \e[u        | Restaura a posição do cursor que foi salva.    |
+   '-------------'------------------------------------------------'
+
+'[<num>m' muda para a cor "num".
+Cada cor tem um código próprio.
+
+(N deve estar no formato "\e[<N>m"):
+     ,-----------------------------,----,-------------,---,
+     | Atributo                    | N  | Cor         | X |
+     |-----------------------------|----|-------------|---|
+     | Desligar todos atributos    | 0  | Preto       | 0 |
+     | Negrito                     | 1  | Vermelho    | 1 |
+     | Cor X para o primeiro plano | 3X | Verde       | 2 |
+     | Cor X para o segundo plano  | 4X | Marrom      | 3 |
+     | Sublinhado                  | 4  | Azul        | 4 |
+     | Piscando (blink)            | 5  | Roxo        | 5 |
+     | Vídeo reverso               | 7  | Ciano       | 6 |
+     |             -x-             | -- | Branco      | 7 |
+     '-----------------------------'----'-------------'---'
+
+# mostra todas as cores do console e seus respectivos códigos.
+function Mcores {
+for LETRA in `seq 0 7`; do
+  for BOLD in '' ';1'; do
+    for FUNDO in `seq 0 7`; do
+      SEQ="4$FUNDO;3$LETRA"
+      echo -ne "\e[$SEQ${BOLD}m $SEQ${BOLD:-  } \e[m"
+    done
+    echo
+  done
+done
+}
+
+
+echo -e -n "\e[44;34;1mTESTES\e[00m\n"
+echo -e -n "\\x1B[44;34;1mTESTES\\x1B[00m\n"
+echo -e -n "\033[44;34;1mTESTES\033[00m\n"
+printf         "\033[44;34;1mTESTES\033[00m\n"

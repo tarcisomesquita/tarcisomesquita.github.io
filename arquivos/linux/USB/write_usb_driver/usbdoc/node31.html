@@ -1,0 +1,245 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 99.1 release (March 30, 1999)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>URB Error Codes</TITLE>
+<META NAME="description" CONTENT="URB Error Codes">
+<META NAME="keywords" CONTENT="usbdoc">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v99.1 release">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="usbdoc.css">
+
+<LINK REL="next" HREF="node32.html">
+<LINK REL="previous" HREF="node30.html">
+<LINK REL="up" HREF="node29.html">
+<LINK REL="next" HREF="node32.html">
+</HEAD>
+
+<BODY ><!doctype html public "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Language" content="de">
+<meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+<link REL="STYLESHEET" HREF="/zope/style.css" type="text/css">
+<script language="JavaScript"><!-- 
+  if(top.frames.length > 0) top.location.href=self.location; 
+  //--></script>
+</head>
+<body bgcolor="#FFFFFF" TOPMARGIN="1" LEFTMARGIN="3" MARGINWIDTH="3" MARGINHEIGHT="1">
+<a name=top></a>
+<!-- Kopfzeile mit Logos -->
+<center>
+<table width="100%" border="0" cellpadding="4" cellspacing="4">
+<tr>
+
+<td align="left" valign="middle">
+<a href="http://www.lrr.in.tum.de/"><img src="http://www.lrr.in.tum.de/zope/images/lrr_tum_logo_png" alt="LRR-TUM-Logo" height="74" width="67" border="0" />
+</a>
+</td>
+<td align="center" valign="middle">
+<a href="http://www.in.tum.de" target="_intum">
+<font COLOR="#A1A1A1" size=+2>Department of</font> <font COLOR="#0075CF" size=+2>Informatics</font></a><br>
+<a href="http://www.tum.de" taget="_blank">
+<font COLOR="#BFBFBF">Technische Universit&auml;t M&uuml;nchen</font></a><br>
+<font COLOR="#0075CF" size=+1> Informatik X: Rechnertechnik und Rechnerorganisation / Parallelrechnerarchitektur</font><br>
+
+<a href="http://www.lrr.in.tum.de/zope/people/bode"><font
+COLOR="#0075CF" size=-1>Prof. Dr. Arndt Bode</font></a>
+<font COLOR="#0075CF" size=-1>,</font>
+<a href="http://www.lrr.in.tum.de/zope/people/gerndt"><font
+COLOR="#0075CF" size=-1>Prof. Dr. Hans Michael Gerndt</font></a>
+</td>
+<td align="right" valign="middle">
+<a href="http://www.lrr.in.tum.de/zope/abacus"><img src="http://www.lrr.in.tum.de/zope/abakus50x50.gif" alt="abakus50x50.gif" height="51" width="50" border="0" /></a>
+</td>
+</tr>
+</table>
+</center>
+<!-- Ende Kopfzeile -->
+<!--Begin Horizontal Navigation-->
+<center>
+<table border="0" width="100%" cellpadding="2" cellspacing="2" bgcolor="FFFFFF">
+
+<tr>
+<td nowrap align="center" valign="middle"><font size="+1">
+&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope">Home</a>&nbsp;
+
+							|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/address">Addresses</a>&nbsp;
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/people">Staff</a>&nbsp;
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/research">Research</a>&nbsp;
+
+				|&nbsp;<a class="hnav" href="http://www.lrr.in.tum.de/zope/lectures">Lectures</a>&nbsp;
+											</font></td></tr>
+<!--End Horizontal Navigation-->
+<tr><td bgcolor="#dddddd">
+<table width=100% border=0>
+<tr>
+<td align=left>
+
+                
+            
+</td>
+<td align=right>
+<a href="http://www.lrr.in.tum.de/zope/search">Search</a>&nbsp;
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</center>
+<!-- Ende Header -->
+
+<!--Navigation Panel-->
+<A NAME="tex2html527"
+ HREF="node32.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next_motif.gif"></A> 
+<A NAME="tex2html521"
+ HREF="node29.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_motif.gif"></A> 
+<A NAME="tex2html515"
+ HREF="node30.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="previous_motif.gif"></A> 
+<A NAME="tex2html523"
+ HREF="node2.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents_motif.gif"></A> 
+<A NAME="tex2html525"
+ HREF="node34.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html528"
+ HREF="node32.html">Error Codes returned by</A>
+<B> Up:</B> <A NAME="tex2html522"
+ HREF="node29.html">Error Codes</A>
+<B> Previous:</B> <A NAME="tex2html516"
+ HREF="node30.html">Error codes returned by</A>
+ &nbsp <B>  <A NAME="tex2html524"
+ HREF="node2.html">Contents</A></B> 
+ &nbsp <B>  <A NAME="tex2html526"
+ HREF="node34.html">Index</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION10061200000000000000">
+URB Error Codes</A>
+</H3>
+
+<P>
+
+<UL>
+<LI>These error codes are returned in <TT> urb-<IMG
+ WIDTH="16" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img8.gif"
+ ALT="$&gt;$">status</TT> or
+<TT> iso_frame_desc[n].status</TT>:
+
+<P>
+ 
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT">0</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=283>Transfer completed successfully</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><TT> -ENOENT</TT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=283>URB was canceled by unlink_urb</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><TT> -EINPROGRESS</TT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=283>URB still pending, no results yet
+			(actually no error until now)</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><TT> -EPROTO</TT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=283>a) Bitstuff error</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=283>b) Unknown USB error</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><TT> -EILSEQ</TT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=283>CRC mismatch</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><TT> -EPIPE</TT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=283>a) Babble detect</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=283>b) Endpoint stalled</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><TT> -ENOST</TT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=283>Buffer error</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><TT> -ETIMEDOUT</TT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=283>Transfer timed out, NAK</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><TT> -ENODEV</TT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=283>Device was removed</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><TT> -EREMOTEIO</TT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=283>Short packet detected</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><TT> -EXDEV</TT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=283>ISO transfer only partially completed
+			look at individual frame status for details</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><TT> -EINVAL</TT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=283>ISO madness, if this happens: Log off and go home</TD>
+</TR>
+</TABLE></LI>
+</UL>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html527"
+ HREF="node32.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next_motif.gif"></A> 
+<A NAME="tex2html521"
+ HREF="node29.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_motif.gif"></A> 
+<A NAME="tex2html515"
+ HREF="node30.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="previous_motif.gif"></A> 
+<A NAME="tex2html523"
+ HREF="node2.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents_motif.gif"></A> 
+<A NAME="tex2html525"
+ HREF="node34.html">
+<IMG WIDTH="43" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="index" SRC="index_motif.gif"></A> 
+<BR>
+<B> Next:</B> <A NAME="tex2html528"
+ HREF="node32.html">Error Codes returned by</A>
+<B> Up:</B> <A NAME="tex2html522"
+ HREF="node29.html">Error Codes</A>
+<B> Previous:</B> <A NAME="tex2html516"
+ HREF="node30.html">Error codes returned by</A>
+ &nbsp <B>  <A NAME="tex2html524"
+ HREF="node2.html">Contents</A></B> 
+ &nbsp <B>  <A NAME="tex2html526"
+ HREF="node34.html">Index</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Detlef Fliegl</I>
+<BR><I>2001-01-08</I>
+</ADDRESS>
+  <table class="changed" align="right">
+    <tr>
+	<td>
+		(none)
+	</td>
+      <td>
+        <a href="javascript:{var a='arch',b='mailbode.in.tum.de';location='mailto:'+a+'@'+b}">Webmaster</a>
+      </td>
+    </tr>
+
+  </table>
+
+</body></html>
+</BODY>
+</HTML>

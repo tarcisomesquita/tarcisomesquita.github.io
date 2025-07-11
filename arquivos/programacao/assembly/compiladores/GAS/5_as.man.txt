@@ -1,0 +1,54 @@
+
+Usage: as [option...] [asmfile...]
+Options:
+  --traditional-format    Use same format as native assembler when possible
+
+  -n                      Do not optimize code alignment
+
+  -march=CPU[,+EXTENSION...]
+                          generate code for CPU and EXTENSION
+			  CPU is one of:
+                           i8086, i186, i286, i386, i486, pentium, pentiumpro,
+                           pentiumii, pentiumiii, pentium4, prescott, nocona,
+                           core, core2, k6, k6_2, athlon, k8, amdfam10,
+                           generic32, generic64
+                          EXTENSION is combination of:
+                           mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, sse4,
+                           avx, vmx, smx, xsave, movbe, ept, aes, pclmul, fma,
+                           3dnow, 3dnowa, sse4a, sse5, svme, abm, padlock
+  -mtune=CPU              optimize for CPU, CPU is one of:
+                           i8086, i186, i286, i386, i486, pentium, pentiumpro,
+                           pentiumii, pentiumiii, pentium4, prescott, nocona,
+                           core, core2, k6, k6_2, athlon, k8, amdfam10,
+                           generic32, generic64
+ Target i386 options:
+          [--32|--x32|--64] [-n]
+          [-march=CPU[+EXTENSION...]] [-mtune=CPU]
+-march=i686+sse4+vmx
+
+  -mmnemonic=[att|intel]  use AT&T/Intel mnemonic
+  -msyntax=[att|intel]    use AT&T/Intel syntax
+
+
+       Target i386 options:
+          [--32|--64] [-n]
+          [-march=CPU[+EXTENSION...]] [-mtune=CPU]
+
+
+gcc -Wa option to pass arguments to the assembler.
+gcc -c -g -O -Wa,-alh,-L file.c
+
+OPTIONS
+       --defsym sym=value
+           Define  the  symbol  sym to be value before assembling the input file.  value must be an integer constant.
+           As in C, a leading 0x indicates a hexadecimal value, and a leading 0 indicates an octal value.  The  value
+           of the symbol can be overridden inside a source file via the use of a ".set" pseudo-op.
+
+       -o objfile
+           Name the object-file output from as objfile.
+
+  -R                      fold data section into text section
+  --reduce-memory-overheads 
+-mintel64               accept only Intel64 ISA
+-msyntax=[att|intel]
+-mmnemonic=[att|intel] (default: att)

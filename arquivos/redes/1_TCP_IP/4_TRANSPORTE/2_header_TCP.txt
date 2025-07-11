@@ -1,0 +1,139 @@
+
+O TCP, no servidor, divide em pacotes o arquivo que vai ser transportado pela rede. No cliente, o TCP reordena e junta os pacotes para montar o arquivo.
+
+O cabeçalho tem 20 bytes que carrega as informações necessárias à remontagem dos pacotes.
+
+RFC 793:
+ 0                   1                   2                   3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|          Source Port          |       Destination Port        |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                        Sequence Number                        |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                    Acknowledgment Number                      |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|  Data |           |U|A|P|R|S|F|                               |
+| Offset| Reserved  |R|C|S|S|Y|I|            Window             |
+|       |           |G|K|H|T|N|N|                               |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|           Checksum            |         Urgent Pointer        |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                    Options                    |    Padding    |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                             data                              |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+Nome                   Número de bits
+source port . . . . . .(16)
+destination port . . . (16)
+sequence number . . . .(32)
+acknowledgment number .(32)
+header length . . . . .(04)
+reserved . . . . . . . (06)
+flags . . . . . . . . .(06)
+window size . . . . . .(16)
+TCP checksum . . . . . (16)
+urgent pointer . . . . (16)
+options . . . . . . . .(if any)
+
+Sequence number: quando um arquivo vai ser enviado, o TCP divide o arquivo em pacotes numera eles. If the SYN flag is set, then this is the initial sequence number.
+
+Acknowledgement number: Se a Flag ACK está setada, é o próximo sequence number que o computador que originou esse pacote espera receber do outro computador. O primeiro pacote ACK não contém dados.
+
+Header length: "8", ou seja, 8 palavras de 4 bytes, ou 32 bytes ao todo. 
+
+Reserved: must be zero.
+
+Flags: "18" = 01 1000
+    * CWR (1 bit) – Congestion Window Reduced (CWR) flag is set by the sending host to indicate that it received a TCP segment with the ECE flag set and had responded in congestion control mechanism (added to header by RFC 3168).
+    * ECE (1 bit) – ECN-Echo indicates
+        * If the SYN flag is set, that the TCP peer is ECN capable.
+        * If the SYN flag is clear, that a packet with Congestion Experienced flag in IP header set is received during normal transmission(added to header by RFC 3168).
+    * URG (urgent pointer is valid)
+    * ACK indicates that the Acknowledgment field is significant. All packets after the initial SYN packet sent by the client should have this flag set.
+
+    * PUSH (repasse os dados para a aplicação o mais rápido possível)
+    * RST (reset - a conexão deve ser derrubada imediatamente, sem que haja interação posterior)
+    * SYN (synchronize, ou sincronização dos sequence numbers, ativa no primeiro pacote da conexão). Only the first packet sent from each end should have this flag set. 
+    * FIN (finish).
+
+Window size: A quantidade de bytes, iniciando no acknowledgment number, que o computador que gerou esse pacote admite receber para esta conexão. Trata-se de um mecanismo de controle de fluxo, para regular a velocidade de envio a fim de evitar colapsos. (permite o envio de vários pacotes sem receber o ACK de retorno)
+
+TCP checksum: utilizado para verificar a integridade do cabeçalho TCP e dos dados. The method used to compute the checksum is defined within RFC 1071
+When TCP runs over IPv4, the method used to compute the checksum is defined in RFC 793
+http://tools.ietf.org/html/rfc793
+
+The checksum field is the 16 bit one's complement of the one's complement sum of all 16-bit words in the header and text. If a segment contains an odd number of header and text octets to be checksummed, the last octet is padded on the right with zeros to form a 16-bit word for checksum purposes. The pad is not transmitted as part of the segment. While computing the checksum, the checksum field itself is replaced with zeros.
+http://en.wikipedia.org/wiki/Signed_number_representations#Ones.27_complement
+Inclui no calculo o cabeçalho IP?
+Sempre que a soma der errado, solicita a retransmissão do pacote, o que é repetido indefinidamente, até que receba uma cópia intacta.
+
+Urgent pointer: Quando a flag URG está ativa, este campo informa quantos bytes de dados "urgentes" há a partir do sequence number informado neste pacote. is an offset from the sequence number indicating the last urgent data byte
+
+Options. 0 to 40 bytes. The length is determined by the Header length field.
+All options are included in the checksum.
+The TCP header must be padded with zeros to make the header length a multiple of 32 bits.
+
+O primeiro byte é o "kind", de acordo com a tabela abaixo.
+O segundo byte é o "length"
+
+Kind   Length      Description
+0      1           End of option list. RFC 793
+1      1           No operation. RFC 793
+2      4           MSS, Maximum Segment Size. Quantidade maxima de bytes (sem o cabeçalho) que pode ser recebida em um pacote. RFC 793
+3      3           WSOPT, Window scale factor. Um numero para multiplicar o Window size. RFC 1323
+4      2           SACK (Selective Acknowledgement) permitted. SYN. RFC 2018
+5      Variable.   SACK. RFC 2018, RFC 2883 (multiplo de duas DWORD)
+6      6           Echo. SYN. (obsolete). RFC 1072
+7      6           Echo reply. SYN. (obsolete). RFC 1072
+8      10          TSOPT,  Timestamp and echo of previous timestamp. SYN. RFC 1323 Veja abaixo
+9      2           Partial Order Connection permitted. RFC 1693
+10     3           Partial Order service profile. RFC 1693
+11     6           CC, Connection Count. RFC 1644
+12     6           CC.NEW   RFC 1644
+13     6           CC.ECHO   RFC 1644
+14     3           Alternate checksum request. SYN. RFC 1146
+15     Variable.   Alternate checksum data. RFC 1146
+16     Skeeter.    
+17     Bubba.    
+18     3           Trailer Checksum Option.    
+19     18          MD5 signature. RFC 2385
+20                 SCPS Capabilities.    
+21                 Selective Negative Acknowledgements.    
+22                 Record Boundaries.    
+23                 Corruption experienced.    
+24                 SNAP.    
+25                 
+26                 TCP Compression Filter.    
+27     8           Quick-Start Response. RFC 4782
+28     4           User Timeout. RFC 5482
+29                 TCP-AO, TCP Authentication Option. RFC 5925
+30                 MPTCP    
+31
+-
+252            
+253                RFC3692-style Experiment 1. RFC 4727
+254                RFC3692-style Experiment 2. RFC 4727
+255            
+
+TSOPT é formado pelas duas DWORD a seguir:
+Timestamp Value (TSval). 32 bits.
+This field contains the current value of the timestamp clock of the TCP sending the option.
+Timestamp Echo Reply (TSecr). 32 bits.
+This field is only valid if the ACK bit is set in the TCP header. If it is valid, it echos a timestamp value that was sent by the remote TCP in the TSval field of a Timestamps option. When TSecr is not valid, its value must be zero. 
+TSclock.rate: Period of my.TSclock (1 ms to 1 sec). (usando o horário da captura do pacote obtive que cada tick do clock equivale a ~2 ms)
+The timestamp value to be sent in TSval is to be obtained from a
+      (virtual) clock that we call the "timestamp clock".  Its values
+      must be at least approximately proportional to real time, in order
+      to measure actual RTT.
+
+
+The sender keeps a record of each packet it sends, and waits for acknowledgment before sending the next packet.
+The sender also keeps a timer from when the packet was sent, and retransmits a packet if the timer expires.
+
+Conexão para baixar um arquivo:
+wget 189.111.165.55/favicon.ico
+Flags               Sequence number   Acknowledgment number   Quem enviou   Comentários
+SYN                 58870             0                       cliente
+

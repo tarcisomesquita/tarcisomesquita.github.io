@@ -1,0 +1,124 @@
+On a legacy system, BIOS performs all the usual platform initialization (memory controller configuration, PCI bus configuration and BAR mapping, graphics card initialization, etc.), but then drops into a backwards-compatible real mode environment. The bootloader must enable the A20 gate, configure a GDT and an IDT, switch to protected mode, and for x86-64 CPUs, configure paging and switch to long mode.
+
+UEFI firmware performs those same steps, but also prepares a protected mode environment with flat segmentation and for x86-64 CPUs, a long mode environment with identity-mapped paging. The A20 gate is enabled as well.
+
+
+Boot mechanism
+BIOS loads 512 byte from the MBR of the boot device into memory at physical address 7C00 and jumps to it.
+UEFI firmware loads an arbitrary sized UEFI application (a relocatable PE executable file) from a FAT partition on a GPT-partitioned boot device to some address selected at run-time. Then it calls that application's main entry point. The application can return control to the firmware, which will continue searching for another boot device or bring up a diagnostic menu.
+
+System discovery
+A legacy bootloader scans memory for structures like the EBDA, SMBIOS, and ACPI tables. It uses PIO to talk to the root PCI controller and scan the PCI bus.
+
+When UEFI firmware calls a UEFI application's entry point function, it passes a "System Table" structure, which contains pointers to all of the system's ACPI tables, memory map, and other information relevant to an OS. Legacy tables (like SMBIOS) may not be present in memory.
+
+UEFI firmware establishes many callable functions in memory, which are grouped into sets called "protocols" and are discoverable through the System Table.
+
+
+GNU-EFI includes four things:
+
+crt0-efi-x86_64.o: A CRT0 (C runtime initialization code) that provides an entry point that UEFI firmware will call when launching the application, which will in turn call the "efi_main" function that the developer writes.
+libgnuefi.a: A library containing a single function (_relocate) that is used by the CRT0.
+elf_x86_64_efi.lds: A linker script used to link UEFI applications.
+efi.h and other headers: Convenience headers that provide structures, typedefs, and constants improve readability when accessing the System Table and other UEFI resources.
+libefi.a: A library containing convenience functions like CRC computation, string length calculation, and easy text printing.
+efilib.h: Header for libefi.a.
+At a bare minimum, a 64-bit UEFI application will need to link against crt0-efi-x86_64.o and libgnuefi.a using the elf_x86_64_efi.lds linker script. Most likely you will want to use the provided headers and the convenience library as well, and this section will assume that going forward.
+
+The traditional "Hello, world" UEFI program is shown below.
+
+#include <efi.h>
+#include <efilib.h>
+ 
+EFI_STATUS
+EFIAPI
+efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
+{
+  InitializeLib(ImageHandle, SystemTable);
+  Print(L"Hello, world!\n");
+  return EFI_SUCCESS;
+}
+
+
+gcc main.c                             \
+      -c                                 \
+      -fno-stack-protector               \
+      -fpic                              \
+      -fshort-wchar                      \
+      -mno-red-zone                      \
+      -I /path/to/gnu-efi/headers        \
+      -I /path/to/gnu-efi/headers/x86_64 \
+      -DEFI_FUNCTION_WRAPPER             \
+      -o main.o
+ 
+$ ld main.o                         \
+     /path/to/crt0-efi-x86_64.o     \
+     -nostdlib                      \
+     -znocombreloc                  \
+     -T /path/to/elf_x86_64_efi.lds \
+     -shared                        \
+     -Bsymbolic                     \
+     -L /path/to/libs               \
+     -l:libgnuefi.a                 \
+     -l:libefi.a                    \
+     -o main.so
+ 
+$ objcopy -j .text                \
+          -j .sdata               \
+          -j .data                \
+          -j .dynamic             \
+          -j .dynsym              \
+          -j .rel                 \
+          -j .rela                \
+          -j .reloc               \
+          --target=efi-app-x86_64 \
+          main.so                 \
+          main.efi
+          
+          
+The Linux efivarfs kernel module will use these functions to list NVRAM variables in the /sys/firmware/efi/efivars file. NVRAM variables can also be dumped from within the UEFI shell itself with the dmpstore command.
+
+The Linux program efibootmgr works specifically with the boot order NVRAM variables. The UEFI shell offers the bcfg command for the same purpose.
+
+Binary Format
+UEFI executables are regular PE32 / PE32+ (Windows x32 / x64) images, with a specific subsystem. Every UEFI application is basically a windows EXE (or DLL) without symbol tables.
+
+Types of UEFI images
+Type	Description	Subsystem
+Applications	OS loaders and other utility programs.	10
+Boot service driver	Drivers used by the firmware when booting (e.g. disk drivers, network drivers).	11
+Runtime driver	Drivers which may stay loaded even after the OS loads and exits the boot services.	12
+UEFI images must also specify the type of machine code they contain. A UEFI loader will refuse to boot an incompatible image.
+
+Types of machines
+Name / arch	Value
+x86	0x014c
+x86_64	0x8664
+Itanium x64	0x0200
+UEFI Byte Code	0x0EBC
+ARM1	0x01C2
+AArch (ARM x64)	0xAA64
+RISC-V x32	0x5032
+RISC-V x64	0x5064
+RISC-V x128	0x5128
+[1] ARM means you can use Thumb / Thumb 2 instructions, but UEFI interfaces are in ARM mode.
+
+For x86-64, however, the entry point function must be declared with the "___attribute___((ms_abi))" modifier and all calls to UEFI-provided functions must be made through the "uefi_call_wrapper" thunk. 
+
+the following main function will compile with the correct calling convention on both x86 and x86-64 and the call through the "uefi_call_wrapper" thunk will select the correct calling convention to use when calling the UEFI function (in this case, printing a string).
+
+EFI_STATUS EFIAPI efi_main(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
+{
+  EFI_STATUS status = uefi_call_wrapper(SystemTable->ConOut->OutputString,
+                                        2,
+                                        SystemTable->ConOut,
+                                        L"Hello, World!\n");
+  return status;
+}
+
+
+
+My UEFI application hangs/resets after about 5 minutes
+you can disable it completely with code like
+SystemTable->BootServices->SetWatchdogTimer(0, 0, 0, NULL);
+

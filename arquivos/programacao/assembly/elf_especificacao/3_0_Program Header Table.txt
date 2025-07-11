@@ -1,0 +1,90 @@
+
+A Program Header Table, if present, tells the system how to create a process image. Files used to build a process image (execute a program) must have a Program Header Table; relocatable files do not need one.
+
+Is for use of loader.
+
+Descreve um segmento ou outra informação que o sistema precisa para execução do programa.
+
+Cada segmento precisa de um Program Header Table.
+
+typedef struct elf32_phdr{
+  unsigned long int	p_type;
+  unsigned long int	p_offset;
+  unsigned long int	p_vaddr;
+  unsigned long int	p_paddr;
+  unsigned long int	p_filesz;
+  unsigned long int	p_memsz;
+  unsigned long int	p_flags;
+  unsigned long int	p_align;
+} Elf32_Phdr;
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+p_type
+has to contain 1, to mark it as a loadable segment.
+
+Name         Value
+PT_NULL      0
+PT_LOAD      1
+PT_DYNAMIC   2
+PT_INTERP    3
+PT_NOTE      4
+PT_SHLIB     5
+PT_PHDR      6
+PT_LOPROC    0x70000000
+PT_HIPROC    0x7fffffff
+
+PT_NULL
+The array of elements of table is unused e must be ignored.
+
+PT_LOAD
+Loaded segment, described by p_filesz and p_memsz
+
+PT_DYNAMIC
+The table have dynamic linking information.
+
+PT_INTERP
+The array specifies the location and size of a null-terminated path to invoke as interpreter. For Program Interpreter.
+
+PT_NOTE
+The array element specifies the location and size of auxiliary information.
+
+PT_SHLIB
+Is reserved.
+
+PT_PHDR
+specifies the location and size of the program header table. For Program Interpreter.
+
+PT_LOPROC and PT_HIPROC
+Values in this range is reserved for processor specific semantics.
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+p_offset
+The offset from the beginning of the file at which the first byte of segment reside.
+
+p_vaddr
+The virtual adress at which the first byte of segment resides in memory.
+Note, however, that we're not required to load at 0x08048000. Almost any address can be used as long as it's above 0x00000000, below 0x80000000, and page-aligned.
+
+p_paddr
+Reserved for segment's physical address, but System V ignore physical addressing.
+
+p_filesz
+indicates how many bytes to load of the file into memory
+
+p_memsz
+indicates how large the memory segment needs to be. If large than p_filesz, the extra bytes are filed with 0.
+
+p_flags
+indicates what permissions to give the memory segment.
+It needs to be readable (4), or it won't be usable at all
+it needs to also be executable (1), or else we can't execute code in it. Other bits can probably be set as well, but we need to have those at minimum.
+
+p_align
+gives the alignment requirements for the memory segment. Is mainly used when relocating segments containing position-independent code (as for shared libraries), so for an executable file Linux will ignore whatever garbage we store here. 
+Values 0 and 1 mean no alignment is required. Otherwise, should be a power of 2.
+
+
+

@@ -1,0 +1,18 @@
+for F in $(ls /media/arq/uninter/IHC/*.pdf); do pdftotext $F - ; done | sed ':I; $bF; N; bI; :F; s/\r//g; s/\x0c//g; s/[ \t]\{1,\}\n/\n/g; s/[\n]\{2,\}/\n/g; s/,\n/, /g; s/\([a-z]\)\n\([a-z]\)/\1 \2/g'
+
+apt-get install poppler-utils
+apt-get install pdfgrep
+
+gs -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=opcao_de_compressao -sOutputFile=arquivo_reduzido.pdf arquivo_original.pdf
+
+opcao_de_compressao:
+   /screen – possui a menor resolução e, consequentemente, o menor tamanho de arquivo. Ideal para visualização em tela.
+   /ebook – é um meio termo entre resoloução e tamanho de arquivo.
+   /printer – próprio para impressão, mas o tamanho do arquivo resultante é maior.
+   /prepress – impressão em alta qualidade, mas o tamanho do arquivo  final fica muito grande.
+
+/usr/bin/pdfinfo
+
+/usr/bin/pdfimages -png -p file.pdf  ./
+/usr/bin/pdftotext -raw -enc UTF-8 -eol unix file.pdf
+

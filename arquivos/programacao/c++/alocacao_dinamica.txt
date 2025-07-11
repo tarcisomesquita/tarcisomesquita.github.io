@@ -1,0 +1,38 @@
+pointer = new type [number_of_elements]
+
+int *foo;
+foo = new int [5];
+
+foo[1] or *(foo+1)
+
+int * foo;
+foo = new (nothrow) int [5];
+if (foo == nullptr) {
+  // error assigning memory. Take measures.
+}
+
+delete pointer;
+delete[] pointer;
+The first statement releases the memory of a single element allocated using new, and the second one releases the memory allocated for arrays of elements using new and a size in brackets ([]).
+
+#include <iostream>
+using namespace std;
+
+int main() {
+  int i, n;
+  int *p;
+  cout << "How many numbers would you like to type? ";
+  cin >> i;
+  p = new (nothrow) int[i];
+  if (p == nullptr) cout << "Error: memory could not be allocated";
+  else {
+    for (n=0; n<i; n++) {
+      cout << "Enter number: ";
+      cin >> p[n];
+    }
+    cout << "You have entered: ";
+    for (n=0; n<i; n++) cout << p[n] << ", ";
+    delete[] p;
+  }
+  return 0;
+}

@@ -1,0 +1,32 @@
+Funções intrínsecas
+- eval = Calcula o conteúdo da string 
+- parseInt - Transforma string em inteiro 
+- parseFloat - Transforma string em número com ponto flutuante 
+- date() - Retorna a data e a hora (veja o capítulo manipulando datas) 
+
+
+- Funções tipicamente Matemáticas: 
+Math.abs(número) - retorna o valor absoluto do número (ponto flutuante) 
+Math.ceil(número) - retorna o próximo valor inteiro maior que o número 
+Math.floor(número) - retorna o próximo valor inteiro menor que o número 
+Math.round(número) - retorna o valor inteiro, arredondado, do número 
+Math.pow(base, expoente) - retorna o cálculo do exponencial 
+Math.max(número1, número2) - retorna o maior número dos dois fornecidos 
+Math.min(número1, número2) - retorna o menor número dos dois fornecidos 
+Math.sqrt(número) - retorna a raiz quadrada do número 
+Math.SQRT2 - retorna a raiz quadrada de 2 (aproximadamente 1.414) 
+Math.SQRT_2 - retorna a raiz quadrada de 1/2 (aproximadamente 0.707) 
+Math.sin(número) - retorna o seno de um número (anglo em radianos) 
+Math.asin(número) - retorna o arco seno de um número (em radianos) 
+Math.cos(número) - retorna o cosseno de um número (anglo em radianos) 
+Math.acos(número) - retorna o arco cosseno de um número (em radianos) 
+Math.tan(número) - retorna a tangente de um número (anglo em radianos) 
+Math.atan(número) - retorna o arco tangente de um número (em radianos) 
+Math.pi retorna o valor de PI (aproximadamente 3.14159) 
+Math.log(número) - retorna o logarítmo de um número 
+Math.E - retorna a base dos logarítmos naturais (aproximadamente 2.718) 
+Math.LN2 - retorna o valor do logarítmo de 2 (aproximadamente 0.693) 
+Math.LOG2E - retorna a base do logarítmo de 2 (aproximadamente 1.442) 
+Math.LN10 retorna o valor do logarítmo de 10 (aproximadamente 2.302) 
+Math.LOG10E - retorna a base do logarítmo de 10 (aproximadamente 0.434) 
+

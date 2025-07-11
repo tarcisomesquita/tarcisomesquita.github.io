@@ -1,0 +1,148 @@
+
+jpegtopnm /media/lubuntu/ARQ/bo_carro.jpeg > teste.pnm
+
+pngtopnm
+pnmtopng
+
+ppmtoyuv
+
+pgmtoppm
+pgmtopbm
+
+ppmtopgm
+ppmtobmp
+ppmtojpeg
+ppmtompeg
+
+.pbm Portable BitMap (white & black)
+.pgm Portable GrayMap
+.ppm Portable PixMap 
+
+fonte: https://en.wikipedia.org/wiki/Netpbm
+
+File formats
+.pbm, .pgm, .ppm, .pnm
+
+image/x-portable-bitmap
+image/x-portable-graymap
+image/x-portable-pixmap
+image/x-portable-anymap
+
+The "magic number" (Px) at the beginning of a file determines the type, not the file extension.
+
+Each file starts with a two-byte magic number (in ASCII) that identifies the type of file it is (PBM, PGM, and PPM) and its encoding (ASCII/"plain" or binary/"raw"). The magic number is a capital P followed by a single-digit number.
+Type 	Magic number 	Extension 	Colors
+ASCII (plain) 	Binary (raw)
+Portable BitMap 	P1 	P4 	.pbm 	0–1 (white & black)
+Portable GrayMap 	P2 	P5 	.pgm 	0–255 (gray scale), 0–65535 (gray scale), variable, black-to-white range
+Portable PixMap 	P3 	P6 	.ppm 	16777216 (0–255 for each RGB channel), some support for 0-65535 per channel
+
+A value of P7 refers to the PAM file format that is covered as well by the netpbm library.
+
+In the binary formats, PBM uses 1 bit per pixel, PGM uses 8 or 16 bits per pixel, and PPM uses 24 bits per pixel: 8 for red, 8 for green, 8 for blue.
+
+echo -n 'P1
+# This is an example bitmap of the letter "J"
+6 10
+0 0 0 0 1 0
+0 0 0 0 1 0
+0 0 0 0 1 0
+0 0 0 0 1 0
+0 0 0 0 1 0
+0 0 0 0 1 0
+1 0 0 0 1 0
+0 1 1 1 0 0
+0 0 0 0 0 0
+0 0 0 0 0 0' > teste.pbm
+
+echo -e -n "P4
+8 10
+\x02\x02\x02\x02\x02\x02\x22\x1C\x00\x00" > teste2.pbm
+
+The format ignores whitespaces and linefeeds in the data section.
+echo -n 'P1
+# This is an example bitmap of the letter "J"
+6 10
+000010000010000010000010000010000010100010011100000000000000' > teste3.pbm
+
+Note that a 0 signifies a white pixel, and a 1 signifies a black pixel.
+
+
+The PGM and PPM formats (both ASCII and binary versions) have an additional parameter for the maximum value (numbers of grey between black and white) after the X and Y dimensions and before the actual pixel data. Black is 0 and max value is white. There is a newline character at the end of each line.
+
+P2
+# Shows the word "FEEP" (example from Netpbm man page on PGM)
+24 7
+15
+0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+0  3  3  3  3  0  0  7  7  7  7  0  0 11 11 11 11  0  0 15 15 15 15  0
+0  3  0  0  0  0  0  7  0  0  0  0  0 11  0  0  0  0  0 15  0  0 15  0
+0  3  3  3  0  0  0  7  7  7  0  0  0 11 11 11  0  0  0 15 15 15 15  0
+0  3  0  0  0  0  0  7  0  0  0  0  0 11  0  0  0  0  0 15  0  0  0  0
+0  3  0  0  0  0  0  7  7  7  7  0  0 11 11 11 11  0  0 15  0  0  0  0
+0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+
+PPM example
+
+This is an example of a color RGB image stored in PPM format. There is a newline character at the end of each line.
+
+P3           # "P3" means this is a RGB color image in ASCII
+3 2          # "3 2" is the width and height of the image in pixels
+255          # "255" is the maximum value for each color
+# The part above is the header
+# The part below is the image data: RGB triplets
+255   0   0  # red
+  0 255   0  # green
+  0   0 255  # blue
+255 255   0  # yellow
+255 255 255  # white
+  0   0   0  # black
+
+
+The image shown above using only 0 or the maximal value for the red-green-blue channels can be also encoded as:
+
+echo -n 'P3
+# The same image with width 3 and height 2,
+# using 0 or 1 per color (red, green, blue)
+3 2 1
+1 0 0   0 1 0   0 0 1
+1 1 0   1 1 1   0 0 0' > teste.ppm
+display teste.ppm
+
+White space including line ends and comment lines is syntactically equivalent to a single space within the PNM headers. For the plain formats P1...P3 this also affects the pixmap lines; in fact lines should be limited to 70 characters:
+
+echo -n 'P3 3 2 1  1 0 0   0 1 0   0 0 1  1 1 0   1 1 1   0 0 0' > teste.ppm
+display teste.ppm
+
+
+create an image of text
+cat file.txt | pbmtext > file.pbm
+
+reduce the number of colors
+pnmquant 5 bo.ppm > bo_5.ppm
+
+.pam
+Internet media type	
+image/x-portable-arbitrarymap
+
+echo -n 'P7
+WIDTH 4
+HEIGHT 2
+DEPTH 4
+MAXVAL 255
+TUPLTYPE RGB_ALPHA
+ENDHDR
+' > teste.pam
+echo -e -n \\x00\\x00\\xFF\\xFF >> teste.pam # blue
+echo -e -n \\x00\\xFF\\x00\\xFF >> teste.pam # green
+echo -e -n \\xFF\\x00\\x00\\xFF >> teste.pam # red
+echo -e -n \\xFF\\xFF\\xFF\\xFF >> teste.pam # white
+
+echo -e -n \\x00\\x00\\xFF\\x7F >> teste.pam
+echo -e -n \\x00\\xFF\\x00\\x7F >> teste.pam
+echo -e -n \\xFF\\x00\\x00\\x7F >> teste.pam
+echo -e -n \\xFF\\xFF\\xFF\\x7F >> teste.pam
+hexdump -C -v teste.pam
+
+display teste.pam
+ffmpeg -i teste.pam teste.png

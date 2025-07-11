@@ -1,0 +1,33 @@
+
+INSTRUÇÕES DIRETAS
+
+modo de endereçamento imediato
+mov     cx, 2056   (move o valor hexadecimal 2056 para cx)
+mov DS:0x112, ax  (Armazena AX na posição de memória DS:112h)
+
+modo de endereçamento por registrador
+mov     ax, bx     (move o valor de bx para ax, deixando o valor de bx inalterado)
+
+
+modo de endereçamento direto
+mov     ax, [1000]    (carrega ax com o valor de 16 bits armazenado na memória começando na posição hexadecimal 1000)
+
+
+INSTRUÇÕES INDIRETAS
+
+modo de endereçamento indireto
+mov     ax, [bx]        (carrega ax com o valor que está na posição de memória cujo endereço está em bx)
+mov ss:[di], bx	; Armazena bx na posição SS:300h
+
+modo de endereçamento indexado
+mov     ax, [1000+bx]   (soma os conteúdos de bx com 1000 para produzir o valor do endereço de memória a procurar)
+
+0x100[bp] é equivalente a [0x100+bp] 
+
+	1[bx][si]
+	10h[bp][si]
+	[bx][di-80h]
+	100h[bp][di]
+
+
+

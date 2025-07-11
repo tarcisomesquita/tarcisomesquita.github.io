@@ -1,0 +1,140 @@
+
+TARGET EXTENSIONS
+
+DNAT
+nat table PREROUTING and OUTPUT
+specifies that the destination address of the packet should be modified (and all future packets in this connection will also be mangled), and rules should cease being examined.
+
+--to-destination [ipaddr][:port]
+port is only valid if the rule also specifies -p tcp or -p udp.
+Ex.: iptables -t nat -I PREROUTING 1 -j DNAT --to-destination 192.168.0.5:80
+
+If no port range is specified, then the destination port will never be modified.
+Ex.: iptables -t nat -I PREROUTING 1 -p tcp -j DNAT --to-destination 192.168.0.5
+
+If no IP address is specified then only the destination port will be modified.
+Ex.: iptables -t nat -I PREROUTING 1 -j DNAT --to-destination :80
+
+Port forwarding, load sharing, and transparent proxying are all forms of DNAT.
+Transparent Proxying: Each packet which passes through your Linux box is destined for a program on the Linuxbox itself. Your network won't even know it's talking to a proxy.
+
+Squid can be configured to work this way.
+
+If you are doing port forwarding back onto the same network, you need to make sure that both future packets and reply packets pass through the NAT box (so they can be altered).
+The NAT block the outgoing ICMP redirect.
+
+
+LOG
+Turn on kernel logging of matching packets.
+Não faz log de pacotes ARP.
+
+--log-level level
+Possible values are (in decreasing order  of  priority): emerg, alert, crit, error, warning, notice, info.
+
+--log-prefix prefix
+Prefix log messages with the specified prefix; up to 29 letters long, and useful for distinguishing messages in the logs.
+
+--log-tcp-sequence
+Log TCP sequence numbers. This is a security risk if the log is readable by users.
+
+--log-tcp-options
+Log options from the TCP packet header.
+
+--log-ip-options
+Log options from the IP packet header.
+
+--log-uid
+Log the userid of the process which generated the packet.
+
+
+MASQUERADE
+nat table in POSTROUTING
+if you have a static IP address, you should use the SNAT target.
+
+--to-ports port[-port]
+This specifies a range of source ports to use.
+This is only valid if the rule also specifies -p tcp or -p udp.
+
+--random
+Randomize source port
+
+Ex.:
+echo 1 > /proc/sys/net/ipv4/ip_forward
+echo 1 > /proc/sys/net/ipv4/conf/all/forwarding
+iptables -A FORWARD -s 192.168.0.0/16 -o ppp0 -j ACCEPT
+iptables -A FORWARD -d 192.168.0.0/16 -m state --state ESTABLISHED,RELATED -i ppp0 -j ACCEPT
+iptables -t nat -A POSTROUTING -s 192.168.0.0/16 -o ppp0 -j MASQUERADE
+
+
+NFQUEUE
+This target is an extension of the QUEUE target.
+
+--queue-num value
+This specifies the QUEUE number to use. Valid queue numbers are 0 to 65535. The default value is 0.
+requires module nfnetlink_queue
+
+
+REDIRECT
+Use DNAT.
+
+SNAT
+nat table in POSTROUTING chain.
+Modify the source address of the packet (and all future packets in this connection will also be mangled), and rules should cease being examined.
+
+--to-source ipaddr[-ipaddr][:port[-port]]
+port range (which is only valid if the rule also specifies -p tcp or -p udp).
+
+--random
+If option --random is used then port mapping will be randomized (kernel >= 2.6.21).
+
+Se o IP não for fixo (dhcp) use MASQUERADE
+Ex.: iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to 123.12.23.43
+
+
+TCPOPTSTRIP
+This target will strip TCP options off a TCP packet. (It will actually replace them by NO-OPs.) As such, you will need to add the -p tcp parameters.
+
+--strip-options option[,option...]
+Strip the given option(s). The options may be specified by TCP option number or by symbolic name. The list of recognized options can be obtained by calling iptables with -j TCPOPTSTRIP -h.
+
+
+TOS
+This module sets the Type of Service field in the IPv4 header
+valid in the mangle table.
+
+--set-tos value[/mask]
+Zeroes out the bits given by mask and XORs value into the TOS/Priority field. If mask is omitted, 0xFF is assumed.
+
+--set-tos symbol
+You can specify a symbolic name when using the TOS target for IPv4. It implies a mask of 0xFF.
+(0x10) 16 Minimize-Delay, maior prioridade, recomendado para tráfego interativo.
+(0x08)  8 Maximize-Throughput
+(0x04)  4 Maximize-Reliability
+(0x02)  2 Minimize-Cost
+(0x00)  0 Normal-Service
+
+The following mnemonics are available:
+
+--and-tos bits
+Binary AND the TOS value with bits. (Mnemonic for --set-tos 0/invbits, where invbits is the binary negation of bits.)
+
+--or-tos bits
+Binary OR the TOS value with bits. (Mnemonic for --set-tos bits/bits.)
+
+--xor-tos bits
+Binary XOR the TOS value with bits. (Mnemonic for --set-tos bits/0.)
+
+Ex.: iptables -t mangle -A OUTPUT -o ppp+ -p udp --dport 53 -j TOS --set-tos 0x10
+
+
+TRACE
+This target marks packes so that the kernel will log every rule which match the packets as those traverse the tables, chains, rules.
+(The ipt_LOG or ip6t_LOG module is required for the logging.)
+The packets are logged with the string prefix: "TRACE: tablename:chain-name:type:rulenum".
+It can only be used in the raw table.
+
+
+ULOG
+The `libipulog/' contains a library for receiving the ULOG messages.
+web page <http://www.gnumonks.org/projects/ulogd> containing the proper documentation for ULOG.
+

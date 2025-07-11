@@ -1,0 +1,4 @@
+O ltrace tem as mesmas características do strace, mas ao invés de monitorar as chamadas do sistema, ele monitora as chamadas às funções das bibliotecas carregadas dinamicamente APENAS.
+
+exemplo:
+$ ltrace nc localhost 1234

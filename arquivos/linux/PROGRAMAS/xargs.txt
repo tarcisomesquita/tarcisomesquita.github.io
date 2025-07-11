@@ -1,0 +1,12 @@
+Transforma várias entradas recebidas em argumentos para um comando.
+echo -e "Jose\\x00Rubia" | xargs -0 echo
+echo -e "Jose\nRubia" | xargs echo 
+
+
+Substitui xxx pela entrada
+echo -e "Jose\nRubia" | xargs -I xxx echo "Oi xxx. xxx como vai?"
+
+Executa o comando para cada linha de entrada.
+echo -e "Jose\nRubia" | xargs -n 1 echo "Oi"
+
+

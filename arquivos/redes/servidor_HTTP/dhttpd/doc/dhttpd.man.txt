@@ -1,0 +1,74 @@
+.\" $Id: dhttpd.man,v 1.3 2003/10/15 14:20:24 dublet Exp $
+.\"
+.\" Dublet's HTTP Daemon                                                      
+.\"
+.\" Released under BSD license
+.\" Copyright (c) 2002, Dublet
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without 
+.\" modification, are permitted provided that the following conditions 
+.\" are met:
+.\"
+.\"     * Redistributions of source code must retain the above copyright 
+.\"       notice, this list of conditions and the following disclaimer.
+.\"     * Redistributions in binary form must reproduce the above copyright 
+.\"       notice, this list of conditions and the following disclaimer in 
+.\"       the documentation and/or other materials provided with the distribution.
+.\"     * Neither the name of the Dublet nor the names of its contributors 
+.\"       may be used to endorse or promote products derived from this 
+.\"       software without specific prior written permission.
+.\"     * All advertising materials mentioning features or use of this software
+.\"	 must display the following acknowledgement:
+.\"	    This product includes software developed by Dublet.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+.\" "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+.\" LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A 
+.\" PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER 
+.\" OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+.\" EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+.\" PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+.\" PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+.\" LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+.\" NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+.\" EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.\"
+
+.Dd October 15, 2003
+.Dt DHTTPD 1
+.Sh NAME
+.Nm dhttpd
+.Nd HTTP Daemon
+.Sh SYNOPSIS
+.Nm
+.Op Fl wd
+.Op Fl p Ar http_port
+.Op Fl s Ar https_port
+.Op Fl b Ar backlog
+.Op Fl f Ar config_file
+.Sh DESCRIPTION
+.Nm
+is a HTTP daemon. It is fast, secure and simple. Sometimes.
+.Ss Options
+.Bl -tag -width Ds
+.It Fl w
+Some switch which probably doesn't get used anymore.
+.It Fl d
+Turn debugging on. Multiple instances increase debug level
+.It Fl p Ar http_port
+Port we should listen on for HTTP.
+.It Fl s Ar https_port
+If compiled in with SSL support, the port we will listen on for requests over HTTPS.
+.It Fl b Ar backlog
+The amount of concurrent requests we consider.
+.It Fl f Ar config_file
+File in which our configuration is specified. 
+.El
+
+.Sh EXAMPLES
+dhttpd -ddf dhttpd.conf
+.Sh AUTHORS
+Dublet <dublet@dublet.org> and Kefren <kefren@netbastards.org> are responsible for this pathetic excuse of a webserver. Feel free to visit them at #netbsd on undernet. 
+.Sh SEE ALSO
+.Xr dhttpd.conf 1

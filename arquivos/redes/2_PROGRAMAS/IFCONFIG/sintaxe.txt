@@ -1,0 +1,10 @@
+
+net-tools 2007-12-02
+IFCONFIG(8)
+
+used to configure the kernel-resident network interfaces.
+
+
+SYNOPSIS
+       ifconfig [-v] [-a] [-s] [interface]
+       ifconfig [-v] interface [aftype] options | address ...

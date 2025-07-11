@@ -1,0 +1,209 @@
+Tem 16 bytes
+o endereço é dividido em oito grupos, separando-os por ":".
+
+Exemplos:
+"2001:bce4:5641:3412:341:45ae:fe32:65".
+"::1"
+"fee::1".
+
+Todos os zeros à esquerda podem ser omitidos. "0001" é escrito "1".
+
+2001:0DB8:0000:0000:130F:0000:0000:140B
+pode ser escrito como
+2001:DB8:0:0:130F::140B
+ou
+2001:DB8::130F:0:0:140B
+
+sugestão do IEFT é usar os endereços MAC das placas de rede para atribuir os endereços dos hosts.
+O endereço "00:16:F2:FE:34:E1", viraria então "0016:f2ff:fffe:34e1".
+Adicionando o endereço da rede, o endereço IPV6 completo deste micro seria "2001:bce4:0:0:0016:f2ff:fffe:34e1"
+
+O IPV6 também oferece um recurso de compatibilidade com endereços IPV4, permitindo que você continue utilizando os mesmos endereços ao migrar para ele. Neste caso, você usaria o endereço "::FFFF:" seguido pelo endereço IPV4 usado atualmente, como em:
+::FFFF:192.168.0.1
+
+
+Boot Process using Autoconfiguration
+DAD -- Duplicate Address Detection via ICMPv6 
+NDP -- Neighbor Discovery Protocol via ICMPv6 (Substitui o ARP)
+DHCPv6 -- Dynamic Host Configuration Protocol version 6
+
+
+    * Prefixo 2001:db8:3003:2::/64
+    * Prefixo global 2001:db8::/32
+    * ID da sub-rede 3003:2
+
+    * http://[2001:12ff:0:4::22]/index.html
+    * http://[2001:12ff:0:4::22]:8080
+
+
+Existem no IPv6 três tipos de endereços definidos:
+
+    * Unicast – este tipo de endereço identifica uma única interface, de modo que um pacote enviado a um endereço unicast é entregue a uma única interface;
+    * Anycast – identifica um conjunto de interfaces. Um pacote encaminhado a um endereço anycast é entregue a interface pertencente a este conjunto mais próxima da origem (de acordo com distância medida pelos protocolos de roteamento). Um endereço anycast é utilizado em comunicações de um-para-um-de-muitos.
+    * Multicast – também identifica um conjunto de interfaces, entretanto, um pacote enviado a um endereço multicast é entregue a todas as interfaces associadas a esse endereço. Um endereço multicast é utilizado em comunicações de um-para-muitos.
+
+Diferente do IPv4, no IPv6 não existe endereço broadcast, responsável por direcionar um pacote para todos os nós de um mesmo domínio. No IPv6, essa função foi atribuída à tipos específicos de endereços multicast.
+
+
+ Endereços Unicast
+
+Os endereços unicast são utilizados para comunicação entre dois nós, por exemplo, telefones VoIPv6, computadores em uma rede privada, etc..
+
+Existem alguns tipos de endereços unicast IPv6: Global Unicast; Unique-Local; e Link-Local por exemplo. Existem também alguns tipos para usos especiais, como endereços IPv4 mapeados em IPv6, endereço de loopback e o endereço não-especificado, entre outros.
+
+    * Global Unicast – equivalente aos endereços públicos IPv4, o endereço global unicast é globalmente roteável e acessível na Internet IPv6. Ele é constituído por três partes: o prefixo de roteamento global, utilizado para identificar o tamanho do bloco atribuído a uma rede; a identificação da sub-rede, utilizada para identificar um enlace em uma rede; e a identificação da interface, que deve identificar de forma única uma interface dentro de um enlace.Sua estrutura foi projetada para utilizar os 64 bits mais a esquerda para identificação da rede e os 64 bits mais a direita para identificação da interface. Portanto, exceto casos específicos, todas as sub-redes em IPv6 tem o mesmo tamanho de prefixo, 64 bits (/64), o que possibilita 2^64 = 18.446.744.073.709.551.616 dispositivos por sub-rede.
+
+      Atualmente, está reservada para atribuição de endereços a faixa 2000::/3 (001), que corresponde aos endereços de 2000:: a 3fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff. Isto representa 13% do total de endereços possíveis com IPv6, o que nos permite criar
+
+    * Link Local – podendo ser usado apenas no enlace específico onde a interface está conectada, o endereço link local é atribuído automaticamente utilizando o prefixo FE80::/64. Os 64 bits reservados para a identificação da interface são configurados utilizando o formato IEEE EUI-64. Vale ressaltar que os roteadores não devem encaminhar para outros enlaces, pacotes que possuam como origem ou destino um endereço link-local
+    * Unique Local Address (ULA) – endereço com grande probabilidade de ser globalmente único, utilizado apenas para comunicações locais, geralmente dentro de um mesmo enlace ou conjunto de enlaces. Um endereço ULA não deve ser roteável na Internet global.Um endereço ULA, criado utilizado um ID globa alocado pseudo-randomicamente, é composto das seguintes partes:
+          o Prefixo: FC00::/7.
+          o Flag Local (L): se o valor for 1 (FD) o prefixo é atribuído localmente. Se o valor for 0 (FC), o prefixo deve ser atribuído por uma organização central (ainda a definir).
+          o Identificador global: identificador de 40 bits usado para criar um prefixo globalmente único.
+          o Identificador da Interface: identificador da interface de 64 bits.
+
+      Deste modo, a estrutura de um endereço ULA é FDUU:UUUU:UUUU:: onde U são os bits do identificador único, gerado aleatoriamente por um algoritmo específico.
+
+      Sua utilização permite que qualquer enlace possua um prefixo /48 privado e único globalmente. Deste modo, caso duas redes, de empresas distintas por exemplo, sejam interconectadas, provavelmente não haverá conflito de endereços ou necessidade de renumerar a interface que o esteja usando. Além disso, o endereço ULA é independente de provedor, podendo ser utilizado na comunicação dentro do enlace mesmo que não haja uma conexão com a Internet. Outra vantagem, é que seu prefixo pode ser facilmente bloqueado, e caso um endereço ULA seja anunciado acidentalmente para fora do enlace, através de um roteador ou via DNS, não haverá conflito com outros endereços. 
+
+Identificadores de interface
+
+Os identificadores de interface (IID), utilizados para distinguir as interfaces dentro de um enlace, devem ser únicos dentro do mesmo prefixo de sub-rede. O mesmo IID pode ser usado em múltiplas interfaces em um único nó, porém, elas dever estar associadas a deferentes sub-redes.
+
+Normalmente utiliza-se um IID de 64 bits, que pode ser obtido de diversas formas. Ele pode ser configurado manualmente, a partir do mecanismo de autoconfiguração stateless do IPv6, a partir de servidores DHCPv6 (stateful), ou formados a partir de uma chave pública (CGA). Estes métodos serão detalhados no decorrer deste curso.
+
+Embora eles possam ser gerados randomicamente e de forma temporária, recomenda-se que o IID seja construído baseado no endereço MAC da interface, no formato EUI-64.
+
+Um IID baseado no formato EUI-64 é criado da seguinte forma:
+
+    * Caso a interface possua um endereço MAC de 64 bits (padrão EUI-64), basta complementar o sétimo bit mais a esquerda (chamado de bit U/L – Universal/Local) do endereço MAC, isto é, se for 1, será alterado para 0; se for 0, será alterado para 1. Caso a interface utilize um endereço MAC de 48 bits (padrão IEEE 802), primeiro adiciona-se os dígitos hexadecimais FF-FE entre o terceiro e quarto Byte do endereço MAC (transformando no padrão EUI-64), e em seguida, o bit U/L é complementado. Por exemplo:
+          o Se endereço MAC da interface for:
+                + 48-1E-C9-21-85-0C
+                + adiciona-se os dígitos FF-FE na metade do endereço:
+                + 48-1E-C9-FF-FE-21-85-0C
+                + complementa-se o bit U/L:
+                + 48 = 01001000
+                + 01001000 → 01001010
+                + 01001010 = 4A
+                + IID = 4A-1E-C9-FF-FE-21-85-0C
+
+Um endereço link local atribuído à essa interface seria FE80::4A1E:C9FF:FE21:850C.
+Endereços especiais
+
+Existem alguns endereços IPv6 especiais utilizados para fins específicos:
+
+    * Endereço Não-Especificado (Unspecified): é representado pelo endereço 0:0:0:0:0:0:0:0 ou ::0 (equivalente ao endereço IPv4 unspecified 0.0.0.0). Ele nunca deve ser atribuído a nenhum nó, indicando apenas a ausência de um endereço. Ele pode, por exemplo, ser utilizado no campo Endereço de Origem de um pacote IPv6 enviado por um host durante o processo de inicialização, antes que este tenha seu endereço exclusivo determinado. O endereço unspecified não deve ser utilizado como endereço de destino de pacotes IPv6;
+    * Endereço Loopback: representado pelo endereço unicast 0:0:0:0:0:0:0:1 ou ::1 (equivalente ao endereço IPv4 loopback 127.0.0.1). Este endereço é utilizado para referenciar a própria máquina, sendo muito utilizado para teste internos. Este tipo de endereço não deve ser atribuído a nenhuma interface física, nem usado como endereço de origem em pacotes IPv6 enviados para outros nós. Além disso, um pacote IPv6 com um endereço loopback como destino não pode ser enviado por um roteador IPv6, e caso um pacote recebido em uma interface possua um endereço loopback como destino, este deve ser descartado;
+    * Endereços IPv4-mapeado: representado por 0:0:0:0:0:FFFF:wxyz ou ::FFFF:wxyz, é usado para mapear um endereço IPv4 em um endereço IPv6 de 128-bit, onde wxyz representa os 32 bits do endereço IPv4, utilizando dígitos decimais. É aplicado em técnicas de transição para que nós IPv6 e IPv4 se comuniquem. Ex. ::FFFF:192.168.100.1.
+
+Algumas faixas de endereços também são reservadas para uso específicos:
+
+    * 2002::/16: prefixo utilizado no mecanismo de transição 6to4;
+    * 2001:0000::/32: prefixo utilizado no mecanismo de transição TEREDO;
+    * 2001:db8::/32: prefixo utilizado para representar endereços IPv6 em textos e documentações.
+
+Outros endereços, utilizados no início do desenvolvimento do IPv6 tornaram-se obsoletos e não devem mais ser utilizados:
+
+    * FEC0::/10: prefixo utilizado pelos endereços do tipo site local, desenvolvidos para serem utilizados dentro de uma rede específica sem a necessidade de um prefixo global, equivalente aos endereços privados do IPv4. Sua utilização foi substituída pelos endereços ULA;
+    * ::wxyz: utilizado para representar o endereço IPv4-compatível. Sua função é a mesma do endereço IPv4-mapeado, tornando-se obsoleto por desuso;
+    * 3FFE::/16: prefixo utilizado para representar os endereços da rede de teste 6Bone. Criada para ajudar na implantação do IPv6, está rede foi desativada em 6 de junho de 2006 (06/06/06).
+
+Endereços Anicast
+
+Um endereço IPv6 anycast é utilizado para identificar um grupo de interfaces, porém, com a propriedade de que um pacote enviado a um endereço anycast é encaminhado apenas a interface do grupo mais próxima da origem do pacote.
+
+Os endereços anycast são atribuídos a partir da faixa de endereços unicast e não há diferenças sintáticas entre eles. Portanto, um endereço unicast atribuído a mais de uma interface transforma-se em um endereço anycast, devendo-se neste caso, configurar explicitamente os nós para que saibam que lhes foi atribuído um endereço anycast. Além disso, este endereço deve ser configurado nos roteadores como uma entrada separada (prefixo /128 – host route).
+
+Este esquema de endereçamento pode ser utilizado para descobrir serviços na rede, como servidores DNS e proxies HTTP, garantindo a redundância desses serviços. Também pode-se utilizar para fazer balanceamento de carga em situações onde múltiplos hosts ou roteadores provem o mesmo serviço, para localizar roteadores que forneçam acesso a uma determinada sub-rede ou para localizar os Agentes de Origem em redes com suporte a mobilidade IPv6.
+
+Todos os roteadores devem ter suporte ao endereço anycast Subnet-Router. Este tipo de endereço é formado pelo prefixo da sub-rede e pelo IID preenchido com zeros (ex.: 2001:db8:cafe:dad0::/64). Um pacote enviado para o endereço Subnet-Router será entregue para o roteador mais próximo da origem dentro da mesma sub-rede.
+
+Também foi definido um endereço anycast para ser utilizado no suporte a mobilidade IPv6. Este tipo de endereço é formado pelo prefixo da sub-rede seguido pelo IID dfff:ffff:ffff:fffe (ex.: 2001:db8::dfff:ffff:ffff:fffe). Ele é utilizado pelo Nó Móvel, quando este precisar localizar um Agente Origem em sua Rede Original.
+Endereços Multicast
+
+Endereços multicast são utilizados para identificar grupos de interfaces, sendo que cada interface pode pertencer a mais de um grupo. Os pacotes enviados para esses endereço são entregues a todos as interfaces que compõe o grupo.
+
+No IPv4, o suporte a multicast é opcional, já que foi introduzido apenas como uma extensão ao protocolo. Entretanto, no IPv6 é requerido que todos os nós suportem multicast, visto que muitas funcionalidades da nova versão do protocolo IP utilizam esse tipo de endereço.
+
+Seu funcionamento é similar ao do broadcast, dado que um único pacote é enviado a vários hosts, diferenciando-se apenas pelo fato de que no broadcast o pacote é enviado a todos os hosts da rede, sem exceção, enquanto que no multicast apenas um grupo de hosts receberá esse pacote.
+
+Deste modo, a possibilidade de transportar apenas uma cópia dos dados a todos os elementos do grupo, a partir de uma árvore de distribuição, pode reduzir a utilização de recurso de uma rede, bem como otimizar a entrega de dados aos hosts receptores. Aplicações como videoconferência, distribuição de vídeo sob demanda, atualizações de softwares e jogos on-line, são exemplos de serviços que vêm ganhando notoriedade e podem utilizar as vantagens apresentadas pelo multicast.
+
+Os endereços multicast não devem ser utilizados como endereço de origem de um pacote. Esses endereços derivam do bloco FF00::/8, onde o prefixo FF, que identifica um endereço multicast, é precedido por quatro bits, que representam quatro flags, e um valor de quatro bits que define o escopo do grupo multicast. Os 112 bits restantes são utilizados para identificar o grupo multicast.
+
+As flags são definidas da seguinte forma:
+
+O primeiro bit mais a esquerda é reservado e deve ser marcado com 0;
+
+    * Flag R: Se o valor for 1, indica que o endereço multicast “carrega” o endereço de um Ponto de Encontro (Rendezvous Point). Se o valor for 0, indica que não há um endereço de Ponto de Encontro embutido;
+    * Flag P: Se o valor for 1, indica que o endereço multicast é baseado em um prefixo de rede. Se o valor for 0, indica que o endereço não é baseado em um prefixo de rede;
+    * Flag T: Se o valor for 0, indica que o endereço multicast é permanente, ou seja, é atribuído pela IANA. Se o valor for 1, indica que o endereço multicast não é permanente, ou seja, é atribuído dinamicamente.
+
+Os quatro bits que representam o escopo do endereço multicast, são utilizados para delimitar a área de abrangência de um grupo multicast. Os valores atribuídos a esse campo são o seguinte:
+
+    * 1 – abrange apenas a interface local;
+    * 2 – abrange os nós de um enlace;
+    * 3 – abrange os nós de uma sub-rede
+    * 4 – abrange a menor área que pode ser configurada manualmente;
+    * 5 – abrange os nós de um site;
+    * 8 – abrange vários sites de uma mesma organização;
+    * E – abrange toda a Internet;
+    * 0, F – reservados;
+    * 6, 7, 9, A, B, C, D – não estão alocados.
+
+Deste modo, um roteador ligado ao backbone da Internet não encaminhará pacotes com escopo menor do que 14 (E em hexa), por exemplo. No IPv4, o escopo de um grupo multicast é especificado através do campo TTL do cabeçalho.
+
+
+
+
+
+IPv6 socket structures
+
+struct sockaddr_in6 {
+        uint8_t         sin6_len;       /* length of this struct */
+        sa_family_t     sin6_family;    /* AF_INET6 */
+        in_port_t       sin6_port;      /* Transport layer port # */
+        uint32_t        sin6_flowinfo;  /* IP6 flow information */
+        struct in6_addr sin6_addr;      /* IP6 address */
+        uint32_t        sin6_scope_id;  /* scope zone index */
+};
+
+struct in6_addr {
+        union {
+                uint8_t         __u6_addr8[16];
+                uint16_t        __u6_addr16[8];
+                uint32_t        __u6_addr32[4];
+        } __u6_addr;                    /* 128-bit IP6 address */
+};
+
+
+struct sockaddr {
+        unsigned char   sa_len;         /* total length */
+        sa_family_t     sa_family;      /* address family */
+        char            sa_data[14];    /* actually longer; address value */
+};
+
+struct addrinfo {
+        int     ai_flags;       /* AI_PASSIVE, AI_CANONNAME, AI_NUMERICHOST */
+        int     ai_family;      /* PF_xxx */
+        int     ai_socktype;    /* SOCK_xxx */
+        int     ai_protocol;    /* 0 or IPPROTO_xxx for IPv4 and IPv6 */
+        socklen_t ai_addrlen;   /* length of ai_addr */
+        char    *ai_canonname;  /* canonical name for hostname */
+        struct  sockaddr *ai_addr;      /* binary address */
+        struct  addrinfo *ai_next;      /* next structure in linked list */
+};
+
+IPv6 Name Resolution Functions
+
+#include 
+#include 
+#include 
+
+void         freeaddrinfo(struct addrinfo *ai);
+int          getaddrinfo(const char *hostname, const char *servname,
+         const struct addrinfo *hints, struct addrinfo **res);
+const char * gai_strerror(int ecode);
+
+
+

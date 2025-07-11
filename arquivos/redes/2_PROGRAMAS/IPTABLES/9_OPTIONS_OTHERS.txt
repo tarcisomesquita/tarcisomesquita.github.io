@@ -1,0 +1,28 @@
+
+OTHER OPTIONS
+
+-v, --verbose
+   Verbose output.  This option makes the  list  command  show  the
+   interface  name,  the  rule options (if any), and the TOS masks.
+   The packet and byte counters are also listed,  with  the  suffix
+   'K',  'M' or 'G' for 1000, 1,000,000 and 1,000,000,000 multipli-
+   ers respectively (but see the -x  flag  to  change  this).   For
+   appending,  insertion,  deletion  and  replacement,  this causes
+   detailed information on the rule or rules to be printed.
+
+-n, --numeric
+   Numeric output.  IP addresses and port numbers will  be  printed
+   in  numeric format.  By default, the program will try to display
+   them as host names, network names, or services (whenever  appli-
+   cable).
+
+-x, --exact
+   Expand  numbers.  Display the exact value of the packet and byte
+   counters, instead of only the rounded number in  K's  (multiples
+   of  1000)  M's (multiples of 1000K) or G's (multiples of 1000M).
+   This option is only relevant for the -L command.
+
+--line-numbers
+   When listing rules, add line numbers to the  beginning  of  each
+   rule, corresponding to that rule's position in the chain.
+

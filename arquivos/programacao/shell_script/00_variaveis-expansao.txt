@@ -1,0 +1,44 @@
+
+Expansão de variáveis
+
+${var} 	        É o mesmo que $var, porém não ambíguo
+${#var} 	Retorna o tamanho da string
+${!var} 	Executa o conteúdo de $var (igual 'eval \$$var')
+${!texto*} 	Retorna os nomes de variáveis começadas por 'texto'
+${var:N} 	Retorna o texto à partir da posição 'N'
+${var:N:tam} 	Retorna 'tam' caracteres à partir da posição 'N'
+${var:-texto} 	Se var não está definida, retorna 'texto'
+${var:=texto} 	Se var não está definida, defina-a com 'texto'
+${var:?texto} 	Se var não está definida, retorna o erro 'texto'
+${var:+texto} 	Se var está definida, retorna 'texto', senão retorna o vazio
+${var#texto} 	Corta 'texto' do início da string
+${var##texto} 	Corta 'texto' do início da string (* guloso)
+${var%texto} 	Corta 'texto' do final da string
+${var%%texto} 	Corta 'texto' do final da string (* guloso)
+${var/texto/novo} 	Substitui 'texto' por 'novo', uma vez
+${var//texto/novo} 	Substitui 'texto' por 'novo', sempre
+${var/#texto/novo} 	Se a string começar com 'texto', substitui 'texto' por 'novo'
+${var/%texto/novo} 	Se a string terminar com 'texto', substitui 'texto' por 'novo'
+
+$ TESTE="primeira linha da variavel
+> segunda linha
+> terceira...
+> chega! :)
+> "
+$ echo $TESTE
+primeira linha da variavel segunda linha terceira... chega! :)
+$ echo "$TESTE"
+primeira linha da variavel
+segunda linha
+terceira...
+chega! :)
+
+#!/bin/bash
+for x in $(cat list.txt) ; do echo $x; done
+
+#The IFS (Internal Field Separator) variable is what determines what separates the list.
+IFS='
+' #only a newline between the quotes
+for x in $(cat list.txt) ; do echo $x; done
+unset IFS # unset the change to IFS back to normal
+

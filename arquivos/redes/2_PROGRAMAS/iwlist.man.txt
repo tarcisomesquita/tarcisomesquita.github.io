@@ -1,0 +1,77 @@
+IWLIST(8)
+iwlist - Get more detailed wireless information from a wireless interface
+
+SYNOPSIS
+       iwlist [interface] scanning
+       iwlist [interface] frequency
+       iwlist [interface] rate
+       iwlist [interface] keys (tamanho de senhas aceitas e listas de senhas em uso)
+       iwlist [interface] power
+       iwlist [interface] txpower
+       iwlist [interface] retry (List the transmit retry limits and retry lifetime on the device.)
+       iwlist [interface] event
+       iwlist [interface] auth
+       iwlist [interface] wpakeys
+       iwlist [interface] genie
+       iwlist [interface] modulation
+       iwlist --help
+       iwlist --version
+
+SEE ALSO
+       iwconfig(8), iwspy(8).  iwevent(8), iwpriv(8), wireless(7).
+
+wireless-tools
+13 April 2006
+
+
+ubuntu@max:~/Desktop$ sudo strace -f iwlist wlp6s0 scanning
+
+socket(PF_INET, SOCK_DGRAM, IPPROTO_IP) = 3
+ioctl(3, SIOCGIWRANGE, 0x7ffd7ca50570)  = 0
+ioctl(3, SIOCSIWSCAN, 0x7ffd7ca50e10)   = 0
+select(0, 0x7ffd7ca50b20, NULL, NULL, {0, 250000}) = 0 (Timeout)
+brk(NULL)                               = 0x241e000
+brk(0x2440000)                          = 0x2440000
+
+ioctl(3, SIOCGIWSCAN, 0x7ffd7ca50e10)   = -1 EAGAIN (Resource temporarily unavailable)    Pede o resultado
+select(0, 0x7ffd7ca50b20, NULL, NULL, {0, 100000}) = 0 (Timeout)                          Espera
+
+ioctl(3, SIOCGIWSCAN, 0x7ffd7ca50e10)   = -1 E2BIG (Argument list too long)
+ioctl(3, SIOCGIWSCAN, 0x7ffd7ca50e10)   = -1 E2BIG (Argument list too long)
+ioctl(3, SIOCGIWSCAN, 0x7ffd7ca50e10)   = 0
+fstat(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 1), ...}) = 0
+write(1, "wlp6s0    Scan completed :\n", 27wlp6s0    Scan completed :
+) = 27
+
+
+
+ubuntu@max:~/Desktop$ sudo ltrace -f iwlist wlp6s0 scanning
+
+[pid 4337] iw_sockets_open(0x405364, 0x7ffc59d2c907, 256, 868)                          = 3
+[pid 4337] iw_get_range_info(3, 0x7ffc59d2c900, 0x7ffc59d2b290, 0)                      = 0
+
+[pid 4337] strncpy(0x7ffc59d2b500, "wlp6s0", 16)                                        = 0x7ffc59d2b500
+[pid 4337] ioctl(3, 35608, 0x7ffc59d2b500)                                              = 0
+[pid 4337] select(0, 0x7ffc59d2b210, 0, 0)                                              = 0
+[pid 4337] realloc(0, 4096)                                                             = 0x2087010
+
+
+[pid 4337] strncpy(0x7ffc59d2b500, "wlp6s0", 16)                                        = 0x7ffc59d2b500
+[pid 4337] ioctl(3, 35609, 0x7ffc59d2b500)                                              = 0
+
+[pid 4337] __printf_chk(1, 0x405190, 0x7ffc59d2c900, 0x7ff504f3c687wlp6s0    Scan completed :
+)                    = 27
+
+[pid 4337] iw_init_event_stream(0x7ffc59d2b1f0, 0x2087010, 5738, 0x7ffffff7)            = 27
+[pid 4337] iw_extract_event_stream(0x7ffc59d2b1f0, 0x7ffc59d2b4e0, 22, 0x7ffc59d2b4e8)  = 1
+[pid 4337] iw_ether_ntop(0x7ffc59d2b4ea, 0x7ffc59d2b560, 16, 24)                        = 17
+
+[pid 4337] __printf_chk(1, 0x405de8, 1, 0x7ffc59d2b560          Cell 01 - Address: F0:7D:68:E7:68:E6
+)                                 = 47
+[pid 4337] iw_extract_event_stream(0x7ffc59d2b1f0, 0x7ffc59d2b4e0, 22, 0x7fffffd1)      = 1
+[pid 4337] iw_freq2float(0x7ffc59d2b4e8, 11, 8, 16)                                     = 0
+[pid 4337] iw_freq_to_channel(0x7ffc59d2b290, 0x40240000, 0x40240000, 0x4024000000000000) = 0xffffffff
+[pid 4337] iw_print_freq(0x7ffc59d2b560, 128, 0xffffffff, 0)                            = 0
+[pid 4337] __printf_chk(1, 0x4051c8, 0x7ffc59d2b560, 0x7ffffff5                    Channel:11
+)                        = 31
+

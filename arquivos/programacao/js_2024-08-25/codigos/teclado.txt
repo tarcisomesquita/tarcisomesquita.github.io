@@ -1,0 +1,13 @@
+// Check for F2. If pressed, restart the game. Two versions: for FF & IE
+document.onkeydown = checkKeyDown; // Uses global onkeypress. 
+function checkKeyDown(e) { 
+   try {
+      if (e.keyCode == 113) {
+         alert("F2 pressed"); } }
+   catch (e) {}
+   try {
+      if (window.event.keyCode == 113) {
+         alert("F2 pressed"); } }
+   catch (e) {}
+}
+

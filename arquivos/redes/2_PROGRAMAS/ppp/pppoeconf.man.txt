@@ -1,0 +1,19 @@
+PPPOECONF(8)
+
+pppoeconf — configures a PPPoE (ADSL) connection
+
+SYNOPSIS
+       pppoeconf [-nox]  [iface]
+
+-nox      Force ncurses use.
+
+FILES
+/etc/ppp/peers/dsl-provider is pppd options file for your dsl provider.
+/etc/ppp/pap-secrets and /etc/ppp/chap-secrets are described in pppd documentation. pppoeconf may add lines to theses files.
+/etc/ppp/ip-up.d/0clampmss and /etc/ppp/ip-down.d/0clampmss are used to clamp MSS if needed.
+/etc/network/interfaces is network interface file for your system.
+
+SEE ALSO
+pppd(8), interfaces(5), pon(1) and pppoe(8).
+
+

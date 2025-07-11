@@ -1,0 +1,33 @@
+python -m zipfile -l monty.zip
+
+    zipfile.py -l zipfile.zip        # Show listing of a zipfile
+    zipfile.py -t zipfile.zip        # Test if a zipfile is valid
+    zipfile.py -e zipfile.zip target # Extract zipfile into target dir
+    zipfile.py -c zipfile.zip src ... # Create zipfile from sources
+
+
+import zipfile
+zipfile.is_zipfile("/home/ubuntu/cajati.txt.zip")
+zp = ZipFile("/home/ubuntu/cajati.txt.zip", mode='r', compression=ZIP_STORED, allowZip64=True)
+
+zipfile.ZipFile(file, mode='r', compression=ZIP_STORED, allowZip64=True)
+mode parameter should be 'r' to read an existing file, 'x' to exclusively create and write a new file.
+compression is the ZIP compression method to use when writing the archive, and should be ZIP_STORED, ZIP_DEFLATED, ZIP_BZIP2 or ZIP_LZMA
+
+with ZipFile('/home/ubuntu/cajati.txt.zip') as myzip:
+    with myzip.open('eggs.txt') as myfile:
+        print(myfile.read())
+
+ ZipFile.extract(member, path=None, pwd=None)¶
+
+ ZipFile.getinfo(name)¶
+     
+
+ZipFile.infolist()¶
+
+
+ ZipFile.extractall(path=None, members=None, pwd=None)¶
+
+    Extract all members from the archive to the current working directory. path specifies a different directory to extract to. members is optional and must be a subset of the list returned by namelist(). pwd is the password used for encrypted files.
+
+

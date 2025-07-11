@@ -1,0 +1,51 @@
+/usr/include/linux/msdos_fs.h
+
+sudo mkdir /media/ubuntu/64MiB
+
+sudo umount /media/ubuntu/64MiB && \
+sudo losetup -d $LOOP && \
+# no linux se o tamanho for menor que 32 MiB, ele altera sectors: dw 0x0000  ; 0x00000013 
+dd if=/dev/zero of=fat32.bin bs=$((1024*1024)) count=64 && \
+export LOOP=$(sudo losetup -f) && \
+sudo losetup $LOOP /home/ubuntu/Desktop/fat32.bin && \
+sudo mkfs.vfat -F 32 -s 8 -n "64MiB" -i 54545454 $LOOP && \
+sudo mount -t vfat $LOOP /media/ubuntu/64MiB
+
+
+File Allocation Table (FAT)
+
+Reserved Region
+FAT Region
+File and Directory Data Region
+
+
+File and Directory Data Region is divided into clusters. The FAT describes which clusters are used by which files.
+
+root_cluster:  dd 0x00000002         ; 0x0000002C   first cluster of the root directory  . . . . . . . . . . . . . . . . . . . . . . . . . [OK]
+Unlike other directories, the root directory itself on any FAT type does not have any date or time stamps, does not have a file name (other than the implied file name "\"), and does not contain "." and ".." files as the first two directory entries in the directory.
+
+
+sec_per_clus:  db 0x04               ; 0x0000000D   sectors per cluster. 1, 2, 4, 8, 16, 32, 64, 128.
+reserved:      dw 0x0020             ; 0x0000000E   reserved sectors (sectors before the first FAT)  . . . . . . . . . . . . . . . . . . . [OK]
+fats:          db 0x02               ; 0x00000010   number of FATs (copy)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . [OK]
+
+The File Allocation Table has one entry per cluster.
+
+first two entries of the FAT are unused
+In the first byte of the first entry a copy of the media descriptor is stored.
+The remaining bits of this entry are 1.
+
+The high order two bits of the second entry are sometimes, in the case of FAT16 and FAT32, used for dirty volume management:
+high order bit 1: last shutdown was clean
+next highest bit 1: during the previous mount no disk I/O errors were detected. 
+
+FAT32 entries are 32 bits of which the top 4 bits are reserved.
+Possible values for FAT32 are:
+00000000: free
+00000002-0fffffef: cluster in use; the value given is the number of the next cluster in the file
+0ffffff0-0ffffff6: reserved
+0ffffff7: bad cluster
+0ffffff8-0fffffff: cluster in use, the last one in this file.
+
+The maximum possible size for a file on a FAT32 volume is 4 GiB minus 1 byte (2^32−1 bytes).
+

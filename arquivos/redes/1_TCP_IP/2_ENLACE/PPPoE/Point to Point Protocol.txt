@@ -1,0 +1,61 @@
+Point to Point Protocol (PPP) 
+(RFC 1661)
+
+Point to Point Protocol (PPP) protocol is utilized to establish a connection between 
+your PC and your ISP (Internet Service Provider). PPP is used on two points-connection only 
+usually modem to modem. This protocol accomplishes a few main tasks:
+
+Checks the condition of the phone line.
+Checks your password.
+Provides your computer with an IP address valid for the duration of connection.
+Establishes the configuration of packets (packet size, compression, etc).
+Acknowledge one part that the other is closing the connection.
+
+PPP operates by sending Request packets and waiting for Acknowledge packets that either accept, reject 
+or try to change the request. 
+
+Various protocols are utilized to accomplish different tasks which together form the PPP. 
+
+Link Control Protocol (LCP) checks among other things the condition of the line by sending a 
+large (4 byte-hex) randomly chosen number (Magic Number) which needs to be returned by the 
+receiving part. 
+
+Password Authentication Protocol (PAP) or Challenged Authentication Protocol (CHAP) checks the 
+password either sent in clear (PAP) or encrypted (CHAP).
+
+Internet Protocol Control Protocol (IPCP) is utilized to assign an IP address to the PC, to 
+determine if compression will be used and to setup the configuration of the packets
+encapsulated within PPP frames.
+
+PPP PACKET FORMAT (example):
+
+The fields are transmitted from left to right.
+
++----------+----------+----------+----------+---------------+----------+----------
+|   Flag   | Address  | Control  | Protocol | Information   |   FCS    |   Flag  |
+|   0x7E   |  0xFF    |  0x03    | 16 bits  |  *            | 16 bits  |   0x7E  |
++----------+----------+----------+----------+---------------+----------+----------
+
+Here is a typical example of a PPP packet: 
+                                                             
+7E FF 7D 23 C0 21 7D 21 7D 22 7D 20 7D 38 7D 21 7D 24 7D 25 DC 7D 22 7D 26 7D 20 7D 20 
+7D 20 7D 20 7D 25 7D 26 29 23 BE 84 7D 27 7D 22 7D 28 7D 22 DF 7D 30 7E
+
+Packet content:
+
+Start			7E
+Address			FF 03			FF 7D 23
+Protocol (LCP)		C0 21
+Code (CONFREQ)		01			7D 21
+Id			01			7D 21
+Length			00 18			7D 20 7D 38
+Type, Length, MRU	01 04 05 DC     	7D 21 7D 24 7D 25 DC
+Type, Length, ACCM	02 06 00 00 00 00	7D 22 7D 26 7D 20 7D 20 7D 20 7D 20 
+Type, Length, MAGIC	05 06 29 23 BE 84	7D 25 7D 26 29 23 BE 84	
+Type, Length, PFC	07 02			7D 27 7D 22
+Type, Length, ACFC	08 02			7D 28 7D 22 
+FCS			DF 10			DF 7D 30
+Stop			7E
+
+7E is the flag sequence.
+7D is the escape sequence (any octet that follows is added 0x20). 

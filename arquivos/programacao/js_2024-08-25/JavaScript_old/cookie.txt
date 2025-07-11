@@ -1,0 +1,50 @@
+
+<script language="JavaScript">
+<!--
+function DefineCookie(nome, valor, form) {
+   document.cookie = nome+"="+valor+";";
+   form.Nome.value = "";
+   form.Valor.value= "";
+}
+</script>
+
+
+function check_enter_nome_ok() {
+  var nome = document.form1.nome.value;
+
+  if (nome.length>0 && nome.indexOf('Digite')==-1) {
+
+    var expires = new Date("Jan 1, 2015 00:00:00");
+    setCookie("nome", nome, expires);
+    document.form1.msg.value = 'Meu nome é ' + nome;
+    DoTalk();
+  }
+  document.form1.msg.focus();
+}
+
+function setCookie(name, value, expires, path, domain, secure) {
+    document.cookie= name + "=" + escape(value) +
+        ((expires) ? "; expires=" + expires.toGMTString() : "") +
+        ((path) ? "; path=" + path : "") +
+        ((domain) ? "; domain=" + domain : "") +
+        ((secure) ? "; secure" : "");
+}
+
+function getCookie (name) {
+   var dcookie = document.cookie;
+   var cname = name + "=";
+   var clen = dcookie.length;
+   var cbegin = 0;
+   while (cbegin < clen) {
+     var vbegin = cbegin + cname.length;
+     if (dcookie.substring(cbegin, vbegin) == cname) {
+       var vend = dcookie.indexOf (";", vbegin);
+       if (vend == -1) vend = clen;
+       return unescape(dcookie.substring(vbegin, vend));
+     }
+     cbegin = dcookie.indexOf(" ", cbegin) + 1;
+     if (cbegin == 0) break;
+   }
+   return null;
+}
+

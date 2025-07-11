@@ -1,0 +1,29 @@
+
+Status Description
+00h     No error
+01h     Invalid function
+02h     Address mark not found
+03h     Media write-protected
+04h     Sector not found
+05h     Reset failed
+06h     Media changed
+07h     Hard drive parameter is invalid
+08h     DMA overflow occurred
+09h     DMA operation crossed 64KB boundary
+0ah     Hard drive bad sector
+0bh     Hard drive bad track
+0ch     Invalid floppy disk media type
+0dh     Invalid number of sectors
+0eh     Control data address mark found
+0fh     DMA arbitration out of range
+10h     Unrecoverable read error
+11h     Recoverable data area (ECC corrected)
+20h     Floppy disk controller failure
+40h     Seek to invalid track
+80h     Timeout
+aah     Hard drive not ready
+bbh     Unknown hard disk drive error
+cch     Hard drive write error
+e0h     Hard drive status register error
+ffh     Hard drive sense operation failed
+

@@ -1,0 +1,11 @@
+
+Nome                   Número de bits
+source port . . . . . .(16)
+destinatio port . . . .(16)
+lenght . . . . . . . . (16)
+checksum . . . . . . . (16)
+data . . . . . . . . . (128) 16 bytes
+
+he checksum field is used for error-checking of the header and data. If the checksum is omitted in IPv4, the field uses the value all-zeros. This field is not optional for IPv6.
+checksum = Cyclic Redundancy Check (CRC)
+

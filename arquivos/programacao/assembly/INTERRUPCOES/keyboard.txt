@@ -1,0 +1,61 @@
+keyboard input.
+
+There are quite a few functions related to INT 16h (the keyboard interrupt.)  They are:
+
+WHERE AH= the function number when you call INT 16h
+
+FUNCTION#
+---------
+
+    0h  -Gets a key from the keyboard buffer.  If there isn't one, it waits until there is.
+            Returns the SCAN code in ah, and the ASCII translation in AL
+
+    1h  -Checks to see if a key is ready to grab.  Sets the zero flag if a
+            key is ready to grab.  Grab it with Fn# 0
+            This also returns the same info about the key as Fn#0, but does
+            not remove it from the buffer.
+
+    2h  -Returns the shift flags in al.  They are:
+            bit 7 - Insert active
+            bit 6 - Caps lock active
+            bit 5 - Num Lock active
+            bit 4 - Scroll lock active
+            bit 3 - Alt pressed
+            bit 2 - Ctrl pressed
+            bit 1 - Left shift pressed
+            bit 0 - right shift pressed
+
+    3h  -You can set the Typematic Rate and delay with this function
+            registers must be set as follows
+            AL = 5
+            BH = Delay value (0-3: 250,500,750,1000 millisec)
+            BL = Typematic rate (0-1fh) 1fh = slowest (2 chars per sec)
+                0 =fastest (30 chars per second)
+
+    4h  -Key Click control - not important
+
+    5h  -STUFF the keyboard
+        input:
+            CH = scan code
+            CL = ascii code
+
+        output:
+            al = 0 no error
+            al = 1 keyboard buffer is full
+
+   10h  -Same as #0, but its for the extended keyboard.  Checks all the keys.
+
+   11h  -Same as #1, but for the extended keyboard.
+
+   12h  -Same as #2, but AH contains additional shift flags:
+            bit 7 - Sys req pressed
+            bit 6 - Caps lock active
+            bit 5 - Num Lock active
+            bit 4 - Scroll lock active
+            bit 3 - Right Alt active
+            bit 2 - Right Ctrl active
+            bit 1 - Left Alt active
+            bit 0 - Right Alt active
+        Al is EXACTLY the same as in Fn#2
+
+

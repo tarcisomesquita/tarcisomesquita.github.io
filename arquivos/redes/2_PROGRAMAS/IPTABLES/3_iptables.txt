@@ -1,0 +1,10 @@
+Packets are processed by sequentially traversing the rules in chains.
+
+General rules are:
+Rule 	Description
+-p PROTOCOL 	Specify an IP protocol (eg. TCP or UDP).
+-s ADDRESS 	Specify a source address.
+-d ADDRESS 	Specify a destination address.
+-i INTERFACE 	Specify a local interface of incoming traffic.
+-o INTERFACE 	Specify a local interface of outgoing traffic. 
+

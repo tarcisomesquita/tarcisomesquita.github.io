@@ -1,0 +1,12 @@
+
+Instrução JB ou JNAE
+
+Proposito: Salto condicional.
+
+Sintaxe:
+JB símbolo
+
+a instrucao salta se esta down, se esta not up ou se esta equal.
+
+o salto e feito se CF esta ativado.
+

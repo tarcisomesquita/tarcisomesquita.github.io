@@ -1,0 +1,36 @@
+sudo apt-get install openssh-client
+sudo apt-get install openssh-server
+
+$ ssh morimoto@192.168.0.2
+
+$ ssh -X gdh@192.168.1.254
+O "-X" permite que você rode aplicativos gráficos. Basta chamá-los pelo nome através do terminal, como se estivesse sentado na frente do servidor.
+
+$ ssh -p 12525 morimoto@192.168.0.2
+
+12525 é a porta configurada em:
+/etc/ssh/sshd_config
+
+/etc/ssh/ssh/ssh_config que contém a configuração do cliente.
+
+Transferência de arquivos
+você pode utilizar o módulo "ssh://" do Nautilus, digitando "ssh://usuario@servidor" diretamente na barra de endereços (clique no ícone com a folha de papel para liberar a edição), o que permite acessar os arquivos diretamente e inclusive copiar e colar arquivos entre diversas janelas do navegador
+ou
+# sftp gdh@192.168.1.254
+Para baixar um arquivo use o comando "get" e para navegar entre os diretórios use o "cd" e o "ls ..", da mesma forma que em um prompt local.
+
+To generate the keys, from a terminal prompt enter:
+ssh-keygen -t dsa
+
+This will generate the keys using a DSA authentication identity of the user. During the process you will be prompted for a password. Simply hit Enter when prompted to create the key.
+By default the public key is saved in the file ~/.ssh/id_dsa.pub, while ~/.ssh/id_dsa is the private key. Now copy the id_dsa.pub file to the remote host and append it to ~/.ssh/authorized_keys by entering:
+ssh-copy-id username@remotehost
+You should now be able to SSH to the host without being prompted for a password.
+
+Para rodar aplicativos gráficos em conexões lentas, o TightVNC é a melhor opção por causa dos recursos de compressão de dados oferecidos por ele.
+
+rodando o gerenciador de janelas apartir do servidor.
+inicie a interface gráfica (no cliente) usando o "xinit" ao invés do "startx". Isto abrirá o servidor X "puro", sem gerenciador de janelas algum.
+Use o terminal para abrir a conexão via SSH e em seguida chame o gerenciador de janelas desejado com os comandos "startkde", "wmaker", "gnome-session", "blackbox" etc.
+
+

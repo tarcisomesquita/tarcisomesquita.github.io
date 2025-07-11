@@ -1,0 +1,44 @@
+
+Pcap_Global_Header:
+Magic_Number:     0xA1B2C3D4      ; pcap file
+Version_Major:    2               ; versão é 2.4
+Version_Minor:    4               ; 
+Thiszone:         0               ; sem correção de tempo em relação ao GMT
+sigfigs:          0               ; accuracy of time stamps
+snaplen:          262144           ; length for the capture, typically 65535
+network:          001             ; enlace Ethernet
+
+
+2016/07/01  13:02:15.711943  = = = = = = = = = offset = 0x00000018 = = = = = = = = = = = = = =
+
+Pcap_Packet_Header:
+ts_sec:           0x57769407      ; number of seconds elapsed since 00:00:00 on January 1, 1970
+ts_usec:          0x000ADD07      ; tempo em microsegundos
+incl_len:              00064      ; quantidade de bytes capturados
+orig_len:              00064      ; quantidade de bytes que o pacote possuia
+
+
+Cabeçalho Ethernet:
+MAC destination . . . . . (48) 01:80:C2:00:00:00
+MAC source  . . . . . . . (48) CC:3E:5F:E8:F4:B6
+Ethertype . . . . . . . . (16) 0x0027  Extensão:   Spanning Tree Protocol (STP)
+
+
+Cabeçalho STP
+Protocol Identifier . . . . . .(16)  0x0000  
+Protocol Version Identifier . .(08)  0x02     RST
+BPDU Type . . . . . . . . . . .(08)  0x02     Rapid Spanning Tree BPDU
+flags . . . . . . . . . . . . .(08)  0x2C        ; port role Designated ; forwarding
+Root Identifier . . . . . . . .(64)  2000.CC:3E:5F:E8:F4:AE
+path_cost . . . . . . . . . . .(32)  0x00000000      
+Bridge Identifier . . . . . . .(80)  5FE8.F4:AE:80:07:00:00.1400
+age_message . . . . . . . . . .(16)  0x0002  
+age_max . . . . . . . . . . . .(16)  0x000F  
+time_hello  . . . . . . . . . .(16)  0x0000  
+delay . . . . . . . . . . . . .(16)  0x0000  
+
+00000050                                          00 00 00  |             ...|
+00000060  00 00 00 00 00                                    |.....           |
+
+Foram impressos 101 bytes
+

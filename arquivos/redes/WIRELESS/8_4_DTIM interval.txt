@@ -1,0 +1,7 @@
+
+DTIM Interval (DTIM Period): O DTIM (delivery traffic indication message) tem efeito sobre a transmissão de pacotes multicast (transmitidos simultaneamente a várias estações), indicando o número de beacons que o ponto de acesso aguarda antes de transmitir pacotes de multicast agendados. A opção aceita valores entre 1 e 255, sendo que o default na maioria APs é 1.
+
+Quanto maior é o valor, menor é a prioridade dos pacotes de multicast. Calcule que se o beacon é transmitido a cada 100 ms, um valor "10" faria com que os pacotes de multicast fossem transmitidos apenas uma vez a cada segundo.
+
+O uso de pacotes multicast permite que vários clientes recebam o mesmo stream de vídeo através da rede wireless, por exemplo, mas este ainda não é um recurso muito explorado pelos softwares, de forma que essa opção acaba não tendo muito efeito sobre a rede. Use o valor "1" para que os pacotes multicast sejam transmitidos rapidamente, caso usados.
+

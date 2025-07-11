@@ -1,0 +1,39 @@
+
+# ifconfig eth0:1 172.16.12.78 netmask 255.255.255.0 up
+
+aliases na interface loopback (lo)
+
+O endereço IP default da interface lo no Linux é 127.0.0.1. Se mexermos com o endereço 127.0.0.1 podemos quebrar as nossas conexões de rede. Ao invés disso usaremos os aliases lo:1 e lo:2 para executarmos os testes. Para atribuir endereços IP à essas interfaces, os seguintes comandos devem ser executados (como usuário root) no console do Linux:
+
+# ifconfig lo:1 10.0.1.1
+# ifconfig lo:2 10.0.1.2O
+
+O comando ifconfig também permite verificar se o comando foi bem sucedido:
+
+$ ifconfig
+lo Link encap:Local Loopback
+   inet addr:127.0.0.1 Mask:255.0.0.0
+   UP LOOPBACK RUNNING MTU:16436 Metric:1
+   RX packets:10 errors:0 dropped:0 overruns:0 frame:0
+   TX packets:10 errors:0 dropped:0 overruns:0 carrier:0
+   collisions:0 txqueuelen:0
+   RX bytes:700 (700.0 b) TX bytes:700 (700.0 b)
+
+lo:1 Link encap:Local Loopback
+   inet addr:10.0.1.1 Mask:255.0.0.0
+   UP LOOPBACK RUNNING MTU:16436 Metric:1
+   RX packets:20848 errors:911 dropped:0 overruns:0 frame:926
+   TX packets:63 errors:0 dropped:0 overruns:0 carrier:0
+   collisions:0 txqueuelen:0
+   RX bytes:1398645 (1.3 Mb) TX bytes:6935 (6.7 Kb)
+
+lo:2 Link encap:Local Loopbackinet
+   addr:10.0.1.2 Mask:255.0.0.0
+   UP LOOPBACK RUNNING MTU:16436 Metric:1
+   RX packets:20848 errors:911 dropped:0 overruns:0 frame:926
+   TX packets:63 errors:0 dropped:0 overruns:0 carrier:0
+   collisions:0 txqueuelen:0
+   RX bytes:1398645 (1.3 Mb) TX bytes:7281 (7.1 Kb)
+
+As interfaces de rede configuradas dessa forma permitem-nos trabalhar como se fossem dois computadores na mesma rede, com IPs diferentes.
+

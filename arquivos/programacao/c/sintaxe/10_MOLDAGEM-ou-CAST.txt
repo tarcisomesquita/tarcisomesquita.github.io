@@ -1,0 +1,27 @@
+
+MOLDAGEM OU CAST
+
+Sintaxe:
+   (tipo) expressão
+
+Força a expressão a assumir um determinado tipo.
+
+#include <stdio.h>
+
+int main() {
+  int dividendo = 5, divisor = 2;
+  float resultado = 0.0;
+  
+  resultado = ((float)dividendo/divisor)+1.5;
+  printf("Resultado: %5.2f\n", resultado);
+  
+  return 0;
+}
+
+75   // int
+75u  // unsigned int
+75l  // long
+75ul // unsigned long
+
+3.14159L // long double
+6.02e23f // float

@@ -1,0 +1,24 @@
+sudo apt-get --download-only install ncurses-dev libssl-dev
+sudo apt-get --download-only --no-install-recommends install kernel-package
+cat linux-4.6.tar.xz | xz --decompress | tar -x
+gpg --verify linux-4.6.tar.sign linux-4.6.tar.xz 
+gpg: Assinatura feita Dom 15 Mai 2016 22:50:20 UTC usando RSA chave ID 00411886
+gpg: Impossível verificar assinatura: chave pública não encontrada
+
+gpg --keyserver hkp://keys.gnupg.net --recv-keys 00411886
+gpg --verify linux-4.6.tar.sign linux-4.6.tar.xz 
+
+cd linux-4.6
+cp /boot/config-$(uname -r) .config
+make menuconfig
+make-kpkg clean
+fakeroot make-kpkg --initrd --revision=1.0.NAS kernel_image kernel_headers -j 16
+
+http://www.cyberciti.biz/faq/debian-ubuntu-building-installing-a-custom-linux-kernel/
+
+http://torvalds-family.blogspot.com/
+
+sudo apt-get build-dep --no-install-recommends linux-image-$(uname -r)
+apt-get source linux-image-$(uname -r)
+
+

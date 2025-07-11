@@ -1,0 +1,92 @@
+
+Pcap_Global_Header:
+Magic_Number:     0xA1B2C3D4      ; pcap file
+Version_Major:    2               ; versão é 2.4
+Version_Minor:    4               ; 
+Thiszone:         0               ; sem correção de tempo em relação ao GMT
+sigfigs:          0               ; accuracy of time stamps
+snaplen:          262144           ; length for the capture, typically 65535
+network:          001             ; enlace Ethernet
+
+
+2016/09/17  15:50:15.331118  = = = = = = = = = offset = 0x00000018 = = = = = = = = = = = = = =
+
+Pcap_Packet_Header:
+ts_sec:           0x57DD9067      ; number of seconds elapsed since 00:00:00 on January 1, 1970
+ts_usec:          0x00050D6E      ; tempo em microsegundos
+incl_len:              00046      ; quantidade de bytes capturados
+orig_len:              00046      ; quantidade de bytes que o pacote possuia
+
+
+Cabeçalho Ethernet:
+MAC destination . . . . . (48) F0:7D:68:E7:68:E6
+MAC source  . . . . . . . (48) 18:89:5B:46:29:ED
+Ethertype . . . . . . . . (16) 0x0800  Internet Protocol, Version 4 (IPv4)
+
+
+Cabeçalho IP:
+version  . . . . . . . (04) 4   ipv4
+header length  . . . . (04) 5   (words de 4 bytes)
+TOS  . . . . . . . . . (08) 0
+total length . . . . . (16) 32
+identification . . . . (16) 0
+flags  . . . . . . . . (03) 0 
+fragment offset  . . . (13) 0 
+TTL  . . . . . . . . . (08) 255 
+protocol . . . . . . . (08) 1 ICMP
+header checksum  . . . (16) 0x39EE
+source address . . . . (32) 192.168.0.157
+destination address  . (32) 192.168.0.1
+
+
+Cabeçalho ICMP:
+type . . . . . . . . (08) 0x08   Request
+code . . . . . . . . (08) 0x00
+checksum . . . . . . (16) 0x3E2C
+identifier . . . . . (16) 0xE803
+sequence . . . . . . (16) 0x0000
+Data:
+00000050        54 65 73 74                                 |  Test          |
+
+
+2016/09/17  15:50:15.331346  = = = = = = = = = offset = 0x000000A6 = = = = = = = = = = = = = =
+
+Pcap_Packet_Header:
+ts_sec:           0x57DD9067      ; number of seconds elapsed since 00:00:00 on January 1, 1970
+ts_usec:          0x00050E52      ; tempo em microsegundos
+incl_len:              00060      ; quantidade de bytes capturados
+orig_len:              00060      ; quantidade de bytes que o pacote possuia
+
+
+Cabeçalho Ethernet:
+MAC destination . . . . . (48) 18:89:5B:46:29:ED
+MAC source  . . . . . . . (48) F0:7D:68:E7:68:E6
+Ethertype . . . . . . . . (16) 0x0800  Internet Protocol, Version 4 (IPv4)
+
+
+Cabeçalho IP:
+version  . . . . . . . (04) 4   ipv4
+header length  . . . . (04) 5   (words de 4 bytes)
+TOS  . . . . . . . . . (08) 0
+total length . . . . . (16) 32
+identification . . . . (16) 106
+flags  . . . . . . . . (03) 0 
+fragment offset  . . . (13) 0 
+TTL  . . . . . . . . . (08) 64 
+protocol . . . . . . . (08) 1 ICMP
+header checksum  . . . (16) 0xF884
+source address . . . . (32) 192.168.0.1
+destination address  . (32) 192.168.0.157
+
+
+Cabeçalho ICMP:
+type . . . . . . . . (08) 0x00   Reply
+code . . . . . . . . (08) 0x00
+checksum . . . . . . (16) 0x3E34
+identifier . . . . . (16) 0xE803
+sequence . . . . . . (16) 0x0000
+Data:
+000000F0  00 00                                             |..              |
+
+Foram impressos 308 bytes
+

@@ -1,0 +1,8 @@
+
+Specify breakpoint number N to break only if COND is true.
+
+Usage is `condition N COND', where N is an integer and COND is an expression to be evaluated whenever breakpoint N is reached.
+
+ex.:
+condition 1 var==5
+

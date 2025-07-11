@@ -1,0 +1,24 @@
+
+CHS(Cylinder, Head, Sector)
+
+O número de cilindros vai de 0 a 1023
+O número de cabeças vai de 0 a 254
+O número de setores vai de 1 a 63
+
+o número CHS(51, 31, 63) equivale ao LBA 821330 = 51*255*63+31*63+63*1-1
+lba_inicio+lba_size = X*255*63+254*63+63*1
+X=(lba_inicio+lba_size-254*63-63*1)/(255*63)
+
+Exemplo
+FE BF D3  (bytes em hexadecimal)
+
+1111 1110  1011 1111  1101 0011 (bytes em binário)
+
+head     =    1111 1110 = 254
+sector   =      11 1111 = 63
+cylinder = 10 1101 0011 = 723
+
+CHS(723, 254, 63)     número decimal
+
+O último setor pertencente uma partição deve ser o último setor de um cilindro, ou seja, CHS(X, 254, 63), para não ter problemas com a int 13 ah 02.
+

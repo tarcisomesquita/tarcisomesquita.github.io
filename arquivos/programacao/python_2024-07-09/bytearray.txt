@@ -1,0 +1,86 @@
+>>> bytearray.fromhex('2Ef0 F1f2  ')
+bytearray(b'.\xf0\xf1\xf2')
+
+>>> bytearray(b'\xf0\xf1\xf2').hex()
+'f0f1f2'
+
+
+a = "abc"
+b = a.replace("a", "f")
+and:
+
+a = b"abc"
+b = a.replace(b"a", b"f")
+
+
+bytes.decode(encoding="utf-8", errors="strict")
+bytearray.decode(encoding="utf-8", errors="strict")
+
+bytes.find(sub[, start[, end]])
+bytearray.find(sub[, start[, end]])
+
+bytes.index(sub[, start[, end]])
+bytearray.index(sub[, start[, end]])
+
+bytes.replace(old, new[, count])
+bytearray.replace(old, new[, count])
+
+>>> b'   spacious   '.strip()
+b'spacious'
+>>> b'www.example.com'.strip(b'cmowz.')
+b'example'
+
+bytes.isalnum()¶
+bytearray.isalnum()¶
+Return true if all bytes in the sequence are alphabetical ASCII characters or ASCII decimal digits and the sequence is not empty, false otherwise. Alphabetic ASCII characters are those byte values in the sequence b'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'. ASCII decimal digits are those byte values in the sequence b'0123456789'.
+
+For example:
+
+>>> b'ABCabc1'.isalnum()
+True
+>>> b'ABC abc1'.isalnum()
+False
+bytes.isalpha()¶
+bytearray.isalpha()¶
+Return true if all bytes in the sequence are alphabetic ASCII characters and the sequence is not empty, false otherwise. Alphabetic ASCII characters are those byte values in the sequence b'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.
+
+For example:
+
+>>> b'ABCabc'.isalpha()
+True
+>>> b'ABCabc1'.isalpha()
+False
+
+bytes.isspace()¶
+bytearray.isspace()¶
+Return true if all bytes in the sequence are ASCII whitespace and the sequence is not empty, false otherwise. ASCII whitespace characters are those byte values in the sequence b' \t\n\r\x0b\f' (space, tab, newline, carriage return, vertical tab, form feed).
+
+bytes.istitle()¶
+bytearray.istitle()¶
+Return true if the sequence is ASCII titlecase and the sequence is not empty, false otherwise. See bytes.title() for more details on the definition of “titlecase”.
+
+For example:
+
+>>> b'Hello World'.istitle()
+True
+>>> b'Hello world'.istitle()
+False
+
+>>> b'ab c\n\nde fg\rkl\r\n'.splitlines()
+[b'ab c', b'', b'de fg', b'kl']
+>>> b'ab c\n\nde fg\rkl\r\n'.splitlines(keepends=True)
+[b'ab c\n', b'\n', b'de fg\r', b'kl\r\n']
+
+>>> b"".split(b'\n'), b"Two lines\n".split(b'\n')
+([b''], [b'Two lines', b''])
+
+>>> b'Hello World'.upper()
+b'HELLO WORLD'
+
+>>> b"42".zfill(5)
+b'00042'
+>>> b"-42".zfill(5)
+b'-0042'
+
+
+

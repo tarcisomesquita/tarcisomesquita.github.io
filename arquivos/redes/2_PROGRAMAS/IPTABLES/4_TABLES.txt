@@ -1,0 +1,27 @@
+
+TABLES
+Which tables are  present depends on the kernel configuration options and which modules are present.
+
+       -t, --table table
+
+              filter:
+                  This  is  the default table (if no -t option is passed).
+
+              nat:
+                  for altering packets.
+                  
+              mangle:
+                  for specialized packet alteration.
+
+              raw:
+                  for configuring exemptions from connection tracking in combi-
+                  nation with the NOTRACK  target.
+                  It registers at the netfilter hooks with higher priority and
+                  is thus called before ip_conntrack, or any other IP  tables.
+                  
+Tables:
+raw 	Low level alteration of packets.
+nat 	Changes on packets headers (where NAT takes place).
+mangle 	Used to make specialized packet alterations.
+filter 	Packet filtering. 
+

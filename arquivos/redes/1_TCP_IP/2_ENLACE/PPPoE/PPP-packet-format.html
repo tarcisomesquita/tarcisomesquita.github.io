@@ -1,0 +1,1054 @@
+<html>
+http://wwwlehre.dhbw-stuttgart.de/~schulte/htme/images/ppp1.gif <br>
+
+
+<b style="color:black;background-color:#ffff66">PPP</b> <b style="color:black;background-color:#a0ffff">Packet</b> Formats
+
+
+</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="2436">
+B 
+</a></p>
+</div>
+<p>
+</p><hr>
+<a name="3468">
+The following information describes the formats and configuration options for Point-to-Point Protocol (<b style="color:black;background-color:#ffff66">PPP</b>). See </a><a href="PPP.fm.html#11768">"Debugging and Interpreting <b style="color:black;background-color:#ffff66">PPP</b> Negotiation" on page 4-2</a> for information about displaying negotiation information that can be analyzed using the <b style="color:black;background-color:#a0ffff">packet</b> formats contained in this appendix, or by using the Decoder Ring located on the Lucent Remote Access website (http://www.livingston.com).
+<p><a name="3495">
+All values shown in the fields are in hexadecimal <b style="color:black;background-color:#99ff99">format</b>. Adjacent frames can be separated by a single flag. Address and control bytes are omitted in non-Link Control Protocol (LCP) frames if Address-and-Control-Field-Compression is negotiated. 
+</a></p><p><a name="3496">
+If the first byte of the Protocol field is zero, it is omitted in non-LCP frames if Protocol-Field-Compression is negotiated. On asynchronous links, special characters-flags, escape characters, and control characters selected in the negotiated remote Async-Control-Character-Map-between the flags are replaced by an escape character (7D) and the original byte with bit 6 inverted (XOR'ed with 0x20).
+</a></p><p><a name="3500">
+&nbsp;</a><a href="packet.fm.html#3509">Table B-1</a> shows values that can appear in the Protocol field of a <b style="color:black;background-color:#ffff66">PPP</b> frame. The Network Control Protocol (NCP) value is used to establish a connection for the associated data transfer protocol. See RFC  1700, Assigned Numbers, for a complete list of protocol values.
+<a name="3509">&nbsp;</a>
+
+
+Table B-1 Protocol Values   
+
+
+<h2><a name="3515">
+Protocol
+
+</a></h2><h2><a name="3517">
+Value
+
+</a></h2><h2><a name="3519">
+NCP Value
+
+</a></h2><table border="3"><tbody><tr></tr>
+<tr><td><a name="3521">
+Internet Protocol (IP)
+</a><p></p></td><td><a name="3523">
+0021
+</a><p></p></td><td><a name="3525">
+8021
+</a><p></p></td></tr>
+<tr><td><a name="3527">
+OSI Network Layer
+</a><p></p></td><td><a name="3529">
+0023
+</a><p></p></td><td><a name="3531">
+8023
+</a><p></p></td></tr>
+<tr><td><a name="3533">
+DECnet Phase IV
+</a><p></p></td><td><a name="3535">
+0027
+</a><p></p></td><td><a name="3537">
+8027
+</a><p></p></td></tr>
+<tr><td><a name="3539">
+AppleTalk
+</a><p></p></td><td><a name="3541">
+0029
+</a><p></p></td><td><a name="3543">
+8029
+</a><p></p></td></tr>
+<tr><td><a name="3545">
+Novell IPX
+</a><p></p></td><td><a name="3547">
+002B
+</a><p></p></td><td><a name="3549">
+802B
+</a><p></p></td></tr>
+<tr><td><a name="3551">
+Van Jacobson Compressed TCP/IP
+</a><p></p></td><td><a name="3553">
+002D
+</a><p></p></td><td><a name="3555">
+
+&nbsp;</a><p></p></td></tr>
+<tr><td><a name="3557">
+Van Jacobson Uncompressed TCP/IP
+</a><p></p></td><td><a name="3559">
+002F
+</a><p></p></td><td><a name="3561">
+
+&nbsp;</a><p></p></td></tr>
+<tr><td><a name="3563">
+Banyan VINES
+</a><p></p></td><td><a name="3565">
+0035
+</a><p></p></td><td><a name="3567">
+8035
+</a><p></p></td></tr>
+<tr><td><a name="3569">
+Link Control Protocol (LCP)
+</a><p></p></td><td><a name="3571">
+
+&nbsp;</a><p></p></td><td><a name="3573">
+C021
+</a><p></p></td></tr>
+<tr><td><a name="3575">
+Password Authentication Protocol (PAP)
+</a><p></p></td><td><a name="3577">
+
+&nbsp;</a><p></p></td><td><a name="3579">
+C023
+</a><p></p></td></tr>
+<tr><td><a name="3581">
+Link Quality Monitoring (LQM)
+</a><p></p></td><td><a name="3583">
+
+&nbsp;</a><p></p></td><td><a name="3585">
+C025
+</a><p></p></td></tr>
+<tr><td><a name="3587">
+Challenge Handshake Authentication Protocol (CHAP)
+</a><p></p></td><td><a name="3589">
+
+&nbsp;</a><p></p></td><td><a name="3591">
+C223
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p></p><h2><a name="4497">
+Formats for LCP Packets
+
+</a></h2><h3><a name="4498">
+ LCP <b style="color:black;background-color:#a0ffff">Packet</b> Formats
+</a></h3><a name="4516">
+Configure-Request
+</a><p><table border="3">
+
+<tbody><tr><td><a name="4504">
+01
+</a><p></p></td><td><a name="4506">
+ID
+</a><p></p></td><td><a name="4508">
+Length
+</a><p></p></td><td><a name="4510">
+Configuration Options
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4517">
+Configure-Nak
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4535">
+03
+</a><p></p></td><td><a name="4537">
+ID
+</a><p></p></td><td><a name="4539">
+Length
+</a><p></p></td><td><a name="4541">
+Configuration Options
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4533">
+Terminate-Request
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4547">
+05
+</a><p></p></td><td><a name="4549">
+ID
+</a><p></p></td><td><a name="4551">
+Length
+</a><p></p></td><td><a name="4553">
+Data
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4561">
+Code-Reject
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4565">
+07
+</a><p></p></td><td><a name="4567">
+ID
+</a><p></p></td><td><a name="4569">
+Length
+</a><p></p></td><td><a name="4571">
+Rejected-<b style="color:black;background-color:#a0ffff">Packet</b>
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4581">
+Echo-Request
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4585">
+09
+</a><p></p></td><td><a name="4587">
+ID
+</a><p></p></td><td><a name="4589">
+Length
+</a><p></p></td><td><a name="4591">
+Magic-Number
+</a><p></p></td><td><a name="4600">
+Data
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4499">
+Discard-Request
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4604">
+0b
+</a><p></p></td><td><a name="4606">
+ID
+</a><p></p></td><td><a name="4608">
+Length
+</a><p></p></td><td><a name="4610">
+Magic Number
+</a><p></p></td><td><a name="5832">
+Data
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4616">
+Configure-Ack
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4620">
+02
+</a><p></p></td><td><a name="4622">
+ID
+</a><p></p></td><td><a name="4624">
+Length
+</a><p></p></td><td><a name="4626">
+Configuration Options
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4632">
+Configure-Reject
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4636">
+04
+</a><p></p></td><td><a name="4638">
+ID
+</a><p></p></td><td><a name="4640">
+Length
+</a><p></p></td><td><a name="4642">
+Configuration Options
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4648">
+Terminate-Ack
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4652">
+06
+</a><p></p></td><td><a name="4654">
+ID
+</a><p></p></td><td><a name="4656">
+Length
+</a><p></p></td><td><a name="4658">
+Data
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4666">
+Protocol-Reject
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4670">
+08
+</a><p></p></td><td><a name="4672">
+ID
+</a><p></p></td><td><a name="4674">
+Length
+</a><p></p></td><td><a name="4676">
+Rejected-Protocol
+</a><p></p></td><td><a name="4686">
+Rejected-Info
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4687">
+Echo-Reply
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4691">
+0a
+</a><p></p></td><td><a name="4693">
+ID
+</a><p></p></td><td><a name="4695">
+Length
+</a><p></p></td><td><a name="4697">
+Magic-Number
+</a><p></p></td><td><a name="4708">
+Data
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p></p><h3><a name="4909">
+ LCP Configuration Options
+</a></h3><a name="4911">
+Maximum Receive Unit
+</a><p><table border="3">
+
+<tbody><tr><td><a name="5111">
+01
+</a><p></p></td><td><a name="5113">
+04
+</a><p></p></td><td><a name="5115">
+MRU
+</a><p></p></td><td><a name="5771">
+Default is 1520 decimal
+</a><p></p></td></tr>
+
+</tbody></table>
+
+ (MRU)
+</p><p><a name="5080">
+Authentication-Protocol
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="5090">
+03
+</a><p></p></td><td><a name="5092">
+Length
+</a><p></p></td><td><a name="5094">
+Authentication
+</a><p></p></td><td><a name="5169">
+Protocol
+</a><p></p></td><td><a name="5096">
+Data
+</a><p></p></td><td><a name="5155">
+Default is no authentication
+</a><p></p></td></tr>
+<tr><td><a name="5141">
+
+&nbsp;</a><p></p></td><td><a name="5143">
+04
+</a><p></p></td><td><a name="5145">
+c0 
+</a><p></p></td><td><a name="5171">
+23
+</a><p></p></td><td><a name="5147">
+
+&nbsp;</a><p></p></td><td><a name="5157">
+PAP
+</a><p></p></td></tr>
+<tr><td><a name="5133">
+
+&nbsp;</a><p></p></td><td><a name="5135">
+05
+</a><p></p></td><td><a name="5137">
+c2 
+</a><p></p></td><td><a name="5173">
+23
+</a><p></p></td><td><a name="5139">
+05
+</a><p></p></td><td><a name="5159">
+CHAP using MD5
+</a><p></p></td></tr>
+<tr><td><a name="5125">
+
+&nbsp;</a><p></p></td><td><a name="5127">
+05
+</a><p></p></td><td><a name="5129">
+c2
+</a><p></p></td><td><a name="5175">
+23
+</a><p></p></td><td><a name="5131">
+80
+</a><p></p></td><td><a name="5161">
+MS-CHAP
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="5208">
+Magic-Number
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="5212">
+05
+</a><p></p></td><td><a name="5214">
+06
+</a><p></p></td><td><a name="5216">
+Magic-Number
+</a><p></p></td><td><a name="5227">
+Default is no magic number
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="5228">
+Address-and-Control-Field-Compression
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="5232">
+08
+</a><p></p></td><td><a name="5234">
+02
+</a><p></p></td><td><a name="5236">
+Default is no compression
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="5247">
+Async-Control-Character-Map
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="5253">
+02
+</a><p></p></td><td><a name="5255">
+06
+</a><p></p></td><td><a name="5257">
+Async-Map
+</a><p></p></td><td><a name="5268">
+Default is FFFFFFFF
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="5269">
+Quality-Protocol
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="5775">
+04
+</a><p></p></td><td><a name="5777">
+Length
+</a><p></p></td><td><a name="5779">
+Quality
+</a><p></p></td><td><a name="5781">
+Protocol
+</a><p></p></td><td><a name="5783">
+Data
+</a><p></p></td><td><a name="5839">
+Default is no LQM
+</a><p></p></td></tr>
+<tr><td><a name="5785">
+
+&nbsp;</a><p></p></td><td><a name="5787">
+08
+</a><p></p></td><td><a name="5789">
+c0
+</a><p></p></td><td><a name="5791">
+25
+</a><p></p></td><td><a name="5793">
+Reporting-Period
+</a><p></p></td><td><a name="5841">
+
+&nbsp;</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="5079">
+Protocol-Field-Compression
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="5320">
+07
+</a><p></p></td><td><a name="5322">
+02
+</a><p></p></td><td><a name="5324">
+Default is no compression
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p></p><h2><a name="5332">
+IPCP Configuration Options
+
+</a></h2><a name="5337">
+The IP Control Protocol (IPCP) is similar to LCP except that only codes 1 through 7 are used.
+</a><p><a name="5342">
+IP-Addresses
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="5396">
+01
+</a><p></p></td><td><a name="5398">
+0a
+</a><p></p></td><td colspan="2" rowspan="1"><a name="5400">
+Source-IP-Address
+</a><p></p></td><td><a name="5402">
+Deprecated
+</a><p></p></td></tr>
+<tr><td colspan="3" rowspan="1"><a name="5404">
+Destination-IP-Address
+</a><p></p></td><td><a name="5414">
+
+&nbsp;</a><p></p></td><td><a name="5410">
+
+&nbsp;</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="5416">
+IP-Address
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="5420">
+03
+</a><p></p></td><td><a name="5422">
+06
+</a><p></p></td><td><a name="5424">
+IP-Address
+</a><p></p></td><td><a name="5426">
+No default
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="5438">
+IP-Compression-Protocol
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="5442">
+02
+</a><p></p></td><td><a name="5444">
+Length
+</a><p></p></td><td><a name="5446">
+Compression
+</a><p></p></td><td><a name="5467">
+Protocol
+</a><p></p></td><td><a name="5448">
+Data
+</a><p></p></td><td><a name="5465">
+Default is no compression
+</a><p></p></td></tr>
+<tr><td><a name="5469">
+
+&nbsp;</a><p></p></td><td><a name="5471">
+06
+</a><p></p></td><td><a name="5473">
+00
+</a><p></p></td><td><a name="5475">
+2d
+</a><p></p></td><td><a name="5477">
+Max-Slot-ID 
+</a><p></p></td><td><a name="5479">
+Comp-Slot-ID
+</a><p><a name="5495">
+(Van Jacobson Compressed TCP/IP)
+</a></p><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p></p><h2><a name="5496">
+PAP <b style="color:black;background-color:#a0ffff">Packet</b> Formats
+
+</a></h2><a name="5501">
+Authenticate-Request
+</a><p><table border="3">
+
+<tbody><tr><td><a name="5505">
+01
+</a><p></p></td><td><a name="5507">
+ID
+</a><p></p></td><td><a name="5509">
+Length
+</a><p></p></td><td><a name="5511">
+IDLen
+</a><p></p></td><td><a name="5529">
+Peer-ID
+</a><p></p></td></tr>
+<tr><td><a name="5531">
+PwLen
+</a><p></p></td><td colspan="2" rowspan="1"><a name="5533">
+Password
+</a><p></p></td><td><a name="5537">
+
+&nbsp;</a><p></p></td><td><a name="5539">
+
+&nbsp;</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="5543">
+Authenticate-Nak
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="5547">
+03
+</a><p></p></td><td><a name="5549">
+ID
+</a><p></p></td><td><a name="5551">
+Length
+</a><p></p></td><td><a name="5553">
+MsgLen
+</a><p></p></td><td><a name="5568">
+Message
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="5605">
+Authenticate -Ack
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="5596">
+02
+</a><p></p></td><td><a name="5598">
+ID
+</a><p></p></td><td><a name="5600">
+Length
+</a><p></p></td><td><a name="5602">
+MsgLen
+</a><p></p></td><td><a name="5604">
+Message
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p></p><h2><a name="5610">
+CHAP <b style="color:black;background-color:#a0ffff">Packet</b> Formats
+
+</a></h2><a name="5624">
+Challenge
+</a><p><table border="3">
+
+<tbody><tr><td><a name="5615">
+01
+</a><p></p></td><td><a name="5617">
+ID
+</a><p></p></td><td><a name="5619">
+Length
+</a><p></p></td><td><a name="5621">
+ValSize
+</a><p></p></td><td><a name="5623">
+Value
+</a><p></p></td></tr>
+<tr><td colspan="3" rowspan="1"><a name="5635">
+Name
+</a><p></p></td><td><a name="5641">
+
+&nbsp;</a><p></p></td><td><a name="5643">
+
+&nbsp;</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="5656">
+Success
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="5660">
+03
+</a><p></p></td><td><a name="5662">
+ID
+</a><p></p></td><td><a name="5664">
+Length
+</a><p></p></td><td><a name="5666">
+Message
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="5752">
+Response
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="5733">
+02
+</a><p></p></td><td><a name="5735">
+ID
+</a><p></p></td><td><a name="5737">
+Length
+</a><p></p></td><td><a name="5739">
+ValSize
+</a><p></p></td><td><a name="5741">
+Value
+</a><p></p></td></tr>
+<tr><td colspan="3" rowspan="1"><a name="5743">
+Name
+</a><p></p></td><td><a name="5749">
+
+&nbsp;</a><p></p></td><td><a name="5751">
+
+&nbsp;</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="5762">
+Failure
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="5755">
+04
+</a><p></p></td><td><a name="5757">
+ID
+</a><p></p></td><td><a name="5759">
+Length
+</a><p></p></td><td><a name="5761">
+Message
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p></p><h2><a name="5794">
+Formats for IPXCP Packets
+
+</a></h2><a name="5795">
+This section illustrates the <b style="color:black;background-color:#a0ffff">packet</b> formats and configuration options of IPX Control Protocol (IPXCP) that are found in the IPX NCP layer during the <b style="color:black;background-color:#ffff66">PPP</b> negotiation process. More information on this subject can be found in RFC 1552, The <b style="color:black;background-color:#ffff66">PPP</b> Internetwork <b style="color:black;background-color:#a0ffff">Packet</b> Exchange Control Protocol (IPXCP).
+</a><p></p><h3><a name="5796">
+ IPXCP <b style="color:black;background-color:#a0ffff">Packet</b> Formats
+</a></h3><a name="4125">
+Configure-Request
+</a><p><table border="3">
+
+<tbody><tr><td><a name="4118">
+01
+</a><p></p></td><td><a name="4120">
+ID
+</a><p></p></td><td><a name="4122">
+Length
+</a><p></p></td><td><a name="4124">
+Configuration Options
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4135">
+Configure-Ack
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4128">
+02
+</a><p></p></td><td><a name="4130">
+ID
+</a><p></p></td><td><a name="4132">
+Length
+</a><p></p></td><td><a name="4134">
+Configuration Options
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4145">
+Configure-Nak
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4138">
+01
+</a><p></p></td><td><a name="4140">
+ID
+</a><p></p></td><td><a name="4142">
+Length
+</a><p></p></td><td><a name="4144">
+Configuration Options
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4155">
+Configure-Reject
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4148">
+04
+</a><p></p></td><td><a name="4150">
+ID
+</a><p></p></td><td><a name="4152">
+Length
+</a><p></p></td><td><a name="4154">
+Configuration Options
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4165">
+Terminate-Request
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4158">
+05
+</a><p></p></td><td><a name="4160">
+ID
+</a><p></p></td><td><a name="4162">
+Length
+</a><p></p></td><td><a name="4164">
+Data
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4175">
+Terminate-Ack
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4168">
+05
+</a><p></p></td><td><a name="4170">
+ID
+</a><p></p></td><td><a name="4172">
+Length
+</a><p></p></td><td><a name="4174">
+Data
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4185">
+Code-Reject
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4178">
+06
+</a><p></p></td><td><a name="4180">
+ID
+</a><p></p></td><td><a name="4182">
+Length
+</a><p></p></td><td><a name="4184">
+Data
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p></p><h3><a name="4187">
+ IPXCP Configuration Options
+</a></h3><a name="4195">
+IPX-Network-Number
+</a><p><table border="3">
+
+<tbody><tr><td><a name="4190">
+01
+</a><p></p></td><td><a name="4192">
+06
+</a><p></p></td><td><a name="4194">
+IPX-Network-Number
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4203">
+IPX-Node-Number
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4198">
+02
+</a><p></p></td><td><a name="4200">
+08
+</a><p></p></td><td><a name="4202">
+IPX-Node-Number
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4211">
+IPX-Compression-Protocol
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4206">
+03
+</a><p></p></td><td><a name="4208">
+Length
+</a><p></p></td><td><a name="4210">
+IPX-Compression-Protocol (2 bytes)
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4212">
+Data:
+</a></p><p></p><ul><li><a name="4213">
+00 02   Telebit Compressed IPX
+</a><p></p></li><li><a name="4214">
+02 35   Shiva Compressed NCP/IPX
+</a><p><a name="4222">
+IPX-Routing-Protocol
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4217">
+04
+</a><p></p></td><td><a name="4219">
+Length
+</a><p></p></td><td><a name="4221">
+IPX-Routing-Protocol (2 bytes)
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4223">
+Data:
+</a></p><p></p></li><li><a name="4224">
+0 = No routing protocols
+</a><p></p></li><li><a name="4225">
+1 = RESERVED
+</a><p></p></li><li><a name="4226">
+2 = Novell RIP/SAP required
+</a><p></p></li><li><a name="4227">
+3 = Novell Netware Link Services Protocol (NLSP) required
+</a><p><a name="4235">
+IPX-Router-Name
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4230">
+05
+</a><p></p></td><td><a name="4232">
+Length
+</a><p></p></td><td><a name="4234">
+Name ...
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4241">
+IPX-Configuration-Complete
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4238">
+06
+</a><p></p></td><td><a name="4240">
+02
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p></li></ul><h2><a name="2598">
+Formats for CCP Packets
+
+</a></h2><a name="4297">
+The Compression Control Protocol (CCP) is similar to LCP with two additional codes.
+</a><p></p><h3><a name="6022">
+ CCP <b style="color:black;background-color:#a0ffff">Packet</b> Formats
+</a></h3><a name="4310">
+Reset-Request
+</a><p><table border="3">
+
+<tbody><tr><td><a name="4303">
+14
+</a><p></p></td><td><a name="4305">
+ID
+</a><p></p></td><td><a name="4307">
+Length
+</a><p></p></td><td><a name="4309">
+Configuration Options...
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p><a name="4330">
+Reset-Ack
+</a></p><p><table border="3">
+
+<tbody><tr><td><a name="4323">
+15
+</a><p></p></td><td><a name="4325">
+ID
+</a><p></p></td><td><a name="4327">
+Length
+</a><p></p></td><td><a name="4329">
+Configuration Options...
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+</p><p></p><h3><a name="4354">
+ CCP Configuration Options
+</a></h3><p><table border="3">
+
+<tbody><tr><td><a name="4371">
+Type
+</a><p></p></td><td><a name="4373">
+Length
+</a><p></p></td><td><a name="4375">
+Values
+</a><p></p></td></tr>
+
+</tbody></table>
+
+
+<a name="4343">
+Compression types:
+</a></p><p></p><ul><li><a name="4376">
+0x0	Organization Unique Identifier (OUI)
+</a><p></p></li><li><a name="4377">
+0x1	Predictor type 1
+</a><p></p></li><li><a name="4378">
+0x2	Predictor type 2
+</a><p></p></li><li><a name="4379">
+0x3	Puddle Jumper
+</a><p></p></li><li><a name="4380">
+0x10	Hewlett-Packard <b style="color:black;background-color:#a0ffff">packet</b>-by-<b style="color:black;background-color:#a0ffff">packet</b> compression (PPC)
+</a><p></p></li><li><a name="4381">
+0x11	Stac Electronics LZS
+</a><p></p></li><li><a name="4382">
+0x12	Microsoft PPC
+</a><p></p></li><li><a name="4383">
+0x13	Gandalf FZA
+</a><p></p></li><li><a name="4384">
+0x14	V.42bis compression
+</a><p></p></li><li><a name="4387">
+0x15	BSD LZW compression
+</a>
+</html>

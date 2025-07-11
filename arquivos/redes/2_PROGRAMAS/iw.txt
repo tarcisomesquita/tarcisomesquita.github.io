@@ -1,0 +1,28 @@
+sudo iw dev wlp6s0 info
+iw dev wlp6s0 station dump
+iw dev wlp6s0 link
+
+
+iw - show / manipulate wireless devices and their configuration
+
+iw OBJECT COMMAND
+OBJECT := { dev | phy | reg }
+
+
+OBJECT
+    dev <interface name>
+   - network interface.
+
+    phy <phy name>
+   - wireless hardware device (by name).
+
+    phy#<phy index>
+   - wireless hardware device (by index).
+
+    reg    - regulatory agent.
+
+COMMAND
+iw help will print all supported commands, while iw help command will print the help for all matching commands.
+
+http://wireless.kernel.org/en/users/Documentation/iw
+

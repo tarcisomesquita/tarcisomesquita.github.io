@@ -1,0 +1,40 @@
+IMAP (porta 143) no host local ao IMAP com SSL (porta 993) no imap.exemplo.com.
+
+# ncat -l localhost 143 --sh-exec "ncat --ssl imap.exemplo.com 993"
+
+
+$ ncat -C mail.example.com 25
+220 mail.example.com ESMTP
+HELO client.example.com
+250 mail.example.com Hello client.example.com
+MAIL FROM:a@example.com
+250 OK
+RCPT TO:b@example.com
+250 Accepted
+DATA
+354 Enter message, ending with "." on a line by itself
+From: a@example.com
+To: b@example.com
+Subject: Greetings from Ncat
+
+Hello. This short message is being sent by Ncat.
+.
+250 OK
+QUIT
+221 mail.example.com closing connection
+
+nc -lk -p 8080 --sh-exec "echo -e 'HTTP/1.1 200 OK\r\n'; cat index.html"
+
+send a log file from host1 to host3 by way of host2:
+host3$ ncat -l > log.txt
+host2$ ncat -l | ncat host3
+host1$ ncat --send-only host2 < log.txt
+
+connects the inputs and outputs
+host3$ ncat -l > log.txt
+host2$ ncat -l --sh-exec "ncat host3"
+host1$ ncat --send-only host2 < log.txt
+
+This example forwards the local port 8080 to the web server on example.org:
+ncat -l localhost 8080 --sh-exec "ncat example.org 80"
+

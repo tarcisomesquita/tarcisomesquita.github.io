@@ -1,0 +1,32 @@
+possible states follow:
+    Initial
+    Starting
+    Closed
+    Stopped
+    Closing
+    Stopping
+    Request-Sent
+    Ack-Received
+    Ack-Sent
+    Opened
+
+Packet Type
+Configure-Request
+Configure-Ack
+Configure-Nak
+Configure-Reject
+Terminate-Request
+Terminate-Ack
+Code-Reject
+Protocol-Reject
+Echo-Request
+Echo-Reply
+Discard-Request1
+
+RFC1548 http://www.cis.ohio-state.edu/htbin/rfc/rfc1548.html
+RFC1661 http://www.cis.ohio-state.edu/htbin/rfc/rfc1661.html
+RFC1662 http://www.cis.ohio-state.edu/htbin/rfc/rfc1662.html
+
+http://tools.ietf.org/html/rfc2684
+
+

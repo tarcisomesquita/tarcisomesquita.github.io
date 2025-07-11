@@ -1,0 +1,99 @@
+The meaning of the new configure options of binutils:
+
+CC=$LFS_TGT-gcc AR=$LFS_TGT-ar RANLIB=$LFS_TGT-ranlib
+    Because this is really a native build of Binutils, setting these variables ensures that the build system uses the cross-compiler and associated tools instead of the ones on the host system.
+
+--with-lib-path=/tools/lib
+    This tells the configure script to specify the library search path during the compilation of Binutils, resulting in /tools/lib being passed to the linker. This prevents the linker from searching through library directories on the host.
+
+--with-sysroot
+    The sysroot feature enables the linker to find shared objects which are required by other shared objects explicitly included on the linker's command line. Without this, some packages may not build successfully on some hosts.
+
+
+
+meaning of the configure options of gcc
+
+--with-newlib
+    Since a working C library is not yet available, this ensures that the inhibit_libc constant is defined when building libgcc. This prevents the compiling of any code that requires libc support.
+
+--without-headers
+    When creating a complete cross-compiler, GCC requires standard headers compatible with the target system. For our purposes these headers will not be needed. This switch prevents GCC from looking for them.
+
+--with-local-prefix=/tools
+    The local prefix is the location in the system that GCC will search for locally installed include files. The default is /usr/local. Setting this to /tools helps keep the host location of /usr/local out of this GCC's search path.
+
+--with-native-system-header-dir=/tools/include
+    By default GCC searches /usr/include for system headers. In conjunction with the sysroot switch, this would translate normally to $LFS/usr/include. However the headers that will be installed in the next two sections will go to $LFS/tools/include. This switch ensures that gcc will find them correctly. In the second pass of GCC, this same switch will ensure that no headers from the host system are found.
+
+--disable-shared
+    This switch forces GCC to link its internal libraries statically. We do this to avoid possible issues with the host system.
+
+--disable-decimal-float, --disable-threads, --disable-libatomic, --disable-libgomp, --disable-libitm, --disable-libquadmath, --disable-libsanitizer, --disable-libssp, --disable-libvtv, --disable-libcilkrts, --disable-libstdc++-v3
+    These switches disable support for the decimal floating point extension, threading, libatomic, libgomp, libitm, libquadmath, libsanitizer, libssp, libvtv, libcilkrts and the C++ standard library respectively. These features will fail to compile when building a cross-compiler and are not necessary for the task of cross-compiling the temporary libc.
+
+--disable-multilib
+    On x86_64, LFS does not yet support a multilib configuration. This switch is harmless for x86.
+
+--enable-languages=c,c++
+    This option ensures that only the C and C++ compilers are built. These are the only languages needed now.
+
+ --disable-libstdcxx-pch
+    Do not build the pre-compiled header (PCH) for libstdc++. It takes up a lot of space, and we have no use for it.
+
+--disable-bootstrap
+    For native builds of GCC, the default is to do a "bootstrap" build. This does not just compile GCC, but compiles it several times. It uses the programs compiled in a first round to compile itself a second time, and then again a third time. The second and third iterations are compared to make sure it can reproduce itself flawlessly. This also implies that it was compiled correctly. However, the LFS build method should provide a solid compiler without the need to bootstrap each time.
+
+
+
+meaning of the configure options of glibc:
+
+--host=$LFS_TGT, --build=$(../glibc-2.20/scripts/config.guess)
+    The combined effect of these switches is that Glibc's build system configures itself to cross-compile, using the cross-linker and cross-compiler in /tools.
+
+--disable-profile
+    This builds the libraries without profiling information. Omit this option if profiling on the temporary tools is necessary.
+
+--enable-kernel=2.6.32
+    This tells Glibc to compile the library with support for 2.6.32 and later Linux kernels. Workarounds for older kernels are not enabled.
+
+--with-headers=/tools/include
+    This tells Glibc to compile itself against the headers recently installed to the tools directory, so that it knows exactly what features the kernel has and can optimize itself accordingly.
+
+libc_cv_forced_unwind=yes
+    The linker installed during Section 5.4, “Binutils-2.24 - Pass 1” was cross-compiled and as such cannot be used until Glibc has been installed. This means that the configure test for force-unwind support will fail, as it relies on a working linker. The libc_cv_forced_unwind=yes variable is passed in order to inform configure that force-unwind support is available without it having to run the test.
+
+libc_cv_c_cleanup=yes
+    Simlarly, we pass libc_cv_c_cleanup=yes through to the configure script so that the test is skipped and C cleanup handling support is configured.
+
+libc_cv_ctors_header=yes
+    Simlarly, we pass libc_cv_ctors_header=yes through to the configure script so that the test is skipped and gcc constructor support is configured.
+
+
+meaning of the configure options of libstdc:
+
+--host=...
+    Indicates to use the cross compiler we have just built instead of the one in /usr/bin.
+
+--disable-libstdcxx-threads
+    Since we have not built the thread C library, the C++ one cannot be built as well.
+
+--disable-libstdcxx-pch
+    This switch prevents the installation of precompiled include files, which are not needed at this stage.
+
+--with-gxx-include-dir=/tools/$LFS_TGT/include/c++/4.9.1
+    This is the location where the standard include files are searched by the C++ compiler. In a normal build, this information is automatically passed to the Libstdc++ configure options from the toplevel directory. In our case, this information must be explicitly given.
+
+
+
+The meaning of the configure option of Util-linux:
+--without-python
+    This switch disables using Python if it is installed on the host system. It avoids trying to build unneeded bindings.
+
+--disable-makeinstall-chown
+    This switch disables using the chown command during installation. This is not needed when installing into the /tools directory and avoids the necessity of installing as root.
+
+--without-systemdsystemunitdir
+    On systems that use systemd, the package tries to install a systemd specific file to a non-existent directory in /tools. This switch disables the unnecessary action.
+
+PKG_CONFIG=""
+    Setting this envronment variable prevents adding unneeded features that may be available on the host. Note that the location shown for setting this environment variable is different from other LFS sections where variables are set preceding the command. This location is shown to demonstrate an alternative way of setting an environment variable when using configure.

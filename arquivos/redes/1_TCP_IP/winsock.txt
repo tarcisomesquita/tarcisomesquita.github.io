@@ -1,0 +1,6347 @@
+// Microsoft Development Environment 2003 - Version 7.1.3088
+
+// Copyright (r) 1987-2002 Microsoft Corporation. All Right Reserved
+
+// Microsoft .NET Framework 1.1 - Version 1.1.4322
+
+// Copyright (r) 1998-2002 Microsoft Corporation. All Right Reserved
+
+//
+
+// Run on Windows XP Pro machine, version 2002, SP 2
+
+//
+
+// <windows.h> already included...
+
+// WINVER = 0x0501 for Xp already defined in windows.h
+
+ 
+
+#include <stdio.h>
+
+#include <winsock2.h>
+
+ 
+
+int main()
+
+{
+
+WORD wVersionRequested;
+
+WSADATA wsaData;
+
+int wsaerr;
+
+ 
+
+// Using MAKEWORD macro, Winsock version request 2.2
+
+wVersionRequested = MAKEWORD(2, 2);
+
+ 
+
+wsaerr = WSAStartup(wVersionRequested, &wsaData);
+
+if (wsaerr != 0)
+
+{
+
+    /* Tell the user that we could not find a usable */
+
+    /* WinSock DLL.*/
+
+    printf("The Winsock dll not found!\n");
+
+    return 0;
+
+}
+
+else
+
+{
+
+    printf("The Winsock dll found!\n");
+
+    printf("The status: %s.\n", wsaData.szSystemStatus);
+
+}
+
+ 
+
+/* Confirm that the WinSock DLL supports 2.2.*/
+
+/* Note that if the DLL supports versions greater    */
+
+/* than 2.2 in addition to 2.2, it will still return */
+
+/* 2.2 in wVersion since that is the version we      */
+
+/* requested.                                        */
+
+if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2 )
+
+{
+
+    /* Tell the user that we could not find a usable */
+
+    /* WinSock DLL.*/
+
+    printf("The dll do not support the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion),HIBYTE(wsaData.wVersion));
+
+    WSACleanup();
+
+    return 0;
+
+}
+
+else
+
+{
+
+    printf("The dll supports the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion),HIBYTE(wsaData.wVersion));
+
+    printf("The highest version this dll can support: %u.%u\n", LOBYTE(wsaData.wHighVersion), HIBYTE(wsaData.wHighVersion));
+
+}
+
+ 
+
+/* The next task... */
+
+ 
+
+return 0;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+// Microsoft Development Environment 2003 - Version 7.1.3088
+
+// Copyright (r) 1987-2002 Microsoft Corporation. All Right Reserved
+
+// Microsoft .NET Framework 1.1 - Version 1.1.4322
+
+// Copyright (r) 1998-2002 Microsoft Corporation. All Right Reserved
+
+//
+
+// Run on Windows XP Pro machine, version 2002, SP 2
+
+//
+
+// <windows.h> already included
+
+// WINVER = 0x0501 for Xp already defined in windows.h
+
+ 
+
+#include <stdio.h>
+
+#include <winsock2.h>
+
+ 
+
+int main()
+
+{
+
+WORD wVersionRequested;
+
+WSADATA wsaData;
+
+int wsaerr;
+
+ 
+
+// Using MAKEWORD macro, Winsock version request 2.2
+
+wVersionRequested = MAKEWORD(2, 2);
+
+ 
+
+wsaerr = WSAStartup(wVersionRequested, &wsaData);
+
+if (wsaerr != 0)
+
+{
+
+    /* Tell the user that we could not find a usable WinSock DLL.*/
+
+    printf("The Winsock dll not found!\n");
+
+    return 0;
+
+}
+
+ 
+
+else
+
+{
+
+       printf("The Winsock dll found!\n");
+
+       printf("The status: %s.\n", wsaData.szSystemStatus);
+
+}
+
+ 
+
+/* Confirm that the WinSock DLL supports 2.2.        */
+
+/* Note that if the DLL supports versions greater    */
+
+/* than 2.2 in addition to 2.2, it will still return */
+
+/* 2.2 in wVersion since that is the version we      */
+
+/* requested.                                        */
+
+if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2)
+
+{
+
+    /* Tell the user that we could not find a usable WinSock DLL.*/
+
+    printf("The dll do not support the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion),HIBYTE(wsaData.wVersion));
+
+    WSACleanup();
+
+    return 0;
+
+}
+
+ 
+
+else
+
+{
+
+       printf("The dll supports the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion),HIBYTE(wsaData.wVersion));
+
+       printf("The highest version this dll can support: %u.%u\n", LOBYTE(wsaData.wHighVersion), HIBYTE(wsaData.wHighVersion));
+
+}
+
+ 
+
+//////////Create a socket////////////////////////
+
+//Create a SOCKET object called m_socket.
+
+SOCKET m_socket;
+
+ 
+
+// Call the socket function and return its value to the m_socket variable.
+
+// For this application, use the Internet address family, streaming sockets, and
+
+// the TCP/IP protocol.
+
+// using AF_INET family, TCP socket type and protocol of the AF_INET - IPv4
+
+m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+ 
+
+// Check for errors to ensure that the socket is a valid socket.
+
+if (m_socket == INVALID_SOCKET)
+
+{
+
+    printf("Error at socket(): %ld\n", WSAGetLastError());
+
+    WSACleanup();
+
+    return 0;
+
+}
+
+else
+
+{
+
+       printf("socket() is OK!\n");
+
+}
+
+ 
+
+return 0;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+Using socket() and bind() Program Example
+
+    // Microsoft Development Environment 2003 - Version 7.1.3088
+
+    // Copyright (r) 1987-2002 Microsoft Corporation. All Right Reserved
+
+    // Microsoft .NET Framework 1.1 - Version 1.1.4322
+
+    // Copyright (r) 1998-2002 Microsoft Corporation. All Right Reserved
+
+    //
+
+    // Run on Windows XP Pro machine, version 2002, SP 2
+
+    //
+
+    // <windows.h> already included
+
+    // WINVER = 0x0501 for Xp already defined in windows.h
+
+     
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    int main()
+
+    {
+
+    WORD wVersionRequested;
+
+    WSADATA wsaData;
+
+    int wsaerr;
+
+     
+
+    // Using MAKEWORD macro, Winsock version request 2.2
+
+    wVersionRequested = MAKEWORD(2, 2);
+
+     
+
+    wsaerr = WSAStartup(wVersionRequested, &wsaData);
+
+    if (wsaerr != 0)
+
+    {
+
+        /* Tell the user that we could not find a usable */
+
+        /* WinSock DLL.*/
+
+        printf("The Winsock dll not found!\n");
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+           printf("The Winsock dll found!\n");
+
+           printf("The status: %s.\n", wsaData.szSystemStatus);
+
+    }
+
+     
+
+    /* Confirm that the WinSock DLL supports 2.2.*/
+
+    /* Note that if the DLL supports versions greater    */
+
+    /* than 2.2 in addition to 2.2, it will still return */
+
+    /* 2.2 in wVersion since that is the version we      */
+
+    /* requested.                                        */
+
+    if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2)
+
+    {
+
+        /* Tell the user that we could not find a usable */
+
+        /* WinSock DLL.*/
+
+        printf("The dll do not support the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion), HIBYTE(wsaData.wVersion));
+
+        WSACleanup();
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+        printf("The dll supports the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion), HIBYTE(wsaData.wVersion));
+
+        printf("The highest version this dll can support: %u.%u\n", LOBYTE(wsaData.wHighVersion), HIBYTE(wsaData.wHighVersion));
+
+    }
+
+     
+
+    //////////Create a socket////////////////////////
+
+    //Create a SOCKET object called m_socket.
+
+    SOCKET m_socket;
+
+     
+
+    // Call the socket function and return its value to the m_socket variable.
+
+    // For this application, use the Internet address family, streaming sockets, and
+
+    // the TCP/IP protocol.
+
+    // using AF_INET family, TCP socket type and protocol of the AF_INET - IPv4
+
+    m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+     
+
+    // Check for errors to ensure that the socket is a valid socket.
+
+    if (m_socket == INVALID_SOCKET)
+
+    {
+
+        printf("Error at socket(): %ld.\n", WSAGetLastError());
+
+        WSACleanup();
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+        printf("socket() is OK!\n");
+
+    }
+
+     
+
+    ////////////////bind()//////////////////////////////
+
+    // Create a sockaddr_in object and set its values.
+
+    sockaddr_in service;
+
+     
+
+    // AF_INET is the Internet address family.
+
+    service.sin_family = AF_INET;
+
+    // "127.0.0.1" is the local IP address to which the socket will be bound.
+
+    service.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+    // 55555 is the port number to which the socket will be bound.
+
+    service.sin_port = htons(55555);
+
+     
+
+    // Call the bind function, passing the created socket and the sockaddr_in structure as parameters.
+
+    // Check for general errors.
+
+     
+
+    if (bind(m_socket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR)
+
+    {
+
+        printf("bind() failed: %ld.\n", WSAGetLastError());
+
+        closesocket(m_socket);
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+       printf("bind() is OK!\n");
+
+    }
+
+     
+
+    return 0;
+
+    }
+
+
+
+
+
+
+Another example demonstrates the use of the bind() function.
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    int main()
+
+    {
+
+      // Initialize Winsock
+
+      WSADATA wsaData;
+
+      int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+      if (iResult != NO_ERROR)
+
+        printf("Error at WSAStartup().\n");
+
+      else
+
+        printf("Winsock dll is available.\n");
+
+     
+
+      // Create a SOCKET for listening for
+
+      // incoming connection requests
+
+      SOCKET ListenSocket;
+
+      ListenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+      if (ListenSocket == INVALID_SOCKET)
+
+      {
+
+        printf("Error at socket(): %ld.\n", WSAGetLastError());
+
+        WSACleanup();
+
+        return 0;
+
+      }
+
+      else
+
+      {
+
+        printf("socket() is OK!\n");
+
+      }
+
+     
+
+      // The sockaddr_in structure specifies the address family,
+
+      // IP address, and port for the socket that is being bound.
+
+      sockaddr_in service;
+
+      // Address family - internet IPv4
+
+      service.sin_family = AF_INET;
+
+      // IP address
+
+      service.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+      // Port number
+
+      service.sin_port = htons(55555);
+
+     
+
+      // Bind the socket.
+
+      if (bind( ListenSocket, (SOCKADDR*) &service, sizeof(service)) == SOCKET_ERROR)
+
+      {
+
+        printf("bind() failed.\n");
+
+        closesocket(ListenSocket);
+
+        return 0;
+
+      }
+
+      else
+
+      {
+
+        printf("bind() is OK!\n");
+
+      }
+
+     
+
+      WSACleanup();
+
+      return 0;
+
+    }
+
+     
+
+
+Program Example Using socket(), bind() and listen()
+
+    // Microsoft Development Environment 2003 - Version 7.1.3088
+
+    // Copyright (r) 1987-2002 Microsoft Corporation. All Right Reserved
+
+    // Microsoft .NET Framework 1.1 - Version 1.1.4322
+
+    // Copyright (r) 1998-2002 Microsoft Corporation. All Right Reserved
+
+    //
+
+    // Run on Windows XP Pro machine, version 2002, SP 2
+
+    //
+
+    // <windows.h> already included
+
+    // WINVER = 0x0501 for Xp already defined in windows.h
+
+     
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    int main()
+
+    {
+
+    WORD wVersionRequested;
+
+    WSADATA wsaData;
+
+    int wsaerr;
+
+     
+
+    // Using MAKEWORD macro, Winsock version request 2.2
+
+    wVersionRequested = MAKEWORD(2, 2);
+
+     
+
+    wsaerr = WSAStartup(wVersionRequested, &wsaData);
+
+    if (wsaerr != 0)
+
+    {
+
+        /* Tell the user that we could not find a usable */
+
+        /* WinSock DLL.*/
+
+        printf("The Winsock dll not found!\n");
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+           printf("The Winsock dll found!\n");
+
+           printf("The status: %s.\n", wsaData.szSystemStatus);
+
+    }
+
+     
+
+    /* Confirm that the WinSock DLL supports 2.2.*/
+
+    /* Note that if the DLL supports versions greater    */
+
+    /* than 2.2 in addition to 2.2, it will still return */
+
+    /* 2.2 in wVersion since that is the version we      */
+
+    /* requested.                                        */
+
+    if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2 )
+
+    {
+
+        /* Tell the user that we could not find a usable */
+
+        /* WinSock DLL.*/
+
+        printf("The dll do not support the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion), HIBYTE(wsaData.wVersion));
+
+        WSACleanup();
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+         printf("The dll supports the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion), HIBYTE(wsaData.wVersion));
+
+         printf("The highest version this dll can support: %u.%u\n", LOBYTE(wsaData.wHighVersion), HIBYTE(wsaData.wHighVersion));
+
+    }
+
+     
+
+    //////////Create a socket////////////////////////
+
+    //Create a SOCKET object called m_socket.
+
+    SOCKET m_socket;
+
+     
+
+    // Call the socket function and return its value to the m_socket variable.
+
+    // For this application, use the Internet address family, streaming sockets, and the TCP/IP protocol.
+
+    // using AF_INET family, TCP socket type and protocol of the AF_INET - IPv4
+
+    m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+     
+
+    // Check for errors to ensure that the socket is a valid socket.
+
+    if (m_socket == INVALID_SOCKET)
+
+    {
+
+        printf("Error at socket(): %ld\n", WSAGetLastError());
+
+        WSACleanup();
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+        printf("socket() is OK!\n");
+
+    }
+
+     
+
+    ////////////////bind()//////////////////////////////
+
+    // Create a sockaddr_in object and set its values.
+
+    sockaddr_in service;
+
+     
+
+    // AF_INET is the Internet address family.
+
+    service.sin_family = AF_INET;
+
+    // "127.0.0.1" is the local IP address to which the socket will be bound.
+
+    service.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+    // 55555 is the port number to which the socket will be bound.
+
+    service.sin_port = htons(55555);
+
+     
+
+    // Call the bind function, passing the created socket and the sockaddr_in structure as parameters.
+
+    // Check for general errors.
+
+    if (bind(m_socket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR)
+
+    {
+
+        printf("bind() failed: %ld.\n", WSAGetLastError());
+
+        closesocket(m_socket);
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+        printf("bind() is OK!\n");
+
+    }
+
+     
+
+    // Call the listen function, passing the created socket and the maximum number of allowed
+
+    // connections to accept as parameters. Check for general errors.
+
+    if (listen( m_socket, 1) == SOCKET_ERROR)
+
+        printf("listen(): Error listening on socket %ld.\n", WSAGetLastError());
+
+    else
+
+    {
+
+        printf("listen() is OK, I'm waiting for connections...\n");
+
+    }
+
+     
+
+    return 0;
+
+    }
+
+     
+
+    Sample output:
+
+Windows socket program example output screen: socket(), bind() and listen()
+
+ 
+
+Figure 1
+
+ 
+
+Another example that demonstrates the use of the listen() function.
+
+ 
+
+Another Program Example
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    int main()
+
+    {
+
+      // Initialize Winsock
+
+      WSADATA wsaData;
+
+      int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+
+      if (iResult != NO_ERROR)
+
+             printf("Server: Error at WSAStartup().\n");
+
+      else
+
+             printf("Server: WSAStartup() is OK!\n");
+
+     
+
+       // Create a SOCKET for listening for incoming connection requests.
+
+      SOCKET ListenSocket;
+
+      ListenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+      if (ListenSocket == INVALID_SOCKET)
+
+      {
+
+        printf("Server: Error at socket(): %ld\n", WSAGetLastError());
+
+        WSACleanup();
+
+        return 0;
+
+      }
+
+      else
+
+         printf("Server: socket() is OK.\n");
+
+     
+
+      // The sockaddr_in structure specifies the address family,
+
+      // IP address, and port for the socket that is being bound.
+
+      sockaddr_in service;
+
+      service.sin_family = AF_INET;
+
+      service.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+      service.sin_port = htons(55555);
+
+     
+
+      if (bind(ListenSocket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR)
+
+      {
+
+        printf("Server: bind() failed.\n");
+
+        closesocket(ListenSocket);
+
+        return 0;
+
+      }
+
+      else
+
+        printf("Server: bind() is OK.\n");
+
+     
+
+        // Listen for incoming connection requests on the created socket
+
+      if (listen(ListenSocket, 1) == SOCKET_ERROR)
+
+        printf("Server: listen(): Error listening on socket.\n");
+
+     
+
+      printf("Server: I'm listening on socket, waiting for connection...\n");
+
+      WSACleanup();
+
+      return 0;
+
+    }
+
+     
+
+    Sample output:
+
+ 
+
+Server Listening Socket Program Example
+
+    // Microsoft Development Environment 2003 - Version 7.1.3088
+
+    // Copyright (r) 1987-2002 Microsoft Corporation. All Right Reserved
+
+    // Microsoft .NET Framework 1.1 - Version 1.1.4322
+
+    // Copyright (r) 1998-2002 Microsoft Corporation. All Right Reserved
+
+    //
+
+    // Run on Windows XP Pro machine, version 2002, SP 2
+
+    //
+
+    // <windows.h> already included
+
+    // WINVER = 0x0501 for Xp already defined in windows.h
+
+     
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    int main()
+
+    {
+
+    WORD wVersionRequested;
+
+    WSADATA wsaData;
+
+    int wsaerr;
+
+     
+
+    // Using MAKEWORD macro, Winsock version request 2.2
+
+    wVersionRequested = MAKEWORD(2, 2);
+
+    wsaerr = WSAStartup(wVersionRequested, &wsaData);
+
+    if (wsaerr != 0)
+
+    {
+
+        /* Tell the user that we could not find a usable WinSock DLL.*/
+
+        printf("Server: The Winsock dll not found!\n");
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+           printf("Server: The Winsock dll found!\n");
+
+           printf("Server: The status: %s.\n", wsaData.szSystemStatus);
+
+    }
+
+     
+
+    /* Confirm that the WinSock DLL supports 2.2.*/
+
+    /* Note that if the DLL supports versions greater    */
+
+    /* than 2.2 in addition to 2.2, it will still return */
+
+    /* 2.2 in wVersion since that is the version we      */
+
+    /* requested.                                        */
+
+    if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2 )
+
+     
+
+    {
+
+    /* Tell the user that we could not find a usable WinSock DLL.*/
+
+    printf("Server: The dll do not support the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion), HIBYTE(wsaData.wVersion));
+
+           WSACleanup();
+
+           return 0;
+
+    }
+
+    else
+
+    {
+
+           printf("Server: The dll supports the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion), HIBYTE(wsaData.wVersion));
+
+           printf("Server: The highest version this dll can support: %u.%u\n", LOBYTE(wsaData.wHighVersion), HIBYTE(wsaData.wHighVersion));
+
+    }
+
+     
+
+    //////////Create a socket////////////////////////
+
+    //Create a SOCKET object called m_socket.
+
+    SOCKET m_socket;
+
+     
+
+    // Call the socket function and return its value to the m_socket variable.
+
+    // For this application, use the Internet address family, streaming sockets, and the TCP/IP protocol.
+
+    // using AF_INET family, TCP socket type and protocol of the AF_INET - IPv4
+
+    m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+     
+
+    // Check for errors to ensure that the socket is a valid socket.
+
+    if (m_socket == INVALID_SOCKET)
+
+    {
+
+        printf("Server: Error at socket(): %ld\n", WSAGetLastError());
+
+        WSACleanup();
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+        printf("Server: socket() is OK!\n");
+
+    }
+
+     
+
+    ////////////////bind//////////////////////////////
+
+    // Create a sockaddr_in object and set its values.
+
+    sockaddr_in service;
+
+     
+
+    // AF_INET is the Internet address family.
+
+    service.sin_family = AF_INET;
+
+    // "127.0.0.1" is the local IP address to which the socket will be bound.
+
+    service.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+    // 55555 is the port number to which the socket will be bound.
+
+    // using the htons for big-endian
+
+    service.sin_port = htons(55555);
+
+     
+
+    // Call the bind function, passing the created socket and the sockaddr_in structure as parameters.
+
+    // Check for general errors.
+
+    if (bind(m_socket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR)
+
+    {
+
+        printf("Server: bind() failed: %ld.\n", WSAGetLastError());
+
+        closesocket(m_socket);
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+        printf("Server: bind() is OK!\n");
+
+    }
+
+     
+
+    // Call the listen function, passing the created socket and the maximum number of allowed
+
+    // connections to accept as parameters. Check for general errors.
+
+    if (listen(m_socket, 1) == SOCKET_ERROR)
+
+           printf("Server: listen(): Error listening on socket %ld.\n", WSAGetLastError());
+
+    else
+
+    {
+
+        printf("Server: listen() is OK, I'm waiting for connections...\n");
+
+    }
+
+     
+
+    // Create a temporary SOCKET object called AcceptSocket for accepting connections.
+
+    SOCKET AcceptSocket;
+
+     
+
+    // Create a continuous loop that checks for connections requests. If a connection
+
+    // request occurs, call the accept function to handle the request.
+
+    printf("Server: Waiting for a client to connect...\n");
+
+    printf("***Hint: Server is ready...run your client program...***\n");
+
+    // Do some verification...
+
+    while (1)
+
+    {
+
+        AcceptSocket = SOCKET_ERROR;
+
+     
+
+          while (AcceptSocket == SOCKET_ERROR)
+
+           {
+
+            AcceptSocket = accept(m_socket, NULL, NULL);
+
+           }
+
+     
+
+       // else, accept the connection...
+
+       // When the client connection has been accepted, transfer control from the
+
+       // temporary socket to the original socket and stop checking for new connections.
+
+        printf("Server: Client Connected!\n");
+
+        m_socket = AcceptSocket;
+
+        break;
+
+    }
+
+     
+
+    return 0;
+
+    }
+
+     
+Another Listening Socket Program Example (socket(), bind(), listen() and accept())
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    int main()
+
+    {
+
+      // Initialize Winsock.
+
+      WSADATA wsaData;
+
+      int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+      if (iResult != NO_ERROR)
+
+        printf("Server: Error at WSAStartup().\n");
+
+      else
+
+        printf("Server: WSAStartup() is OK.\n");
+
+     
+
+      // Create a SOCKET for listening for
+
+      // incoming connection requests.
+
+      SOCKET ListenSocket;
+
+      ListenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+      if (ListenSocket == INVALID_SOCKET)
+
+      {
+
+        printf("Server: Error at socket(): %ld\n", WSAGetLastError());
+
+        WSACleanup();
+
+        return 0;
+
+      }
+
+      else
+
+        printf("Server: socket() is OK.\n");
+
+     
+
+      // The sockaddr_in structure specifies the address family,
+
+      // IP address, and port for the socket that is being bound.
+
+      sockaddr_in service;
+
+      service.sin_family = AF_INET;
+
+      service.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+      service.sin_port = htons(55555);
+
+     
+
+      if (bind(ListenSocket, (SOCKADDR*) &service, sizeof(service)) == SOCKET_ERROR)
+
+      {
+
+        printf("Server: bind() failed.\n");
+
+        closesocket(ListenSocket);
+
+        return 0;
+
+      }
+
+      else
+
+        printf("Server: bind() is OK.\n");
+
+     
+
+       // Listen for incoming connection requests on the created socket
+
+      if (listen(ListenSocket, 10) == SOCKET_ERROR)
+
+        printf("Server: Error listening on socket.\n");
+
+      else
+
+        printf("Server: listen() is OK.\n");
+
+     
+
+      // Create a SOCKET for accepting incoming requests.
+
+      SOCKET AcceptSocket;
+
+      printf("Server: Waiting for client to connect...\n");
+
+     
+
+      // Accept the connection if any...
+
+      while(1)
+
+      {
+
+        AcceptSocket = SOCKET_ERROR;
+
+        while(AcceptSocket == SOCKET_ERROR)
+
+        {
+
+          AcceptSocket = accept(ListenSocket, NULL, NULL);
+
+        }
+
+        printf("Server: accept() is OK.\n");
+
+        printf("Server: Client connected...ready for communication.\n");
+
+        ListenSocket = AcceptSocket;
+
+        break;
+
+      }
+
+     
+
+      WSACleanup();
+
+      return 0;
+
+    }
+
+     
+
+Client Socket Program Example
+
+    // Microsoft Development Environment 2003 - Version 7.1.3088
+
+    // Copyright (r) 1987-2002 Microsoft Corporation. All Right Reserved
+
+    // Microsoft .NET Framework 1.1 - Version 1.1.4322
+
+    // Copyright (r) 1998-2002 Microsoft Corporation. All Right Reserved
+
+    //
+
+    // Run on Windows XP Pro machine, version 2002, SP 2
+
+    //
+
+    // <windows.h> already included
+
+    // WINVER = 0x0501 for Xp already defined in windows.h
+
+    // A sample of client program
+
+     
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    int main()
+
+    {
+
+        // Initialize Winsock.
+
+        WSADATA wsaData;
+
+        int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+
+     
+
+        if (iResult != NO_ERROR)
+
+             printf("Client: Error at WSAStartup().\n");
+
+        else
+
+             printf("Client: WSAStartup() is OK.\n");
+
+     
+
+        // Create a socket.
+
+        SOCKET m_socket;
+
+        m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+     
+
+        if (m_socket == INVALID_SOCKET)
+
+        {
+
+            printf("Client: socket() - Error at socket(): %ld\n", WSAGetLastError());
+
+            WSACleanup();
+
+            return 0;
+
+        }
+
+        else
+
+           printf("Client: socket() is OK.\n");
+
+     
+
+        // Connect to a server.
+
+        sockaddr_in clientService;
+
+     
+
+        clientService.sin_family = AF_INET;
+
+        clientService.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+        clientService.sin_port = htons(55555);
+
+     
+
+        if (connect(m_socket, (SOCKADDR*)&clientService, sizeof(clientService)) == SOCKET_ERROR)
+
+        {
+
+            printf("Client: connect() - Failed to connect.\n");
+
+            WSACleanup();
+
+            return 0;
+
+        }
+
+     
+
+        // Send and receive data.
+
+        int bytesSent;
+
+        int bytesRecv = SOCKET_ERROR;
+
+        // Be careful with the array bound, provide some checking mechanism
+
+        char sendbuf[200] = "Client: Sending some test string to server...";
+
+        char recvbuf[200] = "";
+
+     
+
+        bytesSent = send(m_socket, sendbuf, strlen(sendbuf), 0);
+
+        printf("Client: send() - Bytes Sent: %ld\n", bytesSent);
+
+     
+
+        while(bytesRecv == SOCKET_ERROR)
+
+        {
+
+            bytesRecv = recv(m_socket, recvbuf, 32, 0);
+
+            if (bytesRecv == 0 || bytesRecv == WSAECONNRESET)
+
+            {
+
+                printf("Client: Connection Closed.\n");
+
+                break;
+
+            }
+
+            else
+
+                printf("Client: recv() is OK.\n");
+
+     
+
+            if (bytesRecv < 0)
+
+                return 0;
+
+            else
+
+                printf("Client: Bytes received - %ld.\n", bytesRecv);
+
+        }
+
+     
+
+        return 0;
+
+    }
+
+
+send() and recv() Server Program Example
+
+    // Microsoft Development Environment 2003 - Version 7.1.3088
+
+    // Copyright (r) 1987-2002 Microsoft Corporation. All Right Reserved
+
+    // Microsoft .NET Framework 1.1 - Version 1.1.4322
+
+    // Copyright (r) 1998-2002 Microsoft Corporation. All Right Reserved
+
+    //
+
+    // Run on Windows XP Pro machine, version 2002, SP 2
+
+    //
+
+    // <windows.h> already included
+
+    // WINVER = 0x0501 for Xp already defined in windows.h
+
+    // Server program, using TCP
+
+     
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    int main()
+
+    {
+
+    WORD wVersionRequested;
+
+    WSADATA wsaData;
+
+    int wsaerr;
+
+     
+
+    // Using MAKEWORD macro, Winsock version request 2.2
+
+    wVersionRequested = MAKEWORD(2, 2);
+
+     
+
+    wsaerr = WSAStartup(wVersionRequested, &wsaData);
+
+    if (wsaerr != 0)
+
+    {
+
+        /* Tell the user that we could not find a usable WinSock DLL.*/
+
+        printf("Server: The Winsock dll not found!\n");
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+           printf("Server: The Winsock dll found!\n");
+
+           printf("Server: The status: %s.\n", wsaData.szSystemStatus);
+
+    }
+
+     
+
+    /* Confirm that the WinSock DLL supports 2.2.*/
+
+    /* Note that if the DLL supports versions greater    */
+
+    /* than 2.2 in addition to 2.2, it will still return */
+
+    /* 2.2 in wVersion since that is the version we      */
+
+    /* requested.                                        */
+
+    if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2 )
+
+    {
+
+        /* Tell the user that we could not find a usable WinSock DLL.*/
+
+        printf("Server: The dll do not support the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion), HIBYTE(wsaData.wVersion));
+
+        WSACleanup();
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+           printf("Server: The dll supports the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion), HIBYTE(wsaData.wVersion));
+
+           printf("Server: The highest version this dll can support: %u.%u\n", LOBYTE(wsaData.wHighVersion), HIBYTE(wsaData.wHighVersion));
+
+    }
+
+     
+
+    //////////Create a socket////////////////////////
+
+    //Create a SOCKET object called m_socket.
+
+    SOCKET m_socket;
+
+     
+
+    // Call the socket function and return its value to the m_socket variable.
+
+    // For this application, use the Internet address family, streaming sockets, and
+
+    // the TCP/IP protocol.
+
+    // using AF_INET family, TCP socket type and protocol of the AF_INET - IPv4
+
+    m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+     
+
+    // Check for errors to ensure that the socket is a valid socket.
+
+    if (m_socket == INVALID_SOCKET)
+
+    {
+
+        printf("Server: Error at socket(): %ld\n", WSAGetLastError());
+
+        WSACleanup();
+
+        return 0;
+
+    }
+
+    else
+
+    { printf("Server: socket() is OK!\n"); }
+
+     
+
+    ////////////////bind//////////////////////////////
+
+    // Create a sockaddr_in object and set its values.
+
+    sockaddr_in service;
+
+     
+
+    // AF_INET is the Internet address family.
+
+    service.sin_family = AF_INET;
+
+    // "127.0.0.1" is the local IP address to which the socket will be bound.
+
+    service.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+    // 55555 is the port number to which the socket will be bound.
+
+    service.sin_port = htons(55555);
+
+     
+
+    // Call the bind function, passing the created socket and the sockaddr_in structure as parameters.
+
+    // Check for general errors.
+
+    if (bind(m_socket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR)
+
+    {
+
+        printf("Server: bind() failed: %ld.\n", WSAGetLastError());
+
+        closesocket(m_socket);
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+        printf("Server: bind() is OK!\n");
+
+    }
+
+     
+
+    // Call the listen function, passing the created socket and the maximum number of allowed
+
+    // connections to accept as parameters. Check for general errors.
+
+    if (listen(m_socket, 10) == SOCKET_ERROR)
+
+        printf("Server: listen(): Error listening on socket %ld.\n", WSAGetLastError());
+
+    else
+
+    {
+
+       printf("Server: listen() is OK, I'm waiting for connections...\n");
+
+    }
+
+     
+
+    // Create a temporary SOCKET object called AcceptSocket for accepting connections.
+
+    SOCKET AcceptSocket;
+
+     
+
+    // Create a continuous loop that checks for connections requests. If a connection
+
+    // request occurs, call the accept function to handle the request.
+
+    printf("Server: Waiting for a client to connect...\n" );
+
+    printf("***Hint: Server is ready...run your client program...***\n");
+
+    // Do some verification...
+
+    while (1)
+
+    {
+
+        AcceptSocket = SOCKET_ERROR;
+
+        while (AcceptSocket == SOCKET_ERROR)
+
+        {
+
+            AcceptSocket = accept(m_socket, NULL, NULL);
+
+        }
+
+     
+
+    // else, accept the connection...
+
+    // When the client connection has been accepted, transfer control from the
+
+    // temporary socket to the original socket and stop checking for new connections.
+
+    printf("Server: Client Connected!\n");
+
+    m_socket = AcceptSocket; 
+
+    break;
+
+    }
+
+     
+
+    int bytesSent;
+
+    int bytesRecv = SOCKET_ERROR;
+
+    char sendbuf[200] = "This string is a test data from server";
+
+    // initialize to empty data...
+
+    char recvbuf[200] = "";
+
+     
+
+    // Send some test string to client...
+
+    printf("Server: Sending some test data to client...\n");
+
+    bytesSent = send(m_socket, sendbuf, strlen(sendbuf), 0);
+
+     
+
+    if (bytesSent == SOCKET_ERROR)
+
+           printf("Server: send() error %ld.\n", WSAGetLastError());
+
+    else
+
+    {
+
+           printf("Server: send() is OK.\n");
+
+           printf("Server: Bytes Sent: %ld.\n", bytesSent);
+
+    }
+
+     
+
+    // Receives some test string from client...and client
+
+    // must send something lol...
+
+    bytesRecv = recv(m_socket, recvbuf, 200, 0);
+
+     
+
+    if (bytesRecv == SOCKET_ERROR)
+
+           printf("Server: recv() error %ld.\n", WSAGetLastError());
+
+    else
+
+    {
+
+           printf("Server: recv() is OK.\n");
+
+           printf("Server: Received data is: \"%s\"\n", recvbuf);
+
+           printf("Server: Bytes received: %ld.\n", bytesRecv);
+
+    }
+
+     
+
+    WSACleanup();
+
+    return 0;
+
+    }
+
+     
+
+    Sample output:
+
+Windows socket program example output screen: more using send() and recv()
+
+ 
+
+Figure 1
+
+ 
+
+The server program is listening to and waiting for connection. While this program is running, run the following client program.
+
+ 
+
+send() and recv() Client Program Example
+
+    // Microsoft Development Environment 2003 - Version 7.1.3088
+
+    // Copyright (r) 1987-2002 Microsoft Corporation. All Right Reserved
+
+    // Microsoft .NET Framework 1.1 - Version 1.1.4322
+
+    // Copyright (r) 1998-2002 Microsoft Corporation. All Right Reserved
+
+    //
+
+    // Run on Windows XP Pro machine, version 2002, SP 2
+
+    //
+
+    // <windows.h> already included
+
+    // WINVER = 0x0501 for Xp already defined in windows.h
+
+    // A sample of client program using TCP
+
+     
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    int main()
+
+    {
+
+        // Initialize Winsock.
+
+        WSADATA wsaData;
+
+        int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+
+        if (iResult != NO_ERROR)
+
+                  printf("Client: Error at WSAStartup().\n");
+
+        else
+
+                  printf("Client: WSAStartup() is OK.\n");
+
+     
+
+        // Create a socket.
+
+        SOCKET m_socket;
+
+        m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+     
+
+        if (m_socket == INVALID_SOCKET)
+
+        {
+
+            printf("Client: socket() - Error at socket(): %ld\n", WSAGetLastError());
+
+            WSACleanup();
+
+            return 0;
+
+        }
+
+       else
+
+           printf("Client: socket() is OK.\n");
+
+     
+
+        // Connect to a server.
+
+        sockaddr_in clientService;
+
+     
+
+        clientService.sin_family = AF_INET;
+
+        // Just test using the localhost, you can try other IP address
+
+        clientService.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+        clientService.sin_port = htons(55555);
+
+     
+
+        if (connect(m_socket, (SOCKADDR*)&clientService, sizeof(clientService)) == SOCKET_ERROR)
+
+        {
+
+            printf("Client: connect() - Failed to connect.\n");
+
+            WSACleanup();
+
+            return 0;
+
+        }
+
+        else
+
+        {
+
+           printf("Client: connect() is OK.\n");
+
+           printf("Client: Can start sending and receiving data...\n");
+
+        }
+
+     
+
+        // Send and receive data.
+
+        int bytesSent;
+
+        int bytesRecv = SOCKET_ERROR;
+
+        // Be careful with the array bound, provide some checking mechanism...
+
+        char sendbuf[200] = "This is a test string from client";
+
+        char recvbuf[200] = "";
+
+     
+
+           // Receives some test string to server...
+
+           while(bytesRecv == SOCKET_ERROR)
+
+           {
+
+               bytesRecv = recv(m_socket, recvbuf, 200, 0);
+
+            if (bytesRecv == 0 || bytesRecv == WSAECONNRESET)
+
+            {
+
+                 printf("Client: Connection Closed.\n");
+
+                break;
+
+            }
+
+     
+
+            if (bytesRecv < 0)
+
+                return 0;
+
+           else
+
+           {
+
+                  printf("Client: recv() is OK.\n");
+
+                  printf("Client: Received data is: \"%s\"\n", recvbuf);
+
+                  printf("Client: Bytes received is: %ld.\n", bytesRecv);
+
+           }
+
+        }
+
+     
+
+           // Sends some test data to server...
+
+           bytesSent = send(m_socket, sendbuf, strlen(sendbuf), 0);
+
+           if(bytesSent == SOCKET_ERROR)
+
+                  printf("Client: send() error %ld.\n", WSAGetLastError());
+
+           else
+
+           {
+
+                  printf("Client: send() is OK - Bytes sent: %ld\n", bytesSent);
+
+                  printf("Client: The test string sent: \"%s\"\n", sendbuf);
+
+           }
+
+     
+
+        WSACleanup();
+
+        return 0;
+
+    }
+
+     
+connect() Sever Program Example
+
+ 
+
+The following example demonstrates the use of the connect() function for client and server. Firstly run the server program and then the client.
+
+    // Microsoft Development Environment 2003 - Version 7.1.3088
+
+    // Copyright (r) 1987-2002 Microsoft Corporation. All Right Reserved
+
+    // Microsoft .NET Framework 1.1 - Version 1.1.4322
+
+    // Copyright (r) 1998-2002 Microsoft Corporation. All Right Reserved
+
+    //
+
+    // Run on Windows XP Pro machine, version 2002, SP 2
+
+    //
+
+    // <windows.h> already included
+
+    // WINVER = 0x0501 for Xp already defined in windows.h
+
+    // Server program, using TCP
+
+     
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    int main()
+
+    {
+
+    WORD wVersionRequested;
+
+    WSADATA wsaData;
+
+    int wsaerr;
+
+    // Using MAKEWORD macro, Winsock version request 2.2
+
+    wVersionRequested = MAKEWORD(2, 2);
+
+     
+
+    wsaerr = WSAStartup(wVersionRequested, &wsaData);
+
+    if (wsaerr != 0)
+
+    {
+
+        /* Tell the user that we could not find a usable WinSock DLL.*/
+
+        printf("Server: The Winsock dll not found!\n");
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+           printf("Server: The Winsock dll found!\n");
+
+           printf("Server: The status: %s.\n", wsaData.szSystemStatus);
+
+    }
+
+     
+
+    /* Confirm that the WinSock DLL supports 2.2.*/
+
+    /* Note that if the DLL supports versions greater    */
+
+    /* than 2.2 in addition to 2.2, it will still return */
+
+    /* 2.2 in wVersion since that is the version we      */
+
+    /* requested.                                        */
+
+    if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2 )
+
+    {
+
+        /* Tell the user that we could not find a usable WinSock DLL.*/
+
+        printf("Server: The dll do not support the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion), HIBYTE(wsaData.wVersion));
+
+        WSACleanup();
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+           printf("Server: The dll supports the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion), HIBYTE(wsaData.wVersion));
+
+           printf("Server: The highest version this dll can support: %u.%u\n", LOBYTE(wsaData.wHighVersion), HIBYTE(wsaData.wHighVersion));
+
+    }
+
+     
+
+    //////////Create a socket////////////////////////
+
+    //Create a SOCKET object called m_socket.
+
+    SOCKET m_socket;
+
+     
+
+    // Call the socket function and return its value to the m_socket variable.
+
+    // For this application, use the Internet address family, streaming sockets, and the TCP/IP protocol.
+
+    // using AF_INET family, TCP socket type and protocol of the AF_INET - IPv4
+
+    m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+     
+
+    // Check for errors to ensure that the socket is a valid socket.
+
+    if (m_socket == INVALID_SOCKET)
+
+    {
+
+        printf("Server: Error at socket(): %ld\n", WSAGetLastError());
+
+        WSACleanup();
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+        printf("Server: socket() is OK!\n");
+
+    }
+
+     
+
+    ////////////////bind//////////////////////////////
+
+    // Create a sockaddr_in object and set its values.
+
+    sockaddr_in service;
+
+     
+
+    // AF_INET is the Internet address family.
+
+    service.sin_family = AF_INET;
+
+    // "127.0.0.1" is the local IP address to which the socket will be bound.
+
+    // Try your machine IP address...
+
+    service.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+    // 55555 is the port number to which the socket will be bound…
+
+    // Try other non-standard ports ( > 1024). Max = 2 power to 16 = 65536
+
+    service.sin_port = htons(55555);
+
+     
+
+    // Call the bind function, passing the created socket and the sockaddr_in structure as parameters.
+
+    // Check for general errors.
+
+    if (bind(m_socket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR)
+
+    {
+
+        printf("Server: bind() failed: %ld.\n", WSAGetLastError());
+
+        closesocket(m_socket);
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+        printf("Server: bind() is OK!\n");
+
+    }
+
+     
+
+    // Call the listen function, passing the created socket and the maximum number of allowed
+
+    // connections to accept as parameters. Check for general errors.
+
+    if (listen(m_socket, 10) == SOCKET_ERROR)
+
+         printf("Server: listen(): Error listening on socket %ld.\n", WSAGetLastError());
+
+    else
+
+    {
+
+         printf("Server: listen() is OK, I'm waiting for connections...\n");
+
+    }
+
+     
+
+    // Create a temporary SOCKET object called AcceptSocket for accepting connections.
+
+    SOCKET AcceptSocket;
+
+     
+
+    // Create a continuous loop that checks for connections requests. If a connection
+
+    // request occurs, call the accept function to handle the request.
+
+    printf("Server: Waiting for a client to connect...\n" );
+
+    printf("***Hint: Server is ready...run your client program...***\n");
+
+    // Do some verification...
+
+    while (1)
+
+    {
+
+        AcceptSocket = SOCKET_ERROR;
+
+        while (AcceptSocket == SOCKET_ERROR)
+
+        {
+
+            AcceptSocket = accept(m_socket, NULL, NULL);
+
+        }
+
+     
+
+        // else, accept the connection...
+
+        // When the client connection has been accepted, transfer control from the
+
+        // temporary socket to the original socket and stop checking for new connections.
+
+        printf("Server: Client Connected!\n");
+
+        m_socket = AcceptSocket; 
+
+        break;
+
+    }
+
+     
+
+    WSACleanup();
+
+    return 0;
+
+    }
+
+     
+connect() Client Program Example
+
+ 
+
+The following is the client program to test the previous connect() function.
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    int main()
+
+    {
+
+      // Initialize Winsock
+
+      WSADATA wsaData;
+
+      int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+
+      if (iResult != NO_ERROR)
+
+        printf("Client: Error at WSAStartup().\n");
+
+      else
+
+        printf("Client: WSAStartup() is OK.\n");
+
+     
+
+      // Create a SOCKET for connecting to server
+
+      SOCKET ConnectSocket;
+
+      ConnectSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+      if (ConnectSocket == INVALID_SOCKET)
+
+      {
+
+        printf("Client: Error at socket(): %ld\n", WSAGetLastError());
+
+        WSACleanup();
+
+        return 0;
+
+      }
+
+      else
+
+             printf("Client: socket() is OK.\n");
+
+     
+
+      // The sockaddr_in structure specifies the address family,
+
+      // IP address, and port of the server to be connected to.
+
+      sockaddr_in clientService;
+
+      clientService.sin_family = AF_INET;
+
+      clientService.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+      clientService.sin_port = htons(55555);
+
+     
+
+      // Connect to server...
+
+      if (connect(ConnectSocket, (SOCKADDR*)&clientService, sizeof(clientService)) == SOCKET_ERROR)
+
+      {
+
+        printf("Client: Failed to connect.\n");
+
+        WSACleanup();
+
+        return 0;
+
+      }
+
+      else
+
+           printf("Client: connect() is OK.\n");
+
+     
+
+      printf("Client: Connected to server...\n");
+
+      WSACleanup();
+
+      return 0;
+
+    }
+
+     
+
+
+    // Microsoft Development Environment 2003 - Version 7.1.3088
+
+    // Copyright (r) 1987-2002 Microsoft Corporation. All Right Reserved
+
+    // Microsoft .NET Framework 1.1 - Version 1.1.4322
+
+    // Copyright (r) 1998-2002 Microsoft Corporation. All Right Reserved
+
+    //
+
+    // Run on Windows XP Pro machine, version 2002, SP 2
+
+    //
+
+    // <windows.h> already included
+
+    // WINVER = 0x0501 for Xp already defined in windows.h
+
+    // Server program, using TCP
+
+     
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    int main()
+
+    {
+
+    WORD wVersionRequested;
+
+    WSADATA wsaData;
+
+    int wsaerr;
+
+     
+
+    // Using MAKEWORD macro, Winsock version request 2.2
+
+    wVersionRequested = MAKEWORD(2, 2);
+
+     
+
+    wsaerr = WSAStartup(wVersionRequested, &wsaData);
+
+    if (wsaerr != 0)
+
+    {
+
+        /* Tell the user that we could not find a usable WinSock DLL.*/
+
+        printf("Server: The Winsock dll not found!\n");
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+           printf("Server: The Winsock dll found!\n");
+
+           printf("Server: The status: %s.\n", wsaData.szSystemStatus);
+
+    }
+
+     
+
+    /* Confirm that the WinSock DLL supports 2.2.*/
+
+    /* Note that if the DLL supports versions greater    */
+
+    /* than 2.2 in addition to 2.2, it will still return */
+
+    /* 2.2 in wVersion since that is the version we      */
+
+    /* requested.                                        */
+
+    if (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2 )
+
+    {
+
+        /* Tell the user that we could not find a usable WinSock DLL.*/
+
+        printf("Server: The dll do not support the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion), HIBYTE(wsaData.wVersion));
+
+        WSACleanup();
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+           printf("Server: The dll supports the Winsock version %u.%u!\n", LOBYTE(wsaData.wVersion), HIBYTE(wsaData.wVersion));
+
+           printf("Server: The highest version this dll can support: %u.%u\n", LOBYTE(wsaData.wHighVersion), HIBYTE(wsaData.wHighVersion));
+
+    }
+
+     
+
+    //////////Create a socket////////////////////////
+
+    //Create a SOCKET object called m_socket.
+
+    SOCKET m_socket;
+
+     
+
+    // Call the socket function and return its value to the m_socket variable.
+
+    // For this application, use the Internet address family, streaming sockets, and
+
+    // the TCP/IP protocol.
+
+    // using AF_INET family, TCP socket type and protocol of the AF_INET - IPv4
+
+    m_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+     
+
+    // Check for errors to ensure that the socket is a valid socket.
+
+    if (m_socket == INVALID_SOCKET)
+
+    {
+
+        printf("Server: Error at socket(): %ld\n", WSAGetLastError());
+
+        WSACleanup();
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+        printf("Server: socket() is OK!\n");
+
+    }
+
+     
+
+    ////////////////bind//////////////////////////////
+
+    // Create a sockaddr_in object and set its values.
+
+    sockaddr_in service;
+
+     
+
+    // AF_INET is the Internet address family.
+
+    service.sin_family = AF_INET;
+
+    // "127.0.0.1" is the local IP address to which the socket will be bound.
+
+    service.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+    // 55555 is the port number to which the socket will be bound.
+
+    service.sin_port = htons(55555);
+
+     
+
+    // Call the bind function, passing the created socket and the sockaddr_in structure as parameters.
+
+    // Check for general errors.
+
+    if (bind(m_socket, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR)
+
+    {
+
+        printf("Server: bind() failed: %ld.\n", WSAGetLastError());
+
+        closesocket(m_socket);
+
+        return 0;
+
+    }
+
+    else
+
+    {
+
+        printf("Server: bind() is OK!\n");
+
+    }
+
+     
+
+    // Call the listen function, passing the created socket and the maximum number of allowed
+
+    // connections to accept as parameters. Check for general errors.
+
+    if (listen(m_socket, 10) == SOCKET_ERROR)
+
+       printf("Server: listen(): Error listening on socket %ld.\n", WSAGetLastError());
+
+    else
+
+    {
+
+       printf("Server: listen() is OK, I'm waiting for connections...\n");
+
+    }
+
+     
+
+    // Create a temporary SOCKET object called AcceptSocket for accepting connections.
+
+    SOCKET AcceptSocket;
+
+     
+
+    // Create a continuous loop that checks for connections requests. If a connection
+
+    // request occurs, call the accept function to handle the request.
+
+    printf("Server: Waiting for a client to connect...\n" );
+
+    printf("***Hint: Server is ready...run your client program...***\n");
+
+    // Do some verification...
+
+    while (1)
+
+    {
+
+        AcceptSocket = SOCKET_ERROR;
+
+        while (AcceptSocket == SOCKET_ERROR)
+
+        {
+
+            AcceptSocket = accept(m_socket, NULL, NULL);
+
+        }
+
+        // else, accept the connection...
+
+        // When the client connection has been accepted, transfer control from the
+
+        // temporary socket to the original socket and stop checking for new connections.
+
+        printf("Server: Client Connected!\n");
+
+        m_socket = AcceptSocket;
+
+        break;
+
+    }
+
+     
+
+    int bytesSent;
+
+    int bytesRecv = SOCKET_ERROR;
+
+    char sendbuf[200] = "This string is a test data from server";
+
+    // initialize to empty data...
+
+    char recvbuf[200] = "";
+
+     
+
+    // Send some test string to client...
+
+    printf("Server: Sending some test data to client...\n");
+
+     
+
+    bytesSent = send(m_socket, sendbuf, strlen(sendbuf), 0);
+
+     
+
+    if (bytesSent == SOCKET_ERROR)
+
+           printf("Server: send() error %ld.\n", WSAGetLastError());
+
+    else
+
+    {
+
+           printf("Server: send() is OK.\n");
+
+           printf("Server: Bytes Sent: %ld.\n", bytesSent);
+
+    }
+
+     
+
+    // Receives some test string from client...and client
+
+    // must send something lol...
+
+    bytesRecv = recv(m_socket, recvbuf, 200, 0);
+
+     
+
+    if (bytesRecv == SOCKET_ERROR)
+
+           printf("Server: recv() error %ld.\n", WSAGetLastError());
+
+    else
+
+    {
+
+           printf("Server: recv() is OK.\n");
+
+           printf("Server: Received data is: \"%s\"\n", recvbuf);
+
+           printf("Server: Bytes received: %ld.\n", bytesRecv);
+
+    }
+
+     
+
+    WSACleanup();
+
+    return 0;
+
+    }
+
+     
+
+    Sample output:
+
+Windows socket program example output screen: using recv() and send() for server
+
+ 
+
+Figure 1
+
+ 
+
+Client send() and recv() Program Example
+
+ 
+
+The following is the client program. As usual, you have to run the server program first.
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    int main()
+
+    {
+
+      // Initialize Winsock
+
+      WSADATA wsaData;
+
+      int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+
+      if (iResult != NO_ERROR)
+
+        printf("Client: Error at WSAStartup().\n");
+
+      else
+
+        printf("Client: WSAStartup() is OK.\n");
+
+     
+
+      // Create a SOCKET for connecting to server
+
+      SOCKET ConnectSocket;
+
+      ConnectSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+      if (ConnectSocket == INVALID_SOCKET)
+
+      {
+
+        printf("Client: Error at socket(): %ld.\n", WSAGetLastError());
+
+        WSACleanup();
+
+        return 0;
+
+      }
+
+      else
+
+        printf("Client: socket() is OK.\n");
+
+     
+
+      // The sockaddr_in structure specifies the address family,
+
+      // IP address, and port of the server to be connected to.
+
+      sockaddr_in clientService;
+
+      clientService.sin_family = AF_INET;
+
+      clientService.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+      clientService.sin_port = htons(55555);
+
+     
+
+      // Connect to server.
+
+      if (connect(ConnectSocket, (SOCKADDR*)&clientService, sizeof(clientService)) == SOCKET_ERROR)
+
+      {
+
+        printf("Client: Failed to connect.\n");
+
+        WSACleanup();
+
+        return 0;
+
+      }
+
+      else
+
+        printf("Client: connect() is OK.\n");
+
+     
+
+      // Declare and initialize variables.
+
+      int bytesSent;
+
+      int bytesRecv = SOCKET_ERROR;
+
+      char sendbuf[100] = "Client: Sending some data.";
+
+      char recvbuf[100] = "";
+
+     
+
+      while(bytesRecv == SOCKET_ERROR )
+
+      {
+
+        bytesRecv = recv(ConnectSocket, recvbuf, 100, 0);
+
+        if (bytesRecv == 0 || bytesRecv == WSAECONNRESET)
+
+        {
+
+          printf("Client: Connection Closed.\n");
+
+          break;
+
+        }
+
+        else
+
+        {
+
+           printf("Client: recv() is OK.\n");
+
+           printf("Client: Bytes received: %ld\n", bytesRecv);
+
+        }
+
+      }
+
+     
+
+      // Send and receive data.
+
+      bytesSent = send(ConnectSocket, sendbuf, strlen(sendbuf), 0);
+
+      printf("Client: Bytes sent: %ld\n", bytesSent);
+
+      WSACleanup();
+
+      return 0;
+
+    }
+
+     
+setsockopt() Program Example
+
+ 
+
+The following example demonstrates the setsockopt() function.
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    void main()
+
+    {
+
+      // Declare variables
+
+      WSADATA wsaData;
+
+      SOCKET ListenSocket;
+
+      sockaddr_in service;
+
+     
+
+      // Initialize Winsock, request the Winsock 2.2
+
+      int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+      if(iResult != NO_ERROR)
+
+        printf("Error at WSAStartup().\n");
+
+      else
+
+        printf("WSAStartup() is OK.\n");
+
+     
+
+      // Create a listening socket
+
+      ListenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+      if (ListenSocket == INVALID_SOCKET)
+
+      {
+
+        printf("Error at socket().\n");
+
+        WSACleanup();
+
+        return;
+
+      }
+
+      else
+
+             printf("socket() is OK.\n");
+
+     
+
+      // Bind the socket to the local IP address and port 55555
+
+      hostent* thisHost;
+
+      char* ip;
+
+      u_short port;
+
+      port = 55555;
+
+      thisHost = gethostbyname("");
+
+      ip = inet_ntoa(*(struct in_addr *)*thisHost->h_addr_list);
+
+     
+
+      // Try running this program on machine using live IP...
+
+      printf("\nIP address is: %s.\n", ip);
+
+      printf("Hostname is: %s.\n", thisHost->h_name);
+
+      printf("Address type: %i.\n\n", thisHost->h_addrtype);
+
+     
+
+      service.sin_family = AF_INET;
+
+      service.sin_addr.s_addr = inet_addr(ip);
+
+      service.sin_port = htons(port);
+
+     
+
+      if (bind(ListenSocket,(SOCKADDR*) &service, sizeof(service)) == SOCKET_ERROR)
+
+      {
+
+        printf("bind() failed lol!\n");
+
+        closesocket(ListenSocket);
+
+        return;
+
+      }
+
+    else
+
+             printf("bind() is OK.\n");
+
+     
+
+      // Initialize variables and call setsockopt().
+
+      // The SO_KEEPALIVE parameter is a socket option
+
+      // that makes the socket send keepalive messages
+
+      // on the session. The SO_KEEPALIVE socket option
+
+      // requires a boolean value to be passed to the
+
+      // setsockopt function. If TRUE, the socket is
+
+      // configured to send keepalive messages, if FALSE
+
+      // the socket configured to NOT send keepalive messages.
+
+      // This section of code tests the setsockopt() function
+
+      // by checking the status of SO_KEEPALIVE on the socket
+
+      // using the getsockopt() function.
+
+      BOOL bOptVal = TRUE;
+
+      int bOptLen = sizeof(BOOL);
+
+      int iOptVal;
+
+      int iOptLen = sizeof(int);
+
+     
+
+      if (getsockopt(ListenSocket, SOL_SOCKET, SO_KEEPALIVE, (char*)&iOptVal, &iOptLen) != SOCKET_ERROR)
+
+      {
+
+        printf("SO_KEEPALIVE value: %ld.\n", iOptVal);
+
+      }
+
+     
+
+      if (setsockopt(ListenSocket, SOL_SOCKET, SO_KEEPALIVE, (char*)&bOptVal, bOptLen) != SOCKET_ERROR)
+
+      {
+
+        printf("Sends keep-alives. Setting the SO_KEEPALIVE.\n");
+
+      }
+
+     
+
+      if (getsockopt(ListenSocket, SOL_SOCKET, SO_KEEPALIVE, (char*)&iOptVal, &iOptLen) != SOCKET_ERROR)
+
+      {
+
+        printf("SO_KEEPALIVE value: %ld.\n", iOptVal);
+
+      }
+
+      // Binding to the already used socket
+
+      BOOL bOptVal1 = TRUE;
+
+      int bOptLen1 = sizeof(BOOL);
+
+      int iOptVal1;
+
+      int iOptLen1 = sizeof(int);
+
+     
+
+      if (setsockopt(ListenSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&bOptVal1, bOptLen1) != SOCKET_ERROR)
+
+      {
+
+        printf("Socket can be bound to an address that is already in use.\n");
+
+      }
+
+     
+
+      if (getsockopt(ListenSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&iOptVal1, &iOptLen1) != SOCKET_ERROR)
+
+      {
+
+        printf("SO_REUSEADDR value: %ld.\n", iOptVal1);
+
+      }
+
+     
+
+      WSACleanup();
+
+      return;
+
+    }
+setsockopt() Program Example
+
+ 
+
+The following example demonstrates the setsockopt() function.
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    void main()
+
+    {
+
+      // Declare variables
+
+      WSADATA wsaData;
+
+      SOCKET ListenSocket;
+
+      sockaddr_in service;
+
+     
+
+      // Initialize Winsock, request the Winsock 2.2
+
+      int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+      if(iResult != NO_ERROR)
+
+        printf("Error at WSAStartup().\n");
+
+      else
+
+        printf("WSAStartup() is OK.\n");
+
+     
+
+      // Create a listening socket
+
+      ListenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+      if (ListenSocket == INVALID_SOCKET)
+
+      {
+
+        printf("Error at socket().\n");
+
+        WSACleanup();
+
+        return;
+
+      }
+
+      else
+
+             printf("socket() is OK.\n");
+
+     
+
+      // Bind the socket to the local IP address and port 55555
+
+      hostent* thisHost;
+
+      char* ip;
+
+      u_short port;
+
+      port = 55555;
+
+      thisHost = gethostbyname("");
+
+      ip = inet_ntoa(*(struct in_addr *)*thisHost->h_addr_list);
+
+     
+
+      // Try running this program on machine using live IP...
+
+      printf("\nIP address is: %s.\n", ip);
+
+      printf("Hostname is: %s.\n", thisHost->h_name);
+
+      printf("Address type: %i.\n\n", thisHost->h_addrtype);
+
+     
+
+      service.sin_family = AF_INET;
+
+      service.sin_addr.s_addr = inet_addr(ip);
+
+      service.sin_port = htons(port);
+
+     
+
+      if (bind(ListenSocket,(SOCKADDR*) &service, sizeof(service)) == SOCKET_ERROR)
+
+      {
+
+        printf("bind() failed lol!\n");
+
+        closesocket(ListenSocket);
+
+        return;
+
+      }
+
+    else
+
+             printf("bind() is OK.\n");
+
+     
+
+      // Initialize variables and call setsockopt().
+
+      // The SO_KEEPALIVE parameter is a socket option
+
+      // that makes the socket send keepalive messages
+
+      // on the session. The SO_KEEPALIVE socket option
+
+      // requires a boolean value to be passed to the
+
+      // setsockopt function. If TRUE, the socket is
+
+      // configured to send keepalive messages, if FALSE
+
+      // the socket configured to NOT send keepalive messages.
+
+      // This section of code tests the setsockopt() function
+
+      // by checking the status of SO_KEEPALIVE on the socket
+
+      // using the getsockopt() function.
+
+      BOOL bOptVal = TRUE;
+
+      int bOptLen = sizeof(BOOL);
+
+      int iOptVal;
+
+      int iOptLen = sizeof(int);
+
+     
+
+      if (getsockopt(ListenSocket, SOL_SOCKET, SO_KEEPALIVE, (char*)&iOptVal, &iOptLen) != SOCKET_ERROR)
+
+      {
+
+        printf("SO_KEEPALIVE value: %ld.\n", iOptVal);
+
+      }
+
+     
+
+      if (setsockopt(ListenSocket, SOL_SOCKET, SO_KEEPALIVE, (char*)&bOptVal, bOptLen) != SOCKET_ERROR)
+
+      {
+
+        printf("Sends keep-alives. Setting the SO_KEEPALIVE.\n");
+
+      }
+
+     
+
+      if (getsockopt(ListenSocket, SOL_SOCKET, SO_KEEPALIVE, (char*)&iOptVal, &iOptLen) != SOCKET_ERROR)
+
+      {
+
+        printf("SO_KEEPALIVE value: %ld.\n", iOptVal);
+
+      }
+
+      // Binding to the already used socket
+
+      BOOL bOptVal1 = TRUE;
+
+      int bOptLen1 = sizeof(BOOL);
+
+      int iOptVal1;
+
+      int iOptLen1 = sizeof(int);
+
+     
+
+      if (setsockopt(ListenSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&bOptVal1, bOptLen1) != SOCKET_ERROR)
+
+      {
+
+        printf("Socket can be bound to an address that is already in use.\n");
+
+      }
+
+     
+
+      if (getsockopt(ListenSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&iOptVal1, &iOptLen1) != SOCKET_ERROR)
+
+      {
+
+        printf("SO_REUSEADDR value: %ld.\n", iOptVal1);
+
+      }
+
+     
+
+      WSACleanup();
+
+      return;
+
+    }
+
+#include <stdio.h>
+
+#include "winsock2.h"
+
+ 
+
+void main()
+
+{
+
+  // Declare variables
+
+  WSADATA wsaData;
+
+  SOCKET ListenSocket;
+
+  sockaddr_in service;
+
+ 
+
+  // Initialize Winsock, request Winsock 2.2
+
+  int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+ 
+
+  if(iResult != NO_ERROR)
+
+    printf("Error at WSAStartup().\n");
+
+  else
+
+    printf("WSAStartup() is OK.\n");
+
+ 
+
+  // Create a listening socket
+
+  ListenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+  if (ListenSocket == INVALID_SOCKET)
+
+  {
+
+    printf("Error at socket()\n");
+
+    WSACleanup();
+
+    return;
+
+  }
+
+  else
+
+    printf("socket() is OK.\n");
+
+ 
+
+  // Bind the socket to the local IP address and port 55555
+
+  hostent* thisHost;
+
+  char* ip;
+
+  u_short port;
+
+  port = 55555;
+
+  thisHost = gethostbyname("");
+
+  ip = inet_ntoa(*(struct in_addr *)*thisHost->h_addr_list);
+
+ 
+
+  // Try running this program on machine using live IP...
+
+  printf("\nIP address is: %s.\n", ip);
+
+  printf("Hostname is: %s.\n", thisHost->h_name);
+
+  printf("Address type: %i.\n\n", thisHost->h_addrtype);
+
+ 
+
+  service.sin_family = AF_INET;
+
+  service.sin_addr.s_addr = inet_addr(ip);
+
+  service.sin_port = htons(port);
+
+ 
+
+  if (bind(ListenSocket,(SOCKADDR*) &service, sizeof(service)) == SOCKET_ERROR)
+
+  {
+
+    printf("bind() failed.\n");
+
+    closesocket(ListenSocket);
+
+    return;
+
+  }
+
+  else
+
+    printf("bind() is OK.\n");
+
+ 
+
+  // Initialize variables and call getsockopt().
+
+  // The SO_ACCEPTCONN parameter is a socket option
+
+  // that tells the function to check whether the
+
+  // socket has been put in listening mode or not.
+
+  // The various socket options return different
+
+  // information about the socket. This call should
+
+  // return 0 to the optVal parameter, since the socket
+
+  // is not in listening mode.
+
+  int optVal;
+
+  int optLen = sizeof(int);
+
+ if (getsockopt(ListenSocket,
+
+    SOL_SOCKET,
+
+    SO_ACCEPTCONN,
+
+    (char*)&optVal,
+
+    &optLen) != SOCKET_ERROR)
+
+    printf("Initial SockOpt value: %ld\n", optVal);
+
+  // Put the listening socket in listening mode.
+
+  if (listen(ListenSocket, 100) == SOCKET_ERROR)
+
+  {
+
+    printf("Error listening.\n");
+
+  }
+
+  else
+
+    printf("listen() is OK. Socket in listening mode...\n");
+
+ 
+
+  // Call getsockopt() again to verify that the socket is in listening mode.
+
+  if (getsockopt(ListenSocket,
+
+    SOL_SOCKET,
+
+    SO_ACCEPTCONN,
+
+    (char*)&optVal,
+
+    &optLen) != SOCKET_ERROR)
+
+    printf("Then, SockOpt value: %ld.\n", optVal);
+
+  else
+
+    printf("Error getsockopt().\n");
+
+ 
+
+  WSACleanup();
+
+  return;
+
+}
+
+Using sockaddr
+
+ 
+
+The following example demonstrates the use of the sockaddr structure.
+
+    #include <stdio.h>
+
+    #include "winsock2.h"
+
+     
+
+    int main()
+
+    {
+
+      // Declare variables
+
+      WSADATA wsaData;
+
+      SOCKET ListenSocket;
+
+      sockaddr_in service;
+
+     
+
+      // Initialize Winsock, request the Winsock 2.2
+
+      int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+      if(iResult != NO_ERROR)
+
+        printf("Error at WSAStartup().\n");
+
+      else
+
+        printf("WSAStartup() is OK.\n");
+
+     
+
+      // Create a listening socket
+
+      ListenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+      if (ListenSocket == INVALID_SOCKET)
+
+      {
+
+        printf("Error at socket().\n");
+
+        WSACleanup();
+
+        return 0;
+
+      }
+
+      else
+
+         printf("socket() is OK.\n");
+
+     
+
+      // Bind the socket to the local IP address and port 55555
+
+      hostent* thisHost;
+
+      char* ip;
+
+      u_short port;
+
+      port = 55555;
+
+      thisHost = gethostbyname("");
+
+      ip = inet_ntoa(*(struct in_addr *)*thisHost->h_addr_list);
+
+     
+
+      printf("\nIP address is: %s.\n", ip);
+
+      printf("Hostname is: %s.\n", thisHost->h_name);
+
+      printf("Address type: %i.\n\n", thisHost->h_addrtype);
+
+     
+
+      service.sin_family = AF_INET;
+
+      service.sin_addr.s_addr = inet_addr(ip);
+
+      service.sin_port = htons(port);
+
+     
+
+      if (bind(ListenSocket,(SOCKADDR*) &service, sizeof(service)) == SOCKET_ERROR)
+
+      {
+
+        printf("bind() failed lol!\n");
+
+        closesocket(ListenSocket);
+
+        return 0;
+
+      }
+
+      else
+
+        printf("bind() is OK.\n");
+
+     
+
+      WSACleanup();
+
+      return 0;
+
+    }
+
+     
+
+
+    #include <stdio.h>
+
+    #include <winsock2.h>
+
+     
+
+    int main()
+
+    {
+
+      // Declare variables
+
+      WSADATA wsaData;
+
+     
+
+      // Initialize Winsock, request the Winsock 2.2
+
+      int iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+      if(iResult != NO_ERROR)
+
+        printf("Error at WSAStartup().\n");
+
+      else
+
+        printf("WSAStartup() is OK.\n");
+
+     
+
+    // Declare and initialize variables
+
+    hostent* remoteHost;
+
+    char* ip;
+
+    char* host_name;
+
+    unsigned int addr;
+
+     
+
+    // User inputs name of host
+
+    printf("Input name/IP of host: ");
+
+    host_name = (char*) malloc(sizeof(char*)*128);
+
+    fgets(host_name, 128, stdin);
+
+     
+
+    // If the user input is an alpha name for the host, use gethostbyname()
+
+    // else, gethostbyaddr() (assume IPv4) host address is a name
+
+    if (isalpha(host_name[0]))
+
+    {
+
+      printf("\nUsing gethostbyname()...\n");
+
+      // NULL terminated
+
+      host_name[strlen(host_name)-1] = '\0';
+
+      remoteHost = gethostbyname(host_name);
+
+      ip = inet_ntoa(*(struct in_addr *)*remoteHost->h_addr_list);
+
+      printf("IP address is: %s.\n", ip);
+
+      printf("Address type: %i.\n\n", remoteHost->h_addrtype);
+
+     }
+
+    else
+
+    {
+
+      printf("\nUsing gethostbyaddr()...\n");
+
+      addr = inet_addr(host_name);
+
+      remoteHost = gethostbyaddr((char *)&addr, 4, AF_INET);
+
+      printf("Hostname is: %s.\n", remoteHost->h_name);
+
+      printf("Address type: %i.\n\n", remoteHost->h_addrtype);
+
+    }
+
+     
+
+    if (WSAGetLastError() != 0)
+
+    {
+
+      if (WSAGetLastError() == 11001)
+
+      printf("Host not found...\nExiting.\n");
+
+    }
+
+    else
+
+      printf("error #: %ld\n", WSAGetLastError());
+
+     
+
+    // The remoteHost structure can now be used to access information about the host
+
+      WSACleanup();
+
+      return 0;
+
+    }
+
+     
+
+    Sample output:
+
+ 
+
+Figure 2
+
+ 
+
+ 
+
+Figure 3
+
+ 
+
+ 
+
+ 
+
+ 
+
+ A Complete client-server program example
+
+ 
+
+The following codes are server and client program examples that used the previous discussed Winsock functions and structures. In this case, to make the client-server communication possible you have to make the server settings (through the arguments- protocol, port number etc.) must match with the client settings. For example if you choose to run the UDP server, the client also must be UDP client. Please run the server program first and you can run the client from different computers. In this example the server and client have been run using the default values of arguments on local Windows Xp Pro machine.
+
+    /* Server program example for IPv4 */
+
+    #define WIN32_LEAN_AND_MEAN
+
+    #include <winsock2.h>
+
+    #include <stdlib.h>
+
+    #include <stdio.h>
+
+    #include <string.h>
+
+     
+
+    #define DEFAULT_PORT 2007
+
+    // default TCP socket type
+
+    #define DEFAULT_PROTO SOCK_STREAM
+
+     
+
+    void Usage(char *progname)
+
+    {
+
+        fprintf(stderr,"Usage: %s -p [protocol] -e [port_num] -i [ip_address]\n", progname);
+
+        fprintf(stderr,"Where:\n\t- protocol is one of TCP or UDP\n");
+
+        fprintf(stderr,"\t- port_num is the port to listen on\n");
+
+        fprintf(stderr,"\t- ip_address is the ip address (in dotted\n");
+
+        fprintf(stderr,"\t  decimal notation) to bind to. But it is not useful here...\n");
+
+        fprintf(stderr,"\t- Hit Ctrl-C to terminate server program...\n");
+
+        fprintf(stderr,"\t- The defaults are TCP, 2007 and INADDR_ANY.\n");
+
+        WSACleanup();
+
+        exit(1);
+
+    }
+
+     
+
+    int main(int argc, char **argv)
+
+    {
+
+        char Buffer[128];
+
+        char *ip_address= NULL;
+
+        unsigned short port=DEFAULT_PORT;
+
+        int retval;
+
+        int fromlen;
+
+        int i;
+
+        int socket_type = DEFAULT_PROTO;
+
+        struct sockaddr_in local, from;
+
+        WSADATA wsaData;
+
+        SOCKET listen_socket, msgsock;
+
+     
+
+        /* Parse arguments, if there are arguments supplied */
+
+        if (argc > 1)
+
+           {
+
+            for(i=1; i<argc; i++)
+
+                  {
+
+                         // switches or options...
+
+                if ((argv[i][0] == '-') || (argv[i][0] == '/'))
+
+                         {
+
+                                // Change to lower...if any
+
+                               switch(tolower(argv[i][1]))
+
+                               {
+
+                         // if -p or /p
+
+                        case 'p':
+
+                            if (!stricmp(argv[i+1], "TCP"))
+
+                                socket_type = SOCK_STREAM;
+
+                            else if (!stricmp(argv[i+1], "UDP"))
+
+                                socket_type = SOCK_DGRAM;
+
+                            else
+
+                                Usage(argv[0]);
+
+                            i++;
+
+                            break;
+
+                         // if -i or /i, for server it is not so useful...
+
+                        case 'i':
+
+                            ip_address = argv[++i];
+
+                            break;
+
+                        // if -e or /e
+
+                        case 'e':
+
+                            port = atoi(argv[++i]);
+
+                            break;
+
+                         // No match...
+
+                        default:
+
+                            Usage(argv[0]);
+
+                            break;
+
+                    }
+
+                }
+
+                else
+
+                    Usage(argv[0]);
+
+            }
+
+        }
+
+     
+
+        // Request Winsock version 2.2
+
+        if ((retval = WSAStartup(0x202, &wsaData)) != 0)
+
+           {
+
+            fprintf(stderr,"Server: WSAStartup() failed with error %d\n", retval);
+
+            WSACleanup();
+
+            return -1;
+
+        }
+
+        else
+
+           printf("Server: WSAStartup() is OK.\n");
+
+     
+
+        if (port == 0)
+
+           {
+
+            Usage(argv[0]);
+
+        }
+
+     
+
+        local.sin_family = AF_INET;
+
+        local.sin_addr.s_addr = (!ip_address) ? INADDR_ANY:inet_addr(ip_address);
+
+     
+
+        /* Port MUST be in Network Byte Order */
+
+        local.sin_port = htons(port);
+
+        // TCP socket
+
+        listen_socket = socket(AF_INET, socket_type,0);
+
+     
+
+        if (listen_socket == INVALID_SOCKET){
+
+            fprintf(stderr,"Server: socket() failed with error %d\n", WSAGetLastError());
+
+            WSACleanup();
+
+            return -1;
+
+        }
+
+        else
+
+           printf("Server: socket() is OK.\n");
+
+     
+
+        // bind() associates a local address and port combination with the socket just created.
+
+        // This is most useful when the application is a
+
+        // server that has a well-known port that clients know about in advance.
+
+        if (bind(listen_socket, (struct sockaddr*)&local, sizeof(local)) == SOCKET_ERROR)
+
+           {
+
+            fprintf(stderr,"Server: bind() failed with error %d\n", WSAGetLastError());
+
+            WSACleanup();
+
+            return -1;
+
+        }
+
+        else
+
+                  printf("Server: bind() is OK.\n");
+
+     
+
+         // So far, everything we did was applicable to TCP as well as UDP.
+
+         // However, there are certain steps that do not work when the server is
+
+         // using UDP. We cannot listen() on a UDP socket.
+
+        if (socket_type != SOCK_DGRAM)
+
+           {
+
+            if (listen(listen_socket,5) == SOCKET_ERROR)
+
+                  {
+
+                fprintf(stderr,"Server: listen() failed with error %d\n", WSAGetLastError());
+
+                WSACleanup();
+
+                return -1;
+
+            }
+
+           else
+
+                  printf("Server: listen() is OK.\n");
+
+        }
+
+        printf("Server: %s: I'm listening and waiting connection\non port %d, protocol %s\n", argv[0], port, (socket_type == SOCK_STREAM)?"TCP":"UDP");
+
+     
+
+           while(1)
+
+           {
+
+            fromlen =sizeof(from);
+
+            // accept() doesn't make sense on UDP, since we do not listen()
+
+            if (socket_type != SOCK_DGRAM)
+
+                  {
+
+                msgsock = accept(listen_socket, (struct sockaddr*)&from, &fromlen);
+
+                if (msgsock == INVALID_SOCKET)
+
+               {
+
+                    fprintf(stderr,"Server: accept() error %d\n", WSAGetLastError());
+
+                    WSACleanup();
+
+                    return -1;
+
+                }
+
+               else
+
+                  printf("Server: accept() is OK.\n");
+
+                  printf("Server: accepted connection from %s, port %d\n", inet_ntoa(from.sin_addr), htons(from.sin_port)) ;
+
+               
+
+            }
+
+            else
+
+                msgsock = listen_socket;
+
+     
+
+            // In the case of SOCK_STREAM, the server can do recv() and send() on
+
+            // the accepted socket and then close it.
+
+            // However, for SOCK_DGRAM (UDP), the server will do recvfrom() and sendto()  in a loop.
+
+            if (socket_type != SOCK_DGRAM)
+
+                retval = recv(msgsock, Buffer, sizeof(Buffer), 0);
+
+     
+
+           else
+
+           {
+
+                retval = recvfrom(msgsock,Buffer, sizeof(Buffer), 0, (struct sockaddr *)&from, &fromlen);
+
+                printf("Server: Received datagram from %s\n", inet_ntoa(from.sin_addr));
+
+            }
+
+               
+
+            if (retval == SOCKET_ERROR)
+
+                  {
+
+                fprintf(stderr,"Server: recv() failed: error %d\n", WSAGetLastError());
+
+                closesocket(msgsock);
+
+                continue;
+
+            }
+
+           else
+
+                printf("Server: recv() is OK.\n");
+
+     
+
+            if (retval == 0)
+
+                  {
+
+                printf("Server: Client closed connection.\n");
+
+                closesocket(msgsock);
+
+                continue;
+
+            }
+
+            printf("Server: Received %d bytes, data \"%s\" from client\n", retval, Buffer);
+
+     
+
+            printf("Server: Echoing the same data back to client...\n");
+
+            if (socket_type != SOCK_DGRAM)
+
+                retval = send(msgsock, Buffer, sizeof(Buffer), 0);
+
+            else
+
+                retval = sendto(msgsock, Buffer, sizeof(Buffer), 0, (struct sockaddr *)&from, fromlen);
+
+     
+
+                  if (retval == SOCKET_ERROR)
+
+                  {
+
+                         fprintf(stderr,"Server: send() failed: error %d\n", WSAGetLastError());
+
+                   }
+
+                  else
+
+                         printf("Server: send() is OK.\n");
+
+     
+
+            if (socket_type != SOCK_DGRAM)
+
+           {
+
+                printf("Server: I'm waiting more connection, try running the client\n");
+
+                printf("Server: program from the same computer or other computer...\n");
+
+                closesocket(msgsock);
+
+            }
+
+            else
+
+                printf("Server: UDP server looping back for more requests\n");
+
+            continue;
+
+        }
+
+           return 0;
+
+    }
+
+     
+
+    Sample output:
+
+ 
+
+Figure 1
+	   
+
+ 
+
+The following is the client program.
+
+ 
+
+    // Client program example
+
+    #define WIN32_LEAN_AND_MEAN
+
+    #include <winsock2.h>
+
+    #include <stdlib.h>
+
+    #include <stdio.h>
+
+    #include <string.h>
+
+     
+
+    #define DEFAULT_PORT 2007
+
+    // TCP socket type
+
+    #define DEFAULT_PROTO SOCK_STREAM
+
+     
+
+    void Usage(char *progname)
+
+    {
+
+        fprintf(stderr,"Usage: %s -p [protocol] -n [server name/IP] -e [port_num] -l [iterations]\n", progname);
+
+        fprintf(stderr,"Where:\n\tprotocol is one of TCP or UDP\n");
+
+        fprintf(stderr,"\t- server is the IP address or name of server\n");
+
+        fprintf(stderr,"\t- port_num is the port to listen on\n");
+
+        fprintf(stderr,"\t- iterations is the number of loops to execute.\n");
+
+        fprintf(stderr,"\t- (-l by itself makes client run in an infinite loop,\n");
+
+        fprintf(stderr,"\t- Hit Ctrl-C to terminate it)\n");
+
+        fprintf(stderr,"\t- The defaults are TCP , localhost and 2007\n");
+
+        WSACleanup();
+
+        exit(1);
+
+    }
+
+     
+
+    int main(int argc, char **argv)
+
+    {
+
+        char Buffer[128];
+
+        // default to localhost
+
+        char *server_name= "localhost";
+
+        unsigned short port = DEFAULT_PORT;
+
+        int retval, loopflag = 0;
+
+        int i, loopcount, maxloop=-1;
+
+        unsigned int addr;
+
+        int socket_type = DEFAULT_PROTO;
+
+        struct sockaddr_in server;
+
+        struct hostent *hp;
+
+        WSADATA wsaData;
+
+        SOCKET  conn_socket;
+
+     
+
+        if (argc >1)
+
+           {
+
+            for(i=1; i<argc; i++)
+
+            {
+
+                if ((argv[i][0] == '-') || (argv[i][0] == '/'))
+
+               {
+
+                    switch(tolower(argv[i][1]))
+
+                     {
+
+                        case 'p':
+
+                            if (!stricmp(argv[i+1], "TCP"))
+
+                                socket_type = SOCK_STREAM;
+
+                            else if (!stricmp(argv[i+1], "UDP"))
+
+                                socket_type = SOCK_DGRAM;
+
+                            else
+
+                                Usage(argv[0]);
+
+                            i++;
+
+                            break;
+
+                        case 'n':
+
+                            server_name = argv[++i];
+
+                            break;
+
+                        case 'e':
+
+                            port = atoi(argv[++i]);
+
+                            break;
+
+                        case 'l':
+
+                            loopflag =1;
+
+                            if (argv[i+1]) {
+
+                                if (argv[i+1][0] != '-')
+
+                                    maxloop = atoi(argv[i+1]);
+
+                            }
+
+                            else
+
+                                maxloop = -1;
+
+                            i++;
+
+                            break;
+
+                        default:
+
+                            Usage(argv[0]);
+
+                            break;
+
+                    }
+
+                }
+
+                else
+
+                    Usage(argv[0]);
+
+            }
+
+        }
+
+     
+
+        if ((retval = WSAStartup(0x202, &wsaData)) != 0)
+
+        {
+
+           fprintf(stderr,"Client: WSAStartup() failed with error %d\n", retval);
+
+            WSACleanup();
+
+            return -1;
+
+        }
+
+        else
+
+           printf("Client: WSAStartup() is OK.\n");
+
+     
+
+        if (port == 0)
+
+        {
+
+            Usage(argv[0]);
+
+        }
+
+        // Attempt to detect if we should call gethostbyname() or gethostbyaddr()
+
+        if (isalpha(server_name[0]))
+
+        {   // server address is a name
+
+            hp = gethostbyname(server_name);
+
+        }
+
+        else
+
+        { // Convert nnn.nnn address to a usable one
+
+            addr = inet_addr(server_name);
+
+            hp = gethostbyaddr((char *)&addr, 4, AF_INET);
+
+        }
+
+        if (hp == NULL )
+
+        {
+
+            fprintf(stderr,"Client: Cannot resolve address \"%s\": Error %d\n", server_name, WSAGetLastError());
+
+            WSACleanup();
+
+            exit(1);
+
+        }
+
+        else
+
+           printf("Client: gethostbyaddr() is OK.\n");
+
+        // Copy the resolved information into the sockaddr_in structure
+
+        memset(&server, 0, sizeof(server));
+
+        memcpy(&(server.sin_addr), hp->h_addr, hp->h_length);
+
+        server.sin_family = hp->h_addrtype;
+
+        server.sin_port = htons(port);
+
+     
+
+        conn_socket = socket(AF_INET, socket_type, 0); /* Open a socket */
+
+        if (conn_socket <0 )
+
+        {
+
+            fprintf(stderr,"Client: Error Opening socket: Error %d\n", WSAGetLastError());
+
+            WSACleanup();
+
+            return -1;
+
+        }
+
+        else
+
+           printf("Client: socket() is OK.\n");
+
+     
+
+        // Notice that nothing in this code is specific to whether we
+
+        // are using UDP or TCP.
+
+        // We achieve this by using a simple trick.
+
+        //    When connect() is called on a datagram socket, it does not
+
+        //    actually establish the connection as a stream (TCP) socket
+
+        //    would. Instead, TCP/IP establishes the remote half of the
+
+        //    (LocalIPAddress, LocalPort, RemoteIP, RemotePort) mapping.
+
+        //    This enables us to use send() and recv() on datagram sockets,
+
+        //    instead of recvfrom() and sendto()
+
+        printf("Client: Client connecting to: %s.\n", hp->h_name);
+
+        if (connect(conn_socket, (struct sockaddr*)&server, sizeof(server)) == SOCKET_ERROR)
+
+        {
+
+            fprintf(stderr,"Client: connect() failed: %d\n", WSAGetLastError());
+
+            WSACleanup();
+
+            return -1;
+
+        }
+
+        else
+
+           printf("Client: connect() is OK.\n");
+
+     
+
+        // Test sending some string
+
+        loopcount = 0;
+
+        while(1)
+
+        {
+
+             wsprintf(Buffer,"This is a test message from client #%d", loopcount++);
+
+            retval = send(conn_socket, Buffer, sizeof(Buffer), 0);
+
+            if (retval == SOCKET_ERROR)
+
+            {
+
+                fprintf(stderr,"Client: send() failed: error %d.\n", WSAGetLastError());
+
+                WSACleanup();
+
+                return -1;
+
+            }
+
+            else
+
+              printf("Client: send() is OK.\n");
+
+            printf("Client: Sent data \"%s\"\n", Buffer);
+
+     
+
+                  retval = recv(conn_socket, Buffer, sizeof(Buffer), 0);
+
+            if (retval == SOCKET_ERROR)
+
+           {
+
+                fprintf(stderr,"Client: recv() failed: error %d.\n", WSAGetLastError());
+
+                closesocket(conn_socket);
+
+                WSACleanup();
+
+                return -1;
+
+            }
+
+            else
+
+                printf("Client: recv() is OK.\n");
+
+           
+
+            // We are not likely to see this with UDP, since there is no
+
+            // 'connection' established.
+
+            if (retval == 0)
+
+           {
+
+                printf("Client: Server closed connection.\n");
+
+                closesocket(conn_socket);
+
+                WSACleanup();
+
+                return -1;
+
+            }
+
+     
+
+            printf("Client: Received %d bytes, data \"%s\" from server.\n", retval, Buffer);
+
+            if (!loopflag)
+
+           {
+
+                printf("Client: Terminating connection...\n");
+
+                break;
+
+            }
+
+            else
+
+           {
+
+                if ((loopcount >= maxloop) && (maxloop >0))
+
+                break;
+
+            }
+
+        }
+
+        closesocket(conn_socket);
+
+        WSACleanup();
+
+     
+
+    return 0;
+
+    }
+
+ 
+
+The following is an output when the client program has been run twice using the default arguments. Remember that you have to run the server program first.
+
+    C:\>myclient -
+
+    Usage: myclient -p [protocol] -n [server name/IP] -e [port_num] -l [iterations]
+
+    Where:
+
+            protocol is one of TCP or UDP
+
+            - server is the IP address or name of server
+
+            - port_num is the port to listen on
+
+            - iterations is the number of loops to execute.
+
+            - (-l by itself makes client run in an infinite loop,
+
+            - Hit Ctrl-C to terminate it)
+
+            - The defaults are TCP , localhost and 2007
+
+     
+
+    C:\>myclient -p TCP -n 127.0.0.1 -e 5656 -l 3
+
+    Client: WSAStartup() is OK.
+
+    Client: gethostbyaddr() is OK.
+
+    Client: socket() is OK.
+
+    Client: Client connecting to: localhost.
+
+    Client: connect() is OK.
+
+    Client: send() is OK.
+
+    Client: Sent data "This is a test message from client #0"
+
+    Client: recv() is OK.
+
+    Client: Received 128 bytes, data "This is a test message from client #0" from server.
+
+    Client: send() is OK.
+
+    Client: Sent data "This is a test message from client #1"
+
+    Client: recv() failed: error 10053.
+
+     
+
+    C:\>myclient -p TCP -n 127.0.0.1 -e 5656 -l 3
+
+    Client: WSAStartup() is OK.
+
+    Client: gethostbyaddr() is OK.
+
+    Client: socket() is OK.
+
+    Client: Client connecting to: localhost.
+
+    Client: connect() is OK.
+
+    Client: send() is OK.
+
+    Client: Sent data "This is a test message from client #0"
+
+    Client: recv() is OK.
+
+    Client: Received 128 bytes, data "This is a test message from client #0" from server.
+
+    Client: send() is OK.
+
+    Client: Sent data "This is a test message from client #1"
+
+    Client: recv() failed: error 10053.
+
+     
+
+    C:\>
+
+IPv6 Server Program Example
+
+ 
+
+The following is a client-server program example for IPv6 enabled machines. The first one is the server program example run for IPv4. If you are in IPv6 network environment, please try running the program using the IPv6 address and PF_INET6 family.
+
+ 
+
+    // IPv6 server program example. Try running it on the IPv6 enabled machines using IPv6 arguments
+
+    #define WIN32_LEAN_AND_MEAN
+
+    #include <winsock2.h>
+
+    #include <ws2tcpip.h>
+
+    #ifndef IPPROTO_IPV6
+
+    // For IPv6.
+
+    #include <tpipv6.h>
+
+    #endif
+
+    #include <stdlib.h>
+
+    #include <stdio.h>
+
+    #include <string.h>
+
+     
+
+    // This code assumes that at the transport level, the system only supports
+
+    // one stream protocol (TCP) and one datagram protocol (UDP).  Therefore,
+
+    // specifying a socket type of SOCK_STREAM is equivalent to specifying TCP
+
+    // and specifying a socket type of
+
+    // SOCK_DGRAM is equivalent to specifying UDP.
+
+     
+
+    // Accept either IPv4 or IPv6
+
+    #define DEFAULT_FAMILY     PF_UNSPEC
+
+    // TCP socket type
+
+    #define DEFAULT_SOCKTYPE   SOCK_STREAM
+
+    // Arbitrary, test port
+
+    #define DEFAULT_PORT       "2007"
+
+    // Set very small for demonstration purposes
+
+    #define BUFFER_SIZE        128
+
+     
+
+    void Usage(char *ProgName)
+
+    {
+
+        fprintf(stderr, "\nSimple socket server program.\n");
+
+        fprintf(stderr, "\n%s [-f family] [-t transport] [-p port] [-a address]\n\n", ProgName);
+
+        fprintf(stderr, "  family\tOne of PF_INET, PF_INET6 or PF_UNSPEC. (default %s)\n",
+
+                (DEFAULT_FAMILY == PF_UNSPEC) ? "PF_UNSPEC" :
+
+                ((DEFAULT_FAMILY == PF_INET) ? "PF_INET" : "PF_INET6"));
+
+        fprintf(stderr, "  transport\tEither TCP or UDP. (default: %s)\n", (DEFAULT_SOCKTYPE == SOCK_STREAM) ? "TCP" : "UDP");
+
+        fprintf(stderr, "  port\t\tPort on which to bind. (default %s)\n", DEFAULT_PORT);
+
+        fprintf(stderr, "  address\tIP address on which to bind.  (default: unspecified address)\n");
+
+        WSACleanup();
+
+        exit(1);
+
+    }
+
+     
+
+    LPSTR DecodeError(int ErrorCode)
+
+    {
+
+        static char Message[1024];
+
+     
+
+        // If this program was multi-threaded, we'd want to use FORMAT_MESSAGE_ALLOCATE_BUFFER
+
+        // instead of a static buffer here.
+
+        // (And of course, free the buffer when we were done with it)
+
+        FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS |
+
+                      FORMAT_MESSAGE_MAX_WIDTH_MASK, NULL, ErrorCode,
+
+                      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)Message, 1024, NULL);
+
+        return Message;
+
+    }
+
+     
+
+    int main(int argc, char **argv)
+
+    {
+
+        char Buffer[BUFFER_SIZE], Hostname[NI_MAXHOST];
+
+        int Family = DEFAULT_FAMILY;
+
+        int SocketType = DEFAULT_SOCKTYPE;
+
+        char *Port = DEFAULT_PORT;
+
+        char *Address = NULL;
+
+        int i, NumSocks, RetVal, FromLen, AmountRead;
+
+        SOCKADDR_STORAGE From;
+
+        WSADATA wsaData;
+
+        ADDRINFO Hints, *AddrInfo, *AI;
+
+        SOCKET ServSock[FD_SETSIZE];
+
+        fd_set SockSet;
+
+     
+
+           printf("Usage: %s [-f family] [-t transport] [-p port] [-a address]\n", argv[0]);
+
+           printf("Example: %s -f PF_INET6 -t TCP -p 1234 -a 127.0.0.1\n", argv[0]);
+
+           printf("Else, default values used. By the way, the -a not usable for server...\n");
+
+           printf("Ctrl + C to terminate the server program.\n\n");
+
+     
+
+        // Parse arguments
+
+        if (argc > 1)
+
+        {
+
+            for(i = 1;i < argc; i++)
+
+           {
+
+                if ((argv[i][0] == '-') || (argv[i][0] == '/') &&
+
+                    (argv[i][1] != 0) && (argv[i][2] == 0))
+
+               {
+
+                    switch(tolower(argv[i][1]))
+
+                   {
+
+                        case 'f':
+
+                            if (!argv[i+1])
+
+                                Usage(argv[0]);
+
+                            if (!stricmp(argv[i+1], "PF_INET"))
+
+                                Family = PF_INET;
+
+                            else if (!stricmp(argv[i+1], "PF_INET6"))
+
+                                Family = PF_INET6;
+
+                            else if (!stricmp(argv[i+1], "PF_UNSPEC"))
+
+                                Family = PF_UNSPEC;
+
+                            else
+
+                                Usage(argv[0]);
+
+                            i++;
+
+                            break;
+
+     
+
+                        case 't':
+
+                            if (!argv[i+1])
+
+                                Usage(argv[0]);
+
+                            if (!stricmp(argv[i+1], "TCP"))
+
+                                SocketType = SOCK_STREAM;
+
+                            else if (!stricmp(argv[i+1], "UDP"))
+
+                                SocketType = SOCK_DGRAM;
+
+                            else
+
+                                Usage(argv[0]);
+
+                            i++;
+
+                            break;
+
+     
+
+                        case 'a':
+
+                            if (argv[i+1])
+
+                          {
+
+                                if (argv[i+1][0] != '-')
+
+                               {
+
+                                    Address = argv[++i];
+
+                                    break;
+
+                                }
+
+                            }
+
+                            Usage(argv[0]);
+
+                            break;
+
+     
+
+                        case 'p':
+
+                            if (argv[i+1])
+
+                            {
+
+                                if (argv[i+1][0] != '-')
+
+                              {
+
+                                    Port = argv[++i];
+
+                                    break;
+
+                                }
+
+                            }
+
+                            Usage(argv[0]);
+
+                            break;
+
+     
+
+                        default:
+
+                            Usage(argv[0]);
+
+                            break;
+
+                    }
+
+                } else
+
+                    Usage(argv[0]);
+
+            }
+
+        }
+
+     
+
+        // Ask for Winsock version 2.2...
+
+        if ((RetVal = WSAStartup(MAKEWORD(2, 2), &wsaData)) != 0)
+
+        {
+
+           fprintf(stderr, "Server: WSAStartup() failed with error %d: %s\n", RetVal, DecodeError(RetVal));
+
+            WSACleanup();
+
+            return -1;
+
+        }
+
+        else
+
+             printf("Server: WSAStartup() is OK.\n");
+
+     
+
+        if (Port == NULL)
+
+        {
+
+            Usage(argv[0]);
+
+        }
+
+     
+
+        // By setting the AI_PASSIVE flag in the hints to getaddrinfo(),
+
+        // we're indicating that we intend to use the resulting address(es) to bind
+
+        // to a socket(s) for accepting incoming connections.  This means
+
+        // that when the Address parameter is NULL, getaddrinfo() will return one
+
+        // entry per allowed protocol family containing the unspecified address for that family.
+
+        memset(&Hints, 0, sizeof(Hints));
+
+        Hints.ai_family   = Family;
+
+        Hints.ai_socktype = SocketType;
+
+        Hints.ai_flags    = AI_NUMERICHOST | AI_PASSIVE;
+
+        RetVal = getaddrinfo(Address, Port, &Hints, &AddrInfo);
+
+        if (RetVal != 0)
+
+        {
+
+            fprintf(stderr, "getaddrinfo() failed with error %d: %s\n", RetVal, gai_strerror(RetVal));
+
+            WSACleanup();
+
+            return -1;
+
+        }
+
+        else
+
+           printf("Server: getaddrinfo() is OK.\n");
+
+     
+
+        // For each address getaddrinfo returned, we create a new socket,
+
+        // bind that address to it, and create a queue to listen on.
+
+        for (i = 0, AI = AddrInfo; AI != NULL; AI = AI->ai_next, i++)
+
+           {
+
+            // Highly unlikely, but check anyway.
+
+            if (i == FD_SETSIZE)
+
+           {
+
+                printf("Server: getaddrinfo() returned more addresses than we could use.\n");
+
+                break;
+
+            }
+
+     
+
+            // This example only supports PF_INET and PF_INET6.
+
+            if ((AI->ai_family != PF_INET) && (AI->ai_family != PF_INET6))
+
+                continue;
+
+     
+
+            // Open a socket with the correct address family for this address.
+
+            ServSock[i] = socket(AI->ai_family, AI->ai_socktype, AI->ai_protocol);
+
+            if (ServSock[i] == INVALID_SOCKET)
+
+           {
+
+                fprintf(stderr, "Server: socket() failed with error %d: %s\n", WSAGetLastError(), DecodeError(WSAGetLastError()));
+
+                continue;
+
+            }
+
+           else
+
+               printf("Server: socket() is OK.\n");
+
+     
+
+            // bind() associates a local address and port combination with
+
+            // the socket just created. This is most useful when
+
+            // the application is a server that has a well-known port that
+
+            // clients know about in advance.
+
+            if (bind(ServSock[i], AI->ai_addr, int(AI->ai_addrlen)) == SOCKET_ERROR)
+
+           {
+
+                fprintf(stderr,"Server: bind() failed with error %d: %s\n", WSAGetLastError(), DecodeError(WSAGetLastError()));
+
+                continue;
+
+            }
+
+           else
+
+               printf("Server: bind() is OK.\n");
+
+     
+
+            // So far, everything we did was applicable to TCP as well as UDP.
+
+            // However, there are certain fundamental differences between stream
+
+            // protocols such as TCP and datagram protocols such as UDP.
+
+            //
+
+            // Only connection orientated sockets, for example those of
+
+            // type SOCK_STREAM, can listen() for incoming connections.
+
+            if (SocketType == SOCK_STREAM)
+
+           {
+
+                if (listen(ServSock[i], 5) == SOCKET_ERROR)
+
+               {
+
+                  fprintf(stderr, "Server: listen() failed with error %d: %s\n", WSAGetLastError(), DecodeError(WSAGetLastError()));
+
+                    continue;
+
+                }
+
+               else
+
+                  printf("Server: listen() is OK.\n");
+
+            }
+
+     
+
+            printf("I'm listening and waiting on port %s, protocol %s, protocol family %s\n",
+
+                   Port, (SocketType == SOCK_STREAM) ? "TCP" : "UDP",
+
+                   (AI->ai_family == PF_INET) ? "PF_INET" : "PF_INET6");
+
+        }
+
+     
+
+        freeaddrinfo(AddrInfo);
+
+     
+
+        if (i == 0)
+
+       {
+
+            fprintf(stderr, "Fatal error: unable to serve on any address.\n");
+
+            WSACleanup();
+
+            return -1;
+
+        }
+
+        NumSocks = i;
+
+     
+
+        // We now put the server into an eternal loop, serving requests as they arrive.
+
+        FD_ZERO(&SockSet);
+
+        while(1)
+
+        {
+
+            FromLen = sizeof(From);
+
+            // For connection orientated protocols, we will handle
+
+            // the packets comprising a connection collectively.  For datagram
+
+            // protocols, we have to handle each datagram individually.
+
+            //
+
+            // Check to see if we have any sockets remaining to be
+
+            // served from previous time through this loop.  If not, call select()
+
+            // to wait for a connection request or a datagram to arrive.
+
+            for (i = 0; i < NumSocks; i++)
+
+           {
+
+                if (FD_ISSET(ServSock[i], &SockSet))
+
+                    break;
+
+            }
+
+            if (i == NumSocks)
+
+           {
+
+                for (i = 0; i < NumSocks; i++)
+
+                    FD_SET(ServSock[i], &SockSet);
+
+                if (select(NumSocks, &SockSet, 0, 0, 0) == SOCKET_ERROR)
+
+               {
+
+                  fprintf(stderr, "Server: select() failed with error %d: %s\n", WSAGetLastError(), DecodeError(WSAGetLastError()));
+
+                    WSACleanup();
+
+                    return -1;
+
+                }
+
+                else
+
+                  printf("Server: select() is OK.\n");
+
+     
+
+            }
+
+            for (i = 0; i < NumSocks; i++)
+
+           {
+
+                if (FD_ISSET(ServSock[i], &SockSet))
+
+               {
+
+                    FD_CLR(ServSock[i], &SockSet);
+
+                    break;
+
+                }
+
+            }
+
+     
+
+            if (SocketType == SOCK_STREAM)
+
+           {
+
+                SOCKET ConnSock;
+
+     
+
+                // Since this socket was returned by the select(), we know we
+
+                // have a connection waiting and that this accept() won't block.
+
+                ConnSock = accept(ServSock[i], (LPSOCKADDR)&From, &FromLen);
+
+                if (ConnSock == INVALID_SOCKET)
+
+                {
+
+                   fprintf(stderr, "Server: accept() failed with error %d: %s\n", WSAGetLastError(), DecodeError(WSAGetLastError()));
+
+                    WSACleanup();
+
+                    return -1;
+
+                }
+
+                else
+
+                  printf("Server: accept() is OK.\n");
+
+     
+
+                if (getnameinfo((LPSOCKADDR)&From, FromLen, Hostname, sizeof(Hostname), NULL, 0, NI_NUMERICHOST) != 0)
+
+                    strcpy(Hostname, "<unknown>");
+
+                printf("\nAccepted connection from %s.\n", Hostname);
+
+     
+
+                // This sample server only handles connections sequentially.
+
+                // To handle multiple connections simultaneously, a server
+
+                // would likely want to launch another thread or process at
+
+                // this point to handle each individual connection.  Alternatively,
+
+                // it could keep a socket per connection and use select() on the
+
+                // fd_set to determine which to read from next.
+
+                //
+
+                // Here we just loop until this connection terminates.
+
+                while (1)
+
+               {
+
+                    // We now read in data from the client.
+
+                    //  Because TCP does NOT maintain message boundaries, we may recv()
+
+                    // the client's data grouped differently than it was sent.
+
+                    //  Since all this server does is echo the data it
+
+                    // receives back to the client, we don't need to concern
+
+                    // ourselves about message boundaries.  But it does mean
+
+                    // that the message data we print for a particular recv()
+
+                    // below may contain more or less data than was contained
+
+                    // in a particular client send().
+
+                    AmountRead = recv(ConnSock, Buffer, sizeof(Buffer), 0);
+
+                    if (AmountRead == SOCKET_ERROR)
+
+                   {
+
+                     fprintf(stderr, "Server: recv() failed with error %d: %s\n", WSAGetLastError(), DecodeError(WSAGetLastError()));
+
+                        closesocket(ConnSock);
+
+                        break;
+
+                    }
+
+                    else
+
+                      printf("Server: recv() is OK.\n");
+
+     
+
+                    if (AmountRead == 0)
+
+                   {
+
+                        printf("Server: Client closed the connection.\n");
+
+                        closesocket(ConnSock);
+
+                        break;
+
+                    }
+
+     
+
+                    printf("Server: Received %d bytes from client: \"%.*s\"\n", AmountRead, AmountRead, Buffer);
+
+                    printf("Server: Echoing the same data back to client...\n");
+
+     
+
+                    RetVal = send(ConnSock, Buffer, AmountRead, 0);
+
+                    if (RetVal == SOCKET_ERROR)
+
+                   {
+
+                        fprintf(stderr, "Server: send() failed: error %d: %s\n", WSAGetLastError(), DecodeError(WSAGetLastError()));
+
+                        closesocket(ConnSock);
+
+                        break;
+
+                    }
+
+                   else
+
+                      printf("Server: send() is OK.\n");
+
+                }
+
+     
+
+            }
+
+                  else
+
+                  {
+
+                // Since UDP maintains message boundaries, the amount of data
+
+                // we get from a recvfrom() should match exactly the amount
+
+                // of data the client sent in the corresponding sendto().
+
+                AmountRead = recvfrom(ServSock[i], Buffer, sizeof(Buffer), 0, (LPSOCKADDR)&From, &FromLen);
+
+                if (AmountRead == SOCKET_ERROR)
+
+               {
+
+                 fprintf(stderr, "Server: recvfrom() failed with error %d: %s\n", WSAGetLastError(), DecodeError(WSAGetLastError()));
+
+                    closesocket(ServSock[i]);
+
+                    break;
+
+                }
+
+                else
+
+                  printf("Server: recvfrom() is OK.\n");
+
+     
+
+                if (AmountRead == 0)
+
+               {
+
+                    // This should never happen on an unconnected socket, but...
+
+                    printf("Server: recvfrom() returned zero, aborting...\n");
+
+                    closesocket(ServSock[i]);
+
+                    break;
+
+                }
+
+                else
+
+                  printf("Server: recvfrom() is OK, returning non-zero.\n");
+
+     
+
+                RetVal = getnameinfo((LPSOCKADDR)&From, FromLen, Hostname, sizeof(Hostname), NULL, 0, NI_NUMERICHOST);
+
+                if (RetVal != 0)
+
+               {
+
+                    fprintf(stderr, "Server: getnameinfo() failed with error %d: %s\n", RetVal, DecodeError(RetVal));
+
+                    strcpy(Hostname, "<unknown>");
+
+                }
+
+               else
+
+                  printf("Server: getnameinfo() is OK.\n");
+
+               
+
+                printf("Server: Received a %d byte datagram from %s: \"%.*s\"\n", AmountRead, Hostname, AmountRead, Buffer);
+
+                printf("Server: Echoing the same data back to client\n");
+
+     
+
+                RetVal = sendto(ServSock[i], Buffer, AmountRead, 0, (LPSOCKADDR)&From, FromLen);
+
+                if (RetVal == SOCKET_ERROR)
+
+               {
+
+                   fprintf(stderr, "Server: sendto() failed with error %d: %s\n", WSAGetLastError(), DecodeError(WSAGetLastError()));
+
+                }
+
+               else
+
+                  printf("Server: sendto() is OK.\n");
+
+            }
+
+        }
+
+     
+
+        return 0;
+
+    }
+
+     
+The IPv6 Client Program Example
+
+ 
+
+And the client program for IPv6 example.
+
+ 
+
+    // Client for IPv6 enabled program example
+
+    #define WIN32_LEAN_AND_MEAN
+
+    #include <winsock2.h>
+
+    #include <ws2tcpip.h>
+
+    #ifndef IPPROTO_IPV6
+
+    // For IPv6
+
+    #include <tpipv6.h>
+
+    #endif
+
+    #include <stdlib.h>
+
+    #include <stdio.h>
+
+    #include <string.h>
+
+     
+
+    // This code assumes that at the transport level, the system only supports
+
+    // one stream protocol (TCP) and one datagram protocol (UDP).  Therefore,
+
+    // specifying a socket type of SOCK_STREAM is equivalent to specifying TCP
+
+    // and specifying a socket type of SOCK_DGRAM is equivalent to specifying UDP.
+
+    //
+
+    // Will use the loopback interface
+
+    #define DEFAULT_SERVER     NULL
+
+    // Accept either IPv4 or IPv6
+
+    #define DEFAULT_FAMILY     PF_UNSPEC
+
+    // TCP socket type
+
+    #define DEFAULT_SOCKTYPE   SOCK_STREAM
+
+    // Arbitrary, test port
+
+    #define DEFAULT_PORT       "2007"
+
+    // Number of "extra" bytes to send
+
+    #define DEFAULT_EXTRA      0
+
+    #define BUFFER_SIZE        65536
+
+     
+
+    void Usage(char *ProgName)
+
+    {
+
+        fprintf(stderr, "\nSimple socket IPv6 client program.\n");
+
+        fprintf(stderr, "\n%s [-s server] [-f family] [-t transport] [-p port] [-b bytes] [-n number]\n\n", ProgName);
+
+        fprintf(stderr, "  server\tServer name or IP address.  (default: %s)\n",
+
+                (DEFAULT_SERVER == NULL) ? "loopback address" : DEFAULT_SERVER);
+
+        fprintf(stderr, "  family\tOne of PF_INET, PF_INET6 or PF_UNSPEC.  (default: %s)\n",
+
+                (DEFAULT_FAMILY == PF_UNSPEC) ? "PF_UNSPEC" :
+
+                ((DEFAULT_FAMILY == PF_INET) ? "PF_INET" : "PF_INET6"));
+
+        fprintf(stderr, "  transport\tEither TCP or UDP.  (default: %s)\n",
+
+                (DEFAULT_SOCKTYPE == SOCK_STREAM) ? "TCP" : "UDP");
+
+        fprintf(stderr, "  port\t\tPort on which to connect.  (default: %s)\n",
+
+                DEFAULT_PORT);
+
+        fprintf(stderr, "  bytes\t\tBytes of extra data to send.  (default: %d)\n",
+
+                DEFAULT_EXTRA);
+
+        fprintf(stderr, "  number\tNumber of sends to perform.  (default: 1)\n");
+
+        fprintf(stderr, "  (-n by itself makes client run in an infinite loop,");
+
+        fprintf(stderr, " Hit Ctrl-C to terminate)\n");
+
+        WSACleanup();
+
+        exit(1);
+
+    }
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+    LPSTR DecodeError(int ErrorCode)
+
+    {
+
+        static char Message[1024];
+
+     
+
+        // If this program was multi-threaded, we'd want to use
+
+        // FORMAT_MESSAGE_ALLOCATE_BUFFER instead of a static buffer here.
+
+        // (And of course, free the buffer when we were done with it)
+
+     
+
+        FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS |
+
+                      FORMAT_MESSAGE_MAX_WIDTH_MASK,
+
+                      NULL, ErrorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+
+                      (LPSTR)Message, 1024, NULL);
+
+        return Message;
+
+    }
+
+     
+
+    int ReceiveAndPrint(SOCKET ConnSocket, char *Buffer, int BufLen)
+
+    {
+
+        int AmountRead;
+
+     
+
+        AmountRead = recv(ConnSocket, Buffer, BufLen, 0);
+
+        if (AmountRead == SOCKET_ERROR)
+
+        {
+
+           fprintf(stderr, "Client: recv() failed with error %d: %s\n",  WSAGetLastError(), DecodeError(WSAGetLastError()));
+
+            closesocket(ConnSocket);
+
+            WSACleanup();
+
+            exit(1);
+
+        }
+
+        else
+
+           printf("Client: recv() is OK.\n");
+
+     
+
+        // We are not likely to see this with UDP, since there is no 'connection' established.
+
+        if (AmountRead == 0)
+
+        {
+
+            printf("Client: Server closed the connection...\n");
+
+            closesocket(ConnSocket);
+
+            WSACleanup();
+
+            exit(0);
+
+        }
+
+        printf("Client: Received %d bytes from server: \"%.*s\"\n", AmountRead, AmountRead, Buffer);
+
+        return AmountRead;
+
+    }
+
+     
+
+    int main(int argc, char **argv)
+
+    {
+
+        char Buffer[BUFFER_SIZE], AddrName[NI_MAXHOST];
+
+        char *Server = DEFAULT_SERVER;
+
+        int Family = DEFAULT_FAMILY;
+
+        int SocketType = DEFAULT_SOCKTYPE;
+
+        char *Port = DEFAULT_PORT;
+
+        int i, RetVal, AddrLen, AmountToSend;
+
+        int ExtraBytes = DEFAULT_EXTRA;
+
+        unsigned int Iteration, MaxIterations = 1;
+
+        BOOL RunForever = FALSE;
+
+        WSADATA wsaData;
+
+        ADDRINFO Hints, *AddrInfo, *AI;
+
+        SOCKET ConnSocket;
+
+        struct sockaddr_storage Addr;
+
+     
+
+           printf("Usage: %s [-s server] [-f family] [-t transport] [-p port] [-b bytes] [-n number]\n", argv[0]);
+
+           printf("Example: %s -s 127.0.0.1 -f PF_INET6 -t TCP -p 1234 -b 1024 -n 4\n", argv[0]);
+
+           printf("Else, default values used.\n\n");
+
+           if (argc > 1)
+
+           {
+
+            for (i = 1;i < argc; i++)
+
+                  {
+
+                if (((argv[i][0] == '-') || (argv[i][0] == '/')) &&
+
+                    (argv[i][1] != 0) && (argv[i][2] == 0))
+
+                         {
+
+                    switch(tolower(argv[i][1]))
+
+                               {
+
+                        case 'f':
+
+                            if (!argv[i+1])
+
+                                Usage(argv[0]);
+
+                            if (!stricmp(argv[i+1], "PF_INET"))
+
+                                Family = PF_INET;
+
+                            else if (!stricmp(argv[i+1], "PF_INET6"))
+
+                                Family = PF_INET6;
+
+                            else if (!stricmp(argv[i+1], "PF_UNSPEC"))
+
+                                Family = PF_UNSPEC;
+
+                            else
+
+                                Usage(argv[0]);
+
+                            i++;
+
+                            break;
+
+                        case 't':
+
+                            if (!argv[i+1])
+
+                                Usage(argv[0]);
+
+                            if (!stricmp(argv[i+1], "TCP"))
+
+                                SocketType = SOCK_STREAM;
+
+                            else if (!stricmp(argv[i+1], "UDP"))
+
+                                SocketType = SOCK_DGRAM;
+
+                            else
+
+                                Usage(argv[0]);
+
+                            i++;
+
+                            break;
+
+                        case 's':
+
+                            if (argv[i+1])
+
+                            {
+
+                                if (argv[i+1][0] != '-')
+
+                                {
+
+                                    Server = argv[++i];
+
+                                    break;
+
+                                }
+
+                            }
+
+                            Usage(argv[0]);
+
+                            break;
+
+                        case 'p':
+
+                            if (argv[i+1])
+
+                            {
+
+                                if (argv[i+1][0] != '-')
+
+                                {
+
+                                    Port = argv[++i];
+
+                                    break;
+
+                                }
+
+                            }
+
+                            Usage(argv[0]);
+
+                            break;
+
+                        case 'b':
+
+                            if (argv[i+1])
+
+                            {
+
+                                if (argv[i+1][0] != '-')
+
+                                {
+
+                                    ExtraBytes = atoi(argv[++i]);
+
+                                    if (ExtraBytes > sizeof(Buffer) - sizeof("Message #4294967295"))
+
+                                        Usage(argv[0]);
+
+                                    break;
+
+                                }
+
+                            }
+
+                            Usage(argv[0]);
+
+                            break;
+
+                        case 'n':
+
+                            if (argv[i+1])
+
+                            {
+
+                                if (argv[i+1][0] != '-')
+
+                                {
+
+                                    MaxIterations = atoi(argv[++i]);
+
+                                    break;
+
+                                }
+
+                            }
+
+                            RunForever = TRUE;
+
+                            break;
+
+                        default:
+
+                            Usage(argv[0]);
+
+                            break;
+
+                    }
+
+                }
+
+                else
+
+                    Usage(argv[0]);
+
+            }
+
+        }
+
+        // Request for Winsock version 2.2.
+
+        if ((RetVal = WSAStartup(MAKEWORD(2, 2), &wsaData)) != 0)
+
+        {
+
+            fprintf(stderr, "Client: WSAStartup() failed with error %d: %s\n", RetVal, DecodeError(RetVal));
+
+            WSACleanup();
+
+            return -1;
+
+        }
+
+        else
+
+           printf("Client: WSAStartup() is OK.\n");
+
+        // By not setting the AI_PASSIVE flag in the hints to getaddrinfo, we're
+
+        // indicating that we intend to use the resulting address(es) to connect
+
+        // to a service.  This means that when the Server parameter is NULL,
+
+        // getaddrinfo will return one entry per allowed protocol family
+
+        // containing the loopback address for that family.
+
+        memset(&Hints, 0, sizeof(Hints));
+
+        Hints.ai_family = Family;
+
+        Hints.ai_socktype = SocketType;
+
+        RetVal = getaddrinfo(Server, Port, &Hints, &AddrInfo);
+
+        if (RetVal != 0)
+
+        {
+
+            fprintf(stderr, "Client: Cannot resolve address [%s] and port [%s], error %d: %s\n", Server, Port, RetVal, gai_strerror(RetVal));
+
+            WSACleanup();
+
+            return -1;
+
+        }
+
+        else
+
+           printf("Client: getaddrinfo() is OK, name resolved.\n");
+
+        // Try each address getaddrinfo returned, until we find one to which
+
+        // we can successfully connect.
+
+        for (AI = AddrInfo; AI != NULL; AI = AI->ai_next)
+
+        {
+
+            // Open a socket with the correct address family for this address.
+
+            ConnSocket = socket(AI->ai_family, AI->ai_socktype, AI->ai_protocol);
+
+            if (ConnSocket == INVALID_SOCKET)
+
+            {
+
+                fprintf(stderr,"Client: Error Opening socket, error %d: %s\n", WSAGetLastError(), DecodeError(WSAGetLastError()));
+
+                continue;
+
+            }
+
+           else
+
+               printf("Client: socket() is OK.\n");
+
+            // Notice that nothing in this code is specific to whether we
+
+            // are using UDP or TCP.
+
+            //
+
+            // When connect() is called on a datagram socket, it does not
+
+            // actually establish the connection as a stream (TCP) socket
+
+            // would. Instead, TCP/IP establishes the remote half of the
+
+            // (LocalIPAddress, LocalPort, RemoteIP, RemotePort) mapping.
+
+            // This enables us to use send() and recv() on datagram sockets,
+
+            // instead of recvfrom() and sendto().
+
+            printf("Client: Attempting to connect to: %s\n", Server ? Server : "localhost");
+
+            if (connect(ConnSocket, AI->ai_addr, int(AI->ai_addrlen)) != SOCKET_ERROR)
+
+                break;
+
+            else
+
+               printf("Client: connect() is OK.\n");
+
+     
+
+            i = WSAGetLastError();
+
+            if (getnameinfo(AI->ai_addr, int(AI->ai_addrlen), AddrName, sizeof(AddrName), NULL, 0, NI_NUMERICHOST) != 0)
+
+            strcpy(AddrName, "<unknown>");
+
+            fprintf(stderr, "Client: connect() to %s failed with error %d: %s\n", AddrName, i, DecodeError(i));
+
+            closesocket(ConnSocket);
+
+        }
+
+     
+
+        if (AI == NULL)
+
+        {
+
+            fprintf(stderr, "Client: Fatal error: unable to connect to the server.\n");
+
+            WSACleanup();
+
+            return -1;
+
+        }
+
+        // This demonstrates how to determine to where a socket is connected.
+
+        AddrLen = sizeof(Addr);
+
+        if (getpeername(ConnSocket, (LPSOCKADDR)&Addr, &AddrLen) == SOCKET_ERROR)
+
+        {
+
+            fprintf(stderr, "Client: getpeername() failed with error %d: %s\n", WSAGetLastError(), DecodeError(WSAGetLastError()));
+
+        }
+
+        else
+
+        {
+
+            if (getnameinfo((LPSOCKADDR)&Addr, AddrLen, AddrName, sizeof(AddrName), NULL, 0, NI_NUMERICHOST) != 0)
+
+            strcpy(AddrName, "<unknown>");
+
+            printf("Client: Connected to %s, port %d, protocol %s, protocol family %s\n", AddrName, ntohs(SS_PORT(&Addr)), (AI->ai_socktype == SOCK_STREAM) ? "TCP" : "UDP", (AI->ai_family == PF_INET) ? "PF_INET" : "PF_INET6");
+
+        }
+
+        // We are done with the address info chain, so we can free it.
+
+        freeaddrinfo(AddrInfo);
+
+        // Find out what local address and port the system picked for us.
+
+        AddrLen = sizeof(Addr);
+
+        if (getsockname(ConnSocket, (LPSOCKADDR)&Addr, &AddrLen) == SOCKET_ERROR)
+
+        {
+
+            fprintf(stderr, "Client: getsockname() failed with error %d: %s\n", WSAGetLastError(), DecodeError(WSAGetLastError()));
+
+        }
+
+        else
+
+        {
+
+           printf("Client: getsockname() is OK.\n");
+
+            if (getnameinfo((LPSOCKADDR)&Addr, AddrLen, AddrName, sizeof(AddrName), NULL, 0, NI_NUMERICHOST) != 0)
+
+                strcpy(AddrName, "<unknown>");
+
+            printf("Client: Using local address %s, port %d\n", AddrName, ntohs(SS_PORT(&Addr)));
+
+        }
+
+        // Send and receive in a loop for the requested number of iterations.
+
+        for (Iteration = 0; RunForever || Iteration < MaxIterations; Iteration++)
+
+        {
+
+            // compose a message to send.
+
+            AmountToSend = sprintf(Buffer, "This is message #%u", Iteration + 1);
+
+            for (i = 0; i < ExtraBytes; i++)
+
+           {
+
+                Buffer[AmountToSend++] = (char)((i & 0x3f) + 0x20);
+
+            }
+
+            // Send the message.  Since we are using a blocking socket, this
+
+            // call shouldn't return until it's able to send the entire amount.
+
+            RetVal = send(ConnSocket, Buffer, AmountToSend, 0);
+
+            if (RetVal == SOCKET_ERROR)
+
+           {
+
+                fprintf(stderr, "Client: send() failed with error %d: %s\n", WSAGetLastError(), DecodeError(WSAGetLastError()));
+
+                WSACleanup();
+
+                return -1;
+
+            }
+
+           else
+
+              printf("Client: send() is OK.\n");
+
+     
+
+            printf("Client: Sent %d bytes (out of %d bytes) of data: \"%.*s\"\n", RetVal, AmountToSend, AmountToSend, Buffer);
+
+            // Clear buffer just to prove we're really receiving something.
+
+            memset(Buffer, 0, sizeof(Buffer));
+
+            // Receive and print server's reply.
+
+            ReceiveAndPrint(ConnSocket, Buffer, sizeof(Buffer));
+
+        }
+
+        // Tell system we're done sending.
+
+        printf("Client: Sending done...\n");
+
+        shutdown(ConnSocket, SD_SEND);
+
+        // Since TCP does not preserve message boundaries, there may still
+
+        // be more data arriving from the server.  So we continue to receive
+
+        // data until the server closes the connection.
+
+        if (SocketType == SOCK_STREAM)
+
+            while (ReceiveAndPrint(ConnSocket, Buffer, sizeof(Buffer)) != 0)
+
+                         ;
+
+        closesocket(ConnSocket);
+
+        WSACleanup();
+
+        return 0;
+
+    }
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+   
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Testing the IPv6 Client-server Programs
+
+ 
+
+Run the previous server program example, then run the client program. The following is the client program’s output.
+
+    C:\>myclient -s 127.0.0.1 -f PF_INET -t TCP -p 12345 -b 32 -n 4
+
+    Usage: myclient [-s server] [-f family] [-t transport] [-p port] [-b bytes] [-n number]
+
+    Example: myclient -s 127.0.0.1 -f PF_INET6 -t TCP -p 1234 -b 1024 -n 4
+
+    Else, default values used.
+
+

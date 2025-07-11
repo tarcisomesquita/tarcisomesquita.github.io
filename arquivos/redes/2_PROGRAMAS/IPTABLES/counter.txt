@@ -1,0 +1,28 @@
+
+# iptables -A FORWARD -s 192.168.0.117
+# iptables -A FORWARD -d 192.168.0.117
+
+# iptables -nv -L FORWARD
+Chain FORWARD (policy ACCEPT 243 packets, 28089 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+    8   832            all  --  *      *       192.168.0.117        0.0.0.0/0
+   15  1052            all  --  *      *       0.0.0.0/0            192.168.0.117
+
+If you want to process the results with a script it is useful to use the "-x" or "--exact" option of iptables
+# iptables -nvx -L FORWARD
+
+to zero the counters of all rules in the chain forward:
+# iptables -Z FORWARD
+
+to replace a rule, which zero the counter
+# iptables -R FORWARD 1 -s 192.168.0.117
+
+Generate a traffic.log
+trafficlog="/var/log/vz-traffic.log"
+for i in `./vz-all-running-ip` ; do
+   echo -n `date "+%Y-%m-%d %H:%M:%S"` >> $trafficlog
+   echo -n " $i " >> $trafficlog
+   echo `iptables -nvx -L FORWARD | grep " $i " | tr -s [:blank:] | cut -d' ' -f3 | awk '{sum+=$1} END {print sum;}'` >> $trafficlog
+done
+iptables -Z FORWARD
+

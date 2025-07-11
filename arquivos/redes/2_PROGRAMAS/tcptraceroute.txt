@@ -1,0 +1,46 @@
+TCPTRACEROUTE(1)
+
+NAME
+       tcptraceroute - A traceroute implementation using TCP packets
+
+SYNOPSIS
+       tcptraceroute [-nNFSAE] [ -i interface ] [ -f first ttl ]
+       [ -l length ] [ -q number of queries ] [ -t tos ]
+       [ -m max ttl ] [ -p source port ] [ -s source address ]
+       [ -w wait time ] host [ destination port ] [ length ]
+
+DESCRIPTION
+       tcptraceroute is a traceroute implementation using TCP packets.
+
+packets with a TTL of one, and increments the TTL until the destination has been reached.  By printing the gateways that generate ICMP time exceeded messages along the way, it is able to determine the path packets are taking to reach the destination.
+
+By sending out TCP SYN packets instead of UDP or ICMP ECHO packets, tcptraceroute is able to bypass the most common firewall filters.
+
+If the host is not listening for incoming connections, it will respond with an RST indicating that the port is closed.
+If the host instead responds with a SYN|ACK, the port is known to be open, and an RST is sent by the tcptraceroute.
+
+
+OPTIONS
+       -n     Display numeric output, rather than doing a reverse DNS lookup for each hop.
+       -f     Set the initial TTL used in the first outgoing packet.  The default is 1.
+       -m     Set the maximum TTL used in outgoing packets.  The default is 30.
+       -p     Use the specified local TCP port in outgoing packets.
+
+       -s     Set the source address for outgoing packets.  See also the -i flag.
+
+       -i     Use the specified interface for outgoing packets.
+
+       -q     Set the number of probes to be sent to each hop.  The default is 3.
+
+       -w     Set the timeout, in seconds, to wait for a response for each probe.  The default is 3.
+
+       -S     Set the TCP SYN flag in outgoing packets.  This is the default, if neither -S or -A is specified.
+
+       -A     Set the TCP ACK flag in outgoing packets.  By doing so, it is possible to trace through stateless firewalls which permit outgoing TCP connections.
+
+       -l     Set the total packet length to be used in outgoing packets.  If the length is greater than the minimum size required to assemble the necessary probe packet headers, this value is automatically increased.
+
+       -d     Enable debugging, which may or may not be useful.
+
+       --dnat
+              Enable DNAT detection, and display messages when DNAT transitions are observed.  DNAT detection is based on the fact that some NAT devices, such as some Linux 2.4 kernels, do not correctly rewrite the IP address of the IP packets quoted in ICMP time-exceeded messages tcptraceroute solicits, revealing the destination IP address an outbound probe packet was NATed to.  NAT devices which correctly rewrite the IP address quoted by ICMP messages, such as some Linux 2.6 kernels, will not be detected.  For some target hosts, it may be necessary to use --dnat in conjunction with --track-port.  See the examples.txt file for examples.

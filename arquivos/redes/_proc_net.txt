@@ -1,0 +1,159 @@
+
+/proc/net/*
+
+The relevant /proc/net/ files for IPv4 are: tcp, udp, and raw.
+Each following line represents one open socket.
+File syntax:
+sl                  The number of the line in the output listing.
+
+local_address       The local IP address and port number for the socket. 
+                    IP is a little-endian hexadecimal.
+
+rem_address         The remote IP address and port number for the socket.
+
+st                  The socket status.
+
+tx_queue:rx_queue   The size of the transmit and receive queues.
+
+tr:tm->when         The tr field indicates whether a timer is active for this socket.
+                    A value of zero indicates the timer is not active.
+                    The tm->when field indicates the time remaining before timeout occurs.
+
+retrnsmt            Unused.
+
+uid                 The ID of the user that owns the socket.
+
+time-out            unused.
+
+inode               A cryptic-looking number that identifies the socket to the Linux virtual filesystem.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+arp
+Lists the kernel's ARP table.
+
+dev
+Informações de dispositivos. Show transmit and receive statistics created by driver.
+
+sockstat
+Provides socket statistics.
+
+tcp
+Contains detailed TCP socket information.
+
+raw
+Informação sobre o socket raw.
+
+tcp
+Informação sobre o socket TCP.
+
+udp
+Informação sobre o socket UDP.
+
+unix
+Informação sobre o socket de domínio Unix.
+
+route
+Informação sobre os roteamentos IP realizados pelo kernel
+
+ip_masquerade
+Conexões mascaradas do kernel
+
+
+
+dev_mcast
+Lists Layer2 multicast groups on which each device is listening.
+
+igmp
+Lists the IP multicast addresses which this system joined.
+
+ip_conntrack
+Lists tracked network connections for machines that are forwarding IP connections.
+
+ip_tables_names
+Lists the types of iptables in use. Contain values: mangle, raw, nat, filter.
+
+ip_mr_cache
+Lists the multicast routing cache.
+
+ip_mr_vif
+Lists multicast virtual interfaces.
+
+netstat
+Contains a broad yet detailed collection of networking statistics, including TCP timeouts, SYN cookies sent and received, and much more.
+
+psched
+Lists global packet scheduler parameters.
+
+
+route
+Lists the kernel's routing table.
+the IP addresses and network masks are displayed in byte-reversed hexadecimal.
+For example, to convert the remote address and port of line 16 of the /proc/net/tcp output shown in this column, we'd do the following:
+
+• Take the rem_address field:
+   0100007F:0017
+
+• Reverse the ordering of the bytes in the IP address part:
+   7F000001:0017
+
+• Let's separate the bytes of the address for readability:
+   7F 00 00 01 : 0017
+
+• Perform a simple hexadecimal-to-decimal conversion on each:
+   127 0 0 1 : 23 
+
+The fields are:
+
+Iface         The network interface that datagrams matching this route will 
+              leave.
+
+Destination   In combination with the Mark field, this specifies which data-
+              grams will match this route.
+
+Gateway       The IP address of the host that will act as a gateway for data-
+              grams matching this route.
+
+Flags         An indicator of a number of route attributes. The flags field 
+              values are the RTF_* codings found in the /usr/include/linux/ro-
+              ute.h file.
+
+RefCnt        Unused.
+
+Use           Unused.
+
+Metric        The metric value associated with the route. This is used to in-
+              dicate the cost or priority of a route.
+
+Mask          In combination with the Destination field, this specifies which 
+              datagrams will match this route.
+
+MTU           Specifies the largest TCP segment (in bytes) that will be built 
+              for transmission via this route.
+
+Window        Specifies the TCP window (in bytes) that will be advertised for 
+              TCP connections made via this route.
+
+IRTT          Specifies the Initial Round Trip time (in milliseconds) that 
+              will be used for TCP connections established via this route
+
+
+rt_cache
+Contains the current routing cache.
+
+snmp
+It is intended to be used by SNMP (Simple Network Management Protocol) daemon programs and provides summary statistics for each of the IP, ICMP, TCP, and UDP protocols.
+All of the fields are decimal integers excepting the Ip: Forwarding  field, which is a boolean value. In the SNMP world, boolean values are represented with values 1 and 2, so a value of 1 indicates that IP forwarding is disabled.
+
+
+tr_rif
+Lists the token ring RIF routing table.
+
+udp
+Contains detailed UDP socket information.
+
+unix
+Lists UNIX domain sockets currently in use.
+
+wireless
+Lists wireless interface data. 

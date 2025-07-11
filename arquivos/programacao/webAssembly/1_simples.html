@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>wasm</title>
+</head>
+<body>
+<script>
+WebAssembly.instantiateStreaming(fetch('1_simples.wasm'))
+.then(obj => {
+  console.log(obj.instance.exports.main());
+});
+</script>
+</body>
+</html>

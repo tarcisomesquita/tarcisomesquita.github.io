@@ -1,0 +1,99 @@
+<linkrel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//AAAAAA==" />
+
+$ cat ../../Download/icon.ico  | hexdump -v -C | cut -c19-
+00 00 01 00 01 00 01 01  00 00 01 00 20 00 30 00  |............ .0.|
+00 00 16 00 00 00 28 00  00 00 01 00 00 00 02 00  |......(.........|
+00 00 01 00 20 00 00 00  00 00 04 00 00 00 00 00  |.... ...........|
+00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
+ff ff 00 00 00 00                                 |......|
+
+
+00 00        idReserved 
+01 00        idType
+01 00        idCount 
+
+01           bWidth;
+01           bHeight;
+00           bColorCount;
+00           bReserved;
+01 00        wPlanes;
+20 00        wBitCount;
+30 00 00 00  dwBytesInRes;
+16 00 00 00  dwImageOffset;
+
+28 00 00 00  biSize; 
+01 00 00 00  biWidth; 
+02 00 00 00  biHeight; 
+01 00        biPlanes; 
+20 00        biBitCount; 
+00 00 00 00  biCompression; 
+04 00 00 00  biSizeImage;
+00 00 00 00  biXPelsPerMeter;
+00 00 00 00  biYPelsPerMeter;
+00 00 00 00  biClrUsed;
+00 00 00 00  biClrImportant;
+
+00 00 
+ff ff 00 00 00 00                                 |......|
+
+typedef struct tagBITMAPINFOHEADER {
+  DWORD biSize;              // number of bytes of BITMAPINFOHEADER
+  LONG  biWidth;             // width of the bitmap, in pixels
+  LONG  biHeight;
+  WORD  biPlanes;            // must be set to 1
+  WORD  biBitCount;          // number of bits per pixel
+  DWORD biCompression;
+  DWORD biSizeImage;         // size of the image, in bytes 
+  LONG  biXPelsPerMeter;     // horizontal resolution, in pixels per meter
+  LONG  biYPelsPerMeter;     // vertical resolution, in pixels per meter
+  DWORD biClrUsed;
+  DWORD biClrImportant;
+} BITMAPINFOHEADER
+
+typedef struct tagRGBQUAD {
+  BYTE rgbBlue;
+  BYTE rgbGreen;
+  BYTE rgbRed;
+  BYTE rgbReserved;  // must be zero
+} RGBQUAD;
+
+typedef struct
+{
+    WORD           idReserved;   // Reserved (must be 0)
+    WORD           idType;       // Resource Type (1 for icons)
+    WORD           idCount;      // How many images?
+    ICONDIRENTRY   idEntries[1]; // An entry for each image (idCount of 'em)
+} ICONDIR
+
+typedef struct
+{
+    BYTE        bWidth;          // Width, in pixels, of the image
+    BYTE        bHeight;         // Height, in pixels, of the image
+    BYTE        bColorCount;     // Number of colors in image (0 if >=8bpp)
+    BYTE        bReserved;       // Reserved ( must be 0)
+    WORD        wPlanes;         // Color Planes
+    WORD        wBitCount;       // Bits per pixel
+    DWORD       dwBytesInRes;    // How many bytes in this resource?
+    DWORD       dwImageOffset;   // Where in the file is this image?
+} ICONDIRENTRY
+
+This image data can be found dwImageOffset bytes from the beginning of the file, and is stored in the following format:
+
+
+Copy
+typdef struct
+{
+   BITMAPINFOHEADER   icHeader;      // DIB header
+   RGBQUAD         icColors[1];   // Color table
+   BYTE            icXOR[1];      // DIB bits for XOR mask
+   BYTE            icAND[1];      // DIB bits for AND mask
+} ICONIMAGE, *LPICONIMAGE;
+The icHeader member has the form of a DIB BITMAPINFOHEADER. Only the following members are used: biSize, biWidth, biHeight, biPlanes, biBitCount, biSizeImage. All other members must be 0. The biHeight member specifies the combined height of the XOR and AND masks. The members of icHeader define the contents and sizes of the other elements of the ICONIMAGE structure in the same way that the BITMAPINFOHEADER structure defines a CF_DIB format DIB.
+
+The icColors member is an array of RGBQUADs. The number of elements in this array is determined by examining the icHeader member.
+
+The icXOR member contains the DIB bits for the XOR mask of the image. The number of bytes in this array is determined by examining the icHeader member. The XOR mask is the color portion of the image and is applied to the destination using the XOR operation after the application of the AND mask.
+
+The icAND member contains the bits for the monochrome AND mask. The number of bytes in this array is determined by examining the icHeader member, and assuming 1bpp. The dimensions of this bitmap must be the same as the dimensions of the XOR mask. The AND mask is applied to the destination using the AND operation, to preserve or remove destination pixels before applying the XOR mask
+
+.

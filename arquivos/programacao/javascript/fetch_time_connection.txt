@@ -1,0 +1,284 @@
+let response = await fetch(url);
+if (response.ok) { // if HTTP-status is 200-299
+  // get the response body (the method explained below)
+  let json = await response.json();
+} else {
+  alert("HTTP-Error: " + response.status);
+}
+
+
+let response = await fetch('https://api.github.com/repos/javascript-tutorial/en.javascript.info/commits');
+let text = await response.text(); // read response body as text
+
+// get one header
+alert(response.headers.get('Content-Type')); // application/json; charset=utf-8
+
+// iterate over all headers
+async function teste() {
+  let response = await fetch('https://tarcisomesquita.github.io/ceejapd/index4.html');
+  for (let [key, value] of response.headers) {
+    console.log(`${key} = ${value}`);
+  }
+}
+cache-control = max-age=600
+content-length = 6485
+content-type = text/html; charset=utf-8
+expires = Thu, 13 Apr 2023 10:50:09 GMT
+last-modified = Tue, 28 Mar 2023 23:16:08 GMT
+
+https://fetch.spec.whatwg.org/#forbidden-header-name
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+function resolveAfter2Seconds() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve('resolved');
+    }, 2000);
+  });
+}
+
+async function asyncCall() {
+  console.log('calling');
+  const result = await resolveAfter2Seconds();
+  console.log(result);
+  // Expected output: "resolved"
+}
+
+asyncCall();
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+function resolveAfter2Seconds() {
+  console.log("starting slow promise");
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve("slow");
+      console.log("slow promise is done");
+    }, 2000);
+  });
+}
+
+function resolveAfter1Second() {
+  console.log("starting fast promise");
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve("fast");
+      console.log("fast promise is done");
+    }, 1000);
+  });
+}
+
+async function sequentialStart() {
+  console.log("==SEQUENTIAL START==");
+
+  // 1. Execution gets here almost instantly
+  const slow = await resolveAfter2Seconds();
+  console.log(slow); // 2. this runs 2 seconds after 1.
+
+  const fast = await resolveAfter1Second();
+  console.log(fast); // 3. this runs 3 seconds after 1.
+}
+
+async function concurrentStart() {
+  console.log("==CONCURRENT START with await==");
+  const slow = resolveAfter2Seconds(); // starts timer immediately
+  const fast = resolveAfter1Second(); // starts timer immediately
+
+  // 1. Execution gets here almost instantly
+  console.log(await slow); // 2. this runs 2 seconds after 1.
+  console.log(await fast); // 3. this runs 2 seconds after 1., immediately after 2., since fast is already resolved
+}
+
+function concurrentPromise() {
+  console.log("==CONCURRENT START with Promise.all==");
+  return Promise.all([resolveAfter2Seconds(), resolveAfter1Second()]).then(
+    (messages) => {
+      console.log(messages[0]); // slow
+      console.log(messages[1]); // fast
+    },
+  );
+}
+
+async function parallel() {
+  console.log("==PARALLEL with await Promise.all==");
+
+  // Start 2 "jobs" in parallel and wait for both of them to complete
+  await Promise.all([
+    (async () => console.log(await resolveAfter2Seconds()))(),
+    (async () => console.log(await resolveAfter1Second()))(),
+  ]);
+}
+
+sequentialStart(); // after 2 seconds, logs "slow", then after 1 more second, "fast"
+
+// wait above to finish
+setTimeout(concurrentStart, 4000); // after 2 seconds, logs "slow" and then "fast"
+
+// wait again
+setTimeout(concurrentPromise, 7000); // same as concurrentStart
+
+// wait again
+setTimeout(parallel, 10000); // truly parallel: after 1 second, logs "fast", then after 1 more second, "slow"
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+const myPromise = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve("foo");
+  }, 300);
+});
+
+myPromise
+  .then((value) => `${value} and bar`)
+  .then((value) => `${value} and bar again`)
+  .then((value) => {
+    console.log(value);
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+const promiseA = new Promise(myExecutorFunc);
+const promiseB = promiseA.then(handleFulfilled1, handleRejected1);
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+const aThenable = {
+  then(onFulfilled, onRejected) {
+    onFulfilled({
+      // The thenable is fulfilled with another thenable
+      then(onFulfilled, onRejected) {
+        onFulfilled(42);
+      },
+    });
+  },
+};
+
+Promise.resolve(aThenable); // A promise fulfilled with 42
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// To experiment with error handling, "threshold" values cause errors randomly
+const THRESHOLD_A = 8; // can use zero 0 to guarantee error
+
+function tetheredGetNumber(resolve, reject) {
+  setTimeout(() => {
+    const randomInt = Date.now();
+    const value = randomInt % 10;
+    if (value < THRESHOLD_A) {
+      resolve(value);
+    } else {
+      reject(`Too large: ${value}`);
+    }
+  }, 500);
+}
+
+function determineParity(value) {
+  const isOdd = value % 2 === 1;
+  return { value, isOdd };
+}
+
+function troubleWithGetNumber(reason) {
+  const err = new Error("Trouble getting number", { cause: reason });
+  console.error(err);
+  throw err;
+}
+
+function promiseGetWord(parityInfo) {
+  return new Promise((resolve, reject) => {
+    const { value, isOdd } = parityInfo;
+    if (value >= THRESHOLD_A - 1) {
+      reject(`Still too large: ${value}`);
+    } else {
+      parityInfo.wordEvenOdd = isOdd ? "odd" : "even";
+      resolve(parityInfo);
+    }
+  });
+}
+
+new Promise(tetheredGetNumber)
+  .then(determineParity, troubleWithGetNumber)
+  .then(promiseGetWord)
+  .then((info) => {
+    console.log(`Got: ${info.value}, ${info.wordEvenOdd}`);
+    return info;
+  })
+  .catch((reason) => {
+    if (reason.cause) {
+      console.error("Had previously handled error");
+    } else {
+      console.error(`Trouble with promiseGetWord(): ${reason}`);
+    }
+  })
+  .finally((info) => console.log("All done"));
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+<button id="make-promise">Make a promise!</button>
+<div id="log"></div>
+
+"use strict";
+
+let promiseCount = 0;
+
+function testPromise() {
+  const thisPromiseCount = ++promiseCount;
+  const log = document.getElementById("log");
+  // begin
+  log.insertAdjacentHTML("beforeend", `${thisPromiseCount}) Started<br>`);
+  // We make a new promise: we promise a numeric count of this promise,
+  // starting from 1 (after waiting 3s)
+  const p1 = new Promise((resolve, reject) => {
+    // The executor function is called with the ability
+    // to resolve or reject the promise
+    log.insertAdjacentHTML(
+      "beforeend",
+      `${thisPromiseCount}) Promise constructor<br>`,
+    );
+    // This is only an example to create asynchronism
+    setTimeout(() => {
+      // We fulfill the promise
+      resolve(thisPromiseCount);
+    }, Math.random() * 2000 + 1000);
+  });
+
+  // We define what to do when the promise is resolved with the then() call,
+  // and what to do when the promise is rejected with the catch() call
+  p1.then((val) => {
+    // Log the fulfillment value
+    log.insertAdjacentHTML("beforeend", `${val}) Promise fulfilled<br>`);
+  }).catch((reason) => {
+    // Log the rejection reason
+    console.log(`Handle rejected promise (${reason}) here.`);
+  });
+  // end
+  log.insertAdjacentHTML("beforeend", `${thisPromiseCount}) Promise made<br>`);
+}
+
+const btn = document.getElementById("make-promise");
+btn.addEventListener("click", testPromise);
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+new Promise((resolve, reject) => {
+  console.log("Initial");
+
+  resolve();
+})
+  .then(() => {
+    throw new Error("Something failed");
+
+    console.log("Do this");
+  })
+  .catch(() => {
+    console.error("Do that");
+  })
+  .then(() => {
+    console.log("Do this, no matter what happened before");
+  });
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

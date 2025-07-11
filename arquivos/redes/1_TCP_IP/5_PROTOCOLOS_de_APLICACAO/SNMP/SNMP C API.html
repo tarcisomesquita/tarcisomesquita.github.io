@@ -1,0 +1,224 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- base href="http://cuddletech.com/articles/snmp/node25.html" --></head><body><div style="background:#fff;border:1px solid #999;margin:-1px -1px 0;padding:0;"><div style="background:#ddd;border:1px solid #999;color:#000;font:13px arial,sans-serif;font-weight:normal;margin:12px;padding:8px;text-align:left">Este é o cache do Google de <a href="http://cuddletech.com/articles/snmp/node25.html" style="text-decoration:underline;color:#00c">http://cuddletech.com/articles/snmp/node25.html</a>. Ele é um instantâneo da página com a aparência que ela tinha em 7 jun. 2013 04:32:27 GMT. A <a href="http://cuddletech.com/articles/snmp/node25.html" style="text-decoration:underline;color:#00c">página atual</a> pode ter sido alterada nesse meio tempo. <a href="http://support.google.com/websearch/bin/answer.py?hl=pt-BR&amp;p=cached&amp;answer=1687222" style="text-decoration:underline;color:#00c">Saiba mais</a><br>Dica: para localizar rapidamente o termo de pesquisa nesta página, pressione <b>Ctrl+F</b> ou <b>⌘-F</b> (Mac) e use a barra de localização.<br><br><div style="float:right"><a href="http://webcache.googleusercontent.com/search?q=cache:jk_kOs9BIMQJ:cuddletech.com/articles/snmp/node25.html+snmp+packet+example&amp;hl=pt-BR&amp;gl=br&amp;strip=0" style="text-decoration:underline;color:#00c">Versão completa</a></div>
+<div>Estes termos de pesquisa estão realçados: <span style="background:#ffff66;color:black;font-weight:bold">snmp</span>&nbsp;<span style="background:#a0ffff;color:black;font-weight:bold">packet</span>&nbsp;<span style="background:#99ff99;color:black;font-weight:bold">example</span>&nbsp;&nbsp;</div></div></div><div style="position:relative">
+
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+
+
+<title>Watching SNMP on the wire</title>
+<meta name="description" content="Watching SNMP on the wire">
+<meta name="keywords" content="snmp_paper">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+
+<meta name="Generator" content="LaTeX2HTML v2002-2">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+
+
+
+
+
+
+
+
+
+<!--Navigation Panel-->
+<a name="tex2html366" href="http://cuddletech.com/articles/snmp/node26.html">
+next</a> 
+<a name="tex2html362" href="http://cuddletech.com/articles/snmp/node23.html">
+up</a> 
+<a name="tex2html356" href="http://cuddletech.com/articles/snmp/node24.html">
+previous</a> 
+<a name="tex2html364" href="http://cuddletech.com/articles/snmp/node1.html">
+contents</a>  
+<br>
+<b> Next:</b> <a name="tex2html367" href="http://cuddletech.com/articles/snmp/node26.html">A simple <b style="color:black;background-color:#99ff99">example</b></a>
+<b> Up:</b> <a name="tex2html363" href="http://cuddletech.com/articles/snmp/node23.html">The Net-<b style="color:black;background-color:#ffff66">SNMP</b> C API</a>
+<b> Previous:</b> <a name="tex2html357" href="http://cuddletech.com/articles/snmp/node24.html"><b style="color:black;background-color:#ffff66">SNMP</b> Internals</a>
+ &nbsp; <b>  <a name="tex2html365" href="http://cuddletech.com/articles/snmp/node1.html">Contents</a></b> 
+<br>
+<br>
+<!--End of Navigation Panel-->
+
+<h1><a name="SECTION00720000000000000000">
+Watching <b style="color:black;background-color:#ffff66">SNMP</b> on the wire</a>
+</h1>
+
+<p>
+To illustrate more accurately how <b style="color:black;background-color:#ffff66">SNMP</b> actually works on the wire, lets look at 
+sniffed packets captured during an <b style="color:black;background-color:#ffff66">SNMP</b> GET.  Only 2 packets are exchanged, a
+request by the manager and a response by the agent.  The following was gathered
+using Ethereal:
+
+</p><p>
+</p><pre>No.     Time        Source      Destination Protocol Info
+    112 1.936155    10.10.1.110 10.10.1.224 <b style="color:black;background-color:#ffff66">SNMP</b>     GET <b style="color:black;background-color:#ffff66">SNMP</b>...
+Simple Network Management Protocol
+    Version: 1 (0)
+    Community: public
+    PDU type: GET (0)
+    Request Id: 0x2a7ee1af
+    Error Status: NO ERROR (0)
+    Error Index: 0
+    Object identifier 1: 1.3.6.1.2.1.1.4.0 (SNMPv2-MIB::sysContact.0)
+    Value: NULL
+
+No.     Time        Source      Destination Protocol Info
+    113 1.943425    10.10.1.224 10.10.1.110 <b style="color:black;background-color:#ffff66">SNMP</b>     RESPONSE SN...
+Simple Network Management Protocol
+    Version: 1 (0)
+    Community: public
+    PDU type: RESPONSE (2)
+    Request Id: 0x2a7ee1af
+    Error Status: NO ERROR (0)
+    Error Index: 0
+    Object identifier 1: 1.3.6.1.2.1.1.4.0 (SNMPv2-MIB::sysContact.0)
+    Value: STRING: Ben Rockwood
+</pre>
+
+<p>
+Each <b style="color:black;background-color:#a0ffff">packet</b> is referred to as a PDU in <b style="color:black;background-color:#ffff66">SNMP</b> speak.  The first <b style="color:black;background-color:#a0ffff">packet</b> (with the Ethernet, IP, and UDP
+headers removed) is a version 1 GET request with an OID to get and a community name of "public".
+Notice that the GET PDU has a <i>Value</i> field, but its NULL.  The second <b style="color:black;background-color:#a0ffff">packet</b> is
+the response which you'll notice is identical to the GET PDU with 2 exceptions: the PDU type
+is RESPONSE instead of GET and the <i>Value</i> field is populated.  
+
+</p><p>
+Given this <b style="color:black;background-color:#99ff99">example</b> you can see that when you make a request you hand a PDU to an agent and
+say "Please fill this in".
+
+</p><p>
+Putting this into the context of the Net-<b style="color:black;background-color:#ffff66">SNMP</b> C API, look at the <i>snmp_PDU</i> structure.
+
+</p><p>
+</p><pre>typedef struct snmp_pdu {
+
+    long            version;
+    int             command;
+    long            reqid;
+    ...
+    long            errstat;
+    long            errindex;
+    ...
+    netsnmp_variable_list *variables;
+    ...
+    u_char         *community;
+    ...
+</pre>
+
+<p>
+The <i>version</i> value maps directly the value seen in the <b style="color:black;background-color:#a0ffff">packet</b> above.  The
+<i>command</i> value is the PDU type as seen in the <b style="color:black;background-color:#a0ffff">packet</b> above.  And you can
+also see the <i>reqid</i> in the packets above as the <i>Request ID</i>.
+The important point here is that when a PDU structure is manipulated using the API
+your actually preparing an <b style="color:black;background-color:#ffff66">SNMP</b> <b style="color:black;background-color:#a0ffff">packet</b> for transmission.
+
+</p><p>
+Forming a request, such as a GET, can be done in several ways.  One method is to 
+create a single PDU per OID you wish to request.  As we saw above this would mean
+sending one <b style="color:black;background-color:#a0ffff">packet</b> per OID and thus receiving one <b style="color:black;background-color:#a0ffff">packet</b> for each request.  Another
+method, which is completely valid, is to <i>pack</i> a single GET PDU with multiple
+OIDs for retrieval.  The following is a break capture of such an exchange as seen on the 
+wire:
+
+</p><p>
+</p><pre>No.Time        Source      Destination Protocol Info
+28 2.240789    10.10.1.110 10.10.1.224 <b style="color:black;background-color:#ffff66">SNMP</b>     GET SNMPv...
+Simple Network Management Protocol
+    Version: 1 (0)
+    Community: public 
+    PDU type: GET (0)
+    Request Id: 0x30549f5c
+    Error Status: NO ERROR (0)
+    Error Index: 0
+    Object identifier 1: 1.3.6.1.4.1.318.1.1.1.1.1.1.0 (<b style="color:black;background-color:#ffff66">SNMP</b>...
+    Value: NULL
+    Object identifier 2: 1.3.6.1.4.1.318.1.1.1.1.2.3.0 (<b style="color:black;background-color:#ffff66">SNMP</b>...
+    Value: NULL
+
+No.Time        Source      Destination Protocol Info
+41 2.328751    10.10.1.224 10.10.1.110 <b style="color:black;background-color:#ffff66">SNMP</b>     RESPONSE SNM...
+Simple Network Management Protocol
+    Version: 1 (0)
+    Community: public
+    PDU type: RESPONSE (2)
+    Request Id: 0x30549f5c
+    Error Status: NO ERROR (0)
+    Error Index: 0
+    Object identifier 1: 1.3.6.1.4.1.318.1.1.1.1.1.1.0 (<b style="color:black;background-color:#ffff66">SNMP</b>...
+    Value: STRING: "Silcon DP340E"
+    Object identifier 2: 1.3.6.1.4.1.318.1.1.1.1.2.3.0 (<b style="color:black;background-color:#ffff66">SNMP</b>...
+    Value: STRING: "SE0XXXXXXX   "
+</pre>
+
+<p>
+This exchange looks identical to the previous exchange but this time we've packed multiple (8 total,
+but I only show 2 for brevity) OIDs into the PDU.  Hence, we send one <b style="color:black;background-color:#a0ffff">packet</b> and we are returned one <b style="color:black;background-color:#a0ffff">packet</b>.
+
+</p><p>
+Looking back at the PDU structure, it should not be obvious why there is no fixed value for the OID
+but instead an included <i>netsnmp_variable_list</i> pointer.  This variable list is otherwise
+referred to as a <i>VARLIST</i> or <i>VARBIND</i>.
+
+</p><p>
+</p><pre>typedef struct variable_list netsnmp_variable_list;
+
+struct variable_list {
+   struct variable_list *next_variable;
+   oid            *name;
+   size_t          name_length;
+   u_char          type;
+   netsnmp_vardata val;
+   size_t          val_len;
+   oid             name_loc[MAX_OID_LEN];
+   u_char          buf[40];
+   void           *data;
+   void            (*dataFreeHook)(void *);
+   int             index;
+};
+</pre>
+
+<p>
+So looking at the variable list we immediately notice that its a linked list,
+hence the ability to pack multiple values into a single OID.
+
+</p><p>
+We can pull all this information together to get a much clearer idea of how the API really works.
+As seen in the captures what we really need to do is create, send, receive and then process one or more
+PDUs; thats the basics.  In order to do this we need to initialize a PDU structure, append one or more
+variables into the variable list and then send that PDU out.  What we'll get back is a fully populated (we hope)
+PDU, but this time each OID in the variable list will have a value referenced by the data pointer.
+
+</p><p>
+Next lets look at the actual code.
+
+</p><p>
+</p><hr>
+<!--Navigation Panel-->
+<a name="tex2html366" href="http://cuddletech.com/articles/snmp/node26.html">
+next</a> 
+<a name="tex2html362" href="http://cuddletech.com/articles/snmp/node23.html">
+up</a> 
+<a name="tex2html356" href="http://cuddletech.com/articles/snmp/node24.html">
+previous</a> 
+<a name="tex2html364" href="http://cuddletech.com/articles/snmp/node1.html">
+contents</a>  
+<br>
+<b> Next:</b> <a name="tex2html367" href="http://cuddletech.com/articles/snmp/node26.html">A simple <b style="color:black;background-color:#99ff99">example</b></a>
+<b> Up:</b> <a name="tex2html363" href="http://cuddletech.com/articles/snmp/node23.html">The Net-<b style="color:black;background-color:#ffff66">SNMP</b> C API</a>
+<b> Previous:</b> <a name="tex2html357" href="http://cuddletech.com/articles/snmp/node24.html"><b style="color:black;background-color:#ffff66">SNMP</b> Internals</a>
+ &nbsp; <b>  <a name="tex2html365" href="http://cuddletech.com/articles/snmp/node1.html">Contents</a></b> 
+<!--End of Navigation Panel-->
+
+
+2004-11-23
+
+
+
+</div></body></html>

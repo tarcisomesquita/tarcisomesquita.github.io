@@ -1,0 +1,88 @@
+No Linux pode-se ter múltiplas tabelas de roteamento no kernel. Estas tabelas são identificadas por um número variando de 1 a 255 ou por um nome de acordo com o arquivo /etc/iproute2/rt_tables. Com novas tabelas pode-se criar uma flexível estrutura para implementar uma Política de Roteamento.
+
+Abaixo temos o conteúdo do arquivo /etc/iproute2/rt_tables:
+
+# reserved values
+#
+255     local
+254     main
+253     default
+0       unspec
+#
+# local
+#
+#1 inr.ruhep
+
+    255 local: A tabela "local" contém rotas para endereços locais, esses endereços locais estão localizados no próprio computador, como os endereços que ele possui, a rede dele mesmo e seus broadcast. NUNCA, nunca manipule essa tabela ou retire-a da ordem nas regras. Ela não é útil para o roteamento de uma rede, só para o próprio computador.
+    254 main: Tabela de roteamento principal. É nela que que ficam as rotas quando adicionamos com o comando route ou ip route. Essa tabela armazena as rotas das redes disponíveis localmente, bem como a rota padrão adicionada com o comando route ou ip route.
+    253 default: A tabela "default" é uma tabela solitária, quase nunca é usada se você tem um "default gateway" na tabela "main". 
+
+
+"default gateway" é uma rota dentro de uma tabela, "default" é uma tabela
+
+
+# ip route show table main
+200.217.72.1 dev ppp0 proto kernel scope link src 200.164.113.232
+10.12.0.0/24 dev eth0 proto kernel scope link src 10.12.0.1
+127.0.0.0/8 dev lo scope link
+default via 200.217.72.1 dev ppp0 
+
+
+
+# ip rule show
+
+0:      from all lookup local
+32766:  from all lookup main
+32767:  from all lookup default
+
+a tabela main possui uma prioridade maior que a tabela default ( Quanto menor for o número, maior a prioridade de roteamento)
+O valor máximo de prioridade é 32767,
+
+
+abrir o arquivo /etc/iproute2/rt_tables inserindo a seguinte linha em seu final:
+
+200      velox2
+
+
+
+# ip route del default dev ppp0 via 200.217.72.1 table main
+# ip route add default dev ppp0 via 200.217.72.1 table main
+esses comandoa parecem interessantes
+
+autentica as conexões dsl uma de cada vez, alternando as rotas default
+
+
+# echo 0 > /proc/sys/net/ipv4/ip_forward
+
+O procedimento abaixo desliga o rp_filter, que é um filtro contra pacotes IP "marcianos". Esses pacotes são aqueles que deveriam ter chegado por uma interface, porém chegam por outra.
+# liberar marcianos
+
+for i in /proc/sys/net/ipv4/conf/*/rp_filter; do
+        /usr/bin/echo 0 > $i
+done 
+
+
+# ip route add default dev ppp1 via 200.217.76.56 table velox2 # ip route show table velox2
+default via 200.217.72.56 dev ppp1
+
+
+Inserindo uma regra na nova tabela de roteamento
+
+Primeiramente, vamos marcar todos os pacotes provenientes da LAN com destino aos serviços http com a seguinte regra de iptables e logo em seguida irei inserir uma regra nessa tabela de roteamento. Observe a seqüência de comandos:
+
+# iptables -t mangle -A PREROUTING -i eth0 -p tcp --dport 80 -j MARK --set-mark 1
+
+Bom, a tabela tem uma rota, os pacotes já estão marcados, mas nenhum pacote vai cair nela, pois não há regras para isso, então temos que colocá-la:
+
+# ip rule add fwmark 1 lookup velox2
+
+Depois de qualquer mudança nas tabelas de roteamento, e necessário digitarmos o comando abaixo para as novas regras vigorarem.
+
+# ip route flush cached
+
+Tudo pronto, agora só falta fazer o NAT para que as máquinas da LAN possam acessar a internet, sendo que os pacotes com destino a porta 80 sairão pela interface ppp1 e os demais sairão pela interface ppp0.
+
+# iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE
+# iptables -t nat -A POSTROUTING -o ppp1 -j MASQUERADE 
+
+

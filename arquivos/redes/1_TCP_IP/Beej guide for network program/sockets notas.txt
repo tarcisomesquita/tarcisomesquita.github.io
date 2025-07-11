@@ -1,0 +1,44 @@
+
+"Raw Sockets" are also very powerful and you should look them up.
+
+http://tools.ietf.org/html/rfc793
+RFC 793 for extremely detailed info on TCP
+
+http://tools.ietf.org/html/rfc791
+IP
+
+UDP" (see RFC 768.)
+
+The details of which private network numbers are available for you to use are outlined in RFC 1918
+
+
+
+ipv6
+now we've got a hexadecimal representation, with each two-byte chunk separated by a colon, like this: 2001:0db8:c9d2:aee5:73e3:934a:a5ae:9551
+
+ each of these pairs of addresses are equivalent:
+
+2001:0db8:c9d2:0012:0000:0000:0000:0051
+2001:db8:c9d2:12::51
+
+2001:0db8:ab00:0000:0000:0000:0000:0000
+2001:db8:ab00::
+
+0000:0000:0000:0000:0000:0000:0000:0001
+::1
+
+::1 is the loopback address
+
+
+192.0.2.33 as an IPv6 address, you use the following notation: "::ffff:192.0.2.33".
+
+netmask
+ You just put a slash after the IP address, and then follow that by the number of network bits in decimal. Like this: 192.0.2.12/30.
+for IPv6, something like this: 2001:db8::/32 or 2001:db8:5413:4028::9db9/64.
+
+htons()   host to network short
+htonl()   host to network long
+ntohs()   network to host short
+ntohl()   network to host long
+
+

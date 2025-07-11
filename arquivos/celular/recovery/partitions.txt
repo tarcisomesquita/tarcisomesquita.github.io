@@ -1,0 +1,13 @@
+adb shell ls -l /dev/block/by-name
+
+/boot partition includes the kernel and the ramdisk
+
+/system contains the entire operating system
+
+/recovery can be considered as an alternative boot partition
+
+/data contains the user’s data – contacts, messages, settings and apps. Wiping this partition performs a factory reset.
+
+/cache where Android stores frequently accessed data
+
+/misc contains miscellaneous system settings in form of on/off switches. These settings may include CID (Carrier or Region ID), USB configuration and certain hardware settings etc.

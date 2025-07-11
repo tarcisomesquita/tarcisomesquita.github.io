@@ -1,0 +1,18 @@
+
+Master
+maintain list of associated Stations. Manages security policies.
+In linux, the program hostapd is used for mode master.
+
+Managed
+The station is part of the network of a AP after a process of authentication.
+
+Monitor
+All incoming packets are handed over to the host computer completely unfiltered. This mode is useful to see what's going on on the network.
+With mac80211, it's also possible to transmit packets in monitor mode, which is known as packet injection.
+
+Ad-Hoc
+wireless network without a Master Access Point. Can connect two or more computers.
+
+scanning actively: a station begins transmitting 'Probe' frames. When an AP hears a 'Probe' frame, it responds with a 'Probe Response' frame that contains information about the AP. The station collects 'Probe Response' frames from as many APs as possible and then selects an AP.
+scanning passively: a station simply listens for traffic from any AP that might be nearby. Again, the station collects information about as many APs as possible and then selects one.
+

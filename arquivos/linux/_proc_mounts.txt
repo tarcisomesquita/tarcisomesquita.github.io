@@ -1,0 +1,12 @@
+# filesystem   mount-point  type   options         dump  fsck
+/dev/sdc4      none         swap   pri=1           0     0
+/dev/sdc1      /mnt/sdc1    ext3   defaults        0     0
+proc           /proc        proc   defaults        0     0
+sysfs          /sys         sysfs  defaults        0     0
+devpts         /dev/pts     devpts gid=4,mode=620  0     0
+shm            /dev/shm     tmpfs  defaults        0     0
+
+
+/home/ro.fs  /mnt squashfs loop 0 0
+unionfs /home/user1 unionfs dirs=/home/rw.fs=rw:/mnt=ro 0 0
+

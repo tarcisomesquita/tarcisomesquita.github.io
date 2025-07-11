@@ -1,0 +1,26 @@
+
+G531BTVJU0API1_G531BTZTO0API1_G531BTVJU0APF1_HOME.tar.md5
+
+iniciar em modo downloading (baixo + meio + power)
+
+sudo ./heimdall flash \
+--BOOT spl.img  \
+--SBOOT sboot.bin  \
+--SBOOT2 sboot2.bin  \
+--WDSP SPRDDSP.img  \
+--MODEM SPRDCP.img  \
+--KERNEL boot.img  \
+--RECOVERY recovery.img  \
+--CACHE cache.img  \
+--SYSTEM system.img  \
+--HIDDEN hidden.img \
+--verbose --no-reboot
+
+Tirar a bateria
+
+Fazer wipe (CIMA + meio + power)
+
+Demorou uns 5 min para começar a configurar os apps.
+
+Deixei para fazer backup automático de apps e senhas para a conta google.
+

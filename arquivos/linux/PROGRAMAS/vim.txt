@@ -1,0 +1,85 @@
+help
+:h
+CTRL-] para acessar link
+CTRL-T para retornar à página anterior
+
+Esc key switches back to command mode.
+
+i switch the editor to insert mode.
+
+dd delete cursor line.
+nd delete cursor line more n lines
+OBS: quando deleta, também copia, então pode colar depois.
+
+y         copy
+y3[space] copia 3 caracteres
+y3w       copia 3 palavras
+3x        deleta 3 letras
+p         paste after cursor
+
+w next word
+b prev word
+gg go to begin of the document.
+G  go to end of the document.
+
+/pattern   search pattern in text
+n next pattern
+N previous pattern
+
+:n moves to line n of the file.
+:w will save (write) the file
+:w novo_arquivo.txt : Salva o arquivo atual com o nome novo_arquivo.txt.
+:e arquivo.txt  abre arquivo.txt
+:q will exit the editor.
+:q! forces the exit when you want to quit a file containing unsaved changes.
+:wq will save and exit
+:w newfile will save the text to newfile.
+:wq! overrides read-only permission
+
+:r nomedoarquivo para incluir o texto do arquivo na posição atual do cursor
+:r!comando para inserir a saída do comando.
+
+:recover will recover a file after an unexpected interruption.
+
+:1, $s/word/anotherword/g will replace word with anotherword throughout the file.
+
+:%s/padrao1/padrao2/ substitui o padrao1 pelo padrao2 no texto inteiro
+:s/padrao1/padrao2/g substitui o padrao1 pelo padrao2 no texto da linha
+:s/padrao1/padrao2/ substitui o padrao1 pelo padrao2 na primeira ocorrencia da linha atual
+:1,3s/padrao1/padrao2/g substitui o padrao1 pelo padrao2 nas linhas 1 a 3
+:%s/teste/teste1/gc : Substitui todas as ocorrências da palavra teste por teste1, no arquivo inteiro, pedindo confirmação.
+
+. é a linha atual
+$ é o final do arquivo
+
+:&. repete o ultimo comando
+
+<num>G : Move o cursor para a linha indicada pelo número <num>.
+/<texto> : Procura dentro do arquivo pelo texo informado.
+n : repete o último comando / realizado.
+N : repete o último comando / realizado, porém, na direção reversa.
+<CTRL>+g : Mostra as informações sobre o arquivo, como seu nome, número da linha corrente, e total de linhas.
+
+J : join lines
+d$ apaga o resto da linha
+u : desfaz a última modificação.
+^r redo
+
+Y : Copia a linha corrente.
+S : Cortar a linha corrente.
+P : Cola o conteúdo da área de transferência.
+V : Seleção visual.
+
+:reg mostra todos os registradores
+"xp cola o conteúdo do registrador x
+:echo @r mostra o registro r
+"+  system clipboard (não funcionou)
+
+:set number : exibe o número de linhas do arquivos atual.
+:set nonumber : desabilita a visualização do número de linhas.
+
+:split  divide a tela em duas
+:vsplit
+^w e setas para ir para outra janela
+:q para fechar janela
+

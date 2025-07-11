@@ -1,0 +1,9 @@
+
+/path/dir
+cd /path
+zip --recurse-paths dir.zip dir
+
+
+find /home/ -name '*.mp3' -print | zip -j file.zip -@
+
+

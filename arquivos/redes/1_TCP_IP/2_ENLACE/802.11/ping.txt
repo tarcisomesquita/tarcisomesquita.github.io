@@ -1,0 +1,187 @@
+ping to/from remote host -  2 packets
+	ping echo request
+	ping echo reply
+	
+topology:
+
+laptop/lucent 80211 card ... wireless link
+	AP ... ethernet ... linux/router (nat/dhcp) .. Inet .. remote host
+
+unicast ping/to from remote host
+------------------------------------------------------------
+metastructure
+	802.11 header: 24 bytes
+		control flags: data packet TO DS (to AP/inside ...)
+		3 mac addresses
+			bss id (also agere card)
+			src (agere card)
+			dst (on other side of AP, linux router)
+	llc: 8 bytes
+		snap sap aa aa 03 00 00 00 08 00
+		ip header type indicated (0x800)
+	ip hdr: 20 bytes, unicast
+	icmp hdr: ping echo
+
+frame 1 details:
+Frame 102 (116 on wire, 116 captured)
+    Arrival Time: Mar  9, 2002 08:48:25.536445000
+    Time delta from previous packet: 0.004372000 seconds
+    Time relative to first packet: 5.037050000 seconds
+    Frame Number: 102
+    Packet Length: 116 bytes
+    Capture Length: 116 bytes
+IEEE 802.11
+    Type/Subtype: Data (32)
+    Frame Control: 0x0108
+        Version: 0
+        Type: Data frame (2)
+        Subtype: 0
+        Flags: 0x1
+            DS status: Frame is entering DS (To DS: 1  From DS: 0) (0x01)
+            .... .0.. = Fragments: No fragments
+            .... 0... = Retry: Frame is not being retransmitted
+            ...0 .... = PWR MGT: STA will stay up
+            ..0. .... = More Data: No data buffered
+            .0.. .... = WEP flag: WEP is disabled
+            0... .... = Order flag: Not strictly ordered
+    Duration: 258
+    BSS Id: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    Source address: 00:02:2d:0d:06:c2 (Agere_0d:06:c2)
+    Destination address: 00:03:47:72:1d:42 (Intel_72:1d:42)
+    Fragment number: 0
+    Sequence number: 183
+Logical-Link Control
+    DSAP: SNAP (0xaa)
+    IG Bit: Individual
+    SSAP: SNAP (0xaa)
+    CR Bit: Command
+    Control field: U, func = UI (0x03)
+        000. 00.. = Unnumbered Information
+        .... ..11 = Unnumbered frame
+    Organization Code: Encapsulated Ethernet (0x000000)
+    Type: IP (0x0800)
+Internet Protocol, Src Addr: 192.168.30.146 (192.168.30.146), Dst Addr: 131.252.120.50 (131.252.120.50)
+    Version: 4
+    Header length: 20 bytes
+    Differentiated Services Field: 0x00 (DSCP 0x00: Default; ECN: 0x00)
+        0000 00.. = Differentiated Services Codepoint: Default (0x00)
+        .... ..0. = ECN-Capable Transport (ECT): 0
+        .... ...0 = ECN-CE: 0
+    Total Length: 84
+    Identification: 0x0029
+    Flags: 0x00
+        .0.. = Don't fragment: Not set
+        ..0. = More fragments: Not set
+    Fragment offset: 0
+    Time to live: 64
+    Protocol: ICMP (0x01)
+    Header checksum: 0x9f17 (correct)
+    Source: 192.168.30.146 (192.168.30.146)
+    Destination: 131.252.120.50 (131.252.120.50)
+
+Internet Control Message Protocol
+    Type: 8 (Echo (ping) request)
+    Code: 0 
+    Checksum: 0xea23 (correct)
+    Identifier: 0xe700
+    Sequence number: 00:00
+    Data (56 bytes)
+
+0000  08 01 02 01 00 02 2d 2a 1f d1 00 02 2d 0d 06 c2   ......-*....-...
+0010  00 03 47 72 1d 42 70 0b aa aa 03 00 00 00 08 00   ..Gr.Bp.........
+0020  45 00 00 54 00 29 00 00 40 01 9f 17 c0 a8 1e 92   E..T.)..@.......
+0030  83 fc 78 32
+                  08 00 ea 23 e7 00 00 00 6e 3f 8a 3c   ..x2...#....n?.<
+0040  37 5c 0c 00 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13   7\..............
+0050  14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23   ............ !"#
+0060  24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33   $%&'()*+,-./0123
+0070  34 35 36 37                                       4567      
+      
+--------------------------------------------------------------------------
+frame 2 overview:
+	802.11 header, 24 bytes
+		control flags: frame is EXITING DS
+		3 mac addresses
+			dst: laptop (agere)
+			bss id: agere AP
+			source: intel/linux router
+		note: retransmit flag set 
+	llc: 8 bytes, as previous frame
+	ip
+	icmp
+		echo reply
+
+frame 2 details:
+Frame 103 (116 on wire, 116 captured)
+    Arrival Time: Mar  9, 2002 08:48:25.566564000
+    Time delta from previous packet: 0.030119000 seconds
+    Time relative to first packet: 5.067169000 seconds
+    Frame Number: 103
+    Packet Length: 116 bytes
+    Capture Length: 116 bytes
+IEEE 802.11
+    Type/Subtype: Data (32)
+    Frame Control: 0x0A08
+        Version: 0
+        Type: Data frame (2)
+        Subtype: 0
+        Flags: 0xA
+            DS status: Frame is exiting DS (To DS: 0  From DS: 1) (0x02)
+            .... .0.. = Fragments: No fragments
+            .... 1... = Retry: Frame is being retransmitted
+            ...0 .... = PWR MGT: STA will stay up
+            ..0. .... = More Data: No data buffered
+            .0.. .... = WEP flag: WEP is disabled
+            0... .... = Order flag: Not strictly ordered
+    Duration: 258
+    Destination address: 00:02:2d:0d:06:c2 (Agere_0d:06:c2)
+    BSS Id: 00:02:2d:2a:1f:d1 (Agere_2a:1f:d1)
+    Source address: 00:03:47:72:1d:42 (Intel_72:1d:42)
+    Fragment number: 0
+    Sequence number: 2149
+Logical-Link Control
+    DSAP: SNAP (0xaa)
+    IG Bit: Individual
+    SSAP: SNAP (0xaa)
+    CR Bit: Command
+    Control field: U, func = UI (0x03)
+        000. 00.. = Unnumbered Information
+        .... ..11 = Unnumbered frame
+    Organization Code: Encapsulated Ethernet (0x000000)
+    Type: IP (0x0800)
+Internet Protocol, Src Addr: 131.252.120.50 (131.252.120.50), Dst Addr: 192.168.30.146 (192.168.30.146)
+    Version: 4
+    Header length: 20 bytes
+    Differentiated Services Field: 0x00 (DSCP 0x00: Default; ECN: 0x00)
+        0000 00.. = Differentiated Services Codepoint: Default (0x00)
+        .... ..0. = ECN-Capable Transport (ECT): 0
+        .... ...0 = ECN-CE: 0
+    Total Length: 84
+    Identification: 0x4582
+    Flags: 0x04
+        .1.. = Don't fragment: Set
+        ..0. = More fragments: Not set
+    Fragment offset: 0
+    Time to live: 238
+    Protocol: ICMP (0x01)
+    Header checksum: 0x6bbd (correct)
+    Source: 131.252.120.50 (131.252.120.50)
+    Destination: 192.168.30.146 (192.168.30.146)
+Internet Control Message Protocol
+    Type: 0 (Echo (ping) reply)
+    Code: 0 
+    Checksum: 0xf223 (correct)
+    Identifier: 0xe700
+    Sequence number: 00:00
+    Data (56 bytes)
+
+0000  08 0a 02 01 00 02 2d 0d 06 c2 00 02 2d 2a 1f d1   ......-.....-*..
+0010  00 03 47 72 1d 42 50 86 aa aa 03 00 00 00 08 00   ..Gr.BP.........
+0020  45 00 00 54 45 82 40 00 ee 01 6b bd 83 fc 78 32   E..TE.@...k...x2
+0030  c0 a8 1e 92 
+                  00 00 f2 23 e7 00 00 00 6e 3f 8a 3c   .......#....n?.<
+0040  37 5c 0c 00 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13   7\..............
+0050  14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23   ............ !"#
+0060  24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33   $%&'()*+,-./0123
+0070  34 35 36 37                                       4567            
+

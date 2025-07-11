@@ -1,0 +1,74 @@
+FUSER(1)
+
+SYNOPSIS
+ fuser [-a|-s|-c] [-4|-6] [-n space ] [-k [-i] [-signal ] ] [-muvf] name ...
+ fuser -l
+ fuser -V
+
+displays the PIDs of processes using the specified files, file systems, TCP and UDP sockets.
+# fuser ./ (mostra os processos que estão usando o diretório atual)
+
+In the default display mode, each file name is followed by a letter denoting the type of access:
+c   current directory.
+e   executable being run.
+f   open file. f is omitted in default display mode.
+F   open file for writing. F is omitted in default display mode.
+r   root directory.
+m   mmap’ed file or shared library.
+
+By default fuser will look in both IPv6 and IPv4 sockets.
+Can be specified the local port, the remote address and the remote port. [lcl_port][,[rmt_host][,[rmt_port]]]
+ex.: fuser 35395,127.0.0.1,8080/tcp
+Either symbolic or numeric values can be used for IP addresses and port numbers.
+
+fuser outputs only the PIDs to stdout, everything else is sent to stderr.
+
+OPTIONS
+-  Reset all options and set the signal back to SIGKILL.
+
+-4   Search only for IPv4 sockets.
+
+-6   Search only for IPv6 sockets.
+
+-a   Show all files specified on the command line. By default, only files that are accessed by at least one process are shown.
+
+-k   Kill processes accessing the file.
+     Unless changed with -signal, SIGKILL is sent.
+     # fuser -k -m -i /home    kills all processes accessing the file system /home in any way.
+     # fuser -k /media/cdrom   mata o processo que impedia o cdrom de ser desmontado
+
+-i   Ask the user for confirmation before killing a process. This option is silently ignored if -k is not present too.
+
+-l   List all known signal names.
+     # fuser -l
+     # fuser -k TERM -i ./
+
+-m   name specifies a file on a mounted file system or a block device that is mounted. All processes accessing files on that file system are listed.
+     If a directory file is specified, it is automatically changed to name/. to use any file system that might be mounted on that directory.
+     # fuser -m /dev/sdb1
+     # fuser -m /dev/sgX will show all processes, even if you don’t have that device configured.
+
+-n space
+     Select a different name space.
+     The name spaces file (file names, the default), udp (local UDP ports), and tcp (local TCP ports) are supported.
+     For ports, either the port number or the symbolic name can be specified.
+     # fuser -n tcp 631/tcp
+
+-s   Silent operation. -u and -v are ignored in this mode. -a must not be used with -s.
+     # if fuser -s /dev/ttyS1; then :; else something; fi invokes something if no other process is using /dev/ttyS1.
+
+  -signal
+     Use the specified signal instead of SIGKILL when killing processes.
+     Signals can be specified either by name (e.g. -HUP) or by number (e.g.-1).
+     This option is silently ignored if the -k option is not used.
+     # fuser -k -TERM -i 8080/tcp
+
+-u   Append the user name of the process owner to each PID.
+
+-v   Verbose mode. Show fields USER, PID, ACCESS and COMMAND are similar to ps.
+
+-V   Display version information.
+
+
+Veja também: lsof.man.txt
+

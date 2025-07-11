@@ -1,0 +1,16 @@
+packets dropped by kernel
+find "/sys/devices/pci0000:00/0000:00:1c.2/0000:06:00.0/net/wlp6s0/statistics/" -type f -exec echo -n '{} ' \; -exec cat '{}' \;
+
+packets ``dropped by kernel'' (this is the number of packets that were dropped, due to a lack of buffer space, by the  packet capture  mechanism in the OS
+
+When a malicious driver attempts to send a spoofed packet, it is dropped by
+
+to determine if forward or drop a packet, numa bridge tem:
+tabela com os MACs pertencentes a cada porta
+tabela com os IPs pertencentes a cada porta
+
+
+tem como detectar modo promisc
+enviar um ICMP echo request com o IP certo e MAC errado.
+Se receber resposta, então a placa está em modo promiscuo.
+

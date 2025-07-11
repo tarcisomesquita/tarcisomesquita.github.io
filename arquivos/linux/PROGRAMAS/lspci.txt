@@ -1,0 +1,24 @@
+lspci [options]
+
+<domain>:<bus>:<slot>.<func>
+domains are numbered from 0 to ffff), bus (0 to ff), slot (0 to 1f) and function (0 to 7).
+
+-m     Dump PCI device data in a machine readable form.
+-t     Show a tree-like diagram containing all buses, bridges, devices and connections between them.
+-vvv display everything we are able to parse
+
+lspci -nnvmm
+
+-k     Show kernel drivers handling each device and also kernel modules capable of handling it.
+
+-x     Show hexadecimal dump of the standard part of the configuration space (the first 64 bytes or 128 bytes for CardBus bridges).
+-xxx   Show hexadecimal dump of the whole PCI configuration space.
+-xxxx  Show hexadecimal dump of the extended (4096-byte) PCI configuration space available on PCI-X 2.0 and PCI Express buses.
+
+-D     Always show PCI domain numbers.
+
+-nn    Show PCI vendor and device codes as both numbers and names.
+
+-d [<vendor>]:[<device>]
+  Show only devices with specified vendor and device ID.
+  Both ID's are given in hexadecimal

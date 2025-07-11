@@ -1,0 +1,56 @@
+
+chains:
+
+PREROUTING
+Incoming traffic to the machine (including local generated traffic destined to the machine itself) before routing takes place (can be either local or passing traffic).
+
+INPUT
+Packet is going to be locally delivered.
+
+FORWARD
+All packets that have been routed and were not for local delivery will traverse this chain. (remote generated, remote destination). 
+
+OUTPUT
+Locally generated traffic (either local or remote destination). 
+
+POSTROUTING
+Routing decision has been made. Packets enter this chain just before handing them off to the hardware. (including locally generating traffic, destined to the machine itself). 
+
+
+OPTIONS
+
+-L, --list [chain]
+List all rules in the selected chain.
+If no chain is selected, all chains are listed.
+Ex.: iptables -t nat -n -L
+
+-S, --list-rules [chain]
+Print all rules in the selected chain.
+If no chain is selected, all chains are printed.
+
+-P, --policy chain target
+If the end of a built-in chain is reached the target specified by the chain policy determines the fate of the packet.
+Only built-in (non-user defined) chains can have policies.
+Ex.: iptables -t raw -P OUTPUT ACCEPT
+
+-F, --flush [chain]
+Flush (delete all rules in) the selected chain (all the chains in the table if none is given).
+
+-Z, --zero [chain]
+Zero the packet and byte counters in all chains.
+
+-N, --new-chain chain
+Create a new user-defined chain by the given name.
+Ex.:
+iptables -t filter -N internet
+iptables -t filter -A INPUT -j internet
+iptables -t filter -A internet -s 200.200.200.200 -j DROP
+
+-X, --delete-chain [chain]
+Delete the optional user-defined chain specified.
+The chain must be empty, i.e. not contain any rules.
+If no argument is given, it will attempt to delete every non-builtin chain in the table.
+
+-E, --rename-chain old-chain new-chain
+Rename the user specified chain to the user supplied name.
+

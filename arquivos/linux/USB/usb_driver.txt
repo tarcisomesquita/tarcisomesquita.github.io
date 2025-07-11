@@ -1,0 +1,214 @@
+
+In Linux there exists a subsystem called “The USB Core” with a specific API to support USB devices and host controllers. Its purpose is to abstract all hardware or device dependent parts by defining a set of data structures, macros and functions.
+
+The USB core contains routines common to all USB device drivers and host controller drivers. These functions can be grouped into an upper and a lower API layer.
+
+A driver must register 2 entry points and its name.
+
+specific USB devices driver may register a couple of file operations and a minor number.
+In this case the specified minor number and the 15 following numbers are assigned to the driver. This makes it possible to serve up to 16 similar USB devices by one driver.
+The major number of all USB devices is 180.
+
+structure needed to register a USB device driver at the subsystem:
+
+struct usb_driver {
+   const char *name;
+   void * (*probe)(struct usb_device *, unsigned int, const struct usb_device_id *id_table);
+   void (*disconnect)(struct usb_device *, void *);
+   struct list_head driver_list;
+   struct file_operations *fops;
+   int minor;
+   struct semaphore serialize;
+   int (*ioctl) (struct usb_device *dev, unsigned int code, void *buf);
+   const struct usb_device_id *id_table;
+};
+
+All USB related functions or data structures follow the same naming convention and start with usb_
+
+name: Usually the name of the module.
+probe: The entry point of the probe function.
+disconnect: The entry point of the disconnect function.
+driver list: For internal use of the subsystem - initialize to {NULL,NULL}
+fops: The usual list of file operations for a driver
+minor: The base minor number assigned to this device (the value has to be a multiple of 16)
+
+A simple probe function. This entry point is called whenever a new device is attached to the bus.
+
+void *probe(struct usb_device *dev, unsigned int interface, const struct usb_device_id *id_table) {
+   struct driver_context *context;
+   %TODO
+   if (dev->descriptor.idVendor == 0x0547 && dev->descriptor.idProduct == 0x2131 && interface == 1 ) {
+      MOD_INC_USE_COUNT;
+      // allocate resources for this instance
+      context=allocate_driver_resources();
+      // return pointer to instance context
+      return context;
+   }
+   return NULL;
+}
+
+Probing normally is done by checking the vendor and product identifications or the class and subclass definitions. If they match the interface number is compared with the ones supported by the driver.
+
+
+function called whenever a device is disconnected.
+
+static void dabusb_disconnect (struct usb_device *usbdev, void *drv_context) {
+   // get a pointer to our driver_context
+   struct driver_context *s = drv_context;
+   // set remove pending flag
+   s->remove_pending = 1;
+   // wake up all sleeping parts of the driver
+   wake_up (&s->wait);
+   // wait until driver is ready to release device associated structures
+   sleep_on (&s->remove_ok);
+   // deallocate resources used by this instance
+   free_driver_resources(s);
+   MOD_DEC_USE_COUNT;
+}
+
+driver context returns a pointer to the previously registered driver context of the probe function.
+
+int usb register(struct usb driver *drv);
+This function is used to register a new USB device driver at the subsystem.
+The argument drv points to a completely initialized usb_driver structure.
+On success 0 is returned otherwise an error value is returned.
+
+void usb deregister(struct usb driver *drv);
+This function deregisters a formerly registerd USB device driver at the subsystem.
+
+void usb_driver_claim_interface(struct usb_driver *driver, struct usb_interface *iface, void *drv_context);
+This function is intended to be used by USB device drivers that need to claim more than one interface on a device at once when probing. The argument driver points to a completely initialized usb driver structure.
+  The iface argument points to a usb interface structure which is part
+  of the usb config descriptor which is accesible from the usb device
+  structure (given in the probe function). The drv context pointer nor-
+  mally references the device driver’s context structure (see return value of
+  the probe function).
+• int usb interface claimed(struct usb interface *iface);
+  This function is used to check if another device driver already has claimed
+  the specified interface. The return value is 0 if the interface was not
+  claimed by any driver.
+• void usb driver release interface(struct usb driver *driver,
+  struct usb interface *iface);
+  If a driver wants to release a previously claimed interface it has to call
+  this function. In the disconnect function you do not have to release any
+  interfaces that were additionally claimed in the probe function.
+• const struct usb_device_id *usb match_id(
+  struct usb device *dev, struct usb_interface *interface,
+  const struct usb_device_id *id);
+
+
+  Accessing all available configuration descriptors can be done like this:
+  for (i = 0; i < dev->descriptor.bNumConfigurations; i++) {
+     struct usb_config_descriptor *cfg = &dev->config[i];
+     ...
+  }
+• Accessing all available interface descriptors of a particular configuration
+  is done like this:
+  for (j = 0; j < cfg->bNumInterfaces; j++) {
+     struct usb_interface *ifp = &cfg->interface[j];
+     ...
+  }
+
+int usb set configuration(struct usb device *dev, int configuration);
+To activate a particular configuration use this function.
+
+ nt usb set interface(struct usb device *dev, int interface,
+int alternate);
+This function activates an alternate setting of a specified interface.
+
+int usb get descriptor(struct usb device *dev,
+unsigned char desctype, unsigned char descindex, void *buf,
+int size);
+Single USB descriptors can be read as raw data from a device. This
+function can be used to parse extended or vendor specific descriptors.
+
+
+int usb get device descriptor(struct usb device *dev);
+This function rereads the complete descriptor tree from a particular de-
+vice. It is called automatically whenever a device is attached to the bus
+or it may be called whenever a USB descriptor has changed.
+
+
+  int usb get string(struct usb device *dev,
+  unsigned short langid, unsigned char index, void *buf,
+  int size);
+  If a device, configuration or interface descriptor references a string in-
+  dex value (see [4] section 9.6.5) this function can be used to retrieve the
+  string descriptor. According to the specification USB strings are coded
+  as Unicode. If successful the function returns 0 otherwise an error code
+  is returned.
+• int usb string(struct usb device *dev, int index, char *buf,
+  size t size);
+  This function simplifies usb get string by converting Unicode strings
+  into ASCII strings.
+
+  int usb get status(struct usb device *dev, int type,
+  int target, void *data);
+  This USB control request is documented in [4] section 9.4.5.
+• int usb clear halt(struct usb device *dev, int pipe);
+  If an endpoint is stalled (see [4] chapter 8.4.4) call this function to clear
+  the STALL condition. STALL indicates that a function is unable to transmit
+  or receive data, or that a control pipe request is not supported. The
+  argument endpoint defines a pipe handle.
+• int usb get protocol(struct usb device *dev, int ifnum);
+  This HID USB control request is documented in [6] section 7.2.5.
+• int usb set protocol(struct usb device *dev, int protocol,
+  int ifnum); This HID USB control request is documented in [6] section
+  7.2.6.
+• int usb get report(struct usb device *dev,
+  unsigned char type, unsigned char id, int ifnum, void *buf,
+  int size);
+  This HID USB control request is documented in [6] section 7.2.1
+• int usb set idle(struct usb device *dev, int ifnum,
+  int duration, int report id);
+  This HID USB control request is documented in [6] section 7.2.4
+
+
+        Transfer Data Structures & Macros
+The Linux USB subsystem uses only one data transfer structure called USB
+Request Block (URB). This structure contains all parameters to setup any USB
+transfer type. All transfer requests are sent asynchronously to the USB core
+and the completion of the request is signalled via a callback function.
+    As shown in figure 7 the URB structure contains elements common to all
+transfer types (marked with C). Elements marked with > are input parame-
+ters, M means mandatory and O means optional. Elements marked with <
+are return values. Elements marked with T are transient parameters (input and
+output). All non common elements are marked on three columns which repre-
+sent control, interrupt and isochronous transfers. A X marks this element to be
+used with the associated transfer type.
+
+typedef struct
+{
+  unsigned int offset;        // offset to the transfer_buffer
+  unsigned int length;        // expected length
+  unsigned int actual_length;// actual length after processing
+  unsigned int status;        // status after processing
+} iso_packet_descriptor_t, *piso_packet_descriptor_t;
+struct urb;
+typedef void (*usb_complete_t)(struct urb *);
+typedef struct urb
+{
+     spinlock_t lock;
+     void *hcpriv;                 // private data for host controller (don’t care)
+     struct list_head urb_list; // list pointer to all active urbs (don’t care)
+>CO struct urb* next;              // pointer to next URB
+>CM struct usb_device *dev;        // pointer to associated USB device
+>CM unsigned int pipe;             // pipe information
+<C   int status;                   // returned status
+TCO unsigned int transfer_flags;//USB_DISABLE_SPD|USB_ISO_ASAP|USB_URB_EARLY_COMPLETE
+>CM void *transfer_buffer;         // associated data buffer
+>CM int transfer_buffer_length; // data buffer length
+<C   int actual_length;            // actual data buffer length
+     int bandwidth;                // allocated bandwidth
+<X-- unsigned char *setup_packet;// setup packet (control only)
+T-XX int start_frame;              // start frame (iso/irq only)
+>--X int number_of_packets;        // number of packets in this request (iso only)
+>-X- int interval;                 // polling interval (irq only)
+<--X int error_count;              // number of errors in this transfer (iso only)
+>XXX int timeout;                  // timeout in jiffies
+>CO  void *context;                // context for completion routine
+>CO  usb_complete_t complete;      // pointer to completion routine
+>--X iso_packet_descriptor_t    iso_frame_desc[0]; // optional iso descriptors
+} urb_t, *purb_t;
+                       Figure 7: URB Structure
+

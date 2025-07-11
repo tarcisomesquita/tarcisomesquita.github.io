@@ -1,0 +1,26 @@
+Base[0..15] 	Limit[0..15]
+Base[24..31] 	G 	D 	0 	U 	Limit[16..19] 	P 	DPL 	S 	X 	C 	R 	A 	Base[16..23]
+
+
+Structure of segment descriptor entry
+
+    A is the Accessed bit;
+    R is the Readable bit;
+    C (Bit 42) depends on X:[38]
+        if X = 1 then C is the Conforming bit, and determines which privilege levels can far-jump to this segment (without changing privilege level):
+            if C = 0 then only code with the same privilege level as DPL may jump here;
+            if C = 1 then code with the same or a lower privilege level relative to DPL may jump here.
+        if X = 0 then C is the direction bit:
+            if C = 0 then the segment grows up;
+            if C = 1 then the segment grows down.
+    X is the Executable bit:[38]
+        if X = 1 then the segment is a code segment;
+        if X = 0 then the segment is a data segment.
+    S is the Segment type bit, which should generally be cleared for system segments;[38]
+    DPL is the Descriptor Privilege Level;
+    P is the Present bit;
+    D is the Default operand size;
+    G is the Granularity bit;
+    Bit 52 of the 80386 descriptor is not used by the hardware.
+
+

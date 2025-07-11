@@ -1,0 +1,16 @@
+Referências:
+https://developer.mozilla.org/en-US/docs/Web/HTML/Reference
+https://www.w3schools.com/tags/
+
+Validadores:
+http://validator.w3.org
+https://validator.w3.org/i18n-checker/
+
+
+<FORM > texto </FORM>
+ACTION=script
+accept-charset = list of character-encoding names. Specifies the character encodings used for form submission.
+ENCTYPE=[ "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain" ]. multipart/form-data é usado para envio de arquivos usando post	
+METHOD=[POST | GET]
+NAME=string
+target = "_blank", "_self", "_parent", or "_top".

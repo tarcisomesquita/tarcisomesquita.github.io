@@ -1,0 +1,31 @@
+$ cat drupal.nt | rdf-objects | sort | uniq | head -n5
+
+# N-Triples aliases from http://blog.datagraph.org/2010/03/grepping-ntriples
+alias rdf-count="awk '/^\s*[^#]/ { n += 1 } END { print n }'"
+alias rdf-lengths="awk '/^\s*[^#]/ { print length }'"
+alias rdf-length-avg="awk '/^\s*[^#]/ { n += 1; s += length } END { print s/n }'"
+alias rdf-length-max="awk 'BEGIN { n=0 } /^\s*[^#]/ { if (length>n) n=length } END { print n }'"
+alias rdf-length-min="awk 'BEGIN { n=1e9 } /^\s*[^#]/ { if (length>0 && length<n) n=length } END { print (n<1e9 ? n : 0) }'"
+alias rdf-subjects="awk '/^\s*[^#]/ { print \$1 }' | uniq"
+alias rdf-predicates="awk '/^\s*[^#]/ { print \$2 }' | uniq"
+alias rdf-objects="awk '/^\s*[^#]/ { ORS=\"\"; for (i=3;i<=NF-1;i++) print \$i \" \"; print \"\n\" }' | uniq"
+alias rdf-datatypes="awk -F'\x5E' '/\"\^\^</ { print substr(\$3, 2, length(\$3)-4) }' | uniq"
+
+echo 'Um grande pais
+se faz com grandes homens.' > citacao
+
+awk '{print $2}' citacao
+grande
+faz
+
+awk '{print NR ":", $0}' citacao
+1: Um grande pais
+2: se faz com grandes homens.
+
+awk '{print $0 " (" length($0) " caracteres)"}' citacao
+Um grande pais (14 caracteres)
+se faz com grandes homens. (26 caracteres)
+
+awk 'BEGIN {maior=0} {if (length($0) > maior) { maior=length($0)}} END { print "A maior linha tem " maior " caracteres"}' citacao
+A maior linha tem 26 caracteres
+

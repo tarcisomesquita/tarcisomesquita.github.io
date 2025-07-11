@@ -1,0 +1,84 @@
+dig - DNS lookup utility
+
+SYNOPSIS
+       dig [@server] [-b address] [-c class] [-q name] [-t type] [-x addr] [-4] [-6] [name] [type] [class] [queryopt...]
+
+OPTIONS
+       -4
+           Use IPv4 only.
+
+       -6
+           Use IPv6 only.
+
+       -b address[#port]
+           The address must be a valid address on one of the host's network interfaces, or "0.0.0.0" or "::".
+
+       -c class
+           The default class is IN.
+
+       -f file
+           dig reads a list of lookup requests to process from the given file.
+
+       -q name
+           The domain name to query. This is useful to distinguish the name from other arguments.
+
+       -t type
+          Default query type is "A", unless the -x option is supplied to indicate a reverse lookup.
+
+       -x addr
+           The addr is an IPv4 address in dotted-decimal notation, or a colon-delimited IPv6 address.
+           Automatically performs a lookup for a name like 94.2.0.192.in-addr.arpa and sets the query type and class to PTR and IN.
+
+
+QUERY OPTIONS
+       +nocmd (colocar isso entre os primeiros argumentos)
+       +nostats +nocomments
+       +noall +answer
+       +dnssec
+       +short
+
+dig @192.168.15.1 -q www.google.com.br -t ANY +showsearch +trace
+
+dig +all google.com
+
+       +[no]nssearch
+           When this option is set, dig attempts to find the authoritative name servers for the zone containing the name being looked up and display the SOA record that each name server has for the zone.
+
+       +[no]recurse
+           Toggle the setting of the RD (recursion desired) bit in the query. This bit is set by default, which means dig normally sends recursive queries. Recursion is automatically disabled when the +nssearch or +trace query options are used.
+
+       +[no]short
+           Provide a terse answer. The default is to print the answer in a verbose form.
+
+       +[no]showsearch
+           Perform [do not perform] a search showing intermediate results.
+
+       +split=W
+           Split long hex- or base64-formatted fields in resource records into chunks of W characters (where W is rounded up to the nearest multiple of 4).  +nosplit or +split=0 causes fields not to be split at all. The default is 56 characters, or 44 characters when multiline mode is active.
+
+       +[no]stats
+           This query option toggles the printing of statistics: when the query was made, the size of the reply and so on. The default behavior is to print the query statistics.
+
+       +time=T
+           Sets the timeout for a query to T seconds. The default timeout is 5 seconds. An attempt to set T to less than 1 will result in a query timeout of 1 second being applied.
+
+       +[no]trace
+           Toggle tracing of the delegation path from the root name servers for the name being looked up. Tracing is disabled by default. When tracing is enabled, dig makes iterative queries to resolve the name being looked up. It will follow referrals from the root servers, showing the answer from each server that was used to resolve the lookup.
+
+           If @server is also specified, it affects only the initial query for the root zone name servers.
+
+           +dnssec is also set when +trace is set to better emulate the default queries from a nameserver.
+
+       +tries=T
+           Sets the number of times to try UDP queries to server to T instead of the default, 3. If T is less than or equal to zero, the number of tries is silently rounded up to 1.
+
+       +trusted-key=####
+           Specifies a file containing trusted keys to be used with +sigchase. Each DNSKEY record must be on its own line.
+
+           If not specified, dig will look for /etc/trusted-key.key then trusted-key.key in the current directory.
+
+           Requires dig be compiled with -DDIG_SIGCHASE.
+
+FILES
+       /etc/resolv.conf
+

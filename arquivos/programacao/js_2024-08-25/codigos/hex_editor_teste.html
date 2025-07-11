@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Hex editor</title>
+</head>
+<body>
+
+<div id="divMain"></div>
+
+<script>
+var domElement = null;
+function domElementUpdate() {
+   if (domElement == null) {
+      var divSession = document.createElement("div");
+      
+      var textareaHexadecimal = document.createElement("textarea");
+      textareaHexadecimal.cols = 40;
+      textareaHexadecimal.rows = 10;
+      //textareaHexadecimal.onkeyup = this.textareaHexadecimal_KeyUp.bind(this);
+      //textareaHexadecimal.oninput = this.textareaHexadecimal_Changed.bind(this);
+      divSession.appendChild(textareaHexadecimal);
+      
+      var textareaASCII = document.createElement("textarea");
+      textareaASCII.cols = 20;
+      textareaASCII.rows = 10;
+      textareaASCII.disabled = true;
+      divSession.appendChild(textareaASCII);
+      
+      
+      var divFileOperations = document.createElement("div");
+      
+      var buttonSave = document.createElement("button");
+      buttonSave.innerHTML = "Save";
+      //buttonSave.onclick = this.buttonSave_Clicked.bind(this);
+      divFileOperations.appendChild(buttonSave);
+      
+      var inputFileToLoad = document.createElement("input");
+      inputFileToLoad.type = "file";
+      //inputFileToLoad.onchange = this.inputFileToLoad_Changed.bind(this);
+      divFileOperations.appendChild(inputFileToLoad);
+      
+      divSession.appendChild(divFileOperations);
+      
+      var divCursor = document.createElement("div");
+       
+      var labelCursorPosition = document.createElement("label");
+      labelCursorPosition.innerHTML = "Cursor Position:";
+      divCursor.appendChild(labelCursorPosition);
+      
+      var inputCursorPosition = document.createElement("input");
+      inputCursorPosition.disabled = true;
+      //this.inputCursorPosition = inputCursorPosition;
+      divCursor.appendChild(inputCursorPosition);
+      
+      divSession.appendChild(divCursor);
+      
+      var divMain = document.getElementById("divMain");
+      divMain.appendChild(divSession);
+      
+      domElement = divSession;
+    }
+    /*
+    var bytesAsStringHexadecimal = Converter.bytesToStringHexadecimal(this.bytes);
+    this.textareaHexadecimal.value = bytesAsStringHexadecimal + this.finalNibble;
+    
+    var bytesAsStringASCII = Converter.bytesToStringASCII(this.bytes);
+    this.textareaASCII.value = bytesAsStringASCII;
+    
+    var cursorPos = this.textareaHexadecimal.selectionStart;
+    var cursorPosAsString = "0d" + cursorPos + "; 0x" + cursorPos.toString(16) + "; 0b" + cursorPos.toString(2);
+    
+    inputCursorPosition.value = cursorPosAsString;
+*/
+}
+
+domElementUpdate();
+</script>
+ 
+</body>
+</html>

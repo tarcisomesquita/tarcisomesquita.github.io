@@ -1,0 +1,130 @@
+int x __attribute__ ((aligned (16))) = 0;
+
+
+deprecated' attribute results in a warning if the function is used anywhere in the source file.  This is useful when identifying
+     functions that are expected to be removed in a future version of a
+     program.
+          int old_fn () __attribute__ ((deprecated));
+
+mode (mode)
+    This attribute specifies the data type
+You may also specify a mode of byte or __byte__ to indicate the mode corresponding to a one-byte integer, word or __word__ for the mode of a one-word integer, and pointer or __pointer__ for the mode used to represent pointers. 
+
+typedef unsigned int u_int8_t __attribute__ ((__mode__ (__QI__)));
+QI: An integer that is as wide as the smallest addressable unit, usually 8 bits.
+HI: An integer, twice as wide as a QI mode integer, usually 16 bits.
+SI: An integer, four times as wide as a QI mode integer, usually 32 bits.
+DI: An integer, eight times as wide as a QI mode integer, usually 64 bits.
+SF: A floating point value, as wide as a SI mode integer, usually 32 bits.
+DF: A floating point value, as wide as a DI mode integer, usually 64 bits.
+
+noreturn
+    Found in versions: 2.5-3.4 
+    Introduced in version 2.5. (according to documentation) 
+    Description:
+
+         A few standard library functions, such as `abort' and `exit',
+         cannot return.  GCC knows this automatically.  Some programs define
+         their own functions that never return.  You can declare them
+         `noreturn' to tell the compiler this fact.  For example,
+
+              void fatal () __attribute__ ((noreturn));
+              
+              void
+              fatal (/* ... */)
+              {
+                /* ... */ /* Print error message. */ /* ... */
+                exit (1);
+              }
+
+nothrow
+    Found in versions: 3.3 3.4 
+    Introduced in version 3.2. (according to documentation) 
+    Description:
+
+         The `nothrow' attribute is used to inform the compiler that a
+         function cannot throw an exception.  For example, most functions in
+         the standard C library can be guaranteed not to throw an exception
+         with the notable exceptions of `qsort' and `bsearch' that take
+         function pointer arguments.  The `nothrow' attribute is not
+         implemented in GCC versions earlier than 3.2.
+C functions can never propagate exceptions
+
+
+visibility ("VISIBILITY_TYPE")
+    Found in versions: 3.3 3.4 
+    Description:
+
+         The `visibility' attribute on ELF targets causes the declaration
+         to be emitted with default, hidden, protected or internal
+         visibility.
+
+              void __attribute__ ((visibility ("protected")))
+              f () { /* Do something. */; }
+              int i __attribute__ ((visibility ("hidden")));
+
+         See the ELF gABI for complete details, but the short story is:
+
+        "default"
+              Default visibility is the normal case for ELF.  This value is
+              available for the visibility attribute to override other
+              options that may change the assumed visibility of symbols.
+
+        "hidden"
+              Hidden visibility indicates that the symbol will not be
+              placed into the dynamic symbol table, so no other "module"
+              (executable or shared library) can reference it directly.
+
+        "protected"
+              Protected visibility indicates that the symbol will be placed
+              in the dynamic symbol table, but that references within the
+              defining module will bind to the local symbol.  That is, the
+              symbol cannot be overridden by another module.
+
+        "internal"
+              Internal visibility is like hidden visibility, but with
+              additional processor specific semantics.  Unless otherwise
+              specified by the psABI, GCC defines internal visibility to
+              mean that the function is _never_ called from another module.
+              Note that hidden symbols, while they cannot be referenced
+              directly by other modules, can be referenced indirectly via
+              function pointers.  By indicating that a symbol cannot be
+              called from outside the module, GCC may for instance omit the
+              load of a PIC register since it is known that the calling
+              function loaded the correct value.
+
+
+
+packed
+    The packed attribute specifies that a variable or structure field should have the smallest possible alignment.
+
+    Here is a structure in which the field x is packed, so that it immediately follows a:
+
+              struct foo
+              {
+                char a;
+                int x[2] __attribute__ ((packed));
+              };
+         
+section ("section-name")
+    Normally, the compiler places the objects it generates in sections like data and bss. Sometimes, however, you need additional sections, or you need certain particular variables to appear in special sections, for example to map to special hardware. The section attribute specifies that a variable (or function) lives in a particular section. For example, this small program uses several specific section names:
+
+              struct duart a __attribute__ ((section ("DUART_A"))) = { 0 };
+              struct duart b __attribute__ ((section ("DUART_B"))) = { 0 };
+              char stack[10000] __attribute__ ((section ("STACK"))) = { 0 };
+              int init_data __attribute__ ((section ("INITDATA")));
+              
+              main()
+              {
+                /* Initialize stack pointer */
+                init_sp (stack + sizeof (stack));
+              
+                /* Initialize initialized data */
+                memcpy (&init_data, &data, &edata - &data);
+              
+                /* Turn on the serial ports */
+                init_duart (&a);
+                init_duart (&b);
+              }
+         
+

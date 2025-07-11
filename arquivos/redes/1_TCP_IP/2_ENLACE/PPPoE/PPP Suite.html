@@ -1,0 +1,1181 @@
+<html>
+        <td valign="top" width="384"><p align="right"><br>
+          </p>
+        </td>
+      </tr>
+      <tr align="left"> 
+        <td colspan="2" height="84" valign="top"><table border="0" width="492">
+            <tbody><tr> 
+              <td height="31" width="437"><!-- InstanceBeginEditable name="title" -->
+                <h1><b style="color:black;background-color:#ffff66">PPP</b> 
+                  Suite </h1>
+              <!-- InstanceEndEditable --></td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+            </tr>
+            <tr> 
+              <td><!-- InstanceBeginEditable name="body" --> 
+                <p><a name="PPP"></a><b style="color:black;background-color:#ffff66">PPP</b> 
+                  </p>
+                <p>RFC1548 <a href="http://www.cis.ohio-state.edu/htbin/rfc/rfc1548.html" target="_blank">http://www.cis.ohio-state.edu/htbin/rfc/rfc1548.html</a><br>
+                  RFC1661 <a href="http://www.cis.ohio-state.edu/htbin/rfc/rfc1661.html" target="_blank">http://www.cis.ohio-state.edu/htbin/rfc/rfc1661.html</a><br>
+                  RFC1662 <a href="http://www.cis.ohio-state.edu/htbin/rfc/rfc1662.html" target="_blank">http://www.cis.ohio-state.edu/htbin/rfc/rfc1662.html</a></p>
+                <p class="blacktext"><b style="color:black;background-color:#ffff66">PPP</b> (Point-to-Point Protocol) is designed 
+                  for simple links which transport packets between two peers. 
+                  These links provide full-duplex simultaneous bi-directional 
+                  operation and are assumed to deliver packets in order. <b style="color:black;background-color:#ffff66">PPP</b> provides 
+                  a common solution for the easy connection of a wide variety 
+                  of hosts, bridges and routers. </p>
+                <p class="blacktext">The structure of the <b style="color:black;background-color:#ffff66">PPP</b> header is shown 
+                  in the following illustration:</p>
+                <table class="blacktext" bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="400">
+                  <tbody><tr> 
+                    <td valign="top" width="17%"> <center>
+                        Address </center></td>
+                    <td valign="top" width="17%"> <center>
+                        Control </center></td>
+                    <td valign="top" width="22%"> <center>
+                        Protocol </center></td>
+                    <td valign="top" width="22%"> <center>
+                        Information </center></td>
+                    <td valign="top" width="22%"> <center>
+                        FCS </center></td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#FFFFFF" valign="top" width="17%"> <center>
+                        1 byte </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="17%"> <center>
+                        1 byte </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="22%"> <center>
+                        2 bytes </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="22%"> <center>
+                        variable </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="22%"> <center>
+                        2 bytes </center></td>
+                  </tr>
+                  <tr> 
+                    <td colspan="5" class="blackitalic" bgcolor="#FFFFFF" valign="top"> 
+                      <div align="center"><b style="color:black;background-color:#ffff66">PPP</b> header structure</div></td>
+                  </tr>
+                </tbody></table>
+                <p>Address<br>
+                  HDLC broadcast address. <b style="color:black;background-color:#ffff66">PPP</b> does 
+                  not assign individual station addresses. The value of this field 
+                  is always set to FF Hex.</p>
+                <p class="blacktext">Control<br>
+                  HDLC command for Unnumbered Information (UI) with the Poll/Final 
+                  bit set to zero. The value of this field is always set to 03 
+                  Hex. Frames containing any other value in this field are discarded. 
+                </p>
+                <p class="blacktext">Protocol<br>
+                  Identifies the encapsulated protocol within the Information 
+                  field of the frame.</p>
+                <p class="blacktext">Information<br>
+                  Higher-level protocol data.</p>
+                <p class="blacktext">FCS<br>
+                  Value of the frame checksum calculation. <b style="color:black;background-color:#ffff66">PPP</b> verifies 
+                  the contents of the FCS field upon receipt of the <b style="color:black;background-color:#a0ffff">packet</b>.</p>
+                <p class="blacktext">Interested in more 
+                  details about testing this protocol?  
+                  <a href="http://www.radcom.com/Products.aspx?BoneId=659&amp;ObjId=-1&amp;=&amp;=&amp;=&amp;staticName1=&amp;staticName2=">click here</a>
+                 </p>
+                <p class="blacktext">&nbsp;</p>
+                <p><a name="BPDU"></a><b style="color:black;background-color:#ffff66">PPP</b>-BPDU</p>
+                <p>RFC1638 <a href="http://www.cis.ohio-state.edu/htbin/rfc/rfc1638.html" target="_blank">http://www.cis.ohio-state.edu/htbin/rfc/rfc1638.html</a></p>
+                <p class="blacktext">There exist two basic types of bridges: those 
+                  that interconnect LANs directly, called Local Bridges, and those 
+                  that interconnect LANs via an intermediate WAN medium such as 
+                  a leased line, called Remote Bridges. The <b style="color:black;background-color:#ffff66">PPP</b>-BPDU (Bridge Protocol 
+                  Data Unit) is used to connect Remote Bridges.</p>
+                <p class="blacktext">The <b style="color:black;background-color:#99ff99">format</b> of the <b style="color:black;background-color:#ffff66">PPP</b>-BPDU <b style="color:black;background-color:#a0ffff">packet</b> is shown 
+                  in the following illustration:</p>
+                <p> 
+                <table class="blacktext" bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="400">
+                  <tbody><tr> 
+                    <td colspan="3" bgcolor="#FFFFFF" valign="top">&nbsp;</td>
+                    <td bgcolor="#FFFFFF" valign="top" width="3%"> <div align="right"> 
+                        4 </div></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="12%"> <div align="right"> 
+                        8 </div></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="24%"> <div align="right"> 
+                        16 </div></td>
+                    <td colspan="3" bgcolor="#FFFFFF" valign="top"> <div align="right"> 
+                        32 bits </div></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top" width="3%"> <center>
+                        F </center></td>
+                    <td valign="top" width="3%"> <center>
+                        I </center></td>
+                    <td valign="top" width="3%"> <center>
+                        Z </center></td>
+                    <td valign="top" width="3%"> <center>
+                        0 </center></td>
+                    <td valign="top" width="12%"> <center>
+                        Pads </center></td>
+                    <td valign="top" width="24%"> <center>
+                        MAC type </center></td>
+                    <td colspan="3" valign="top"> <center>
+                        LAN ID high word (optional) </center></td>
+                  </tr>
+                  <tr> 
+                    <td colspan="7" valign="top"> <center>
+                        LAN ID low word (optional) </center></td>
+                    <td valign="top" width="23%"> <center>
+                        Pad byte </center></td>
+                    <td valign="top" width="29%"> <center>
+                        Frame control </center></td>
+                  </tr>
+                  <tr> 
+                    <td colspan="9" valign="top"> <center>
+                        Destination MAC address </center></td>
+                  </tr>
+                  <tr> 
+                    <td colspan="7" valign="top"> <center>
+                        Destination MAC address </center></td>
+                    <td colspan="2" valign="top"> <center>
+                        Source MAC address </center></td>
+                  </tr>
+                  <tr> 
+                    <td colspan="9" valign="top"> <center>
+                        Source MAC address </center></td>
+                  </tr>
+                  <tr> 
+                    <td colspan="9" valign="top"> <center>
+                        LLC data </center></td>
+                  </tr>
+                  <tr bgcolor="#FFFFFF"> 
+                    <td colspan="9" valign="top"> <div class="blackitalic" align="center"><b style="color:black;background-color:#ffff66">PPP</b>-BPDU 
+                        <b style="color:black;background-color:#a0ffff">packet</b> structure</div></td>
+                  </tr>
+                </tbody></table>
+                </p><p>F<br>
+                  F flag, set if the LAN FCS field 
+                  is present.</p>
+                <p class="blacktext">I<br>
+                  I flag, set if the LAN ID field is present.</p>
+                <p class="blacktext">Z<br>
+                  Z flag, set if IEEE 802.3 pad must be zero filled to minimum 
+                  size.</p>
+                <p class="blacktext">0<br>
+                  0 flag reserved, must be zero.</p>
+                <p class="blacktext">Pads<br>
+                  Any <b style="color:black;background-color:#ffff66">PPP</b> frame may have padding inserted in the Optional Data 
+                  Link Layer Padding field. This number tells the receiving system 
+                  how many pad octets to strip off.</p>
+                <p class="blacktext">MAC type<br>
+                  Values of the MAC Type field.</p>
+                <table class="blacktext" border="0" cellpadding="0" cellspacing="0" width="500">
+                  <tbody><tr> 
+                    <td width="8%">1 </td>
+                    <td width="92%">Bridge-Identification</td>
+                  </tr>
+                  <tr> 
+                    <td width="8%">2 </td>
+                    <td width="92%">Line-Identification</td>
+                  </tr>
+                  <tr> 
+                    <td width="8%">3 </td>
+                    <td width="92%">MAC-Support</td>
+                  </tr>
+                  <tr> 
+                    <td width="8%">4</td>
+                    <td width="92%">Tinygram-Compression</td>
+                  </tr>
+                  <tr> 
+                    <td width="8%">5</td>
+                    <td width="92%">LAN-Identification</td>
+                  </tr>
+                  <tr> 
+                    <td width="8%">6 </td>
+                    <td width="92%">MAC-Address</td>
+                  </tr>
+                  <tr> 
+                    <td width="8%">7 </td>
+                    <td width="92%">Spanning-Tree-Protocol</td>
+                  </tr>
+                </tbody></table>
+                <p>LAN ID<br>
+                  Optional 32-bit field that identifies 
+                  the Community of LANs which may be interested in receiving this 
+                  frame. If the LAN ID flag is not set, then this field is not 
+                  present and the PDU is four octets shorter.</p>
+                <p>Frame control<br>
+                  On 802.4, 802.5 and FDDI LANs, 
+                  there are a few octets preceding the Destination MAC Address, 
+                  one of which is protected by the FCS. The MAC Type of the frame 
+                  determines the contents of the Frame Control field. A pad octet 
+                  is present to provide a 32-bit <b style="color:black;background-color:#a0ffff">packet</b> alignment.</p>
+                <p>Destination MAC address<br>
+                  As defined by the IEEE. The MAC 
+                  Type field defines the bit ordering.</p>
+                <p>Source MAC address<br>
+                  As defined by the IEEE. The MAC 
+                  Type field defines the bit ordering.</p>
+                <p>LLC data<br>
+                  This is the remainder of the 
+                  MAC frame which is (or would be were it present) protected by 
+                  the LAN FCS.</p>
+                <p>Interested in more details about testing 
+                  this protocol?  
+                  <a href="http://www.radcom.com/Products.aspx?BoneId=659&amp;ObjId=-1&amp;=&amp;=&amp;=&amp;staticName1=&amp;staticName2=">click here</a>
+                   </p>
+                <p>&nbsp;</p>
+                <p class="title2"><a name="BAP"></a>BAP</p>
+                <p>RFC2125 <a href="http://www.cis.ohio-state.edu/htbin/rfc/rfc2125.html">http://www.cis.ohio-state.edu/htbin/rfc/rfc2125.html</a></p>
+                <p class="blacktext">The Bandwidth Allocation Protocol (BAP) can 
+                  be used to manage the number of links in a multi-link bundle. 
+                  BAP defines datagrams to coordinate adding and removing individual 
+                  links in a multi-link bundle, as well as specifying which peer 
+                  is responsible for various decisions regarding managing bandwidth 
+                  during a multi-link connection.</p>
+                <p class="blacktext">The <b style="color:black;background-color:#99ff99">format</b> of the BAP <b style="color:black;background-color:#a0ffff">packet</b> is shown in 
+                  the following illustration:</p>
+                <table class="blacktext" bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="400">
+                  <tbody><tr> 
+                    <td valign="top" width="24%"> <center>
+                        Type </center></td>
+                    <td valign="top" width="24%"> <center>
+                        Length </center></td>
+                    <td valign="top" width="53%"> <center>
+                        Data </center></td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#FFFFFF" valign="top" width="24%"> <center>
+                        1 byte </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="24%"> <center>
+                        1 byte </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="53%"> <center>
+                        variable </center></td>
+                  </tr>
+                  <tr> 
+                    <td colspan="3" bgcolor="#FFFFFF" valign="top"><div class="blackitalic" align="center">BAP 
+                        <b style="color:black;background-color:#a0ffff">packet</b> structure</div></td>
+                  </tr>
+                </tbody></table>
+                <p>Type<br>
+                  One-octet field which indicates 
+                  the type of the BAP Datagram Option. This field is binary coded 
+                  Hexadecimal.</p>
+                <p>Interested in more details about testing 
+                  this protocol?  
+                  <a href="http://www.radcom.com/Products.aspx?BoneId=659&amp;ObjId=-1&amp;=&amp;=&amp;=&amp;staticName1=&amp;staticName2=">click here</a>
+                   </p>
+                <p>&nbsp;</p>
+                <p><b><a name="CHAP"></a></b>CHAP 
+                </p><p>RFC1334 <a href="http://www.cis.ohio-state.edu/htbin/rfc/rfc1334.html" target="_blank">http://www.cis.ohio-state.edu/htbin/rfc/rfc1334.html</a></p>
+                <p class="blacktext">Challenge Handshake Authentication Protocol 
+                  (CHAP) is used to periodically verify the identity of the peer 
+                  using a 3-way handshake. This is done upon initial link establishment 
+                  and may be repeated any time after the link has been established.</p>
+                <p class="blacktext">Exactly one CHAP <b style="color:black;background-color:#a0ffff">packet</b> is encapsulated in 
+                  the Information field of a <b style="color:black;background-color:#ffff66">PPP</b> data link layer frame where the 
+                  protocol field indicates type hex c223. The structure of the 
+                  CHAP <b style="color:black;background-color:#a0ffff">packet</b> is shown in the following illustration.</p>
+                <table class="blacktext" bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="400">
+                  <tbody><tr> 
+                    <td valign="top" width="15%"> <center>
+                        Code </center></td>
+                    <td valign="top" width="15%"> <center>
+                        Identifier </center></td>
+                    <td valign="top" width="30%"> <center>
+                        Length </center></td>
+                    <td valign="top" width="40%"> <center>
+                        Data . . . </center></td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#FFFFFF" valign="top" width="15%"> <center>
+                        1 byte </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="15%"> <center>
+                        1 byte </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="30%"> <center>
+                        2 bytes </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="40%"> <center>
+                        variable </center></td>
+                  </tr>
+                  <tr> 
+                    <td colspan="4" bgcolor="#FFFFFF" valign="top"><div class="blackitalic" align="center">CHAP 
+                        <b style="color:black;background-color:#a0ffff">packet</b> structure</div></td>
+                  </tr>
+                </tbody></table>
+                <p>Code<br>
+                  Identifies the type of CHAP <b style="color:black;background-color:#a0ffff">packet</b>. 
+                  CHAP codes are assigned as follows:</p>
+                <table border="0" cellpadding="0" cellspacing="0" width="500">
+                  <tbody><tr> 
+                    <td width="8%"><font face="Arial,Helvetica,sans-serif">1</font></td>
+                    <td width="92%"><font face="Arial,Helvetica,sans-serif">Challenge</font></td>
+                  </tr>
+                  <tr> 
+                    <td width="8%"><font face="Arial,Helvetica,sans-serif">2</font></td>
+                    <td width="92%"><font face="Arial,Helvetica,sans-serif">Response 
+                      </font></td>
+                  </tr>
+                  <tr> 
+                    <td width="8%"><font face="Arial,Helvetica,sans-serif">3</font></td>
+                    <td width="92%"><font face="Arial,Helvetica,sans-serif">Success</font></td>
+                  </tr>
+                  <tr> 
+                    <td width="8%"><font face="Arial,Helvetica,sans-serif">4</font></td>
+                    <td width="92%"><font face="Arial,Helvetica,sans-serif">Failure</font></td>
+                  </tr>
+                </tbody></table>
+                <p>Identifier<br>
+                  Aids in matching challenges, 
+                  responses and replies.</p>
+                <p class="blacktext">Length<br>
+                  Length of the CHAP <b style="color:black;background-color:#a0ffff">packet</b> including the Code, Identifier, Length 
+                  and Data fields.</p>
+                <p class="blacktext">Data<br>
+                  Zero or more octets, the <b style="color:black;background-color:#99ff99">format</b> of which is determined by the 
+                  Code field. The <b style="color:black;background-color:#99ff99">format</b> of the Challenge and Response data fields 
+                  is shown in the following illustration:</p>
+                <table class="blacktext" bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="400">
+                  <tbody><tr> 
+                    <td valign="top" width="27%"> <center>
+                        Value Size </center></td>
+                    <td valign="top" width="45%"> <center>
+                        Value </center></td>
+                    <td valign="top" width="27%"> <center>
+                        Name </center></td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#FFFFFF" valign="top" width="27%"> <center>
+                        1 byte </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="45%">&nbsp;</td>
+                    <td bgcolor="#FFFFFF" valign="top" width="27%"> <center>
+                        1 byte </center></td>
+                  </tr>
+                  <tr> 
+                    <td colspan="3" bgcolor="#FFFFFF" valign="top"><div class="blackitalic" align="center">CHAP 
+                        Challenge and Response data structure</div></td>
+                  </tr>
+                </tbody></table>
+                <p class="blacktext">Value size<br>
+                  Indicates the length of the Value field.</p>
+                <p class="blacktext">Value<br>
+                  Challenge value is a variable stream of octets which must be 
+                  changed each time a challenge is sent.<br>
+                  Response value is the one-way hash calculated over a stream 
+                  of octets consisting of the Identifier, followed by the "secret" 
+                  and the Challenge value.</p>
+                <p class="blacktext">Name<br>
+                  Identification of the system transmitting the <b style="color:black;background-color:#a0ffff">packet</b>.</p>
+                <p class="blacktext">For Success and Failure, the data field contains 
+                  a variable message field which is implementation dependent.</p>
+                <p>Interested in more details about testing 
+                  this protocol?  
+                  <a href="http://www.radcom.com/Products.aspx?BoneId=659&amp;ObjId=-1&amp;=&amp;=&amp;=&amp;staticName1=&amp;staticName2=">click here</a>
+                   </p>
+                <p>&nbsp;</p>
+                <p> <a name="IPHC"></a>IPHC 
+                </p><p>RFC 2509<br>
+                  <br>
+                  IP Header Compression (IPHC) may be used for compression of 
+                  both IPv4 and IPv6 datagrams or packets encapsulated with multiple 
+                  IP headers. IPHC is also capable of compressing both TCP and 
+                  UDP transport protocol headers. The IP/UDP/RTP header compression 
+                  defined in CRTP fits within the framework defined by IPHC so 
+                  that it may also be applied to both IPv4 and IPv6 packets.</p>
+                <p class="blacktext">In order to establish compression of IP datagrams 
+                  sent over a <b style="color:black;background-color:#ffff66">PPP</b> link, each end of the link must agree on a set 
+                  of configuration parameters for the compression. The process 
+                  of negotiating link parameters for network layer protocols is 
+                  handled in <b style="color:black;background-color:#ffff66">PPP</b> by a family of network control protocols (NCPs). 
+                  Since there are separate NCPs for IPv4 and IPv6, this document 
+                  defines configuration options to be used in both NCPs to negotiate 
+                  parameters for the compression scheme.</p>
+                <p class="title3">Configuration option <b style="color:black;background-color:#99ff99">format</b></p>
+                <p class="blacktext">Both the network control protocol for IPv4, 
+                  IPCP (RFC1332) and the IPv6 NCP, IPV6CP (RFC2023) may be used 
+                  to negotiate IP Header Compression parameters for their respective 
+                  protocols. The <b style="color:black;background-color:#99ff99">format</b> of the configuration option is the same 
+                  for both IPCP and IPV6CP.</p>
+                <table bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="451">
+                  <tbody><tr> 
+                    <td class="blacktext" align="center">Type</td>
+                    <td class="blacktext" align="center">Length</td>
+                    <td class="blacktext" align="center">IP compression protocol</td>
+                  </tr>
+                  <tr> 
+                    <td colspan="2" class="blacktext" align="center">TCP_SPACE</td>
+                    <td class="blacktext" align="center">NON_TCP_SPACE</td>
+                  </tr>
+                  <tr> 
+                    <td colspan="2" class="blacktext" align="center">TCP_SPACE</td>
+                    <td class="blacktext" align="center">F_MAX_TIME</td>
+                  </tr>
+                  <tr> 
+                    <td colspan="2" class="blacktext" align="center">MAX_HEADER</td>
+                    <td class="blacktext" align="center">Suboptions</td>
+                  </tr>
+                  <tr> 
+                    <td class="blacktext" bgcolor="#FFFFFF" align="center">1 byte</td>
+                    <td class="blacktext" bgcolor="#FFFFFF" align="center">1 byte</td>
+                    <td class="blacktext" bgcolor="#FFFFFF" align="center">2 byte</td>
+                  </tr>
+                  <tr> 
+                    <td colspan="3" class="blackitalic" bgcolor="#FFFFFF" align="center">IPHC 
+                      configuration option <b style="color:black;background-color:#99ff99">format</b></td>
+                  </tr>
+                </tbody></table>
+                <p class="blacktext">The following parameters are available:</p>
+                <p>Type<br>
+                  The value of the Type field is 2.</p>
+                <p>Length<br>
+                  Indicates the length of the suboption in its entirety, 
+                  including the lengths of the type and length fields. The value 
+                  of this field is 14.</p>
+                <p>IP compression protocol<br>
+                  The value of this field is 0061 (hex).</p>
+                <p>TCP_SPACE<br>
+                  The TCP_SPACE field indicates the maximum value of a 
+                  context identifier in the space of context identifiers allocated 
+                  for TCP. The suggested value of this field is: 15. TCP_SPACE 
+                  must be at least 0 and at most 255 (The value 0 implies having 
+                  one context).</p>
+                <p>F_MAX_PERIOD<br>
+                  Maximum interval between full headers. No more then F_MAX_PERIOD 
+                  compressed non-TCP headers may be sent between full header headers. 
+                  Suggested value: 256</p>
+                <p>F_MAX_TIME<br>
+                  Maximum time interval between full headers. Suggested 
+                  value: 5 seconds. A value of zero implies infinity.</p>
+                <p>MAX_HEADER<br>
+                  The largest header size in octets that may be compressed. 
+                  Suggested value: 168 octets.<br>
+                  The value of MAX_HEADER should be large enough so that at least 
+                  the outer network layer header can be compressed. To increase 
+                  compression efficiency MAX_HEADER should be set to a value large 
+                  enough to cover common combinations of network and transport 
+                  layer headers.</p>
+                <p>Suboptions<br>
+                  The Suboptions field consists of zero or more suboptions. 
+                  Each suboption consists of a type field, a length field and 
+                  zero or more parameter octets, as defined by the suboption type. 
+                  The value of the length field indicates the length of the suboption 
+                  in its entirety, including the lengths of the type and length 
+                  fields.<font color="#cc6600" face="Arial,Helvetica,sans-serif"></font></p>
+                <p>Interested in more details about testing 
+                  this protocol?  
+                  <a href="http://www.radcom.com/Products.aspx?BoneId=659&amp;ObjId=-1&amp;=&amp;=&amp;=&amp;staticName1=&amp;staticName2=">click here</a>
+                   </p>
+                <p>&nbsp;</p>
+                <p class="title2"><a name="LCP"></a>LCP 
+                </p><p>RFC1570 <a href="http://www.cis.ohio-state.edu/htbin/rfc/rfc1570.html" target="_blank">http://www.cis.ohio-state.edu/htbin/rfc/rfc1570.html</a><br>
+                  RFC1661 <a href="http://www.cis.ohio-state.edu/htbin/rfc/rfc1661.html" target="_blank">http://www.cis.ohio-state.edu/htbin/rfc/rfc1661.html</a></p>
+                <p class="blacktext">In order to be sufficiently versatile to 
+                  be portable to a wide variety of environments, <b style="color:black;background-color:#ffff66">PPP</b> provides 
+                  the Link Control Protocol (LCP) for establishing, configuring 
+                  and testing the data link connection. LCP is used to automatically 
+                  agree upon the encapsulation <b style="color:black;background-color:#99ff99">format</b> options, handle varying 
+                  limits on sizes of packets, detect a looped-back link and other 
+                  common misconfiguration errors, and terminate the link. Other 
+                  optional facilities provided are authentication of the identity 
+                  of its peer on the link, and determination when a link is functioning 
+                  properly and when it is failing.</p>
+                <p class="blacktext">The <b style="color:black;background-color:#99ff99">format</b> of the LCP <b style="color:black;background-color:#a0ffff">packet</b> is shown in 
+                  the following illustration:</p>
+                <table class="blacktext" bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="400">
+                  <tbody><tr> 
+                    <td valign="top" width="19%"> <center>
+                        Code </center></td>
+                    <td valign="top" width="19%"> <center>
+                        Identifier </center></td>
+                    <td valign="top" width="31%"> <center>
+                        Length </center></td>
+                    <td valign="top" width="31%"> <center>
+                        Data </center></td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#FFFFFF" valign="top" width="19%"> <center>
+                        1 byte </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="19%"> <center>
+                        1 byte </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="31%"> <center>
+                        2 bytes </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="31%"> <center>
+                        variable </center></td>
+                  </tr>
+                  <tr> 
+                    <td colspan="4" class="blackitalic" bgcolor="#FFFFFF" valign="top"> 
+                      <div align="center">LCP <b style="color:black;background-color:#a0ffff">packet</b> structure</div></td>
+                  </tr>
+                </tbody></table>
+                Code<br>
+                Decimal value which indicates the 
+                type of LCP <b style="color:black;background-color:#a0ffff">packet</b>: 
+                <table class="blacktext" border="0" cellpadding="0" cellspacing="0" width="500">
+                  <tbody><tr> 
+                    <td width="26">1</td>
+                    <td width="422">Configure-Request.</td>
+                  </tr>
+                  <tr> 
+                    <td width="26">2</td>
+                    <td width="422">Configure-Ack.</td>
+                  </tr>
+                  <tr> 
+                    <td width="26">3</td>
+                    <td width="422">Configure-Nak. </td>
+                  </tr>
+                  <tr> 
+                    <td width="26">4</td>
+                    <td width="422">Configure-Reject. </td>
+                  </tr>
+                  <tr> 
+                    <td width="26">5</td>
+                    <td width="422">Terminate-Request.</td>
+                  </tr>
+                  <tr> 
+                    <td width="26">6</td>
+                    <td width="422">Terminate-Ack. </td>
+                  </tr>
+                  <tr> 
+                    <td width="26">7</td>
+                    <td width="422">Code-Reject. </td>
+                  </tr>
+                  <tr> 
+                    <td width="26">8</td>
+                    <td width="422">Protocol-Reject.</td>
+                  </tr>
+                  <tr> 
+                    <td width="26">9</td>
+                    <td width="422">Echo-Request. </td>
+                  </tr>
+                  <tr> 
+                    <td width="26">10</td>
+                    <td width="422">Echo-Reply. </td>
+                  </tr>
+                  <tr> 
+                    <td width="26">11</td>
+                    <td width="422">Discard-Request.</td>
+                  </tr>
+                  <tr> 
+                    <td width="26">12</td>
+                    <td width="422">Link-Quality Report.</td>
+                  </tr>
+                </tbody></table>
+                <p>Identifier<br>
+                  Decimal value which aids in matching 
+                  requests and replies. 
+                </p><p class="blacktext">Length<br>
+                  Length of the LCP <b style="color:black;background-color:#a0ffff">packet</b>, including the Code, Identifier, Length 
+                  and Data fields. </p>
+                <p class="blacktext">Data<br>
+                  Variable length field which may contain one or more configuration 
+                  options. The <b style="color:black;background-color:#99ff99">format</b> of the LCP configuration options is as follows:</p>
+                <table bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="400">
+                  <tbody><tr> 
+                    <td valign="top" width="33%"> <center>
+                        Type </center></td>
+                    <td valign="top" width="33%"> <center>
+                        Length </center></td>
+                    <td valign="top" width="33%"> <center>
+                        Data </center></td>
+                  </tr>
+                  <tr bgcolor="#FFFFFF"> 
+                    <td colspan="3" valign="top"> <div class="blackitalic" align="center">LCP 
+                        configuration options</div></td>
+                  </tr>
+                </tbody></table>
+                Type<br>
+                One-byte indication of the type 
+                of the configuration option.  
+                <p>Length<br>
+                  Length of the configuration option 
+                  including the Type, Length and Data fields.</p>
+                <p>Data<br>
+                  Value of the Data field.</p>
+                <table border="0" cellpadding="0" cellspacing="0" width="400">
+                  <tbody><tr> 
+                    <td><a href="images/image58.gif"></a></td>
+                  </tr>
+                  <tr> 
+                    <td><div class="blackitalic" align="center">LCP decode<font face="Arial,Helvetica,sans-serif"></font></div></td>
+                  </tr>
+                </tbody></table>
+                <p>Interested in more details about testing 
+                  this protocol?  
+                  <a href="http://www.radcom.com/Products.aspx?BoneId=659&amp;ObjId=-1&amp;=&amp;=&amp;=&amp;staticName1=&amp;staticName2=">click here</a>
+                   </p>
+                <p>&nbsp;</p>
+                <p><b><a name="LQR"></a></b>LQR</p>
+                <p>RFC1333<a href="http://www.cis.ohio-state.edu/htbin/rfc/rfc1333.html" target="_blank"> 
+                  http://www.cis.ohio-state.edu/htbin/rfc/rfc1333.html</a> 
+                </p>
+                <p class="blacktext">The Link Quality Report (LQR) protocol specifies 
+                  the mechanism for link quality monitoring within <b style="color:black;background-color:#ffff66">PPP</b>. Packets 
+                  are sometimes dropped or corrupted due to line noise, equipment 
+                  failure, buffer overruns, etc. and it is often desirable to 
+                  determine when and how often the link drops data. Routers may 
+                  temporarily allow another route to take precedence, or an implementation 
+                  may have the option of disconnecting and switching to an alternate 
+                  link. For these reasons, such a quality monitoring mechanism 
+                  is necessary.</p>
+                <p class="blacktext">One LQR <b style="color:black;background-color:#a0ffff">packet</b> is encapsulated in the information 
+                  field of <b style="color:black;background-color:#ffff66">PPP</b> data link layer frames where the protocol field 
+                  indicates type hex c025. The structure of the LQR <b style="color:black;background-color:#a0ffff">packet</b> is 
+                  shown in the following illustration:</p>
+                <table class="blacktext" bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="400">
+                  <tbody><tr> 
+                    <td bgcolor="#FFFFFF" valign="top"> <center>
+                        4 bytes </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Magic number </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Last out LQRs </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Last out packets </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Last out octets </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Peer in LQRs </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Peer in packets </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Peer in discards </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Peer in errors </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Peer in octets </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Peer out LQRs </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Peer out packets </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Peer out octets </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Save in LQRs </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Save in packets </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Save in discards </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Save in errors </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top"> <center>
+                        Save in octets </center></td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#FFFFFF" valign="top"><div class="blackitalic" align="center">LQR 
+                        <b style="color:black;background-color:#a0ffff">packet</b> structure</div></td>
+                  </tr>
+                </tbody></table>
+                <p class="blacktext">Magic number<br>
+                  Aids in detecting links which are in the looped-back condition.</p>
+                <p class="blacktext">Last out LQRs<br>
+                  Copied from the most recently received Peer Out LQRs on transmission.</p>
+                <p class="blacktext">Last out packets<br>
+                  Copied from the most recently received Peer Out Packets on transmission.</p>
+                <p class="blacktext">Last out octets<br>
+                  Copied from the most recently received Peer Out Octets on transmission.</p>
+                <p class="blacktext">Peer in LQRs<br>
+                  Copied from the most recently received Save In LQRs on transmission. 
+                  Whenever the Peer In LQRs field is zero, the Last Out fields 
+                  are indeterminate and the Peer In fields contain the initial 
+                  values for the peer.</p>
+                <p class="blacktext">Peer in packets<br>
+                  Copied from the most recently received Save In Packets on transmission.</p>
+                <p class="blacktext">Peer in discards<br>
+                  Copied from the most recently received Save In Discards on transmission.</p>
+                <p class="blacktext">Peer in errors<br>
+                  Copied from the most recently received Save In Errors on transmission.</p>
+                <p class="blacktext">Peer in octets<br>
+                  Copied from the most recently received Save In Octets on transmission.</p>
+                <p class="blacktext">Peer out LQRs<br>
+                  Copied from the Out LQRs on transmission. This number must include 
+                  this LQR.</p>
+                <p class="blacktext">Peer out packets<br>
+                  Copied from the current MIB ifOutUniPackets and ifOutNUniPackets 
+                  on transmission. This number must include this LQR.</p>
+                <p class="blacktext">Peer out octets<br>
+                  Copied from the current MIB ifOutOctets on transmission. This 
+                  number must include this LQR.</p>
+                <p class="blacktext">The following fields are not actually transmitted 
+                  over the inbound link. Rather, they are logically appended to 
+                  the <b style="color:black;background-color:#a0ffff">packet</b> by the Rx process.</p>
+                <p class="blacktext">Save in LQRs<br>
+                  Copied from In LQRs on reception. This number must include this 
+                  LQR.</p>
+                <p class="blacktext">Save in packets<br>
+                  Copied from the current MIB ifInUniPackets and ifInNUniPackets 
+                  on reception. This number must include this LQR.</p>
+                <p class="blacktext">Save in discards<br>
+                  Copied from the current MIB ifInDiscards on reception. This 
+                  number must include this LQR.</p>
+                <p class="blacktext">Save in errors<br>
+                  Copied from the current MIB ifInErrors on reception. This number 
+                  must include this LQR.</p>
+                <p class="blacktext">Save in octets<br>
+                  Copied from the current InGoodOctets on reception. This number 
+                  must include this LQR.</p>
+                <p class="blacktext">Interested in more 
+                  details about testing this protocol?  
+                  <a href="http://www.radcom.com/Products.aspx?BoneId=659&amp;ObjId=-1&amp;=&amp;=&amp;=&amp;staticName1=&amp;staticName2=">click here</a>
+                   </p>
+                <p class="blacktext">&nbsp;</p>
+                <p><a name="MPPC"></a>MPPC</p>
+                <p>RFC 2118 <a href="http://www.cis.ohio-state.edu/htbin/rfc/rfc2118.html" target="_blank">http://www.cis.ohio-state.edu/htbin/rfc/rfc2118.html</a></p>
+                <p class="blacktext">The Point-to-Point Protocol provides a standard 
+                  method for transporting multi-protocol datagrams over point-to-point 
+                  links. The <b style="color:black;background-color:#ffff66">PPP</b> Compression Control Protocol provides a method 
+                  to negotiate and utilize compression protocols over <b style="color:black;background-color:#ffff66">PPP</b> encapsulated 
+                  links. The Microsoft Point to Point Compression protocol (also 
+                  referred to as MPPC) compresses <b style="color:black;background-color:#ffff66">PPP</b> encapsulated packets. The 
+                  Microsoft Point to Point Compression scheme is a means of representing 
+                  arbitrary Point-to-Point Protocol (<b style="color:black;background-color:#ffff66">PPP</b>) packets in a compressed 
+                  form. The MPPC algorithm is designed to optimize processor utilization 
+                  and bandwidth utilization in order to support large number of 
+                  simultaneous connections. The MPPC algorithm is also optimized 
+                  to work efficiently in typical <b style="color:black;background-color:#ffff66">PPP</b> scenarios (1500 byte MTU, 
+                  etc.). The CCP configuration Option negotiates the use of MPPC 
+                  on the link. Before any MPPC packets may be transmitted, <b style="color:black;background-color:#ffff66">PPP</b> 
+                  must reach the Network-Layer protocol phase and the CCP Control 
+                  Protocol must reach the opened state. One MPPC datagram is encapsulated 
+                  in the <b style="color:black;background-color:#ffff66">PPP</b> information field. Only packets with <b style="color:black;background-color:#ffff66">PPP</b> protocol 
+                  numbers in the range 0021 to 00FA are compressed.</p>
+                <p class="blacktext">The <b style="color:black;background-color:#99ff99">format</b> of the MPPC <b style="color:black;background-color:#a0ffff">packet</b> is shown in 
+                  the following illustration:</p>
+                <table bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="387">
+                  <tbody><tr bgcolor="#FFFFFF"> 
+                    <td class="blacktext" align="center">1 byte</td>
+                    <td>&nbsp;</td>
+                    <td class="blacktext" align="center">1 byte</td>
+                  </tr>
+                  <tr> 
+                    <td class="blacktext" height="23" align="center"><b style="color:black;background-color:#ffff66">PPP</b> Protocol</td>
+                    <td class="blacktext" align="center">A B C D</td>
+                    <td class="blacktext" align="center">Coherency Count</td>
+                  </tr>
+                  <tr height="40"> 
+                    <td colspan="3" height="40" align="center">Compressed 
+                      Data... <p class="blacktext">......</p>
+                      <p class="blacktext">.....</p></td>
+                  </tr>
+                  <tr bgcolor="#FFFFFF"> 
+                    <td colspan="3" class="blackitalic" align="center">MPPC <b style="color:black;background-color:#a0ffff">packet</b> 
+                      structure</td>
+                  </tr>
+                </tbody></table>
+                <p class="blacktext"><b style="color:black;background-color:#ffff66">PPP</b> Protocol<br>
+                  Identifies the encapsulated protocol within the information 
+                  field of the frame. </p>
+                <p class="blacktext">Bit A<br>
+                  This bit indicates that the history buffer has just been initialized 
+                  before the <b style="color:black;background-color:#a0ffff">packet</b> was generated. It is sent to inform the peer 
+                  that the sender has initialized its history buffer before compressing 
+                  the <b style="color:black;background-color:#a0ffff">packet</b> and that the receiving peer must initialize its history 
+                  buffer before decompressing the <b style="color:black;background-color:#a0ffff">packet</b>. This bit is referred 
+                  to as the flushed bit.</p>
+                <p class="blacktext">Bit B<br>
+                  This bit indicates that the <b style="color:black;background-color:#a0ffff">packet</b> was moved to the front end 
+                  of the history buffer.</p>
+                <p class="blacktext">Bit C<br>
+                  This bit is set to indicate that the <b style="color:black;background-color:#a0ffff">packet</b> is compressed.</p>
+                <p class="blacktext">Bit D<br>
+                  This bit must be set to 0.</p>
+                <p class="blacktext">Coherency Count<br>
+                  This is used to assure that the packets are sent in the correct 
+                  order and that no <b style="color:black;background-color:#a0ffff">packet</b> has been dropped.</p>
+                <p class="blacktext">Compressed Data<br>
+                  The compressed data begins with the protocol field; for example 
+                  in an IP <b style="color:black;background-color:#a0ffff">packet</b> (0021 followed by an IIP header) the compressor 
+                  will try to compress the 0021 field first and then the IP header 
+                  itself.</p>
+                <p class="blacktext">Interested in more 
+                  details about testing this protocol?  
+                  <a href="http://www.radcom.com/Products.aspx?BoneId=659&amp;ObjId=-1&amp;=&amp;=&amp;=&amp;staticName1=&amp;staticName2=">click here</a>
+                   </p>
+                <p class="blacktext">&nbsp;</p>
+                <p><b><a name="PAP"></a></b>PAP</p>
+                <p>RFC1334 <a href="http://www.cis.ohio-state.edu/htbin/rfc/rfc1334.html" target="_blank">http://www.cis.ohio-state.edu/htbin/rfc/rfc1334.html</a></p>
+                <p class="blacktext">Password Authentication Protocol (PAP) provides 
+                  a simple method for the peer to establish its identity using 
+                  a 2-way handshake. This is done only upon initial link establishment.</p>
+                <p class="blacktext">The PAP <b style="color:black;background-color:#a0ffff">packet</b> is encapsulated in the Information 
+                  field of a <b style="color:black;background-color:#ffff66">PPP</b> data link layer frame where the protocol field 
+                  indicates type hex c023. The structure of the PAP <b style="color:black;background-color:#a0ffff">packet</b> is 
+                  shown in the following illustration:</p>
+                <table class="blacktext" bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="377">
+                  <tbody><tr> 
+                    <td valign="top" width="20%"> <center>
+                        Code </center></td>
+                    <td valign="top" width="20%"> <center>
+                        Identifier </center></td>
+                    <td valign="top" width="20%"> <center>
+                        Length </center></td>
+                    <td valign="top" width="40%"> <center>
+                        Data . . . </center></td>
+                  </tr>
+                  <tr> 
+                    <td valign="top" width="20%"> <center>
+                        1 byte </center></td>
+                    <td valign="top" width="20%"> <center>
+                        1 byte </center></td>
+                    <td valign="top" width="20%"> <center>
+                        2 bytes </center></td>
+                    <td valign="top" width="40%">&nbsp;</td>
+                  </tr>
+                  <tr bgcolor="#FFFFFF"> 
+                    <td colspan="4" height="25" valign="top"> <p class="blackitalic" align="center">PAP 
+                        <b style="color:black;background-color:#a0ffff">packet</b> structure</p></td>
+                  </tr>
+                </tbody></table>
+                Code<br>
+                One-octet field which identifies the type of PAP <b style="color:black;background-color:#a0ffff">packet</b>. PAP codes 
+                are assigned as follows: 
+                <table class="blacktext" border="0" cellpadding="0" cellspacing="0" width="500">
+                  <tbody><tr> 
+                    <td width="8%">1</td>
+                    <td width="92%">Authenticate-Request</td>
+                  </tr>
+                  <tr> 
+                    <td width="8%">2</td>
+                    <td width="92%">Authenticate-Ack</td>
+                  </tr>
+                  <tr> 
+                    <td width="8%">3</td>
+                    <td width="92%">Authenticate-Nak</td>
+                  </tr>
+                </tbody></table>
+                <p>Identifier<br>
+                  Aids in matching requests and 
+                  replies.</p>
+                <p class="blacktext">Length<br>
+                  Indicates the length of the PAP <b style="color:black;background-color:#a0ffff">packet</b> including the Code, Identifier, 
+                  Length and Data fields.</p>
+                <p class="blacktext">Data<br>
+                  Zero or more octets, the <b style="color:black;background-color:#99ff99">format</b> of which is determined by the 
+                  Code field. The <b style="color:black;background-color:#99ff99">format</b> of the data field for Authenticate-Request 
+                  packets is shown below:</p>
+                <table class="blacktext" bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="400">
+                  <tbody><tr> 
+                    <td valign="top" width="20%"> <center>
+                        Peer-ID length </center></td>
+                    <td valign="top" width="28%"> <center>
+                        Peer-ID </center></td>
+                    <td valign="top" width="23%"> <center>
+                        Password length </center></td>
+                    <td valign="top" width="28%"> <center>
+                        Password </center></td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#FFFFFF" valign="top" width="20%"> <center>
+                        1 byte </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="28%"> <center>
+                        variable </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="23%"> <center>
+                        1 byte </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="28%"> <center>
+                        variable </center></td>
+                  </tr>
+                  <tr> 
+                    <td colspan="4" class="blackitalic" bgcolor="#FFFFFF" valign="top"><div align="center">Data 
+                        structure for Authenticate-Request <b style="color:black;background-color:#a0ffff">packet</b></div></td>
+                  </tr>
+                </tbody></table>
+                <p>Peer-ID length<br>
+                  Length of the Peer-ID field.</p>
+                <p class="blacktext">Peer-ID<br>
+                  Indicates the name of the peer to be authenticated.</p>
+                <p class="blacktext">Password length<br>
+                  Length of the Password field.</p>
+                <p class="blacktext">Password<br>
+                  Indicates the password to be used for authentication.</p>
+                <p class="blacktext">The <b style="color:black;background-color:#99ff99">format</b> of the data field for Authenticate-Ack 
+                  and Authenticate-Nak packets is shown below:</p>
+                <table class="blacktext" bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="400">
+                  <tbody><tr> 
+                    <td valign="top" width="32%"> <center>
+                        Message Length </center></td>
+                    <td valign="top" width="68%"> <center>
+                        Message </center></td>
+                  </tr>
+                  <tr> 
+                    <td bgcolor="#FFFFFF" valign="top" width="32%"> <center>
+                        1 byte </center></td>
+                    <td bgcolor="#FFFFFF" valign="top" width="68%"> <center>
+                        variable </center></td>
+                  </tr>
+                  <tr> 
+                    <td colspan="2" class="blackitalic" bgcolor="#FFFFFF" valign="top"><div align="center">Data 
+                        structure for Authenticate-Ack and Authenticate-Nak packets</div></td>
+                  </tr>
+                </tbody></table>
+                <br>
+                Message length<br>
+                Length of the Message field.  
+                <p class="blacktext">Message<br>
+                  The contents of the Message field are implementation dependent.</p>
+                <p class="blacktext">Interested in more 
+                  details about testing this protocol?  
+                  <a href="http://www.radcom.com/Products.aspx?BoneId=659&amp;ObjId=-1&amp;=&amp;=&amp;=&amp;staticName1=&amp;staticName2=">click here</a>
+                   </p>
+                <p class="blacktext">&nbsp;</p>
+                <p class="redbold"><a name="ATCP"></a>ATCP</p>
+                <p>RFC1378 <a href="http://www.cis.ohio-state.edu/htbin/rfc/rfc1378.html" target="_blank">http://www.cis.ohio-state.edu/htbin/rfc/rfc1378.html</a></p>
+                <p class="blacktext">The AppleTalk Control Protocol (ATCP) is 
+                  responsible for configuring, the AppleTalk parameters on both 
+                  ends of the point-to-point link. ATCP uses the same <b style="color:black;background-color:#a0ffff">packet</b> exchange 
+                  mechanism as the Link Control Protocol (LCP). ATCP packets may 
+                  not be exchanged until <b style="color:black;background-color:#ffff66">PPP</b> has reached the Network-Layer Protocol 
+                  phase. ATCP packets received before this phase is reached are 
+                  discarded.</p>
+                <p class="blacktext">The <b style="color:black;background-color:#99ff99">format</b> of the ATCP <b style="color:black;background-color:#a0ffff">packet</b> is shown in 
+                  the following illustration:</p>
+                <table class="blacktext" bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="400">
+                  <tbody><tr> 
+                    <td valign="top" width="16%"> <center>
+                        Code </center></td>
+                    <td valign="top" width="16%"> <center>
+                        Identifier </center></td>
+                    <td valign="top" width="32%"> <center>
+                        Length </center></td>
+                    <td valign="top" width="36%"> <center>
+                        Data </center></td>
+                  </tr>
+                  <tr bgcolor="#FFFFFF"> 
+                    <td valign="top" width="16%"> <center>
+                        1 byte </center></td>
+                    <td valign="top" width="16%"> <center>
+                        1 byte </center></td>
+                    <td valign="top" width="32%"> <center>
+                        2 bytes </center></td>
+                    <td valign="top" width="36%"> <center>
+                        variable </center></td>
+                  </tr>
+                  <tr bgcolor="#FFFFFF"> 
+                    <td colspan="4" class="blackitalic" valign="top"> <div align="center">ATCP 
+                        <b style="color:black;background-color:#a0ffff">packet</b> structure</div></td>
+                  </tr>
+                </tbody></table>
+                <p class="blacktext">Code<br>
+                  Decimal value which indicates the type of ATCP <b style="color:black;background-color:#a0ffff">packet</b>.</p>
+                <table class="blacktext" border="0" cellpadding="0" cellspacing="0" width="500">
+                  <tbody><tr> 
+                    <td width="8%">1 </td>
+                    <td width="92%">Configure-Request</td>
+                  </tr>
+                  <tr> 
+                    <td width="8%">2 </td>
+                    <td width="92%">Configure-Ack</td>
+                  </tr>
+                  <tr> 
+                    <td width="8%">3 </td>
+                    <td width="92%">Configure-Nak</td>
+                  </tr>
+                  <tr> 
+                    <td width="8%">4 </td>
+                    <td width="92%">Configure-Reject</td>
+                  </tr>
+                  <tr> 
+                    <td width="8%">5 </td>
+                    <td width="92%">Terminate-Request</td>
+                  </tr>
+                  <tr> 
+                    <td width="8%">6 </td>
+                    <td width="92%">Terminate-Ack</td>
+                  </tr>
+                  <tr> 
+                    <td width="8%">7 </td>
+                    <td width="92%">Code-Reject</td>
+                  </tr>
+                </tbody></table>
+                <p class="blacktext">Identifier<br>
+                  Decimal value which aids in matching requests and replies.</p>
+                <p class="blacktext">Length<br>
+                  Length of the ATCP <b style="color:black;background-color:#a0ffff">packet</b>, including the Code, Identifier, Length 
+                  and Data fields. </p>
+                <p class="blacktext">Data<br>
+                  Variable length field which may contain one or more configuration 
+                  options. The <b style="color:black;background-color:#99ff99">format</b> of the ATCP configuration options is as 
+                  follows:</p>
+                <table class="blacktext" bgcolor="#99CCFF" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" width="340">
+                  <tbody><tr> 
+                    <td valign="top" width="33%"> <center>
+                        Type </center></td>
+                    <td valign="top" width="33%"> <center>
+                        Length </center></td>
+                    <td valign="top" width="33%"> <center>
+                        Data </center></td>
+                  </tr>
+                  <tr> 
+                    <td colspan="3" bgcolor="#FFFFFF" height="25" valign="top"> 
+                      <p class="blackitalic" align="center"><b style="color:black;background-color:#99ff99">Format</b> of ATCP configuration 
+                        options</p></td>
+                  </tr>
+                </tbody></table>
+                Type<br>
+                One-byte indication of the type 
+                of the configuration option. 
+                <table class="blacktext" border="0" cellpadding="0" cellspacing="0" width="500">
+                  <tbody><tr> 
+                    <td>1 </td>
+                    <td>AppleTalk-Address</td>
+                  </tr>
+                  <tr> 
+                    <td>2</td>
+                    <td>Routing-Protocol</td>
+                  </tr>
+                  <tr> 
+                    <td>3 </td>
+                    <td>Suppress-Broadcasts</td>
+                  </tr>
+                  <tr> 
+                    <td>4 </td>
+                    <td>AT-Compression Protocol</td>
+                  </tr>
+                  <tr> 
+                    <td>6 </td>
+                    <td>Server-Information</td>
+                  </tr>
+                  <tr> 
+                    <td>7 </td>
+                    <td>Zone-Information</td>
+                  </tr>
+                  <tr> 
+                    <td>8 </td>
+                    <td>Default Router-Address</td>
+                  </tr>
+                </tbody></table>
+                <p class="blacktext">Length<br>
+                  Length of the configuration option including the Type, Length 
+                  and Data fields. 
+                </p><p class="blacktext">Data<br>
+                  Value of the Data field.</p>
+                <p class="blacktext">Interested in more 
+                  details about testing this protocol?  
+                  <a href="http://www.radcom.com/Products.aspx?BoneId=659&amp;ObjId=-1&amp;=&amp;=&amp;=&amp;staticName1=&amp;staticName2=">click here</a>
+                   </p>
+                <p class="blacktext">&nbsp;</p>
+                <p><a href="ppp.htm"></a> 
+                  <a href="ppp.htm">1</a> 2 <a href="ppp2.htm">3</a> <a href="ppp3.htm">4</a> 
+                  <a href="ppp4.htm">5</a>  <a href="ppp2.htm"></a> 
+                </p>
+                <p> 
+                  
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                  
+                  <b style="color:black;background-color:#ffff66">PPP</b> Family Protocol Information 
+                  <br>
+                  <a href="ppp1.htm#ATCP">ATCP</a> | <a href="ppp2.htm#BACP">BACP</a> 
+                  | <a href="ppp1.htm#BAP">BAP</a> | <a href="ppp2.htm#BCP">BCP</a> 
+                  | <a href="ppp4.htm#BSD">BSD</a> | <a href="ppp2.htm#BVCP">BVCP</a> 
+                  | <a href="ppp2.htm#CCP">CCP</a> | <a href="ppp1.htm#CHAP">CHAP</a> 
+                  | <a href="ppp4.htm#DESE">DESE</a> | <a href="ppp3.htm#DNCP">DNCP</a> 
+                  | <a href="ppp3.htm#ECP">ECP</a> | <a href="ppp2.htm#IPCP">IPCP</a> 
+                  | <a href="ppp1.htm#IPHC">IPHC</a> | <a href="ppp2.htm#IPv6CP">IPv6CP</a> 
+                  | <a href="ppp2.htm#IPXCP">IPXCP</a> | <a href="ppp3.htm#L2F">L2F</a> 
+                  | <a href="ppp3.htm#L2TP">L2TP</a> | <a href="ppp1.htm#LCP">LCP</a> 
+                  | <a href="ppp1.htm#LQR">LQR</a> | <a href="ppp4.htm#LZS">LZS</a> 
+                  | <a href="ppp1.htm#MPPC">MPPC</a> | <a href="ppp4.htm#MultiPPP">MultiPPP</a> 
+                  | <a href="ppp2.htm#NBFCP">NBFCP</a> | <a href="ppp3.htm#OSINLCP">OSINLCP</a> 
+                  | <a href="ppp1.htm#PAP">PAP</a> | <a href="ppp1.htm#PPP"><b style="color:black;background-color:#ffff66">PPP</b></a> 
+                   | <a href="ppp1.htm#BPDU"><b style="color:black;background-color:#ffff66">PPP</b>-BPDU</a> 
+                  | <a href="ppp3.htm#PPTP">PPTP</a> | <a href="ppp3.htm#SDCP">SDCP</a> 
+                  | <a href="ppp2.htm#SNACP">SNACP</a><br>
+                  </p>
+                <!-- InstanceEndEditable --></td>
+            </tr>
+            <tr class="bottom"> 
+              <td><table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <tbody><tr> 
+                    <td>&nbsp;</td>
+                  </tr>
+                  <tr> 
+                    <td>Additional Information</td>
+                  </tr>
+                  <tr> 
+                    <td><ul>
+                        <li><a href="http://www.radcom.com/Products.aspx?BoneId=374&amp;ObjId=-1&amp;=&amp;=&amp;=&amp;staticName1=1&amp;staticName2=" target="_blank">Protocol 
+                          Testing - Products</a></li>
+                        <li><a href="http://www.radcom.com/Solutions.aspx?BoneId=375&amp;ObjId=-1&amp;=&amp;=&amp;=&amp;staticName1=1&amp;staticName2=" target="_blank">Protocol 
+                          Testing - Solutions</a></li>
+                        <li><a href="http://www.radcom.com/LeadForm1.aspx?BoneId=376&amp;ObjID=-1&amp;staticname1=1" target="_blank">Protocol 
+                          Testing - Technologies</a></li>
+                      </ul></td>
+                  </tr>
+                </tbody></table></td>
+            </tr>
+            <tr class="bottom"> 
+              <td><div align="right"></div></td>
+            </tr>
+            <tr class="bottom"> 
+              <td><div align="center"> <a href="../protocols.htm" class="bottom"><font size="1">Directory</font></a><font size="1"> 
+                  | <a href="../stand.htm" class="bottom">Acronyms</a> 
+                  | <a href="../hot.htm" class="bottom">Hot Links</a>| 
+                  <a href="../v2/forms/register_wp.htm" class="bottom">Tech 
+                  Papers</a> | <a href="../v2/forms/register.htm" class="bottom">Register</a> 
+                  | <a href="../v2/forms/feed.htm" class="bottom">Feedback</a> 
+                  | <a href="../v2/forms/ad.htm">Advertising</a></font> 
+                  | <font size="1"><a href="../index.htm">Search</a></font><br>
+				  <a title="voip testing" href="http://www.radcom.com/Products.aspx?BoneId=916">VoIP Testing</a> | 
+					<a title="network monitoring " href="http://www.radcom.com/Products.aspx?BoneId=658">Network Monitoring </a> | 
+					<a title="voip monitoring" href="http://www.radcom.com/Solutions.aspx?BoneId=1016">VoIP Monitoring</a> | 
+					<a title="network analyzer" href="http://www.radcom.com/Products.aspx?BoneId=938">Network Analyzer</a> | 
+					<a title="wireless monitor" href="http://www.radcom.com/Solutions.aspx?BoneId=759">Wireless Monitor</a> | 
+					<a title="protocol analyzer" href="http://www.radcom.com/Products.aspx?BoneId=826">Protocol Analyzer</a> | 
+					<a title="network analysis" href="http://www.radcom.com/Products.aspx?BoneId=832">Network Analysis</a> | 
+					<a title="voip call generator" href="http://www.radcom.com/Products.aspx?BoneId=674">VoIP Call Generator</a> | 
+					<a title="SIP Simulator" href="http://www.radcom.com/Products.aspx?BoneId=673">SIP Simulator</a> | 
+					<a title="TCP/IP analyzer " href="http://www.radcom.com/Products.aspx?BoneId=666">TCP/IP Analyzer</a></div></td>
+            </tr>
+          </tbody></table></td>
+      </tr>
+    </tbody></table>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+</html>

@@ -1,0 +1,7 @@
+
+./ é o diretório atual
+../ é o diretório anterior ao atual
+~/ é o diretório HOME.
+
+. arquivo.txt   executa cada linha de arquivo.txt, como se copiasse seu conteúdo e colasse no terminal
+

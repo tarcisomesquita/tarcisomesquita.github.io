@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title></title>
+<meta charset="UTF-8">
+
+<script> 
+if (window.event) document.captureEvents(event.MOUSEUP); 
+
+function nocontextmenu()  { 
+   event.cancelBubble = true 
+   event.returnValue = false; 
+   return false; 
+} 
+
+function norightclick(e) { 
+   if (window.event) { 
+      if (e.which == 2 || e.which == 3) return false; 
+   } 
+   else {
+      if (event.button == 2 || event.button == 3) { 
+         event.cancelBubble = true 
+         event.returnValue = false; 
+         return false; 
+      }
+   }
+}
+ 
+if (document.layers) { 
+   document.captureEvents(Event.MOUSEDOWN); 
+} 
+
+document.oncontextmenu = nocontextmenu; 
+document.onmousedown = norightclick; 
+document.onmouseup = norightclick; 
+
+document.onselectstart = new function() {return false;}; //não funcionou
+</script>
+
+</head>
+<body>
+<p>Isso é um teste de desabilitação clique de mouse com o botão direito. Testei no celular apenas.</p>
+
+</body>
+</html>

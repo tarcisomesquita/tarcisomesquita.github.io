@@ -1,0 +1,14 @@
+
+Function Keyboard Service
+00h      Read Character
+01h      Return Keyboard Status
+02h      Return Keyboard Flags
+03h      Set Keyboard Typematic Rate
+05h      Push Character/Scancode to Buffer
+10h      Enhanced Read Character
+11h      Enhanced Write Character
+12h      Enhanced Return Keyboard Flags
+f0h      Set CPU Speed
+f1h      Get CPU Speed
+f4h      Cache Control
+

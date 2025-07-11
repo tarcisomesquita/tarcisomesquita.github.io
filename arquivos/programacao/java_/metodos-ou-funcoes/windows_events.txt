@@ -1,0 +1,72 @@
+
+class MeuExemplo implements ActionListener {
+...
+public void actionPerformed(ActionEvent e) {
+System.out.println ("Quem causou o evento foi " + e.getSource());
+}
+}
+
+A palavra reservada implements exige
+que essa classe defina um certo método especial que será executado quando o evento ocorrer. 
+
+
+Interface              Métodos da interface
+ActionListener         actionPerformed(ActionEvent)
+AdjustmentListener     adjustmentValueChanged(AdjustmentEvent)
+ComponentListener      componentHidden(ComponentEvent)
+ComponentAdapter       componentShown(ComponentEvent)
+                       componentMoved(ComponentEvent)
+                       componentResized(ComponentEvent)
+FocusListener          focusGained(FocusEvent)
+FocusAdapter           focusLost(FocusEvent)
+KeyListener            keyPressed(KeyEvent)
+KeyAdapter             keyReleased(KeyEvent)
+                       keyTyped(KeyEvent)
+MouseListener          mouseClicked(MouseEvent)
+MouseAdapter           mouseReleased(MouseEvent)
+MouseMotionListener    mouseDragged(MouseEvent)
+MouseMotionAdapter     mouseMoved(MouseEvent)
+WindowListener         windowOpened(WindowEvent)
+WindowAdapter          windowClosing(WindowEvent)
+                       windowClosed(WindowEvent)
+                       windowActivated(WindowEvent)
+                       windowDeactivated(WindowEvent)
+                       windowIconified(WindowEvent)
+                       windowDeiconified(WindowEvent)
+
+
+import java.applet.*;
+import java.awt.*;
+
+public class Eventos extends Applet {
+   public boolean mouseUp(Event e, int x, int y) {
+      showStatus("mouseUp posição: " + x + " e " + y + " ");
+      return true;
+   }
+   
+   public boolean mouseDown(Event e, int x, int y) {
+      showStatus("mouse Down posição: " + x + " e " + y + " ");
+      return true;
+   }
+   
+   public boolean mouseDrag(Event e, int x, int y) {
+      showStatus("mouse Drag posição: " + x + " e " + y + " ");
+      return true;
+   }
+   
+   public boolean mouseMove(Event e, int x, int y) {
+      showStatus("mouse Move posição: " + x + " e " + y + " ");
+      return true;
+   }
+   
+   public boolean mouseExit(Event e, int x, int y) {
+      showStatus("mouseExit posição: " + x + " e " + y + " ");
+      return true;
+   }
+   
+   public boolean Keydown(Event e, int x) {
+      showStatus("Keydown código: " + x);
+      return true;
+   }
+}
+

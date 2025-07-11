@@ -1,0 +1,80 @@
+
+HOST DISCOVERY
+       -sL (List Scan) apenas obtem o hostname de cada IP
+
+       -sP (Ping Scan) nmap default
+           sends an ICMP echo request and a TCP ACK packet to port 80 by default. When executed by an unprivileged user, only a
+           SYN packet is sent to port 80 on the target.
+           When a privileged user tries to scan targets on a local ethernet
+           network, ARP requests are used unless --send-ip was specified.
+
+       -PN (No ping)
+           Nmap only performs port scans, version detection, or OS detection against hosts that are
+           found to be up. Disabling host discovery with -PN causes Nmap to
+           attempt the requested scanning functions against every target IP
+           address specified. For machines on a local ethernet network, ARP scanning will
+           still be performed (unless --send-ip is specified) because Nmap
+           needs MAC addresses to further scan target hosts.
+
+       -PS portlist (TCP SYN Ping)
+           This option sends an empty TCP packet with the SYN flag set. The default destination port is 80
+           Alternate ports can be specified as a parameter. Examples are -PS22 and -PS22-25,80,113,1050,35000.
+
+       -PA portlist (TCP ACK Ping)
+           an ACK packet purports to be
+           acknowledging data over an established TCP connection, but no such
+           connection exists. So remote hosts should always respond with a RST
+           packet, disclosing their existence in the process.
+
+           The -PA option uses the same default port as the SYN probe (80) and
+           can also take a list of destination ports in the same format.
+
+       -PU portlist (UDP Ping)
+           sends an empty (unless --data-length is specified) UDP packet to the given ports.
+           If no ports are specified, the default is 31338.
+
+       -PE; -PP; -PM (ICMP Ping Types)
+           PE echo request
+           The ICMP standard (RFC 792[2]) also specifies timestamp
+           request, information request, and address mask request packets as
+           codes 13, 15, and 17, respectively. Timestamp and address mask queries can be sent with the -PP and -PM
+           options, respectively. A timestamp reply (ICMP code 14) or address
+           mask reply (code 18) discloses that the host is available.
+
+       -PO protolist (IP Protocol Ping)
+           The newest host discovery option is the IP protocol ping, which
+           sends IP packets with the specified protocol number set in their IP
+           header. If no
+           protocols are specified, the default is to send multiple IP packets
+           for ICMP (protocol 1), IGMP (protocol 2), and IP-in-IP (protocol
+           4). Note that for
+           the ICMP, IGMP, TCP (protocol 6), and UDP (protocol 17), the
+           packets are sent with the proper protocol headers while other
+           protocols are sent with no additional data beyond the IP header
+           (unless the --data-length option is specified).
+
+       -PR (ARP Ping)
+           private address ranges specified by RFC 1918[3].
+           If you absolutely don't want to do an ARP scan for local network, specify --send-ip.
+
+       --traceroute (Trace path to host)
+           Traceroute works by sending packets with a low TTL (time-to-live)
+           in an attempt to elicit ICMP Time Exceeded messages from
+           intermediate hops between the scanner and the target host. Standard
+           traceroute implementations start with a TTL of 1 and increment the
+           TTL until the destination host is reached. Nmap's traceroute starts
+           with a high TTL and then decrements the TTL until it reaches 0.
+
+       -n (No DNS resolution)
+           Tells Nmap to never do reverse DNS
+
+       -R (DNS resolution for all targets)
+           Tells Nmap to always do reverse DNS resolution on the target IP
+           addresses. Normally reverse DNS is only performed against
+           responsive (online) hosts.
+
+       --dns-servers server1[,server2[,...]]  (Servers to use for reverse DNS queries)
+           By default, Nmap determines your DNS servers (for rDNS resolution) from your resolv.conf file.
+           Alternatively, you may use this option to specify alternate
+           servers.
+

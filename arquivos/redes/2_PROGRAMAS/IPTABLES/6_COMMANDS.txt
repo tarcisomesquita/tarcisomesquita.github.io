@@ -1,0 +1,17 @@
+-A, --append chain rule-specification
+Append one or more rules to the end of the selected chain.
+
+-D, --delete chain rule-specification
+-D, --delete chain rulenum
+Delete one or more rules from the selected chain.
+There are two versions of this command: the rule can be specified as a number in the chain (starting at 1 for the first rule) or a rule to match.
+Ex.: iptables -t nat -D POSTROUTING 1
+
+-I, --insert chain [rulenum] rule-specification
+Insert rule in the selected chain as the given rule number.
+If no rule number is specified, the default rule number is 1.
+Ex.: iptables -t filter -I OUTPUT -j DROP
+
+-R, --replace chain rulenum rule-specification
+Replace a rule in the selected chain.
+

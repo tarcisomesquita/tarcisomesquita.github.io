@@ -1,0 +1,22 @@
+
+/etc/wpa_supplicant.conf
+
+ap_scan=6
+ctrl_interface=/var/run/wpa_supplicant
+
+network={
+	ssid="MYWIFI"
+	scan_ssid=0
+	proto=WPA
+	key_mgmt=RSN
+	#key_mgmt=WPA-PSK
+	psk="12345678"
+	pairwise=TKIP CCMP
+	group=TKIP CCMP
+}
+
+ifconfig wlan0 down
+wpa_supplicant -D wext -i wlan0 -c /etc/wpa_supplicant.conf -dd
+ifconfig wlan0 up
+iwconfig wlan0 mode Managed
+

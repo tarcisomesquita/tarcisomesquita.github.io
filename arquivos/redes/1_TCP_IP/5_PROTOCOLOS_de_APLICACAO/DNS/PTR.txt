@@ -1,0 +1,11 @@
+ver inverse_query.txt
+
+dig 22.128.157.209.in-addr.arpa PTR
+;; ANSWER SECTION:
+22.128.157.209.in-addr.arpa. 2244 IN    PTR    www.sobell.com.
+
+dig -x 209.157.128.22
+;; ANSWER SECTION:
+22.128.157.209.in-addr.arpa. 2204 IN    PTR    www.sobell.com.
+
+

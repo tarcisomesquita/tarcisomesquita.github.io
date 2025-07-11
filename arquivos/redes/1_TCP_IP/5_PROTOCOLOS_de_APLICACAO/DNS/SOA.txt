@@ -1,0 +1,25 @@
+SOA
+Start Of Authority
+
+<domain-name> [<ttl>] IN SOA <m-name> <r-name> (
+<serial-number>
+<refresh-interval>
+<retry-interval>
+<expire-interval>
+<default-ttl>)
+
+googleplex.edu. IN SOA ns1.googleplex.edu it.googleplex.edu (
+42     ; Version: Esse número aumenta cada vez que um record é alterado na zona.
+21600  ; Refresh: Tempo, em segundos, que um servidor DNS secundário espera antes de consultar sua origem da zona para tentar renová-la.
+3600   ; Retry:   Tempo, em segundos, que um servidor secundário espera antes de tentar novamente uma transferência de zona falha.
+604800 ; Expire:  Tempo, em segundos, antes que o servidor secundário pare de responder às consultas depois da zona não ser renovada.
+86400) ; Minimum: O menor tempo de vida (TTL) da zona e o intervalo máximo para armazenar respostas negativas em cache.
+
+
+exemplo.com.br. IN SOA ns1.exemplo.com.br. hostmaster.exemplo.com.br.
+1     ; serial
+3600  ; refresh (1h)
+1800  ; retry (30m)
+86400 ; expire (1d)
+900   ; minimum (15m)
+

@@ -1,0 +1,66 @@
+
+Pcap_Global_Header:
+Magic_Number:     0xA1B2C3D4      ; pcap file
+Version_Major:    2               ; versão é 2.4
+Version_Minor:    4               ; 
+Thiszone:         0               ; sem correção de tempo em relação ao GMT
+sigfigs:          0               ; accuracy of time stamps
+snaplen:          01500           ; length for the capture, typically 65535
+network:          001             ; enlace Ethernet
+
+
+2012/01/02  10:47:40.361696  = = = = = = = = = offset = 0x00000018 = = = = = = = = = = = = = =
+
+Pcap_Packet_Header:
+ts_sec:           0x4F01A76C      ; number of seconds elapsed since 00:00:00 on January 1, 1970
+ts_usec:          0x000584E0      ; tempo em microsegundos
+incl_len:              00042      ; quantidade de bytes capturados
+orig_len:              00042      ; quantidade de bytes que o pacote possuia
+
+
+Cabeçalho Ethernet:
+MAC destination . . . . . (48) FF:FF:FF:FF:FF:FF
+MAC source  . . . . . . . (48) 00:13:02:54:33:47
+Ethertype . . . . . . . . (16) 0x0806  Address Resolution Protocol (ARP)
+
+
+Cabeçalho ARP
+Hardware type (HTYPE) . . . . . .(16)  0x0001   Ethernet
+Protocol type (PTYPE) . . . . . .(16)  0x0800   IPv4
+Hardware address length (HLEN) . (08)  0x06     
+Protocol address length (PLEN) . (08)  0x04     
+Operation (OPER) . . . . . . . . (16)  0x0001   request
+Sender hardware address (SHA) . .(48)  00:13:02:54:33:47
+Sender protocol address (SPA) . .(32)  192.168.43.170
+Target hardware address (SHA) . .(48)  00:00:00:00:00:00
+Target protocol address (SPA) . .(32)  192.168.43.1
+
+
+2012/01/02  10:47:40.375363  = = = = = = = = = offset = 0x00000052 = = = = = = = = = = = = = =
+
+Pcap_Packet_Header:
+ts_sec:           0x4F01A76C      ; number of seconds elapsed since 00:00:00 on January 1, 1970
+ts_usec:          0x0005BA43      ; tempo em microsegundos
+incl_len:              00042      ; quantidade de bytes capturados
+orig_len:              00042      ; quantidade de bytes que o pacote possuia
+
+
+Cabeçalho Ethernet:
+MAC destination . . . . . (48) 00:13:02:54:33:47
+MAC source  . . . . . . . (48) 10:1D:C0:36:C1:E5
+Ethertype . . . . . . . . (16) 0x0806  Address Resolution Protocol (ARP)
+
+
+Cabeçalho ARP
+Hardware type (HTYPE) . . . . . .(16)  0x0001   Ethernet
+Protocol type (PTYPE) . . . . . .(16)  0x0800   IPv4
+Hardware address length (HLEN) . (08)  0x06     
+Protocol address length (PLEN) . (08)  0x04     
+Operation (OPER) . . . . . . . . (16)  0x0002   reply
+Sender hardware address (SHA) . .(48)  10:1D:C0:36:C1:E5
+Sender protocol address (SPA) . .(32)  192.168.43.1
+Target hardware address (SHA) . .(48)  00:13:02:54:33:47
+Target protocol address (SPA) . .(32)  192.168.43.170
+
+Foram impressos 140 bytes
+

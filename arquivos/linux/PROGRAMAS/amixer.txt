@@ -1,0 +1,6 @@
+amixer -D pulse set Master 1+ toggle ## Sets mute on and off
+amixer -D pulse set Master 40%       ## Set volume 40% 
+
+amixer -q -D pulse set Master   mute
+amixer    -D pulse set Master unmute
+

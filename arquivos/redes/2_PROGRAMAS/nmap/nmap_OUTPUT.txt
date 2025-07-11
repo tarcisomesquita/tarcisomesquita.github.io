@@ -1,0 +1,54 @@
+OUTPUT
+       -oN filename (normal output)
+           Requests that normal output be directed to the given filename.
+
+       -oX filename (XML output)
+
+       -v (Increase verbosity level)
+           Increases the verbosity level, causing Nmap to print more
+           information about the scan in progress. Open ports are shown as
+           they are found and completion time estimates are provided when Nmap
+           thinks a scan will take more than a few minutes. Use it twice or
+           more for even greater verbosity.
+
+       -d [level] (Increase or set debugging level)
+           When even verbose mode doesn't provide sufficient data for you,
+           debugging is available to flood you with much more! For example, -d9 sets level nine. That is the
+           highest effective level and will produce thousands of lines unless
+           you run a very simple scan with very few ports and targets.
+           Some lines are self explanatory, but the messages become more obscure as the debug level is increased.
+
+       --packet-trace (Trace packets and data sent and received)
+           Causes Nmap to print a summary of every packet sent or received.
+           This is often used for debugging, but is also a valuable way for
+           new users to understand exactly what Nmap is doing under the
+           covers.
+
+       --open (Show only open (or possibly open) ports)
+           Sometimes you only care about ports you can actually connect to
+           (open ones), and don't want results cluttered with closed,
+           filtered, and closed|filtered ports.
+
+       --iflist (List interfaces and routes)
+
+       --resume filename (Resume aborted scan)
+           Some extensive Nmap runs take a very long time--on the order of
+           days. Such scans don't always run to completion. Restrictions may
+           prevent Nmap from being run during working hours, the network could
+           go down, the machine Nmap is running on might suffer a planned or
+           unplanned reboot, or Nmap itself could crash. The administrator
+           running Nmap could cancel it for any other reason as well, by
+           pressing ctrl-C. Restarting the whole scan from the beginning may
+           be undesirable. Fortunately, if normal (-oN) logs
+           were kept, the user can ask Nmap to resume scanning with the target
+           it was working on when execution ceased. Simply specify the
+           --resume option and pass the normal/grepable output file as its
+           argument. No other arguments are permitted. Simply call
+           Nmap as nmap --resume logfilename. Nmap will append new results to
+           the data files specified in the previous execution.
+
+       --stylesheet path or URL (Set XSL stylesheet to transform XML output)
+           Nmap ships with an XSL stylesheet named nmap.xsl for viewing or translating XML output to HTML.
+
+           --stylesheet http://nmap.org/data/nmap.xsl
+

@@ -1,0 +1,11 @@
+
+USB 1.x = 12 Mb/s (pouco para HDs, pendrives, drives de CD, placas wireless e outros periféricos rápidos)
+USB 2.0 = 480 Mb/s (ou 60 MB/s).
+USB 3.0 = 4.8 Gb/s (ou ~600 MB/s)
+
+The slowest device connected to a controller sets the bandwidth of the interface.
+
+There are two separate controllers in each USB 3.0 host, then, USB 3.0 devices will transmit and receive at USB 3.0 data rates regardless of USB 2.0 or earlier devices connected to that host.
+
+
+

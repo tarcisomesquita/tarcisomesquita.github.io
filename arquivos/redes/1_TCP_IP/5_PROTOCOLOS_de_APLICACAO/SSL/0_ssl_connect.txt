@@ -1,0 +1,13 @@
+
+openssl s_client -connect tarcisomesquita.github.io:443 -crlf
+
+GET / HTTP/1.1\n
+Host: tarcisomesquita.github.io\n\n
+
+======================
+
+openssl req -new -x509 -out server.pem -nodes -keyout privkey.pem -subj /CN=localhost # create a server certificate
+
+sudo openssl s_server -accept 443 -WWW -key ./privkey.pem
+
+wget --no-check-certificate https://127.0.0.1/WL_Redes.txt 

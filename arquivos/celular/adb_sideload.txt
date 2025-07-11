@@ -1,0 +1,10 @@
+iniciar em modo recovery
+
+adb
+
+adb sideload update.zip
+
+
+o que consigo fazer com um update.zip ?
+
+

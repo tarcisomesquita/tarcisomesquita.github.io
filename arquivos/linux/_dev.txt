@@ -1,0 +1,28 @@
+sudo mkdir /tev
+sudo mount -t devtmpfs udev /tev
+mount | grep devtmpfs
+
+também funciona
+sudo mount -t devtmpfs devtmpfs /tev
+
+
+mknod [-m <mode>] <file-name> [b|c] <major-number> <minor-number>
+
+mknod -m 0600 ~/my-floppy b 2 0
+
+mode é o número que seta os bits da permissão.
+b      create a block file
+c      create a character file
+u      create a character unbuffered file
+p      create a FIFO file. Not use MAJOR or MINOR
+
+
+sudo cat /dev/input/mice | hexdump -C
+sudo cat /dev/psaux | hexdump -C
+
+echo -n m | sudo dd of=/dev/tty2 status=none
+
+
+/proc/devices
+major number dos dispositivos
+

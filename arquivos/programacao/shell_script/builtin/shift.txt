@@ -1,0 +1,19 @@
+sai o primeiro parâmetro da lista e o segundo vai para $1 o terceiro vai para $2, e assim por diante.
+
+Você pode especificar quantas "casas" você quer que os parâmetros "andem" à esquerda através de "shift n", mas se n for maior que o número de parâmetros
+o shift não é executado.
+
+#!/bin/bash
+echo "$#: $*"
+echo -e "executando \"shift\""
+shift
+echo "$#: $*"
+echo -e "executando \"shift 5\""
+shift 5
+echo "$#: $*"
+echo -e "executando \"shift 7\""
+shift 7
+echo "$#: $*"
+
+$ ./teste.sh 1 2 3 4 5 6 7 8 9 0
+

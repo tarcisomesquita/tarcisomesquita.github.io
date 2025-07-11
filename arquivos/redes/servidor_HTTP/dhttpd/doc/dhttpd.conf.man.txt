@@ -1,0 +1,201 @@
+.\" $Id: dhttpd.conf.man,v 1.10 2004/01/04 13:04:23 dublet Exp $
+.\"
+.\" Dublet's HTTP Daemon                                                      
+.\"
+.\" Released under BSD license
+.\" Copyright (c) 2002, Dublet
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without 
+.\" modification, are permitted provided that the following conditions 
+.\" are met:
+.\"
+.\"     * Redistributions of source code must retain the above copyright 
+.\"       notice, this list of conditions and the following disclaimer.
+.\"     * Redistributions in binary form must reproduce the above copyright 
+.\"       notice, this list of conditions and the following disclaimer in 
+.\"       the documentation and/or other materials provided with the distribution.
+.\"     * Neither the name of the Dublet nor the names of its contributors 
+.\"       may be used to endorse or promote products derived from this 
+.\"       software without specific prior written permission.
+.\"     * All advertising materials mentioning features or use of this software
+.\"	 must display the following acknowledgement:
+.\"	    This product includes software developed by Dublet.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+.\" "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+.\" LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A 
+.\" PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER 
+.\" OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+.\" EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+.\" PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+.\" PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+.\" LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+.\" NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
+.\" EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.\"
+
+.Dd October 16, 2003
+.Dt DHTTPD.CONF 1
+.Sh NAME
+.Nm dhttpd.conf
+.Nd Configuration file for dhttpd. 
+.Sh DESCRIPTION
+The file consists of several sections. Currently there are three sections. The global section, virtual hosts and QoS.
+.Ss Global configuration
+Essential. Begins with 
+.Sq <global>
+and ends with
+.Sq </global> . 
+Never forget any of these. They may result in the manifestation of the desired behaviour of the authors.
+.Bl -tag -width Ds 
+.It Sy listen_on
+The address on which dhttpd should listen. This may be either a node name, a numeric host address string (i.e., a dotted-decimal IPv4 address or an IPv6 hex address) or one of the words
+.Sq any
+or
+.Sq all .
+The latter two have the same effect.
+.It Sy port 
+An integer.
+.It Sy max_connections 
+An integer.
+.It Sy debug 
+An integer. 
+.Sq 0
+is debugging disabled, 
+.Sq 1
+or higher turns debugging on, and raised the debug amount information.
+.It Sy https_port 
+An integer.
+.It Sy timeout 
+An integer.
+.It Sy script_pool
+An integer.
+.It Sy user 
+Any valid user name.
+.It Sy jail_root 
+A path.
+.It Sy mime_file 
+A file.
+.It Sy perl_bin
+Path to your perl interpreter executable. Eg:
+.Sq /usr/bin/perl .
+.It Sy php_bin
+Path to your php interpreter executable. Eg:
+.Sq /usr/bin/php .
+.It Sy use_large_access_log_buffer
+If string is present, access logs will be block buffered, instead of set to be line buffered. Default is line buffered logs.
+.It Sy default_mime_type
+A string indicating mime type which should be used as default, eg 
+.Sq text/plain 
+or
+.Sq text/html .
+.It Sy cache_size
+A number to indicate the amount of file descriptors stat information entries to be cached. The default is 32. 
+.It Sy max_cache_age
+The maximum age of a cache entry in seconds. After this amount of time has been passed, the stat information will be refreshed. Set high for when your files don't change, set low for continuously changing files. Default is 60.
+.Bl -hang 
+.It Em Note 1 :
+This does not effect the execution of CGI files.
+.It Em Note 2 :
+dhttpd will not notice file changes until this time has passed once a file has been cached!
+.El
+.El
+.Ss Virtual hosts
+Essential. Comes in the form of
+.Sq <vhost:hostname>
+and ending with
+.Sq </vhost> .
+ 
+
+.Bl -hang
+.It Em Note :
+It is most imperative that you include 
+.Sq <vhost:default>  
+! 
+Forgetting this 
+.Em will
+result in strange behaviour.
+.El
+.Bl -tag -width Ds
+.It Sy index_document 
+Any file name.
+.It Sy access_log 
+Any file name.
+.It Sy error_log 
+Any file name.
+.It Sy document_base
+A sub path from 
+.Sy jail_root
+indicating where
+.Sy index_document
+and other documents for this vhost reside.
+.It Sy log_type
+The type of log you want for this vhost. May be
+.Sq common ,
+.Sq extended
+or
+.Sq combined .
+Defaults to combined.
+.El
+
+.Ss Quality of Service
+.Bl -hang
+.It Em Note :
+Support for this must be compiled in.
+.El
+.Bl -tag -width Ds
+.It Sy interface_bandwidth 
+Any integer. May have 
+.Sq K ,
+.Sq M
+or 
+.Sq G
+appended for multiplication with 1 000, 1 000 000 or 1 000 000 000, respectively.
+.It Sy type 
+One of 
+.Sq shaper ,
+.Sq guaranteed
+or
+.Sq priority .
+Anything else defaults to 
+.Sq best effort .
+.It Sy intype 
+Either 
+.Sq wfq
+or something else. In the latter case defaults to 
+.Sq fq
+.El
+
+.Sh EXAMPLE
+.Bd -literal
+# dhttpd.conf example
+<global>
+listen_on = all
+port = 8080
+max_connections=15
+debug = 1
+https_port = 8443
+timeout = 1000
+user = wwwrun
+jail_root = /usr/dhttpd/jail_root
+mime_file = mime.list
+perl_bin = /usr/bin/perl
+php_bin = /usr/bin/php
+script_pool = 10
+</global>
+<vhost:default>
+index_document = index.html
+document_base = vhost-default/
+access_log = dhttpd-nor.log
+error_log = dhttpd-err.log
+</vhost>
+<QoS>
+interface_bandwidth = 20K
+type = fq
+intype = shaper
+</QoS>
+# EOF
+.Ed
+.Sh SEE ALSO
+.Xr dhttpd 1

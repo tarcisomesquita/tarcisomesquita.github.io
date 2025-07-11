@@ -1,0 +1,778 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+>
+
+<html>
+  <head><meta charset="UTF-8" />
+    <meta>
+    <meta>
+    <title>HOWTO Fetch Internet Resources Using The urllib Package &#8212; Python 3.6.5 documentation</title>
+    <link>
+    <link>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <script></script>
+    <link rel="search" type="application/opensearchdescription+xml"
+          title="Search within Python 3.6.5 documentation"
+>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    <link>
+    
+    <script></script>
+    <script></script>
+    
+    
+ 
+
+  </head><body>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="argparse.html" title="Argparse Tutorial"
+>next</a> |</li>
+        <li>
+          <a href="unicode.html" title="Unicode HOWTO"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>Python HOWTOs</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>    
+
+    <div>
+      <div>
+        <div>
+          <div>
+            
+  <div>
+<span></span><h1>HOWTO Fetch Internet Resources Using The urllib Package<a>¶</a></h1>
+<table>
+<col>
+<col>
+<tbody>
+<tr><th>Author:</th><td><a>Michael Foord</a></td>
+</tr>
+</tbody>
+</table>
+<div>
+<p>Note</p>
+<p>There is a French translation of an earlier revision of this
+HOWTO, available at <a>urllib2 - Le Manuel manquant</a>.</p>
+</div>
+<div>
+<h2>Introduction<a>¶</a></h2>
+<div>
+<p>Related Articles</p>
+<p>You may also find useful the following article on fetching web resources
+with Python:</p>
+<ul>
+<li><p><a>Basic Authentication</a></p>
+<blockquote>
+<div><p>A tutorial on <em>Basic Authentication</em>, with examples in Python.</p>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<p><strong>urllib.request</strong> is a Python module for fetching URLs
+(Uniform Resource Locators). It offers a very simple interface, in the form of
+the <em>urlopen</em> function. This is capable of fetching URLs using a variety of
+different protocols. It also offers a slightly more complex interface for
+handling common situations - like basic authentication, cookies, proxies and so
+on. These are provided by objects called handlers and openers.</p>
+<p>urllib.request supports fetching URLs for many “URL schemes” (identified by the string
+before the <code><span>&quot;:&quot;</span></code> in URL - for example <code><span>&quot;ftp&quot;</span></code> is the URL scheme of
+<code><span>&quot;ftp://python.org/&quot;</span></code>) using their associated network protocols (e.g. FTP, HTTP).
+This tutorial focuses on the most common case, HTTP.</p>
+<p>For straightforward situations <em>urlopen</em> is very easy to use. But as soon as you
+encounter errors or non-trivial cases when opening HTTP URLs, you will need some
+understanding of the HyperText Transfer Protocol. The most comprehensive and
+authoritative reference to HTTP is <span></span><a><strong>RFC 2616</strong></a>. This is a technical document and
+not intended to be easy to read. This HOWTO aims to illustrate using <em>urllib</em>,
+with enough detail about HTTP to help you through. It is not intended to replace
+the <a><code><span>urllib.request</span></code></a> docs, but is supplementary to them.</p>
+</div>
+<div>
+<h2>Fetching URLs<a>¶</a></h2>
+<p>The simplest way to use urllib.request is as follows:</p>
+<div><div><pre><span></span><span>import</span> <span>urllib.request</span>
+<span>with</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>urlopen</span><span>(</span><span>&#39;http://python.org/&#39;</span><span>)</span> <span>as</span> <span>response</span><span>:</span>
+   <span>html</span> <span>=</span> <span>response</span><span>.</span><span>read</span><span>()</span>
+</pre></div>
+</div>
+<p>If you wish to retrieve a resource via URL and store it in a temporary
+location, you can do so via the <a><code><span>shutil.copyfileobj()</span></code></a> and
+<a><code><span>tempfile.NamedTemporaryFile()</span></code></a> functions:</p>
+<div><div><pre><span></span><span>import</span> <span>shutil</span>
+<span>import</span> <span>tempfile</span>
+<span>import</span> <span>urllib.request</span>
+
+<span>with</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>urlopen</span><span>(</span><span>&#39;http://python.org/&#39;</span><span>)</span> <span>as</span> <span>response</span><span>:</span>
+    <span>with</span> <span>tempfile</span><span>.</span><span>NamedTemporaryFile</span><span>(</span><span>delete</span><span>=</span><span>False</span><span>)</span> <span>as</span> <span>tmp_file</span><span>:</span>
+        <span>shutil</span><span>.</span><span>copyfileobj</span><span>(</span><span>response</span><span>,</span> <span>tmp_file</span><span>)</span>
+
+<span>with</span> <span>open</span><span>(</span><span>tmp_file</span><span>.</span><span>name</span><span>)</span> <span>as</span> <span>html</span><span>:</span>
+    <span>pass</span>
+</pre></div>
+</div>
+<p>Many uses of urllib will be that simple (note that instead of an ‘http:’ URL we
+could have used a URL starting with ‘ftp:’, ‘file:’, etc.).  However, it’s the
+purpose of this tutorial to explain the more complicated cases, concentrating on
+HTTP.</p>
+<p>HTTP is based on requests and responses - the client makes requests and servers
+send responses. urllib.request mirrors this with a <code><span>Request</span></code> object which represents
+the HTTP request you are making. In its simplest form you create a Request
+object that specifies the URL you want to fetch. Calling <code><span>urlopen</span></code> with this
+Request object returns a response object for the URL requested. This response is
+a file-like object, which means you can for example call <code><span>.read()</span></code> on the
+response:</p>
+<div><div><pre><span></span><span>import</span> <span>urllib.request</span>
+
+<span>req</span> <span>=</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>Request</span><span>(</span><span>&#39;http://www.voidspace.org.uk&#39;</span><span>)</span>
+<span>with</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>urlopen</span><span>(</span><span>req</span><span>)</span> <span>as</span> <span>response</span><span>:</span>
+   <span>the_page</span> <span>=</span> <span>response</span><span>.</span><span>read</span><span>()</span>
+</pre></div>
+</div>
+<p>Note that urllib.request makes use of the same Request interface to handle all URL
+schemes.  For example, you can make an FTP request like so:</p>
+<div><div><pre><span></span><span>req</span> <span>=</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>Request</span><span>(</span><span>&#39;ftp://example.com/&#39;</span><span>)</span>
+</pre></div>
+</div>
+<p>In the case of HTTP, there are two extra things that Request objects allow you
+to do: First, you can pass data to be sent to the server.  Second, you can pass
+extra information (“metadata”) <em>about</em> the data or the about request itself, to
+the server - this information is sent as HTTP “headers”.  Let’s look at each of
+these in turn.</p>
+<div>
+<h3>Data<a>¶</a></h3>
+<p>Sometimes you want to send data to a URL (often the URL will refer to a CGI
+(Common Gateway Interface) script or other web application). With HTTP,
+this is often done using what’s known as a <strong>POST</strong> request. This is often what
+your browser does when you submit a HTML form that you filled in on the web. Not
+all POSTs have to come from forms: you can use a POST to transmit arbitrary data
+to your own application. In the common case of HTML forms, the data needs to be
+encoded in a standard way, and then passed to the Request object as the <code><span>data</span></code>
+argument. The encoding is done using a function from the <a><code><span>urllib.parse</span></code></a>
+library.</p>
+<div><div><pre><span></span><span>import</span> <span>urllib.parse</span>
+<span>import</span> <span>urllib.request</span>
+
+<span>url</span> <span>=</span> <span>&#39;http://www.someserver.com/cgi-bin/register.cgi&#39;</span>
+<span>values</span> <span>=</span> <span>{</span><span>&#39;name&#39;</span> <span>:</span> <span>&#39;Michael Foord&#39;</span><span>,</span>
+          <span>&#39;location&#39;</span> <span>:</span> <span>&#39;Northampton&#39;</span><span>,</span>
+          <span>&#39;language&#39;</span> <span>:</span> <span>&#39;Python&#39;</span> <span>}</span>
+
+<span>data</span> <span>=</span> <span>urllib</span><span>.</span><span>parse</span><span>.</span><span>urlencode</span><span>(</span><span>values</span><span>)</span>
+<span>data</span> <span>=</span> <span>data</span><span>.</span><span>encode</span><span>(</span><span>&#39;ascii&#39;</span><span>)</span> <span># data should be bytes</span>
+<span>req</span> <span>=</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>Request</span><span>(</span><span>url</span><span>,</span> <span>data</span><span>)</span>
+<span>with</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>urlopen</span><span>(</span><span>req</span><span>)</span> <span>as</span> <span>response</span><span>:</span>
+   <span>the_page</span> <span>=</span> <span>response</span><span>.</span><span>read</span><span>()</span>
+</pre></div>
+</div>
+<p>Note that other encodings are sometimes required (e.g. for file upload from HTML
+forms - see <a>HTML Specification, Form Submission</a> for more
+details).</p>
+<p>If you do not pass the <code><span>data</span></code> argument, urllib uses a <strong>GET</strong> request. One
+way in which GET and POST requests differ is that POST requests often have
+“side-effects”: they change the state of the system in some way (for example by
+placing an order with the website for a hundredweight of tinned spam to be
+delivered to your door).  Though the HTTP standard makes it clear that POSTs are
+intended to <em>always</em> cause side-effects, and GET requests <em>never</em> to cause
+side-effects, nothing prevents a GET request from having side-effects, nor a
+POST requests from having no side-effects. Data can also be passed in an HTTP
+GET request by encoding it in the URL itself.</p>
+<p>This is done as follows:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>import</span> <span>urllib.request</span>
+<span>&gt;&gt;&gt; </span><span>import</span> <span>urllib.parse</span>
+<span>&gt;&gt;&gt; </span><span>data</span> <span>=</span> <span>{}</span>
+<span>&gt;&gt;&gt; </span><span>data</span><span>[</span><span>&#39;name&#39;</span><span>]</span> <span>=</span> <span>&#39;Somebody Here&#39;</span>
+<span>&gt;&gt;&gt; </span><span>data</span><span>[</span><span>&#39;location&#39;</span><span>]</span> <span>=</span> <span>&#39;Northampton&#39;</span>
+<span>&gt;&gt;&gt; </span><span>data</span><span>[</span><span>&#39;language&#39;</span><span>]</span> <span>=</span> <span>&#39;Python&#39;</span>
+<span>&gt;&gt;&gt; </span><span>url_values</span> <span>=</span> <span>urllib</span><span>.</span><span>parse</span><span>.</span><span>urlencode</span><span>(</span><span>data</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>print</span><span>(</span><span>url_values</span><span>)</span>  <span># The order may differ from below.  </span>
+<span>name=Somebody+Here&amp;language=Python&amp;location=Northampton</span>
+<span>&gt;&gt;&gt; </span><span>url</span> <span>=</span> <span>&#39;http://www.example.com/example.cgi&#39;</span>
+<span>&gt;&gt;&gt; </span><span>full_url</span> <span>=</span> <span>url</span> <span>+</span> <span>&#39;?&#39;</span> <span>+</span> <span>url_values</span>
+<span>&gt;&gt;&gt; </span><span>data</span> <span>=</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>urlopen</span><span>(</span><span>full_url</span><span>)</span>
+</pre></div>
+</div>
+<p>Notice that the full URL is created by adding a <code><span>?</span></code> to the URL, followed by
+the encoded values.</p>
+</div>
+<div>
+<h3>Headers<a>¶</a></h3>
+<p>We’ll discuss here one particular HTTP header, to illustrate how to add headers
+to your HTTP request.</p>
+<p>Some websites <a>[1]</a> dislike being browsed by programs, or send different versions
+to different browsers <a>[2]</a>. By default urllib identifies itself as
+<code><span>Python-urllib/x.y</span></code> (where <code><span>x</span></code> and <code><span>y</span></code> are the major and minor version
+numbers of the Python release,
+e.g. <code><span>Python-urllib/2.5</span></code>), which may confuse the site, or just plain
+not work. The way a browser identifies itself is through the
+<code><span>User-Agent</span></code> header <a>[3]</a>. When you create a Request object you can
+pass a dictionary of headers in. The following example makes the same
+request as above, but identifies itself as a version of Internet
+Explorer <a>[4]</a>.</p>
+<div><div><pre><span></span><span>import</span> <span>urllib.parse</span>
+<span>import</span> <span>urllib.request</span>
+
+<span>url</span> <span>=</span> <span>&#39;http://www.someserver.com/cgi-bin/register.cgi&#39;</span>
+<span>user_agent</span> <span>=</span> <span>&#39;Mozilla/5.0 (Windows NT 6.1; Win64; x64)&#39;</span>
+<span>values</span> <span>=</span> <span>{</span><span>&#39;name&#39;</span><span>:</span> <span>&#39;Michael Foord&#39;</span><span>,</span>
+          <span>&#39;location&#39;</span><span>:</span> <span>&#39;Northampton&#39;</span><span>,</span>
+          <span>&#39;language&#39;</span><span>:</span> <span>&#39;Python&#39;</span> <span>}</span>
+<span>headers</span> <span>=</span> <span>{</span><span>&#39;User-Agent&#39;</span><span>:</span> <span>user_agent</span><span>}</span>
+
+<span>data</span> <span>=</span> <span>urllib</span><span>.</span><span>parse</span><span>.</span><span>urlencode</span><span>(</span><span>values</span><span>)</span>
+<span>data</span> <span>=</span> <span>data</span><span>.</span><span>encode</span><span>(</span><span>&#39;ascii&#39;</span><span>)</span>
+<span>req</span> <span>=</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>Request</span><span>(</span><span>url</span><span>,</span> <span>data</span><span>,</span> <span>headers</span><span>)</span>
+<span>with</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>urlopen</span><span>(</span><span>req</span><span>)</span> <span>as</span> <span>response</span><span>:</span>
+   <span>the_page</span> <span>=</span> <span>response</span><span>.</span><span>read</span><span>()</span>
+</pre></div>
+</div>
+<p>The response also has two useful methods. See the section on <a>info and geturl</a>
+which comes after we have a look at what happens when things go wrong.</p>
+</div>
+</div>
+<div>
+<h2>Handling Exceptions<a>¶</a></h2>
+<p><em>urlopen</em> raises <code><span>URLError</span></code> when it cannot handle a response (though as
+usual with Python APIs, built-in exceptions such as <a><code><span>ValueError</span></code></a>,
+<a><code><span>TypeError</span></code></a> etc. may also be raised).</p>
+<p><code><span>HTTPError</span></code> is the subclass of <code><span>URLError</span></code> raised in the specific case of
+HTTP URLs.</p>
+<p>The exception classes are exported from the <a><code><span>urllib.error</span></code></a> module.</p>
+<div>
+<h3>URLError<a>¶</a></h3>
+<p>Often, URLError is raised because there is no network connection (no route to
+the specified server), or the specified server doesn’t exist.  In this case, the
+exception raised will have a ‘reason’ attribute, which is a tuple containing an
+error code and a text error message.</p>
+<p>e.g.</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>req</span> <span>=</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>Request</span><span>(</span><span>&#39;http://www.pretend_server.org&#39;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>try</span><span>:</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>urlopen</span><span>(</span><span>req</span><span>)</span>
+<span>... </span><span>except</span> <span>urllib</span><span>.</span><span>error</span><span>.</span><span>URLError</span> <span>as</span> <span>e</span><span>:</span>
+<span>... </span>    <span>print</span><span>(</span><span>e</span><span>.</span><span>reason</span><span>)</span>      
+<span>...</span>
+<span>(4, &#39;getaddrinfo failed&#39;)</span>
+</pre></div>
+</div>
+</div>
+<div>
+<h3>HTTPError<a>¶</a></h3>
+<p>Every HTTP response from the server contains a numeric “status code”. Sometimes
+the status code indicates that the server is unable to fulfil the request. The
+default handlers will handle some of these responses for you (for example, if
+the response is a “redirection” that requests the client fetch the document from
+a different URL, urllib will handle that for you). For those it can’t handle,
+urlopen will raise an <code><span>HTTPError</span></code>. Typical errors include ‘404’ (page not
+found), ‘403’ (request forbidden), and ‘401’ (authentication required).</p>
+<p>See section 10 of RFC 2616 for a reference on all the HTTP error codes.</p>
+<p>The <code><span>HTTPError</span></code> instance raised will have an integer ‘code’ attribute, which
+corresponds to the error sent by the server.</p>
+<div>
+<h4>Error Codes<a>¶</a></h4>
+<p>Because the default handlers handle redirects (codes in the 300 range), and
+codes in the 100–299 range indicate success, you will usually only see error
+codes in the 400–599 range.</p>
+<p><a><code><span>http.server.BaseHTTPRequestHandler.responses</span></code></a> is a useful dictionary of
+response codes in that shows all the response codes used by RFC 2616. The
+dictionary is reproduced here for convenience</p>
+<div><div><pre><span></span><span># Table mapping response codes to messages; entries have the</span>
+<span># form {code: (shortmessage, longmessage)}.</span>
+<span>responses</span> <span>=</span> <span>{</span>
+    <span>100</span><span>:</span> <span>(</span><span>&#39;Continue&#39;</span><span>,</span> <span>&#39;Request received, please continue&#39;</span><span>),</span>
+    <span>101</span><span>:</span> <span>(</span><span>&#39;Switching Protocols&#39;</span><span>,</span>
+          <span>&#39;Switching to new protocol; obey Upgrade header&#39;</span><span>),</span>
+
+    <span>200</span><span>:</span> <span>(</span><span>&#39;OK&#39;</span><span>,</span> <span>&#39;Request fulfilled, document follows&#39;</span><span>),</span>
+    <span>201</span><span>:</span> <span>(</span><span>&#39;Created&#39;</span><span>,</span> <span>&#39;Document created, URL follows&#39;</span><span>),</span>
+    <span>202</span><span>:</span> <span>(</span><span>&#39;Accepted&#39;</span><span>,</span>
+          <span>&#39;Request accepted, processing continues off-line&#39;</span><span>),</span>
+    <span>203</span><span>:</span> <span>(</span><span>&#39;Non-Authoritative Information&#39;</span><span>,</span> <span>&#39;Request fulfilled from cache&#39;</span><span>),</span>
+    <span>204</span><span>:</span> <span>(</span><span>&#39;No Content&#39;</span><span>,</span> <span>&#39;Request fulfilled, nothing follows&#39;</span><span>),</span>
+    <span>205</span><span>:</span> <span>(</span><span>&#39;Reset Content&#39;</span><span>,</span> <span>&#39;Clear input form for further input.&#39;</span><span>),</span>
+    <span>206</span><span>:</span> <span>(</span><span>&#39;Partial Content&#39;</span><span>,</span> <span>&#39;Partial content follows.&#39;</span><span>),</span>
+
+    <span>300</span><span>:</span> <span>(</span><span>&#39;Multiple Choices&#39;</span><span>,</span>
+          <span>&#39;Object has several resources -- see URI list&#39;</span><span>),</span>
+    <span>301</span><span>:</span> <span>(</span><span>&#39;Moved Permanently&#39;</span><span>,</span> <span>&#39;Object moved permanently -- see URI list&#39;</span><span>),</span>
+    <span>302</span><span>:</span> <span>(</span><span>&#39;Found&#39;</span><span>,</span> <span>&#39;Object moved temporarily -- see URI list&#39;</span><span>),</span>
+    <span>303</span><span>:</span> <span>(</span><span>&#39;See Other&#39;</span><span>,</span> <span>&#39;Object moved -- see Method and URL list&#39;</span><span>),</span>
+    <span>304</span><span>:</span> <span>(</span><span>&#39;Not Modified&#39;</span><span>,</span>
+          <span>&#39;Document has not changed since given time&#39;</span><span>),</span>
+    <span>305</span><span>:</span> <span>(</span><span>&#39;Use Proxy&#39;</span><span>,</span>
+          <span>&#39;You must use proxy specified in Location to access this &#39;</span>
+          <span>&#39;resource.&#39;</span><span>),</span>
+    <span>307</span><span>:</span> <span>(</span><span>&#39;Temporary Redirect&#39;</span><span>,</span>
+          <span>&#39;Object moved temporarily -- see URI list&#39;</span><span>),</span>
+
+    <span>400</span><span>:</span> <span>(</span><span>&#39;Bad Request&#39;</span><span>,</span>
+          <span>&#39;Bad request syntax or unsupported method&#39;</span><span>),</span>
+    <span>401</span><span>:</span> <span>(</span><span>&#39;Unauthorized&#39;</span><span>,</span>
+          <span>&#39;No permission -- see authorization schemes&#39;</span><span>),</span>
+    <span>402</span><span>:</span> <span>(</span><span>&#39;Payment Required&#39;</span><span>,</span>
+          <span>&#39;No payment -- see charging schemes&#39;</span><span>),</span>
+    <span>403</span><span>:</span> <span>(</span><span>&#39;Forbidden&#39;</span><span>,</span>
+          <span>&#39;Request forbidden -- authorization will not help&#39;</span><span>),</span>
+    <span>404</span><span>:</span> <span>(</span><span>&#39;Not Found&#39;</span><span>,</span> <span>&#39;Nothing matches the given URI&#39;</span><span>),</span>
+    <span>405</span><span>:</span> <span>(</span><span>&#39;Method Not Allowed&#39;</span><span>,</span>
+          <span>&#39;Specified method is invalid for this server.&#39;</span><span>),</span>
+    <span>406</span><span>:</span> <span>(</span><span>&#39;Not Acceptable&#39;</span><span>,</span> <span>&#39;URI not available in preferred format.&#39;</span><span>),</span>
+    <span>407</span><span>:</span> <span>(</span><span>&#39;Proxy Authentication Required&#39;</span><span>,</span> <span>&#39;You must authenticate with &#39;</span>
+          <span>&#39;this proxy before proceeding.&#39;</span><span>),</span>
+    <span>408</span><span>:</span> <span>(</span><span>&#39;Request Timeout&#39;</span><span>,</span> <span>&#39;Request timed out; try again later.&#39;</span><span>),</span>
+    <span>409</span><span>:</span> <span>(</span><span>&#39;Conflict&#39;</span><span>,</span> <span>&#39;Request conflict.&#39;</span><span>),</span>
+    <span>410</span><span>:</span> <span>(</span><span>&#39;Gone&#39;</span><span>,</span>
+          <span>&#39;URI no longer exists and has been permanently removed.&#39;</span><span>),</span>
+    <span>411</span><span>:</span> <span>(</span><span>&#39;Length Required&#39;</span><span>,</span> <span>&#39;Client must specify Content-Length.&#39;</span><span>),</span>
+    <span>412</span><span>:</span> <span>(</span><span>&#39;Precondition Failed&#39;</span><span>,</span> <span>&#39;Precondition in headers is false.&#39;</span><span>),</span>
+    <span>413</span><span>:</span> <span>(</span><span>&#39;Request Entity Too Large&#39;</span><span>,</span> <span>&#39;Entity is too large.&#39;</span><span>),</span>
+    <span>414</span><span>:</span> <span>(</span><span>&#39;Request-URI Too Long&#39;</span><span>,</span> <span>&#39;URI is too long.&#39;</span><span>),</span>
+    <span>415</span><span>:</span> <span>(</span><span>&#39;Unsupported Media Type&#39;</span><span>,</span> <span>&#39;Entity body in unsupported format.&#39;</span><span>),</span>
+    <span>416</span><span>:</span> <span>(</span><span>&#39;Requested Range Not Satisfiable&#39;</span><span>,</span>
+          <span>&#39;Cannot satisfy request range.&#39;</span><span>),</span>
+    <span>417</span><span>:</span> <span>(</span><span>&#39;Expectation Failed&#39;</span><span>,</span>
+          <span>&#39;Expect condition could not be satisfied.&#39;</span><span>),</span>
+
+    <span>500</span><span>:</span> <span>(</span><span>&#39;Internal Server Error&#39;</span><span>,</span> <span>&#39;Server got itself in trouble&#39;</span><span>),</span>
+    <span>501</span><span>:</span> <span>(</span><span>&#39;Not Implemented&#39;</span><span>,</span>
+          <span>&#39;Server does not support this operation&#39;</span><span>),</span>
+    <span>502</span><span>:</span> <span>(</span><span>&#39;Bad Gateway&#39;</span><span>,</span> <span>&#39;Invalid responses from another server/proxy.&#39;</span><span>),</span>
+    <span>503</span><span>:</span> <span>(</span><span>&#39;Service Unavailable&#39;</span><span>,</span>
+          <span>&#39;The server cannot process the request due to a high load&#39;</span><span>),</span>
+    <span>504</span><span>:</span> <span>(</span><span>&#39;Gateway Timeout&#39;</span><span>,</span>
+          <span>&#39;The gateway server did not receive a timely response&#39;</span><span>),</span>
+    <span>505</span><span>:</span> <span>(</span><span>&#39;HTTP Version Not Supported&#39;</span><span>,</span> <span>&#39;Cannot fulfill request.&#39;</span><span>),</span>
+    <span>}</span>
+</pre></div>
+</div>
+<p>When an error is raised the server responds by returning an HTTP error code
+<em>and</em> an error page. You can use the <code><span>HTTPError</span></code> instance as a response on the
+page returned. This means that as well as the code attribute, it also has read,
+geturl, and info, methods as returned by the <code><span>urllib.response</span></code> module:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>req</span> <span>=</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>Request</span><span>(</span><span>&#39;http://www.python.org/fish.html&#39;</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>try</span><span>:</span>
+<span>... </span>    <span>urllib</span><span>.</span><span>request</span><span>.</span><span>urlopen</span><span>(</span><span>req</span><span>)</span>
+<span>... </span><span>except</span> <span>urllib</span><span>.</span><span>error</span><span>.</span><span>HTTPError</span> <span>as</span> <span>e</span><span>:</span>
+<span>... </span>    <span>print</span><span>(</span><span>e</span><span>.</span><span>code</span><span>)</span>
+<span>... </span>    <span>print</span><span>(</span><span>e</span><span>.</span><span>read</span><span>())</span>  
+<span>...</span>
+<span>404</span>
+<span>b&#39;&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot;</span>
+<span>  &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;\n\n\n&lt;html</span>
+<span>  ...</span>
+<span>  &lt;title&gt;Page Not Found&lt;/title&gt;\n</span>
+<span>  ...</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div>
+<h3>Wrapping it Up<a>¶</a></h3>
+<p>So if you want to be prepared for <code><span>HTTPError</span></code> <em>or</em> <code><span>URLError</span></code> there are two
+basic approaches. I prefer the second approach.</p>
+<div>
+<h4>Number 1<a>¶</a></h4>
+<div><div><pre><span></span><span>from</span> <span>urllib.request</span> <span>import</span> <span>Request</span><span>,</span> <span>urlopen</span>
+<span>from</span> <span>urllib.error</span> <span>import</span> <span>URLError</span><span>,</span> <span>HTTPError</span>
+<span>req</span> <span>=</span> <span>Request</span><span>(</span><span>someurl</span><span>)</span>
+<span>try</span><span>:</span>
+    <span>response</span> <span>=</span> <span>urlopen</span><span>(</span><span>req</span><span>)</span>
+<span>except</span> <span>HTTPError</span> <span>as</span> <span>e</span><span>:</span>
+    <span>print</span><span>(</span><span>&#39;The server couldn</span><span>\&#39;</span><span>t fulfill the request.&#39;</span><span>)</span>
+    <span>print</span><span>(</span><span>&#39;Error code: &#39;</span><span>,</span> <span>e</span><span>.</span><span>code</span><span>)</span>
+<span>except</span> <span>URLError</span> <span>as</span> <span>e</span><span>:</span>
+    <span>print</span><span>(</span><span>&#39;We failed to reach a server.&#39;</span><span>)</span>
+    <span>print</span><span>(</span><span>&#39;Reason: &#39;</span><span>,</span> <span>e</span><span>.</span><span>reason</span><span>)</span>
+<span>else</span><span>:</span>
+    <span># everything is fine</span>
+</pre></div>
+</div>
+<div>
+<p>Note</p>
+<p>The <code><span>except</span> <span>HTTPError</span></code> <em>must</em> come first, otherwise <code><span>except</span> <span>URLError</span></code>
+will <em>also</em> catch an <code><span>HTTPError</span></code>.</p>
+</div>
+</div>
+<div>
+<h4>Number 2<a>¶</a></h4>
+<div><div><pre><span></span><span>from</span> <span>urllib.request</span> <span>import</span> <span>Request</span><span>,</span> <span>urlopen</span>
+<span>from</span> <span>urllib.error</span> <span>import</span> <span>URLError</span>
+<span>req</span> <span>=</span> <span>Request</span><span>(</span><span>someurl</span><span>)</span>
+<span>try</span><span>:</span>
+    <span>response</span> <span>=</span> <span>urlopen</span><span>(</span><span>req</span><span>)</span>
+<span>except</span> <span>URLError</span> <span>as</span> <span>e</span><span>:</span>
+    <span>if</span> <span>hasattr</span><span>(</span><span>e</span><span>,</span> <span>&#39;reason&#39;</span><span>):</span>
+        <span>print</span><span>(</span><span>&#39;We failed to reach a server.&#39;</span><span>)</span>
+        <span>print</span><span>(</span><span>&#39;Reason: &#39;</span><span>,</span> <span>e</span><span>.</span><span>reason</span><span>)</span>
+    <span>elif</span> <span>hasattr</span><span>(</span><span>e</span><span>,</span> <span>&#39;code&#39;</span><span>):</span>
+        <span>print</span><span>(</span><span>&#39;The server couldn</span><span>\&#39;</span><span>t fulfill the request.&#39;</span><span>)</span>
+        <span>print</span><span>(</span><span>&#39;Error code: &#39;</span><span>,</span> <span>e</span><span>.</span><span>code</span><span>)</span>
+<span>else</span><span>:</span>
+    <span># everything is fine</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h2>info and geturl<a>¶</a></h2>
+<p>The response returned by urlopen (or the <code><span>HTTPError</span></code> instance) has two
+useful methods <code><span>info()</span></code> and <code><span>geturl()</span></code> and is defined in the module
+<a><code><span>urllib.response</span></code></a>..</p>
+<p><strong>geturl</strong> - this returns the real URL of the page fetched. This is useful
+because <code><span>urlopen</span></code> (or the opener object used) may have followed a
+redirect. The URL of the page fetched may not be the same as the URL requested.</p>
+<p><strong>info</strong> - this returns a dictionary-like object that describes the page
+fetched, particularly the headers sent by the server. It is currently an
+<code><span>http.client.HTTPMessage</span></code> instance.</p>
+<p>Typical headers include ‘Content-length’, ‘Content-type’, and so on. See the
+<a>Quick Reference to HTTP Headers</a>
+for a useful listing of HTTP headers with brief explanations of their meaning
+and use.</p>
+</div>
+<div>
+<h2>Openers and Handlers<a>¶</a></h2>
+<p>When you fetch a URL you use an opener (an instance of the perhaps
+confusingly-named <a><code><span>urllib.request.OpenerDirector</span></code></a>). Normally we have been using
+the default opener - via <code><span>urlopen</span></code> - but you can create custom
+openers. Openers use handlers. All the “heavy lifting” is done by the
+handlers. Each handler knows how to open URLs for a particular URL scheme (http,
+ftp, etc.), or how to handle an aspect of URL opening, for example HTTP
+redirections or HTTP cookies.</p>
+<p>You will want to create openers if you want to fetch URLs with specific handlers
+installed, for example to get an opener that handles cookies, or to get an
+opener that does not handle redirections.</p>
+<p>To create an opener, instantiate an <code><span>OpenerDirector</span></code>, and then call
+<code><span>.add_handler(some_handler_instance)</span></code> repeatedly.</p>
+<p>Alternatively, you can use <code><span>build_opener</span></code>, which is a convenience function for
+creating opener objects with a single function call.  <code><span>build_opener</span></code> adds
+several handlers by default, but provides a quick way to add more and/or
+override the default handlers.</p>
+<p>Other sorts of handlers you might want to can handle proxies, authentication,
+and other common but slightly specialised situations.</p>
+<p><code><span>install_opener</span></code> can be used to make an <code><span>opener</span></code> object the (global) default
+opener. This means that calls to <code><span>urlopen</span></code> will use the opener you have
+installed.</p>
+<p>Opener objects have an <code><span>open</span></code> method, which can be called directly to fetch
+urls in the same way as the <code><span>urlopen</span></code> function: there’s no need to call
+<code><span>install_opener</span></code>, except as a convenience.</p>
+</div>
+<div>
+<h2>Basic Authentication<a>¶</a></h2>
+<p>To illustrate creating and installing a handler we will use the
+<code><span>HTTPBasicAuthHandler</span></code>. For a more detailed discussion of this subject –
+including an explanation of how Basic Authentication works - see the <a>Basic
+Authentication Tutorial</a>.</p>
+<p>When authentication is required, the server sends a header (as well as the 401
+error code) requesting authentication.  This specifies the authentication scheme
+and a ‘realm’. The header looks like: <code><span>WWW-Authenticate:</span> <span>SCHEME</span>
+<span>realm=&quot;REALM&quot;</span></code>.</p>
+<p>e.g.</p>
+<div><div><pre><span></span>WWW-Authenticate: Basic realm=&quot;cPanel Users&quot;
+</pre></div>
+</div>
+<p>The client should then retry the request with the appropriate name and password
+for the realm included as a header in the request. This is ‘basic
+authentication’. In order to simplify this process we can create an instance of
+<code><span>HTTPBasicAuthHandler</span></code> and an opener to use this handler.</p>
+<p>The <code><span>HTTPBasicAuthHandler</span></code> uses an object called a password manager to handle
+the mapping of URLs and realms to passwords and usernames. If you know what the
+realm is (from the authentication header sent by the server), then you can use a
+<code><span>HTTPPasswordMgr</span></code>. Frequently one doesn’t care what the realm is. In that
+case, it is convenient to use <code><span>HTTPPasswordMgrWithDefaultRealm</span></code>. This allows
+you to specify a default username and password for a URL. This will be supplied
+in the absence of you providing an alternative combination for a specific
+realm. We indicate this by providing <code><span>None</span></code> as the realm argument to the
+<code><span>add_password</span></code> method.</p>
+<p>The top-level URL is the first URL that requires authentication. URLs “deeper”
+than the URL you pass to .add_password() will also match.</p>
+<div><div><pre><span></span><span># create a password manager</span>
+<span>password_mgr</span> <span>=</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>HTTPPasswordMgrWithDefaultRealm</span><span>()</span>
+
+<span># Add the username and password.</span>
+<span># If we knew the realm, we could use it instead of None.</span>
+<span>top_level_url</span> <span>=</span> <span>&quot;http://example.com/foo/&quot;</span>
+<span>password_mgr</span><span>.</span><span>add_password</span><span>(</span><span>None</span><span>,</span> <span>top_level_url</span><span>,</span> <span>username</span><span>,</span> <span>password</span><span>)</span>
+
+<span>handler</span> <span>=</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>HTTPBasicAuthHandler</span><span>(</span><span>password_mgr</span><span>)</span>
+
+<span># create &quot;opener&quot; (OpenerDirector instance)</span>
+<span>opener</span> <span>=</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>build_opener</span><span>(</span><span>handler</span><span>)</span>
+
+<span># use the opener to fetch a URL</span>
+<span>opener</span><span>.</span><span>open</span><span>(</span><span>a_url</span><span>)</span>
+
+<span># Install the opener.</span>
+<span># Now all calls to urllib.request.urlopen use our opener.</span>
+<span>urllib</span><span>.</span><span>request</span><span>.</span><span>install_opener</span><span>(</span><span>opener</span><span>)</span>
+</pre></div>
+</div>
+<div>
+<p>Note</p>
+<p>In the above example we only supplied our <code><span>HTTPBasicAuthHandler</span></code> to
+<code><span>build_opener</span></code>. By default openers have the handlers for normal situations
+– <code><span>ProxyHandler</span></code> (if a proxy setting such as an <span></span><code><span>http_proxy</span></code>
+environment variable is set), <code><span>UnknownHandler</span></code>, <code><span>HTTPHandler</span></code>,
+<code><span>HTTPDefaultErrorHandler</span></code>, <code><span>HTTPRedirectHandler</span></code>, <code><span>FTPHandler</span></code>,
+<code><span>FileHandler</span></code>, <code><span>DataHandler</span></code>, <code><span>HTTPErrorProcessor</span></code>.</p>
+</div>
+<p><code><span>top_level_url</span></code> is in fact <em>either</em> a full URL (including the ‘http:’ scheme
+component and the hostname and optionally the port number)
+e.g. <code><span>&quot;http://example.com/&quot;</span></code> <em>or</em> an “authority” (i.e. the hostname,
+optionally including the port number) e.g. <code><span>&quot;example.com&quot;</span></code> or <code><span>&quot;example.com:8080&quot;</span></code>
+(the latter example includes a port number).  The authority, if present, must
+NOT contain the “userinfo” component - for example <code><span>&quot;joe:password&#64;example.com&quot;</span></code> is
+not correct.</p>
+</div>
+<div>
+<h2>Proxies<a>¶</a></h2>
+<p><strong>urllib</strong> will auto-detect your proxy settings and use those. This is through
+the <code><span>ProxyHandler</span></code>, which is part of the normal handler chain when a proxy
+setting is detected.  Normally that’s a good thing, but there are occasions
+when it may not be helpful <a>[5]</a>. One way to do this is to setup our own
+<code><span>ProxyHandler</span></code>, with no proxies defined. This is done using similar steps to
+setting up a <a>Basic Authentication</a> handler:</p>
+<div><div><pre><span></span><span>&gt;&gt;&gt; </span><span>proxy_support</span> <span>=</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>ProxyHandler</span><span>({})</span>
+<span>&gt;&gt;&gt; </span><span>opener</span> <span>=</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>build_opener</span><span>(</span><span>proxy_support</span><span>)</span>
+<span>&gt;&gt;&gt; </span><span>urllib</span><span>.</span><span>request</span><span>.</span><span>install_opener</span><span>(</span><span>opener</span><span>)</span>
+</pre></div>
+</div>
+<div>
+<p>Note</p>
+<p>Currently <code><span>urllib.request</span></code> <em>does not</em> support fetching of <code><span>https</span></code> locations
+through a proxy.  However, this can be enabled by extending urllib.request as
+shown in the recipe <a>[6]</a>.</p>
+</div>
+<div>
+<p>Note</p>
+<p><code><span>HTTP_PROXY</span></code> will be ignored if a variable <code><span>REQUEST_METHOD</span></code> is set; see
+the documentation on <a><code><span>getproxies()</span></code></a>.</p>
+</div>
+</div>
+<div>
+<h2>Sockets and Layers<a>¶</a></h2>
+<p>The Python support for fetching resources from the web is layered.  urllib uses
+the <a><code><span>http.client</span></code></a> library, which in turn uses the socket library.</p>
+<p>As of Python 2.3 you can specify how long a socket should wait for a response
+before timing out. This can be useful in applications which have to fetch web
+pages. By default the socket module has <em>no timeout</em> and can hang. Currently,
+the socket timeout is not exposed at the http.client or urllib.request levels.
+However, you can set the default timeout globally for all sockets using</p>
+<div><div><pre><span></span><span>import</span> <span>socket</span>
+<span>import</span> <span>urllib.request</span>
+
+<span># timeout in seconds</span>
+<span>timeout</span> <span>=</span> <span>10</span>
+<span>socket</span><span>.</span><span>setdefaulttimeout</span><span>(</span><span>timeout</span><span>)</span>
+
+<span># this call to urllib.request.urlopen now uses the default timeout</span>
+<span># we have set in the socket module</span>
+<span>req</span> <span>=</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>Request</span><span>(</span><span>&#39;http://www.voidspace.org.uk&#39;</span><span>)</span>
+<span>response</span> <span>=</span> <span>urllib</span><span>.</span><span>request</span><span>.</span><span>urlopen</span><span>(</span><span>req</span><span>)</span>
+</pre></div>
+</div>
+</div>
+<hr>
+<div>
+<h2>Footnotes<a>¶</a></h2>
+<p>This document was reviewed and revised by John Lee.</p>
+<table>
+<colgroup><col><col></colgroup>
+<tbody>
+<tr><td><a>[1]</a></td><td>Google for example.</td></tr>
+</tbody>
+</table>
+<table>
+<colgroup><col><col></colgroup>
+<tbody>
+<tr><td><a>[2]</a></td><td>Browser sniffing is a very bad practice for website design - building
+sites using web standards is much more sensible. Unfortunately a lot of
+sites still send different versions to different browsers.</td></tr>
+</tbody>
+</table>
+<table>
+<colgroup><col><col></colgroup>
+<tbody>
+<tr><td><a>[3]</a></td><td>The user agent for MSIE 6 is
+<em>‘Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322)’</em></td></tr>
+</tbody>
+</table>
+<table>
+<colgroup><col><col></colgroup>
+<tbody>
+<tr><td><a>[4]</a></td><td>For details of more HTTP request headers, see
+<a>Quick Reference to HTTP Headers</a>.</td></tr>
+</tbody>
+</table>
+<table>
+<colgroup><col><col></colgroup>
+<tbody>
+<tr><td><a>[5]</a></td><td>In my case I have to use a proxy to access the internet at work. If you
+attempt to fetch <em>localhost</em> URLs through this proxy it blocks them. IE
+is set to use the proxy, which urllib picks up on. In order to test
+scripts with a localhost server, I have to prevent urllib from using
+the proxy.</td></tr>
+</tbody>
+</table>
+<table>
+<colgroup><col><col></colgroup>
+<tbody>
+<tr><td><a>[6]</a></td><td>urllib opener for SSL proxy (CONNECT method): <a>ASPN Cookbook Recipe</a>.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+  <h3><a>Table Of Contents</a></h3>
+  <ul>
+<li><a>HOWTO Fetch Internet Resources Using The urllib Package</a><ul>
+<li><a>Introduction</a></li>
+<li><a>Fetching URLs</a><ul>
+<li><a>Data</a></li>
+<li><a>Headers</a></li>
+</ul>
+</li>
+<li><a>Handling Exceptions</a><ul>
+<li><a>URLError</a></li>
+<li><a>HTTPError</a><ul>
+<li><a>Error Codes</a></li>
+</ul>
+</li>
+<li><a>Wrapping it Up</a><ul>
+<li><a>Number 1</a></li>
+<li><a>Number 2</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a>info and geturl</a></li>
+<li><a>Openers and Handlers</a></li>
+<li><a>Basic Authentication</a></li>
+<li><a>Proxies</a></li>
+<li><a>Sockets and Layers</a></li>
+<li><a>Footnotes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p><a href="unicode.html"
+           >Unicode HOWTO</a></p>
+  <h4>Next topic</h4>
+  <p><a href="argparse.html"
+           >Argparse Tutorial</a></p>
+  <div>
+    <h3>This Page</h3>
+    <ul>
+      <li><a>Report a Bug</a></li>
+      <li>
+        <a href="https://github.com/python/cpython/blob/3.6/Doc/howto/urllib2.rst"
+>Show Source
+        </a>
+      </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+      <div></div>
+    </div>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="argparse.html" title="Argparse Tutorial"
+>next</a> |</li>
+        <li>
+          <a href="unicode.html" title="Unicode HOWTO"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>Python HOWTOs</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>  
+    <div>
+    &copy; <a>Copyright</a> 2001-2018, Python Software Foundation.
+    <br>
+    The Python Software Foundation is a non-profit corporation.
+    <a>Please donate.</a>
+    <br>
+    Last updated on May 20, 2018.
+    <a>Found a bug</a>?
+    <br>
+    Created using <a>Sphinx</a> 1.7.4.
+    </div>
+
+  </body>
+</html>

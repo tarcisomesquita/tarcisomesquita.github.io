@@ -1,0 +1,48 @@
+
+every line must end on a dword boundary or padded with zeroes.
+
+BMP files are stored bottom-up, that means that the first scan line is the bottom line.
+
+
+OFFSET              Count TYPE   Description
+0000h                   2 char   ID='BM' - BitMap
+0002h                   1 dword  Filesize of whole file
+0006h                   4 byte   reserved
+000Ah                   1 dword  Offset of bitmap in file
+000Eh                   1 dword  Length of BitMapInfoHeader
+				 The BitMapInfoHeader starts directly after this header.
+
+
+0012h                   1 dword  Horizontal width of bitmap in pixels
+0016h                   1 dword  Vertical width of bitmap in pixels
+001Ah                   1 word   Number of planes
+001Ch                   1 word   Bits per pixel ( thus the number of colors )
+          			 1 - monochrome bitmap
+          			 4 - 16 color bitmap
+          			 8 - 256 color bitmap
+          			 16 - 16bit (high color) bitmap
+          			 24 - 24bit (true color) bitmap
+          			 32 - 32bit (true color) bitmap
+001Eh                   1 dword  Compression type
+          			 0 - none
+				 1 - RLE 8-bit/Pixel
+				 2 - RLE 4-bit/Pixel
+0022h                   1 dword  Size of picture in bytes
+0026h                   1 dword  Horizontal resolution (pixel/metro)
+002Ah                   1 dword  Vertical resolution (pixel/metro)
+002Eh                   1 dword  Number of used colors (for 8 bits is 256 = 100h)
+0032h                   1 dword  Number of important colors
+
+0036h                   BitMap
+ 				1 byte   Blue component
+ 				1 byte   Green component
+ 				1 byte   Red component
+ 				1 byte   Filler (padded with 0x00 to be each line a multiple of four) 
+
+Nos demais formatos (monocromatico, 16 e 256 cores) no offset 0x36 começa uma paleta de cores formada de N vezes 4 bytes.
+monocromático N = 2
+256 cores     N = 256
+
+The 32-bit per pixel (32bpp) format supports 4,294,967,296 distinct colors and stores 1 pixel per 4 byte DWORD. Each DWORD can define the Alpha, Red, Green and Blue samples of the pixel.
+
+

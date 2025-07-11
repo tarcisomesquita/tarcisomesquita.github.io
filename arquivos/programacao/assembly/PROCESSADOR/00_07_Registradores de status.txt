@@ -1,0 +1,43 @@
+
+Registradores de Status - Registradores Especiais (386+)
+CR0 	Registrador de Controle 0 	DR0 	Registrador de Debug 0
+CR2 	Registrador de Controle 2 	DR1 	Registrador de Debug 1
+CR3 	Registrador de Controle 3 	DR2 	Registrador de Debug 2
+  	  	                        DR3 	Registrador de Debug 3
+TR4 	Registrador de Teste 4 	        DR6 	Registrador de Debug 6
+TR5 	Registrador de Teste 5 	        DR7 	Registrador de Debug 7
+TR6 	Registrador de Teste 6 	  	 
+TR7 	Registrador de Teste 7 	  	 
+
+
+Registradores de status MSW (Machine Status Word - 286+)
+
+31  30-5  4  3  2  1  0
+ |    |   |  |  |  |  |--- PE Protection Enable
+ |    |   |  |  |  |------ MP Math Present
+ |    |   |  |  |--------- EM Emulação
+ |    |   |  |------------ TS Task Switched
+ |    |   |--------------- ET Tipo de Extensão
+ |    |------------------- Reservado
+ | ----------------------- PG Paginação
+
+Bit 0 - PE (Protection Enable): troca o processador entre modo real e protegido
+
+Bit 1 - MP (Math Present): controla o funcionamento da instrução WAIT
+
+Bit 2 - EM (Emulation): indica quais funções do coprocessador devem ser emuladas
+
+Bit 3 - TS (Task Switched): setado e interrogado pelo coprocessador em tarefas de switches e quando interpretando instruções do coprocessador
+
+Bit 4 - ET (Extension Type): indica o tipo do coprocessador no sistema
+
+Bits 5 a 30 - Reservados
+
+Bit 31 - PG (Paging): indica se o processador usa tabelas page para traduzir endereços lineares em endereços físicos
+
+
+Registradores mal documentados
+
+Existem registradores nos processadores 80386 e acima que não foram bem documentados pela Intel. Estes são divididos em registradores de controle, de debug, de teste e de segmentação no modo protegido. Ao que tudo indica, os registradores de controle, juntamente com os registradores de segmentação, são usados na programação em modo protegido.
+
+Os registradores de teste foram tirados a partir do Pentium. Os registradores de controle são os CR0 a CR4, registradores de debug são os DR0 a DR7, os registradores de teste são os TR3 a TR7 e os registradores de segmentação no modo protegido são o GDTR (Global Descriptor Table Register), o IDTR (Interrupt Descriptor Table Register), o LDTR (Local DTR) e o TR.

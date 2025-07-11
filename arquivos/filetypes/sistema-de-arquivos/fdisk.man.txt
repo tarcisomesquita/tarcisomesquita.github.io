@@ -1,0 +1,59 @@
+
+  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+$ fdisk -l -u /dev/sdb
+
+Disco /dev/sdb: 3868 MB, 3868430336 bytes
+255 heads, 63 sectors/track, 470 cylinders, total de 7555528 setores
+Units = setores of 1 * 512 = 512 bytes
+Disk identifier: 0x00000000
+
+Dispositivo Boot Início Fim Blocos Id Sistema
+/dev/sdb1   *         136     1437831      718848   83  Linux
+A partição 1 possui inícios físico/lógico diferentes (não Linux?):
+     fís. = (1023, 254, 63) lógico = (0, 2, 11)
+A partição 1 possui fins físico/lógico diferentes:
+     fís. = (1023, 254, 63) lógico = (89, 127, 46)
+
+  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+-l   List the partition tables for the specified devices and then exit.
+
+-u   When listing partition tables, give sizes in sectors instead of cylinders.
+
+SEE ALSO
+       parted(8)
+
+AVAILABILITY
+util-linux-ng package
+ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/
+
+
+strace -s 100 -i -f -v fdisk -l -u /dev/sdb > fdisk.txt 2>&1
+
+[b7f82430] execve("/sbin/fdisk", ["fdisk", "-l", "-u", "/dev/sdb"], ) = 0
+
+[b8008430] open("/dev/sdb", O_RDONLY|O_LARGEFILE) = 3
+[b8008430] ioctl(3, BLKSSZGET, 0xbfb25e88) = 0
+[b8008430] _llseek(3, 512, [512], SEEK_SET) = 0
+[b8008430] read(3, "\3721\300\216\330\216\320\216\300f\275\360\37\0\0f\211\354\373f\350\335\10\0\0\277\214\235\0\0\2714\236\0\0)\3710\300\374\363\252\2704\236\0\0\243\250\235\0\0\211\25\214\235\0\0\350\311\23\0\0\350\0\0\0\0\350\363\10\0\0\364\353\375\213T$\4`\350\346\10\0\0\273\1\0\210\320\264\16\315\20f\350\221\10\0\0"..., 512) = 512
+[b8008430] fstat64(3, {st_dev=makedev(0, 15), st_ino=40827, st_mode=S_IFBLK|0660, st_nlink=1, st_uid=0, st_gid=6, st_blksize=4096, st_blocks=0, st_rdev=makedev(8, 16), st_atime=2014/06/30-10:59:53, st_mtime=2014/06/30-10:38:22, st_ctime=2014/06/30-10:38:22}) = 0
+[b8008430] ioctl(3, BLKGETSIZE64, 0xbfb25e78) = 0
+[b8008430] ioctl(3, BLKSSZGET, 0xbfb25e84) = 0
+[b8008430] ioctl(3, BLKSSZGET, 0xbfb25e88) = 0
+[b8008430] _llseek(3, 3868429824, [3868429824], SEEK_SET) = 0
+[b8008430] read(3, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 512) = 512
+[b8008430] close(3)                     = 0
+
+[b8008430] open("/dev/sdb", O_RDONLY|O_LARGEFILE) = 4
+[b8008430] read(4, "\372\352\6|\0\0001\300\216\330\216\320\274\0 \211\345\373R\270\0\0\216\300\273\0\202\260\24\265\0\261\2\266\0\264\2\315\23r\6Z\352\0\202\0\0\2768|\350\24\0\364\353\375ERRO READ\0\273\1\0\264\16\315\20\254<\0u\364\303\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 512) = 512
+[b8008430] ioctl(4, BLKSSZGET, 0xbfb25e84) = 0
+[b8008430] fstat64(4, {st_dev=makedev(0, 15), st_ino=40827, st_mode=S_IFBLK|0660, st_nlink=1, st_uid=0, st_gid=6, st_blksize=4096, st_blocks=0, st_rdev=makedev(8, 16), st_atime=2014/06/30-10:59:53, st_mtime=2014/06/30-10:38:22, st_ctime=2014/06/30-10:38:22}) = 0
+[b8008430] ioctl(4, 0x301, 0xbfb25e70)  = 0
+[b8008430] ioctl(4, BLKGETSIZE64, 0xbfb25e20) = 0
+[b8008430] _llseek(4, 0, [0], SEEK_SET) = 0
+[b8008430] read(4, "\372\352\6|\0\0001\300\216\330\216\320\274\0 \211\345\373R\270\0\0\216\300\273\0\202\260\24\265\0\261\2\266\0\264\2\315\23r\6Z\352\0\202\0\0\2768|\350\24\0\364\353\375ERRO READ\0\273\1\0\264\16\315\20\254<\0u\364\303\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"..., 8192) = 8192
+[b8008430] close(4)                     = 0
+
+[b8008430] write(1, "\nDisco /dev/sdb: 3868 MB, 3868430336 ...
+

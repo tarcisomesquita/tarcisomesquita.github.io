@@ -1,0 +1,19 @@
+use make -n
+
+não está clean
+
+
+gcc \
+-I/media/lubuntu/ARQ_D/OS_2020-04-10/UEFI/gnu-efi-3.0.9/inc           \
+-I/media/lubuntu/ARQ_D/OS_2020-04-10/UEFI/gnu-efi-3.0.9/gnuefi        \
+-I/media/lubuntu/ARQ_D/OS_2020-04-10/UEFI/gnu-efi-3.0.9/inc/x86_64    \
+-I/media/lubuntu/ARQ_D/OS_2020-04-10/UEFI/gnu-efi-3.0.9/inc/protocol  \
+-Wno-error=pragmas -mno-red-zone -mno-avx -fpic -g -O2 -Wall -Wextra -Werror -fshort-wchar -fno-strict-aliasing -ffreestanding -fno-stack-protector -fno-stack-check -fno-stack-check -fno-merge-all-constants \
+-DCONFIG_x86_64 \
+-DGNU_EFI_USE_MS_ABI -maccumulate-outgoing-args --std=c11 \
+-c /media/lubuntu/ARQ_D/OS_2020-04-10/UEFI/gnu-efi-3.0.9/gnuefi/reloc_x86_64.c \
+-o reloc_x86_64.o
+
+ar rDv libgnuefi.a reloc_x86_64.o
+rm reloc_x86_64.o
+

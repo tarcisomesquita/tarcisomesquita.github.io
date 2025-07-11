@@ -1,0 +1,61 @@
+
+Variaveis locais são definidas dentro das funções e loops.
+
+Variaveis globais são definidas fora da função main
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+int main() {
+  auto unsigned long int var_local = 5;
+  return 0;
+}
+
+.globl main
+main:
+	lea	ecx, [esp+4]
+	and	esp, 0xFFFFFFF0
+	push	DWORD [ecx-4]
+	push	ebp
+	mov	ebp, esp
+	push	ecx
+
+	sub	esp, 16
+	mov	DWORD [ebp-8], 5
+
+	mov	eax, 0
+
+	add	esp, 16
+	pop	ecx
+	pop	ebp
+	lea	esp, [ecx-4]
+	ret
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+unsigned long int var_global = 5;
+int main() {
+  return 0
+}
+
+	.data
+.globl var_global
+	.align 4
+var_global:
+	.long	5
+
+	.text
+.globl main
+main:
+	lea	ecx, [esp+4]
+	and	esp, -16
+	push	DWORD PTR [ecx-4]
+	push	ebp
+	mov	ebp, esp
+	push	ecx
+
+	mov	eax, 0
+
+	pop	ecx
+	pop	ebp
+	lea	esp, [ecx-4]
+	ret

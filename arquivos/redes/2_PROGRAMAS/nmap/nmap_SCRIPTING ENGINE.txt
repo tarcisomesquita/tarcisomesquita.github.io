@@ -1,0 +1,11 @@
+
+NMAP SCRIPTING ENGINE (NSE)
+allows users to write (and share) simple scripts (using the Lua programming language[8])
+
+Currently defined categories are safe, intrusive, malware, version, discovery, vuln, auth, and default.
+
+       -sC
+           Performs a script scan using the default set of scripts.
+
+       --script script-categories|directory|filename|all
+

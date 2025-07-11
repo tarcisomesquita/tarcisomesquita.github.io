@@ -1,0 +1,308 @@
+
+swapoff -a
+echo 3 > /proc/sys/vm/drop_caches
+
+for (( ; ; )); do FREE=$(cat /proc/meminfo  | grep MemFree | sed 's/ \{2,\}/ /' | cut -d' ' -f2); echo "$(($FREE / 1024)) MiB"; if [ $FREE -lt 524288 ]; then (feh file:///usr/share/icons/hicolor/128x128/apps/editor.png &); fi; sleep 5; done
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+echo $(cat /sys/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A08:00/device:19/PNP0C09:00/PNP0C0A:00/power_supply/BAT0/capacity)% $(date +%d-%m-%Y_%H:%M:%S)
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+echo 60000 > /sys/class/backlight/intel_backlight/brightness
+
+sudo bash -c 'echo 0 > /sys/class/backlight/intel_backlight/brightness' && read TEST && sudo bash -c 'echo 60000 > /sys/class/backlight/intel_backlight/brightness'
+
+xset dpms force off
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+veja JOB CONTROL no manual do bash
+
+Para e envia para backgroud
+$ <ctrl>+Z
+retorna o jobid
+
+Executa em background
+$ bg jobid
+
+Para fazer jobs background se tornarem foreground
+$ fg jobid
+
+Para ver jobs background:
+$ jobs
+
+Para parar um processo background
+$ stop jobid
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+cat /proc/diskstats | grep sdb1
+   8      17 sdb1 15667 1793 1775879 141668 1 0 1 4 0 40276 141652
+tmpfs não aparece
+
+cat /proc/diskstats | sed 's/\t/ /g; s/[ ]\{2,\}/ /g; s/^ //' | cut -d' ' -f3,6,7,10,11
+
+Field  6 -- # of sectors read
+    This is the total number of sectors read successfully.
+
+Field  7 -- # of milliseconds spent reading
+    This is the total number of milliseconds spent by all reads.
+
+Field  10 -- # of sectors written
+    This is the total number of sectors written successfully.
+
+Field  11 -- # of milliseconds spent writing
+    This is the total number of milliseconds spent by all writes.
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+cat /proc/net/dev
+cat /proc/net/udp
+cat /proc/net/tcp
+
+cat /proc/net/tcp
+ In sl : 0, local_address(0100007F:1FBB) can be converted into doted decimal ip address as 0100007F:1FBB –> 7F000001:1FBB –> 7F 00 00 01:1FBB –> 127 0 0 1:8123 –> 127.0.0.1:8123 (ip : 127.0.0.1 and port : 8123).
+
+cat /proc/net/tcp6
+cat /proc/net/arp
+cat /proc/net/raw
+cat /proc/net/raw6
+cat /proc/net/route
+
+/proc/PID/fd
+netstat -tupanee
+ss -tupanee
+lsof -i
+
+cat /proc/mounts
+df -ah
+cat /proc/meminfo
+cat /proc/modules
+cat /proc/version
+cat /proc/cpuinfo
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+ 
+sudo dpkg --add-architecture i386
+sudo apt-get install lib32z1 lib32ncurses5 libstdc++6:i386
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+ACPI Wakeup
+
+wakeuptime=`date -d "8:37am tomorrow" +%s`  # number of seconds since 1970
+sudo sh -c "echo 0 > /sys/class/rtc/rtc0/wakealarm"
+sudo sh -c "echo $wakeuptime > /sys/class/rtc/rtc0/wakealarm"
+
+To check that the correct date/time is set in the BIOS:
+grep alrm_[td] /proc/driver/rtc
+
+amixer get PCM | grep Limits
+[ "$ALRM_VOLUME" != "" ] && amixer -q set PCM $ALRM_VOLUME
+
+/etc/init.d/alarmclock
+ALARM_USER=steve
+DISPLAY=:0.0 smplayer -playlist Music/Playlists/Smplayer.TV_Music $ACTION_DETAIL
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+foto da webcam
+streamer -s 1280x720 -f jpeg -o image.jpeg
+
+streamer -h
+
+capture ten frames, two per second:
+streamer -t 10 -r 2 -o foobar00.jpeg
+
+1280x720
+848x480
+640x480
+ffmpeg -f video4linux2 -s 640x480 -i /dev/video0 -ss 0:0:2 -frames 1 /tmp/out.jpg
+
+Discover resolutions
+$ lsusb
+Bus 001 Device 002: ID 5986:0241 Acer, Inc BisonCam, NB Pro
+$ lsusb -s 001:002 -v | egrep "Width|Height"
+or
+ffmpeg -f video4linux2 -list_formats all -i /dev/video0
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+cat /proc/bus/input/devices
+clear ; cat /proc/bus/input/devices | grep -C5 -i mouse
+ver Handler em /dev
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+find /usr/ /etc/ /home/ -name autostart -print 2>/dev/null | xargs ls
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+setup null password
+# usermod -p "" username
+
+add to sudo
+# usermod -aG sudo username
+
+groups (1)           - print the groups a user is in
+
+sg (1)               - execute command as different group ID
+
+groupadd (8)         - Criar um novo grupo
+groupdel (8)         - Apaga um grupo
+
+addgroup (8)         - add a user or group to the system
+adduser (8)          - add a user or group to the system
+chgpasswd (8)        - update group passwords in batch mode
+
+deluser (8)          - remove a user or group from the system
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Package: fbi
+Description: Linux frame buffer image viewer
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+sudo cat /proc/[pid]/maps
+sudo cat /proc/17040/smaps
+Pick one batch of memory (so for example 00621000-00622000) then use gdb to attach to the process and dump that memory:
+gdb --pid [pid]
+(gdb) dump memory /root/output 0x00621000 0x00622000
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+# apt-get install gcc make
+https://github.com/504ensicslabs/lime
+# tar -xvf lime-forensics-1.1-r17.tar.gz
+# cd src
+# make
+sudo insmod lime-5.19.0-21-generic.ko "path=/media/lubuntu/ARQ/mem.lime format=lime"
+# insmod lime.ko "path=tcp:4444 format=lime"
+$ nc localhost 4444 > ram.lime
+
+o arquivo /root/mem.dump que conterá o dump da memória.
+
+O LiME trabalha com três formatos de dump: raw, padded e lime.
+raw fornece uma cópia idêntica do conteúdo da RAM.
+
+Antes de realizar um novo dump de memória na máquina, remova o módulo LiME:
+# rmmod lime
+
+In lime format each range prepended with fixed-size header containing address space info
+
+typedef struct {
+    unsigned int magic;        // Always 0x4C694D45 (LiME)
+    unsigned int version;        // Header version number
+    unsigned long long s_addr;    // Starting address of physical RAM range
+    unsigned long long e_addr;    // Ending address of physical RAM range
+    unsigned char reserved[8];    // Currently all zeros
+} lime_mem_range_header;
+
+                     
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+cat /etc/X11/default-display-manager
+
+pstree
+
+/usr/lib/xorg/Xorg -nolisten tcp -auth /var/run/sddm/{bd1713aa-0fb8-44ea-80a3-88c6baa5e5fd} -background none -noreset -displayfd 17 -seat seat0 vt1
+
+/usr/lib/xorg/Xorg -core :0 -seat seat0 -auth /var/run/lightdm/root/:0 -nolisten tcp vt7 -novtswitch
+-seat escolhe o monitor
+
+sudo apt-get install lxde
+# xinit /usr/bin/lxsession -s Lubuntu -e LXDE -- /usr/bin/X :1 vt8
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+/bin/su --login -c /usr/bin/startx -- :0 vt7 -ac -nolisten tcp
+xinit /root/.xinitrc -- /usr/bin/X :0 vt7 -ac -nolisten tcp -auth /tmp/serverauth.CVbcRtjvcP
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Logins are provided by the getty program.
+init starts a separate instance of getty for each terminal upon which logins are to be allowed.
+getty reads the username and runs the login program, which reads the password.
+If the username and password are correct, login runs the shell. When the shell terminates, i.e., the user logs out, or when login terminated
+because the username and password didn't match, init notices this and starts a new instance of getty.
+The kernel has no notion of logins, this is all handled by the system programs.
+
+getty outputs a welcome message (stored in /etc/issue), and prompts for the username, and finally runs the login program.
+login gets the username as a parameter, and prompts the user for the password.
+
+Currently logged in people are listed in /var/run/utmp.
+who, w, and other similar commands look in utmp
+
+All successful logins are recorded into /var/log/wtmp.
+The last command browses wtmp.
+
+/etc/passwd
+/etc/shadow
+
+man 5 passwd
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+iwlist scanning
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+xmodmap -e "keycode 62 = Menu"
+
+# X
+setxkbmap br
+
+# console
+sudo loadkeys br
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+toram initrd=/casper/initrd  locale=pt_BR keyboard-configuration/layoutcode?=br keyboard-configuration/modelcode?=abnt2
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+timedatectl set-timezone America/Sao_Paulo
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+rmmod ath10k_pci
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+lsusb
+find /sys/devices/pci0000\:00/ -name idProduct -exec grep 2510 '{}' ';' -print
+echo 1 > /sys/devices/pci0000:00/0000:00:1a.0/usb1/1-1/1-1.5/remove
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+# Turn off system beep in console:
+xset b off
+xset b 0 0 0
+
+sed -i 's/#HandlePowerKey=poweroff/HandlePowerKey=ignore/' /etc/systemd/logind.conf
+systemctl restart systemd-logind
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+rfkill unblock all
+
+ip link set wlp2s0 up
+
+#wpa_passphrase MYWIFI "senha"
+echo 'network={
+  ssid="Tarciso_Mesquita"
+  psk=...
+}
+' > /etc/wpa_supplicant.conf
+
+kill `pidof wpa_supplicant`
+/sbin/wpa_supplicant -d wext -i wlp2s0 -c /etc/wpa_supplicant.conf -B
+kill `pidof dhclient`
+/sbin/dhclient wlp2s0
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+

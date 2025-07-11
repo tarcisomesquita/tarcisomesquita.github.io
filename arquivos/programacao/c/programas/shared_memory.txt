@@ -1,0 +1,166 @@
+Shared memory can best be described as the mapping of an area (segment) of memory that will be mapped and shared by more than one process.
+
+
+#include<sys/shm.h>
+
+// Shared memory control operation.
+extern int shmctl (int shmid, int cmd, struct shmid_ds *buf);
+
+// Get shared memory segment.
+extern int shmget (key_t key, size_t size, int shmflg);
+
+// Attach shared memory segment.
+extern void *shmat (int shmid, const void *shmaddr, int shmflg);
+
+// Detach shared memory segment.
+extern int shmdt (const void *shmaddr);
+
+linux/shm.h as follows:
+/* One shmid data structure for each shared memory segment in the syste
+struct shmid_ds {
+            struct ipc_perm shm_perm;        /* operation perms */
+            int     shm_segsz;               /* size of segment (bytes) */
+            time_t shm_atime;                /* last attach time */
+            time_t shm_dtime;                /* last detach time */
+            time_t shm_ctime;                /* last change time */
+            unsigned short shm_cpid;         /* pid of creator */
+            unsigned short shm_lpid;         /* pid of last operator */
+            short   shm_nattch;              /* no. of current attaches */
+                                             /* the following are private *
+            unsigned short   shm_npages;     /* size of segment (pages) */
+            unsigned long   *shm_pages;      /* array of ptrs to frames ->
+            struct vm_area_struct *attaches; /* descriptors for attaches */
+};
+
+SYSTEM CALL: shmget();
+PROTOTYPE: int shmget ( key_t key, int size, int shmflg );
+  RETURNS: shared memory segment identifier on success
+           -1 on error: errno = EINVAL (Invalid segment size specified)
+                                EEXIST (Segment exists, cannot create)
+                                EIDRM (Segment is marked for deletion, or was r
+                                ENOENT (Segment does not exist)
+                                EACCES (Permission denied)
+                                ENOMEM (Not enough memory to create segment)
+
+the open or access operation is dependent upon the contents of the shmflg argument.
+IPC CREAT
+     Create the segment if it doesn’t already exist in the kernel.
+IPC EXCL
+     When used with IPC CREAT, fail if segment already exists.
+
+int open_segment( key_t keyval, int segsize )
+{
+        int     shmid;
+        if((shmid = shmget( keyval, segsize, IPC_CREAT | 0660 )) == -1)
+        {
+                return(-1);
+        }
+        return(shmid);
+}
+
+
+char *attach_segment( int shmid )
+{
+        return(shmat(shmid, 0, 0));
+}
+
+    After a shared memory segment is no longer needed by a process, it should be detached
+by calling this system call. As mentioned earlier, this is not the same as removing the
+segment from the kernel! After a detach is successful, the shm nattch member of the as-
+sociates shmid ds structure is decremented by one. When this value reaches zero (0), the
+kernel will physically remove the segment.
+
+
+Examples
+shmtool    w   test
+shmtool    w   "This is a test"
+shmtool    r
+shmtool    d
+shmtool    m   660
+
+The Source
+#include   <stdio.h>
+#include   <sys/types.h>
+#include   <sys/ipc.h>
+#include   <sys/shm.h>
+#define SEGSIZE 100
+main(int argc, char *argv[])
+{
+          key_t key;
+          int   shmid, cntr;
+          char *segptr;
+          if(argc == 1)
+                   usage();
+          /* Create unique key via call to ftok() */
+          key = ftok(".", ’S’);
+          /* Open the shared memory segment - create if necessary */
+          if((shmid = shmget(key, SEGSIZE, IPC_CREAT|IPC_EXCL|0666)) == -1)
+          {
+                   printf("Shared memory segment exists - opening as client\n");
+                   /* Segment probably already exists - try as a client */
+                   if((shmid = shmget(key, SEGSIZE, 0)) == -1)
+                   {
+                            perror("shmget");
+                            exit(1);
+                   }
+          }
+          else
+          {
+                  printf("Creating new shared memory segment\n");
+          }
+          /* Attach (map) the shared memory segment into the current process */
+          if((segptr = shmat(shmid, 0, 0)) == -1)
+          {
+                  perror("shmat");
+                  exit(1);
+          }
+          switch(tolower(argv[1][0]))
+          {
+                  case ’w’: writeshm(shmid, segptr, argv[2]);
+                            break;
+                  case ’r’: readshm(shmid, segptr);
+                            break;
+                  case ’d’: removeshm(shmid);
+                            break;
+                  case ’m’: changemode(shmid, argv[2]);
+                            break;
+                   default: usage();
+          }
+}
+writeshm(int shmid, char *segptr, char *text)
+{
+          strcpy(segptr, text);
+          printf("Done...\n");
+}
+readshm(int shmid, char *segptr)
+{
+          printf("segptr: %s\n", segptr);
+}
+removeshm(int shmid)
+{
+          shmctl(shmid, IPC_RMID, 0);
+          printf("Shared memory segment marked for deletion\n");
+}
+changemode(int shmid, char *mode)
+{
+          struct shmid_ds myshmds;
+          /* Get current values for internal data structure */
+          shmctl(shmid, IPC_STAT, &myshmds);
+          /* Display old permissions */
+          printf("Old permissions were: %o\n", myshmds.shm_perm.mode);
+          /* Convert and load the mode */
+          sscanf(mode, "%o", &myshmds.shm_perm.mode);
+        /* Update the mode */
+        shmctl(shmid, IPC_SET, &myshmds);
+        printf("New permissions are : %o\n", myshmds.shm_perm.mode);
+}
+usage()
+{
+        fprintf(stderr, "shmtool - A utility for tinkering with shared memory\n
+        fprintf(stderr, "\nUSAGE: shmtool (w)rite <text>\n");
+        fprintf(stderr, "                 (r)ead\n");
+        fprintf(stderr, "                 (d)elete\n");
+        fprintf(stderr, "                 (m)ode change <octal mode>\n");
+        exit(1);
+}
+

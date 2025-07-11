@@ -1,0 +1,33 @@
+
+instalei /media/arq_preto/programacao/Assembly/ELF/compiladores do gcc/gawk-4.0.0.tar.bz2
+
+apt-get install build-essential kernel-package
+
+tar --force-local --no-wildcards -p -xf /media/arq_preto/programacao/Assembly/ELF/compiladores\ do\ gcc/gawk-4.0.0.tar.bz2 --use-compress-program=bzip2 -C /home/ubuntu/Desktop/
+cd /home/ubuntu/Desktop/gawk-4.0.0
+/home/ubuntu/Desktop/gawk-4.0.0/configure && \
+make && \
+sudo make install && \
+cd /home/ubuntu/Desktop/ && \
+sudo rm -r /home/ubuntu/Desktop/gawk-4.0.0
+
+wget http://ftp.gnu.org/gnu/glibc/glibc-2.9.tar.bz2
+tar --force-local --no-wildcards -p -xf /media/arq_preto/programacao/Assembly/ELF/compiladores\ do\ gcc/glibc-2.9.tar.bz2 --use-compress-program=bzip2 -C /home/ubuntu/Desktop/
+
+mkdir obj
+cd obj
+CFLAGS="-O2 -U_FORTIFY_SOURCE -march=prescott -mtune=native -fno-stack-protector"
+export CFLAGS
+../glibc-2.9/configure --prefix=/usr  && \
+date > make.txt  && \
+make 2>&1 >> make.txt && \
+date >> make.txt
+
+duração: 06:25:27 - 06:42:22
+
+
+make -k check 2>&1 | tee glibc-check-log
+grep Error glibc-check-log
+
+demorou tanto tempo quanto compilar e deu erro
+

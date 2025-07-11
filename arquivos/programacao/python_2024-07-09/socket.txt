@@ -1,0 +1,67 @@
+
+https://www.uninteramericas.com/graduacao-ead/engenharia-de-software/
+
+AVA > Serviços > Solicitação de serviços > selecione o seu curso > CANCELAMENTO DE MATRÍCULA.
+multa de 10% do valor da mensalidade
+Próxima mensalidade vence em 10/10/2024
+
+0800 727 0530
+WhatsApp (41) 2104-2791, de segunda a sexta-feira das 09h às 20h.
+
+DESEMPENHO > GRADE
+
+Arquitetura de Sistemas
+Computação em Nuvem
+
+https://jobboard.universia.net/centraldecarreirasuninter
+https://portal.ciee.org.br/quero-uma-vaga/?ct=1&codigoMunicipio=3550308&tipoVaga=ESTAGIO&nivelEnsino=SU&idAreaProfissional=16&utm_source=g_ads_search&utm_medium=trafego&utm_campaign=vagas_adm&gad_source=1&gclid=Cj0KCQjwv7O0BhDwARIsAC0sjWPUgZkFUPw1wyy-oV8VyWlUID6blV-rVH5JZBmR_SM0M8htZ7ew0hIaAiWBEALw_wcB
+
+echo '
+import ipaddress;
+for x in ipaddress.ip_network("192.0.2.0/24").hosts():
+  print(x)
+
+' | python3
+
+echo -e 'import ipaddress\nfor x in ipaddress.ip_network("192.0.2.0/24").hosts():\n  print(x)' | python3
+
+import ipaddress;
+for x in ipaddress.ip_network('192.0.2.0/24').hosts():
+  print(x)
+
+import socket;
+
+# create an INET, STREAMing socket
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# now connect to the web server on port 80 - the normal http port
+s.connect(("www.python.org", 80))
+
+
+# create an INET, STREAMing socket
+serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# bind the socket to a public host, and a well-known port
+serversocket.bind((socket.gethostname(), 80))
+# become a server socket
+serversocket.listen(5)
+
+while True:
+    # accept connections from outside
+    (clientsocket, address) = serversocket.accept()
+    # now do something with the clientsocket
+    # in this case, we'll pretend this is a threaded server
+    ct = client_thread(clientsocket)
+    ct.run()
+
+
+>>> from concurrent.futures import process
+>>> process.__name__
+'concurrent.futures.process'
+
+__name__ == '__main__'
+arquivo __main__.py em pacotes Python
+
+if __name__ == '__main__':
+    # Execute when the module is not initialized from an import statement.
+
+
+

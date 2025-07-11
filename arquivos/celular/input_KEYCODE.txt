@@ -1,0 +1,488 @@
+== Key event
+adb shell input keyevent 3 // Home btn
+adb shell input keyevent 4 // Back btn
+adb shell input keyevent 5 // Call
+adb shell input keyevent 6 // End call
+adb shell input keyevent 26  // Turn Android device ON and OFF. It will toggle device to on/off status.
+adb shell input keyevent 27 // Camera
+adb shell input keyevent 64 // Open browser
+adb shell input keyevent 66 // Enter
+adb shell input keyevent 67 // Delete (backspace)
+adb shell input keyevent 207 // Contacts
+adb shell input keyevent 220 / 221 // Brightness down/up
+adb shell input keyevent 277 / 278 /279 // Cut/Copy/Paste
+// https://developer.android.com/reference/android/view/KeyEvent.html
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+KEYCODE_CALENDAR
+API 15
+constant: Calendar special function Used to launch a calendar application.
+Value: 208
+
+KEYCODE_CALL
+API 1
+constant: Call
+Value: 5
+
+KEYCODE_CAMERA
+API 1
+constant: Camera Used to launch a camera application or take pictures.
+Value: 27
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+KEYCODE_BACK
+API 1
+constant: Back
+Value: 4
+
+KEYCODE_APP_SWITCH
+API 11
+constant: App switch Should bring up the application switcher dialog.
+Value: 187
+
+KEYCODE_BRIGHTNESS_DOWN
+API 18
+constant: Brightness Down Adjusts the screen brightness down.
+Value: 220
+
+KEYCODE_BRIGHTNESS_UP
+API 18
+constant: Brightness Up Adjusts the screen brightness up.
+Value: 221
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+KEYCODE_ALT_LEFT
+API 1
+constant: Left Alt modifier
+Value: 57
+
+KEYCODE_ALT_RIGHT
+API 1
+constant: Right Alt modifier
+Value: 58
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+KEYCODE_APOSTROPHE
+API 1
+constant: '''
+Value: 75
+
+KEYCODE_AT
+API 1
+constant: '@'
+Value: 77
+
+KEYCODE_BACKSLASH
+API 1
+constant: '\'
+Value: 73
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+KEYCODE_0
+API 1
+constant: '0'
+Value: 7
+
+KEYCODE_1
+API 1
+constant: '1'
+Value: 8
+
+KEYCODE_2
+API 1
+constant: '2'
+Value: 9
+
+KEYCODE_3
+API 1
+constant: '3'
+Value: 10
+
+KEYCODE_4
+API 1
+constant: '4'
+Value: 11
+
+KEYCODE_5
+API 1
+constant: '5'
+Value: 12
+
+KEYCODE_6
+API 1
+constant: '6'
+Value: 13
+
+KEYCODE_7
+API 1
+constant: '7'
+Value: 14
+
+KEYCODE_8
+API 1
+constant: '8'
+Value: 15
+
+KEYCODE_9
+API 1
+constant: '9'
+Value: 16
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+KEYCODE_A
+API 1
+constant: 'A'
+Value: 29
+
+KEYCODE_B
+API 1
+constant: 'B'
+Value: 30
+
+KEYCODE_C
+API 1
+constant: 'C'
+Value: 31
+
+
+KEYCODE_CAPS_LOCK
+API 11
+constant: Caps Lock
+Value: 115
+
+KEYCODE_COMMA
+API 1
+constant: ','
+Value: 55
+
+KEYCODE_CONTACTS
+API 15
+constant: Contacts special function Used to launch an address book application.
+Value: 207
+
+KEYCODE_COPY
+API 24
+constant: Copy
+Value: 278
+
+KEYCODE_CTRL_LEFT
+API 11
+constant: Left Control modifier
+Value: 113
+
+KEYCODE_CTRL_RIGHT
+API 11
+constant: Right Control modifier
+Value: 114
+
+KEYCODE_CUT
+API 24
+constant: Cut
+Value: 277
+
+KEYCODE_D
+API 1
+constant: 'D'
+Value: 32
+
+KEYCODE_DEL
+API 1
+constant: Backspace Deletes characters before the insertion point, unlike KEYCODE_FORWARD_DEL.
+Value: 67
+
+KEYCODE_DPAD_CENTER
+API 1
+constant: Directional Pad Center May also be synthesized from trackball motions.
+Value: 23
+
+KEYCODE_DPAD_DOWN
+API 1
+constant: Directional Pad Down May also be synthesized from trackball motions.
+Value: 20
+
+KEYCODE_DPAD_DOWN_LEFT
+API 24
+constant: Directional Pad Down-Left
+Value: 269
+
+KEYCODE_DPAD_DOWN_RIGHT
+API 24
+constant: Directional Pad Down-Right
+Value: 271
+
+KEYCODE_DPAD_LEFT
+API 1
+constant: Directional Pad Left May also be synthesized from trackball motions.
+Value: 21
+
+KEYCODE_DPAD_RIGHT
+API 1
+constant: Directional Pad Right May also be synthesized from trackball motions.
+Value: 22
+
+KEYCODE_DPAD_UP
+API 1
+constant: Directional Pad Up May also be synthesized from trackball motions.
+Value: 19
+
+KEYCODE_DPAD_UP_LEFT
+API 24
+constant: Directional Pad Up-Left
+Value: 268
+
+KEYCODE_DPAD_UP_RIGHT
+API 24
+constant: Directional Pad Up-Right
+Value: 270
+
+KEYCODE_DVR
+API 11
+constant: DVR On some TV remotes, switches to a DVR mode for recorded shows.
+Value: 173
+
+KEYCODE_E
+API 1
+constant: 'E'
+Value: 33
+
+KEYCODE_EISU
+API 16
+constant: Japanese alphanumeric
+Value: 212
+
+KEYCODE_ENDCALL
+API 1
+constant: End Call
+Value: 6
+
+KEYCODE_ENTER
+API 1
+constant: Enter
+Value: 66
+
+KEYCODE_ENVELOPE
+API 1
+constant: Envelope special function Used to launch a mail application.
+Value: 65
+
+KEYCODE_EQUALS
+API 1
+constant: '='
+Value: 70
+
+KEYCODE_ESCAPE
+API 11
+constant: Escape
+Value: 111
+
+KEYCODE_EXPLORER
+API 1
+constant: Explorer special function Used to launch a browser application.
+Value: 64
+
+KEYCODE_F
+API 1
+constant: 'F'
+Value: 34
+
+KEYCODE_F1
+API 11
+constant: F1
+Value: 131
+
+KEYCODE_F10
+API 11
+constant: F10
+Value: 140
+
+KEYCODE_F11
+API 11
+constant: F11
+Value: 141
+
+KEYCODE_F12
+API 11
+constant: F12
+Value: 142
+
+KEYCODE_F2
+API 11
+constant: F2
+Value: 132
+
+KEYCODE_F3
+API 11
+constant: F3
+Value: 133
+
+KEYCODE_F4
+API 11
+constant: F4
+Value: 134
+
+KEYCODE_F5
+API 11
+constant: F5
+Value: 135
+
+KEYCODE_F6
+API 11
+constant: F6
+Value: 136
+
+KEYCODE_F7
+API 11
+constant: F7
+Value: 137
+
+KEYCODE_F8
+API 11
+constant: F8
+Value: 138
+
+KEYCODE_F9
+API 11
+constant: F9
+Value: 139
+
+KEYCODE_FOCUS
+API 1
+constant: Camera Focus Used to focus the camera.
+Value: 80
+
+KEYCODE_FORWARD
+API 11
+constant: Forward Navigates forward in the history stack. Complement of KEYCODE_BACK.
+Value: 125
+
+KEYCODE_FORWARD_DEL
+API 11
+constant: Forward Delete Deletes characters ahead of the insertion point, unlike KEYCODE_DEL.
+Value: 112
+
+KEYCODE_FUNCTION
+API 11
+constant: Function modifier
+Value: 119
+
+KEYCODE_G
+API 1
+constant: 'G'
+Value: 35
+
+KEYCODE_GRAVE
+API 1
+constant: '`'
+Value: 68
+
+KEYCODE_GUIDE
+API 11
+constant: Guide On TV remotes, shows a programming guide.
+Value: 172
+
+KEYCODE_H
+API 1
+constant: 'H'
+Value: 36
+
+KEYCODE_HEADSETHOOK
+API 1
+constant: Headset Hook Used to hang up calls and stop media.
+Value: 79
+
+KEYCODE_HELP
+API 21
+constant: Help
+Value: 259
+
+KEYCODE_HENKAN
+API 16
+constant: Japanese conversion
+Value: 214
+
+KEYCODE_HOME
+API 1
+constant: Home This key is handled by the framework and is never delivered to applications.
+Value: 3
+
+KEYCODE_I
+API 1
+constant: 'I'
+Value: 37
+
+KEYCODE_INFO
+API 11
+constant: Info Common on TV remotes to show additional information related to what is currently being viewed.
+Value: 165
+
+KEYCODE_INSERT
+API 11
+constant: Insert Toggles insert / overwrite edit mode.
+Value: 124
+
+KEYCODE_J
+API 1
+constant: 'J'
+Value: 38
+
+KEYCODE_K
+API 1
+constant: 'K'
+Value: 39
+
+KEYCODE_KANA
+API 16
+constant: Japanese kana
+Value: 218
+
+KEYCODE_KATAKANA_HIRAGANA
+API 16
+constant: Japanese katakana / hiragana
+Value: 215
+
+KEYCODE_L
+API 1
+constant: 'L'
+Value: 40
+
+KEYCODE_LANGUAGE_SWITCH
+API 14
+constant: Language Switch Toggles the current input language such as switching between English and Japanese on a QWERTY keyboard. On some devices, the same function may be performed by pressing Shift+Spacebar.
+Value: 204
+
+KEYCODE_LAST_CHANNEL
+API 21
+constant: Last Channel Goes to the last viewed channel.
+Value: 229
+
+KEYCODE_LEFT_BRACKET
+API 1
+constant: '['
+Value: 71
+
+KEYCODE_M
+API 1
+constant: 'M'
+Value: 41
+
+KEYCODE_MANNER_MODE
+API 14
+constant: Manner Mode Toggles silent or vibrate mode on and off to make the device behave more politely in certain settings such as on a crowded train. On some devices, the key may only operate when long-pressed.
+Value: 205
+
+KEYCODE_MEDIA_AUDIO_TRACK
+API 19
+constant: Audio Track Switches the audio tracks.
+Value: 222
+
+KEYCODE_MEDIA_CLOSE
+API 11
+constant: Close media May be used to close a CD tray, for example.
+Value: 128
+

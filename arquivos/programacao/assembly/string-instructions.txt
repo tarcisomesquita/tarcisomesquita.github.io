@@ -1,0 +1,26 @@
+
+movs (move string)
+lods (load string element into the accumulator)
+stos (store accumulator into string element)
+scas (Scan string and check for match against the value in the accumulator)
+cmps (compare two strings).
+ins (input a string from an I/O port)
+outs (output a string to an I/O port
+rep (repeat a string operation)
+repz (repeat while zero)
+repe (repeat while equal)
+repnz (repeat while not zero)
+repne (repeat while not equal)
+
+cmps{b,w,d}:    cmp ds:[si], es:[di]
+                if direction_flag = 0 then
+                        si := si + size;
+                        di := di + size;
+                else
+                        si := si - size;
+                        di := di - size;
+                endif;
+sets the processor flags accordingly
+
+
+

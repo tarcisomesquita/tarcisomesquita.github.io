@@ -1,0 +1,8 @@
++  adição de valor e concatenação de strings 
+-   subtração de valores 
+*   multiplicação de valores 
+/   divisão de valores 
+% obtem o resto de uma divisão: 
+++ incremento
+-- decremento
+

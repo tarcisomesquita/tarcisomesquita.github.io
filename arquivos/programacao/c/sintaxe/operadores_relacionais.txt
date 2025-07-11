@@ -1,0 +1,10 @@
+
+
+Operador  	Função
+> 	Maior que
+>= 	Maior ou Igual à
+< 	Menor que
+>= 	Menor ou igual à
+== 	Igual à
+!= 	Diferente de
+

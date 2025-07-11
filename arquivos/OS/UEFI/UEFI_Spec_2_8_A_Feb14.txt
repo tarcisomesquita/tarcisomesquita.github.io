@@ -1,0 +1,73 @@
+UEFI is an interface between the operating system (OS) and the platform firmware.
+
+The interface is in the form of data tables that contain platform-related information, and boot and runtime service calls that are available to the OS loader and the OS.
+
+EFI OS LOADER use EFI BOOT SERVICES and UFI RUNTIME SERVICES
+
+UEFI uses a subset of the PE32+ image format with a modified header signature
+
+// PE32+ Subsystem type for EFI images
+#define EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION 10
+#define EFI_IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER 11
+#define EFI_IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER 12
+
+// PE32+ Machine type for EFI images
+#define EFI_IMAGE_MACHINE_IA32 0x014c
+#define EFI_IMAGE_MACHINE_IA64 0x0200
+#define EFI_IMAGE_MACHINE_EBC 0x0EBC
+#define EFI_IMAGE_MACHINE_x64 0x8664
+#define EFI_IMAGE_MACHINE_ARMTHUMB_MIXED 0x01C2
+#define EFI_IMAGE_MACHINE_AARCH64 0xAA64
+#define EFI_IMAGE_MACHINE_RISCV32 0x5032
+#define EFI_IMAGE_MACHINE_RISCV64 0x5064
+#define EFI_IMAGE_MACHINE_RISCV128 0x5128
+
+Subsystem Type                                Code Memory Type         Data Memory Type
+EFI_IMAGE_SUSBSYTEM_EFI_APPLICATION           EfiLoaderCode            EfiLoaderData
+EFI_IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER   EfiBootServicesCode      EfiBootServicesData
+EFI_IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER        EfiRuntimeServicesCode   EfiRuntimeServicesData
+
+A UEFI image is loaded into memory through the EFI_BOOT_SERVICES.LoadImage()
+
+Once the image is loaded into memory, and the appropriate fix-ups have been performed, control is transferred to a loaded image at the AddressOfEntryPoint
+
+
+Table 4. UEFI Runtime Services
+Name Description
+GetTime() Returns the current time, time context, and time keeping capabilities.
+SetTime() Sets the current time and time context.
+GetWakeupTime() Returns the current wakeup alarm settings.
+SetWakeupTime() Sets the current wakeup alarm settings.
+GetVariable() Returns the value of a named variable.
+GetNextVariableName() Enumerates variable names.
+SetVariable() Sets, and if needed creates, a variable.
+SetVirtualAddressMap() Switches all runtime functions from physical to virtual addressing.
+ConvertPointer() Used to convert a pointer from physical to virtual addressing.
+GetNextHighMonotonicCount() Subsumes the platform's monotonic counter functionality.
+ResetSystem() Resets all processors and devices and reboots the system.
+UpdateCapsule() Passes capsules to the firmware with both virtual and physical mapping.
+EFI_MEMORY_RANGE_CAPSULE_GUID   Returns if the capsule can be supported via UpdateCapsule().
+Hardware Error Record Persistence   Returns information about the EFI variable store.
+
+2.3.4.1 Handoff State
+Rcx – EFI_HANDLE
+Rdx – EFI_SYSTEM_TABLE *
+RSP - <return address>
+
+2.3.4.2 Detailed Calling Conventions
+The caller passes the first four integer arguments in registers. The integer values are passed from left to
+right in Rcx, Rdx, R8, and R9 registers. The caller passes arguments five and above onto the stack.
+
+Return values that fix into 64-bits are returned in the Rax register. If the return value does not fit within
+64-bits, then the caller must allocate and pass a pointer for the return value as the first argument, Rcx.
+Subsequent arguments are then shifted one argument to the right, so for example argument one would
+be passed in Rdx. User-defined types to be returned must be 1,2,4,8,16,32, or 64 bits in length.
+The registers Rax, Rcx Rdx R8, R9, R10, R11, and XMM0-XMM5 are volatile and are, therefore, destroyed
+on function calls.
+The registers RBX, RBP, RDI, RSI, R12, R13, R14, R15, and XMM6-XMM15 are considered nonvolatile and
+must be saved and restored by a function that uses them.
+
+
+
+2.1.2 UEFI Applications
+page 16 (89 of 2556)

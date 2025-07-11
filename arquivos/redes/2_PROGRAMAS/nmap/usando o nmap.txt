@@ -1,0 +1,217 @@
+
+try connect to TCP ports less than 1024
+# nmap -sT 127.0.0.1
+
+um pacote SYN é enviado (apenas uma requisição de conexão), caso haja resposta (um pacote SYN-ACK seja recebido), é porque a porta está aberta. Caso seja recebido um RST é porque está fechada. Se a resposta vier positiva (SYN-ACK), o nmap envia um RST.
+# nmap -sS alvo
+
+ACK scan
+# nmap -sA alvo
+
+são enviados pacotes "ICMP echo request" para o alvo, caso não haja resposta, é enviado um pacote TCP ACK para a porta 80 ou então um pacote SYN (se nenhum das anteriores responder)
+# nmap -sP alvo
+
+UDP
+Nesse método, um pacote UDP de 0 byte é enviado, caso seja recebido um "ICMP port unreachable" é porque a porta está fechada, caso contrário, está aberta.
+# nmap -sU alvo
+
+Qual servidor está na porta
+# nmap -sV -p 22,53,110,143,4564 198.116.0-255.1-127
+
+
+FIN (Stealth)
+Esse método envia pacotes FIN para o alvo, caso não haja resposta, a porta está aberta, caso seja recebido um pacote RST, é porque está fechada. Esse método é útil, pois alguns firewalls podem detectar a chegada de pacotes SYN, detectando o método TCP SYN, esse modo elimina essa possibilidade de detecção.
+# nmap -sF alvo
+# nmap -sX alvo
+(Xmas Tree -> envia as flag FIN, URG e PUSH no pacote FIN)
+# nmap -sN alvo
+(null scan -> não envia flag no pacote FIN)
+
+
+
+RPC scan
+Esse método combina vários métodos de scan do nmap. Ele considera todas as portas TCP/UDP abertas e as "flooda" com comandos "NULL SunRPC", tentando descobrir quais portas RPC estão abertas, e se possível, o programa e a versão do RPC.
+# nmap -sR alvo
+
+usa várias informações recebidas e as compara com a base da dados dos sistemas operacionais conhecidos
+# nmap -O alvo
+
+Além dessas opções, o nmap possui muitas outras, como por exemplo o scan rápido (nmap -F) ou então a opção de não pingar a máquina antes de scaniá-la (nmap -P0).
+
+Em adição a esses métodos de scan, o nmap oferece a opção de escolher "políticas", de modo a dificultar a detecção pelo IDS da máquina alvo. As opções são "Paranoid", "Sneaky", "Polite", "Normal", "Aggressive" ou "Insane".
+A opção "Paranoid" escaneia de 5 em 5 minutos cada porta, a "Sneaky", de 15 em 15 segundos e assim evoluindo.
+A vantagem do "scan" ser mais lento é que dificulta a descoberta pelo IDS da máquina alvo. A opção padrão é a normal.
+# nmap -T <Paranoid|Sneaky|Polite|Normal|Aggressive|Insane> alvo
+
+* -sO - É usado para tentar determinar os protocolos suportados pelo host;
+* -A - Verifica a porta e o serviço que está rodando. 
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+O Nmap pode ser instalado via apt-get:
+# apt-get install nmap
+
+Para usar todos os recursos do Nmap, você deve executá-lo como root. O uso mais simples é escanear diretamente uma máquina da rede, como em:
+# nmap 192.168.0.3
+
+Starting nmap 3.81 ( http://www.insecure.org/nmap/ )
+
+Interesting ports on 192.168.0.3:
+(The 1661 ports scanned but not shown below are in state: closed)
+
+PORT STATE SERVICE
+68/tcp open dhcpclient
+631/tcp open ipp
+MAC Address: 00:0F:B0:55:EE:16 (Compal Electronics)
+Nmap finished: 1 IP address (1 host up) scanned in 0.339 seconds
+
+Neste exemplo, o teste foi disparado contra uma máquina Linux, rodando uma instalação personalizada do Debian Sarge. As duas portas abertas são o cliente DHCP (é normal que a porta 68 fique aberta em clientes configurados via DHCP) e o servidor Cups, que escuta na porta 631. O Cups mantém esta porta aberta sempre que é ativado (você precisa dele para imprimir, tanto em compartilhamentos da rede, quanto em impressoras locais). Por padrão, ele permite apenas que o localhost imprima e acesse a interface de administração, mas é possível configurá-lo para compartilhar as impressoras com a rede de forma bem simples através do arquivo "/etc/cups/cupsd.conf".
+
+Nem o cliente DHCP nem o Cups permitem acesso via shell, por isso, salvo eventuais graves brechas de segurança, os ataques mais graves que poderiam ser lançados neste caso seriam tentar modificar a configuração de rede, tentando responder ao cliente DHCP no lugar do servidor DHCP da rede, ou tentar usar impressoras compartilhadas no Cups.
+
+O simples fato de uma determinada porta estar aberta, não significa que a máquina está vulnerável, mas apenas que existem serviços ativos e as portas não estão sendo bloqueadas por nenhum firewall.
+
+
+
+^^^^^^^^^^^^^^^^^^^^^^
+
+Por padrão, o Nmap escaneia apenas um conjunto de 1661 portas, que incluem as usadas pelos serviços mais comuns. Uma media de segurança comum é esconder serviços como o SSH em portas altas, de forma que eles sejam mais difíceis de detectar. Nesses casos, você pode fazer um scan completo, incluindo todas as portas TCP (ou UDP) usando a opção "-p 0-65535", como em:
+
+# nmap -sS -p 0-65535 192.168.0.4
+
+A opção "-p" pode ser usada para escanear apenas uma porta específica, ou uma faixa de portas em que esteja interessado.
+
+
+
+Tudo é muito simples quando a máquina alvo não possui nenhum firewall ativo. O scan é rápido e você pode lançar toda sorte de ataques sobre os serviços ativos. Mas, com um firewall ativo, as coisas tornam-se um pouco mais complicadas e demoradas. Um firewall configurado para descartar (DROP) todos os pacotes recebidos, faz com que o scan torne-se extremamente lento.
+Você pode forçar o Nmap a completar o teste, a fim de detectar serviços escondidos em portas altas usando o parâmetro "-P0", como em:
+# nmap -sS -P0 -p 0-65535 192.168.0.4
+O problema neste caso é que o scan demora muito mais que o normal, já que, por não receber respostas, ele precisa aguardar um tempo muito maior antes de passar para a porta seguinte. Um teste executado contra um micro na Internet, através de uma conexão lenta, pode literalmente demorar dias. Apesar de não responder, o micro remoto pode ser configurado para logar suas tentativas, permitindo que o administrador tome conhecimento e aja de acordo, bloqueando seu endereço IP ou contatando seu provedor de acesso. Um firewall bem configurado é realmente uma grande vantagem de segurança para qualquer servidor. 
+
+
+Explorando o TCP
+
+=============================[Introdução]=================================
+
+Oi pessoal, este fazendo este tutrial com a finalidade de mostrar como detectar e *tabelar um Firewall, mostrar os estilos de scan que podemos realizar e quais pacotes são enviados e recebidos.
+
+*Fazer uma lista das regras que estão inseridas em um Firewall.
+
+==============================[Scanners]=================================
+
+Daqui pra frente sera demonstrado as técnicas de varredura e explicando como cada uma funciona internamente. Para que não esta familiarizado com “handshake” eu recomendo que de uma estudada antes.
+
+==============================[TCP Connect]==============================
+
+É a forma mais básica de se realizar um scan (todo scan possuem esta opção). Uma vez que a porta esteja aberta o computador do atacante ira enviar um pacote SYN e terá que receber um SYN/ACK, em seguida enviar um ACK e um RST.
+
+Obs: Muitos scan (ruins) enviam o pacote SYN e o SYN/ACK, mas esquecem de fechar a coneção com um RST.
+Se a porta estiver fechada assim que for enviada um SYN ira receber um RST.
+
+Porta Aberta
+PC1 <———-<— SYN <———<—- PC2
+PC1 —–>——–> SYN/ACK ——–>—–> PC2
+PC1 <——<——- ACK< ————- PC2
+PC1 <——-<—— RST <————- PC2
+
+Porta Fechada
+PC1 <———<—- SYN <——-<—— PC2
+PC1 >——->—— RST >——->—— PC2
+
+Comando no nmap:
+nmap -sT IP
+
+===============================[TCP SYN]===============================
+Esta técnica é a que eu considero a melhor.
+O computador envia um SYN e recebe um SYN/ACK e imediatamente envia um RST (diferentemente do TCP Connect que envia um ACK)
+Esta técnica também é conhecida como Scan de meia coneção, pois ele não chega a realizar uma coneção completa com a porta.
+Se a porta estiver fechada assim que for enviada um SYN ira receber um RST.
+
+Porta Aberta
+PC1 <———-<— SYN <———<—- PC2
+PC1 —–>——–> SYN/ACK ——–>—–> PC2
+PC1 <——-<—— RST <————- PC2
+
+Porta Fechada
+PC1 <———<—- SYN <——-<—— PC2
+PC1 >——->—— RST >——->—— PC2
+Comando no nmap:
+nmap -sS IP
+
+===========================[TCP Xmax Tree]===============================
+A varredura Xmas Tree ou Arvore de Natal envia um SIN/URG/PSH, se não houver uma resposta a porta esta aberta, se receber um RST a porta esta fechada.
+
+Porta Aberta
+PC1 <———-<— FIN/URG/PSH <———<—- PC2
+PC1 —–>——–> Sem resposta ——–>—–> PC2
+
+Porta Fechada
+PC1 <———<—- FIN/URG/PSH <——-<—— PC2
+PC1 >——->—— RST >——->—— PC2
+Comando no nmap:
+nmap -sX IP
+
+===============================[TCP Null]================================
+Nesta varredura sera enviado uma flag nula (ativa), se não receber uma resposta a porta esta aberta, mas se receber um RST a porta estara fechada.
+
+Porta Aberta
+PC1 <———-<— Null <———<—- PC2
+PC1 —–>——–> Sem resposta ——–>—–> PC2
+
+Porta Fechada
+PC1 <———<—- Nulo <——-<—— PC2
+PC1 >——->—— RST >——->—— PC2
+
+Comando no nmap:
+nmap -sN
+
+===============================[TCP ACK]===============================
+
+Esta é uma varredura utilizada para detectar e tabelar Firewalls. Se for enviado um pacote ACK e tiver como resposta um RST a porta pode esta aberta ou fechada, se receber um ICMP Tipo 3 quer dizer que tem um firewall rejeitando os pacotes, e se não receber uma resposta o Firewall estará negando.
+
+Porta Aberta ou Fechada
+PC1 <———<—- ACK <——-<—— PC2
+PC1 >——->—— RST >——->—— PC2
+
+Firewall Rejeitando
+PC1 <———<—- ACK <——-<—— PC2
+PC1 >——->—— ICMP Tipo 3 >——->—— PC2
+
+Firewall Negando
+PC1 <———<—- ACK <——-<—— PC2
+PC1 >——->—— Sem Resposta >——->—— PC2
+
+Comando no nmap:
+nmap -sA IP
+
+=============================[TCP FIN/ACK]==============================
+Idem ao TCP ACK. Se for enviado um pacote FIN/ACK e tiver como resposta um RST a porta pode esta aberta ou fechada, se receber um ICMP Tipo 3 quer dizer que tem um firewall rejeitando os pacotes, e se não receber uma resposta o Firewall estará negando.
+
+Porta Aberta ou Fechada
+PC1 <———<—- FIN/ACK <——-<—— PC2
+PC1 >——->—— RST >——->—— PC2
+
+Firewall Rejeitando
+PC1 <———<—- FIN/ACK <——-<—— PC2
+PC1 >——->—— ICMP Tipo 3 >——->—— PC2
+
+Firewall Negando
+PC1 <———<—- FIN/ACK <——-<—— PC2
+PC1 >——->—— Sem Resposta >——->—— PC2
+
+=============================[Mais detalhes]===============================
+Varredura Porta aberta Porta fechada
+TCP SYN SYN/ACK RST
+TCP Connect SYN/ACK RST
+TCP FIN/URG/PSH Sem resposta RST
+TCP Null Sem resposta RST
+
+Para detecção de Firewalls
+Varredura Porta aberta Porta fechada Rejeitando Negando
+TCP ACK RST RST ICMP 3 S/Resposta
+TCP FIN/ACK RST RST ICMP 3 S/Resposta
+TCP SYN/ACK RST RST ICMP 3 S/Resposta
+
+===============================[FIM]===================================
+Espero que tenham gostado, até a proxima.
+

@@ -1,0 +1,35 @@
+The job of a driver is writing and reading I/O ports and I/O memory.
+
+device driver should be guaranteed exclusive access to its I/O regions in order to prevent interference from other drivers.
+# cat /proc/ioports
+# cat /proc/iomem
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+/lib/modules/2.6.28-11-generic/modules.dep
+module dependencies
+
+msdos.ko depende de fat.ko
+
+insmod /lib/modules/2.6.28-11-generic/kernel/fs/fat/fat.ko
+insmod /lib/modules/2.6.28-11-generic/kernel/fs/msdos/msdos.ko
+
+or:
+
+modprobe msdos
+
+modprobe, insmod and depmod belong to package called module-init-tools
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+sudo cat /proc/modules
+3rd field is how many processes are using the module
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+modinfo ath9k
+
+parm show parameters send to drive.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+

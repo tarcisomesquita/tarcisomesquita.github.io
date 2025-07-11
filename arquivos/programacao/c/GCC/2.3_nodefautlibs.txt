@@ -1,0 +1,16 @@
+-nostdinc
+   Do not search the standard system directories for header files.
+   Only the directories you have specified with -I options (and the directory of the current file, if appropriate) are searched.
+
+-nostartfiles
+   Do not use the standard system startup files when linking.
+   The standard system libraries are used normally.
+
+-nodefaultlibs
+   Do not use the standard system libraries when linking.
+   Only the libraries you specify will be passed to the linker.
+   The standard startup files are used normally.
+
+-nostdlib
+   Do not use the standard system startup files or libraries when linking.
+

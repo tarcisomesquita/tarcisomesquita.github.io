@@ -1,0 +1,7 @@
+
+O beacon é um frame de sincronismo enviado periodicamente pelo ponto de acesso.
+(msec, range: 1~65535, default: 100)
+
+Se o beacon é mais freqüente, a latência da transmissão será menor, já que os dados ficarão menos tempo parados no buffer do access point, mas em compensação a placa na estação consumirá mais energia
+um intervalo muito curto também reduz sutilmente a taxa de transmissão da rede e aumenta a estabilidade.
+

@@ -1,0 +1,73 @@
+initctl(8)
+
+SYNOPSIS
+initctl [OPTION]... COMMAND [OPTION]... ARG...
+
+DESCRIPTION
+initctl allows a system administrator to communication with the init(8) daemon and perform various actions depending on COMMAND.
+
+OPTIONS
+--show-ids
+   This option causes all commands to output id of jobs and events, in addition to their name.
+   Ex.: sudo initctl list --show-ids
+
+--by-id
+   accept the job id as argument
+   Applies to the start, stop and status commands.
+
+--no-wait
+   Return without waiting jobs or events to be started, stopped or finished.
+   Applies to the start, stop and emit commands.
+
+--quiet
+   Reduces output of all commands to errors only.
+
+COMMANDS
+start JOB...
+   Requests that the named jobs be started.
+   Ex.: sudo initctl start tty2
+   Veja os jobs em /etc/event.d/
+
+stop JOB...
+   Requests that the named jobs be stopped. The status of the jobs will be output to standard output until they are successfully stopped.
+   When called without an instance job, all instances will be stopped.
+   Ex.: sudo initctl stop tty2
+
+status JOB...
+   Requests the status of the named jobs.
+   Ex.: sudo initctl status tty6 tty1
+
+list [PATTERN]
+   Requests a list of the known jobs and their statuses.
+   PATTERN may contain the usual shell wildcard and glob characters, if omitted all known jobs are returned.
+   Ex.: sudo initctl list 'tt*'
+
+emit EVENT
+   Requests that the named event be emitted, potentially causing jobs to be started and stopped.
+   The event information is  output  once  handling begins followed by each job status changed caused by the event until handling is finished.
+
+     fstab-device-added hda1
+         FSTAB_FSNAME=/dev/hda1
+         FSTAB_DIR=/
+         FSTAB_TYPE=ext3
+         FSTAB_OPTS=default
+
+   The  event  name  is  given first followed by each argument to the event separated by a space.
+   Consecutive lines are indented and give the environment variables passed to any job changed by the event.
+
+jobs
+   Requests notification of all job state changes be sent to the process, which remains in the foreground until terminated.
+
+events
+   Requests notification of all generated events be sent to the process, which remains in the foreground until terminated.
+
+version
+   Requests and outputs the version of the running init daemon.
+
+log-priority PRIORITY
+   Changes the minimum priority of messages logged by the init daemon.
+   PRIORITY may be one of debug, info, message, warn, error or fatal.
+
+Upstart
+March 2007
+

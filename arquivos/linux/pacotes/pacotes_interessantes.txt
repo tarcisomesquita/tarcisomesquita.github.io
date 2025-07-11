@@ -1,0 +1,11 @@
+build-essential
+ffmpeg
+mysql-server
+virtualbox
+wine
+youtube-dl
+xclip
+xdotool
+
+poppler-utils
+pdfgrep

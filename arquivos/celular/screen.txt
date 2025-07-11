@@ -1,0 +1,5 @@
+adb shell screencap -p > screen2.png
+adb shell screencap /sdcard/screen.png
+
+adb shell /system/bin/screenrecord  --bit-rate 500000 --time-limit 5 /sdcard/teste.mp4
+

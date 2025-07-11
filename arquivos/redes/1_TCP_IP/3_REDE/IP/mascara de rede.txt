@@ -1,0 +1,11 @@
+
+Máscara: 255.255.255.240 
+
+240-255 = 16 endereços = 14 disponíveis para equipamentos + (1 endereço da subrede (o primeiro) + 1 endereço de broadcast (o último))
+
+240 = 0xF0 = 1111 0000
+
+252 = 0xFC = 1111 1100 > tem 2 endereços disponíveis para equipamentos
+
+você pode tanto escrever a máscara por extenso, como em "192.168.0.0/255.255.255.0", quanto escrever usado a notação abreviada, como em "192.168.0.0/24".
+

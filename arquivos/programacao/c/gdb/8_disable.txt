@@ -1,0 +1,16 @@
+
+Disable some breakpoints.
+
+Arguments are breakpoint numbers with spaces in between.
+
+To disable all breakpoints, give no argument.
+
+A disabled breakpoint is not forgotten, but has no effect until reenabled.
+
+List of disable subcommands:
+
+disable breakpoints -- Disable some breakpoints
+disable display -- Disable some expressions to be displayed when program stops
+disable mem -- Disable memory region
+disable tracepoints -- Disable specified tracepoints
+

@@ -1,0 +1,68 @@
+// Override the onload event
+window.onload = function() {
+  console.log("hello from func1");
+}
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// objeto
+
+const obj1 = {firstname:"Joana", lastname:"Mit", age:40, eyecolor:"green"};
+for (let key in obj1) {console.log(`${key}:${obj1[key]}`)}
+console.log(Object.keys(obj1));
+
+const nn = { 'name': 'nn', 'nome': function() {return this.name}}
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// key types
+
+const meuObj = {}, str = 'minhaString', aleat = Math.random(), obj = {};
+
+meuObj.tipo               = "Sintaxe de ponto";
+meuObj["data de criacao"] = "String com espaco";
+meuObj[str]               = "valor de String";
+meuObj[aleat]             = "Numero Aleatorio";
+meuObj[obj]               = "Objeto";
+meuObj[""]                = "Mesmo uma string vazia";
+
+console.log(JSON.stringify(meuObj));
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// function, new, this, prototype, delete
+
+// não cria window.myname.
+(function() { let myname = 'doo'; console.log(myname);})();
+
+function person(firstname,lastname,age,eyecolor) {
+   this.firstname = firstname;
+   this.lastname = lastname;
+   this.age = age;
+   this.eyecolor = eyecolor;
+   
+   this.newlastname = newlastname;
+}
+
+function newlastname(new_lastname) {
+   this.lastname = new_lastname;
+}
+
+const personObj3 = new person("Sally","Rally",48,"green");
+personObj3.newlastname("Doe");
+
+delete personObj3.age;                      // remove um atributo
+personObj3.nascimento = "Nov 23, 1975 GMT"; // adiciona um novo atributo
+delete personObj3;                          // remove o Objeto inteiro // FALHOU
+
+// para adicionar propriedades e métodos a objetos já existentes precisamos usar o objeto prototype
+// Aqui apenas personObj3 é instância do objeto person, mas se tivesse muitas instâncias, com prototype todas elas seriam atualizadas
+person.prototype.outro = function (pessoa) {
+   this.nome = pessoa;
+}
+personObj3.outro("Paulo");
+
+
+String.prototype.first = function() {
+   if(this.length > 1) return this.charAt(0);
+   return '';
+};
+console.log('Test'.first());
+

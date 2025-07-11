@@ -1,0 +1,80 @@
+strace -f -v -s 500 bash -c 'echo -e "GET / HTTP/1.1\n" | nc -vv -n 189.111.165.55 80' > teste.txt 2>&1
+
+execve("/bin/bash", ["bash", "-c", "echo -e \"GET / HTTP/1.1\\n\" | nc -vv -n 189.111.165.55 80"], ["ORBIT_SOCKETDIR=/tmp/orbit-ubuntu", "SSH_AGENT_PID=4998", "GPG_AGENT_INFO=/tmp/seahorse-fwK5UW/S.gpg-agent:5021:1", "TERM=xterm", "SHELL=/bin/bash", "XDG_SESSION_COOKIE=7403443dc9d5c07c6acd67515235c8ad-1379256501.181433-1490096756", "GTK_RC_FILES=/etc/gtk/gtkrc:/home/ubuntu/.gtkrc-1.2-gnome2", "WINDOWID=23068819", "GTK_MODULES=canberra-gtk-module", "USER=ubuntu", "LS_COLORS=no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.svgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:"..., "GNOME_KEYRING_SOCKET=/tmp/keyring-uPLU5v/socket", "SSH_AUTH_SOCK=/tmp/keyring-uPLU5v/socket.ssh", "SESSION_MANAGER=local/ubuntu:/tmp/.ICE-unix/4770", "USERNAME=ubuntu", "DESKTOP_SESSION=default.desktop", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/media/SD/so_android/android-sdk-linux_x86/platform-tools:/media/SD/so_android/android-sdk-linux_x86/tools:/media/SD/pacotes/jdk1.6.0_26/bin:/media/SD/so_android/apache-ant-1.8.2/bin", "GDM_XSERVER_LOCATION=local", "PWD=/home/ubuntu/Desktop", "LANG=pt_BR.UTF-8", "GDM_LANG=pt_BR.UTF-8", "GDMSESSION=default.desktop", "HISTCONTROL=ignoreboth", "SHLVL=1", "HOME=/home/ubuntu", "GNOME_DESKTOP_SESSION_ID=this-is-deprecated", "LOGNAME=ubuntu", "XDG_DATA_DIRS=/usr/local/share/:/usr/share/:/usr/share/gdm/", "DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-ZqKnl48ngf,guid=ab3c94727af8264c8cae327e5235c8b5", "LESSOPEN=| /usr/bin/lesspipe %s", "WINDOWPATH=7", "DISPLAY=:0.0", "LESSCLOSE=/usr/bin/lesspipe %s %s", "RUNNING_UNDER_GDM=yes", "XAUTHORITY=/home/ubuntu/.Xauthority", "COLORTERM=gnome-terminal", "_=/usr/bin/strace"]) = 0
+
+pipe([3, 4])                            = 0
+
+rt_sigprocmask(SIG_BLOCK, [INT CHLD], [CHLD], 8) = 0
+clone(Process 22158 attached
+child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0xb7e68708) = 22158
+[pid 22158] rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+
+[pid 22158] dup2(4, 1)                  = 1
+[pid 22158] close(4)                    = 0
+
+[pid 22159] rt_sigaction(SIGTSTP, {SIG_DFL},  <unfinished ...>
+[pid 22158] write(1, "GET / HTTP/1.1\n"..., 15 <unfinished ...>
+[pid 22159] <... rt_sigaction resumed> {SIG_DFL}, 8) = 0
+[pid 22158] <... write resumed> )       = 15
+[pid 22159] rt_sigaction(SIGTTIN, {SIG_DFL},  <unfinished ...>
+[pid 22158] write(1, "\n"..., 1 <unfinished ...>
+[pid 22159] <... rt_sigaction resumed> {SIG_DFL}, 8) = 0
+[pid 22158] <... write resumed> )       = 1
+[pid 22159] rt_sigaction(SIGTTOU, {SIG_DFL}, {SIG_DFL}, 8) = 0
+[pid 22159] dup2(3, 0 <unfinished ...>
+[pid 22158] exit_group(0)               = ?
+Process 22158 detached
+
+[pid 22159] <... dup2 resumed> )        = 0
+
+[pid 22159] rt_sigaction(SIGINT, {SIG_DFL}, {SIG_DFL}, 8) = 0
+[pid 22159] rt_sigaction(SIGQUIT, {SIG_DFL}, {SIG_IGN}, 8) = 0
+[pid 22159] rt_sigaction(SIGCHLD, {SIG_DFL}, {0x807fe90, [], 0}, 8) = 0
+[pid 22159] execve("/bin/nc", ["nc", "-vv", "-n", "189.111.165.55", "80"], ["ORBIT_SOCKETDIR=/tmp/orbit-ubuntu", "SSH_AGENT_PID=4998", "GPG_AGENT_INFO=/tmp/seahorse-fwK5UW/S.gpg-agent:5021:1", "SHELL=/bin/bash", "TERM=xterm", "XDG_SESSION_COOKIE=7403443dc9d5c07c6acd67515235c8ad-1379256501.181433-1490096756", "GTK_RC_FILES=/etc/gtk/gtkrc:/home/ubuntu/.gtkrc-1.2-gnome2", "WINDOWID=23068819", "GTK_MODULES=canberra-gtk-module", "USER=ubuntu", "LS_COLORS=no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.svgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:"..., "SSH_AUTH_SOCK=/tmp/keyring-uPLU5v/socket.ssh", "GNOME_KEYRING_SOCKET=/tmp/keyring-uPLU5v/socket", "USERNAME=ubuntu", "SESSION_MANAGER=local/ubuntu:/tmp/.ICE-unix/4770", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/media/SD/so_android/android-sdk-linux_x86/platform-tools:/media/SD/so_android/android-sdk-linux_x86/tools:/media/SD/pacotes/jdk1.6.0_26/bin:/media/SD/so_android/apache-ant-1.8.2/bin", "DESKTOP_SESSION=default.desktop", "GDM_XSERVER_LOCATION=local", "PWD=/home/ubuntu/Desktop", "LANG=pt_BR.UTF-8", "GDM_LANG=pt_BR.UTF-8", "GDMSESSION=default.desktop", "HISTCONTROL=ignoreboth", "HOME=/home/ubuntu", "SHLVL=2", "GNOME_DESKTOP_SESSION_ID=this-is-deprecated", "LOGNAME=ubuntu", "DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-ZqKnl48ngf,guid=ab3c94727af8264c8cae327e5235c8b5", "XDG_DATA_DIRS=/usr/local/share/:/usr/share/:/usr/share/gdm/", "LESSOPEN=| /usr/bin/lesspipe %s", "WINDOWPATH=7", "DISPLAY=:0.0", "RUNNING_UNDER_GDM=yes", "LESSCLOSE=/usr/bin/lesspipe %s %s", "COLORTERM=gnome-terminal", "XAUTHORITY=/home/ubuntu/.Xauthority", "_=/bin/nc"] <unfinished ...>
+
+[pid 22157] waitpid(-1,  <unfinished ...>
+[pid 22157] waitpid(-1, Process 22157 suspended
+ <unfinished ...>
+
+[pid 22159] socket(PF_INET, SOCK_STREAM, IPPROTO_TCP) = 3
+[pid 22159] setsockopt(3, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
+[pid 22159] rt_sigaction(SIGALRM, {SIG_IGN}, {SIG_DFL}, 8) = 0
+[pid 22159] alarm(0)                    = 0
+[pid 22159] rt_sigprocmask(SIG_BLOCK, NULL, [], 8) = 0
+[pid 22159] connect(3, {sa_family=AF_INET, sin_port=htons(80), sin_addr=inet_addr("189.111.165.55")}, 16) = 0
+[pid 22159] rt_sigaction(SIGALRM, {SIG_IGN}, {SIG_IGN}, 8) = 0
+[pid 22159] alarm(0)                    = 0
+[pid 22159] write(2, "(UNKNOWN) [189.111.165.55] 80 (www) open"..., 40(UNKNOWN) [189.111.165.55] 80 (www) open) = 40
+[pid 22159] write(2, "\n"..., 1
+)        = 1
+[pid 22159] select(4, [0 3], NULL, NULL, NULL) = 1 (in [0])
+[pid 22159] read(0, "GET / HTTP/1.1\n\n"..., 8192) = 16
+[pid 22159] write(3, "GET / HTTP/1.1\n\n"..., 16) = 16
+[pid 22159] select(4, [0 3], NULL, NULL, NULL) = 1 (in [0])
+[pid 22159] read(0, ""..., 8192)        = 0
+[pid 22159] close(0)                    = 0
+[pid 22159] select(4, [3], NULL, NULL, NULL) = 1 (in [3])
+[pid 22159] read(3, "HTTP/1.0 200 OK\n\n"..., 8192) = 17
+[pid 22159] write(1, "HTTP/1.0 200 OK\n\n"..., 17HTTP/1.0 200 OK
+
+) = 17
+[pid 22159] select(4, [3], NULL, NULL, NULL) = 1 (in [3])
+[pid 22159] read(3, "<html>\n<head>\n...) = 450
+[pid 22159] select(4, [3], NULL, NULL, NULL) = 1 (in [3])
+[pid 22159] read(3, ""..., 8192)        = 0
+[pid 22159] close(3)                    = 0
+[pid 22159] write(2, " sent 16, rcvd 1907"..., 19 sent 16, rcvd 1907) = 19
+[pid 22159] write(2, "\n"..., 1
+)        = 1
+[pid 22159] exit_group(0)               = ?
+Process 22157 resumed
+Process 22159 detached
+<... waitpid resumed> [{WIFEXITED(s) && WEXITSTATUS(s) == 0}], 0) = 22159
+rt_sigprocmask(SIG_SETMASK, [CHLD], NULL, 8) = 0
+rt_sigaction(SIGINT, {SIG_DFL}, {0x8080ac0, [], 0}, 8) = 0
+close(3)                                = -1 EBADF (Bad file descriptor)
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+--- SIGCHLD (Child exited) @ 0 (0) ---
+waitpid(-1, 0xbfe2fc38, WNOHANG)        = -1 ECHILD (No child processes)
+sigreturn()                             = ? (mask now [])
+exit_group(0)                           = ?

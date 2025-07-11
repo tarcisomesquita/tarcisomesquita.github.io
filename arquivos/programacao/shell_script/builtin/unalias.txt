@@ -1,0 +1,5 @@
+
+unalias [-a] [name]
+
+If name is specified, the shell removes that alias.  If -a is specified, all aliases are removed.
+

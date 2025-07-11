@@ -1,0 +1,13 @@
+aboot.mbn:         ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), statically linked, stripped
+boot.img:          Android bootimg, kernel, ramdisk, page size: 2048, cmdline (console=null androidboot.hardware=qcom user_debug=23 msm_rtb.filter=0x3F ehci-hcd.park=3 androi)
+cache.img.ext4:    Android sparse image, version: 1.0, Total of 51200 4096-byte output blocks in 16 input chunks.
+hidden.img.ext4:   Android sparse image, version: 1.0, Total of 15360 4096-byte output blocks in 17 input chunks.
+hyp.mbn:           ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), statically linked, stripped
+modem.bin:         DOS/MBR boot sector, code offset 0x3c+2, OEM-ID "MSDOS5.0", sectors/cluster 32, root entries 512, Media descriptor 0xf8, sectors/FAT 17, sectors/track 63, heads 255, sectors 131072 (volumes > 32 MB), serial number 0xbc614e, unlabeled, FAT (16 bit)
+NON-HLOS.bin:      DOS/MBR boot sector, code offset 0x3c+2, OEM-ID "MSDOS5.0", sectors/cluster 32, root entries 512, Media descriptor 0xf8, sectors/FAT 17, sectors/track 63, heads 255, sectors 131072 (volumes > 32 MB), serial number 0xbc614e, unlabeled, FAT (16 bit)
+recovery.img:      Android bootimg, kernel, ramdisk, page size: 2048, cmdline (console=null androidboot.hardware=qcom user_debug=23 msm_rtb.filter=0x3F ehci-hcd.park=3 androi)
+rpm.mbn:           ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), statically linked, stripped
+sbl1.mbn:          ELF 32-bit LSB executable, ARM, EABI5 version 1 (SYSV), statically linked, stripped
+system.img.ext4:   Android sparse image, version: 1.0, Total of 768000 4096-byte output blocks in 3747 input chunks.
+tz.mbn:            ELF 64-bit LSB executable, ARM, version 1 (SYSV), statically linked, stripped
+

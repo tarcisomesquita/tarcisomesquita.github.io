@@ -1,0 +1,325 @@
+priority:
+1. Browser default
+2. External style sheet
+3. Internal style sheet (in the head section)
+4. Inline style (inside an HTML element)
+
+|margin|border|padding|content|padding|border|margin|
+
+em um arquivo file.css vai tudo o que há entre <style> e </style>
+@import "threepart.css";
+
+syntax:
+<style type="text/css">
+selector1 {
+property1: value;
+property2: value;
+}
+
+selector2 {
+property1: value;
+property2: value;
+}
+</style>
+
+seletor
+tag:pseudo-class.class  tag[, tag:pseudo-class.class  tag]
+
+#id-seletor (for an unique element)
+.class-seletor (for various elements)
+ex.:
+.center {text-align:center;}
+p.center {text-align:center;}  (only for <p class="center">)
+.center p {text-align:center;}  (only for <p class="center">)
+
+
+properties
+background: [white|rgb(225, 239, 187)|#e1efbb] url('img_flwr.png') [no-repeat|repeat-x|repeat-y] scroll right [bottom|top];
+background-attachment:
+background-color: #d8da3d;
+background-image:url("images/back40.gif");
+background:url(data:image/gif;base64,R0lGODlhBwAHAJEAAP9uQf///wAAAAAAACH5BAkKAAIALAAAAAAHAAcAAAILFH6Ge8EBH2MKiQIAOw==);
+background:url(//s7.addthis.com/static/5119f292818e4bf19645a6e2061218f4.png)
+background-position: right top;
+background-repeat: no-repeat;
+border: thin dotted;
+border-bottom-style:dotted;
+border-collapse: collapse;
+border-color: [blue|purple|etc];
+border-left-style:solid;
+border-right: 1em solid black;
+border-right-style:solid;
+border-style: [dashed|double|dotted|groove|inset|outset|ridge|solid];
+border-top: thin dashed blue;
+border-top-color: blue;
+border-top-style: dotted;
+border-top-width: thin;
+border-width: [thin|medium|1px|etc];
+bottom: 10px;
+clear: [both|inherit|left|none|right]; not allow wrap text
+clip: [auto|inherit|shape];
+color: [blue|purple|etc]; text color
+cue: url(ting.mp3);
+cursor: [auto|crosshair|default|e-resize|help|pointer|move|n-resize|ne-resize|nw-resize|s-resize|se-resize|sw-resize|text|url|wait|w-resize];
+direction: ; 	Specifies the text direction/writing direction
+display: [block|inline|none];
+filter:alpha(opacity=60); deixa a imagem ou box transparente
+float: [left|inherit|none|right];   allow wrap text
+font:14pt verdana;
+font-family: Arial, Geneva, Helvetica, sans-serif, serif, SunSans-Regular, Times, "Times New Roman";
+font-size: [15px|15pt|1.875em|100%];  "em" unit is recommended by the W3C, 1em = current font size. default 1em = 16px
+font-style: [italic|normal|oblique];
+font-variant: ;
+font-weight: bold;
+height: 30em
+left: 1em;
+letter-spacing: ; 	Increases or decreases the space between characters in a text
+line-height: ; 	Sets the line height
+list-style: square url("sqpurple.gif");
+list-style-image: url('sqpurple.gif');
+list-style-type: [circle|lower-alpha|none|square|upper-roman];
+margin: [0px|auto|0%|10cm|inherit];
+margin-bottom:100px;
+margin-left: 20px;
+margin-right:50px;
+margin-top: 1em;
+[max|min]-height: [none|10px|10%|inherit];
+[max|min]-width: [none|10px|10%|inherit];
+opacity: 0.6; deixa a imagem ou box transparente
+outline: ; /*É um espaço fora das bordas que não é contado no tamanho da caixa*/
+outline-color: [color_name|hex_number|rgb_number|invert|inherit];
+outline-style: [none|dotted|dashed|solid|double|groove|ridge|inset|outset|inherit];
+outline-width: [thin|medium|thick|length|inherit]
+overflow: [auto|hidden|inherit|scroll|visible];
+padding: [0px|10%];
+padding-[bottom|left|right|top]: 11em;
+position: [absolute|fixed|relative|static];
+text-align: [center|justify|left|right];
+right: 10px;
+text-decoration: [blink|line-through|none|overline|underline];
+text-indent: 50px;  indentation of the first line of a text
+text-shadow 	Specifies the shadow effect added to text
+text-transform: [capitalize|lowercase|uppercase];
+top: 2em;
+vertical-align: [baseline | sub | super | text-top | text-bottom | middle | top | bottom | <percentage> | <length>]
+visibility: [hidden|visible];
+width: 9em;
+white-space: [nowrap | normal];  Specifies how white-space inside an element is handled.
+word-spacing: 0px; 	Increases or decreases the space between words in a text
+z-index:-1;  sobrepõe mostrando o de maior valor
+
+
+a:link {color:#FF0000; text-decoration: none;}      /* unvisited link */
+a:visited {color:#00FF00;}  /* visited link */
+a:hover {color:#FF00FF;}  /* mouse over link */
+a:active {color:#0000FF;}  /* selected link */ 
+input:focus  	Selects the input element which has focus
+p:first-letter 	Selects the first letter of every <p> element
+p:first-line 	Selects the first line of every <p> element
+p:first-child 	Selects every <p> elements that is the first child of its parent
+p:before 	Insert content before every <p> element
+p:after 	Insert content after every <p> element
+
+<style type="text/css">
+a:link {
+   color: blue;
+}
+
+a:visited {
+   color: purple;
+}
+
+address {
+   border-top: thin dotted;
+   margin-top: 1em;
+   padding-top: 1em;
+}
+
+ul.navbar a {
+   text-decoration: none;
+}
+
+ul.navbar li {
+   background: white;
+   margin: 0.5em 0;
+   padding: 0.3em;
+   border-right: 1em solid black;
+}
+
+.destaque {
+   color: #ff0000;
+}
+</style>
+
+<span class="destaque">...</span> , quando precisar realçar alguma palavra.
+
+<style type="text/css">
+<!--
+.style1 {
+  font-family: verdana;
+  font-size: 15px;
+  font-weight: bold;
+  color: #FF0000;
+}
+#sombra_1 {
+  width:10px;
+  height:100%;
+  background-image:url(images/sombra.jpg);
+  background-repeat:repeat-y;
+}
+-->
+</style>
+<TD id="sombra_2" width="10">&nbsp;</TD>
+
+margin-left: 0px;
+margin-top: 0px;
+margin-right: 0px;
+margin-bottom: 0px;
+width:10px;
+height:100%;
+font-family: verdana;
+font-size: 15px;
+font-weight: bold;
+color: #FF0000;
+
+<style type="text/css">
+<!--
+a:link {
+   text-decoration:none;
+   color:#000000;
+}
+a:visited {
+   text-decoration:none;
+   color:#000000;
+}
+a:hover {
+   text-decoration:underline;
+   color:#000000;
+}
+a:active {
+   text-decoration:none;
+   color:#000000;
+}
+-->
+</style>
+
+body {
+  background:#FFFFFF;
+  font-size:1.25ex;
+  font-family:arial,helvetica,freesans,sans-serif;
+  margin:5px 0px 5px 5px;
+}
+html>body {
+  background:#FFFFFF;
+  font:x-small arial,helvetica,freesans,sans-serif;
+  margin:5px 0px 5px 5px;
+  padding:0;
+}
+a {
+  text-decoration:none;
+  display:block;
+  color:#000000;
+  font-weight:normal;
+  font-family:arial,freesans,helvetica,sans-serif;
+}
+* {
+  padding:0;
+  margin:0;
+}
+#menu {
+  width:14.2em;
+  border-top:1px solid red;
+  background-color:#CCCCCC;
+  position:absolute;
+  top:0;
+  left:0;
+  font-family:verdana,arial,freesans,helvetica;
+}
+#menu ul {
+  background-color:#CCCCCC; /*Cor de background*/
+}
+#menu ul li {
+  border-bottom:1px solid #333333; /*Cor da borda*/
+  list-style:none;
+  _height:2em;
+}
+#menu ul li a {
+  color:#000000; /*Cor do Texto*/
+  height:1%;
+  padding:0.3em 0.5em;
+  font-family:verdana,arial,freesans,helvetica;
+}
+#menu ul li a {
+  padding:0.4em 0.5em;
+}
+#menu ul li a:hover {
+  background-color:#666666; /*Cor de Fundo quando selecionado*/
+}
+#menu dl {
+  margin:1em 0 0.5em 1em;
+  padding-bottom:1px;
+  font-family:arial;
+}
+#menu dl dd.diff {
+  background:transparent;
+  padding-left:0px;
+}
+#menu .rel {
+  height:1.7em;
+  padding-top:0.4em;
+}
+#menu .e, #menu .d {
+  display:inline;
+}
+</style>
+
+<!-- inicio do código para mudar a cor da barra-->
+<style type="text/css">
+body {
+  scrollbar-face-color:#666666;
+  scrollbar-shadow-color: #333333;
+  scrollbar-highlight-color: #8c96a5;
+  scrollbar-3dlight-color: #333333;
+  scrollbar-darkshadow-color: #333333;
+  scrollbar-track-color: #999999;
+  scrollbar-arrow-color: #e7e7ef;
+}
+</style>
+<!-- fim do código para mudar a cor da barra-->
+
+
+<style>
+@media screen   /*somente para tela*/
+  {
+  p.test {font-family:verdana,sans-serif;font-size:14px;}
+  }
+@media print  /*somente para impressão em papel*/
+  {
+  p.test {font-family:times,serif;font-size:10px;}
+  }
+@media screen,print
+  {
+  p.test {font-weight:bold;}
+  }
+</style>
+
+all  	Used for all media type devices
+handheld 	Used for small or handheld devices
+print 	Used for printers
+projection 	Used for projected presentations, like slides
+screen 	Used for computer screens
+tv 	Used for television-type devices
+
+
+input[type="text"]
+{
+width:150px;
+display:block;
+margin-bottom:10px;
+background-color:yellow;
+}
+
+[title~=hello] { color:blue; } The example below styles all elements with a title attribute that contains a specified value. This works even if the attribute has space separated values
+
+
+

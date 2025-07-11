@@ -1,0 +1,60 @@
+struct arpreq {
+ struct sockaddr arp_pa;      /* protocol address */
+ struct sockaddr arp_ha;      /* hardware address */
+ int             arp_flags;   /* flags */
+ struct sockaddr arp_netmask; /* netmask of protocol address */
+ char            arp_dev[16];
+};
+
+SIOCSARP, SIOCDARP and SIOCGARP respectively set, delete and get an ARP mapping.
+
+arp_pa must be an AF_INET address and arp_ha must have the same type as the device which is specified  in  arp_dev.
+arp_dev is a zero-terminated string which names a device.
+
+┌─────────────────────────────────────┐
+│             arp_flags               │
+├────────────────┬────────────────────┤
+│flag            │ meaning            │
+├────────────────┼────────────────────┤
+│ATF_COM         │ Lookup complete    │
+├────────────────┼────────────────────┤
+│ATF_PERM        │ Permanent entry    │
+├────────────────┼────────────────────┤
+│ATF_PUBL        │ Publish entry      │
+├────────────────┼────────────────────┤
+│ATF_USETRAILERS │ Trailers requested │
+├────────────────┼────────────────────┤
+│ATF_NETMASK     │ Use a netmask      │
+├────────────────┼────────────────────┤
+│ATF_DONTPUB     │ Don't answer       │
+└────────────────┴────────────────────┘
+
+
+/proc/sys/net/ipv4/neigh/enp7s0/gc_interval
+How frequently the garbage collector for neighbor entries should attempt to run. Defaults to 30 seconds.
+
+/proc/sys/net/ipv4/neigh/enp7s0/gc_thresh1 (since Linux 2.2)
+The minimum number of entries to keep in the ARP cache. The garbage collector will not run if there are fewer than this number of entries in the cache. Defaults to 128.
+
+
+delay_first_probe_time (since Linux 2.2)
+Delay before first probe after it has been decided that a neighbor is stale. Defaults to 5 seconds.
+
+
+gc_thresh2 (since Linux 2.2)
+The soft maximum number of entries to keep in the ARP cache. The garbage collector will allow the number of entries to exceed this for 5 seconds before collection will be performed. Defaults to 512.
+
+
+gc_thresh3 (since Linux 2.2)
+The hard maximum number of entries to keep in the ARP cache. The garbage collector will always run if there are more than this number of entries in the cache. Defaults to 1024.
+
+locktime (since Linux 2.2)
+The minimum number of jiffies to keep an ARP entry in the cache. This prevents ARP cache thrashing if there is more than one potential mapping (generally due to network misconfiguration). Defaults to 1 second.
+
+
+/proc/sys/net/ipv4/neigh/enp7s0/proxy_delay
+When an ARP request for a known proxy-ARP address is received, delay up to proxy_delay jiffies before replying. This is used to prevent network flooding in some cases. Defaults to 0.8 seconds.
+
+
+Once a neighbor has been found, the entry is considered to be valid for Defaults to 30000 milliseconds.
+

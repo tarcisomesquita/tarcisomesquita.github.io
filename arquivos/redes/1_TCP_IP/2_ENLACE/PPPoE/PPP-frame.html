@@ -1,0 +1,96 @@
+<html>
+<span class="mw-headline" id="Structure_of_a_PPP_frame">Structure of a PPP frame</span> <span class="mw-editsection">[<a href="/w/index.php?title=Point-to-point_protocol&amp;action=edit&amp;section=7" title="Edit section: Structure of a PPP frame">edit</a>]</span></h3>
+<table class="wikitable" border="1" cellpadding="2" cellspacing="0">
+<tbody><tr>
+<th>Name</th>
+<th>Number of bytes</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>Protocol</td>
+<td>1 or 2</td>
+<td>setting of protocol in data field</td>
+</tr>
+<tr>
+<td>Information</td>
+<td>variable (0 or more)</td>
+<td>datagram</td>
+</tr>
+<tr>
+<td>Padding</td>
+<td>variable (0 or more)</td>
+<td>optional padding</td>
+</tr>
+</tbody></table>
+<p>The Protocol field indicates the type of payload packet (e.g. <a href="/wiki/Link_Control_Protocol" title="Link Control Protocol" class="mw-redirect">LCP</a>, <a href="/wiki/Network_Control_Protocol" title="Network Control Protocol">NCP</a>, <a href="/wiki/Internet_Protocol" title="Internet Protocol">IP</a>, <a href="/wiki/IPX" title="IPX" class="mw-redirect">IPX</a>, <a href="/wiki/AppleTalk" title="AppleTalk">AppleTalk</a>, etc.).</p>
+<p>The Information field contains the PPP payload; it has a variable length with a negotiated maximum called the <a href="/wiki/Maximum_Transmission_Unit" title="Maximum Transmission Unit" class="mw-redirect">Maximum Transmission Unit</a>. By default, the maximum is 1500 <a href="/wiki/Octet_(computing)" title="Octet (computing)">octets</a>. It might be padded on transmission; if the information for a particular protocol can be padded, that protocol must allow information to be distinguished from padding.</p>
+<h3><span class="mw-headline" id="Encapsulation">Encapsulation</span> <span class="mw-editsection">[<a href="/w/index.php?title=Point-to-point_protocol&amp;action=edit&amp;section=8" title="Edit section: Encapsulation">edit</a>]</span></h3>
+<p>PPP frames are encapsulated in a lower-layer protocol that provides framing and may provide other functions such as a <a href="/wiki/Checksum" title="Checksum">checksum</a> to detect transmission errors. PPP on <a href="/wiki/Serial_link" title="Serial link" class="mw-redirect">serial links</a> is usually encapsulated in a framing similar to <a href="/wiki/HDLC" title="HDLC" class="mw-redirect">HDLC</a>, described by IETF <a class="external mw-magiclink-rfc" rel="nofollow" href="//tools.ietf.org/html/rfc1662">RFC 1662</a>.</p>
+<table class="wikitable" border="1" cellpadding="2" cellspacing="0">
+<tbody><tr>
+<th>Name</th>
+<th>Number of bytes</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>Flag</td>
+<td>1</td>
+<td>indicates frame's begin or end</td>
+</tr>
+<tr>
+<td>Address</td>
+<td>1</td>
+<td>broadcast address</td>
+</tr>
+<tr>
+<td>Control</td>
+<td>1</td>
+<td>control byte</td>
+</tr>
+<tr>
+<td>Protocol</td>
+<td>1 or 2</td>
+<td>l in information field</td>
+</tr>
+<tr>
+<td>Information</td>
+<td>variable (0 or more)</td>
+<td>datagram</td>
+</tr>
+<tr>
+<td>Padding</td>
+<td>variable (0 or more)</td>
+<td>optional padding</td>
+</tr>
+<tr>
+<td>FCS</td>
+<td>2 (or 4)</td>
+<td>error check</td>
+</tr>
+</tbody></table>
+<p>The Flag field is present when PPP with HDLC-like framing is used.</p>
+<p>The Address and Control fields always have the value hex FF (for "all stations") and hex 03 (for "unnumbered information"), and can be omitted whenever PPP LCP Address-and-Control-Field-Compression (ACFC) is negotiated.</p>
+<p>The <a href="/wiki/Frame_Check_Sequence" title="Frame Check Sequence" class="mw-redirect">Frame Check Sequence</a> (FCS) field is used for determining whether an individual frame has an error. It contains a <a href="/wiki/Checksum" title="Checksum">checksum</a> computed over the frame to provide basic protection against errors in transmission. This is a <a href="/wiki/Cyclic_redundancy_check" title="Cyclic redundancy check">CRC</a> code similar to the one used for other layer two protocol error protection schemes such as the one used in Ethernet. According to <a class="external mw-magiclink-rfc" rel="nofollow" href="//tools.ietf.org/html/rfc1662">RFC 1662</a>, it can be either 16 bits (2 bytes) or 32 bits (4 bytes) in size (default is 16 bits - Polynomial <i>x</i><sup>16</sup> + <i>x</i><sup>12</sup> + <i>x</i><sup>5</sup> + 1).</p>
+<p>The FCS is calculated over the Address, Control, Protocol, Information and Padding fields after the message has been encapsulated.</p>
+<h2><span class="mw-headline" id="PPP_line_activation_and_phases">PPP line activation and phases</span> <span class="mw-editsection">[<a href="/w/index.php?title=Point-to-point_protocol&amp;action=edit&amp;section=9" title="Edit section: PPP line activation and phases">edit</a>]</span></h2>
+<div class="thumb tright">
+<div class="thumbinner" style="width:452px;"><a href="/wiki/File:PPPPhaseDiagram.svg" class="image"><img alt="" src="//upload.wikimedia.org/wikipedia/commons/thumb/0/0f/PPPPhaseDiagram.svg/450px-PPPPhaseDiagram.svg.png" class="thumbimage" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/0/0f/PPPPhaseDiagram.svg/675px-PPPPhaseDiagram.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/0/0f/PPPPhaseDiagram.svg/900px-PPPPhaseDiagram.svg.png 2x" height="233" width="450"></a>
+<div class="thumbcaption">
+<div class="magnify"><a href="/wiki/File:PPPPhaseDiagram.svg" class="internal" title="Enlarge"><img src="//bits.wikimedia.org/static-1.22wmf4/skins/common/images/magnify-clip.png" alt="" height="11" width="15"></a></div>
+A diagram depicting the phases of PPP according to <a class="external mw-magiclink-rfc" rel="nofollow" href="//tools.ietf.org/html/rfc1661">RFC 1661</a>.</div>
+</div>
+</div>
+<p>The phases of the Point to Point Protocol according to <a class="external mw-magiclink-rfc" rel="nofollow" href="//tools.ietf.org/html/rfc1661">RFC 1661</a> are listed below:</p>
+<dl>
+<dt>Link Dead</dt>
+<dd>This phase occurs when the link fails, or one side has been told to disconnect (e.g. a user has finished his or her dialup connection.)</dd>
+<dt>Link Establishment Phase</dt>
+<dd>This phase is where Link Control Protocol negotiation is attempted. If successful, control goes either to the authentication phase or the Network-Layer Protocol phase, depending on whether authentication is desired.</dd>
+<dt>Authentication Phase</dt>
+<dd>This phase is optional. It allows the sides to authenticate each other before a connection is established. If successful, control goes to the network-layer protocol phase.</dd>
+<dt>Network-Layer Protocol Phase</dt>
+<dd>This phase is where each desired protocols' <a href="/wiki/Network_Control_Protocol" title="Network Control Protocol">Network Control Protocols</a> are invoked. For example, <a href="/wiki/Internet_Protocol_Control_Protocol" title="Internet Protocol Control Protocol">IPCP</a> is used in establishing IP service over the line. Data transport for all protocols which are successfully started with their network control protocols also occurs in this phase. Closing down of network protocols also occur in this phase.</dd>
+<dt>Link Termination Phase</dt>
+<dd>This phase closes down this connection. This can happen if there is an authentication failure, if there are so many checksum errors that the two parties decide to tear down the link automatically, if the link suddenly fails, or if the user decides to hang up his connection.</dd>
+</html>
+

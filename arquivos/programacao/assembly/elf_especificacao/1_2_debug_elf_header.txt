@@ -1,0 +1,23 @@
+
+Mostra n bytes apenas
+hexdump -C -n 56 hello.o
+
+elf32_hdr
+
+   unsigned char  e_ident[16]     = 7f 45 4c 46 01 01 01 00  00 00 00 00 00 00 00 00
+   unsigned short int e_type      = 01 00
+   unsigned short int e_machine   = 03 00
+   unsigned long  int e_version   = 01 00 00 00
+   unsigned long  int e_entry     = 00 00 00 00
+   unsigned long  int e_phoff     = 00 00 00 00
+   unsigned long  int e_shoff     = 40 00 00 00
+   unsigned long  int e_flags     = 00 00 00 00
+   unsigned short int e_ehsize    = 34 00
+   unsigned short int e_phentsize = 00 00
+   unsigned short int e_phnum     = 00 00
+   unsigned short int e_shentsize = 28 00
+   unsigned short int e_shnum     = 07 00
+   unsigned short int e_shstrndx  = 03 00
+
+
+

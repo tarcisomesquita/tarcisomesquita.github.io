@@ -1,0 +1,56 @@
+
+Veja o arquivo 03_operadores.txt
+
+Redirections
+
+Redirections are used to change where a command reads its input or sends its output.
+In general, redirections open, close, or duplicate an existing reference to a file.
+
+The overall format used for redirection is: [n] redir-op file
+where redir-op is one of the redirection operators and [n] is an optional number, as in '3' (not '[3]'), that refers to a file descriptor.
+
+           [n]> file   Redirect standard output (or n) to file.
+
+           [n]>| file  Same, but override the -C option.
+
+           [n]>> file  Append standard output (or n) to file.
+
+           [n]< file   Redirect standard input (or n) from file.
+
+           [n1]<&n2    Duplicate standard input (or n1) from file descriptor n2.
+
+           [n]<&-      Close standard input (or n).
+
+           [n1]>&n2    Duplicate standard output (or n1) to n2.
+
+           [n]>&-      Close standard output (or n).
+
+           [n]<> file  Open file for reading and writing on standard input (or n).
+
+     The following redirection is often called a "here-document".
+
+           [n]<< delimiter
+                 here-doc-text ...
+           delimiter
+
+
+
+
+1> stdout
+2> stderr
+&> stdout e stderr
+2>&1 redireciona um para o outro
+
+
+$ bash << EOF
+> ls
+> echo "será que isso funciona"
+> pwd
+> EOF
+examples.desktop  teste.txt  ubiquity-gtkui.desktop
+será que isso funciona
+/home/ubuntu/Desktop
+$ 
+
+bash << EOF diz para usar como entrada todos os comandos até EOF
+

@@ -1,0 +1,46 @@
+sudo mkntfs -v -s 512 -c 4096 -L "WINXP" /dev/sda1
+
+NAME
+create an NTFS file system
+
+SYNOPSIS
+       mkntfs [options] device [number-of-sectors]
+
+OPTIONS
+   Basic options
+       -f, --fast, -Q, --quick
+              Perform  quick (fast) format. This will skip both zeroing of the volume and bad sector checking.
+
+       -L, --label STRING
+              Set the volume label for the filesystem.
+
+   Advanced options
+       -c, --cluster-size BYTES
+              are powers of two. 4096 bytes is default
+
+       -s, --sector-size BYTES
+              Valid sector size values are 256, 512, 1024, 2048 and 4096 bytes.
+
+       -p, --partition-start SECTOR
+              Specify the partition start sector. default is 0.
+
+       -z, --mft-zone-multiplier NUM
+              size of the MFT zone. The MFT zone is the area at the beginning of the volume reserved for the master file table (MFT), which stores the on disk inodes (MFT records).
+              small files are stored entirely within the inode; thus, if you expect to use the volume for storing large numbers of very small files, it is useful to set the zone multiplier to a higher value.
+
+Valid values are 1, 2, 3 and 4. The values have the following meaning:
+              +--------------------------------+
+              |MFT zone     MFT zone size      |
+              |multiplier   (% of volume size) |
+              |    1        12.5% (default)    |
+              |    2        25.0%              |
+              |    3        37.5%              |
+              |    4        50.0%              |
+              +--------------------------------+
+
+       -I, --no-indexing
+              Disable content indexing on the volume.
+
+       -F, --force
+              Force mkntfs to run, even if the specified device is not a block special device, or appears to be mounted.
+

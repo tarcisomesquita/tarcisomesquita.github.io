@@ -1,0 +1,8 @@
+montar um rootfs totalmente em RAM, usando o ramfs e uma imagem feita com cpio.
+initrd=boot/initrd.gz root=/dev/ram0 rootfstype=ramfs rdinit=/init
+Estou supondo que ramdisk (initrd.gz) foi criado com cpio, algo como um find na raiz do rootfs desejado, e que o /init é um script de partida válido:
+find . |  cpio –H newc –create –verbose > initrd
+gzip –best initrd
+Para “pular” para um rootfs final, basta uma chamada à system call switch_root. Algo como:
+exec switch_root /local/do/rootfs/final /sbin/init 
+

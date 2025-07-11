@@ -1,0 +1,20 @@
+
+if COMANDO ; then
+   comandos ;
+elif COMANDO ; then
+   comandos ;
+else
+   comandos ;
+fi
+
+
+#!/bin/bash
+
+if ! echo "if" ; then
+   echo "entrei if" ;
+elif ! echo "elif" ; then
+   echo "entrei elif" ;
+else
+   echo "entrei else" ;
+fi
+

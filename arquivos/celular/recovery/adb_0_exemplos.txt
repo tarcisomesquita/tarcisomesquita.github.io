@@ -1,0 +1,41 @@
+sudo adb kill-server
+sudo adb start-server
+
+adb devices
+adb reboot bootloader
+adb reboot recovery 
+
+adb shell 'cat /sdcard/teste.txt | nc -q 2 -l -p 9090'
+
+adb logcat
+
+adb shell find / -type f -exec ls -l '{}' '";"' 2>/dev/null | grep '^\-...r..r' > files.txt
+
+open the app for which you want to find the appPackage and appActivity
+adb shell dumpsys window windows | grep --color=always 'Target in display'
+  mInputMethodTarget in display# 0 Window{33671a6 u0 com.android.chrome/com.google.android.apps.chrome.Main}
+adb shell am start -a com.android.chrome/com.google.android.apps.chrome.Main
+
+start [options] intent
+   -R count: repete a inicialização de atividades count vezes.
+   --user user_id
+startservice [options] intent
+force-stop package
+kill [options] package
+
+adb shell dumpsys
+
+coloque o executável em:
+/data/local/tmp/
+
+adb shell 'for F in $(ls /proc/*/cmdline) ; do cat $F; echo ""; done'
+
+adb shell ps | sed 's/[ ]\{2,\}/ /g' | cut -d' ' -f9 | sort
+
+adb shell ls -l /apex/com.android.art/bin/
+dalvikvm -> /apex/com.android.art/bin/dalvikvm
+
+linker -> /apex/com.android.runtime/bin/linker
+linker64 -> /apex/com.android.runtime/bin/linker64
+
+adb shell cat /proc/diskstats

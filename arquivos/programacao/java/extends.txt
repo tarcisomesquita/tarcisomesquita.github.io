@@ -1,0 +1,9 @@
+
+public class HelloWorldApplet extends Applet
+
+extends indica que uma classe é subclasse de uma classe existente.
+
+Isso é o conceito de herança em orientação a objetos.
+
+a nossa classe HelloWorldApplet faz uso das funcionalidades já definidas em Applet.
+

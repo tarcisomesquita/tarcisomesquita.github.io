@@ -1,0 +1,15 @@
+$ ip neighbor show
+
+To suppress ARP on an interface simply use:
+$ ip link set dev $DEV arp off
+
+$ echo 1 > /proc/sys/net/ipv4/conf/all/arp_filter
+$ echo 1 > /proc/sys/net/ipv4/conf/eth0/arp_filter
+
+
+ARQUIVOS
+/proc/net/arp
+/etc/networks
+/etc/hosts
+
+sudo tcpdump -i wlan0 arp

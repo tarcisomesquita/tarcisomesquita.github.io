@@ -1,0 +1,10 @@
+Denial of Service (DoS)
+
+packets Clear To Send (CTS) and Request To Send (RTS) packets. 
+
+Devices use RTS packets when they have something big to send, and they don't want other devices to step on their transmission.
+CTS packets are sent so that the device knows it's okay to transmit. Every device (other than the one that sent the RTS) within the range of the CTS packet cannot transmit anything for the duration specified.
+
+The first technique is to transmit the CTS packets, meaning that anyone in range of your signal will be unable to transmit. This requires a high-gain Omni-directional antenna to a much greater impact. 
+
+The second technique is to send an RTS packet to the AP you are targeting. Once the AP gets the RTS packet, it will send the CTS. A highly directional antenna from a distance can be used to target the AP with an RTS packet. Generally speaking, transmitting the CTS has a greater impact. 

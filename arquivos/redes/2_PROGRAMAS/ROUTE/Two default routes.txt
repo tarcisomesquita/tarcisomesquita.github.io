@@ -1,0 +1,182 @@
+
+# ip addr add 10.1.0.1/16 dev eth0
+# ip addr add 200.254.245.1/24 dev eth1
+# ip addr add 200.128.35.1/24 dev eth2
+
+# ip route add 10.0.0.0/8 via 10.1.0.2
+# ip route add default via 200.254.245.10
+
+#iptables -A FORWARD -i eth0 -o eth1 -j ACCEPT
+#iptables -A FORWARD -i eth0 -o eth2 -j ACCEPT
+#iptables -A FORWARD -i eth1 -o eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT 
+#iptables -A FORWARD -i eth1 -o eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+#iptables -t nat -A POSTROUTING -o eth2 -j MASQUERADE 
+#iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
+
+# echo "200 subrede2" >> /etc/iproute2/rt_tables
+
+#ip route add default via 200.128.35.10 table subrede2
+#ip rule add from 10.2.0.0/16 table subrede2
+Reinicie o sistema.
+
+
+
+Two default routes
+
+# echo 2 cheapskate >> /etc/iproute2/rt_tables
+# ip route add default via 192.168.2.1 dev eth1 table cheapskate
+
+# ip route show table main
+192.168.1.0/24 dev eth0  proto kernel  scope link  src 192.168.1.10
+192.168.2.0/24 dev eth1  proto kernel  scope link  src 192.168.2.10 
+default via 192.168.1.1 dev eth0
+
+# ip rule add from 192.168.2.10 lookup cheapskate prio 1000
+
+# ip rule
+0:      from all lookup local
+1000:   from 192.168.2.10 lookup cheapskate
+32766:  from all lookup main
+32767:  from all lookup default
+
+routes are cached. If you update a routing table and nothing seems to happen, it's because the table is still in memory.
+
+5. Example configuration
+
+When a secondary WAN interface became available at a client site, I wanted to allow their remote users to use this connection as an alternative in case their primary Internet connection ever went down. With Linux, we now know that this is possible.
+
+First, some background information. The client's router had the following interfaces:
+
+- eth0     Primary Internet connection (Versatel).
+           inet addr: 87.215.195.178
+           Bcast:     87.215.195.183 
+           Mask:      255.255.255.248
+
+- eth0:0   Private net behind the Versatel ADSL modem/router.
+           inet addr: 192.168.1.1
+           Bcast:     192.168.1.255 
+           Mask:      255.255.255.0
+
+- eth0:1   Private net behind the Zonnet ADSL modem/router.
+           inet addr: 10.0.0.100
+           Bcast:     10.255.255.255
+           Mask:      255.0.0.0
+
+- eth1     Private net -- main internal network segment.
+           inet addr: 192.168.13.1
+           Bcast:     192.168.13.255
+           Mask:      255.255.255.0
+
+- eth2     Private net -- wireless internal network segment.
+           inet addr: 192.168.14.1
+           Bcast:     192.168.14.255
+           Mask:      255.255.255.0
+
+- lo       Loopback interface.
+           inet addr: 127.0.0.1
+           Mask:      255.0.0.0
+
+- ppp0     Secondary Internet connection (Zonnet).
+           inet addr: 62.58.236.234
+           P-t-P:     195.190.250.17
+           Mask:      255.255.255.255
+
+The main routing table displayed with route -n:
+
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref Use Iface
+195.190.250.17  0.0.0.0         255.255.255.255 UH    0      0     0 ppp0
+87.215.195.176  0.0.0.0         255.255.255.248 U     0      0     0 eth0
+62.58.50.0      62.58.236.234   255.255.255.128 UG    0      0     0 ppp0
+192.168.1.0     0.0.0.0         255.255.255.0   U     0      0     0 eth0
+192.168.14.0    0.0.0.0         255.255.255.0   U     0      0     0 eth2
+192.168.13.0    0.0.0.0         255.255.255.0   U     0      0     0 eth1
+62.58.232.0     62.58.236.234   255.255.248.0   UG    0      0     0 ppp0
+10.0.0.0        0.0.0.0         255.0.0.0       U     0      0     0 eth0
+0.0.0.0         87.215.195.177  0.0.0.0         UG    0      0     0 eth0
+
+The route for 62.58.232.0/21 via ppp0 may be unnecessary, but I figured it would be 'cheaper' because the IP address for ppp0 is part of the same network. The route to 62.58.50.0/25 via the ppp0, on the other hand, is a network segment that includes an SMTP relay that is not be available via any other route.
+
+The list of interfaces displayed with ip link list:
+
+1: lo: <LOOPBACK,UP> mtu 16436 qdisc noqueue
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: eth0: <BROADCAST,MULTICAST,UP> mtu 1500 qdisc pfifo_fast qlen 1000
+    link/ether 00:00:24:c1:10:5c brd ff:ff:ff:ff:ff:ff
+3: eth1: <BROADCAST,MULTICAST,UP> mtu 1500 qdisc pfifo_fast qlen 1000
+    link/ether 00:00:24:c1:10:5d brd ff:ff:ff:ff:ff:ff
+4: eth2: <BROADCAST,MULTICAST,UP> mtu 1500 qdisc pfifo_fast qlen 1000
+    link/ether 00:00:24:c1:10:5e brd ff:ff:ff:ff:ff:ff
+5: sit0: <NOARP> mtu 1480 qdisc noop
+    link/sit 0.0.0.0 brd 0.0.0.0
+6: ppp0: <POINTOPOINT,MULTICAST,NOARP,UP> mtu 1500 qdisc pfifo_fast
+    qlen 3 link/ppp
+
+NB: sit0 is an IPv6-IPv4 tunnel.
+
+The main routing table displayed with ip route show table main:
+
+195.190.250.17 dev ppp0  proto kernel  scope link  src 62.58.236.234
+87.215.195.176/29 dev eth0  proto kernel  scope link  src 87.215.195.178
+62.58.50.0/25 via 62.58.236.234 dev ppp0  scope link
+192.168.1.0/24 dev eth0  proto kernel  scope link  src 192.168.1.1
+192.168.14.0/24 dev eth2  proto kernel  scope link  src 192.168.14.1
+192.168.13.0/24 dev eth1  proto kernel  scope link  src 192.168.13.1
+62.58.232.0/21 via 62.58.236.234 dev ppp0  scope link
+10.0.0.0/8 dev eth0  proto kernel  scope link  src 10.0.0.100
+default via 87.215.195.177 dev eth0
+
+The idea was to create a second routing table for the second Internet connection (ppp0) with its own default route. This can be done in only three steps. First, after installing the necessary software (see above), I created a second routing table (after the existing main routing table) called 'zonnet':
+
+~# echo 2 zonnet >> /etc/iproute2/rt_tables
+
+Second, I added a default route to the zonnet routing table using the ppp0 interface and its IP address:
+
+~# ip route add default via 62.58.236.234 dev ppp0 table zonnet
+
+Third, I added a new rule to the kernel that tell it to use the new routing table when packets (connections) originate from the second interface:
+
+~# ip rule add from 62.58.236.234 lookup zonnet prio 1000
+
+Thus, the new zonnet routing table looks like this (just one line):
+
+~# ip route show table zonnet
+default via 62.58.236.234 dev ppp0
+~# _
+
+And the routing rule looks like this:
+
+~# ip rule
+0:      from all lookup local
+1000:   from 62.58.236.234 lookup zonnet
+32766:  from all lookup main
+32767:  from all lookup default
+~# _
+
+So far, the result of all this is that all requests destined for the firewall coming in from eth0 are sent back out eth0 (the main default gateway; 87.215.195.177), while requests destined for the firewall coming in from ppp0 are sent back out ppp0 (the secondary default gateway; 62.58.236.234). However, if the server responds to any requests that are forwarded to it, those responses will still be routed out the main default gateway regardless.
+
+The first step towards a solution was to define a second network, 192.168.15.0/24, on the UTP segment that the server is attached to. Luckily, Windows server 2003 allows you to bind additional IP addresses to its interfaces. In this case, only the server and the firewall (via eth1) have addresses on this network.
+
+- eth1:0   Private net -- additional internal network segment.
+           inet addr: 192.168.15.1
+           Bcast:     192.168.13.255
+           Mask:      255.255.255.0
+
+On this network, the server is defined as 192.168.15.2 and the firewall is configured to forward all requests for it that arrive via ppp0 on to this address. Naturally, the responses come out this way too.
+
+Second, since all of the packets moving from 192.168/.15.0/24 into the firewall are responses to requests that arrive via the secondary Internet connection (and should be sent back that way) anyway, I could use this one routing rule:
+
+~# ip rule add from 192.168.15.0/24 lookup secnet prio 990
+
+The routing rule now looks like this:
+
+~# ip rule
+0:      from all lookup local
+990:    from 192.168.15.0/24 lookup zonnet
+1000:   from 62.58.236.234 lookup zonnet
+32766:  from all lookup main
+32767:  from all lookup default
+~# _
+
+Now if a request is sent in via ppp0 and forwarded on to the server (via 192.168.15.0/24), its response will also be sent back via ppp0. 

@@ -1,0 +1,20 @@
+sudo mount -t tmpfs -o size=256Mi tmpfs /home/live/test
+sudo mount -t tmpfs -o size=5% tmpfs /home/live/test
+size attribute prevent out-of-memory situations (default 50%)
+
+a successor to the older ramfs
+filesystems reside in RAM
+If a tmpfs filesystem is unmounted, its contents are discarded (lost).
+for user-space tools and applications to create tmpfs filesystems, the kernel must be configured with the CONFIG_TMPFS option.
+
+mount -l | grep tmpfs
+tmpfs on /tmp type tmpfs (rw,nosuid,nodev,relatime,inode64)
+tmpfs on /run/user/1000 type tmpfs (rw,nosuid,nodev,relatime,size=800772k,nr_inodes=200193,mode=700,uid=1000,gid=1000,inode64)
+
+mount -o remount,size=4G,noatime /tmp
+
+df -h # ver o que está montado
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           3.9G  112K  3.9G   1% /tmp
+
+glibc 2.2 and above expects tmpfs to be mounted at /dev/shm for POSIX shared memory (shm_open, shm_unlink).

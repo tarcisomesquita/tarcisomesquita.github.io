@@ -1,0 +1,43 @@
+0x9FC00 - 0x9FFFF EBDA (Extended BIOS Data Area)
+
+a estrutura não é padronizada
+
+Offset	Size	Description
+ 00h	BYTE	Length of EBDA in kilobytes
+ 01h 15 BYTEs	reserved
+ 17h	BYTE	Number of entries in POST error log (0-5)
+ 18h  5 WORDs	POST error log (each word is a POST error number)
+ 19h-21h	reserved
+ 22h	DWORD	Pointing Device Driver entry point
+ 26h	BYTE	Pointing Device Flags 1
+		   bit 7:    =1 command in progress
+		   bit 6:    =1 resend
+		   bit 5:    =1 acknowledge
+		   bit 4:    =1 error
+		   bit 3:    =0 reserved
+		   bits 2-0: index count
+ 27h	BYTE	Pointing Device Flags 2
+		   bit 7:    =1 device driver far call flag
+		   bits 6-3: reserved
+		   bits 2-0: package size
+ 28h  7 BYTEs	Pointing Device Auxiliary Device Data
+ 2Fh	BYTE	reserved
+ 30h	DWORD	Vector for INT 07h stored here during 80387 interrupt
+ 34h	DWORD	Vector for INT 01h stored here during INT 07h emulation
+ 38h	BYTE	Scratchpad for 80287/80387 interrupt code
+ 39h	WORD	Timer3: Watchdog timer initial count
+ 3Bh	BYTE	??? seen non-zero on Model 30
+ 3Ch	BYTE	???
+ 3Dh 16 BYTEs	Fixed Disk parameter table for drive 0 (oh really?)
+ 4Dh 16 BYTEs	Fixed Disk parameter table for drive 1 (oh really?)
+		    Neither of above seen on any Model 30, 50, 60 yet.
+ 5Dh-6Bh	???
+ 6Ch	BYTE	Fixed disk: (=FFh on ESDI systems)
+		    bits 7-4: Channel number 00-0Fh
+		    bits 3-0: DMA arbitration level 00-0Eh
+ 6Dh and up:	??? seen non-zero on Model 60
+3F0h	BYTE	Fixed disk buffer (???!!!)
+
+
+You can determine the size of the EBDA by examining the word at 0x0413.
+

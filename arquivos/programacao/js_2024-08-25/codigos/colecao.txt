@@ -1,0 +1,2 @@
+https://www.30secondsofcode.org/
+https://github.com/trekhleb/javascript-algorithms

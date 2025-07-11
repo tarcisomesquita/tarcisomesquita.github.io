@@ -1,0 +1,1010 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Deflate file format</title>
+        <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+
+        <div id="content">
+            <div id="pagecontent">
+                            <div>
+                <a href="?lang=en&amp;page=_sitemap">Site map</a>
+                <div class="rightfloat">
+                    2019-08-30 21:10:41 (Originally published at: 2017-09-21)                </div>
+            </div>
+                        <div class="navline">
+                <a href="?lang=en&amp;page=programming" class="navlink">Programming</a>                
+            </div>
+                    <h1><a href="http://calmarius.net/index.php?lang=en&amp;page=programming%2Fzlib_deflate_quick_reference">ZLIB + Deflate file format</a></h1>
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>    
+    <p>
+    This writing is a quick reference for those who would like to implement the inflate algorithm on their own or would like to make their compressors produce a bit stream in deflate format.
+</p>
+
+<h2>Overall ZLIB format</h2>
+
+<p>
+    Bits are numbered from lowest to highest starting from zero.
+    So 0 is the lowest order bit, 7 is the highest order one.
+</p>
+
+<table>
+    <tr>
+        <th>Size in bytes</th>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>compression method and window size (CMF)</td>
+        <td>
+            <p>
+                This is essentially a magic number. It's 0x78 most often. 
+            </p>
+            <ul>
+                <li>Bits 0..3: The compression method 8 means the compression method is deflate. 15 is reserved.</li>
+                <li>Bits 4..7: the maximum look behind window size. 
+                    7 means 32768 bytes long window, which is the maximum supported size by deflate.
+                    The formula is: $2^{8+w}$, where $w$ is the value of those 4 bits.
+                </li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>checksum and flags (FLG)</td>
+        <td>
+            <ul>
+                <li>Bits 0..4: Must be set so (256*FLG + CMF) is divisible by 31.</li>
+                <li>Bit 5: Setting this bit means the stream contains the checksum of a prefix dictionary.</li>
+                <li>Bits 6..7: Compression level. 0 is the lowest, 3 is the highest.</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>4 (optional)</td>
+        <td>preset dictionary checksum</td>
+        <td>
+            If the bit 5 in FLG is set, this will be the Adler32 checksum of the data that's initially fed to the decompressor without consuming input.
+            So the compressed data can refer to it. 
+            This can be used, for example, to decompress a stream that consists of multiple parts of ZLIB compressed streams. 
+            When bit 5 in FLG is not set, this field is not present.
+            This checksum is in big-endian byte order (most significant byte first).
+        </td>
+    </tr>
+    <tr>
+        <td>varies</td>
+        <td>compressed data</td>
+        <td>
+            The compressed data itself. 
+            We will describe the format of this later.
+        </td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>checksum</td>
+        <td>
+            This is the Adler32 checksum at the end of the stream, used to validate the integrity of the decompressed data. 
+            Preset dictionaries are not considered in this checksum.
+            Later we will describe how to calculate it.
+            This checksum is in big-endian byte order (most significant byte first).
+        </td>        
+    </tr>
+</table>
+
+
+<h2>Deflate compression format</h2>
+
+<p>
+    Deflate is a frequently used compression method in implementations of GZIP, ZIP and others.
+    This section discusses the format of this compression format.
+    The deflate algorithm uses a combination of LZ algorithm and Huffman coding.
+</p>
+<p>
+    Before moving forward we should understand how is the data encoded.
+</p>
+<p>
+    The compressed data is a bit stream on the lowest level.
+    Bytes of the compressed stream is consumed one after the other.
+    Bits in these bytes are consumed by consuming the lowest order bit first and the highest order bit last.
+</p>
+<p>
+    The data contains bit fields. 
+    Bits in these fields are in little-endian bit order. 
+    So the least significant bit will be read first and the most significant one is read last.
+</p>
+
+<h3>Overview of the LZ compressed data</h3>
+
+<p>
+    The point of the LZ algorithm is the elimination of duplicate sequences from the input.
+    This means we don't write the same thing twice, instead we write a reference where the is sequence is found.
+    If the sequence is long this can save space.
+</p>
+<p>
+    Let Δ(X, Y) mean "Go back X places and copy Y bytes from there to the output".
+    This allows the decompressor copy sequences to the output that's previously occurred in the output.
+    Consider the following string: ABCDABCDEFGHABCDEFG.
+    At the 5th position we can see that the sequence ABC repeats, so we can replace it by the copy code: ABCDΔ(4,3)DEFGHABCDEFG.
+    Then we can see the sequence ABCDEFG also repeats so instead of writing it down again we can replace it with a copy command too: ABCDΔ(4,3)DEFGHΔ(8,7).
+    And these copy codes can shorten the data greatly when very long sequences repeat. 
+</p>
+<p>
+    The sequence and its next occurrence may overlap.
+    Consider the following: ABCABCABCABCABC. 
+    This can be reduced to: ABCΔ(3,12).
+    So we tell the decompressor go back 3 positions and copy 12 bytes from there. 
+    There are not enough bytes in the output to copy 12 bytes right away, but as the decompressor executes the copy the output is being written so the decompressor will copy these previously written bytes again.
+    And this allows the very efficient storage of repeated data. 
+    But this should be a note for implementers: you shouldn't use memory copying functions to copy because that would break this behavior.
+</p>
+
+<h3>Encoding of the LZ compressed data in Deflate</h3>
+
+<p>
+    The deflate format uses two alphabets to encode LZ compressed data.
+    One is the literal/length alphabet and the other is the distance alphabet.
+    The literal/length alphabet contains the symbols for literals. And the length part of the copy command.
+    The distance alphabet is a supplementary alphabet used to determine the distance. 
+</p>
+<p>
+    When we say <dfn>symbol</dfn> we refer to the element of the alphabet.
+    When we say <dfn>code</dfn> we refer to the bit pattern that represent the symbol.
+</p>
+<p>
+    The symbols of the literal/length alphabet means the following:
+</p>
+<ul>
+    <li>0..255: Literal bytes, just copy the value to the output.</li>
+    <li>256: The end of block marker. This denotes the end of the compressed data.</li>
+    <li>
+        257..285: Copy command. 
+        This also encodes the length part of a copy command.
+        After each symbol the specified number of extra bits must be read and the value must be added to length base to get the actual length for the copy command.
+        When the number of extra bits to read is 0 then the value is exact an no extra bits is read.
+        The length bases and the corresponding extra bits can be seen in the following table:
+    </li>
+</ul>
+<div>
+    <table style="display:inline-block; vertical-align:top">
+        <tr><th>Code</th><th>Length base</th><th>Extra bits</th></tr>
+        <tr><td>257</td><td>3</td><td>0</td></tr>
+        <tr><td>258</td><td>4</td><td>0</td></tr>
+        <tr><td>259</td><td>5</td><td>0</td></tr>
+        <tr><td>260</td><td>6</td><td>0</td></tr>
+        <tr><td>261</td><td>7</td><td>0</td></tr>
+        <tr><td>262</td><td>8</td><td>0</td></tr>
+        <tr><td>263</td><td>9</td><td>0</td></tr>
+        <tr><td>264</td><td>10</td><td>0</td></tr>
+        <tr><td>265</td><td>11</td><td>1</td></tr>            
+        <tr><td>266</td><td>13</td><td>1</td></tr>
+    </table>
+    <table style="display:inline-block; vertical-align:top">            
+        <tr><th>Code</th><th>Length base</th><th>Extra bits</th></tr>
+        <tr><td>267</td><td>15</td><td>1</td></tr>
+        <tr><td>268</td><td>17</td><td>1</td></tr>
+        <tr><td>269</td><td>19</td><td>2</td></tr>
+        <tr><td>270</td><td>23</td><td>2</td></tr>
+        <tr><td>271</td><td>27</td><td>2</td></tr>
+        <tr><td>272</td><td>31</td><td>2</td></tr>
+        <tr><td>273</td><td>35</td><td>3</td></tr>
+        <tr><td>274</td><td>43</td><td>3</td></tr> 
+        <tr><td>275</td><td>51</td><td>3</td></tr>           
+        <tr><td>276</td><td>59</td><td>3</td></tr>
+    </table>
+    <table style="display:inline-block; vertical-align:top">                        
+        <tr><th>Code</th><th>Length base</th><th>Extra bits</th></tr>
+        <tr><td>277</td><td>67</td><td>4</td></tr>
+        <tr><td>278</td><td>83</td><td>4</td></tr>
+        <tr><td>279</td><td>99</td><td>4</td></tr>
+        <tr><td>280</td><td>115</td><td>4</td></tr>
+        <tr><td>281</td><td>131</td><td>5</td></tr>
+        <tr><td>282</td><td>163</td><td>5</td></tr>
+        <tr><td>283</td><td>195</td><td>5</td></tr>
+        <tr><td>284</td><td>227</td><td>5</td></tr>
+        <tr><td>285</td><td>258</td><td>0</td></tr>
+    </table>
+</div>
+<p>
+    Although these values indeed have a mathematical formula, it's easier to shove them into an array instead of calculating it. 
+</p>
+<p>
+    After we know the length we need to read the distance using the distance alphabet.
+    Each symbol in the distance alphabet specifies a distance base and a number of extra bits to read to be added to the distance base just like with lengths.
+</p>
+<div>
+    <table style="display:inline-block; vertical-align:top">
+        <tr><th>Code</th><th>Length base</th><th>Extra bits</th></tr>
+        <tr><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td>1</td><td>2</td><td>0</td></tr>
+        <tr><td>2</td><td>3</td><td>0</td></tr>
+        <tr><td>3</td><td>4</td><td>0</td></tr>
+        <tr><td>4</td><td>5</td><td>1</td></tr>
+        <tr><td>5</td><td>7</td><td>1</td></tr>
+        <tr><td>6</td><td>9</td><td>2</td></tr>
+        <tr><td>7</td><td>13</td><td>2</td></tr>
+        <tr><td>8</td><td>17</td><td>3</td></tr>
+        <tr><td>9</td><td>25</td><td>3</td></tr>
+    </table>
+    <table style="display:inline-block; vertical-align:top">
+        <tr><th>Code</th><th>Length base</th><th>Extra bits</th></tr>
+        <tr><td>10</td><td>33</td><td>4</td></tr>
+        <tr><td>11</td><td>49</td><td>4</td></tr>
+        <tr><td>12</td><td>65</td><td>5</td></tr>
+        <tr><td>13</td><td>97</td><td>5</td></tr>
+        <tr><td>14</td><td>129</td><td>6</td></tr>
+        <tr><td>15</td><td>193</td><td>6</td></tr>
+        <tr><td>16</td><td>257</td><td>7</td></tr>
+        <tr><td>17</td><td>385</td><td>7</td></tr>
+        <tr><td>18</td><td>513</td><td>8</td></tr>
+        <tr><td>19</td><td>769</td><td>8</td></tr>
+    </table>
+    <table style="display:inline-block; vertical-align:top">
+        <tr><th>Code</th><th>Length base</th><th>Extra bits</th></tr>
+        <tr><td>20</td><td>1025</td><td>9</td></tr>
+        <tr><td>21</td><td>1537</td><td>9</td></tr>
+        <tr><td>22</td><td>2049</td><td>10</td></tr>
+        <tr><td>23</td><td>3073</td><td>10</td></tr>
+        <tr><td>24</td><td>4097</td><td>11</td></tr>
+        <tr><td>25</td><td>6145</td><td>11</td></tr>
+        <tr><td>26</td><td>8193</td><td>12</td></tr>
+        <tr><td>27</td><td>12289</td><td>12</td></tr>
+        <tr><td>28</td><td>16385</td><td>13</td></tr>
+        <tr><td>29</td><td>24577</td><td>13</td></tr>
+    </table>
+</div>
+
+<p>
+    So for example the Δ(13,12) copy command is encoded by first having the symbol 265 (length base 11), 
+        then an extra bit read that will contain 1 to increase it to 12, followed by the distance symbol of 7 from which gives the distance base 13 followed by reading 2 extra bits of 0 to keep it 13.
+</p>
+
+<h3>Overview of Huffman coding</h3>
+
+<p>
+    The LZ algorithm already reduced the size of the data. 
+    But it can be reduced further by assigning shorter code to symbols that appear often and assign longer codes to symbols that appear rarely.
+    This is what's the Huffman coding is about.
+</p>
+<p>
+    The longest allowed code length in the deflate format is 15. 
+    The shortest one is 1.
+    The code length 0 reserved to mark the symbols that doesn't occur in the decompressed data at all.
+    The deflate doesn't store the Huffman codes themselves instead it stores only the lengths of the code, and calculates the actual code from them.
+    To determine the Huffman codes we start from an array of lengths.
+    Consider the following list of lengths: <code>[2, 0, 3, 4, 4, 0, 2, 4, 4, 0, 4, 5, 5]</code>, let's call this array $L$.
+    These are the code lengths corresponding to 13 symbols indexed from 0 to 12. 
+    We can see the symbols 1, 5 and 9 are unused because their code length is 0.
+</p>
+<p>
+    The first step is counting the occurrences of each code length and populate an array with the counts.
+    In our example this is: <code>[0, 0, 2, 1, 5, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]</code>.
+    Let's call this array $F$.
+    And refer to the $i$th element of it as $F_i$.
+    So for example $F_3 = 1$, because there are 1 elements with length 3. 
+    The 0 length is reserved for unused symbols, so there are no code with 0 length, so $F_0 = 0$ by definition.
+</p>
+<p>
+    The second step is determining the initial codes corresponding to each code length.
+    So another array of 16 elements is created, let's call it $N$. 
+    Let's call the $i$th element of it as $N_i$.
+    The formula to calculate this array is: $N_i = 2 \left( N_{i-1} + F_{i-1}\right)$.
+    The $N_0$ is set 0 by definition. 
+    So the generation should start from $i = 1$.
+    This array will be in our example: <code>[0, 0, 0, 4, 10, 30, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768]</code>
+</p>
+<p>
+    The third step is computing the actual codes.
+    Let's denote the $i$th symbol's code with $S_i$.
+    And denote the $i$th length with $L_i$.
+    The operation to calculate the code is: $S_i = N_{L_i}; N_{L_i} := N_{L_i} + 1$.
+    So the $N$ values increase after each assignment as we are doing progress. 
+    Using this step we can obtain the array of Huffman codes for each symbol: <code>[0, 0, 4, 10, 11, 0, 1, 12, 13, 0, 14, 30, 31]</code>.
+    If we express them in binary, considering the code lengths, we have these codes: <code>[00, 0, 100, 1010, 1011, 0, 01, 1100, 1101, 0, 1110, 11110, 11111]</code>.
+    A these codes will represent the symbols.
+    Indexes are shown to see better: <code>[00 -&gt; 0, 0, 100 -&gt; 2, 1010 -&gt; 3, 1011 -&gt; 4, 0, 01 -&gt; 6, 1100 -&gt; 7, 1101 -&gt; 8, 0, 1110 -&gt; 10, 11110 -&gt; 11, 11111 -&gt; 12]</code>
+</p>
+<p>
+    Here is an example Python code used to calculate the Huffman codes.
+</p>
+<pre><code class="python">
+&quot;&quot;&quot;Huffman stuff&quot;&quot;&quot;
+
+# Example LENGTHS
+LENGTHS = [2, 0, 3, 4, 4, 0, 2, 4, 4, 0, 4, 5, 5]
+
+# Maximum Huffman code length is 15
+MAX_HUFF = 16
+
+def genhuff(lengths):
+    &quot;Generates Huffman codes&quot;
+
+    # Generate zeroed arrays.
+    n_lengths = [0] * MAX_HUFF
+    next_codes = [0] * MAX_HUFF
+    huff_codes = [0] * len(lengths)
+
+    # Count lengths
+    for length in lengths:
+        n_lengths[length] += 1
+
+    print n_lengths
+
+    # Calculate next code
+    n_lengths[0] = 0
+    for i in range(1, len(n_lengths)):
+        next_codes[i] = 2*(next_codes[i - 1] + n_lengths[i - 1])
+
+    print next_codes
+
+    # Assign Huffman codes
+    for i  in range(0, len(huff_codes)):
+        if lengths[i] == 0:
+            continue
+        huff_codes[i] = next_codes[lengths[i]]
+        next_codes[lengths[i]] += 1
+
+    # Print it
+    print huff_codes
+    print '[{}]'.format(','.join(bin(x)[2:].zfill(y) for x, y in zip(huff_codes, lengths)))
+
+    return
+
+genhuff(LENGTHS)
+</code></pre>
+<p>
+    These codes are stored in big-endian bit order in the file.
+    For example the symbol 4 has the code 1011. 
+    This means we read the bits 1, 0, 1, 1 in this order, not vice versa unlike any other bit fields.
+    The reason for this is that Huffman code is prefix code. 
+    This means no code word is a prefix of other code word. 
+    In example above, there is no symbol which has the code 1, 10 or 101.
+    So any sequence of bits will unambiguously map to the symbols denoted by the codes (usually).
+    Without needing to specify length before or an end symbol after each code.
+    Consider the bit sequence 10101010101011111000101000010110111101010, which I randomly typed in.
+    This represent these code words: 1010 1010 1010 11111 00 01 01 00 00 1011 01 1110 1010.
+
+    Which encode: 3, 3, 3, 12, 0, 6, 6, 0, 0, 4, 6, 10, 4.
+</p>
+
+<h3>Code length alphabet</h3>
+
+<p>
+    We only store the lengths of the literal/length and the distance alphabets. This means 315 lengths at most.
+    This is a lot. 
+    It can be shortened by encoding with another alphabet: the code length alphabet.
+    It has 19 symbols. 
+</p>
+<ul>
+    <li>0..15: literal code length</li>
+    <li>16: Repeat previous code 3..6 times. Read the next 2 bits and add 3 to it to get the amount to repeat.</li>
+    <li>17: Repeat code length of 0 3..10 times. Read the next 3 bits and add 3 to it.</li>
+    <li>18: Repeat code length of 0 11..138 times. Read the next 7 bits and add 11 to it.</li>
+</ul>
+<p>
+    So basically having the sequence, 3, 4, 16 (extra bits: 11), 17 (extra bits: 100) means the code length sequence. 3, 4, 4, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0.
+</p>
+<p>
+    And even this encoding is further compressed using Huffman code which reduces its size even further. 
+</p>
+
+
+<h3>Layout of the compressed data</h3>
+
+<p>
+    The compressed data is a series of blocks. 
+    Each block can be arbitrary long.
+    The format of the block is the following:
+</p>
+<table>
+    <tr>
+        <th>Size in bits</th>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>final block flag (BFINAL)</td>
+        <td>When this bit is set it indicates that this block is the last block in the compressed data.</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>block type (BTYPE)</td>
+        <td>
+            <p>The type of block: </p>             
+            <ul>
+                <li>0: No compression the block is just stored. This is used when the data cannot be compressed further.</li>
+                <li>1: Compression used using fixed Huffman codes. This is used when the data to compress is small. </li>
+                <li>2: Compress using dynamic Huffman codes. The codes are stored within the block. </li>
+                <li>3: Invalid mode. This shouldn't appear.</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>varies</td>
+        <td>the actual block data</td>
+        <td>The layout of this data depends on the type of the block.</td>
+    </tr>
+</table>
+
+<h3>Layout of stored blocks</h3>
+
+<p>
+    When BTYPE is 0 that means the block is a stored.
+    When this happens the decompressor discards the remaining bits of the current byte it's consuming and resumes reading the streams byte-by-byte.
+    The format of the stored block is:
+</p>
+
+<table>
+    <tr>
+        <th>Size in bytes</th>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>length of the data (LEN)</td>
+        <td>
+            2 byte length of the block. 
+            The length is stored in little-endian order. 
+            And this means the block length is limited to 65536 bytes.
+        </td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>bitwise negation of LEN (NLEN)</td>
+        <td>
+            This is a sort of check word. 
+            Its bits must be set the opposite way than LEN.
+        </td>
+    </tr>
+    <tr>
+        <td>LEN</td>
+        <td>block data</td>
+        <td>
+            The stored block data. 
+            It should be just appended to the output.
+        </td>
+    </tr>
+</table>
+<p>
+    After the block is read.
+    The bit based processing resumes starting from the next byte after the block.
+</p>
+
+<h3>Layout of the compressed blocks</h3>
+
+<p>
+    The layout of the compressed blocks is the following:
+</p>
+
+<table>
+    <tr>
+        <th>Size in bits</th>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>number of symbols in the literal length alphabet (NLIT&nbsp;-&nbsp;257)</td>
+        <td>
+            There are NLIT symbols in the literal/length alphabet.
+            Note the value of this field is 257 less than the actual number.
+        </td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>number of symbols in the distance alphabet (NDIST&nbsp;-&nbsp;1)</td>
+        <td>
+            There are NDIST symbols in the distance alphabet.
+            Note the value of this field is 1 less than the actual number.
+        </td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>number of symbols in the code length alphabet (NCLEN&nbsp;-&nbsp;4)</td>
+        <td>
+            There are NCLEN symbols in the code length alphabet.
+            Note the value of this field is 4 less than the actual number.
+        </td>
+    </tr>
+    <tr>
+        <td>3*NCLEN</td>
+        <td>lengths of the prefix codes used to encode the symbols in the code length alphabet</td>
+        <td>
+            <p>
+                These are 3 bit long bit fields that describe the prefix code lengths used for the code length alphabet.
+                Using these values the Huffman tree for the code length alphabet can be built.
+            </p>
+            <p>
+                The index order in this table is weird.
+                The length codes are assigned in the following order:
+                16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15.
+                If NCLEN is smaller than the maximum possible 19, the unset fields are set zero.
+            </p>
+        </td>        
+    </tr>
+    <tr>
+        <td>varies</td>
+        <td>lengths of the codes for the literal/length alphabet and the distance alphabet</td>
+        <td>
+            There are NLIT + NDIST number of elements in this list encoded by the code length alphabet and whose symbols are encoded using the prefix code described by previous row.
+            First the prefix code lengths for the the literal/length alphabet, then the prefix code lengths for the distance alphabet.
+        </td>        
+    </tr>
+    <tr>
+        <td>varies</td>
+        <td>the compressed data itself</td>
+        <td>
+            After processing the lengths and building the Huffman tree for the literal/length alphabet and the distance alphabet, the compressed data follows. 
+            It's a series of commands that describe how to generate the uncompressed file.  
+        </td>        
+    </tr>    
+</table>
+
+
+<h3>Layout of compressed blocks using a fixed Huffman tree</h3>
+
+<p>
+    In this case the block contains the compressed data only.
+    The code lengths for both the literal/length alphabet and the distance alphabet is hard coded.
+    All codes of the distance alphabet is 5 bits long. 
+    For the literal/length alphabet the code lengths vary in the following intervals:
+    8 bit long for the symbols between 0..143, 9 bits between 144..255, 7 bits between 256..279, 8 bits between 280..287.
+    (286 and 287 won't appear within the compressed data, but takes part in the code generation.)
+</p>
+
+<h3>Adler32 checksum</h3>
+
+<p>
+    The Adler32 checksum is computed the following way:
+    Let's have two integer variables $A$ and $B$.
+    Initialitze them as: $A = 1$, $B = 0$.
+    Let's have $C$ to denote the next byte in the stream. 
+    For each byte in the file going from start to end update the two variables the following way:  $A := (A + C) \text{ mod } 65521$, $B := (A + B) \text{ mod } 65521$.
+    Once all bytes processed, the checksum will be: $65536 B + A$.
+</p>
+
+
+
+            </div>
+            <div id="recentlyupdated">
+                Recently updated:                            <div class="navline">
+                <a href="?lang=en&amp;page=programming" class="navlink">Programming</a>&gt;&gt; <a href="?lang=en&amp;page=programming/zlib_deflate_quick_reference" class="navlink">ZLIB + Deflate file format</a> (2017-09-21)                
+            </div>
+                    <div class="navline">
+                <a href="?lang=en&amp;page=programming" class="navlink">Programming</a>&gt;&gt; <a href="?lang=en&amp;page=programming/resource_management_exceptions_and_templates_in_c" class="navlink">Resource management, exceptions and templates in C</a> (2017-09-20)                
+            </div>
+                    <div class="navline">
+                <a href="?lang=en&amp;page=misc" class="navlink">Miscellaneous</a>&gt;&gt; <a href="?lang=en&amp;page=misc/pokemon_go_ideal_moveset" class="navlink">Pokémon Go offensive moveset calculator</a> (2017-08-09)                
+            </div>
+                    <div class="navline">
+                <a href="?lang=en&amp;page=programming" class="navlink">Programming</a>&gt;&gt; <a href="?lang=en&amp;page=programming/how_to_write_super_portable_programs" class="navlink">How to write super portable programs</a> (2017-08-09)                
+            </div>
+                    <div class="navline">
+                <a href="?lang=en&amp;page=controversial" class="navlink">Controversial</a>&gt;&gt; <a href="?lang=en&amp;page=controversial/betterstackexchange" class="navlink">Ideas for a better Stack Exchange</a> (2016-06-02)                
+            </div>
+                                <p>
+            Content is available on <a href="http://ipfs.io">IPFS</a>! Feel free to host and pin my content if you like it. <a href="http://gateway.ipfs.io/ipns/calmarius.net/index.htm">http://gateway.ipfs.io/ipns/calmarius.net/index.htm</a>        </p>
+                </div>
+            <div id="thirdpartycontent" class="centerchildren">
+                                    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" class="centerblock">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="KN22NQCJEX94Y">
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" name="submit" alt="PayPal - The safer, easier way to pay online!" class="borderless">
+            <img alt="" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1" class="borderless">
+            </form>
+                <script async="async" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- Calmarius.Net -->
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:250px;height:250px"
+             data-ad-client="ca-pub-9475507679308951"
+             data-ad-slot="2919213276"></ins>
+</div>
+
+        
+<style>
+*
+{
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+body
+{
+    font-family: Computer Modern Serif, Verdana, sans-serif;
+    font-size: 1em;
+    background: #CCC;
+    word-wrap: break-word;
+}
+
+
+table
+{
+    border-collapse: collapse;
+}
+
+img, canvas, svg
+{
+    max-width: 100%;
+}
+
+span.ref
+{
+    position: relative;
+    left: 0;
+    top: 0;
+}
+
+span.switch
+{
+    cursor:pointer;
+    vertical-align: text-top;
+    font-size: 70%;
+    font-weight: bold;
+    color: blue;
+}
+
+span.togglee
+{
+    border: 1px solid black;
+    background: white;
+    min-width: 200px;
+    padding: 5px;
+    font-size: 80%;
+    position: absolute;
+    display: none;
+    left: 10px;
+    top: 10px;
+    z-index: 10;
+}
+
+span.help
+{
+    cursor: help;
+}
+
+abbr:hover
+{
+    cursor:help
+}
+
+p:before {
+  content: "";
+  width: 10em;
+  display: block;
+  overflow: hidden;
+  /* For Demonstration */
+/*  border: 1px solid green; */
+}
+
+p
+{
+	border: 1px solid transparent; 
+}
+
+div.imagecontainer
+{
+    border: 1px black solid;
+    padding: 5px;
+    max-width: 100%;
+}
+
+table.tdcenter td
+{
+    text-align: center;
+}
+
+table.columns td,
+table.borderless td
+{
+	border: none;
+}
+
+table.columns
+{
+	width: 100%;
+	table-layout: fixed;
+}
+
+td
+{
+    border: 1px solid gray;
+}
+
+dt
+{
+}
+
+dt:after
+{
+    content: ":"
+}
+
+dl.codeitems dt
+{
+    font-family: Courier New, monospace        
+}
+
+ul.codeitems li
+{
+    font-family: Courier New, monospace        
+}
+
+.code
+{
+    font-family: Courier New, monospace    
+}
+
+pre, code
+{
+    font-family: Courier New, monospace;
+}
+
+th
+{
+    background-color: #CCF;
+    border: 1px solid black;
+}
+
+pre
+{
+    background-color: #EEF;
+    overflow: auto;
+}
+
+h1, h2, h3, h4, h5, h6
+{
+    clear: both
+}
+
+h1
+{
+    font-size: 249%;
+}
+
+h1 a
+{
+    text-decoration: none;
+}
+
+h2
+{
+    border-bottom: 1px solid black;
+    font-size: 207%;
+}
+
+h3
+{
+    font-size: 173%;
+}
+
+h4
+{
+    font-style: italic;
+    font-size: 144%;
+}
+
+h5
+{
+    font-style: italic;
+    font-weight: normal;
+    font-size: 120%;
+}
+
+h6
+{
+    font-size: 100%;
+    font-weight: normal;
+    text-decoration: underline;
+}
+
+em
+{
+    font-style: italic;
+}
+
+img[src$=".svg"] 
+{
+  width: 100%; 
+}
+
+img, canvas, svg
+{
+    vertical-align: middle;
+    border: none;
+}
+
+#content
+{
+    overflow: hidden;
+    
+}
+
+#pagecontent, #recentlyupdated
+{
+    background-color:white;
+    padding: 10px;
+    margin: 5px auto 5px auto;
+    max-width: 800px;
+}
+
+#cummunitycontent
+{
+    overflow: auto;
+    background-color: #FDB;
+    padding: 10px;
+    margin: 5px auto 5px auto;
+    max-width: 800px;
+}
+
+#thirdpartycontent
+{
+    overflow: auto;
+    background-color: #BDF;
+    padding: 10px;
+    margin: 5px auto 5px auto;
+    max-width: 800px;
+    text-align: center;
+}
+
+#footer
+{
+    background-color: #8CF;
+}
+
+#left
+{
+    float: left;
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid black;
+    max-width: 200px;
+}
+
+#right
+#right
+{
+    float: right;
+    margin: 15px;
+    max-width: 300px;
+}
+
+#top_bar
+{
+    text-align: right;
+    margin: 5px;
+}
+
+#debuginfo
+{
+    float:right;
+}
+
+div.path
+{
+    background-color: #8CF;
+    border-top: 1px solid blue;
+    border-bottom: 1px solid blue;
+    padding: 5px;
+    margin: 5px;
+}
+
+a.navlink
+{
+    font-weight: bold;
+    text-decoration: none;
+}
+
+div.navline,
+a.navigationbutton,
+a.navigationbuttoninline
+{
+    background-color: #8CF;
+    border-top: 1px solid blue;
+    border-bottom: 1px solid blue;
+    padding: 5px;
+    margin: 5px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a.navigationbuttoninline
+{
+    display: inline-block;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+a.navigationbutton
+{
+    display: block;
+}
+
+a.selectednavigation
+{
+    background-color: #8FC;
+}
+
+a.button
+{
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid black;
+    display: inline-block;
+}
+
+.centerblock
+{
+    margin: 0 auto 0 auto;
+}
+
+.center
+{
+    text-align: center;
+}
+
+.alert
+{
+    color: red;
+    font-weight: bold;
+}
+
+.success
+{
+    color: green;
+    font-weight: bold;
+}
+
+.rightfloat
+{
+    float: right;
+}
+
+.clearsides
+{
+    clear: both;
+}
+
+.borderless
+{
+    border: none;
+}
+
+.thinborder
+{
+	border: 1px solid black;
+}
+
+.hstretch
+{
+    width: 100%;
+}
+
+.nowrap
+{
+    white-space: nowrap;
+}
+
+.name
+{
+    font-variant: small-caps;
+}
+
+.smallfont
+{
+    font-size:70%;
+}
+
+.scrollable
+{
+	overflow: auto;
+}
+</style>
+    </body>
+</html>
+

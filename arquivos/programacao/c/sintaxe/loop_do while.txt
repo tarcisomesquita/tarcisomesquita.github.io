@@ -1,0 +1,20 @@
+do {
+  comando;
+} while (condição);
+
+Executa o comando enquanto a condição for verdadeira. Como a condição é avaliada no final de cada volta, o comando é executado pelo menos uma vez.
+
+#include <stdio.h>
+
+int main() {
+  int soma = 0, i = 10, final = 15;
+  
+  do {
+    soma += i;
+    i++;
+  } while (i <= final);
+  
+  printf("Soma dos números entre [10 e 15] = %d\n", soma);
+  
+  return 0;
+}

@@ -1,0 +1,395 @@
+MATCH EXTENSIONS
+
+--comment comment
+Ex.: iptables -A INPUT -s 192.168.0.0/16 -m comment --comment "A privatized IP block"
+
+
+connbytes
+Match by how many bytes or packets a connection
+The transferred bytes per connection can be viewed through /proc/net/ip_conntrack
+
+[!] --connbytes from[:to]
+match packets from a connection whose packets or bytes size is more than FROM and less than TO bytes/packets.
+if TO is omitted only FROM check is done.
+"!" is used to match packets not falling in the range.
+
+--connbytes-dir {original|reply|both}
+--connbytes-mode {packets|bytes}
+
+Example:
+iptables -t filter -I OUTPUT -m connbytes --connbytes 1000: --connbytes-dir both --connbytes-mode bytes -j LOG
+
+
+connlimit
+Allows you to restrict the number of parallel connections to a server per client IP address (or client address block).
+
+[!] --connlimit-above n
+Match if the number of existing connections is (not) above n.
+
+Examples:
+# allow 2 telnet connections per client host
+iptables -A INPUT -p tcp --syn --dport 23 -m connlimit --connlimit-above 2 -j REJECT
+
+
+This extension can be used if '--protocol icmp' is specified.
+[!] --icmp-type typename
+ICMP type names shown by the command: iptables -p icmp -h
+
+
+iprange
+[!] --src-range from[-to]
+[!] --dst-range from[-to]
+
+
+length
+This module matches the length of the layer-3 payload
+[!] --length length[:length]
+
+
+limit
+[!] --limit rate[/second|/minute|/hour|/day]
+
+Ex.:
+iptables -A FORWARD -p tcp --syn                           -m limit --limit 1/s -j ACCEPT -m comment --comment "Syn-flood protection"
+iptables -A FORWARD -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit 1/s -j ACCEPT -m comment --comment "Furtive port scanner"
+iptables -A FORWARD -p icmp --icmp-type echo-request       -m limit --limit 1/s -j ACCEPT -m comment --comment "Ping of death"
+
+
+mac
+[!] --mac-source address
+Match source MAC address.
+It must be of the form XX:XX:XX:XX:XX:XX. Note that this only makes sense for packets coming from an Ethernet device and entering the PREROUTING, FORWARD or INPUT chains.
+
+
+multiport
+[!] --source-ports,--sport port[,port|,port:port]...
+[!] --destination-ports,--dport port[,port|,port:port]...
+[!] --ports port[,port|,port:port]...
+Match if either the source or destination ports are equal to one of the given ports.
+
+
+owner
+This module attempts to match various characteristics of the packet creator, for locally generated packets.
+This match is only valid in the OUTPUT and POSTROUTING chains. Forwarded packets do not have any socket associated with them.
+Packets from kernel threads do have a socket, but usually no owner.
+
+[!] --uid-owner username
+[!] --uid-owner userid[-userid]
+Matches if the packet socket's file structure (if it has one) is owned by the given user. You may also specify a numerical UID, or an UID range.
+
+[!] --gid-owner groupname
+[!] --gid-owner groupid[-groupid]
+Matches if the packet socket's file structure is owned by the given group. You may also specify a numerical GID, or a GID range.
+
+[!] --socket-exists
+Matches if the packet is associated with a socket.
+
+Ex.:
+Create a group called "internet" and add your user as a member of this new group. (System->Administration->Users and Groups)
+iptables -A OUTPUT -m owner ! --gid-owner internet -j DROP
+sg internet firefox
+
+kernel was compiled with CONFIG_IP_NF_MATCH_OWNER have:
+--pid-id processid    Matches if the packet was created by a process with the given process id
+--cmd-owner name      Matches if the packet was created by a process with the given command name.
+Veja isso com iptables -m owner -h
+
+
+physdev
+This module matches on the bridge port input and output devices enslaved to a bridge device.
+[!] --physdev-in name
+Name of a bridge port via which a packet is received (only for packets entering the INPUT, FORWARD and PREROUTING chains).
+If the interface name ends in a "+", then any interface which begins with this name will match.
+
+[!] --physdev-out name
+Name of a bridge port via which a packet is going to be sent (for packets entering the FORWARD, OUTPUT and POSTROUTING chains).
+If the interface name ends in a "+", then any interface which begins with this name will match.
+Note that in the nat and mangle OUTPUT chains one cannot match on the bridge output port, however one can in the filter OUTPUT chain.
+
+[!] --physdev-is-in
+Matches if the packet has entered through a bridge interface.
+
+[!] --physdev-is-out
+Matches if the packet will leave through a bridge interface.
+
+[!] --physdev-is-bridged
+Matches if the packet is being bridged and therefore is not being routed.
+This is only useful in the FORWARD and POSTROUTING chains.
+
+
+pkttype
+This module matches the link-layer packet type.
+
+[!] --pkt-type {unicast|broadcast|multicast}
+
+
+recent
+Allows you to dynamically create a list of IP addresses and then match against that list in a few different ways.
+
+For example, you can create a 'badguy' list out of people attempting to connect to port 139 on your firewall and then DROP all future packets from them without considering them.
+
+--name name
+Specify the list to use for the commands. If no name is given
+then 'DEFAULT' will be used.
+
+[!] --set
+This will add the source address of the packet to the list. If
+the source address is already in the list, this will update the
+existing entry. This will always return success (or failure if
+'!' is passed in).
+
+[!] --rcheck
+Check if the source address of the packet is currently in the
+list.
+
+[!] --update
+Like --rcheck, except it will update the "last seen" timestamp
+if it matches.
+
+[!] --remove
+Check if the source address of the packet is currently in the
+list and if so that address will be removed from the list and
+the rule will return true. If the address is not found, false is
+returned.
+
+[!] --seconds seconds
+This option must be used in conjunction with one of --rcheck or
+--update. When used, this will narrow the match to only happen
+when the address is in the list and was seen within the last
+given number of seconds.
+
+[!] --hitcount hits
+This option must be used in conjunction with one of --rcheck or
+--update. When used, this will narrow the match to only happen
+when the address is in the list and packets had been received
+greater than or equal to the given value. This option may be
+used along with --seconds to create an even narrower match
+requiring a certain number of hits within a specific time frame.
+
+--rttl This option must be used in conjunction with one of --rcheck or
+--update. When used, this will narrow the match to only happen
+when the address is in the list and the TTL of the current
+packet matches that of the packet which hit the --set rule. This
+may be useful if you have problems with people faking their
+source address in order to DoS you via this module by disallow-
+ing others access to your site by sending bogus packets to you.
+
+--name name
+Name of the recent list to be used. DEFAULT used if none given.
+
+--rsource
+Match/Save the source address of each packet in the recent list
+table (default).
+
+--rdest
+Match/Save the destination address of each packet in the recent
+list table.
+
+Examples:
+# iptables -A FORWARD -m recent --name badguy --rcheck --seconds 60 -j DROP
+# iptables -A FORWARD -p tcp -i eth0 --dport 139 -m recent --name badguy --set -j DROP
+
+sudo iptables -A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW -m recent --set --name SSH
+sudo iptables -A INPUT -i eth0 -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 60 --hitcount 8 --rttl --name SSH -j DROP
+rate-limit all incoming SSH connections to 8 in a one minute window. Normal users will have no trouble logging in, but the brute force attacks will be dropped, limiting the number of possible account combinations from unlimited, to 8.
+
+/proc/net/ipt_recent/* are the current lists of addresses and information about each entry of each list.
+
+Each file in /proc/net/ipt_recent/ can be read from to see the current list or written two using the following commands to modify the list:
+
+echo xx.xx.xx.xx > /proc/net/ipt_recent/DEFAULT
+to Add to the DEFAULT list
+
+echo -xx.xx.xx.xx > /proc/net/ipt_recent/DEFAULT
+to Remove from the DEFAULT list
+
+echo clear > /proc/net/ipt_recent/DEFAULT
+to empty the DEFAULT list.
+
+The module itself accepts parameters, defaults shown:
+
+ip_list_tot=100
+Number of addresses remembered per table
+
+ip_pkt_list_tot=20
+Number of packets per address remembered
+
+ip_list_hash_size=0
+Hash table size. 0 means to calculate it based on ip_list_tot,
+default: 512
+
+ip_list_perms=0644
+Permissions for /proc/net/ipt_recent/* files
+
+debug=0
+Set to 1 to get lots of debugging info
+
+
+state
+[!] --state state
+Where state is a comma separated list of the connection states to match.
+Possible states are:
+INVALID
+ESTABLISHED meaning that the packet is associated with a connection which has seen packets in both directions
+NEW meaning that the packet has started a new connection
+RELATED meaning that the packet is starting a new connection, but is associated with an existing connection, such as an FTP data transfer, or an ICMP error.
+
+
+string
+This modules matches a given string by using some pattern matching strategy.
+
+--algo {bm|kmp}
+Select the pattern matching strategy. (bm = Boyer-Moore, kmp = Knuth-Pratt-Morris)
+
+--from offset
+Set the offset from which it starts looking for any matching.
+If not passed, default is 0.
+
+--to offset
+Set the offset from which it starts looking for any matching. If not passed, default is the packet size.
+
+[!] --string pattern
+Matches the given pattern.
+
+[!] --hex-string pattern
+Matches the given pattern in hex notation.
+
+Ex.:
+iptables -A INPUT -m string --string 'badstring' -j QUEUE
+A lot of people have been using this match as a mean to stop particular functions in HTTP like POST or GET by dropping.|
+
+
+tcp
+These extensions can be used if '--protocol tcp' is specified. It pro-
+vides the following options:
+
+[!] --source-port,--sport port[:port]
+If the first port is omitted, "0" is assumed; if the last is omitted, "65535" is assumed.
+
+[!] --destination-port,--dport port[,port]
+
+[!] --tcp-flags mask comp
+Match when the TCP flags are as specified.
+The first argument mask is the flags which we should examine, written as a comma separated list.
+The second argument comp is a comma separated list of flags which must be set.
+Flags are: SYN ACK FIN RST URG PSH ALL NONE.
+
+iptables -A FORWARD -p tcp --tcp-flags SYN,ACK,FIN,RST SYN
+match packets with the SYN flag set, and the ACK, FIN and RST flags unset.
+
+[!] --syn
+Only match TCP packets with the SYN bit set and the ACK,RST and FIN bits cleared.
+Such packets are used to request TCP connection initiation; for example, blocking such packets coming in an interface will prevent incoming TCP connections, but outgoing TCP connections will be unaffected.
+It is equivalent to --tcp-flags SYN,RST,ACK,FIN SYN.
+
+
+time
+This matches if the packet arrival time/date is within a given range.
+--datestart YYYY[-MM[-DD[Thh[:mm[:ss]]]]]
+--datestop YYYY[-MM[-DD[Thh[:mm[:ss]]]]]
+
+Only match during the given time, which must be in ISO 8601 "T" notation.
+The possible time range is 1970-01-01T00:00:00 to 2038-01-19T04:17:07.
+
+--timestart hh:mm[:ss]
+--timestop  hh:mm[:ss]
+
+[!] --weekdays day[,day...]
+Mon, Tue, Wed, Thu, Fri, Sat, Sun, or values from 1 to 7, respectively.
+
+--utc
+Interpret the times given for --datestart, --datestop, --timestart and --timestop to be UTC.
+
+--localtz
+Interpret the times given for --datestart, --datestop, --timestart and --timestop to be local kernel time. (Default)
+
+EXAMPLES. To match on weekends, use:
+-m time --datestart 2007-12-24 --datestop 2007-12-27
+-m time --datestart 2007-01-01T17:00 --datestop 2007-01-01T23:59:59
+
+
+u32
+U32 tests whether quantities of up to 4 bytes extracted from a packet have specified values.
+The specification of what to extract is general enough to find data at given offsets from tcp headers or payloads.
+
+[!] --u32 tests
+The argument amounts to a program in a small language described below.
+
+tests
+location "=" value | tests "&&" location "=" value
+
+value
+range | value "," range
+
+range
+number | number ":" number
+n:m is interpreted as the range of numbers >=n and <=m.
+
+location
+number | location operator number
+
+operator
+"&" | "<<" | ">>" | "@"
+
+The operators &, <<, >> and && mean the same as in C.
+The @ operator is what allows moving to the next header and is described further below.
+
+Example:
+--u32 "0 & 0xFFFF = 0x100:0xFFFF"
+To match IP packets with total length >= 256.
+Read bytes 0-3 because the IP header contains a total length field in bytes 2-3.
+AND that with 0xFFFF (giving bytes 2-3), and test whether that is in the range [0x100:0xFFFF]
+
+Example:
+To match ICMP packets with icmp type 0.
+--u32 "6 & 0xFF = 1 && ...
+test that it is an ICMP packet. Is true if byte 9 (protocol) = 1.
+read bytes 6-9, use & to throw away bytes 6-8 and compare the result to 1.
+
+... 4 & 0x3FFF = 0 && ...
+Next test that it is not a fragment.
+The last 6 bits of byte 6 and all of byte 7 are 0 if this is a complete packet (not a fragment).
+
+... 0 >> 22 & 0x3C @ 0 >> 24 = 0"
+Last test: the first byte past the IP header (the type) is 0.
+The length of the IP header (IHL) in 32 bit words is stored in the right half of byte 0 of the IP header itself.
+
+The first 0 means read bytes 0-3, >> Create a group called "no-internet" and add your user as a member of this new group. (System->Administration->Users and Groups)
+iptables -A OUTPUT -m owner --gid-owner no-internet -j DROP
+sg no-internet firefox
+22 means shift that 22 bits to the right. Shifting 24 bits would give the first byte, so only 22 bits is four times that plus a few more bits. &3C then eliminates the two extra bits on the right and the first four bits of the first byte.
+For instance, if IHL=5, then the IP header is 20 (4 x 5) bytes long. In this case, bytes 0-1 are (in binary) xxxx0101 yyzzzzzz, >>22 gives the 10 bit value xxxx0101yy and &3C gives 010100. @ means to use this number as a new offset into the packet, and read four bytes starting from there. This is the first 4 bytes of the ICMP payload, of which byte 0 is the ICMP type. Therefore, we simply shift the value 24 to the right to throw out all but the first byte and compare the result with 0.
+
+Example:
+TCP payload bytes 8-12 is any of 1, 2, 5 or 8
+First we test that the packet is a tcp packet (similar to ICMP).
+--u32 "6 & 0xFF = 6 && ...
+
+Next, test that it is not a fragment (same as above).
+ ... 0 >> 22 & 0x3C @ 12 >> 26 & 0x3C @ 8 = 1,2,5,8"
+0>>22&3C as above computes the number of bytes in the IP header.
+@ makes this the new offset into the packet, which is the start of the TCP header. The length of the TCP header (again in 32 bit words) is the left half of byte 12 of the TCP header. The 12>>26&3C computes this length in bytes (similar to the IP header before). "@" makes this the new offset, which is the start of the TCP payload. Finally, 8 reads bytes 8-12 of the payload and = checks whether the result is any of 1, 2, 5 or 8.
+
+Is the fragment offset 0? (If so, this is either an unfragmented packet or the first fragment).
+"0>>22&0x3C@4=0x29"
+lê na posição 0, desloca 22 bits, faz AND e ? desloca 4 bytes
+
+Is the TCP Sequence number 41? (This requires the previous two checks for TCP and First Fragment as well)
+"0>>22&0x3C@0>>16=0x0301"
+
+Check for ICMP type=3 and code=1 (needs UDP and first fragment tests too)
+"0>>22&0x3C@0&0xFFFF=53"
+
+Is the UDP destination port 53? (Check for udp and first/no fragment first)
+"0>>22&0x3C@8>>15&0x01=1"
+
+
+udp
+These extensions can be used if '--protocol udp' is specified. It provides the following options:
+
+[!] --source-port,--sport port[:port]
+Source port or port range specification. See the description of the --source-port option of the TCP extension for details.
+
+[!] --destination-port,--dport port[:port]
+Destination port or port range specification. See the description of the --destination-port option of the TCP extension for details.
+

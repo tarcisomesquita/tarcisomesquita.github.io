@@ -1,0 +1,72 @@
+urld broadcast, laptop to 255.255.255.255
+	laptop is using wireless
+
+Frame 225 (402 on wire, 402 captured)
+    Arrival Time: Mar 10, 2002 10:42:46.847647000
+    Time delta from previous packet: 0.065486000 seconds
+    Time relative to first packet: 23.001406000 seconds
+    Frame Number: 225
+    Packet Length: 402 bytes
+    Capture Length: 402 bytes
+IEEE 802.11
+    Type/Subtype: Data (32)
+    Frame Control: 0x0108
+        Version: 0
+        Type: Data frame (2)
+        Subtype: 0
+        Flags: 0x1
+            DS status: Frame is entering DS (To DS: 1  From DS: 0) (0x01)
+            .... .0.. = Fragments: No fragments
+            .... 0... = Retry: Frame is not being retransmitted
+            ...0 .... = PWR MGT: STA will stay up
+            ..0. .... = More Data: No data buffered
+            .0.. .... = WEP flag: WEP is disabled
+            0... .... = Order flag: Not strictly ordered
+    Duration: 258
+    BSS Id: 00:50:18:05:d0:f8 (00:50:18:05:d0:f8)
+    Source address: 00:02:2d:0d:06:c2 (00:02:2d:0d:06:c2)
+    Destination address: ff:ff:ff:ff:ff:ff (ff:ff:ff:ff:ff:ff)
+    Fragment number: 0
+    Sequence number: 843
+Logical-Link Control
+    DSAP: SNAP (0xaa)
+    IG Bit: Individual
+    SSAP: SNAP (0xaa)
+    CR Bit: Command
+    Control field: U, func = UI (0x03)
+        000. 00.. = Unnumbered Information
+        .... ..11 = Unnumbered frame
+    Organization Code: Encapsulated Ethernet (0x000000)
+    Type: IP (0x0800)
+Internet Protocol, Src Addr: 192.168.30.146 (192.168.30.146), Dst Addr: 255.255.255.255 (255.255.255.255)
+    Version: 4
+    Header length: 20 bytes
+    Differentiated Services Field: 0x10 (DSCP 0x04: Unknown DSCP; ECN: 0x00)
+        0001 00.. = Differentiated Services Codepoint: Unknown (0x04)
+        .... ..0. = ECN-Capable Transport (ECT): 0
+        .... ...0 = ECN-CE: 0
+    Total Length: 370
+    Identification: 0x0000
+    Flags: 0x00
+        .0.. = Don't fragment: Not set
+        ..0. = More fragments: Not set
+    Fragment offset: 0
+    Time to live: 16
+    Protocol: UDP (0x11)
+    Header checksum: 0xca31 (correct)
+    Source: 192.168.30.146 (192.168.30.146)
+    Destination: 255.255.255.255 (255.255.255.255)
+User Datagram Protocol, Src Port: 1999 (1999), Dst Port: 1999 (1999)
+    Source port: 1999 (1999)
+    Destination port: 1999 (1999)
+    Length: 350
+    Checksum: 0xd72d (correct)
+Data (342 bytes)
+
+0000  08 01 02 01 00 50 18 05 d0 f8 00 02 2d 0d 06 c2   .....P......-...
+0010  ff ff ff ff ff ff b0 34 aa aa 03 00 00 00 08 00   .......4........
+0020  45 10 01 72 00 00 00 00 10 11 ca 31 c0 a8 1e 92   E..r.......1....
+0030  ff ff ff ff 07 cf 07 cf 01 5e d7 2d 00 5b 00 1f   .........^.-.[..
+...
+data suppressed
+

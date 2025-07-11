@@ -1,0 +1,165 @@
+.git/
+HEAD: referência do branch atual
+config: configurações do seu repositório.
+description: descrição do repositório.
+index: índice dos arquivos que serão incluídos no próximo commit.
+objects: Esta pasta contém os objetos binários que representam os arquivos e diretórios do seu projeto. Cada objeto tem um hash único que o identifica.
+refs: Esta pasta contém referências (pointers) para os objetos. É aqui que o Git armazena informações sobre branches, tags e o HEAD (que aponta para o commit atual).
+hooks: Esta pasta contém scripts que podem ser executados em eventos específicos do Git, como antes de um commit ou push.
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+apt-get install git
+
+git config --global user.email "tarcisomesquita@gmail.com"
+git config --global user.name "tarcisomesquita"
+git config --list --show-origin
+
+usuario > settings > Developer Settings > Personal Access tokens > Tokens (classic) > Generate new token > Generate new token (classic) > 
+note: comentário
+Expiration > custom > 1 day
+repo: check
+
+git clone https://github.com/tarcisomesquita/tarcisomesquita.github.io.git
+cd tarcisomesquita.github.io
+git remote set-url origin https://<token>@github.com/tarcisomesquita/tarcisomesquita.github.io
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+echo 'status = = = = = = = ='; git status # Tem mudanças
+
+echo 'add  = = = = = = = = ='; git add .
+echo 'commit = = = = = = = ='; git commit -m "$(date +%d-%m-%Y_%H:%M:%S)"
+echo 'diff = = = = = = = = ='; git diff --name-only main origin # quais arquivos?
+
+echo 'push = = = = = = = = ='; git push
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+baixa os objetos do repositório remoto que são diferentes daqueles do diretório de trabalho local
+
+echo 'fetch = = = = = = = = ='; git fetch
+echo 'diff  = = = = = = = = ='; git diff --name-only main origin
+
+echo 'merge = = = = = = = = ='; git merge
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+cd /home/user/my_project
+git init
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+git ls-tree HEAD
+git cat-file –p d670460b4b4aece5915caf5c68d12f560a9fe3e4
+
+git grep "palavra"
+
+git prune -v -n # somente mostra o que será apagado
+git prune -v    # apaga
+
+git log
+
+redefinir o índice e o diretório de trabalho para o estado do último commit:
+git reset --hard HEAD
+
+git rm filename.txt
+
+git archive --format=tar master
+
+https://raw.githubusercontent.com/progit/progit2/main/images/snapshots.svg
+
+you have the entire history of the project right there on your local disk
+Git uses the checksum SHA-1 hash
+
+states that your files can reside in: modified, staged, and committed
+
+git log --pretty=oneline
+git log -p -2 PROGRAMAS/git.txt
+git log --stat
+git log --oneline --decorate
+
+git log --pretty=oneline
+ab1afef80fac8e34258ff41fc1b867c702daa24b Modify repo.rb a bit
+484a59275031909e19aadb7c92262719cfcdf19a Create repo.rb
+1a410efbd13591db07496601ebc7a059dd55cfe9 Third commit
+cac0cab538b970a37ea1e769cbbde608743bc96d Second commit
+fdf4fc3344e67ab068f836878b6c4951e3b15f3d First commit
+Now, move the master branch back to the middle commit:
+$ git reset --hard 1a410efbd13591db07496601ebc7a059dd55cfe9
+apaga o histórico de log
+
+git revert --no-edit 6111116
+acrescenta um commit no histórico de log
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+echo 'test content' | git hash-object -w --stdin
+d670460b4b4aece5915caf5c68d12f560a9fe3e4
+
+find .git/objects -type f
+.git/objects/d6/70460b4b4aece5915caf5c68d12f560a9fe3e4
+
+git cat-file -p d670460b4b4aece5915caf5c68d12f560a9fe3e4
+
+git cat-file -p master^{tree}
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+git remote add origin https://github.com/tarcisomesquita/linux.git
+
+git remote -v
+git remote remove origin
+git remote set-url origin https://github.com/tarcisomesquita/linux.git
+
+git ls-remote https://github.com/tarcisomesquita/linux.git
+
+ = = = = = = = = = = = = = = = = = = = = = = git checkout main= = = = = =
+
+listar todos os ramos 
+git branch
+
+criar um novo ramo e mudar para ele
+git checkout -b <branch-name>
+
+mudar de um ramo para outro:
+git checkout <branch-name>
+
+excluir um ramo:
+git branch –d <branch-name>
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Configurando um subdomínio no github
+ex.: teste.t7m8.com.br
+acesse o repositório > Configurações > Pages > Domínio personalizado > Salvar > selecione Impor HTTPS (pode levar até 24 horas para que esta opção fique disponível)
+o arquivo CNAME é adicionado automaticamente
+No provedor DNS e crie um registro CNAME que aponte o subdomínio para o domínio padrão do seu site.
+ex.: CNAME teste.t7m8.com.br tarcisomesquita.github.io
+dig teste.t7m8.com.br +nostats +nocomments +nocmd
+dig ns t7m8.com.br +nostats +nocomments +nocmd
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+excluir todo o histórico
+
+git checkout --orphan nova-main # Crie uma nova branch órfã
+
+git rm -rf . # Remova todos os arquivos
+
+git add .
+git commit -m "Initial commit do novo histórico"
+
+git branch -D main   # Exclua a branch antiga
+git branch -m main
+
+git checkout main
+git push -f origin main   # sobrescrever o histórico no seu repositório remoto
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Ver arquivo que já foi apagado
+
+git log --all --  arquivos/programacao/mysql/mysql.txt
+
+git checkout <hash_do_commit_anterior_a_exclusao> -- arquivos/programacao/mysql/mysql.txt   # restaura o arquivo

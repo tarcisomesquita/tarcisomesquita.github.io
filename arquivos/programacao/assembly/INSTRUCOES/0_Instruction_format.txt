@@ -1,0 +1,39 @@
+
+ +----------------------+-----+---+--------+-----+--------------+-----------+
+ | Instruction Prefixes | REX | Opcode | ModR/M | SIB | Displacement | Immediate |
+ +----------------------+-----+---+--------+-----+--------------+-----------+
+
+Instruction Prefixes
+Up to four prefixes of 1 byte each (optional)
+
+REX
+1 byte (optional)
+
+Opcode
+1, 2, or 3 byte 
+
+ModR/M
+1 byte (if required)
+
+SIB
+1 byte (if required)
+
+Displacement
+Address displacement of 1, 2, or 4 bytes or none
+
+Immediate
+Immediate data of 1, 2, or 4 bytes or none
+
+ = = = = = = = = = = = = Opcode = = = = = = = = = = = = = = = =
+
+Two-byte opcode formats for general-purpose and SIMD instructions consist of:
+•    An escape opcode byte 0F as the primary opcode and a second opcode byte, or
+•    A mandatory prefix (66H, F2H, or F3H), an escape opcode byte, and a second opcode byte (same as previous bullet)
+For example, CVTDQ2PD consists of the following sequence: F3 0F E6. The first byte is a mandatory prefix (it is not considered as a repeat prefix).
+Three-byte opcode formats for general-purpose and SIMD instructions consist of:
+•    An escape opcode byte 0FH as the primary opcode, plus two additional opcode
+     bytes, or
+•    A mandatory prefix (66H, F2H, or F3H), an escape opcode byte, plus two additional opcode bytes (same as previous bullet)
+For example, PHADDW for XMM registers consists of the following sequence: 66 0F 38 01. The first byte is the mandatory prefix.
+Valid opcode expressions are defined in Appendix A and Appendix B.
+

@@ -1,0 +1,115 @@
+Conecte o dispositivo Android e o computador host do adb a uma rede Wi-Fi acessível de ambos os dispositivos. 
+
+Conecte o dispositivo ao computador host usando um cabo USB.
+Configure o dispositivo de destino para ouvir uma conexão TCP/IP na porta 5555.
+$ adb tcpip 5555
+Desconecte a porta USB do dispositivo de destino
+adb connect device_ip_address
+
+
+Click developer options then check the box for “USB Debugging”.
+
+adb shell am start -a android.intent.action.VIEW
+
+adb shell am start -a android.intent.action.CALL -d tel:+972527300294 // Make a call
+
+// Open send sms screen with phone number and the message:
+adb shell am start -a android.intent.action.SENDTO -d sms:+972527300294   --es  sms_body "Test --ez exit_on_sent false
+
+adb reboot recovery 
+adb reboot-bootloader
+
+adb uninstall com.myAppPackage
+adb shell pm uninstall com.example.MyApp
+
+
+== Home button
+adb shell am start -W -c android.intent.category.HOME -a android.intent.action.MAIN
+
+adb shell pm grant [packageName] [ Permission]  // Grant a permission to an app. 
+adb shell pm revoke [packageName] [ Permission]   // Revoke a permission from an app.
+
+
+== Print text
+adb shell input text 'Wow, it so cool feature'
+
+== Key event
+adb shell input keyevent 3 // Home btn
+adb shell input keyevent 4 // Back btn
+adb shell input keyevent 5 // Call
+adb shell input keyevent 6 // End call
+adb shell input keyevent 26  // Turn Android device ON and OFF. It will toggle device to on/off status.
+adb shell input keyevent 27 // Camera
+adb shell input keyevent 64 // Open browser
+adb shell input keyevent 66 // Enter
+adb shell input keyevent 67 // Delete (backspace)
+adb shell input keyevent 207 // Contacts
+adb shell input keyevent 220 / 221 // Brightness down/up
+adb shell input keyevent 277 / 278 /279 // Cut/Copy/Paste
+// https://developer.android.com/reference/android/view/KeyEvent.html
+
+
+in your mobile phone, open the app for which you want to find the appPackage and appActivity
+Now run this command: dumpsys window windows | grep -E ‘mCurrentFocus’
+
+or
+dumpsys window windows | grep -E ‘mFocusedApp’
+
+For example, consider some app which shows com.myapp/.mainActivity in command prompt when you run the above commands. In this case, you will notice that the appActivity starts with a dot (which is a relative name). So you would need to add com… at the beginning. After adding the complete appActivity name that you will use would be – com.myapp.mainActivity
+
+
+adb shell am start -a android.intent.action.VIEW
+
+start [options] intent
+   -R count: repete a inicialização de atividades count vezes.
+   --user user_id
+startservice [options] intent
+force-stop package
+kill [options] package
+
+
+adb shell pm uninstall com.example.MyApp
+list packages [options] filter
+   -3: filtrar para mostrar apenas pacotes de terceiros.
+   -f: visualizar o arquivo associado.
+   -e: filtrar para mostrar apenas pacotes ativados.
+   -s: filtrar para mostrar apenas pacotes do sistema.
+   -d: filtrar para mostrar apenas pacotes desativados.
+list permission-groups
+list permissions [options] group
+-g: organiza por grupo.
+-f: exibe todas as informações.
+-s: resumo breve.
+-d: lista apenas permissões perigosas.
+-u: lista apenas as permissões que o usuário visualizará.
+list instrumentation // Lista todos os pacotes de teste.
+list features
+list users
+path package
+install [options] path
+-r: reinstala um aplicativo existente, mantendo seus dados.
+-t: permite que APKs de teste sejam instalados.
+-i installer_package_name: especifica o nome do pacote do instalador.
+-s: instala o pacote no armazenamento em massa compartilhado (como sdcard).
+-f: instala o pacote na memória interna do sistema.
+-d: permite o downgrade do código de versão.
+-g: concede todas as permissões listadas no manifesto do aplicativo.
+uninstall [options] package
+-k: mantém os dados e os diretórios de cache após a remoção do pacote.
+enable package_or_component
+disable package_or_component
+grant package_name permission
+revoke package_name permission
+set-install-location location
+0: Automático — permite que o sistema defina o melhor local.
+1: Interno — instala no armazenamento interno do dispositivo.
+2: Externo — instala em uma mídia externa.
+get-install-location
+create-user user_name
+remove-user user_id
+get-max-users
+
+
+adb shell dumpsys
+
+dumpstate

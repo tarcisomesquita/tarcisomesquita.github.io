@@ -1,0 +1,38 @@
+
+When you plug a USB device in, the host becomes aware (because of the pullup resistor on one data line)
+
+The host now signals a USB Reset to the device, in order that it should start in a known state at the end of the reset. In this state the device responds to the default address 0.
+
+The host will now send a request to endpoint 0 of device address 0 to find out its maximum packet size. It can discover this by using the Get Descriptor (Device) command. This request is one which the device must respond to even on address 0.
+
+Typically (i.e. with Windows) the host will now reset the device again. It then sends a Set Address request, with a unique address to the device at address 0. After the request is completed, the device assumes the new address. (And at this point the host is now free to reset other recently plugged-in devices.)
+
+Typically the host will now begin to quiz the device for as many details as it feels it needs. Some requests involved here are:
+
+    * Get Device Descriptor
+    * Get Configuration Descriptor
+    * Get String Descriptor
+
+Once the host feels it has a clear enough picture of what the device is, it will load a suitable device driver. 
+
+The device driver will then select a configuration for the device, by sending a Set Configuration request to the device.
+
+The device is now in the configured state, and can start working as the device it was designed to be. From now on it may respond to device specific requests, in addition to the standard requests which it must continue to support.
+
+The only transfer type available before the device has been configured is the Control Transfer. The only endpoint available at this time is the bidirectional Endpoint 0.
+
+
+
+O controlador percebe quando um dispositivo é conectado e envia um pacote de controle, que o dispositivo responde enviando uma série de informações, incluindo a classe, velocidade, fabricante, string de identificação e assim por diante.
+
+Além de permitirem que o controlador reserve corretamente os recursos usados pelo dispositivo, essas informações são enviadas ao sistema operacional. Isso permite que o dispositivo seja ativado e o programa ou o aviso correspondente seja mostrado na tela.
+
+Aqui temos um exemplo de mensagens de kernel geradas por uma distribuição Linux ao plugar um joystick USB:
+usb 1-3: new low speed USB device using ohci_hcd and address 3
+usb 1-3: configuration #1 chosen from 1 choice
+input: Logitech WingMan Precision USB as /class/input/input2
+input: USB HID v1.10 Joystick [Logitech WingMan Precision USB] on usb-0000:00:02.0-3
+
+As informações permitem também programar ações para quando determinados dispositivos são plugados. No caso do Linux, por exemplo, isso é feito através do udev, o daemon responsável por detectar mudanças no hardware e a conexão de novos dispositivos. É possível executar automaticamente um script de backup quando o HD externo é plugado, ou abrir um determinado jogo quando você pluga o joystick. O mais interessante é que as ações podem ser relacionadas com o código de identificação do dispositivo (que é único), de forma que o backup seja feito apenas ao plugar um HD específico, evitando que seus dados sejam copiados por engano quando um amigo plugar um pendrive, por exemplo. (Como se faz isso?)
+
+No USB 3.0 em vez de o controlador manter a porta ativa, constantemente perguntando se o dispositivo tem algo a transmitir, o host passa a manter o canal desativado até que o dispositivo envie um sinal de interrupção. 

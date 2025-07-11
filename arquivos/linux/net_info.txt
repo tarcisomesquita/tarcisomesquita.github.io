@@ -1,0 +1,12 @@
+
+cat /proc/meminfo
+
+lsof -i
+cat /proc/1844/net/udp
+
+cat /proc/net/tcp
+
+In sl : 0, local_address(0100007F:1FBB) can be converted into doted decimal ip address as 0100007F:1FBB –> 7F000001:1FBB –> 7F 00 00 01:1FBB –> 127 0 0 1:8123 –> 127.0.0.1:8123 (ip : 127.0.0.1 and port : 8123).
+
+cat /proc/net/tcp | sed 's/[ ]\{1,\}/ /g; 1d' | cut -d' ' -f3 | sed 's/^\(..\)\(..\)\(..\)\(..\):\(....\)$/echo $((0x\1)).$((0x\2)).$((0x\3)).$((0x\4)):$((0x\5))/' | bash
+

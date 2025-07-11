@@ -1,0 +1,59 @@
+Cada ano, mais de 100 bilhões de toneladas de CO₂ e H₂O são convertidos em celulose pela fotossíntese.
+
+A fórmula molecular de um carboidrato é (CH₂O)n.
+Os carboidratos de importância no metabolismo celular têm um n que varia de 3 a 7.
+
+Conforme seu tamanho molecular: monossacarídeos, oligossacarídeos e polissacarídeos.
+
+Um monossacarídeo é uma cadeia ou um anel de carbonos unidos por ligações simples, em que cada átomo de carbono está ligado a um único grupo hidroxila (OH), com exceção de um, que carrega o grupo carbonila (C=O). Se o grupo carbonila estiver localizado em uma posição interna (para formar um grupo cetona), o açúcar é uma cetose; porém, se a carbonila estiver localizada na extremidade do açúcar, ela forma um grupo aldeído (COOH), e a molécula é conhecida como uma aldose.
+
+Duas hexoses, uma aldose (glicose) e uma cetose (frutose)
+
+Monossacarídeos:
+  Glicose: Na maioria dos seres vivos
+  Frutose: Frutas
+  Galactose: Leite
+  Ribose: RNA
+  Desoxirribose: DNA
+
+Dissacarídeo   Monossacarídeos       Fonte
+Sacarose       Glicose + Frutose     Cana-de-açúcar
+Lactose        Glicose + Galactose   Leite
+Maltose        Glicose + Glicose     Vegetais
+
+Um polissacarídeo é um polímero de monossacarídeos que contém mais de vinte unidades de monossacarídeos ligadas entre si. A maioria dos carboidratos encontrada na natureza ocorre como polissacarídeos.
+Ex.: quitina, amido, celulose
+
+Entre as biomoléculas, as proteínas são as moléculas que apresentam maior diversidade em termos estruturais e funcionais. Elas são formadas por um ou mais polímeros lineares denominados peptídeos, que consistem em várias combinações de monômeros, chamados de aminoácidos. Existem cerca de 20 tipos de aminoácidos; todos têm um grupo carboxila (-COOH) e um grupo amino separados entre si por um carbono, o carbono α. Em outra ligação do carbono α, há um átomo de hidrogênio e, em outra, existe um grupamento R, que consiste em um grupamento químico diferente que distingue cada tipo de aminoácido.
+Os 20 aminoácidos que compõem as proteínas: valina, leucina, triptofano, prolina, isoleucina, metionina, fenilalanina, alanina, treonina, glicina, asparagina, glutamina, cisteína, serina, tirosina, arginina, histidina, lisina, ácido glutâmico, ácido aspártico.
+
+proteínas responsáveis pelos movimentos celulares, como na contração das células musculares. Exemplo: actina e miosina.
+enzimas são proteínas que aceleram a velocidade das reações metabólicas. Exemplo: lipases.
+
+Três bases nitrogenadas, a adenina (A), a citosina (C) e a guanina (G), são encontradas tanto no DNA como no RNA. Além disso, o DNA contém a base timina (T), e o RNA, a uracila (U).
+
+mitocôndria é o plural de mitocôndrio
+o mitocôndrio pode ser visualizado pela microscopia óptica, utilizando o corante Verde Janus. Estima-se que, nas células do fígado, 10-15% do volume celular seja composto pelas mitocôndria, e elas são mais abundantes nas células musculares, que necessitam de um maior consumo de energia (ATP) para executar a contração muscular
+
+Durante a divisão celular, os cromossomos compactam-se grandemente, para
+favorecer a transferência do material genético intacto para suas células filhas.
+Por isso, são chamados de cromossomos mitóticos, e são extremamente interessantes para os pesquisadores, uma vez que se tornam visíveis, pois adotam
+formas bem distintas, podendo ser fotografados, e posteriormente separados e
+ordenados de acordo com o tamanho, de forma decrescente, o que é chamado
+de cariótipo.
+
+Watson e Crick, em 1953, esses pesquisadores sugeriram que a replicação do DNA ocorria pela separação
+das fitas de dupla hélice, devido a essas fitas serem complementares uma
+a outra.
+
+Durante o processo de replicação do DNA, ocorre a mobilização de vinte
+ou mais proteínas que fazem parte do sistema denominado de DNA replicase.
+
+É necessário separar as cadeias complementares da dupla hélice, e quem realiza isso são as proteínas chamadas helicases.
+
+A informação genética de um organismo fica contida no DNA em unidades, chamadas genes, organizadas ao longo dos cromossomos. Cada gene funcional é capaz de codificar um conjunto de aminoácidos que formará uma cadeia de proteínas. A informação do DNA é transcrita em moléculas de RNAs mensageiros, que levam a informação até os ribossomos, onde ocorrerá a tradução do RNA mensageiro, formando a proteína.
+
+DNA_codigo.png
+Há um códon usado para iniciar a sequência proteica que é comum a todas as proteínas, o AUG
+
+Um conjunto de enzimas que abre a molécula de DNA para que a RNA polimerase se instale e faça a síntese do RNA mensageiro.

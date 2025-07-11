@@ -1,0 +1,3 @@
+as 1_hello.s -o 1_hello.o
+objdump -d -M intel --no-show-raw-insn  1_hello.o | grep ":" | cut -c7-
+

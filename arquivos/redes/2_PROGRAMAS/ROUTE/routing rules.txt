@@ -1,0 +1,25 @@
+
+ To list existing routing rules, one can try:
+
+# ip rule list
+0:	from all lookup local 
+32766:	from all lookup main 
+32767:	from all lookup default
+
+Rules are processed in increasing priority (1st) column). In the above case, priority 0 rule instruct the kernel to look for a routing decision inside table named local for traffic comming from any origin. The content of this table can be accessed via:
+
+# ip route list table local
+
+
+In the case the table does not solve a certain destination address (eg. traffic to another machine in this case), Linux kernel look for the next rule with lower priority (higher priority number) to find out a routing solution. In this case, the next rule is the one with priority 32766, which says to go to table main
+
+ This table contain exactly the same information displayed by the route command:
+
+# route -n
+
+ One can for example, add a rule specifying that traffic from a certain source must be routed using a specific routing table:
+
+# ip rule add type unicast from 192.168.4.0/24 priority 55 table 55
+
+This will instruct the kernel to when it finds traffic coming from 192.168.4.0/24 network, look for a routing solution inside table number 55, with priority 55. 
+

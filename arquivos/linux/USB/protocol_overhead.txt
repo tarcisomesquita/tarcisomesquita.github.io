@@ -1,0 +1,35 @@
+
+
+Protocol Overhead
+(Based on 480 Mb/s and 8 bit interpacket gap, 8 bit min bus turnaround, 32 bit sync, 8 bit EOP: (3x4 SYNC bytes, 3 PID bytes, 2 EP/ADDR+CRC bytes, 2 CRC16 and a 3x(1+11) byte interpacket delay(EOP, etc.))
+
+
+ Bus Protocol
+The Host Controller initiates all data transfers.
+
+Most bus transactions involve the transmission of up to three packets. Each transaction begins when the
+Host Controller, on a scheduled basis, sends a USB packet describing the type and direction of transaction,
+the USB device address, and endpoint number.
+
+
+A transaction of a particular transfer type typically requires multiple packets. The protocol overhead for
+each transaction includes:
+    •    A SYNC field for each packet: either 8 bits (full-/low-speed) or 32 bits (high-speed)
+    •    A PID byte for each packet: includes PID and PID invert (check) bits
+    •    An EOP for each packet: 3 bits (full-/low-speed) or 8 bits (high-speed)
+    •    In a token packet, the endpoint number, device address, and CRC5 fields (16 bits total)
+     •   In a data packet, CRC16 fields (16 bits total)
+     •   In a data packet, any data field (8 bits per byte)
+     •   For transaction with multiple packets, the inter packet gap or bus turnaround time required.
+For these calculations, there is assumed to be no bit-stuffing required.
+Using the low speed interrupt OUT as an example, there are 5 packets in the transaction:
+     •   A PRE special packet
+     •   A token packet
+     •   A PRE special packet
+     •   A data packet
+     •   A handshake packet
+There is one bus turnaround between the data and handshake packets. The protocol overhead is therefore:
+     5 SYNC, 5 PID, Endpoint + CRC5, CRC16, 5 EOPs and interpacket delay (one bus turnaround, 1 delay
+     between packets, and 2 hub setup times).
+
+

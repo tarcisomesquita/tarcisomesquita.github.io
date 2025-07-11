@@ -1,0 +1,6 @@
+
+recebe o valor zero na pilha
+
+0040102C 6A 00 PUSH 0 ; ExitCode = 0
+0040102E E8 01000000 CALL <JMP.&kernel32.ExitProcess> ; ExitProcess
+

@@ -1,0 +1,23 @@
+while (condição) {
+  comando;
+}
+
+Equivale a:
+for ( ; condição ; ) {
+  comando;
+}
+
+
+Exemplo:
+#include <stdio.h>
+
+int main() {
+  int n1 = 5, n2 = 3, produto = 0;
+  
+  // Multiplica dois inteiros positivos por somas sucessivas
+  while (n2 > 0) {
+    produto += n1;
+    n2--;
+  }
+  printf("5 x 3 = %d\n", produto);
+}

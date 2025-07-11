@@ -1,0 +1,42 @@
+apt-get install netcat-traditional
+
+nc é um atalho para /bin/nc.traditional
+
+nc -v -w 2 -z target 20-30" will try connecting to every port between 20 and 30 [inclusive]
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+conta bytes
+
+$ nc -v -v -l -p 2222
+listening on [any] 2222 ...
+connect to [127.0.0.1] from localhost [127.0.0.1] 59940
+tt sent 0, rcvd 2
+
+echo -n 'tt' | nc -n -w 2  127.0.0.1 2222
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+yes UUUUUUUUUUUUUUU | hexdump -C
+00000000  55 55 55 55 55 55 55 55  55 55 55 55 55 55 55 0a  |UUUUUUUUUUUUUUU.|
+*
+^C
+
+yes UUUUUUUUUUUUUUU | dd of=/dev/null bs=1M status=progress
+79486459904 bytes (79 GB, 74 GiB) copied, 23 s, 3.5 GB/s
+
+wire test
+yes UUUUUUUUUUUUUUU | nc -l -p 2222 | dd of=/dev/null bs=1M status=progress
+11122147328 bytes (11 GB, 10 GiB) copied, 15 s, 741 MB/s
+
+yes UUUUUUUUUUUUUUU | nc 127.0.0.1 2222 | dd of=/dev/null bs=1M status=progress
+11150999552 bytes (11 GB, 10 GiB) copied, 10 s, 1.1 GB/s^C
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+port scan
+nc -n -v -z 127.0.0.1 1-$((0xFFFF))
+(UNKNOWN) [127.0.0.1] 631 (ipp) open
+(UNKNOWN) [127.0.0.1] 111 (sunrpc) open
+(UNKNOWN) [127.0.0.1] 25 (smtp) open
+

@@ -1,0 +1,256 @@
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+display section header table
+readelf -S hello.o
+
+There are 9 section headers, starting at offset 0xbc:
+
+Section Headers:
+  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            00000000 000000 000000 00      0   0  0
+  [ 1] .text             PROGBITS        00000000 000034 000019 00  AX  0   0  4
+  [ 2] .data             PROGBITS        00000000 000050 000000 00  WA  0   0  4
+  [ 3] .bss              NOBITS          00000000 000050 000000 00  WA  0   0  4
+  [ 4] .comment          PROGBITS        00000000 000050 000024 00      0   0  1
+  [ 5] .note.GNU-stack   PROGBITS        00000000 000074 000000 00      0   0  1
+  [ 6] .shstrtab         STRTAB          00000000 000074 000045 00      0   0  1
+  [ 7] .symtab           SYMTAB          00000000 000224 000080 10      8   7  4
+  [ 8] .strtab           STRTAB          00000000 0002a4 00000e 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings)
+  I (info), L (link order), G (group), x (unknown)
+  O (extra OS processing required) o (OS specific), p (processor specific)
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Is for use of compiler and linker.
+
+A section header table contains information describing the file’s sections.
+
+Every section has an entry in the table;
+
+each entry gives information such as the section name, the section size, etc.
+
+Sections on a file may not overlap. No byte in a file reside in more than one section.
+
+Pode haver bytes livres entre as seções e entre seção e cabeçalho.
+
+Files used during linking must have a section header table; other object files may or may not have one.
+
+section header table is optional for executables — but is almost always present!
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+typedef struct {
+  unsigned long int sh_name;
+  unsigned long int sh_type;
+  unsigned long int sh_flags;
+  unsigned long int sh_addr;
+  unsigned long int sh_offset;
+  unsigned long int sh_size;
+  unsigned long int sh_link;
+  unsigned long int sh_info;
+  unsigned long int sh_addralign;
+  unsigned long int sh_entsize;
+} Elf32_Shdr;
+
+
+  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+sh_name
+specifies the name of the section.
+
+É o endereço do primeiro byte de uma null-terminated string dentro da section header string table (seção .shstrtab).
+
+O endereço do primeiro byte dentro da section header string table é 0.
+
+O nome está na section header string table.
+
+we can find the index of the .shstrtab section in the shstrndx field in elf header.
+
+
+/* special sh_name indexes */
+#define SHN_UNDEF	0
+#define SHN_LORESERVE	0xff00
+#define SHN_LOPROC	0xff00
+#define SHN_HIPROC	0xff1f
+#define SHN_ABS		0xfff1
+#define SHN_COMMON	0xfff2
+#define SHN_HIRESERVE	0xffff
+
+SHN_UNDEF
+Nao eh definida ou irrelevante, porem ha uma entrada na tabela de secoes e eh contada no e_shnum do ELF header.
+Há uma entrada na .shstrtab.
+
+SHN_LORESERVE
+Se o valor de sh_name is greater than or equal to SHN_LORESERVE = 0xff00, this member has the value SHN_XINDEX = 0xffff and the valor real de sh_name is contained in the sh_link. (Otherwise, the sh_link member of the initial entry contains 0.) 
+
+SHN_LOPROC e SHN_HIPROC são reservados para processadores específicos
+
+SHN_ABS
+Contém valores para referência no caso de realocação
+
+SHN_COMMON
+Símbolos podem ser definidos em relação a esta seção
+
+SHN_HIRESERVE
+Este número especifica o valor máximo do intervalo reservado para os índices. O sistema reserva numeros (números que não podem ser usados em sh_name) entre SHN_LORESERVE e SHN_HIRESERVE
+
+  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+sh_type
+
+/* sh_type */
+#define SHT_NULL	0
+#define SHT_PROGBITS	1
+#define SHT_SYMTAB	2
+#define SHT_STRTAB	3
+#define SHT_RELA	4
+#define SHT_HASH	5
+#define SHT_DYNAMIC	6
+#define SHT_NOTE	7
+#define SHT_NOBITS	8
+#define SHT_REL		9
+#define SHT_SHLIB	10
+#define SHT_DYNSYM	11
+#define SHT_NUM		12
+#define SHT_LOPROC	0x70000000
+#define SHT_HIPROC	0x7fffffff
+#define SHT_LOUSER	0x80000000
+#define SHT_HIUSER	0xffffffff
+
+
+SHT_NULL
+Não há uma seção associada. Os demais valores da section header table para esta seção são indefinidos.
+
+SHT_PROGBITS
+Os dados escritos na seção são definidos pelo programa, portanto, o significado e o formato dos dados dependem do programa.
+
+SHT_SYMTAB
+A seção é uma symbol table.
+
+SHT_STRTAB
+A seção tem uma string table.
+
+SHT_RELA
+The section hold realocations entries with explicit addends.
+
+SHT_HASH
+The section hold a symbol hash table. All object participating in dynamic linking must contain a symbol hash table.
+
+SHT_DYNAMIC
+The section hold information for dynamic linking.
+
+SHT_NOTE
+The section hold information that marks the file in some way.
+
+SHT_NOBITS
+Veja sh_offset
+
+SHT_REL
+The section hold realocations entries without explicit addends.
+
+SHT_SHLIB
+This section type is reserved but has unspecified semantics. Programs that contain a section of this type do not conform to the ABI
+
+SHT_DYNSYM
+A seção é uma symbol table.
+
+SHT_NUM
+
+SHT_LOPROC through SHT_HIPROC
+Values in this inclusive range are reserved for processador-specific semantics.
+
+SHT_LOUSER à SHT_HIUSER
+Valores neste intervalo são reservados para serem usados por programas.
+
+  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+sh_flags
+São bit flags. Os bits pode estar ativados ou desativados, 1 ou 0.
+
+/* sh_flags */
+#define SHF_WRITE	0x1
+#define SHF_ALLOC	0x2
+#define SHF_EXECINSTR	0x4
+#define SHF_MASKPROC	0xf0000000
+
+SHF_WRITE
+The section contains data that should be writable during process execution
+
+SHF_ALLOC
+The section occupies memory during process execution
+
+SHF_EXECINSTR
+The section contains executable machine instructions.
+
+SHF_MASKPROC
+Are reserved to processador specific semantics.
+
+  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+sh_addr
+the address in virtual memory where this section should be loaded. Since this is a .o file, it is not intended to be loaded into virtual memory, and this field is not filled in.
+
+
+  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+sh_offset;
+is the offset from the beginning of the file to the first byte in the section
+
+Quando sh_type = SHT_NOBITS a seção não ocupa espaço no arquivo e o sh_offset dela é apenas uma posição conceitual.
+
+  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+sh_size
+is the size of the section in bytes
+Quando sh_type = SHT_NOBITS o valor de sh_size pode ser diferente de zero, mas a seção não irá ocupar nenhum espaço no arquivo
+
+
+  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+sh_link
+Veja SHN_LORESERVE em sh_name e sh_info
+
+  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+sh_info
+Tem informações especiais dependendo to tipo da seção.
+
+sh_type        sh_link                          sh_info
+                                                                              
+SHT_DYNAMIC    The section header index of      0
+               the string table used by
+               entries in the section.  
+                                                                              
+SHT_HASH       The section header index of      0
+               the symbol table to which
+               the hash table applies.
+                                                                              
+SHT_REL        The section header index of      The section header index of
+SHT_RELA       the associated symbol table.     the section to which the
+                                                realocation applies.
+                                                                              
+SHT_SYMTAB     The section header index of      One greater than the sym-
+SHT_DYNSYM     the associated string table.     bol table index of the last
+                                                local symbol
+                                                                              
+Other          SHN_UNDEF=0                        0
+
+
+  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+sh_addralign
+Is a adress alignment constraint. For example, if a section holds a doubleword, the system must ensure doubleword alignment for the entire section.
+Only 0 and positive integral powers of two are allowed.
+Values 0 and 1 mean the section has no alignment constraints. 
+
+
+  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+sh_entsize
+Some sections hold a table of fixe-size entries, such as a symbol table. For such a section, sh_entsize gives the size in bytes of each entry. The value 0 mean that the section does hold a table of fixed-size entries.
+
+
+

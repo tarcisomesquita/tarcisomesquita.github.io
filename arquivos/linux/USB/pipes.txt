@@ -1,0 +1,14 @@
+
+USB device communication is based on pipes (logical channels). A pipe is a connection from the host controller to a logical entity, found on a device, and named an endpoint. The term endpoint is occasionally incorrectly used for referring to the pipe. However, while an endpoint exists on the device permanently, a pipe is only formed when the host makes a connection to the endpoint. Therefore, when referring to the connection between a host and an endpoint, the term pipe should be used. A USB device can have up to 32 active pipes: 16 into the host controller and 16 out of the host controller.
+
+There are two types of pipes: stream and message pipes depending on the type of data transfer.
+
+A stream pipe is a uni-directional pipe connected to a uni-directional endpoint that transfers data using an isochronous, interrupt, or bulk transfer. A message pipe is a bi-directional pipe connected to a bi-directional endpoint that is exclusively used for control data flow. 
+
+An endpoint of a pipe is addressable with tuple (device_address, endpoint_number) as specified in a TOKEN packet that the host sends when it wants to start a data transfer session. If the direction of the data transfer is from the host to the endpoint, an OUT packet (a specialization of a TOKEN packet) having the desired device address and endpoint number is sent by the host. If the direction of the data transfer is from the device to the host, the host sends an IN packet instead.
+If the destination endpoint is a uni-directional endpoint the TOKEN packet will be ignored.
+A bi-directional endpoint accepts both IN and OUT packets.
+
+Endpoints are grouped into interfaces and each interface is associated with a single device function. An exception to this is endpoint zero, which is used for device configuration and which is not associated with any interface.
+
+

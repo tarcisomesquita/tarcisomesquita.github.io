@@ -1,0 +1,25 @@
+
+Enhanced Read Keyboard Flags (12h)
+
+Input Parameters:
+        AH - 12h, indicating the Enhanced Read Keyboard Flags Function.
+
+Output Parameters:
+        AX - 16-bit bitmask containing keyboard flags, as follows:
+                00000000.00000001 - right shift key pressed.
+                00000000.00000010 - left shift key pressed.
+                00000000.00000100 - ctrl key pressed.
+                00000000.00001000 - alt key pressed.
+                00000000.00010000 - scroll lock is on.
+                00000000.00100000 - num lock is on.
+                00000000.01000000 - caps lock is on.
+                00000000.10000000 - insert mode is on.
+                00000001.00000000 - left ctrl key is pressed.
+                00000010.00000000 - left alt key is pressed.
+                00000100.00000000 - right ctrl key is pressed.
+                00001000.00000000 - right alt key is pressed.
+                00010000.00000000 - scroll lock key is pressed.
+                00100000.00000000 - num lock key is pressed.
+                01000000.00000000 - caps lock key is pressed.
+                10000000.00000000 - sysreq key is pressed.
+

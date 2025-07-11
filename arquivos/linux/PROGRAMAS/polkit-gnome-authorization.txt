@@ -1,0 +1,7 @@
+> Sistema > Administração > Autorizações
+O Autorizações (polkit-gnome-authorization) é uma interface para o PolicyKi, que permite ajustar as permissões.
+"Console Ativo: No" simplesmente desativa os botões de destravamento, bloqueando o acesso às opções administrativas dentro do aplicativo, para todos.
+"Admin Authentication" (que é o default para a maioria das opções) faz com que elas fiquem acessíveis apenas para os usuários do sistema que podem usar o sudo.
+"Authentication" libera o uso para todos os usuários do sistema (depois de confirmar a senha).
+"keep session" e "keep indefinitely" permitem salvar a senha (apenas durante a sessão, ou indefinidamente), para que você não precise digitar a senha novamente toda hora.
+

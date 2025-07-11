@@ -1,0 +1,33 @@
+adb shell cat /system/bin/input
+#!/system/bin/sh
+export CLASSPATH=/system/framework/input.jar
+exec app_process /system/bin com.android.commands.input.Input "$@"
+
+Usage: input [<source>] <command> [<arg>...]
+
+The sources are: 
+  keyboard
+  touchscreen
+
+The commands and default sources are:
+  text <string> (Default: touchscreen)
+  keyevent [--longpress] <key code number or name> ... (Default: keyboard)
+  tap <x> <y> (Default: touchscreen)
+  swipe <x1> <y1> <x2> <y2> [duration(ms)] (Default: touchscreen)
+
+
+Ferramentas do desenvolvedor > {Mostrar toque, Localização do cursor}
+adb shell input touchscreen tap 617 381    # clica nas coordenadas 617 381
+
+adb shell input touchscreen swipe 200 200 500 500 1000
+
+
+Abra o bloco de notas e depois:
+adb shell input text '"testando tudo isso
+
+duas vezes
+"'
+adb shell input touchscreen text "+55019982909659"    # Entra número do telefone
+
+
+adb shell input keyevent 22 22 66

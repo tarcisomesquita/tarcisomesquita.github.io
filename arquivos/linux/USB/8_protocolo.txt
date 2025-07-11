@@ -1,0 +1,17 @@
+
+1) controlador do host envia um pacote (token packet) descrevendo o tipo e a direção da transação, o endereço do dispositivo USB e o número do ponto final (endpoint).
+O número de endpoint é um valor de 4 bits entre 0(hex) e F(hex).
+
+2) A fonte da transação envia então um pacote de dados ou indica que não há mais dados para serem transferidos.
+O destinatário, em geral, responde com um "pacote aperto de mão" (handshake packet), indicando o sucesso da transferência.
+
+O modelo para transferências de dados entre a fonte ou um destino no host e um ponto final de um dispositivo é conhecido como pipe (tubo ou canal).
+Existem dois tipos de pipe: correntes (stream) e mensagens (message).
+
+Uma corrente de dados não possui uma estrutura USB definida, enquanto as mensagens possuem.
+
+Além disto, os tubos possuem associações com as bandas de transmissão de dados, tipos de serviços de transferência e características de endpoint, como direção e tamanho de buffer. A maioria dos tubos passa a existir quando um dispositivo é configurado. Uma mensagem de pipe, “default control pipe”, sempre existe enquanto o dispositivo está sendo alimentado, para que possa fornecer acesso às configurações, informações de controle e status deste.
+
+A listagem das transações permite o controle do fluxo para várias correntes de tubos (stream pipes). O mecanismo de controle de fluxo permite a construção de listas flexíveis, que acomodam serviços concorrentes de misturas heterogêneas de stream pipes. Múltiplas correntes de pipes podem ser servidas em diferentes intervalos e com pacotes de diferentes tamanhos.
+
+

@@ -1,0 +1,136 @@
+x_tables.ko
+   xt_LOG.ko
+   xt_comment.ko
+   xt_limit.ko
+   xt_mac.ko
+   arp_tables.ko
+   ip6_tables.ko
+   ebtables.ko
+   ebt_arp.ko
+   ebt_ip.ko
+   ebt_ip6.ko
+   ebt_stp.ko
+   ebt_arpreply.ko
+   ebt_log.ko
+   ip_tables.ko
+      iptable_filter.ko
+      iptable_mangle.ko
+      iptable_raw.ko
+      
+      
+
+sudo iptables -t filter -F
+
+sudo rmmod ip6table_filter
+sudo rmmod ip6_tables
+sudo rmmod xt_LOG
+sudo rmmod xt_comment
+sudo rmmod iptable_mangle
+sudo rmmod iptable_filter
+sudo rmmod iptable_raw
+sudo rmmod iptable_nat
+sudo rmmod ip_tables
+sudo rmmod xt_conntrack
+sudo rmmod x_tables
+
+sudo iptables -t filter -I INPUT -j DROP
+lsmod | grep x_tables
+iptable_filter         16384  1
+ip_tables              28672  1 iptable_filter
+x_tables               36864  2 ip_tables,iptable_filter
+
+
+
+rc
+The master run-level control script; it is responsible for running all the other bootscripts one-by-one, in a sequence determined by the name of the symbolic links being processed 
+
+sysklogd
+Starts and stops the system and kernel log daemons
+
+udev
+Prepares the /dev directory and starts Udev
+In Chapter 6, we installed the Udev package
+
+The sysfs filesystem is mounted on /sys.
+The job of sysfs is to export a view of the system's hardware configuration to userspace processes. 
+
+Drivers that have been compiled into the kernel directly register their objects with a sysfs (devtmpfs internally) as they are detected by the kernel.
+For drivers compiled as modules, the registration in devtmpfs will happen when the module is loaded. 
+
+Device files are created by the kernel on /dev with a name, permissions, and owner.
+Later, the kernel will send a uevent to udevd. Based on the rules specified in the files within the /etc/udev/rules.d, /lib/udev/rules.d, and /run/udev/rules.d directories, udevd will create additional symlinks to the device node, or change its permissions, owner, or group, or modify the internal udevd database entry (name) for that object.
+
+modinfo snd-fm801 
+filename:       /lib/modules/4.4.0-21-generic/kernel/sound/pci/snd-fm801.ko
+description:    ForteMedia FM801
+alias:          pci:v00001319d00000801sv*sd*bc04sc01i*  (supports PCI devices with vendor ID 0x1319 and device ID 0x0801)
+
+/sys/bus/pci/devices/0000:00:0d.0/modalias file contain the string "pci:v00001319d00000801sv00001319sd00001319bc04sc01i00"
+
+
+The traditional naming scheme using eth0, eth1, etc can be restored by adding net.ifnames=0 on the kernel command line.
+
+The naming scheme can be customized by creating custom Udev rules.
+    SUBSYSTEM=="net" - This tells Udev to ignore devices that are not network cards.
+    ACTION=="add" - This tells Udev to ignore this rule for a uevent that isn't an add ("remove" and "change" uevents also happen, but don't need to rename network interfaces).
+    DRIVERS=="?*" - This exists so that Udev will ignore VLAN or bridge sub-interfaces (because these sub-interfaces do not have drivers). These sub-interfaces are skipped because the name that would be assigned would collide with their parent devices.
+    ATTR{address} - The value of this key is the NIC's MAC address.
+    ATTR{type}=="1" - This ensures the rule only matches the primary interface in the case of certain wireless drivers, which create multiple virtual interfaces. The secondary interfaces are skipped for the same reason that VLAN and bridge sub-interfaces are skipped: there would be a name collision otherwise.
+    NAME - The value of this key is the name that Udev will assign to this interface.
+
+Figure out the attributes that identify the device uniquely (usually, vendor and product IDs and/or serial numbers work):
+udevadm info -a -p /sys/class/video4linux/video0
+
+Then write rules that create the symlinks, e.g.:
+cat > /etc/udev/rules.d/83-duplicate_devs.rules << "EOF"
+# Persistent symlinks for webcam and tuner
+KERNEL=="video*", ATTRS{idProduct}=="1910", ATTRS{idVendor}=="0d81", SYMLINK+="webcam"
+KERNEL=="video*", ATTRS{device}=="0x036f", ATTRS{vendor}=="0x109e", SYMLINK+="tvtuner"
+EOF
+
+The result is that /dev/video0 and /dev/video1 devices still refer randomly to the tuner and the web camera (and thus should never be used directly), but there are symlinks /dev/tvtuner and /dev/webcam that always point to the correct device.
+
+
+
+0: halt the computer
+1: single-user mode
+2: multi-user mode without networking
+3: multi-user mode with networking
+4: reserved for customization, otherwise does the same as 3
+5: same as 4, it is usually used for GUI login (like X's xdm or KDE's kdm)
+6: reboot the computer
+
+to reboot the computer, a user could issue the init 6 command, which is an alias for the reboot command. Likewise, init 0 is an alias for the halt command.
+
+init reads the initialization file /etc/inittab. Create this file with:
+cat > /etc/inittab << "EOF"
+# Begin /etc/inittab
+
+id:3:initdefault:
+
+si::sysinit:/etc/rc.d/init.d/rc S
+
+l0:0:wait:/etc/rc.d/init.d/rc 0
+l1:S1:wait:/etc/rc.d/init.d/rc 1
+l2:2:wait:/etc/rc.d/init.d/rc 2
+l3:3:wait:/etc/rc.d/init.d/rc 3
+l4:4:wait:/etc/rc.d/init.d/rc 4
+l5:5:wait:/etc/rc.d/init.d/rc 5
+l6:6:wait:/etc/rc.d/init.d/rc 6
+
+ca:12345:ctrlaltdel:/sbin/shutdown -t1 -a -r now
+
+su:S016:once:/sbin/sulogin
+
+1:2345:respawn:/sbin/agetty --noclear tty1 9600
+2:2345:respawn:/sbin/agetty tty2 9600
+3:2345:respawn:/sbin/agetty tty3 9600
+4:2345:respawn:/sbin/agetty tty4 9600
+5:2345:respawn:/sbin/agetty tty5 9600
+6:2345:respawn:/sbin/agetty tty6 9600
+
+# End /etc/inittab
+EOF
+file above will instruct rc to run all the scripts starting with an S in the /etc/rc.d/rcS.d directory followed by all the scripts starting with an S in the /etc/rc.d/rc?.d directory where the question mark is specified by the initdefault value.
+
+

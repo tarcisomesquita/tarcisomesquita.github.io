@@ -1,0 +1,21 @@
+Package: tcpflow
+tcpflow reconstructs the actual data streams and stores each flow in a separate file for later analysis.
+ tcpflow understands sequence numbers and will correctly reconstruct data streams regardless of retransmissions or out-of-order delivery.
+ However, it currently does not understand IP fragments; flows containing IP fragments will not be recorded properly.
+tcpflow -a -o ./teste -l *.pcap*
+tcpflow -i <interface> -o ./teste
+find teste/ -type f -exec bash -c "F='{}' ; file \$F | grep ': data' | cut -d':' -f1" \; | xargs rm '{}' 
+
+http://www.digitalcorpora.org/downloads/tcpflow/
+
+
+Para ver arquivos baixados
+tcpdump -v -n -V files.txt tcp port 80 | egrep -i 'GET |Host: |Content-Length:' | grep -A2 ' HTTP/'
+FILE=
+
+Para ver a conexão
+tcpdump -n -V files.txt tcp port 80 | grep "GET $FILE HTTP/"
+
+tcpdump -n -r teste2.pcap5 -w 1607414.pcap 'src x.x.x.x and tcp port 38648 and tcp[tcpflags] & (tcp-syn|tcp-fin) == 0' 
+
+

@@ -1,0 +1,29 @@
+
+TEST – Logical Compare
+ register1 and register2      1000 010w : 11 reg1 reg2
+ memory and register          1000 010w : mod reg r/m
+ immediate and register       1111 011w : 11 000 reg : immediate data
+ immediate and AL, AX, or EAX 1010 100w : immediate data
+ immediate and memory         1111 011w : mod 000 r/m : immediate data
+
+Sintaxe:
+TEST destino,fonte
+
+Computes the bit-wise logical AND of first operand (source 1 operand) and the
+second operand (source 2 operand) and sets the SF, ZF, and PF status flags 
+according to the result. The result is then discarded.
+
+Operation
+TEMP <-- SRC1 AND SRC2;
+SF <-- MSB(TEMP);   MSB = Most Significant Byte
+IF TEMP = 0
+    THEN ZF <-- 1;
+    ELSE ZF <-- 0;
+FI:
+PF <-- BitwiseXNOR(TEMP[0:7]);
+CF <-- 0;
+OF <-- 0;
+(* AF is undefined *)
+
+
+

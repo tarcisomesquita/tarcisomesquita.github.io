@@ -1,0 +1,8 @@
+;           file                /domain/named.root
+;           on server           FTP.RS.INTERNIC.NET
+
+; formerly NS.INTERNIC.NET
+;
+.                        3600000  IN  NS    A.ROOT-SERVERS.NET.
+A.ROOT-SERVERS.NET.      3600000      A     198.41.0.4
+

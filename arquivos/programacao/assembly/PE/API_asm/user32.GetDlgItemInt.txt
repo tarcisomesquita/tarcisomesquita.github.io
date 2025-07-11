@@ -1,0 +1,6 @@
+
+user32.GetDlgItemInt
+
+pega um número digitado em uma caixa de texto
+coloca o número em EAX
+

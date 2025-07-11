@@ -1,0 +1,22 @@
+document.body.innerHTML = '<textarea id="t0"></textarea>'
+t0.onkeydown = () => console.log(event)
+
+type: "keypress"
+key: "a"
+keyCode: 97
+charCode: 97
+code: "KeyA"
+altKey: false
+composed: true
+ctrlKey: false
+explicitOriginalTarget: <textarea id="t0">
+isComposing: false
+metaKey: false
+originalTarget: <textarea id="t0">
+repeat: false
+shiftKey: false
+srcElement: <textarea id="t0">​
+target: <textarea id="t0">
+timeStamp: 3602194
+view: Window about:newtab
+which: 97

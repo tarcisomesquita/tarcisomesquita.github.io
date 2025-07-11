@@ -1,0 +1,140 @@
+gateway 192.168.1.1 00:1D:0F:A9:F0:45
+
+    # arptables -P INPUT DROP
+    # arptables -P OUTPUT DROP
+    # arptables -A INPUT  -s 192.168.1.1 --source-mac      00:1D:0F:A9:F0:45 -j ACCEPT
+    # arptables -A OUTPUT -d 192.168.1.1 --destination-mac 00:1D:0F:A9:F0:45 -j ACCEPT
+    # arp -s 192.168.1.1 00:1D:0F:A9:F0:45
+
+ARPTABLES(8)
+
+NAME
+       arptables - ARP table administration
+
+SYNOPSIS
+       arptables [-t table] -[AD] chain rule-specification [options]
+       arptables [-t table] -[RI] chain rulenum rule-specification [options]
+       arptables [-t table] -D chain rulenum [options]
+       arptables [-t table] -[LFZ] [chain] [options]
+       arptables [-t table] -[NX] chain
+       arptables [-t table] -E old-chain-name new-chain-name
+       arptables [-t table] -P chain target [options]
+
+DESCRIPTION
+arptables is analogous to the iptables user space tool.
+is used to set up and maintain the tables (-t filter) of ARP rules in the Linux kernel
+
+The rules in kernel table is divided in sets called chain.
+
+-j, --jump target
+When a frame matches a rule, then is performed the action specified by the target. The target can be: ACCEPT, DROP, CONTINUE, RETURN, an 'extension' (see below) or a user-defined chain.
+
+built-in  chains: INPUT, OUTPUT and FORWARD
+
+CONTINUE means the next rule has to be checked.
+RETURN means stop traversing this chain and resume at the next rule in the previous (calling) chain.
+For the extension targets please see the TARGET EXTENSIONS section of this man page.
+
+   COMMANDS
+       -A, --append
+              Append a rule to the end of the selected chain.
+
+       -D, --delete
+              Delete the specified rule from the selected chain.
+
+       -I, --insert
+              Insert the specified rule into the selected chain at the specified rule number.
+
+       -R, --replace
+              Replaces the specified rule into the selected chain at the specified rule number.
+
+       -P, --policy
+              Set the policy for the chain to the given target. The policy can be ACCEPT, DROP or RETURN.
+
+       -F, --flush
+              Flush the selected chain.
+
+       -Z, --zero
+              Set the counters of the selected chain to zero.
+
+       -L, --list
+              List all rules in the selected chain.
+
+       -N, --new-chain
+              Create a new user-defined chain with the given name. Chain name has maximum length of 31 characters.
+
+       -X, --delete-chain
+              Delete the specified user-defined chain.
+
+       -E, --rename-chain
+              Rename the specified chain to a new name.
+
+
+   RULE-SPECIFICATIONS
+       A "!" before the specification inverts the test.
+
+       -s, --source-ip [!] address[/mask]
+              The Source IP specification.
+
+       -d, --destination-ip [!] address[/mask]
+              The Destination IP specification.
+
+       --source-mac [!] address[/mask]
+              The source mac address. Both mask and address are written as 6 hexadecimal numbers separated by colons.
+
+       --destination-mac [!] address[/mask]
+              The destination mac address. Both mask and address are written as 6 hexadecimal numbers separated by colons.
+
+       -i, --in-interface [!] name
+              The interface via which a frame is received (for the INPUT and FORWARD chains). The flag --in-if is an alias for this option.
+
+       -o, --out-interface [!] name
+              The interface via which a frame is going to be sent (for the OUTPUT and FORWARD chains). The flag --out-if is an alias for this option.
+
+       -l, --h-length length[/mask]
+              The hardware length (nr of bytes)
+
+       --opcode code[/mask]
+              The operation code (2 bytes). Available values are: 1=Request 2=Reply 3=Request_Reverse 4=Reply_Reverse 5=DRARP_Request 6=DRARP_Reply 7=DRARP_Error 8=InARP_Request 9=ARP_NAK.
+
+       --h-type type[/mask]
+              The hardware type (2 bytes, hexadecimal). Available values are: 1=Ethernet.
+
+       --proto-type type[/mask]
+              The protocol type (2 bytes). Available values are: 0x800=IPv4.
+
+   TARGET-EXTENSIONS
+       --mangle-ip-s IP address
+              Mangles Source IP Address to given value.
+
+       --mangle-ip-d IP address
+              Mangles Destination IP Address to given value.
+
+       --mangle-mac-s MAC address
+              Mangles Source MAC Address to given value.
+
+       --mangle-mac-d MAC address
+              Mangles Destination MAC Address to given value.
+
+       --mangle-target target
+              Target of ARP mangle operation (DROP, CONTINUE or ACCEPT -- default is ACCEPT).
+
+EXAMPLE
+Let's say you have a machine with two ip addresses aaaa and bbbb. Address aaaa is only for the use of machine cccc. No other machine should be allowed to connect to it. Iptables rules are configured to enforce this requirement.
+
+    # Configure iptables to NAT any attempt to use aaaa on
+    # outgoing packets to machines other than cccc to use
+    # bbbb instead
+    iptables -t nat -A POSTROUTING -s aaaa ! -d cccc -j SNAT --to bbbb
+
+    # Ignore arp requests from machines other than cccc for
+    # address aaaa.
+    arptables -A IN ! -s cccc -d aaaa -j DROP
+
+    # Mangle any outgoing requests from address aaaa to any
+    # machine but cccc to use address bbbb instead.
+    arptables -A OUT -s aaaa ! -d cccc -j mangle --mangle-ip-s bbbb
+
+arptables -A INPUT  -i eth1 --h-length 6 --destination-mac 01:00:5e:00:01:01 -j mangle --mangle-mac-d 00:zz:yy:xx:5a:27
+arptables -A OUTPUT -o eth2 --h-length 6                                     -j mangle --mangle-mac-s 01:00:5e:00:01:02
+

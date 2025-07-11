@@ -1,0 +1,104 @@
+7.3.9 String Operations
+7.3.9.1 String Instructions
+The MOVS (Move String), CMPS (Compare string), SCAS (Scan string), LODS (Load string), and STOS (Store
+string) instructions permit large data structures, such as alphanumeric character strings, to be moved and exam-
+ined in memory. These instructions operate on individual elements in a string, which can be a byte, word, or
+doubleword. The string elements to be operated on are identified with the ESI (source string element) and EDI
+(destination string element) registers. Both of these registers contain absolute addresses (offsets into a segment)
+that point to a string element.
+By default, the ESI register addresses the segment identified with the DS segment register. A segment-override
+prefix allows the ESI register to be associated with the CS, SS, ES, FS, or GS segment register. The EDI register
+addresses the segment identified with the ES segment register; no segment override is allowed for the EDI register.
+The use of two different segment registers in the string instructions permits operations to be performed on strings
+located in different segments. Or by associating the ESI register with the ES segment register, both the source and
+destination strings can be located in the same segment. (This latter condition can also be achieved by loading the
+DS and ES segment registers with the same segment selector and allowing the ESI register to default to the DS
+register.)
+The MOVS instruction moves the string element addressed by the ESI register to the location addressed by the EDI
+register. The assembler recognizes three “short forms” of this instruction, which specify the size of the string to be
+moved: MOVSB (move byte string), MOVSW (move word string), and MOVSD (move doubleword string).
+The CMPS instruction subtracts the destination string element from the source string element and updates the
+status flags (CF, ZF, OF, SF, PF, and AF) in the EFLAGS register according to the results. Neither string element is
+written back to memory. The assembler recognizes three “short forms” of the CMPS instruction: CMPSB (compare
+byte strings), CMPSW (compare word strings), and CMPSD (compare doubleword strings).
+The SCAS instruction subtracts the destination string element from the contents of the EAX, AX, or AL register
+(depending on operand length) and updates the status flags according to the results. The string element and
+register contents are not modified. The following “short forms” of the SCAS instruction specify the operand length:
+SCASB (scan byte string), SCASW (scan word string), and SCASD (scan doubleword string).
+The LODS instruction loads the source string element identified by the ESI register into the EAX register (for a
+doubleword string), the AX register (for a word string), or the AL register (for a byte string). The “short forms” for
+7-18 Vol. 1PROGRAMMING WITH GENERAL-PURPOSE INSTRUCTIONS
+this instruction are LODSB (load byte string), LODSW (load word string), and LODSD (load doubleword string). This
+instruction is usually used in a loop, where other instructions process each element of the string after they are
+loaded into the target register.
+The STOS instruction stores the source string element from the EAX (doubleword string), AX (word string), or AL
+(byte string) register into the memory location identified with the EDI register. The “short forms” for this instruc-
+tion are STOSB (store byte string), STOSW (store word string), and STOSD (store doubleword string). This instruc-
+tion is also normally used in a loop. Here a string is commonly loaded into the register with a LODS instruction,
+operated on by other instructions, and then stored again in memory with a STOS instruction.
+The I/O instructions (see Section 7.3.10, “I/O Instructions”) also perform operations on strings in memory.
+7.3.9.2
+Repeated String Operations
+Each of the string instructions described in Section 7.3.9.1 perform one iteration of a string operation. To operate
+on strings longer than a doubleword, the string instructions can be combined with a repeat prefix (REP) to create a
+repeating instruction or be placed in a loop.
+When used in string instructions, the ESI and EDI registers are automatically incremented or decremented after
+each iteration of an instruction to point to the next element (byte, word, or doubleword) in the string. String oper-
+ations can thus begin at higher addresses and work toward lower ones, or they can begin at lower addresses and
+work toward higher ones. The DF flag in the EFLAGS register controls whether the registers are incremented (DF =
+0) or decremented (DF = 1). The STD and CLD instructions set and clear this flag, respectively.
+The following repeat prefixes can be used in conjunction with a count in the ECX register to cause a string instruc-
+tion to repeat:
+•
+•
+•
+REP — Repeat while the ECX register not zero.
+REPE/REPZ — Repeat while the ECX register not zero and the ZF flag is set.
+REPNE/REPNZ — Repeat while the ECX register not zero and the ZF flag is clear.
+When a string instruction has a repeat prefix, the operation executes until one of the termination conditions spec-
+ified by the prefix is satisfied. The REPE/REPZ and REPNE/REPNZ prefixes are used only with the CMPS and SCAS
+instructions. Also, note that a REP STOS instruction is the fastest way to initialize a large block of memory.
+7.3.9.3
+Fast-String Operation
+To improve performance, more recent processors support modifications to the processor’s operation during the
+string store operations initiated with the MOVS, MOVSB, STOS, and STOSB instructions. This optimized operation,
+called fast-string operation, is used when the execution of one of those instructions meets certain initial condi-
+tions (see below). Instructions using fast-string operation effectively operate on the string in groups that may
+include multiple elements of the native data size (byte, word, doubleword, or quadword). With fast-string opera-
+tion, the processor recognizes interrupts and data breakpoints only on boundaries between these groups. Fast-
+string operation is used only if the source and destination addresses both use either the WB or WC memory types.
+The initial conditions for fast-string operation are implementation-specific and may vary with the native string size.
+Examples of parameters that may impact the use of fast-string operation include the following:
+•
+•
+•
+•
+the alignment indicated in the EDI and ESI alignment registers;
+the address order of the string operation;
+the value of the initial operation counter (ECX); and
+the difference between the source and destination addresses.
+NOTE
+Initial conditions for fast-string operation in future Intel 64 or IA-32 processor families may differ
+from above. The Intel® 64 and IA-32 Architectures Optimization Reference Manual may contain
+model-specific information.
+Software can disable fast-string operation by clearing the fast-string-enable bit (bit 0) of IA32_MISC_ENABLE
+MSR. However, Intel recommends that system software always enable fast-string operation.
+Vol. 1 7-19PROGRAMMING WITH GENERAL-PURPOSE INSTRUCTIONS
+When fast-string operation is enabled (because IA32_MISC_ENABLE[0] = 1), some processors may further
+enhance the operation of the REP MOVSB and REP STOSB instructions. A processor supports these enhancements
+if CPUID.(EAX=07H, ECX=0H):EBX[bit 9] is 1. The Intel® 64 and IA-32 Architectures Optimization Reference
+Manual may include model-specific recommendations for use of these enhancements.
+The stores produced by fast-string operation may appear to execute out of order. Software dependent upon
+sequential store ordering should not use string operations for the entire data structure to be stored. Data and
+semaphores should be separated. Order-dependent code should write to a discrete semaphore variable after any
+string operations to allow correctly ordered data to be seen by all processors. Atomicity of load and store operations
+is guaranteed only for native data elements of the string with native data size, and only if they are included in a
+single cache line. See Section 8.2.4, “Fast-String Operation and Out-of-Order Stores” of Intel® 64 and IA-32 Archi-
+tectures Software Developer’s Manual, Volume 3A.
+
+7.3.9.4 String Operations in 64-Bit Mode
+The behavior of MOVS (Move String), CMPS (Compare string), SCAS (Scan string), LODS (Load string), and STOS (Store string) instructions in 64-bit mode is similar to their behavior in non-64-bit modes, with the following differences:
+• Operation on 64-bit data is supported by using the REX.W prefix.
+• The source operand is specified by RSI or DS:ESI, depending on the address size attribute of the operation.
+• The destination operand is specified by RDI or DS:EDI, depending on the address size attribute of the operation.
+When using REP prefixes for string operations in 64-bit mode, the repeat count is specified by RCX or ECX (depending on the address size attribute of the operation). The default address size is 64 bits.

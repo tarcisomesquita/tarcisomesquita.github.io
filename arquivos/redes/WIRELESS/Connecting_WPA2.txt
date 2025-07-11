@@ -1,0 +1,19 @@
+
+Connecting to WPA / WPA2 encrypted wifi network
+
+liguei a placa wireless
+kill `pidof NetworkManager`
+ifconfig wlan0 192.168.33.101 netmask 255.255.255.0 up
+/usr/bin/wpa_passphrase MYWIFI "senha" | tee -a /etc/wpa_supplicant.conf
+kill `pidof wpa_supplicant`
+/sbin/wpa_supplicant -d wext -i wlan0 -c /etc/wpa_supplicant.conf -B
+route del default
+route add default gw 192.168.33.1 dev wlan0
+echo 'nameserver 208.67.222.222' > /etc/resolv.conf
+
+/sbin/dhclient wlan0
+/sbin/iwconfig  # veja em Access Point se está conectado
+tail /var/log/syslog
+
+O "wext" é o driver (interno do wpa_supplicant) que é usado em quase todos os casos. Em placas com chipset Atheros substitua o "wext" por "madwifi".
+

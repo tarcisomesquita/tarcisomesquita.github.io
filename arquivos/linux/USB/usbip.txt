@@ -1,0 +1,39 @@
+
+Package: usbip
+Priority: optional
+Section: universe/admin
+Installed-Size: 136
+Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
+Original-Maintainer: Max Vozeler <xam@debian.org>
+Architecture: i386
+Version: 0.1.7-3
+Depends: libc6 (>= 2.7), libglib2.0-0 (>= 2.12.0), libsysfs2, libusbip0, usbutils
+Filename: pool/universe/u/usbip/usbip_0.1.7-3_i386.deb
+Size: 28650
+MD5sum: 9a0e689f263c712b0518d5b6776e1e88
+SHA1: c66b084fc9bc2d253c1c40b2173c0a3894bb4e97
+SHA256: 519dcbc76cbacb4566d2e58c23324f555d1bbecd3bd80858301da667711d6e1c
+Description: USB device sharing system over IP network
+ USB/IP is a system for sharing USB devices over the network.
+ .
+ To share USB devices between computers with their full
+ functionality, USB/IP encapsulates "USB requests" into IP
+ packets and transmits them between computers.
+ .
+ Original USB device drivers and applications can be used
+ for remote USB devices without any modification of them. A
+ computer can use remote USB devices as if they were
+ directly attached.
+ .
+ Currently USB/IP provides no access control or encryption.
+ It should only be used in trusted environments.
+ .
+ USB/IP requires kernel support which is included in Linux
+ kernels 2.6.28 or newer.
+ .
+ This package provides the server component 'usbipd' and the
+ client tool 'usbip'.
+Homepage: http://usbip.sourceforge.net/
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+

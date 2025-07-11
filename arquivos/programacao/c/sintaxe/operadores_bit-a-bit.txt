@@ -1,0 +1,29 @@
+Operador   Função
+&          AND
+|          OR
+^          XOR
+~          NOT
+<<         Deslocamento de bits a esquerda
+>>         Deslocamento de bits a direita (não repõe à esquerda)
+
+OBS.: Estes operadores não podem ser usados em variáveis float.
+
+
+#inclde<stdio.h>
+
+int main() {
+  unsigned char caracter;
+  unsigned short int numero;
+  
+  caracter = 'T'; //0101 0100
+  
+  numero = caracter;
+  fprintf(stdout, "\n%hu\n", numero);
+  
+  caracter = caracter << 2; //0101 0000
+  
+  numero = caracter;
+  fprintf(stdout, "\n%hu\n\n", numero);
+  
+  return 0;
+}

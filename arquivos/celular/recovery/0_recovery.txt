@@ -1,0 +1,134 @@
+Ativar desbloqueio por OEM em Opções do desenvolvedor
+
+./unmkbootimg  -i recovery_J510MNZTO2BQL2_7.1.1.img
+
+mkdir ramdisk
+cd ramdisk/
+cat ../ramdisk.cpio.gz  | gzip --decompress --to-stdout | cpio -i -d
+
+strings -t d sbin/recovery | grep -C 5 'Wipe data/factory reset'
+
+dd if=sbin/recovery bs=1 skip=894095 count=193 status=none | hexdump -C
+
+echo -n -e "Reboot           \\x00Bootloader          \\x00Apply update from ADB\\x00Apply update from SD card\\x00Wipe data/factory reset\\x00Wipe cache partition\\x00Mount /system\\x00View recovery logs\\x00Run graphics test\\x00Power off\\x00" | dd of=sbin/recovery bs=1 seek=894095
+
+mv ../ramdisk.cpio.gz ../ramdisk.cpio.gz_
+
+find . -print | cpio -o -H newc | gzip -9 -c - > ../ramdisk.cpio.gz
+
+./mkbootimg --base 0 --pagesize 2048 --kernel_offset 0x80008000 --ramdisk_offset 0x82000000 --second_offset 0x80f00000 --tags_offset 0x81e00000 --cmdline 'console=null androidboot.hardware=qcom user_debug=23 msm_rtb.filter=0x3F ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci' --kernel kernel --ramdisk ramdisk.cpio.gz -o recovery_J510MNZTO2BQL2_7.1.1.img
+
+baixo + meio + power
+confirmei
+
+conectei o cabo
+
+mv recovery_J510MNZTO2BQL2_7.1.1.img recovery_J510MNZTO2BQL2_7.1.1.img_
+
+sudo ./heimdall_2018-12-26 flash --RECOVERY recovery_TWRP_3.0.2.img --verbose --no-reboot
+
+desconectei o cabo
+
+tirei a bateria
+
+cima + meio + power
+
+ERROR: Failed to unpack received packet.
+ERROR: RECOVERY upload failed!
+
+no celular:
+SEGURE DOWNLOAD: ENABLED
+SECURE CHECK FAIL: recovery
+Custom binary (Recovery) Blocked by FRP Lock
+
+tinha esquecido de ativar desbloqueio por OEM em Opções do desenvolvedor
+
+após ativar, não entrou em modo recovery
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+baixo + meio + power
+confirmei
+
+conectei o cabo
+
+sudo ./heimdall_2018-12-26 flash --RECOVERY recovery_TWRP_J510MN.img --verbose --no-reboot
+
+desconectei o cabo
+
+tirei a bateria
+
+cima + meio + power
+
+erro: "RECOVERY IS NOT SEANDROID ENFORCING"
+
+
+twrp errado
+
+correto seria twrp-3.0.2.tar
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+sudo ./heimdall_2018-12-26 flash --RECOVERY recovery_J510MNZTO2BQL2_7.1.1.img --verbose --no-reboot # este é o que já estava instalado
+RECOVERY upload successful
+Não mudou nada
+samsung/j5xlnteub/7.1.1/NMF26X/J510MNVJU2BQL2
+
+sudo ./heimdall_2018-12-26 flash --RECOVERY recovery_TWRP_3.0.2_SM_J5_2016_Nougat_7.1.1.img --verbose --no-reboot
+funcionou
+
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+for F in $(ls *.img); do
+echo $F
+rm -rf initrd/*
+rm -r extracted/*
+./imgtool $F extract > /dev/null 2>&1
+cat extracted/ramdisk | gzip --decompress --to-stdout > ramdisk.cpio
+cd initrd/
+cat ../ramdisk.cpio | cpio -id
+cat default.prop | grep ro.product.model
+cd ..
+mkdir initrd_$F
+cp -R initrd/* initrd_$F
+done
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+gunzip -c /cdrom/casper/initrd.gz | cpio -idv
+find . -print | cpio -o -H newc | gzip -9 -c - > ../initrd.gz
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+./initrd/sbin/recovery
+#!/sbin/busybox sh
+PATH=/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin
+/sbin/busybox mount -t rootfs -o remount,rw rootfs
+/sbin/symlink
+echo 1 > /sys/class/android_usb/android0/enable
+start adbd
+
+  150  ./imgtool recovery_TWRP_3.0.2_SM_J5_2016_Nougat_7.1.1.img extract
+  151  cd extracted/
+  152  history | grep gzip
+  153  cat ramdisk  | gzip --decompress --to-stdout > ramdisk.bin
+  154  cd ram
+  155  history | grep cpio
+  156  cat ramdisk.bin | cpio -id
+  157  file init
+
+./sbin/recovery
+Apply update from SD card
+
+./default.prop
+ro.product.model=SM-J510MN
+
+ro.product.name=j5xnlteub
+ro.product.device=j5xnlte
+ro.product.board=MSM8916
+
+ro.product.cpu.abi=armeabi-v7a
+ro.build.PDA=J510MNVJU2BQL2
+ro.build.fingerprint=samsung/j5xnlteub/j5xnlte:7.1.1/NMF26X/J510MNVJU2BQL2:user/release-keys
+

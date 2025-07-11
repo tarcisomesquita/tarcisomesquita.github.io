@@ -1,0 +1,17 @@
+
+veja
+/proc/net/wireless
+
+iwconfig wlan0 channel N
+iwlist ath0 scan
+
+#iwspy eth2 15.144.104.4 hw 08:00:0E:21:3A:1F
+
+#iwspy eth2 + hw 08:00:0E:2A:26:FA # add the new addresses at the end of the list
+
+iwspy eth2  # display the list of address
+
+
+For example, to change the IP address on device eth2, a program (like ifconfig) would make an ioctl call with the following parameters : ``eth2'', SIOCSIFADDR, new address. The structure defining the parameters layout may be found in /usr/include/linux/if.h and the ioctl call (the constant SIOCSIFADDR) is defined in /usr/include/linux/sockios.h.
+
+For the wireless extensions, I've defined a new set of ioctl calls (for example SIOCSIWFREQ to change the frequency). I've also defined the parameters to those calls (see /usr/include/linux/wireless.h). In fact those new calls map closely to the functionality offered by the wireless tools. 

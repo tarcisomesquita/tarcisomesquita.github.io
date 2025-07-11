@@ -1,0 +1,10 @@
+    4  objdump -d -M intel --wide hello-fasm.exe | tr '\t' ';' | sed '1,7d; s/^\([^;]*\);\([^;]*\);\([^;]*\)$/\3                              \1 \2/; s/^\(.\{1,33\}\) */\1# /; s/ *$//'
+
+    8  xxd -g 1 pwd_orig.exe | sed 's/^/;/; s/:/:\n/' | cut -c1-48 | sed 's/ /, 0x/g; s/^,/db/; s/;/; /' > pwd_orig.asm
+
+   11  ./nasm  -f bin pwd_orig.asm -o pwd.exe
+   12  diff -q -s pwd_orig.exe pwd.exe
+
+./ndisasm -b 32 -e 0x200 -o 0x401050 -p intel pwd.exe | head -n 186 > pwd.teste.asm
+
+

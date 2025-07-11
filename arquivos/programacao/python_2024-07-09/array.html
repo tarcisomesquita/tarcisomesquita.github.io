@@ -1,0 +1,409 @@
+<!DOCTYPE>
+<html>
+  <head><meta charset="UTF-8" />
+    <meta>
+    <title>array</title>
+  </head>
+<body>  
+
+<table>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr><th>Type code</th>
+<th>C Type</th>
+<th>Python Type</th>
+<th>Minimum size in bytes</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><code><span>'b'</span></code></td>
+<td>signed char</td>
+<td>int</td>
+<td>1</td>
+</tr>
+<tr><td><code><span>'B'</span></code></td>
+<td>unsigned char</td>
+<td>int</td>
+<td>1</td>
+</tr>
+<tr><td><code><span>'u'</span></code></td>
+<td>Py_UNICODE</td>
+<td>Unicode character</td>
+<td>2</td>
+</tr>
+<tr><td><code><span>'h'</span></code></td>
+<td>signed short</td>
+<td>int</td>
+<td>2</td>
+</tr>
+<tr><td><code><span>'H'</span></code></td>
+<td>unsigned short</td>
+<td>int</td>
+<td>2</td>
+</tr>
+<tr><td><code><span>'i'</span></code></td>
+<td>signed int</td>
+<td>int</td>
+<td>2</td>
+</tr>
+<tr><td><code><span>'I'</span></code></td>
+<td>unsigned int</td>
+<td>int</td>
+<td>2</td>
+</tr>
+<tr><td><code><span>'l'</span></code></td>
+<td>signed long</td>
+<td>int</td>
+<td>4</td>
+</tr>
+<tr><td><code><span>'L'</span></code></td>
+<td>unsigned long</td>
+<td>int</td>
+<td>4</td>
+</tr>
+<tr><td><code><span>'q'</span></code></td>
+<td>signed long long</td>
+<td>int</td>
+<td>8</td>
+</tr>
+<tr><td><code><span>'Q'</span></code></td>
+<td>unsigned long long</td>
+<td>int</td>
+<td>8</td>
+</tr>
+<tr><td><code><span>'f'</span></code></td>
+<td>float</td>
+<td>float</td>
+<td>4</td>
+</tr>
+<tr><td><code><span>'d'</span></code></td>
+<td>double</td>
+<td>float</td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>The actual representation of values is determined by the machine architecture
+(strictly speaking, by the C implementation).  The actual size can be accessed
+through the <code><span>itemsize</span></code> attribute.</p>
+<p>The module defines the following type:</p>
+<dl>
+<dt>
+<em>class </em><code>array.</code><code>array</code><span>(</span><em>typecode</em><span>[</span>, <em>initializer</em><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>A new array whose items are restricted by <em>typecode</em>, and initialized
+from the optional <em>initializer</em> value, which must be a list, a
+<a><span>bytes-like object</span></a>, or iterable over elements of the
+appropriate type.</p>
+<p>If given a list or string, the initializer is passed to the new array’s
+<a><code><span>fromlist()</span></code></a>, <a><code><span>frombytes()</span></code></a>, or <a><code><span>fromunicode()</span></code></a> method (see below)
+to add initial items to the array.  Otherwise, the iterable initializer is
+passed to the <a><code><span>extend()</span></code></a> method.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>typecodes</code><a>¶</a></dt>
+<dd><p>A string with all available type codes.</p>
+</dd></dl>
+
+<p>Array objects support the ordinary sequence operations of indexing, slicing,
+concatenation, and multiplication.  When using slice assignment, the assigned
+value must be an array object with the same type code; in all other cases,
+<a><code><span>TypeError</span></code></a> is raised. Array objects also implement the buffer interface,
+and may be used wherever <a><span>bytes-like objects</span></a> are supported.</p>
+<p>The following data items and methods are also supported:</p>
+<dl>
+<dt>
+<code>array.</code><code>typecode</code><a>¶</a></dt>
+<dd><p>The typecode character used to create the array.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>itemsize</code><a>¶</a></dt>
+<dd><p>The length in bytes of one array item in the internal representation.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>append</code><span>(</span><em>x</em><span>)</span><a>¶</a></dt>
+<dd><p>Append a new item with value <em>x</em> to the end of the array.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>buffer_info</code><span>(</span><span>)</span><a>¶</a></dt>
+<dd><p>Return a tuple <code><span>(address,</span> <span>length)</span></code> giving the current memory address and the
+length in elements of the buffer used to hold array’s contents.  The size of the
+memory buffer in bytes can be computed as <code><span>array.buffer_info()[1]</span> <span>*</span>
+<span>array.itemsize</span></code>.  This is occasionally useful when working with low-level (and
+inherently unsafe) I/O interfaces that require memory addresses, such as certain
+<code><span>ioctl()</span></code> operations.  The returned numbers are valid as long as the array
+exists and no length-changing operations are applied to it.</p>
+<div>
+<p>Note</p>
+<p>When using array objects from code written in C or C++ (the only way to
+effectively make use of this information), it makes more sense to use the buffer
+interface supported by array objects.  This method is maintained for backward
+compatibility and should be avoided in new code.  The buffer interface is
+documented in <a><span>Buffer Protocol</span></a>.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>byteswap</code><span>(</span><span>)</span><a>¶</a></dt>
+<dd><p>“Byteswap” all items of the array.  This is only supported for values which are
+1, 2, 4, or 8 bytes in size; for other types of values, <a><code><span>RuntimeError</span></code></a> is
+raised.  It is useful when reading data from a file written on a machine with a
+different byte order.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>count</code><span>(</span><em>x</em><span>)</span><a>¶</a></dt>
+<dd><p>Return the number of occurrences of <em>x</em> in the array.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>extend</code><span>(</span><em>iterable</em><span>)</span><a>¶</a></dt>
+<dd><p>Append items from <em>iterable</em> to the end of the array.  If <em>iterable</em> is another
+array, it must have <em>exactly</em> the same type code; if not, <a><code><span>TypeError</span></code></a> will
+be raised.  If <em>iterable</em> is not an array, it must be iterable and its elements
+must be the right type to be appended to the array.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>frombytes</code><span>(</span><em>s</em><span>)</span><a>¶</a></dt>
+<dd><p>Appends items from the string, interpreting the string as an array of machine
+values (as if it had been read from a file using the <a><code><span>fromfile()</span></code></a> method).</p>
+<div>
+<p><span>New in version 3.2: </span><a><code><span>fromstring()</span></code></a> is renamed to <a><code><span>frombytes()</span></code></a> for clarity.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>fromfile</code><span>(</span><em>f</em>, <em>n</em><span>)</span><a>¶</a></dt>
+<dd><p>Read <em>n</em> items (as machine values) from the <a><span>file object</span></a> <em>f</em> and append
+them to the end of the array.  If less than <em>n</em> items are available,
+<a><code><span>EOFError</span></code></a> is raised, but the items that were available are still
+inserted into the array. <em>f</em> must be a real built-in file object; something
+else with a <code><span>read()</span></code> method won’t do.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>fromlist</code><span>(</span><em>list</em><span>)</span><a>¶</a></dt>
+<dd><p>Append items from the list.  This is equivalent to <code><span>for</span> <span>x</span> <span>in</span> <span>list:</span>
+<span>a.append(x)</span></code> except that if there is a type error, the array is unchanged.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>fromstring</code><span>(</span><span>)</span><a>¶</a></dt>
+<dd><p>Deprecated alias for <a><code><span>frombytes()</span></code></a>.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>fromunicode</code><span>(</span><em>s</em><span>)</span><a>¶</a></dt>
+<dd><p>Extends this array with data from the given unicode string.  The array must
+be a type <code><span>'u'</span></code> array; otherwise a <a><code><span>ValueError</span></code></a> is raised.  Use
+<code><span>array.frombytes(unicodestring.encode(enc))</span></code> to append Unicode data to an
+array of some other type.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>index</code><span>(</span><em>x</em><span>)</span><a>¶</a></dt>
+<dd><p>Return the smallest <em>i</em> such that <em>i</em> is the index of the first occurrence of
+<em>x</em> in the array.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>insert</code><span>(</span><em>i</em>, <em>x</em><span>)</span><a>¶</a></dt>
+<dd><p>Insert a new item with value <em>x</em> in the array before position <em>i</em>. Negative
+values are treated as being relative to the end of the array.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>pop</code><span>(</span><span>[</span><em>i</em><span>]</span><span>)</span><a>¶</a></dt>
+<dd><p>Removes the item with the index <em>i</em> from the array and returns it. The optional
+argument defaults to <code><span>-1</span></code>, so that by default the last item is removed and
+returned.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>remove</code><span>(</span><em>x</em><span>)</span><a>¶</a></dt>
+<dd><p>Remove the first occurrence of <em>x</em> from the array.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>reverse</code><span>(</span><span>)</span><a>¶</a></dt>
+<dd><p>Reverse the order of the items in the array.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>tobytes</code><span>(</span><span>)</span><a>¶</a></dt>
+<dd><p>Convert the array to an array of machine values and return the bytes
+representation (the same sequence of bytes that would be written to a file by
+the <a><code><span>tofile()</span></code></a> method.)</p>
+<div>
+<p><span>New in version 3.2: </span><a><code><span>tostring()</span></code></a> is renamed to <a><code><span>tobytes()</span></code></a> for clarity.</p>
+</div>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>tofile</code><span>(</span><em>f</em><span>)</span><a>¶</a></dt>
+<dd><p>Write all items (as machine values) to the <a><span>file object</span></a> <em>f</em>.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>tolist</code><span>(</span><span>)</span><a>¶</a></dt>
+<dd><p>Convert the array to an ordinary list with the same items.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>tostring</code><span>(</span><span>)</span><a>¶</a></dt>
+<dd><p>Deprecated alias for <a><code><span>tobytes()</span></code></a>.</p>
+</dd></dl>
+
+<dl>
+<dt>
+<code>array.</code><code>tounicode</code><span>(</span><span>)</span><a>¶</a></dt>
+<dd><p>Convert the array to a unicode string.  The array must be a type <code><span>'u'</span></code> array;
+otherwise a <a><code><span>ValueError</span></code></a> is raised. Use <code><span>array.tobytes().decode(enc)</span></code> to
+obtain a unicode string from an array of some other type.</p>
+</dd></dl>
+
+<p>When an array object is printed or converted to a string, it is represented as
+<code><span>array(typecode,</span> <span>initializer)</span></code>.  The <em>initializer</em> is omitted if the array is
+empty, otherwise it is a string if the <em>typecode</em> is <code><span>'u'</span></code>, otherwise it is a
+list of numbers.  The string is guaranteed to be able to be converted back to an
+array with the same type and value using <a><code><span>eval()</span></code></a>, so long as the
+<a><code><span>array</span></code></a> class has been imported using <code><span>from</span> <span>array</span> <span>import</span> <span>array</span></code>.
+Examples:</p>
+<div><div><pre><span></span><span>array</span><span>(</span><span>&#39;l&#39;</span><span>)</span>
+<span>array</span><span>(</span><span>&#39;u&#39;</span><span>,</span> <span>&#39;hello </span><span>\u2641</span><span>&#39;</span><span>)</span>
+<span>array</span><span>(</span><span>&#39;l&#39;</span><span>,</span> <span>[</span><span>1</span><span>,</span> <span>2</span><span>,</span> <span>3</span><span>,</span> <span>4</span><span>,</span> <span>5</span><span>])</span>
+<span>array</span><span>(</span><span>&#39;d&#39;</span><span>,</span> <span>[</span><span>1.0</span><span>,</span> <span>2.0</span><span>,</span> <span>3.14</span><span>])</span>
+</pre></div>
+</div>
+<div>
+<p>See also</p>
+<dl>
+<dt>Module <a><code><span>struct</span></code></a></dt>
+<dd>Packing and unpacking of heterogeneous binary data.</dd>
+<dt>Module <a><code><span>xdrlib</span></code></a></dt>
+<dd>Packing and unpacking of External Data Representation (XDR) data as used in some
+remote procedure call systems.</dd>
+<dt><a>The Numerical Python Documentation</a></dt>
+<dd>The Numeric Python extension (NumPy) defines another array type; see
+<a>http://www.numpy.org/</a> for further information about Numerical Python.</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+  <h4>Previous topic</h4>
+  <p><a href="bisect.html"
+           >8.6. <code><span>bisect</span></code> — Array bisection algorithm</a></p>
+  <h4>Next topic</h4>
+  <p><a href="weakref.html"
+           >8.8. <code><span>weakref</span></code> — Weak references</a></p>
+  <div>
+    <h3>This Page</h3>
+    <ul>
+      <li><a>Report a Bug</a></li>
+      <li>
+        <a href="https://github.com/python/cpython/blob/3.6/Doc/library/array.rst"
+>Show Source
+        </a>
+      </li>
+    </ul>
+  </div>
+        </div>
+      </div>
+      <div></div>
+    </div>  
+    <div>
+      <h3>Navigation</h3>
+      <ul>
+        <li>
+          <a href="../genindex.html" title="General Index"
+>index</a></li>
+        <li>
+          <a href="../py-modindex.html" title="Python Module Index"
+>modules</a> |</li>
+        <li>
+          <a href="weakref.html" title="8.8. weakref — Weak references"
+>next</a> |</li>
+        <li>
+          <a href="bisect.html" title="8.6. bisect — Array bisection algorithm"
+>previous</a> |</li>
+        <li><img src="../_static/py.png" alt=""
+      ></li>
+        <li><a>Python</a> &#187;</li>
+        <li>
+          <span>en</span>
+          <span>3.6.5</span>
+          <a>Documentation </a> &#187;
+        </li>
+
+          <li><a>The Python Standard Library</a> &#187;</li>
+          <li><a>8. Data Types</a> &#187;</li>
+    <li>
+        
+
+    <div>
+        <form>
+          <input>
+          <input>
+          <input>
+          <input>
+        </form>
+    </div>
+    <script>$('.inline-search').show(0);</script>
+         |
+    </li>
+
+      </ul>
+    </div>  
+    <div>
+    &copy; <a>Copyright</a> 2001-2018, Python Software Foundation.
+    <br>
+    The Python Software Foundation is a non-profit corporation.
+    <a>Please donate.</a>
+    <br>
+    Last updated on May 20, 2018.
+    <a>Found a bug</a>?
+    <br>
+    Created using <a>Sphinx</a> 1.7.4.
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,23 @@
+
+O modo promíscuo permite que a interface de rede receba todos os pacotes que passam por ela, mesmo os que não são destinados a ela. Técnica muito utilizada para monitorar o tráfego da rede (sniffing), tanto para o "bem" quanto para o "mal".
+
+Para ativar o modo promíscuo:
+
+# ifconfig eth0 promisc
+
+Para desativar o modo promíscuo:
+
+# ifconfig eth0 -promisc
+
+
+Para verificar se alguma interface está em modo promíscuo:
+
+# ifconfig | grep -i PROMISC
+
+A saída do comando acima deve ser equivalente a:
+
+"UP BROADCAST RUNNING PROMISC MULTICAST MTU:1500 Metric:1"
+
+Dica de segurança: Se você notar que sua rede está sendo monitorada indevidamente ou que sua rede ficou muito lenta recentemente. Utilize o comando acima em seu gateway ou qualquer outro host suspeito para verificar se a placa de rede está operando em modo promíscuo. Você pode estar sofrendo um ataque de algum sniffer em algum host da sua rede.
+
+

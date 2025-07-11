@@ -1,0 +1,17 @@
+Configuration is possible is several ways. 
+You can configure several paramets with the command line, but most are settable via
+the configuration file. This file can be specified on the command line.
+
+Basic command line options:
+-w			Do not separate into the background. You'll loose your
+			terminal, and all output will be sent here.
+-d			Output all debugging information (Warning: It's a wadload
+			of overwhelming information!)
+-f <location>		Use this file as configuration file
+
+Some server configurings:
+-p <int>		The HTTP portnumber to be used
+-s <int>		The HTTPS portnumber to be used, if you specified at compile-
+			time that you wanted HTTPS support
+-b <int>		The amount of concurrent connections to manage
+

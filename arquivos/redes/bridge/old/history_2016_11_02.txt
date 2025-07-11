@@ -1,0 +1,175 @@
+   2 modprobe usb_storage
+   4 modprobe mod_sd
+   5 modprobe sd_mod
+   7 mkdir media 
+   8 mount -t vfat /dev/sda1 /media
+   9 . /media/history_x86.txt 
+  10 brctl show
+  11 cat /proc/net/dev
+  12 brctl show
+  13 cat /media/history_x86.txt > h.txt
+  14 cat h.txt | grep eth1
+  15 ifconfig
+  16 cat /proc/net/dev
+  17 cat h.txt | grep eth1
+  18 cat h.txt | grep eth1 > eth1.txt
+  19 . eth1.txt 
+  20 brctl show
+  21 cat /proc/net/dev
+  22 cat h.txt | grep net
+  23 cat h.txt | grep cut
+  24 cat h.txt | grep cut >net_dev.txt
+  25 . net_dev.txt 
+
+  31 umount /media/
+  32 rmmod usb_storage
+  33 brctl show
+  34 ls -lh cap*
+  35 date "201611020008"
+  36 date -s "201611020009"
+  37 hwclock -w
+  38 date
+  39 ls -lh cap*
+  40 date
+  41 tcpdump -tttt -n -r cap.pcap0 -c 10
+  42 tcpdump -tttt -n -r cap.pcap1 -c 10
+  43 ls -lh cap*
+  44 modprobe usb_storage
+  45 mkdir 16G
+  46 mount -t vfat /dev/sda1 /16G/
+  47 ps | grep tcpdump
+  48 tcpdump -i eth1 -w /16G/d02.cap -C 100 -U &
+  49 kill 737
+  50 cp *.cap* /16G/
+  51 cp *.pcap* /16G/
+  52 ls -lh 16G/
+  53 cp *.pcap* /16G/
+  54 rm *.pcap* 
+  55 ls -lh 16G/
+  56 tcpdump -n -v -L
+  57 ls -lh 16G/
+  58 iptables -n -v -L
+  59 arptables -n -v -L
+  60 ls -lh 16G/
+  61 cat /proc/net/dev
+  62 cat eth1.txt 
+  63 . eth1.txt 
+  64 history | grep tcpdump
+  65 tcpdump -i eth1 -w /16G/d02b.cap -C 100 -U &
+  66 ps | grep tcpdump
+  67 ls -lh /16G/
+  68 ps | grep tcpdump
+  69 ls -lh /16G/
+  70 du -chs /16G/*
+  71 ls
+  72 tail log.txt 
+  73 du -chs /16G/*
+  74 ps | grep tcpdump
+  75 tcpdump -i eth1 -w d05.pcap -C 100 -U &
+  76 ps | grep tcpdump
+  77 ls -Ãlh
+  78 ls -lh
+  79 ps | grep tcpdump
+  80 ls -lh *pcap*
+  81 kill 1081
+  82 kill
+  83 sync
+  84 umount  /16G/
+  85 rmmod usb_storage
+  86 ls -lh *pcap*
+  87 modprobe usb_storage
+  88 mount -t vfat /dev/sda1 /16G/ 
+  89 tcpdump -i eth1 -w /16G/d05.pcap -C 100 -U &
+  90 du -chs /16G/*
+  91 brctl show
+  92 du -chs /16G/*
+  93 ls -lh *pcap*
+  94 du -chs /16G/*
+  95 ps | grep tcpdump
+  96 kill 1226
+  97 mv d05.pcap 16G/05.pcap 
+  98 ls -lh *pcap*
+  99 du -chs /16G/*
+ 100 tcpdump -i eth1 -w d07_dhcp.pcap udp port 68 &
+ 101 ps | grep tcpdump
+ 102 kill 1401
+ 103 tcpdump -i eth1 -U -w d07_dhcp.pcap udp port 68 &
+ 104 tcpdump -tttt -n -e -i eth1 -U not ether src fc:b0:c4:62:ce:f4 and not ether src f0:7d:68:e7:68:e5 | cut -c1-16,27-44 | uniq > d07.txt &
+ 105 ls -l d*
+ 106 ls -l d0*
+ 107 brctl  show
+ 108 ps | grep tcpdump
+ 109 history | grep net/dev
+ 110 ls his*
+ 111 ls 
+ 112 cat h.txt | grep net/dev
+ 113 $(cat h.txt | grep net/dev)
+ 114 cat h.txt | grep net/dev
+ 115 sh -c "$(cat h.txt | grep net/dev)"
+ 116 ls 
+ 117 . net_dev.txt 
+ 118 ls -l d0*
+ 119 du -chs /16G/*
+ 120 ls -l /16G/d05.pcap100
+ 121 ls -l /16G/d05.pcap10*
+ 122 ls -l /16G/d05.pcap11*
+ 123 ls -l /16G/d05.pcap13*
+ 124 ls -l /16G/d05.pcap18*
+ 125 ls -l /16G/d05.pcap16*
+ 126 ls -l /16G/d05.pcap15*
+ 127 ls -l /16G/d05.pcap14*
+ 128 tcpdump -i eth1 -w d07.pcap -C 100 -U &
+ 129 ps | grep tcpdump
+ 130 ls -l d0*
+ 131 kill 1282
+ 132 kill 1404
+ 133 kill 1407
+ 134 ls -l d0*
+ 135 sync
+ 136 umount  /16G/
+ 137 rmmod usb_storage
+ 138 ls -l d0*
+ 139 tcpdump -n -i eth1 -U -w d07_b.pcap not ether src fc:b0:c4:62:ce:f4 and not ether src f0:7d:68:e7:68:e5  &
+ 140 tcpdump -i eth1 -U -w d07_dhcp.pcap udp port 68 &
+ 141 ls -l d0*
+ 142 ls -lh d0*
+ 143 rm d07.txt 
+ 144 ls -lh d0*
+ 145 ps | grep tcpdump
+ 146 kill 1462
+ 147 ls -lh d0*
+ 148 . net_dev.txt 
+ 149 ps | grep tcpdump
+ 150 brctl  show
+ 151 ls -lh d0*
+ 152 ls -l d0*
+ 153 modprobe usb_storage
+ 154 mount -t vfat /dev/sda1 /16G/ 
+ 155 cp d07* log.txt /16G/
+ 156 ls -l d0*
+ 157 rm d07.pcap 
+ 158 ls -l /16G/
+ 159 sync
+ 160 umount /16G/
+ 161 rmmod usb_storage
+ 162 brctl  show
+ 163 ls -lh d0*
+ 164 cat log.txt 
+ 165 cat log.txt |  less
+ 166 cat log.txt |  grep eth0 | grep disable
+ 167 cat log.txt |  grep eth0 | grep disable | less
+ 168 modprobe usb_storage
+ 169 mount -t vfat /dev/sda1 /16G/ 
+ 170 cp d07* log.txt /16G/
+ 171 sync
+ 172 umount /16G/
+ 173 rmmod usb_storage
+ 174 cat log.txt |  grep eth1 | grep disable | less
+ 175 cat log.txt |  grep eth0 | grep disable | less
+ 176 modprobe usb_storage
+ 177 mount -t vfat /dev/sda1 /16G/ 
+ 178 ls -lh
+ 179 ls -lh /16G/
+ 180 cp d07* log.txt /16G/
+ 181 ls -lh /16G/
+ 182 history > /16G/history.txt

@@ -1,0 +1,3 @@
+O kernel usa as portas acima de 61.000 para mascaramento de IP.
+Esses valores podem ser conferidos no arquivo /proc/sys/net/ipv4/ip_local_range. É possível alterá-los usando o subsistema sysctl. Por exemplo, com o comando: sysctl -w net.ipv4.ip_local_range="32768 61000"
+

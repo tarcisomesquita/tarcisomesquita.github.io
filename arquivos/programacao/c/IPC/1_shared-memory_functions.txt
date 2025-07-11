@@ -1,0 +1,47 @@
+shared memory files are provided from a tmpfs filesystem mounted at /dev/shm
+shared memory files are created using the shm_open system call.
+
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+int shm_open (const char *name, int oflag, mode_t mode);
+
+shm_open is like the open system call for files. It opens a POSIX shared memory object and makes it available to the calling process via the returned file descriptor. The first parameter, name, is the name of the shared memory object and is of the form /somename, that is, it is a null-terminated string of a maximum of NAME_MAX characters, and, its first character is a slash and none of the other characters can be a slash. oflag is a bit mask constructed by OR-ing either O_RDONLY or O_RDWR with one or more of the following flags. O_CREAT creates the shared memory object if it does not exist. And, if it creates the object, the last nine bits of the third parameter, mode are taken for permissions except that the bits set in the file mode creation mask are cleared for the object. Also, if the shared memory object is created, the owner and group ids of the object are set the corresponding effective ids of the calling process. A newly created shared memory object is of size zero bytes. It can be made of the desired size by using the ftruncate system call. If O_EXCL flag is used together with the O_CREAT flag, and the shared memory object for the name already exists, shm_open fails and errno is set to EEXIST. There is another flag, O_TRUNC, which if specified, truncates the shared memory object, if it already exists, to size zero bytes. On success, shm_open returns the file descriptor for the shared memory object. If shm_open fails, it returns -1 and errno is set to the cause of the error.
+
+3.2 shm_unlink
+
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+int shm_unlink (const char *name);
+
+shm_unlink removes the previously created POSIX shared memory object. The name is the name of the shared memory object as described under shm_open, above.
+
+4.0 Other System Calls used in POSIX Shared Memory Operations
+4.1 ftruncate
+
+#include <unistd.h>
+#include <sys/types.h>
+
+int ftruncate (int fd, off_t length);
+
+The ftruncate system call makes the object referred to by the file descriptor, fd, of size length bytes. When a POSIX shared memory is created, it is of size zero bytes. Using ftruncate, we can make the POSIX shared memory object of size length bytes. ftruncate returns zero on success. In case of error, ftruncate returns -1 and errno is set to the cause of the error.
+
+4.2 mmap
+
+#include <sys/mman.h>
+
+void *mmap (void *addr, size_t length, int prot, int flags,
+            int fd, off_t offset);
+
+With the mmap system call, we can map a POSIX shared memory object to the calling process's virtual address space. addr specifies the address at which it should be mapped. In most cases, we do not care at what address mapping is done and a value of NULL for addr should suffice. length is the length of shared memory object that should be mapped. To keep things simple, we will map the whole object and length for us will be the length of the shared memory object. prot can have the values, PROT_EXEC, PROT_READ, PROT_WRITE and PROT_NONE. PROT_EXEC means that the mapped pages may be executed and PROT_NONE means that the mapped pages may not be accessed. These two values do not make sense for a shared memory object. So we will use PROT_READ | PROT_WRITE value for prot. There are many flags but the only one meaningful for shared memory is MAP_SHARED, which means that the updates to the mapped shared memory are visible to all other processes immediately. fd is, of course, the file descriptor for the shared memory received from an earlier shm_open call. offset is the location in the shared memory object at which the mapping starts; we will use the value zero for offset and map the shared memory object starting right from the beginning. On success, mmap returns the pointer to the location where the shared memory object has been mapped. In case of error, MAP_FAILED, which is, (void *) -1, is returned and errno is set to the cause of the error.
+
+4.3 munmap
+
+#include <sys/mman.h>
+
+int munmap (void *addr, size_t length);
+
+munmap unmapps the shared memory object at location pointed by addr and having size, length. On success, munmap returns 0. In case of error, munmap returns -1 and errno is set to the cause of the error.
+

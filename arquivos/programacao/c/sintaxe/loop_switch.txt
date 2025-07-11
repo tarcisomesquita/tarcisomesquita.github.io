@@ -1,0 +1,90 @@
+switch(expressão) {
+  case constante1:
+    comando;
+    break;
+  case constante2:
+    comando;
+    break;
+  default:
+    comando;
+}
+
+Avalia a expressão e executa os comandos seguintes ao case que coincidir com o valor da expressão. Ao encontrar um break, o restante do switch é pulado. Se nenhum valor de case coincidir com a expressão, então são executados os comandos após default (opcional).
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#include <stdio.h>
+
+int main() {
+  unsigned char escolha;
+  float total = 0.00;
+  
+  printf("1 - Pizza\n");
+  printf("2 - Hambúrger\n");
+  printf("3 - Cachorro Quente\n");
+  printf("0 - FIM\n");
+  
+  do {
+    printf("\nFaça sua escolha: ");
+    
+    while ((escolha = getchar()) == '\n') continue;
+    
+    switch(escolha) {
+      case '1':
+        printf("Você escolheu pizza\n");
+        total += 9.50;
+        break;
+      case '2':
+        printf("Você escolheu hambúrger\n");
+        total += 4.00;
+        break;
+      case '3':
+        printf("Você escolheu cachorro quente\n");
+        total += 1.00;
+        break;
+      case '0':
+        break;
+      default:
+        printf("OPÇÃO INVÁLIDA!\n");
+    }
+  } while(escolha != '0');
+  
+  printf("Total a pagar: %10.2f\n\n", total);
+  return 0;
+}
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+#include <stdio.h>
+
+int main() {
+  auto unsigned short int t;
+  
+  for (t = 1; t < 10; t ++) {
+    printf("\nt = %u\n",t);
+    switch (t) {
+      case 1: 
+        printf("Agora ");
+        break;
+      case 2:
+        printf("é ");
+      case 3:
+      case 4:
+        printf("hora ");
+        printf("de todos os homens bons ");
+        break;
+      case 5:
+      case 6:
+        printf("trabalharem ");
+        break;
+      case 7:
+      case 8:
+      default:
+        printf(".\n");
+      }
+   }
+   
+   return 0;
+}
+
+

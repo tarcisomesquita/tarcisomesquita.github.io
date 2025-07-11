@@ -1,0 +1,72 @@
+
+FIREWALL/IDS EVASION AND SPOOFING
+       -f (fragment packets); --mtu (using the specified MTU)
+           The idea is to split up the TCP header over several packets to make it harder for packet filters detect what you are doing.
+           Nmap splits the packets into 8 bytes or less after the IP header. So a 20-byte TCP header would be split into 3 packets.
+           Two with eight bytes of the TCP header, and one with the final four. Of course each fragment also has an IP header.
+           you can specify your own offset size with the --mtu option. Don't also specify -f if you use --mtu. The offset
+           must be a multiple of 8.
+           capture some packets to ensure that sent packets are fragmented. If your host OS is causing problems, try the --send-eth option to bypass the IP layer and send raw ethernet frames.
+
+       -D decoy1[,decoy2][,ME][,...] (Cloak a scan with decoys)
+           Causes a decoy scan to be performed, which makes it appear to the
+           remote host that the host(s) you specify as decoys are scanning the
+           target network too. Thus their IDS might report 5-10 port scans
+           from unique IP addresses, but they won't know which IP was scanning
+           them and which were innocent decoys. While this can be defeated
+           through router path tracing, response-dropping, and other active
+           mechanisms, it is generally an effective technique for hiding your
+           IP address.
+
+           Separate each decoy host with commas, and you can optionally use ME
+           as one of the decoys to represent the position for your real IP
+           address. If you put ME in the sixth position or later, some common
+           port scan detectors are unlikely to show your IP address at all. If you don't use ME,
+           Nmap will put you in a random position. You can also use RND to generate a random, non-reserved IP address, or RND:number to
+           generate number addresses.
+
+           Note that the hosts you use as decoys should be up or you might
+           accidentally SYN flood your targets.
+
+       -S IP_Address (Spoof source address)
+           IP address of the interface you wish to send packets through.
+
+       -e interface (Use specified interface)
+           Tells Nmap what interface to send and receive packets on.
+
+       --source-port portnumber; -g portnumber (Spoof source port number)
+           Windows XP contain an implicit rule that allows all TCP or UDP traffic from port 88.
+           Zone Alarm 2.1.25 allow any incoming UDP packets with the source port 53 (DNS) or 67 (DHCP).
+
+       --data-length number (Append random data to sent packets)
+           default is send only the headers
+
+       --ip-options S|R [route]|L [route]|T|U ... ; --ip-options hex string
+       (Send packets with specified ip options)
+           The IP protocol[9] offers several options which may be placed in
+           packet headers. you may be able to use the record route option to
+           determine a path to a target even when more traditional
+           traceroute-style approaches fail. Or if your packets are being
+           dropped by a certain firewall, you may be able to specify a
+           different route with the strict or loose source routing options.
+
+           The most powerful way to specify IP options is to simply pass in
+           values as the argument to --ip-options. Precede each hex number
+           with \x then the two digits. You may repeat certain characters by
+           following them with an asterisk and then the number of times you
+           wish them to repeat. For example, \x01\x07\x04\x00*36\x01 is a hex
+           string containing 36 NUL bytes.
+
+           Nmap also offers a shortcut mechanism for specifying options.
+           Simply pass the letter R, T, or U to request record-route,
+           record-timestamp, or both options together, respectively. Loose or
+           strict source routing may be specified with an L or S followed by a
+           space and then a space-separated list of IP addresses.
+
+           If you wish to see the options in packets sent and received,
+           specify --packet-trace.
+
+       --ttl value (Set IP time-to-live field)
+           Sets the IPv4 time-to-live field in sent packets to the given
+           value.
+

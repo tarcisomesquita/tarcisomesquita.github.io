@@ -1,0 +1,1188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html class="linux firefox firefox3 gecko gecko1" dir="ltr" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+
+
+<title>Signed number representations - Wikipedia, the free encyclopedia</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta name="generator" content="MediaWiki 1.16wmf4">
+<link rel="canonical" href="http://en.wikipedia.org/wiki/Signed_number_representations">
+<link rel="alternate" type="application/x-wiki" title="Edit this page" href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;action=edit">
+<link rel="edit" title="Edit this page" href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;action=edit">
+<link rel="apple-touch-icon" href="http://en.wikipedia.org/apple-touch-icon.png">
+<link rel="shortcut icon" href="http://en.wikipedia.org/favicon.ico">
+<link rel="search" type="application/opensearchdescription+xml" href="http://en.wikipedia.org/w/opensearch_desc.php" title="Wikipedia (en)">
+<link rel="copyright" href="http://creativecommons.org/licenses/by-sa/3.0/">
+<link rel="alternate" type="application/atom+xml" title="Wikipedia Atom feed" href="http://en.wikipedia.org/w/index.php?title=Special:RecentChanges&amp;feed=atom">
+<link rel="stylesheet" href="One%27s_complement_files/main-ltr.css" type="text/css" media="screen">
+<link rel="stylesheet" href="One%27s_complement_files/shared.css" type="text/css" media="screen">
+<link rel="stylesheet" href="One%27s_complement_files/commonPrint.css" type="text/css" media="print">
+<link rel="stylesheet" href="One%27s_complement_files/combined.css" type="text/css" media="all">
+<link rel="stylesheet" href="One%27s_complement_files/jquery-ui-1.css" type="text/css" media="all">
+<link rel="stylesheet" href="One%27s_complement_files/index_004.css" type="text/css" media="all">
+<link rel="stylesheet" href="One%27s_complement_files/index_005.css" type="text/css" media="print">
+<link rel="stylesheet" href="One%27s_complement_files/index_002.css" type="text/css" media="handheld">
+<link rel="stylesheet" href="One%27s_complement_files/index_003.css" type="text/css" media="all">
+<link rel="stylesheet" href="One%27s_complement_files/index.css" type="text/css" media="all">
+<script type="text/javascript">
+var skin="vector",
+stylepath="http://bits.wikimedia.org/skins-1.5",
+wgUrlProtocols="http\\:\\/\\/|https\\:\\/\\/|ftp\\:\\/\\/|irc\\:\\/\\/|gopher\\:\\/\\/|telnet\\:\\/\\/|nntp\\:\\/\\/|worldwind\\:\\/\\/|mailto\\:|news\\:|svn\\:\\/\\/",
+wgArticlePath="/wiki/$1",
+wgScriptPath="/w",
+wgScriptExtension=".php",
+wgScript="/w/index.php",
+wgVariantArticlePath=false,
+wgActionPaths={},
+wgServer="http://en.wikipedia.org",
+wgCanonicalNamespace="",
+wgCanonicalSpecialPageName=false,
+wgNamespaceNumber=0,
+wgPageName="Signed_number_representations",
+wgTitle="Signed number representations",
+wgAction="view",
+wgArticleId=586694,
+wgIsArticle=true,
+wgUserName=null,
+wgUserGroups=null,
+wgUserLanguage="en",
+wgContentLanguage="en",
+wgBreakFrames=false,
+wgCurRevisionId=378321503,
+wgVersion="1.16wmf4",
+wgEnableAPI=true,
+wgEnableWriteAPI=true,
+wgSeparatorTransformTable=["", ""],
+wgDigitTransformTable=["", ""],
+wgMainPageTitle="Main Page",
+wgFormattedNamespaces={"-2": "Media", "-1": "Special", "0": "", "1": "Talk", "2": "User", "3": "User talk", "4": "Wikipedia", "5": "Wikipedia talk", "6": "File", "7": "File talk", "8": "MediaWiki", "9": "MediaWiki talk", "10": "Template", "11": "Template talk", "12": "Help", "13": "Help talk", "14": "Category", "15": "Category talk", "100": "Portal", "101": "Portal talk", "108": "Book", "109": "Book talk"},
+wgNamespaceIds={"media": -2, "special": -1, "": 0, "talk": 1, "user": 2, "user_talk": 3, "wikipedia": 4, "wikipedia_talk": 5, "file": 6, "file_talk": 7, "mediawiki": 8, "mediawiki_talk": 9, "template": 10, "template_talk": 11, "help": 12, "help_talk": 13, "category": 14, "category_talk": 15, "portal": 100, "portal_talk": 101, "book": 108, "book_talk": 109, "wp": 4, "wt": 5, "image": 6, "image_talk": 7},
+wgSiteName="Wikipedia",
+wgCategories=["Computer arithmetic"],
+wgMWSuggestTemplate="http://en.wikipedia.org/w/api.php?action=opensearch\x26search={searchTerms}\x26namespace={namespaces}\x26suggest",
+wgDBname="enwiki",
+wgSearchNamespaces=[0],
+wgMWSuggestMessages=["with suggestions", "no suggestions"],
+wgRestrictionEdit=[],
+wgRestrictionMove=[],
+wgFlaggedRevsParams={"tags": {"status": {"levels": 1, "quality": 2, "pristine": 3}}},
+wgStableRevisionId=0,
+wgWikimediaMobileUrl="http://en.m.wikipedia.org/wiki",
+wgCollapsibleNavBucketTest=false,
+wgCollapsibleNavForceNewVersion=false,
+wgVectorPreferences={"collapsiblenav": {"enable": 1}, "editwarning": {"enable": 1}, "simplesearch": {"enable": 1, "disablesuggest": 0}},
+wgVectorEnabledModules={"collapsiblenav": true, "collapsibletabs": true, "editwarning": true, "expandablesearch": false, "footercleanup": false, "simplesearch": true},
+wgNotice="",
+wgNoticeLocal="";
+</script><script src="One%27s_complement_files/wikibits.js" type="text/javascript"></script>
+<script type="text/javascript" src="One%27s_complement_files/jquery.js"></script>
+<script type="text/javascript">
+redirectToFragment("#Ones.27_complement");
+</script>
+<script src="One%27s_complement_files/ajax.js" type="text/javascript"></script>
+<script src="One%27s_complement_files/mwsuggest.js" type="text/javascript"></script>
+<script src="One%27s_complement_files/MobileRedirect.js" type="text/javascript"></script>
+<script src="One%27s_complement_files/plugins.js" type="text/javascript"></script>
+<script src="One%27s_complement_files/Vector.js" type="text/javascript"></script>
+<script type="text/javascript">mw.usability.addMessages({'vector-collapsiblenav-more':'More languages','vector-editwarning-warning':'Leaving this page may cause you to lose any changes you have made.\nIf you are logged in, you can disable this warning in the \"Editing\" section of your preferences.','vector-simplesearch-search':'Search','vector-simplesearch-containing':'containing...'});</script>
+<script type="text/javascript" src="One%27s_complement_files/centralnotice.js"></script><style type="text/css">
+#centralNotice .siteNoticeSmall{display:none;}
+#centralNotice .siteNoticeSmallAnon{display:none;}
+#centralNotice .siteNoticeSmallUser{display:none;}
+#centralNotice.collapsed .siteNoticeBig{display:none;}
+#centralNotice.collapsed .siteNoticeSmall{display:block;}
+#centralNotice.collapsed .siteNoticeSmallUser{display:block;}
+#centralNotice.collapsed .siteNoticeSmallAnon{display:block;}
+#centralNotice.anonnotice .siteNoticeSmallUser{display:none !important;}
+#centralNotice.usernotice .siteNoticeSmallAnon{display:none !important;}
+</style>
+
+
+<!--[if lt IE 7]><style type="text/css">body{behavior:url("/w/skins-1.5/vector/csshover.htc")}</style><![endif]-->
+<script src="One%27s_complement_files/index.php" type="text/javascript"></script><script type="text/javascript" src="One%27s_complement_files/index_002.php"></script>
+
+</head><body class="mediawiki ltr ns-0 ns-subject page-Signed_number_representations skin-vector">
+		<div id="mw-page-base" class="noprint"></div>
+		<div id="mw-head-base" class="noprint"></div>
+		<!-- content -->
+		<div id="content"><div style="visibility: hidden; display: none; width: 602px; height: 402px; margin: 0px; padding: 0px; background-color: white; position: absolute; right: 2em; top: 1em; border: 1px solid gray; z-index: 13;"><iframe style="z-index: 14; position: absolute; right: 1px; top: 1px; width: 600px; height: 400px; margin: 0px; padding: 0px;" frameborder="0" scrolling="no"></iframe><img style="z-index: 15; position: absolute; right: 11px; top: 9px; width: 18px; cursor: pointer;" src="One%27s_complement_files/Button_hide.png" title="close"></div>
+			<a id="top"></a>
+			<div id="mw-js-message" style="display: none;"></div>
+						<!-- sitenotice -->
+			<div id="siteNotice"><script type="text/javascript">if (wgNotice != '') document.writeln(wgNotice);</script><div id="centralNotice" class="expanded anonnotice"><style type="text/css">
+#centralNotice.collapsed .central-notice-banner {
+ display: none;
+}
+.central-notice-banner {
+ position: relative;
+ margin-bottom: 1em !important;
+ border: 2px solid #6cc8f3;
+ background-image: url('http://upload.wikimedia.org/centralnotice/images/bughunting.png');
+ background-repeat: no-repeat;
+ background-position: left center;
+}
+.toggle-box {
+ float: right;
+ margin-top: .75em;
+ margin-right: .75em;
+ font-size: 0.8em;
+}
+
+.vector-bughunt-banner-message {
+ text-align: center;
+}
+.vector-bughunt-banner-message a, .vector-bughunt-banner-message-date  {
+ display: inline-block;
+ height: 2em;
+ cursor: pointer;
+ text-decoration: none;
+}
+.vector-bughunt-banner-message a.vector-bughunt-banner-message-left {
+ color: #333333;
+}
+.vector-bughunt-banner-message a.vector-bughunt-banner-message-right {
+ color: #0645AD;
+}
+.vector-bughunt-banner-message a.vector-banner-message-right:hover {
+ text-decoration: underline;
+}
+.vector-bughunt-banner-message-date {
+ color: #FF6600;
+ cursor: auto;
+}
+
+</style>
+<div style="display: none;" class="central-notice-banner" id="vector_bughunt_transition_message">
+ <div class="toggle-box"><a href="#" onclick="toggleNotice();return false">Hide</a></div>
+ <div class="vector-bughunt-banner-base">
+  <div class="vector-bughunt-banner-base-left">
+   <div class="vector-bughunt-banner-base-right">
+    <div class="vector-bughunt-banner-message">
+     <a href="http://meta.wikimedia.org/wiki/2010_Wikimedia_design_and_feature_change" class="vector-bughunt-banner-message-left">Wikipedia is getting a new look.</a><br>
+     <a href="http://meta.wikimedia.org/wiki/2010_Wikimedia_design_and_feature_change" class="vector-bughunt-banner-message-right">Help us find bugs and complete user interface translations.</a> <span class="vector-bughunt-banner-message-date">(before 25/8/2010)</span>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<script type="text/javascript">
+// Control whether or not this is displayed
+if( 
+(typeof(wgDBname) == "undefined") ||
+ wgUserName == null ||  
+ wgDBname  == 'enwiki' || 
+ wgDBname == 'dewiki' || 
+ wgDBname == 'frwiki'|| 
+ wgDBname == 'plwiki'|| 
+ wgDBname == 'itwiki'|| 
+ wgDBname == 'jawiki'|| 
+ wgDBname == 'eswiki'|| 
+ wgDBname == 'nlwiki'|| 
+ wgDBname == 'ptwiki'|| 
+ wgDBname == 'ruwiki'|| 
+ wgDBname == 'enwikinews'|| 
+ wgDBname == 'nostalgiawiki'|| 
+ wgDBname == 'strategywiki'|| 
+ wgDBname =='strategyappswiki'|| 
+ wgDBname =='usabilitywiki'|| 
+ wgDBname == 'fiwikimedia'|| 
+ wgDBname == 'trwikimedia'|| 
+ wgDBname == 'outreachwiki'|| 
+ wgDBname == 'srwikinews'|| 
+ wgDBname == 'liquidthreads_labswikimedia'|| 
+ wgDBname == 'flaggedrevs_labswikimedia'|| 
+ wgDBname == 'foundationwiki'|| 
+ wgDBname == 'officewiki'|| 
+ wgDBname == 'ukwikimedia'|| 
+ wgDBname == 'commonswiki' ||
+ wgDBname == "wikimania2011wiki" || 
+ wgDBname == "wikimania2010wiki" || 
+wgDBname == "wikimania2009wiki" || 
+wgDBname == "wikimania2008wiki" || 
+wgDBname == "wikimania2007wiki" || 
+wgDBname == "wikimania2006wiki" || 
+wgDBname == "wikimania2005wiki" ||
+wgDBname == "brwikimedia" || 
+wgDBname == "dkwikimedia" || 
+wgDBname == "vewikimedia" || 
+wgDBname == "ptwikimedia" || 
+wgDBname == "nowikimedia" || 
+wgDBname == "ruwikimedia" || 
+wgDBname == "sewikimedia" || 
+wgDBname == "rswikimedia" || 
+wgDBname == "cowikimedia" || 
+wgDBname == "plwikimedia" || 
+wgDBname == "chwikimedia" || 
+wgDBname == "ilwikimedia" || 
+wgDBname == "nlwikimedia" || 
+wgDBname == "nzwikimedia" || 
+wgDBname == "uawikimedia" || 
+wgDBname == "metawiki" || 
+wgDBname == "en_labswikimedia" || 
+wgDBname == "de_labswikimedia" || 
+wgDBname == "readerfeedback_labswikimedia" ||
+wgDBname == "afwiki" || 
+wgDBname == "alswiki" || 
+wgDBname == "arwiki" || 
+wgDBname == "be_x_oldwiki" || 
+wgDBname == "bgwiki" || 
+wgDBname == "bnwiki" || 
+wgDBname == "brwiki" || 
+wgDBname == "bswiki" || 
+wgDBname == "cawiki" || 
+wgDBname == "cswiki" || 
+wgDBname == "cywiki" || 
+wgDBname == "dawiki" || 
+wgDBname == "diqwiki" || 
+wgDBname == "dsbwiki" || 
+wgDBname == "elwiki" || 
+wgDBname == "eowiki" || 
+wgDBname == "etwiki" || 
+wgDBname == "euwiki" || 
+wgDBname == "fawiki" || 
+wgDBname == "fiwiki" || 
+wgDBname == "frpwiki" || 
+wgDBname == "glwiki" || 
+wgDBname == "hewiki" || 
+wgDBname == "hsbwiki" || 
+wgDBname == "huwiki" || 
+wgDBname == "iawiki" || 
+wgDBname == "idwiki" || 
+wgDBname == "kawiki" || 
+wgDBname == "kowiki" || 
+wgDBname == "kshwiki" || 
+wgDBname == "lbwiki" || 
+wgDBname == "mkwiki" || 
+wgDBname == "mlwiki" || 
+wgDBname == "mswiki" || 
+wgDBname == "mtwiki" || 
+wgDBname == "nnwiki" || 
+wgDBname == "nowiki" || 
+wgDBname == "ocwiki" || 
+wgDBname == "pmswiki" || 
+wgDBname == "rowiki" || 
+wgDBname == "roa_tarawiki" || 
+wgDBname == "sahwiki" || 
+wgDBname == "skwiki" || 
+wgDBname == "slwiki" || 
+wgDBname == "sqwiki" || 
+wgDBname == "svwiki" || 
+wgDBname == "tewiki" || 
+wgDBname == "thwiki" || 
+wgDBname == "tlwiki" || 
+wgDBname == "trwiki" || 
+wgDBname == "viwiki" || 
+wgDBname == "yiwiki" || 
+wgDBname == "yowiki" || 
+wgDBname == "zhwiki" || 
+wgDBname == "zh_yuewiki" ||
+wgDBname == "incubatorwiki" || 
+wgDBname == "mediawikiwiki" 
+) {
+    document.getElementById('vector_bughunt_transition_message').style.display='none';
+}
+</script></div>
+</div>
+			<!-- /sitenotice -->
+						<!-- firstHeading -->
+			<h1 id="firstHeading" class="firstHeading">Signed number representations</h1>
+			<!-- /firstHeading -->
+			<!-- bodyContent -->
+			<div id="bodyContent">
+				<!-- tagline -->
+				<div id="siteSub">From Wikipedia, the free encyclopedia</div>
+				<!-- /tagline -->
+				<!-- subtitle -->
+				<div id="contentSub">&nbsp;&nbsp;(Redirected from <a href="http://en.wikipedia.org/w/index.php?title=One%27s_complement&amp;redirect=no" title="One's complement">One's complement</a>)</div>
+				<!-- /subtitle -->
+																<!-- jumpto -->
+				<div id="jump-to-nav">
+					Jump to: <a href="#mw-head">navigation</a>,
+					<a href="#p-search">search</a>
+				</div>
+				<!-- /jumpto -->
+								<!-- bodytext -->
+				<p>In <a href="http://en.wikipedia.org/wiki/Computing" title="Computing">computing</a>, <b>signed number representations</b> are required to encode negative numbers in binary number systems.</p>
+<p>In <a href="http://en.wikipedia.org/wiki/Mathematics" title="Mathematics">mathematics</a>, negative numbers in any base are represented by prefixing them with a − sign. However, in computer <a href="http://en.wikipedia.org/wiki/Hardware" title="Hardware">hardware</a>, numbers are represented in binary only without extra symbols, requiring a method of <a href="http://en.wikipedia.org/wiki/Code" title="Code">encoding</a> the <a href="http://en.wikipedia.org/wiki/Minus_sign" title="Minus sign" class="mw-redirect">minus sign</a>. Four methods exist of extending the <a href="http://en.wikipedia.org/wiki/Binary_numeral_system" title="Binary numeral system">binary numeral system</a> to represent <a href="http://en.wikipedia.org/wiki/Signed_number" title="Signed number" class="mw-redirect">signed numbers</a>: sign-and-magnitude, <a href="http://en.wikipedia.org/wiki/Ones%27_complement" title="Ones' complement" class="mw-redirect">ones' complement</a>, <a href="http://en.wikipedia.org/wiki/Two%27s_complement" title="Two's complement">two's complement</a>, and excess-<i>N</i>.</p>
+<p><br></p>
+<table id="toc" class="toc">
+<tbody><tr>
+<td>
+<div id="toctitle">
+<h2>Contents</h2>
+ <span class="toctoggle">[<a href="#" class="internal" id="togglelink">hide</a>]</span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Sign-and-magnitude_method"><span class="tocnumber">1</span> <span class="toctext">Sign-and-magnitude method</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Ones.27_complement"><span class="tocnumber">2</span> <span class="toctext">Ones' complement</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Two.27s_complement"><span class="tocnumber">3</span> <span class="toctext">Two's complement</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Excess-N"><span class="tocnumber">4</span> <span class="toctext">Excess-N</span></a>
+<ul>
+<li class="toclevel-2 tocsection-5"><a href="#See_also"><span class="tocnumber">4.1</span> <span class="toctext">See also</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-6"><a href="#Base_.E2.88.922"><span class="tocnumber">5</span> <span class="toctext">Base −2</span></a></li>
+<li class="toclevel-1 tocsection-7"><a href="#Comparison_table"><span class="tocnumber">6</span> <span class="toctext">Comparison table</span></a></li>
+<li class="toclevel-1 tocsection-8"><a href="#See_also_2"><span class="tocnumber">7</span> <span class="toctext">See also</span></a></li>
+<li class="toclevel-1 tocsection-9"><a href="#References"><span class="tocnumber">8</span> <span class="toctext">References</span></a></li>
+</ul>
+</td>
+</tr>
+</tbody></table>
+<script type="text/javascript">
+//<![CDATA[
+if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } 
+//]]>
+</script>
+<h2><span class="editsection">[<a href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;action=edit&amp;section=1" title="Edit section: Sign-and-magnitude method">edit</a>]</span> <span class="mw-headline" id="Sign-and-magnitude_method">Sign-and-magnitude method</span></h2>
+<table class="wikitable" style="float: right; width: 20em; margin-left: 1em; text-align: center;">
+<caption>8 bit signed magnitude</caption>
+<tbody><tr>
+<th>Binary</th>
+<th>Signed</th>
+<th>Unsigned</th>
+</tr>
+<tr>
+<td>00000000</td>
+<td>+0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>00000001</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>01111111</td>
+<td>127</td>
+<td>127</td>
+</tr>
+<tr>
+<td>10000000</td>
+<td>−0</td>
+<td>128</td>
+</tr>
+<tr>
+<td>10000001</td>
+<td>−1</td>
+<td>129</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>11111111</td>
+<td>−127</td>
+<td>255</td>
+</tr>
+</tbody></table>
+<p>One may first approach the problem of representing a number's sign by allocating one <b><a href="http://en.wikipedia.org/wiki/Sign_bit" title="Sign bit">sign bit</a></b> to represent the sign: set that <a href="http://en.wikipedia.org/wiki/Bit" title="Bit">bit</a> (often the <a href="http://en.wikipedia.org/wiki/Most_significant_bit" title="Most significant bit">most significant bit</a>) to <i>0</i> for a positive number, and set to <i>1</i> for a negative number. The remaining bits in the number indicate the magnitude (or <a href="http://en.wikipedia.org/wiki/Absolute_value" title="Absolute value">absolute value</a>). Hence in a <a href="http://en.wikipedia.org/wiki/Byte" title="Byte">byte</a>
+ with only 7 bits (apart from the sign bit), the magnitude can range 
+from 0000000 (0) to 1111111 (127). Thus you can represent numbers from 
+−127<sub>10</sub> to +127<sub>10</sub> once you add the sign bit (the 
+eight bit). A consequence of this representation is that there are two 
+ways to represent zero, 00000000 (0) and 10000000 (<a href="http://en.wikipedia.org/wiki/-0" title="-0" class="mw-redirect">−0</a>). Decimal −43 encoded in an eight-bit byte this way is 10101011.</p>
+<p>This approach is directly comparable to the common way of showing a 
+sign (placing a "+" or "−" next to the number's magnitude). Some early 
+binary computers (e.g. <a href="http://en.wikipedia.org/wiki/IBM_7090" title="IBM 7090">IBM 7090</a>)
+ used this representation, perhaps because of its natural relation to 
+common usage. Sign-and-magnitude is the most common way of representing 
+the <a href="http://en.wikipedia.org/wiki/Significand" title="Significand">significand</a> in <a href="http://en.wikipedia.org/wiki/Floating_point" title="Floating point">floating point</a> values.</p>
+<h2><span class="editsection">[<a href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;action=edit&amp;section=2" title="Edit section: Ones' complement">edit</a>]</span> <span class="mw-headline" id="Ones.27_complement">Ones' complement</span></h2>
+<table class="wikitable" style="float: right; width: 20em; margin-left: 1em; text-align: center;">
+<caption>8 bit ones' complement</caption>
+<tbody><tr>
+<th>Binary value</th>
+<th>Ones' complement interpretation</th>
+<th>Unsigned interpretation</th>
+</tr>
+<tr>
+<td>00000000</td>
+<td>+0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>00000001</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>01111101</td>
+<td>125</td>
+<td>125</td>
+</tr>
+<tr>
+<td>01111110</td>
+<td>126</td>
+<td>126</td>
+</tr>
+<tr>
+<td>01111111</td>
+<td>127</td>
+<td>127</td>
+</tr>
+<tr>
+<td>10000000</td>
+<td>−127</td>
+<td>128</td>
+</tr>
+<tr>
+<td>10000001</td>
+<td>−126</td>
+<td>129</td>
+</tr>
+<tr>
+<td>10000010</td>
+<td>−125</td>
+<td>130</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>11111110</td>
+<td>−1</td>
+<td>254</td>
+</tr>
+<tr>
+<td>11111111</td>
+<td>−0</td>
+<td>255</td>
+</tr>
+</tbody></table>
+<p>Alternatively, a system known as <b>ones' complement</b> can be used to represent negative numbers. The ones' complement form of a negative binary number is the <a href="http://en.wikipedia.org/wiki/Bitwise_NOT" title="Bitwise NOT" class="mw-redirect">bitwise NOT</a> applied to it — the <a href="http://en.wikipedia.org/wiki/Complement" title="Complement">complement</a>
+ of its positive counterpart. Like sign-and-magnitude representation, 
+ones' complement has two representations of 0: 00000000 (+0) and 
+11111111 (<a href="http://en.wikipedia.org/wiki/-0" title="-0" class="mw-redirect">−0</a>).</p>
+<p>As an example, the ones' complement form of 00101011 (43) becomes 
+11010100 (−43). The range of signed numbers using ones' complement is 
+represented by −(2<sup>N−1</sup>−1) to (2<sup>N−1</sup>−1) and +/−0. A conventional eight-bit byte is −127<sub>10</sub> to +127<sub>10</sub> with zero being either 00000000 (+0) or 11111111 (−0).</p>
+<p>To add two numbers represented in this system, one does a 
+conventional binary addition, but it is then necessary to add any 
+resulting <a href="http://en.wikipedia.org/wiki/Carry_flag" title="Carry flag">carry</a>
+ back into the resulting sum. To see why this is necessary, consider the
+ following example showing the case of the addition of −1 (11111110) to 
++2 (00000010).</p>
+<pre style="width: 35em;">          binary    decimal
+        11111110     -1
+     +  00000010     +2
+    ............    ...
+      1 00000000      0   &lt;-- not the correct answer
+               1     +1   &lt;-- add carry
+    ............    ...
+        00000001      1   &lt;-- correct answer
+</pre>
+<p>In the previous example, the binary addition alone gives 00000000, 
+which is incorrect. Only when the carry is added back in does the 
+correct result (00000001) appear.</p>
+<p>This numeric representation system was common in older computers; the <a href="http://en.wikipedia.org/wiki/PDP-1" title="PDP-1">PDP-1</a>, <a href="http://en.wikipedia.org/wiki/CDC_160A" title="CDC 160A">CDC 160A</a> and <a href="http://en.wikipedia.org/wiki/UNIVAC_1100/2200_series" title="UNIVAC 1100/2200 series">UNIVAC 1100/2200 series</a>, among many others, used ones'-complement arithmetic.</p>
+<p>A remark on <a href="http://en.wikipedia.org/wiki/Orthography" title="Orthography">orthography</a>: The system is referred to as "ones' complement" because the negation of a positive value <i>x</i> (represented as the <a href="http://en.wikipedia.org/wiki/Bitwise_NOT" title="Bitwise NOT" class="mw-redirect">bitwise NOT</a> of <i>x</i>) can also be formed by subtracting <i>x</i>
+ from the ones' complement representation of zero that is a long 
+sequence of ones (-0). Two's complement arithmetic, on the other hand, 
+forms the negation of <i>x</i> by subtracting <i>x</i> from a single large power of two that is congruent to +0.<sup id="cite_ref-0" class="reference"><a href="#cite_note-0"><span>[</span>1<span>]</span></a></sup> Therefore, ones' complement and <a href="http://en.wikipedia.org/wiki/Two%27s_complement" title="Two's complement">two's complement</a> representations of the same negative value will differ by one.</p>
+<p>The <a href="http://en.wikipedia.org/wiki/Internet" title="Internet">Internet</a> protocols <a href="http://en.wikipedia.org/wiki/IPv4" title="IPv4">IPv4</a>, <a href="http://en.wikipedia.org/wiki/Internet_Control_Message_Protocol" title="Internet Control Message Protocol">ICMP</a>, <a href="http://en.wikipedia.org/wiki/User_Datagram_Protocol" title="User Datagram Protocol">UDP</a> and <a href="http://en.wikipedia.org/wiki/Transmission_Control_Protocol" title="Transmission Control Protocol">TCP</a> all use the same 16-bit ones' complement checksum algorithm. Although most computers lack <a href="http://en.wikipedia.org/wiki/Method_of_complements" title="Method of complements">"end-around carry"</a> hardware, the extra complexity is accepted because "it is equally sensitive to errors in all bit positions".<sup id="cite_ref-1" class="reference"><a href="#cite_note-1"><span>[</span>2<span>]</span></a></sup> In <a href="http://en.wikipedia.org/wiki/User_Datagram_Protocol" title="User Datagram Protocol">UDP</a>,
+ the all 0s representation of zero indicates that the optional checksum 
+feature has been omitted. The other representation, FFFF, indicates a 
+checksum value of 0.<sup id="cite_ref-2" class="reference"><a href="#cite_note-2"><span>[</span>3<span>]</span></a></sup> (Checksums are mandatory in IPv4, TCP and ICMP; they were omitted from <a href="http://en.wikipedia.org/wiki/IPv6" title="IPv6">IPv6</a>).</p>
+<p>Note that the ones' complement representation of a negative number 
+can be obtained from the sign-magnitude representation merely by bitwise
+ complementing the magnitude.</p>
+<h2><span class="editsection">[<a href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;action=edit&amp;section=3" title="Edit section: Two's complement">edit</a>]</span> <span class="mw-headline" id="Two.27s_complement">Two's complement</span></h2>
+<table class="wikitable" style="float: right; width: 20em; margin-left: 1em; text-align: center;">
+<caption>8 bit two's complement</caption>
+<tbody><tr>
+<th>Binary value</th>
+<th>Two's complement interpretation</th>
+<th>Unsigned interpretation</th>
+</tr>
+<tr>
+<td>00000000</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>00000001</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>01111110</td>
+<td>126</td>
+<td>126</td>
+</tr>
+<tr>
+<td>01111111</td>
+<td>127</td>
+<td>127</td>
+</tr>
+<tr>
+<td>10000000</td>
+<td>−128</td>
+<td>128</td>
+</tr>
+<tr>
+<td>10000001</td>
+<td>−127</td>
+<td>129</td>
+</tr>
+<tr>
+<td>10000010</td>
+<td>−126</td>
+<td>130</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>11111110</td>
+<td>−2</td>
+<td>254</td>
+</tr>
+<tr>
+<td>11111111</td>
+<td>−1</td>
+<td>255</td>
+</tr>
+</tbody></table>
+<div class="rellink relarticle mainarticle">Main article: <a href="http://en.wikipedia.org/wiki/Two%27s_complement" title="Two's complement">Two's complement</a></div>
+<p>The problems of multiple representations of 0 and the need for the end-around carry are circumvented by a system called <b>two's complement</b>.
+ In two's complement, negative numbers are represented by the bit 
+pattern which is one greater (in an unsigned sense) than the ones' 
+complement of the positive value.</p>
+<p>In two's-complement, there is only one zero (00000000). Negating a 
+number (whether negative or positive) is done by inverting all the bits 
+and then adding 1 to that result. Addition of a pair of two's-complement
+ integers is the same as addition of a pair of <a href="http://en.wikipedia.org/wiki/Unsigned_number" title="Unsigned number" class="mw-redirect">unsigned numbers</a>
+ (except for detection of overflow, if that is done). For instance, a 
+two's-complement addition of 127 and −128 gives the same binary bit 
+pattern as an unsigned addition of 127 and 128, as can be seen from the 
+above table.</p>
+<p>An easier method to get the negation of a number in two's complement is as follows:</p>
+<table class="wikitable">
+<tbody><tr>
+<th></th>
+<th>Example 1</th>
+<th>Example 2</th>
+</tr>
+<tr>
+<td>1. Starting from the right, find the first '1'</td>
+<td align="center">010100<b>1</b></td>
+<td align="center">0101<b>1</b>00</td>
+</tr>
+<tr>
+<td>2. Invert all of the bits to the left of that one</td>
+<td align="center"><b>101011</b>1</td>
+<td align="center"><b>1010</b>100</td>
+</tr>
+</tbody></table>
+<div style="clear: both;"></div>
+<h2><span class="editsection">[<a href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;action=edit&amp;section=4" title="Edit section: Excess-N">edit</a>]</span> <span class="mw-headline" id="Excess-N">Excess-<i>N</i></span></h2>
+<div class="rellink relarticle mainarticle">Main article: <a href="http://en.wikipedia.org/wiki/Offset_binary" title="Offset binary">Offset binary</a></div>
+<table class="wikitable" style="float: right; width: 20em; margin-left: 1em; text-align: center;">
+<caption>8 bit excess-127</caption>
+<tbody><tr>
+<th>Binary value</th>
+<th>Excess-127 interpretation</th>
+<th>Unsigned interpretation</th>
+</tr>
+<tr>
+<td>00000000</td>
+<td>-127</td>
+<td>0</td>
+</tr>
+<tr>
+<td>00000001</td>
+<td>-126</td>
+<td>1</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>01111111</td>
+<td>0</td>
+<td>127</td>
+</tr>
+<tr>
+<td>10000000</td>
+<td>1</td>
+<td>128</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>11111111</td>
+<td>+128</td>
+<td>255</td>
+</tr>
+</tbody></table>
+<p><b>Excess-<i>N</i></b>, also called <b>biased</b> representation, uses a pre-specified number <i>N</i> as a biasing value. A value is represented by the unsigned number which is <i>N</i> greater than the intended value. Thus 0 is represented by <i>N</i>, and −<i>N</i> is represented by the all-zeros bit pattern.</p>
+<p>This is a representation that is now primarily used within <a href="http://en.wikipedia.org/wiki/Floating-point" title="Floating-point" class="mw-redirect">floating-point</a> numbers. The <a href="http://en.wikipedia.org/wiki/IEEE_floating-point_standard" title="IEEE floating-point standard" class="mw-redirect">IEEE floating-point standard</a> defines the <a href="http://en.wikipedia.org/wiki/Exponent" title="Exponent" class="mw-redirect">exponent</a> field of a <a href="http://en.wikipedia.org/wiki/Single-precision" title="Single-precision" class="mw-redirect">single-precision</a> (32-bit) number as an 8-bit Excess-127 field. The <a href="http://en.wikipedia.org/wiki/Double-precision" title="Double-precision" class="mw-redirect">double-precision</a> (64-bit) exponent field is an 11-bit Excess-1023 field.</p>
+<h3><span class="editsection">[<a href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;action=edit&amp;section=5" title="Edit section: See also">edit</a>]</span> <span class="mw-headline" id="See_also">See also</span></h3>
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/Excess-3" title="Excess-3">Excess-3</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Two%27s_complement" title="Two's complement">Two's complement</a></li>
+</ul>
+<p><br style="clear: both;"></p>
+<h2><span class="editsection">[<a href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;action=edit&amp;section=6" title="Edit section: Base &amp;minus;2">edit</a>]</span> <span class="mw-headline" id="Base_.E2.88.922">Base −2</span></h2>
+<p>In conventional binary number systems, the base, or <a href="http://en.wikipedia.org/wiki/Radix" title="Radix">radix</a>, is 2; thus the rightmost bit represents 2<sup>0</sup>, the next bit represents 2<sup>1</sup>, the next bit 2<sup>2</sup>, and so on. However, a binary number system with base −2 is also possible. The rightmost bit represents (−2)<sup>0</sup>=+1, the next bit represents (−2)<sup>1</sup>=−2, the next bit (−2)<sup>2</sup>=+4
+ and so on, with alternating sign. The numbers that can be represented 
+with four bits are shown in the comparison table below.</p>
+<p>The range of numbers that can be represented is asymmetric. If the 
+word has an even number of bits, the magnitude of the largest negative 
+number that can be represented is twice as large as the largest positive
+ number that can be represented, and vice versa if the word has an odd 
+number of bits.</p>
+<h2><span class="editsection">[<a href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;action=edit&amp;section=7" title="Edit section: Comparison table">edit</a>]</span> <span class="mw-headline" id="Comparison_table">Comparison table</span></h2>
+<p>The following table shows the positive and negative integers that can be represented using 4 bits.</p>
+<table class="wikitable" style="text-align: center;">
+<caption>4 bit integer representations</caption>
+<tbody><tr>
+<th style="width: 7em;">Decimal</th>
+<th style="width: 7em;">Unsigned</th>
+<th style="width: 7em;">Sign and magnitude</th>
+<th style="width: 7em;">Ones' complement</th>
+<th style="width: 7em;">Two's complement</th>
+<th style="width: 7em;">Excess-7 (biased)</th>
+<th style="width: 7em;">Base −2</th>
+</tr>
+<tr>
+<td>+16</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+</tr>
+<tr>
+<td>+15</td>
+<td>1111</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+</tr>
+<tr>
+<td>+14</td>
+<td>1110</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+</tr>
+<tr>
+<td>+13</td>
+<td>1101</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+</tr>
+<tr>
+<td>+12</td>
+<td>1100</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+</tr>
+<tr>
+<td>+11</td>
+<td>1011</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+</tr>
+<tr>
+<td>+10</td>
+<td>1010</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+</tr>
+<tr>
+<td>+9</td>
+<td>1001</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+</tr>
+<tr>
+<td>+8</td>
+<td>1000</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>1111</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+</tr>
+<tr>
+<td>+7</td>
+<td>0111</td>
+<td>0111</td>
+<td>0111</td>
+<td>0111</td>
+<td>1110</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+</tr>
+<tr>
+<td>+6</td>
+<td>0110</td>
+<td>0110</td>
+<td>0110</td>
+<td>0110</td>
+<td>1101</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+</tr>
+<tr>
+<td>+5</td>
+<td>0101</td>
+<td>0101</td>
+<td>0101</td>
+<td>0101</td>
+<td>1100</td>
+<td>0101</td>
+</tr>
+<tr>
+<td>+4</td>
+<td>0100</td>
+<td>0100</td>
+<td>0100</td>
+<td>0100</td>
+<td>1011</td>
+<td>0100</td>
+</tr>
+<tr>
+<td>+3</td>
+<td>0011</td>
+<td>0011</td>
+<td>0011</td>
+<td>0011</td>
+<td>1010</td>
+<td>0111</td>
+</tr>
+<tr>
+<td>+2</td>
+<td>0010</td>
+<td>0010</td>
+<td>0010</td>
+<td>0010</td>
+<td>1001</td>
+<td>0110</td>
+</tr>
+<tr>
+<td>+1</td>
+<td>0001</td>
+<td>0001</td>
+<td>0001</td>
+<td>0001</td>
+<td>1000</td>
+<td>0001</td>
+</tr>
+<tr>
+<td>+0</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>0000</td>
+<td>0000</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+</tr>
+<tr>
+<td>0</td>
+<td>0000</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>0000</td>
+<td>0111</td>
+<td>0000</td>
+</tr>
+<tr>
+<td>−0</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>1000</td>
+<td>1111</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+</tr>
+<tr>
+<td>−1</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>1001</td>
+<td>1110</td>
+<td>1111</td>
+<td>0110</td>
+<td>0011</td>
+</tr>
+<tr>
+<td>−2</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>1010</td>
+<td>1101</td>
+<td>1110</td>
+<td>0101</td>
+<td>0010</td>
+</tr>
+<tr>
+<td>−3</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>1011</td>
+<td>1100</td>
+<td>1101</td>
+<td>0100</td>
+<td>1101</td>
+</tr>
+<tr>
+<td>−4</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>1100</td>
+<td>1011</td>
+<td>1100</td>
+<td>0011</td>
+<td>1100</td>
+</tr>
+<tr>
+<td>−5</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>1101</td>
+<td>1010</td>
+<td>1011</td>
+<td>0010</td>
+<td>1111</td>
+</tr>
+<tr>
+<td>−6</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>1110</td>
+<td>1001</td>
+<td>1010</td>
+<td>0001</td>
+<td>1110</td>
+</tr>
+<tr>
+<td>−7</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>1111</td>
+<td>1000</td>
+<td>1001</td>
+<td>0000</td>
+<td>1001</td>
+</tr>
+<tr>
+<td>−8</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>1000</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>1000</td>
+</tr>
+<tr>
+<td>−9</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>1011</td>
+</tr>
+<tr>
+<td>−10</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td>1010</td>
+</tr>
+<tr>
+<td>−11</td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+<td style="background: none repeat scroll 0% 0% rgb(236, 236, 236); color: grey; vertical-align: middle; text-align: center;" class="table-na"><small>N/A</small></td>
+</tr>
+</tbody></table>
+<h2><span class="editsection">[<a href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;action=edit&amp;section=8" title="Edit section: See also">edit</a>]</span> <span class="mw-headline" id="See_also_2">See also</span></h2>
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/Binary-coded_decimal" title="Binary-coded decimal">Binary-coded decimal</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Computer_numbering_formats" title="Computer numbering formats">Computer numbering formats</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Excess-3" title="Excess-3">Excess-3</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Method_of_complements" title="Method of complements">Method of complements</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Two%27s_complement" title="Two's complement">Two's complement</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Negative_base" title="Negative base">Negative base</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Balanced_ternary" title="Balanced ternary">Balanced ternary</a></li>
+</ul>
+<h2><span class="editsection">[<a href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;action=edit&amp;section=9" title="Edit section: References">edit</a>]</span> <span class="mw-headline" id="References">References</span></h2>
+<div class="references-small">
+<ol class="references">
+<li id="cite_note-0"><b><a href="#cite_ref-0">^</a></b> Donald Knuth: <i><a href="http://en.wikipedia.org/wiki/The_Art_of_Computer_Programming" title="The Art of Computer Programming">The Art of Computer Programming</a>, Volume 2: Seminumerical Algorithms, chapter 4.1</i></li>
+<li id="cite_note-1"><b><a href="#cite_ref-1">^</a></b> <span class="citation web">Braden, R. (September 1988). <a href="http://tools.ietf.org/html/rfc1071" class="external text" rel="nofollow">"Computing the Internet Checksum (RFC 1071)"</a>. The Internet Engineering Task Force<span class="printonly">. <a href="http://tools.ietf.org/html/rfc1071" class="external free" rel="nofollow">http://tools.ietf.org/html/rfc1071</a></span><span class="reference-accessdate">. Retrieved 2009-06-11</span>.</span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=bookitem&amp;rft.btitle=Computing+the+Internet+Checksum+%28RFC+1071%29&amp;rft.atitle=&amp;rft.aulast=Braden&amp;rft.aufirst=R.&amp;rft.au=Braden%2C%26%2332%3BR.&amp;rft.date=September+1988&amp;rft.pub=The+Internet+Engineering+Task+Force&amp;rft_id=http%3A%2F%2Ftools.ietf.org%2Fhtml%2Frfc1071&amp;rfr_id=info:sid/en.wikipedia.org:Signed_number_representations"><span style="display: none;">&nbsp;</span></span></li>
+<li id="cite_note-2"><b><a href="#cite_ref-2">^</a></b> <span class="citation web">Postel, J. (August 1980). <a href="http://tools.ietf.org/html/rfc768" class="external text" rel="nofollow">"User Datagram Protocol (RFC 768)"</a>. The Internet Engineering Task Force<span class="printonly">. <a href="http://tools.ietf.org/html/rfc768" class="external free" rel="nofollow">http://tools.ietf.org/html/rfc768</a></span><span class="reference-accessdate">. Retrieved 2009-06-11</span>.</span><span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=bookitem&amp;rft.btitle=User+Datagram+Protocol+%28RFC+768%29&amp;rft.atitle=&amp;rft.aulast=Postel&amp;rft.aufirst=J.&amp;rft.au=Postel%2C%26%2332%3BJ.&amp;rft.date=August+1980&amp;rft.pub=The+Internet+Engineering+Task+Force&amp;rft_id=http%3A%2F%2Ftools.ietf.org%2Fhtml%2Frfc768&amp;rfr_id=info:sid/en.wikipedia.org:Signed_number_representations"><span style="display: none;">&nbsp;</span></span></li>
+</ol>
+</div>
+<ul>
+<li>Ivan Flores, <i>The Logic of Computer Arithmetic</i>, Prentice-Hall (1963)</li>
+<li>Israel Koren, <i>Computer Arithmetic Algorithms</i>, A.K. Peters (2002), <a href="http://en.wikipedia.org/wiki/Special:BookSources/1568811608" class="internal mw-magiclink-isbn">ISBN 1-56881-160-8</a></li>
+</ul>
+
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 1437/1000000
+Post-expand include size: 17627/2048000 bytes
+Template argument size: 2266/2048000 bytes
+Expensive parser function count: 0/500
+-->
+
+<!-- Saved in parser cache with key enwiki:pcache:idhash:586694-0!1!0!default!!en!4 and timestamp 20100811071301 -->
+<div class="printfooter">
+Retrieved from "<a href="http://en.wikipedia.org/wiki/Signed_number_representations#Ones.27_complement">http://en.wikipedia.org/wiki/Signed_number_representations#Ones.27_complement</a>"</div>
+				<!-- /bodytext -->
+								<!-- catlinks -->
+				<div id="catlinks" class="catlinks"><div id="mw-normal-catlinks"><a href="http://en.wikipedia.org/wiki/Special:Categories" title="Special:Categories">Categories</a>: <span dir="ltr"><a href="http://en.wikipedia.org/wiki/Category:Computer_arithmetic" title="Category:Computer arithmetic">Computer arithmetic</a></span></div></div>				<!-- /catlinks -->
+												<div class="visualClear"></div>
+			</div>
+			<!-- /bodyContent -->
+		</div>
+		<!-- /content -->
+		<!-- header -->
+		<div id="mw-head" class="noprint">
+			
+<!-- 0 -->
+<div id="p-personal" class="">
+	<h5>Personal tools</h5>
+	<ul>
+					<li id="pt-prefswitch-link-anon"><a href="http://en.wikipedia.org/w/index.php?title=Special:UsabilityInitiativePrefSwitch&amp;from=Signed_number_representations" title="Learn about new features" class="no-text-transform">New features</a></li>
+					<li id="pt-login"><a href="http://en.wikipedia.org/w/index.php?title=Special:UserLogin&amp;returnto=Signed_number_representations" title="You are encouraged to log in; however, it is not mandatory. [alt-shift-o]" accesskey="o">Log in / create account</a></li>
+			</ul>
+</div>
+
+<!-- /0 -->
+			<div id="left-navigation">
+				
+<!-- 0 -->
+<div id="p-namespaces" class="vectorTabs">
+	<h5>Namespaces</h5>
+	<ul>
+					<li id="ca-nstab-main" class="selected"><a href="http://en.wikipedia.org/wiki/Signed_number_representations" title="View the content page [alt-shift-c]" accesskey="c"><span>Article</span></a></li>
+					<li id="ca-talk"><a href="http://en.wikipedia.org/wiki/Talk:Signed_number_representations" title="Discussion about the content page [alt-shift-t]" accesskey="t"><span>Discussion</span></a></li>
+			</ul>
+</div>
+
+<!-- /0 -->
+
+<!-- 1 -->
+<div id="p-variants" class="vectorMenu emptyPortlet">
+		<h5><span>Variants</span><a href="#"></a></h5>
+	<div class="menu">
+		<ul>
+					</ul>
+	</div>
+</div>
+
+<!-- /1 -->
+			</div>
+			<div id="right-navigation">
+				
+<!-- 0 -->
+<div id="p-views" class="vectorTabs">
+	<h5>Views</h5>
+	<ul>
+					<li id="ca-view" class="selected"><a href="http://en.wikipedia.org/wiki/Signed_number_representations"><span>Read</span></a></li>
+					<li id="ca-edit"><a href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;action=edit" title="You can edit this page. 
+Please use the preview button before saving. [alt-shift-e]" accesskey="e"><span>Edit</span></a></li>
+					<li id="ca-history" class="collapsible "><a href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;action=history" title="Past versions of this page [alt-shift-h]" accesskey="h"><span>View history</span></a></li>
+			</ul>
+</div>
+
+<!-- /0 -->
+
+<!-- 1 -->
+<div id="p-cactions" class="vectorMenu emptyPortlet">
+	<h5><span>Actions</span><a href="#"></a></h5>
+	<div class="menu">
+		<ul>
+					</ul>
+	</div>
+</div>
+
+<!-- /1 -->
+
+<!-- 2 -->
+<div id="p-search">
+	<h5><label for="searchInput">Search</label></h5>
+	<form action="/w/index.php" id="searchform">
+		<input name="title" value="Special:Search" type="hidden">
+				<div id="simpleSearch">
+			<input autocomplete="off" class="placeholder" tabindex="1" id="searchInput" name="search" title="Search Wikipedia [alt-shift-f]" accesskey="f" value="Search" type="text">
+			<button id="searchButton" type="submit" name="button" title="Search Wikipedia for this text"><img src="One%27s_complement_files/search-ltr.png" alt="Search"></button>
+		</div>
+			</form>
+</div>
+
+<!-- /2 -->
+			</div>
+		</div>
+		<!-- /header -->
+		<!-- panel -->
+			<div id="mw-panel" class="noprint collapsible-nav">
+				<!-- logo -->
+					<div id="p-logo"><a style="background-image: url(&quot;http://upload.wikimedia.org/wikipedia/commons/d/d6/Wikipedia-logo-v2-en.png&quot;);" href="http://en.wikipedia.org/wiki/Main_Page" title="Visit the main page"></a></div>
+				<!-- /logo -->
+				
+<!-- navigation -->
+<div class="portal first persistent" id="p-navigation">
+	<h5>Navigation</h5>
+	<div class="body">
+				<ul>
+					<li id="n-mainpage-description"><a href="http://en.wikipedia.org/wiki/Main_Page" title="Visit the main page [alt-shift-z]" accesskey="z">Main page</a></li>
+					<li id="n-contents"><a href="http://en.wikipedia.org/wiki/Portal:Contents" title="Guides to browsing Wikipedia">Contents</a></li>
+					<li id="n-featuredcontent"><a href="http://en.wikipedia.org/wiki/Portal:Featured_content" title="Featured content — the best of Wikipedia">Featured content</a></li>
+					<li id="n-currentevents"><a href="http://en.wikipedia.org/wiki/Portal:Current_events" title="Find background information on current events">Current events</a></li>
+					<li id="n-randompage"><a href="http://en.wikipedia.org/wiki/Special:Random" title="Load a random article [alt-shift-x]" accesskey="x">Random article</a></li>
+				</ul>
+			</div>
+</div>
+
+<!-- /navigation -->
+
+<!-- SEARCH -->
+
+<!-- /SEARCH -->
+
+<!-- interaction -->
+<div class="portal expanded" id="p-interaction">
+	<h5 tabindex="2">Interaction</h5>
+	<div style="display: block;" class="body">
+				<ul>
+					<li id="n-aboutsite"><a href="http://en.wikipedia.org/wiki/Wikipedia:About" title="Find out about Wikipedia">About Wikipedia</a></li>
+					<li id="n-portal"><a href="http://en.wikipedia.org/wiki/Wikipedia:Community_portal" title="About the project, what you can do, where to find things">Community portal</a></li>
+					<li id="n-recentchanges"><a href="http://en.wikipedia.org/wiki/Special:RecentChanges" title="The list of recent changes in the wiki [alt-shift-r]" accesskey="r">Recent changes</a></li>
+					<li id="n-contact"><a href="http://en.wikipedia.org/wiki/Wikipedia:Contact_us" title="How to contact Wikipedia">Contact Wikipedia</a></li>
+					<li id="n-sitesupport"><a href="http://wikimediafoundation.org/wiki/Support_Wikipedia/en" title="Support us">Donate to Wikipedia</a></li>
+					<li id="n-help"><a href="http://en.wikipedia.org/wiki/Help:Contents" title="Guidance on how to use and edit Wikipedia">Help</a></li>
+				</ul>
+			</div>
+</div>
+
+<!-- /interaction -->
+
+<!-- TOOLBOX -->
+<div class="portal collapsed" id="p-tb">
+	<h5 tabindex="3">Toolbox</h5>
+	<div class="body">
+		<ul>
+					<li id="t-whatlinkshere"><a href="http://en.wikipedia.org/wiki/Special:WhatLinksHere/Signed_number_representations" title="List of all English Wikipedia pages containing links to this page [alt-shift-j]" accesskey="j">What links here</a></li>
+						<li id="t-recentchangeslinked"><a href="http://en.wikipedia.org/wiki/Special:RecentChangesLinked/Signed_number_representations" title="Recent changes in pages linked from this page [alt-shift-k]" accesskey="k">Related changes</a></li>
+																																					<li id="t-upload"><a href="http://en.wikipedia.org/wiki/Wikipedia:Upload" title="Upload files [alt-shift-u]" accesskey="u">Upload file</a></li>
+											<li id="t-specialpages"><a href="http://en.wikipedia.org/wiki/Special:SpecialPages" title="List of all special pages [alt-shift-q]" accesskey="q">Special pages</a></li>
+											<li id="t-permalink"><a href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;oldid=378321503" title="Permanent link to this revision of the page">Permanent link</a></li>
+				<li id="t-cite"><a href="http://en.wikipedia.org/w/index.php?title=Special:Cite&amp;page=Signed_number_representations&amp;id=378321503" title="Information on how to cite this page">Cite this page</a></li>		</ul>
+	</div>
+</div>
+
+<!-- /TOOLBOX -->
+
+<!-- coll-print_export -->
+<div class="portal collapsed" id="p-coll-print_export">
+	<h5 tabindex="4">Print/export</h5>
+	<div class="body">
+				<ul id="collectionPortletList"><li id="coll-create_a_book"><a href="http://en.wikipedia.org/w/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=Signed+number+representations" title="Create a book or page collection" rel="nofollow">Create a book</a></li><li id="coll-download-as-rl"><a href="http://en.wikipedia.org/w/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=Signed+number+representations&amp;oldid=378321503&amp;writer=rl" title="Download a PDF version of this wiki page" rel="nofollow">Download as PDF</a></li><li id="t-print"><a href="http://en.wikipedia.org/w/index.php?title=Signed_number_representations&amp;printable=yes" title="Printable version of this page [alt-shift-p]" accesskey="p">Printable version</a></li></ul>			</div>
+</div>
+
+<!-- /coll-print_export -->
+
+<!-- LANGUAGES -->
+<div class="portal expanded" id="p-lang">
+	<h5 tabindex="5">Languages</h5>
+	<div style="display: block;" class="body">
+		<ul>
+					<li class="interwiki-ca"><a href="http://ca.wikipedia.org/wiki/Complement_a_u" title="Complement a u">Català</a></li>
+					<li class="interwiki-cs"><a href="http://cs.wikipedia.org/wiki/Dvojkov%C3%A1_soustava#Zobrazen.C3.AD_z.C3.A1porn.C3.BDch_.C4.8D.C3.ADsel" title="Dvojková soustava">Česky</a></li>
+					<li class="interwiki-de"><a href="http://de.wikipedia.org/wiki/Einerkomplement" title="Einerkomplement">Deutsch</a></li>
+					<li class="interwiki-es"><a href="http://es.wikipedia.org/wiki/Representaci%C3%B3n_de_n%C3%BAmeros_con_signo" title="Representación de números con signo">Español</a></li>
+					<li class="interwiki-eo"><a href="http://eo.wikipedia.org/wiki/Negativa_kaj_nenegativa_nombroj_en_komputiko" title="Negativa kaj nenegativa nombroj en komputiko">Esperanto</a></li>
+					<li class="interwiki-fr"><a href="http://fr.wikipedia.org/wiki/Compl%C3%A9ment_%C3%A0_un" title="Complément à un">Français</a></li>
+					<li class="interwiki-id"><a href="http://id.wikipedia.org/wiki/Bilangan_biner_bertanda" title="Bilangan biner bertanda">Bahasa Indonesia</a></li>
+					<li class="interwiki-it"><a href="http://it.wikipedia.org/wiki/Rappresentazione_dei_numeri_relativi" title="Rappresentazione dei numeri relativi">Italiano</a></li>
+					<li class="interwiki-ja"><a href="http://ja.wikipedia.org/wiki/%E7%AC%A6%E5%8F%B7%E4%BB%98%E6%95%B0%E5%80%A4%E8%A1%A8%E7%8F%BE" title="符号付数値表現">日本語</a></li>
+					<li class="interwiki-pt"><a href="http://pt.wikipedia.org/wiki/Representa%C3%A7%C3%A3o_de_n%C3%BAmeros_com_sinal" title="Representação de números com sinal">Português</a></li>
+					<li class="interwiki-fi"><a href="http://fi.wikipedia.org/wiki/Bin%C3%A4%C3%A4rij%C3%A4rjestelm%C3%A4_-_negatiiviset_luvut" title="Binäärijärjestelmä - negatiiviset luvut">Suomi</a></li>
+					<li class="interwiki-th"><a href="http://th.wikipedia.org/wiki/Signed_number_representations" title="Signed number representations">ไทย</a></li>
+					<li class="interwiki-vi"><a href="http://vi.wikipedia.org/wiki/Bi%E1%BB%83u_di%E1%BB%85n_s%E1%BB%91_%C3%A2m" title="Biểu diễn số âm">Tiếng Việt</a></li>
+					<li class="interwiki-zh"><a href="http://zh.wikipedia.org/wiki/%E6%9C%89%E7%AC%A6%E5%8F%B7%E6%95%B0%E5%A4%84%E7%90%86" title="有符号数处理">中文</a></li>
+				</ul>
+	</div>
+</div>
+
+<!-- /LANGUAGES -->
+			</div>
+		<!-- /panel -->
+		<!-- footer -->
+		<div id="footer">
+											<ul id="footer-info">
+																	<li id="footer-info-lastmod"> This page was last modified on 11 August 2010 at 07:13.<br></li>
+																							<li id="footer-info-copyright">Text is available under the <a rel="license" href="http://en.wikipedia.org/wiki/Wikipedia:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License">Creative Commons Attribution-ShareAlike License</a><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/" style="display: none;"></a>;
+additional terms may apply.
+See <a href="http://wikimediafoundation.org/wiki/Terms_of_Use">Terms of Use</a> for details.<br>
+Wikipedia® is a registered trademark of the <a href="http://www.wikimediafoundation.org/">Wikimedia Foundation, Inc.</a>, a non-profit organization.<br></li><li class="noprint"><a class="internal" href="http://en.wikipedia.org/wiki/Wikipedia:Contact_us">Contact us</a></li>
+															</ul>
+															<ul id="footer-places">
+																	<li id="footer-places-privacy"><a href="http://wikimediafoundation.org/wiki/Privacy_policy" title="wikimedia:Privacy policy">Privacy policy</a></li>
+																							<li id="footer-places-about"><a href="http://en.wikipedia.org/wiki/Wikipedia:About" title="Wikipedia:About">About Wikipedia</a></li>
+																							<li id="footer-places-disclaimer"><a href="http://en.wikipedia.org/wiki/Wikipedia:General_disclaimer" title="Wikipedia:General disclaimer">Disclaimers</a></li>
+															</ul>
+										<ul id="footer-icons" class="noprint">
+								<li id="footer-icon-poweredby"><a href="http://www.mediawiki.org/"><img src="One%27s_complement_files/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" height="31" width="88"></a></li>
+												<li id="footer-icon-copyright"><a href="http://wikimediafoundation.org/"><img src="One%27s_complement_files/wikimedia-button.png" alt="Wikimedia Foundation" height="31" width="88"></a></li>
+							</ul>
+			<div style="clear: both;"></div>
+		</div>
+		<!-- /footer -->
+		<!-- fixalpha -->
+		<script type="text/javascript"> if ( window.isMSIE55 ) fixalpha(); </script>
+		<!-- /fixalpha -->
+		
+<script type="text/javascript">if (window.runOnloadHook) runOnloadHook();</script>
+		<!-- Served by srv236 in 0.063 secs. -->			<div class="suggestions" style="top: 74px; width: 188px; display: none; left: auto; right: 42px;"><div class="suggestions-results"></div><div class="suggestions-special"></div></div></body></html>

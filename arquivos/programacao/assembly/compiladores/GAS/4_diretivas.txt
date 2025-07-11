@@ -1,0 +1,195 @@
+.align abs-expr , abs-expr
+The first expression is the alignment required. The second expression gives the value to be stored in the padding bytes. Default is zero.
+`.align 8' advances the location counter until it is a multiple of 8.
+
+.ascii "string"...
+expects zero or more string literals separated by commas. It assembles each string (with no automatic trailing zero byte) into consecutive addresses.
+
+.asciz "string"...
+like .ascii, but each string is followed by a zero byte.
+
+.byte expressions
+expects zero or more expressions, separated by commas. Each expression is assembled into the next byte.
+
+.comm symbol , length
+declares a named common area in the bss section.
+
+.data subsection
+.data tells as to assemble the following statements onto the end of the data subsection numbered subsection. If subsection is omitted, it defaults to zero.
+
+.def name
+Begin defining debugging information for a symbol name; the definition extends until the .endef directive is encountered.
+
+.desc symbol, abs-expression
+sets the descriptor of the symbol to the low 16 bits of an absolute expression.
+
+.double flonums
+expects zero or more flonums, separated by commas. It assembles floating point numbers.
+
+.else
+is part of the as support for conditional assembly; see section .if absolute expression.
+
+.endef
+This directive flags the end of a symbol definition begun with .def.
+
+.endif
+is part of the as support for conditional assembly; see section .if.
+
+.equ symbol, expression
+This directive sets the value of symbol to expression. It is synonymous with `.set'.
+
+.fill repeat , size , value
+repeat is the number of copies.
+size is the number of first bytes of value that will be repeted. Default is 1.
+value default is zero.
+
+.float flonums
+This directive assembles zero or more flonums, separated by commas. It has the same effect as .single.
+
+.global symbol, .globl symbol
+makes the symbol visible to ld.
+
+.hword expressions
+expects zero or more expressions, and emits a 16 bit number for each.
+This directive is a synonym for `.short'; depending on the target architecture, it may also be a synonym for `.word'.
+
+.if absolute expression
+marks the beginning of a section of code which is only considered part of the source program being assembled if the argument is non-zero.
+.if ( text < align ) 
+   teste = 1
+.else
+   teste = 0
+.endif
+
+
+The following variants of .if are also supported:
+.ifdef symbol
+    Assembles the following section of code if the specified symbol has been defined.
+
+.ifndef symbol
+ifnotdef symbol
+    Assembles the following section of code if the specified symbol has not been defined. Both spelling variants are equivalent.
+
+.include "file"
+include files at specified points in your source program.
+You can control the search paths used with the `-I' command-line option. Quotation marks are required around file.
+
+.int expressions
+Expect zero or more expressions, of any section, separated by commas. For each expression, emit a number that, at run time, is the value of that expression.
+
+.lcomm symbol , length
+Reserve length bytes for a local common denoted by symbol. The section and value of symbol are those of the new local common. The addresses are allocated in the bss section, so that at run-time the bytes start off zeroed. Symbol is not declared global, so is normally not visible to ld.
+
+.list
+Control (in conjunction with the .nolist directive) whether or not assembly listings are generated.
+By default, listings are disabled. When you enable them (with the `-a' command line option), the initial value of the listing counter is one.
+
+.long expressions
+is the same as `.int'.
+
+.macro
+The commands .macro and .endm allow you to define macros that generate assembly output. For example, this definition specifies a macro sum that puts a sequence of numbers into memory:
+
+        .macro  sum from=0, to=5
+        .long   \from
+        .if     \to-\from
+        sum     "(\from+1)",\to
+        .endif
+        .endm
+
+With that definition, `SUM 0,5' is equivalent to this assembly input:
+
+        .long   0
+        .long   1
+        .long   2
+        .long   3
+        .long   4
+        .long   5
+
+.macro macname
+.macro macname macargs ...
+    Begin the definition of a macro called macname. If your macro definition requires arguments, specify their names after the macro name, separated by commas or spaces. You can supply a default value for any macro argument by following the name with `=deflt'. For example, these are all valid .macro statements:
+
+    .macro comm
+        Begin the definition of a macro called comm, which takes no arguments.
+
+    .macro plus1 p, p1
+    .macro plus1 p p1
+        Either statement begins the definition of a macro called plus1, which takes two arguments; within the macro definition, write `\p' or `\p1' to evaluate the arguments.
+
+    .macro reserve_str p1=0 p2
+        Begin the definition of a macro called reserve_str, with two arguments. The first argument has a default value, but not the second. After the definition is complete, you can call the macro either as `reserve_str a,b' (with `\p1' evaluating to a and `\p2' evaluating to b), or as `reserve_str ,b' (with `\p1' evaluating as the default, in this case `0', and `\p2' evaluating to b). 
+
+    When you call a macro, you can specify the argument values either by position, or by keyword. For example, `sum 9,17' is equivalent to `sum to=17, from=9'.
+
+    .endm Mark the end of a macro definition.
+
+    .exitm Exit early from the current macro definition.
+
+    \@ as maintains a counter of how many macros it has executed in this pseudo-variable; you can copy that number to your output with `\@', but only within a macro definition.
+
+.octa bignums
+This directive expects zero or more bignums, separated by commas. For each bignum, it emits a 16-byte integer.
+
+.org new-lc , fill
+Advance the location counter of the current section to new-lc.
+When the location counter (of the current subsection) is advanced, the intervening bytes are filled with fill. If the comma and fill are omitted, fill defaults to zero.
+
+.psize lines , columns
+Use this directive to declare the number of lines--and, optionally, the number of columns--to use for each page, when generating listings.
+If you do not use .psize, listings use a default line-count of 60. You may omit the comma and columns specification; the default width is 200 columns.
+
+.quad bignums
+.quad expects zero or more bignums, separated by commas. For each bignum, it emits an 8-byte integer.
+If the bignum won't fit in 8 bytes, it prints a warning message; and just takes the lowest order 8 bytes of the bignum.
+The term "quad" comes from contexts in which a "word" is two bytes; hence quad-word for 8 bytes.
+
+.rept count
+Repeat the sequence of lines between the .rept directive and the next .endr directive count times.
+
+For example, assembling
+
+        .rept   3
+        .long   0
+        .endr
+
+is equivalent to assembling
+
+        .long   0
+        .long   0
+        .long   0
+
+.section name, subsection
+Assemble the following code into end of subsection numbered subsection in the COFF named section name.
+If you omit subsection, as uses subsection number zero.
+`.section .text' is equivalent to the .text directive; `.section .data' is equivalent to the .data directive.
+
+.set symbol, expression
+Set the value of symbol to expression. This changes symbol's value and type to conform to expression. If symbol was flagged as external, it remains flagged.
+You may .set a symbol many times in the same assembly.
+If you .set a global symbol, the value stored in the object file is the last value stored into it.
+
+.short expressions
+is normally the same as `.word'.
+
+.single flonums
+This directive assembles zero or more flonums, separated by commas. It has the same effect as .float.
+
+.space size , fill
+This directive emits size times the lenght of bytes of fill.
+If the comma and fill are omitted, fill is assumed to be zero.
+
+.string "str"
+Copy the characters in str to the object file. You may specify more than one string to copy, separated by commas. The assembler marks the end of each string with a 0 byte.
+
+.text subsection
+Tells as to assemble the following statements onto the end of the text subsection numbered subsection, which is an absolute expression. If subsection is omitted, subsection number zero is used.
+
+.word expressions
+This directive expects zero or more expressions, of any section, separated by commas.
+
+
+While GAS normally writes only "pure" 32-bit i386 code, it has limited support for writing code to run in real mode or in 16-bit protected mode code segments. To do this, insert a `.code16' directive before the assembly language instructions to be run in 16-bit mode. You can switch GAS back to writing normal 32-bit code with the `.code32' directive.
+you can write code that runs on 16-bit processors, but only if that code never references memory.
+
+

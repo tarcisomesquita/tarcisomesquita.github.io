@@ -1,0 +1,81 @@
+
+RFC 791:
+                   1                   2                   3
+ 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|Version|  IHL  |Type of Service|          Total Length         |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|         Identification        |Flags|      Fragment Offset    |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|  Time to Live |    Protocol   |         Header Checksum       |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                       Source Address                          |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                    Destination Address                        |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                    Options                    |    Padding    |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+Nome                  Número de bits
+version . . . . . . . (04)
+header length . . . . (04)
+TOS . . . . . . . . . (08)
+total length . . . . .(16)
+identification . . . .(16)
+flags . . . . . . . . (03)
+fragment offset . . . (13)
+TTL . . . . . . . . . (08)
+protocol . . . . . . .(08)
+header checksum . . . (16)
+source address . . . .(32)
+destination address . (32)
+options . . . . . . . (if any)
+
+
+No IPv4 o tamanho máximo de um pacote é 65535 bytes. 
+
+Cada pacote tem um cabeçalho de 20 bytes
+
+
+# tcpdump -i eth0 -l -n -x port 25
+tcpdump: listening on eth0
+14:17:51.950111 192.168.0.9.1100 > 192.168.0.1.25: P 1043394526:1043394554(28)...
+                         4500 0044 9481 0000 4006 64d8 c0a8 0009
+                         c0a8 0001 044c 0019 3e30 efde 679c eea4
+                         5018 37ff 03b9 0000 7263 7074 2074 6f3a
+                         203c 7565 6461
+
+O cabeçalho IP é "4500 0044 94814500+0044+9481+0000+4006+0000+c0a8+0009+c0a8+0001 0000 4006". Analisemos cada um dos campos: 
+
+Version: "4", ou seja, trata-se de um pacote ipv4. 
+
+Header length: "5", ou seja, 5 palavras de 4 bytes cada (20 bytes ao todo).
+
+TOS (Type of Service): "00". O campo TOS permite aos roteadores tomar decisões sobre o envio de cada pacote dependendo do estado de 4 flags presentes nele: minimize delay, maximize throughput, maximize relizbility e minimize monetary cost. Essas flags entretanto são ignoradas por muitas implementações de TCP/IP, e portanto o seu uso pode não alterar a qualidade dos serviços. 
+Originally defined as the TOS field, this field is now defined by RFC 2474 for Differentiated services (DiffServ) and by RFC 3168 for Explicit Congestion Notification (ECN), matching IPv6.
+
+Total length: "0044", ou seja, 4*16+4=68 bytes, dos quais os 20 primeiros são os que estamos analisando.  O datagrama de tamanho mínimo é de 20 bytes e o máximo é 65535 (64 Kbytes). Por vezes, as subredes impõem restrições no tamanho, em cada caso os datagramas têm que ser "fragmentados". A fragmentação é manuseada quer no host quer no switch de pacotes no IPv4, e apenas no host no caso do IPv6.
+
+Identification: "9481" é um identificador de pacotes. Trata-se de um contador circular dos pacotes gerados numa máquina, e importante para o âmbito da fragmentação de pacotes. 
+
+Flags e Fragment Offset: "00", usados para a remontagem de pacotes fragmentados (divididos em várias partes, ao atingir um meio físico om MTU menor do que o tamanho do pacote) ao longo da transmissão. 
+    bit 0: 0 reservado
+    bit 1: 0 = pode fragmentar,  1 = não pode fragmentar
+    bit 2: 0 = ultimo fragmento, 1 = tem mais fragmentos
+
+TTL: "40", time to live.  Historicamente, o campo TTL limita a vida de um datagrama em segundos, mas tornou-se num campo de contagem de hops. Cada switch de pacotes (ou router) que um datagrama atravessa decrementa o campo TTL em um valor. Quando o campo TTL chega a zero, o pacote não é seguido por um switch de pacotes e é descartado. 
+
+Protocol: "06", ou seja, TCP.  A Internet Assigned Numbers Authority mantém uma lista de números de protocolos. 
+
+Header checksum: "64d8", utilizado para verificar a integridade do cabeçalho IP. Um pacote em trânsito é alterado por cada router (hop) que atravesse. Um desses routers pode comprometer o pacote, e o checksum é uma simples forma de detectar a consistência do cabeçalho. Este valor é ajustado ao longo do caminho e verificado a cada novo hop. Envolve apenas verificação do cabeçalho (não dos dados). 
+4500+0044+9481+0000+4006+0000+c0a8+0009+c0a8+0001=29B25
+2+9B25=9B27
+NOT 9B27 = 64D8
+
+Source address: "c0a80009", ou seja, 192.168.0.9. 
+
+Destination address: "c0a80001", ou seja, 192.168.0.1. 
+
+Opções: Campos do cabeçalho adicionais não são normalmente usados. Os campos de opção podem ser seguidos de um campo de caminho que assegura que os dados do utilizador são alinhados numa fronteira de words de 32 bits. (No IPv6, as opções movem-se fora do cabeçalho standard e são especificados pelo campo Next Protocol, semelhante à função do campo "Protocolo" no IPv4). A seguir, três exemplos de opções que são implementadas e aceitas na maioria dos roteadores: Security (Especifica o nível de segurança do datagrama (usado em aplicações militares)), Timestamp (Faz com que cada roteador anexe seu endereço e seu timestamp (32 bits), que serve para depuração de algoritmos de roteamento) e Record route (Faz com que cada roteador anexe seu endereço).
+

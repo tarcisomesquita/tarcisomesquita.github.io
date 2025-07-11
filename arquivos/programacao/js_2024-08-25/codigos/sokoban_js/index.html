@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Description" content="The classic Sokoban puzzle (but with modern graphics) running entirely in your web browser. It keeps working when you are offline.">
+<script type="text/javascript" src="adbabMisc.js"></script>
+<script type="text/javascript" src="sokoban.js"></script>
+<link href="sokoban.css" rel="stylesheet">
+
+<title>Sokoban in Javascript</title>
+
+</head>
+<body onload="init()">
+
+<div id="controls">
+<div id="normalControls">
+<span class="btnGroup">
+<select id="collections" name="collections" title="Collections of levels" onchange="return selCollection()">
+<option value="original" selected="selected">Original 50</option>
+<option value="sasquatch">Sasquatch</option>
+<option value="sasquatch2">Mas Sasquatch</option>
+<option value="sasquatch3">Sasquatch III</option>
+<option value="sasquatch4">Sasquatch IV</option>
+<option value="sasquatch5">Sasquatch V</option>
+<option value="sasquatch6">Sasquatch VI</option>
+<option value="sasquatch7">Sasquatch VII</option>
+<option value="sasquatch8">Sasquatch VIII</option>
+<option value="sasquatch9">Sasquatch IX</option>
+<option value="sasquatch10">Sasquatch X</option>
+<option value="sasquatch11">Sasquatch XI</option>
+<option value="microban">Microban</option>
+<option value="microban2">Mas Microban</option>
+<option value="microban3">Microban III</option>
+<option value="microban4">Microban IV</option>
+<option value="design">Design Your Own …</option>
+</select><span class="hide" id="designControls2">
+<input type="SUBMIT" value="Edit Design" onclick="return showHideDesign(true)"><input type="SUBMIT" value="Forget Design" onclick="return perhapsAbandonDesign()">
+</span><span class="hide" id="designControls3">
+<input type="SUBMIT" value="Really Forget" onclick="return abandonDesign()"><input type="SUBMIT" value="Not Really" onclick="return dontAbandonDesign()">
+</span></span><span class="btnGroup">
+<select id="levels" name="levels" title="Levels in this collection" onchange="return selectLevel()">
+
+<option value="0" selected="selected">Level 1</option><option value="1">Level 2</option><option value="2">Level 3</option><option value="3">Level 4</option><option value="4">Level 5</option><option value="5">Level 6</option><option value="6">Level 7</option><option value="7">Level 8</option><option value="8">Level 9</option><option value="9">Level 10</option><option value="10">Level 11</option><option value="11">Level 12</option><option value="12">Level 13</option><option value="13">Level 14</option><option value="14">Level 15</option><option value="15">Level 16</option><option value="16">Level 17</option><option value="17">Level 18</option><option value="18">Level 19</option><option value="19">Level 20</option><option value="20">Level 21</option><option value="21">Level 22</option><option value="22">Level 23</option><option value="23">Level 24</option><option value="24">Level 25</option><option value="25">Level 26</option><option value="26">Level 27</option><option value="27">Level 28</option><option value="28">Level 29</option><option value="29">Level 30</option><option value="30">Level 31</option><option value="31">Level 32</option><option value="32">Level 33</option><option value="33">Level 34</option><option value="34">Level 35</option><option value="35">Level 36</option><option value="36">Level 37</option><option value="37">Level 38</option><option value="38">Level 39</option><option value="39">Level 40</option><option value="40">Level 41</option><option value="41">Level 42</option><option value="42">Level 43</option><option value="43">Level 44</option><option value="44">Level 45</option><option value="45">Level 46</option><option value="46">Level 47</option><option value="47">Level 48</option><option value="48">Level 49</option><option value="49">Level 50</option></select><input type="SUBMIT" id="prevLevel" value=" &lt;&lt; " disabled="disabled" title="Go to the previous level" onclick="return startLevel(curLevel-1)"><input type="SUBMIT" id="nextLevel" value=" &gt;&gt; " title="Go to the next level" onclick="return startLevel(curLevel+1)"><input type="SUBMIT" id="nextUnfinished" value=" &gt;&gt;| " title="Go to the next unfinished level" onclick="return nextUnfinished()"></span><span class="btnGroup">
+<input type="SUBMIT" id="restart" value=" × " title="Restart this level" onclick="return restart()"><input type="SUBMIT" id="undo" value=" &lt; " title="Undo a move (or use the mouse wheel)" onclick="return undo()"><input type="SUBMIT" id="redo" value=" &gt; " disabled="disabled" title="Redo a move (or use the mouse wheel)" onclick="return redo()"><input type="SUBMIT" value=" Σ " title="View the move history for this level" onclick="return startHistory()"></span><span class="btnGroup">
+<input type="SUBMIT" id="magnify" value=" + " title="Magnify" onclick="return changeScale(+1)"><input type="SUBMIT" id="shrink" value=" − " title="Shrink" onclick="return changeScale(-1)"></span><span class="btnGroup">
+<input type="SUBMIT" value=" ? " title="Help and settings" onclick="return showHideHelp(true)"></span><span class="btnGroup">
+<span id="score">Moves: 37,&nbsp;&nbsp;pushes: 3</span></span>
+</div><!-- normalControls -->
+<div class="hide" id="helpControls">
+<input type="SUBMIT" value="Done" onclick="return showHideHelp(false)">
+</div>
+<div class="hide" id="designControls1">
+<input type="SUBMIT" value="Start Playing" onclick="return playDesign()"><input type="SUBMIT" value="Forget Design" onclick="return perhapsAbandonDesignEdit()">
+</div>
+<div class="hide" id="designControls4">
+<input type="SUBMIT" value="Really Forget" onclick="return abandonDesign()"><input type="SUBMIT" value="Not Really" onclick="return dontAbandonDesignEdit()">
+</div>
+<div class="hide" id="historyControls">
+<input type="SUBMIT" value="Done" onclick="return doneHistory()">
+</div>
+</div><!-- controls -->
+
+<div id="board">
+
+<div id="scene" onclick="return sqClick(event)" onmousedown="return false" style="width: 456px;">
+<img src="image_012.png" style="width: 24px; height: 24px; top: 72px; left: 168px;" id="man">
+<img style="width: 24px; height: 24px" src="image.png" id="things0">
+<img style="width: 24px; height: 24px" src="image.png" id="things1">
+<img style="width: 24px; height: 24px" src="image.png" id="things2">
+<img style="width: 24px; height: 24px" src="image.png" id="things3">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -96px -0px" src="image_020.png" id="things4">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -0px -0px" src="image_005.png" id="things5">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -24px -0px" src="image_005.png" id="things6">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -48px -0px" src="image_005.png" id="things7">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -72px -0px" src="image_019.png" id="things8">
+<img style="width: 24px; height: 24px" src="image.png" id="things9">
+<img style="width: 24px; height: 24px" src="image.png" id="things10">
+<img style="width: 24px; height: 24px" src="image.png" id="things11">
+<img style="width: 24px; height: 24px" src="image.png" id="things12">
+<img style="width: 24px; height: 24px" src="image.png" id="things13">
+<img style="width: 24px; height: 24px" src="image.png" id="things14">
+<img style="width: 24px; height: 24px" src="image.png" id="things15">
+<img style="width: 24px; height: 24px" src="image.png" id="things16">
+<img style="width: 24px; height: 24px" src="image.png" id="things17">
+<img style="width: 24px; height: 24px" src="image.png" id="things18"><br>
+<img style="width: 24px; height: 24px" src="image.png" id="things19">
+<img style="width: 24px; height: 24px" src="image.png" id="things20">
+<img style="width: 24px; height: 24px" src="image.png" id="things21">
+<img style="width: 24px; height: 24px" src="image.png" id="things22">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -96px -24px" src="image_004.png" id="things23">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -0px -24px" src="image.png" id="things24">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -24px -24px" src="image.png" id="things25">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -48px -24px" src="image.png" id="things26">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -72px -24px" src="image_004.png" id="things27">
+<img style="width: 24px; height: 24px" src="image.png" id="things28">
+<img style="width: 24px; height: 24px" src="image.png" id="things29">
+<img style="width: 24px; height: 24px" src="image.png" id="things30">
+<img style="width: 24px; height: 24px" src="image.png" id="things31">
+<img style="width: 24px; height: 24px" src="image.png" id="things32">
+<img style="width: 24px; height: 24px" src="image.png" id="things33">
+<img style="width: 24px; height: 24px" src="image.png" id="things34">
+<img style="width: 24px; height: 24px" src="image.png" id="things35">
+<img style="width: 24px; height: 24px" src="image.png" id="things36">
+<img style="width: 24px; height: 24px" src="image.png" id="things37"><br>
+<img style="width: 24px; height: 24px" src="image.png" id="things38">
+<img style="width: 24px; height: 24px" src="image.png" id="things39">
+<img style="width: 24px; height: 24px" src="image.png" id="things40">
+<img style="width: 24px; height: 24px" src="image.png" id="things41">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -96px -48px" src="image_004.png" id="things42">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -0px -48px" src="image_006.png" id="things43">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -24px -48px" src="image.png" id="things44">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -48px -48px" src="image_006.png" id="things45">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -72px -48px" src="image_004.png" id="things46">
+<img style="width: 24px; height: 24px" src="image.png" id="things47">
+<img style="width: 24px; height: 24px" src="image.png" id="things48">
+<img style="width: 24px; height: 24px" src="image.png" id="things49">
+<img style="width: 24px; height: 24px" src="image.png" id="things50">
+<img style="width: 24px; height: 24px" src="image.png" id="things51">
+<img style="width: 24px; height: 24px" src="image.png" id="things52">
+<img style="width: 24px; height: 24px" src="image.png" id="things53">
+<img style="width: 24px; height: 24px" src="image.png" id="things54">
+<img style="width: 24px; height: 24px" src="image.png" id="things55">
+<img style="width: 24px; height: 24px" src="image.png" id="things56"><br>
+<img style="width: 24px; height: 24px" src="image.png" id="things57">
+<img style="width: 24px; height: 24px" src="image.png" id="things58">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -48px -72px" src="image_020.png" id="things59">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -72px -72px" src="image_005.png" id="things60">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -96px -72px" src="image_007.png" id="things61">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -0px -72px" src="image.png" id="things62">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -24px -72px" src="image.png" id="things63">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -48px -72px" src="image.png" id="things64">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -72px -72px" src="image_013.png" id="things65">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -96px -72px" src="image_019.png" id="things66">
+<img style="width: 24px; height: 24px" src="image.png" id="things67">
+<img style="width: 24px; height: 24px" src="image.png" id="things68">
+<img style="width: 24px; height: 24px" src="image.png" id="things69">
+<img style="width: 24px; height: 24px" src="image.png" id="things70">
+<img style="width: 24px; height: 24px" src="image.png" id="things71">
+<img style="width: 24px; height: 24px" src="image.png" id="things72">
+<img style="width: 24px; height: 24px" src="image.png" id="things73">
+<img style="width: 24px; height: 24px" src="image.png" id="things74">
+<img style="width: 24px; height: 24px" src="image.png" id="things75"><br>
+<img style="width: 24px; height: 24px" src="image.png" id="things76">
+<img style="width: 24px; height: 24px" src="image.png" id="things77">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -48px -96px" src="image_004.png" id="things78">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -72px -96px" src="image.png" id="things79">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -96px -96px" src="image.png" id="things80">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -0px -96px" src="image_006.png" id="things81">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -24px -96px" src="image_006.png" id="things82">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -48px -96px" src="image.png" id="things83">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -72px -96px" src="image.png" id="things84">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -96px -96px" src="image_004.png" id="things85">
+<img style="width: 24px; height: 24px" src="image.png" id="things86">
+<img style="width: 24px; height: 24px" src="image.png" id="things87">
+<img style="width: 24px; height: 24px" src="image.png" id="things88">
+<img style="width: 24px; height: 24px" src="image.png" id="things89">
+<img style="width: 24px; height: 24px" src="image.png" id="things90">
+<img style="width: 24px; height: 24px" src="image.png" id="things91">
+<img style="width: 24px; height: 24px" src="image.png" id="things92">
+<img style="width: 24px; height: 24px" src="image.png" id="things93">
+<img style="width: 24px; height: 24px" src="image.png" id="things94"><br>
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -0px -0px" src="image_020.png" id="things95">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -24px -0px" src="image_005.png" id="things96">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -48px -0px" src="image_007.png" id="things97">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -72px -0px" src="image.png" id="things98">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -96px -0px" src="image_003.png" id="things99">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -0px -0px" src="image.png" id="things100">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -24px -0px" src="image_016.png" id="things101">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -48px -0px" src="image_009.png" id="things102">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -72px -0px" src="image.png" id="things103">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -96px -0px" src="image_004.png" id="things104">
+<img style="width: 24px; height: 24px" src="image.png" id="things105">
+<img style="width: 24px; height: 24px" src="image.png" id="things106">
+<img style="width: 24px; height: 24px" src="image.png" id="things107">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -72px -0px" src="image_020.png" id="things108">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -96px -0px" src="image_005.png" id="things109">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -0px -0px" src="image_005.png" id="things110">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -24px -0px" src="image_005.png" id="things111">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -48px -0px" src="image_005.png" id="things112">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -72px -0px" src="image_019.png" id="things113"><br>
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -0px -24px" src="image_004.png" id="things114">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -24px -24px" src="image.png" id="things115">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -48px -24px" src="image.png" id="things116">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -72px -24px" src="image.png" id="things117">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -96px -24px" src="image_014.png" id="things118">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -0px -24px" src="image_006.png" id="things119">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -24px -24px" src="image_010.png" id="things120">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -48px -24px" src="image_015.png" id="things121">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -72px -24px" src="image.png" id="things122">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -96px -24px" src="image_013.png" id="things123">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -0px -24px" src="image_005.png" id="things124">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -24px -24px" src="image_005.png" id="things125">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -48px -24px" src="image_005.png" id="things126">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -72px -24px" src="image_007.png" id="things127">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -96px -24px" src="image.png" id="things128">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -0px -24px" src="image.png" id="things129">
+<img style="width: 24px; height: 24px; background-color: #402d1f; background-image: url(img/target_w240_h240_x0_y0_r0.jpg); background-position: -24px -24px" src="image.png" id="things130">
+<img style="width: 24px; height: 24px; background-color: #402d1f; background-image: url(img/target_w240_h240_x0_y0_r0.jpg); background-position: -48px -24px" src="image.png" id="things131">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -72px -24px" src="image_004.png" id="things132"><br>
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -0px -48px" src="image_004.png" id="things133">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -24px -48px" src="image.png" id="things134">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -48px -48px" src="image_006.png" id="things135">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -72px -48px" src="image.png" id="things136">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -96px -48px" src="image.png" id="things137">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -0px -48px" src="image.png" id="things138">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -24px -48px" src="image.png" id="things139">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -48px -48px" src="image.png" id="things140">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -72px -48px" src="image.png" id="things141">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -96px -48px" src="image.png" id="things142">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -0px -48px" src="image.png" id="things143">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -24px -48px" src="image.png" id="things144">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -48px -48px" src="image.png" id="things145">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -72px -48px" src="image.png" id="things146">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -96px -48px" src="image.png" id="things147">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -0px -48px" src="image.png" id="things148">
+<img style="width: 24px; height: 24px; background-color: #402d1f; background-image: url(img/target_w240_h240_x0_y0_r0.jpg); background-position: -24px -48px" src="image.png" id="things149">
+<img style="width: 24px; height: 24px; background-color: #402d1f; background-image: url(img/target_w240_h240_x0_y0_r0.jpg); background-position: -48px -48px" src="image.png" id="things150">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -72px -48px" src="image_004.png" id="things151"><br>
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -0px -72px" src="image_013.png" id="things152">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -24px -72px" src="image_005.png" id="things153">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -48px -72px" src="image_005.png" id="things154">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -72px -72px" src="image_005.png" id="things155">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -96px -72px" src="image_019.png" id="things156">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -0px -72px" src="image.png" id="things157">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -24px -72px" src="image_011.png" id="things158">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -48px -72px" src="image_005.png" id="things159">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -72px -72px" src="image_002.png" id="things160">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -96px -72px" src="image.png" id="things161">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -0px -72px" src="image_003.png" id="things162">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -24px -72px" src="image.png" id="things163">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -48px -72px" src="image_016.png" id="things164">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -72px -72px" src="image_009.png" id="things165">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_90.jpg); background-position: -96px -72px" src="image.png" id="things166">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -0px -72px" src="image.png" id="things167">
+<img style="width: 24px; height: 24px; background-color: #402d1f; background-image: url(img/target_w240_h240_x0_y0_r0.jpg); background-position: -24px -72px" src="image.png" id="things168">
+<img style="width: 24px; height: 24px; background-color: #402d1f; background-image: url(img/target_w240_h240_x0_y0_r0.jpg); background-position: -48px -72px" src="image.png" id="things169">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -72px -72px" src="image_004.png" id="things170"><br>
+<img style="width: 24px; height: 24px" src="image.png" id="things171">
+<img style="width: 24px; height: 24px" src="image.png" id="things172">
+<img style="width: 24px; height: 24px" src="image.png" id="things173">
+<img style="width: 24px; height: 24px" src="image.png" id="things174">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -96px -96px" src="image_004.png" id="things175">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -0px -96px" src="image.png" id="things176">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -24px -96px" src="image.png" id="things177">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -48px -96px" src="image.png" id="things178">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -72px -96px" src="image.png" id="things179">
+<img style="width: 24px; height: 24px; background-color: #c18456; background-image: url(img/passage_w240_h240_x0_y0_r0.jpg); background-position: -96px -96px" src="image.png" id="things180">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -0px -96px" src="image_008.png" id="things181">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -24px -96px" src="image_005.png" id="things182">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -48px -96px" src="image_017.png" id="things183">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -72px -96px" src="image_018.png" id="things184">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -96px -96px" src="image_005.png" id="things185">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -0px -96px" src="image_005.png" id="things186">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -24px -96px" src="image_005.png" id="things187">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -48px -96px" src="image_005.png" id="things188">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -72px -96px" src="image_007.png" id="things189"><br>
+<img style="width: 24px; height: 24px" src="image.png" id="things190">
+<img style="width: 24px; height: 24px" src="image.png" id="things191">
+<img style="width: 24px; height: 24px" src="image.png" id="things192">
+<img style="width: 24px; height: 24px" src="image.png" id="things193">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -96px -0px" src="image_013.png" id="things194">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -0px -0px" src="image_005.png" id="things195">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -24px -0px" src="image_005.png" id="things196">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -48px -0px" src="image_005.png" id="things197">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -72px -0px" src="image_005.png" id="things198">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x240_y0_r90.jpg); background-position: -96px -0px" src="image_005.png" id="things199">
+<img style="width: 24px; height: 24px; background-color: #d0aea0; background-image: url(img/wall_w240_h240_x0_y0_r0.jpg); background-position: -0px -0px" src="image_007.png" id="things200">
+<img style="width: 24px; height: 24px" src="image.png" id="things201">
+<img style="width: 24px; height: 24px" src="image.png" id="things202">
+<img style="width: 24px; height: 24px" src="image.png" id="things203">
+<img style="width: 24px; height: 24px" src="image.png" id="things204">
+<img style="width: 24px; height: 24px" src="image.png" id="things205">
+<img style="width: 24px; height: 24px" src="image.png" id="things206">
+<img style="width: 24px; height: 24px" src="image.png" id="things207">
+<img style="width: 24px; height: 24px" src="image.png" id="things208"></div>
+
+<div class="dlog" id="history">
+<table>
+<tbody><tr>
+<td>
+The text area to the right shows the moves you have made in the current
+level.
+<p>
+The program uses browser cookies to preserve the state of the current
+level in each collection, but they are fragile and their capacity is
+limited (so only one level in each collection, for example). If you want
+to preserve the state of play more reliably, copy and paste the move
+list from this text area.
+</p><p>
+Each line is of the form “a-b”, meaning that the red bead at
+square “a” should be moved to square “b”. That
+defines the entire set of moves (apart from aimless wandering of the
+blue bead), since the program can compute the most efficient way to push
+the bead from “a” to “b”.
+</p><p>
+If you click “Done” without modifying the history, the level
+continues from where you left off. But if you modify the history then
+click “Done”, then the level restarts from the beginning,
+with the modified history in the “Redo” list. This lets you
+paste in and replay a previously saved history.
+</p><p>
+If you modify the history incorrectly, you might get error messages when
+you try to replay it.
+</p></td>
+<td id="historyContentsPane">
+<textarea id="historyContents" rows="20" cols="20">history goes here
+</textarea>
+</td>
+</tr>
+</tbody></table>
+</div><!-- history -->
+
+<div class="dlog" id="design">
+<table>
+<tbody><tr>
+<td>
+<b>Design Mode</b> lets you design or modify a level,
+or a collection of levels.
+The built-in levels remain unchanged.
+<p>
+It starts out with a copy of the text describing the single level
+currently being played, then lets you edit and play the copy.
+</p><ul>
+<li>“#” is a wall
+</li><li>space or “-” is an empty passage
+</li><li>“.” is a target square
+</li><li>“$” is a red bead in a passage
+</li><li>“@” is a blue bead in a passage
+</li><li>“*” is a red bead on a target square
+</li><li>“+” is a blue bead on a target square
+</li><li>Any other line separates levels
+</li></ul>
+Note that the edited text is volatile and will disappear when you stop
+using your design, unless you copy it and save it to some local file.
+This can also happen if you navigate away from this page.
+</td>
+<td id="designContentsPane">
+<textarea id="designContents" rows="20" cols="20">levels go here
+</textarea>
+</td>
+</tr>
+</tbody></table>
+</div><!-- design -->
+
+<div class="dlog" id="help">
+<table>
+<tbody><tr>
+<td rowspan="2">
+<b>Sokoban</b> is a game of pushing things around a board so as to place
+them in designated spots.
+<p>
+A Sokoban level is constructed from walls and floors. In this version
+the walls are made from Rosa Christina marble and the floors are wood:
+mostly Hawaiian koa (paler), with some North American walnut (darker).
+Each floor has a solid perimeter wall, so nothing can fall into the
+endless ocean that surrounds it.
+</p><p>
+Scattered around the floor are several red glass beads and a single blue
+bead. The goal is to place each red bead on a walnut (darker) square.
+The only way to move a red bead is to push it with the blue bead. The
+blue bead can only push, and it can only push a single bead at a time.
+None of the beads can go through walls or other beads.
+</p><p>
+You tell the blue bead which red bead to move by clicking on the desired
+bead, which lifts it slightly off the floor. Then you indicate a
+destination square by clicking there. If the blue bead can move to the
+selected bead, and if it can push the bead to the destination, then the
+program shows an animation of this happening. Otherwise the red bead
+drops back onto the floor.
+</p><p>
+If you want more basic control, move the blue bead directly with the
+keyboard, using the arrow keys or the “WASD” (up, left,
+down, right) keys. On a francophone “AZERTY” keyboard, use
+“ZQSD” instead. Use “X”, “&lt;”, and
+“&gt;” for restart, undo, and redo. You can also move the
+blue bead to a vacant square (if there’s a clear path) by clicking on
+that square.
+</p><p>
+In most of the levels there are only a few ways to succeed, and many
+ways of getting stuck. Fortunately there’s an “Undo”
+button (you can also undo/redo with the mouse scroll-wheel or the
+keyboard). Those who know some complexity theory will be delighted to
+learn that Sokoban is believed to be NP-hard and PSPACE-complete. For
+the rest of you, that just means computers aren’t very good at
+playing it. Which, if you can play it well, is very reassuring.
+</p></td>
+<td id="configuration">
+<table>
+<tbody><tr>
+<td>Animation:</td>
+<td>
+<select id="speeds" name="heights" onchange="return changeSpeed()">
+<option value="0">Jump</option>
+<option value="25">Fastest</option>
+<option value="50">Faster</option>
+<option value="100" selected="selected">Normal</option>
+<option value="200">Slower</option>
+<option value="400">Slowest</option>
+</select>
+</td>
+</tr><tr>
+<td>Debug:</td>
+<td>
+<input type="submit" value="Cookies" onclick="return showCookies()">
+</td></tr>
+</tbody></table>
+</td>
+</tr><tr>
+<td id="colophon">
+Sokoban was invented in 1980 by Hiroyuki Imabayashi, and first published
+by Thinking Rabbit (with the Original 50 levels).
+<p>
+The Sasquatch and Microban levels were designed by
+<a href="https://www.facebook.com/david.w.skinner.9">David W. Skinner</a>.
+</p><p>
+For more information about Sokoban, including high score lists, see <a href="http://www.sokobano.de/">the Sokoban project</a>.
+</p><p>
+This version was implemented by me, <a href="http://birrell.org/andrew/me/">Andrew Birrell</a>.
+</p></td>
+</tr>
+</tbody></table>
+</div><!-- help -->
+</div><!-- board -->
+
+
+</body>
+</html>

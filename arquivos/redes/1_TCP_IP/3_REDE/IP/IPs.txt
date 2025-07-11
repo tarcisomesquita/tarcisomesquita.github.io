@@ -1,0 +1,35 @@
+Classe 	   Faixa de endereços de IP 	  Notação CIDR 	   Número de Redes    Número de IPs 	IPs por rede
+Classe A   10.0.0.0 – 10.255.255.255 	  10.0.0.0/8 	   126 	              16.777.215 	16.777.216
+Classe B   172.16.0.1 – 172.31.255.254 	  172.16.0.0/12    16.382             1.048.576 	65.534
+Classe C   192.168.0.0 – 192.168.255.255  192.168.0.0/16   2.091.150 	      65.535            256
+
+Estas faixas não podem ser roteadas para fora da rede privada - não podem se comunicar diretamente com redes públicas.
+
+Blocos de Endereços Reservados
+CIDR  Bloco de Endereços    Descrição                               Referência
+0.0.0.0/8                   Rede corrente                           RFC 1700   0.x.x.x – indica endereço de origem desconhecido
+10.0.0.0/8                  Rede Privada                            RFC 1918
+14.0.0.0/8                  Rede Pública                            RFC 1700
+39.0.0.0/8                  Reservado                               RFC 1797
+127.0.0.0/8                 Localhost                               RFC 3330
+128.0.0.0/16                Reservado (IANA)                        RFC 3330
+169.254.0.0/16              Zeroconf                                RFC 3927
+172.16.0.0/12               Rede Privada                            RFC 1918
+191.255.0.0/16              Reservado (IANA)                        RFC 3330
+192.0.0.0/24                                                        
+192.0.2.0/24                Documentação                            RFC 3330
+192.88.99.0/24              IPv6 para IPv4                          RFC 3068
+192.168.0.0/16              Rede Privada                            RFC 1918
+198.18.0.0/15               Teste de benchmark de redes             RFC 2544
+223.255.255.0/24            Reservado                               RFC 3330
+224.0.0.0/4                 Multicasts (antiga rede Classe D)       RFC 3171
+240.0.0.0/4                 Reservado (antiga rede Classe E)        RFC 1700
+255.255.255.255             Broadcast
+
+Classe   Gama de Endereços                N.º Endereços por Rede
+A        1.0.0.0   até 126.255.255.255    16.777.216
+B        128.0.0.0 até 191.225.255.255    65.536
+C        192.0.0.0 até 223.225.225.255    256
+D        224.0.0.0 até 239.255.255.255    multicast
+E        240.0.0.0 até 247.255.255.255    uso futuro
+

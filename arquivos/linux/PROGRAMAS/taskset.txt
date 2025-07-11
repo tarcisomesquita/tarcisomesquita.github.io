@@ -1,0 +1,6 @@
+taskset [options] mask [pid|cmd [args...]]
+
+taskset 0x4 bash -c 'I=1; while true; do I=$(($I + 1)); done'
+
+taskset --all-tasks --pid 0x8 11966
+
