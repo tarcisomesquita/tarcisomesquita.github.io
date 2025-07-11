@@ -141,23 +141,6 @@ dig ns t7m8.com.br +nostats +nocomments +nocmd
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-excluir todo o histórico
-
-git checkout --orphan nova-main # Crie uma nova branch órfã
-
-git rm -rf . # Remova todos os arquivos
-
-git add .
-git commit -m "Initial commit do novo histórico"
-
-git branch -D main   # Exclua a branch antiga
-git branch -m main
-
-git checkout main
-git push -f origin main   # sobrescrever o histórico no seu repositório remoto
-
- = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
 Ver arquivo que já foi apagado
 
 git log --all --  arquivos/programacao/mysql/mysql.txt

@@ -1,4 +1,0 @@
-examples/cwebp.c parece interessante por que codifica uma imagem
-
-compilado
-examples/.libs/cwebp
