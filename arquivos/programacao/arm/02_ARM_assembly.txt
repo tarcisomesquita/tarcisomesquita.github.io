@@ -1,0 +1,155 @@
+Label     Mnemonic       Operands    Comment
+move_eg   MOV[cond][s]   Rd, <Op2>   ; Move syntax
+
+Data processing instructions include the following:
+• ADD, ADC, SUB, SBC, RSB, RSC for binary arithmetic
+• AND, ORR, EOR and BIC for bit-wise logic operations
+• MOV, MVN for register moves
+• CMP, CMN, TST, TEQ for comparisons
+• MLA, MUL, SMLAL, SMULL, UMLAL, UMULL for multiplication
+• ASR, LSL, LSR, ROR, RRX for shifts (these are “pseudo” instructions)
+• ADR as a pseudo instruction for address loading
+
+
+ADD r0, r1, r2 ; r0 := r1 + r2
+SUB r0, r1, #2 ; r0 := r1 - 2
+
+ADC r0, r1, r2 ; r0 := r1 + r2 + C
+SBC r0, r1, r2 ; r0 := r1 - r2 + C - 1
+
+C is the C bit in the CPSR
+
+MOV r0, r2 ; r0 := r2
+
+CMP r1, r2 ; set cc on r1 - r2 
+
+AND r8, r7, #&ff ; r8 := r7 [7:0]
+
+C-style notation (#0xff) is also supported
+
+second source operand may be shifted
+ADD r3, r2, r1, LSL #3; r3 := r2+r1<<3
+ADD r5, r5, r3, LSL r2; r5 += r3<<r2
+
+Label  Mnemonic  Operands        Comment
+       MOV       r0, r1, LSL r2  ; r0 = r1 x 2^r2
+       MOV       r0, r1, ASR r2  ; r0 = signed(r1 / 2^r2)
+
+LSL: Logical shift left  – shifts bits out the MSB and pads 0s to the LSBs.
+LSR: Logical shift right – shifts bits out the LSB and pads 0s to the MSBs.
+ASR: Arithmetic shift right – shift bits right and fill the vacated bits with 0s if the number was positive and ones if the number was negative.
+ROR: Rotate right – shifts bits right. The LSB rotates to the MSB. Note that there is no ROL.
+RRX: Rotate right extended (through carry) – shifts bits right, where the LSB goes into the Carry flag bit, and the Carry flag bit shifts to the MSB.
+
+64-bit add:
+ADDS r2, r2, r0  ; 32-bit carry-out -> C
+ADC  r3, r3, r1  ; added into top 32 bits
+
+Multiplication
+MUL r4, r3, r2       ; r4 := (r3 x r2) [31:0]
+MLA r4, r3, r2, r1   ; r4 := (r3xr2+r1) [31:0]
+
+load and store
+LDR r0, [r1] ; r0 := mem[r1]
+STR r0, [r1] ; mem[r1] := r0
+
+ldr r1,[r2]           ; address = (r2)
+ldr r1,[r2,#4]        ; address = (r2)+4
+ldr r1,[r2,#-4]       ; address = (r2)-4
+ldr r1,[r2,r3]        ; address = (r2)+(r3)
+ldr r1,[r2,-r3]       ; address = (r2)-(r3)
+ldr r1,[r2,r3,LSL #2] ; address = (r2)+(r3 x 4)
+
+LDR r0, [r1,#4]  ; r0 := mem[r1+4]
+
+LDR r0, [r1,#4]! ; r0 := mem[r1+4]
+                 ; r1 := r1 + 4
+
+ldr r0, [r1,r2]! ; r0 := mem[r1+r2]
+                 ; r1 := r1 + r2
+
+LDR r0, [r1],#4  ; r0 := mem[r1]
+                 ; r1 := r1 + 4
+
+LDRB  r0, [r1]   ; r0 := mem8[r1]
+LDRSH r0, [r1]   ; r0 := mem16[r1](signed)
+
+LDMIA r1, {r0,r2,r5} ; r0 := mem[r1]       I = increment; D = decrement
+                     ; r2 := mem[r1+4]
+                     ; r5 := mem[r1+8]
+- the {...} list may contain any or all of r0 - r15
+- the lowest register always uses the lowest address
+
+LDMIB r1, {r0,r2,r5} ; r0 := mem[r1]       I = increment; D = decrement
+                     ; r2 := mem[r1+1]
+                     ; r5 := mem[r1+2]
+
+STMIA r9!, {r0,r1,r5}
+
+any register can be used for an address
+ADR r1, TABLE1 ; r1 points to TABLE1
+TABLE1         ; LABEL
+
+
+Control flow instructions
+B LABEL
+..    ; these instructions are skipped
+LABEL
+
+
+LOOP
+ADD r0, r0, #1
+CMP r0, #10
+BNE LOOP
+
+Branch   Interpretation     Normal uses
+B        Unconditional   Always take this branch
+BAL      Always Always take this branch
+BEQ      Equal Comparison equal or zero result
+BNE      Not equal Comparison not equal or non-zero result
+BPL      Plus Result positive or zero
+BMI      Minus Result minus or negative
+BCC      Carry clear     Arithmetic operation did not give carry-out
+BLO      Lower          Unsigned comparison gave lower
+BCS Carry set Arithmetic operation gave carry-out
+BHS Higher or same    Unsigned comparison gave higher or same
+BVC Overflow clear Signed integer operation; no overflow occurred
+BVS Overflow set Signed integer operation; overflow occurred
+BGT Greater than Signed integer comparison gave greater than
+BGE Greater or equal Signed integer comparison gave greater or equal
+BLT Less than Signed integer comparison gave less than
+BLE Less or equal Signed integer comparison gave less than or equal
+BHI Higher Unsigned comparison gave higher
+BLS Lower or same Unsigned comparison gave lower or same
+
+MOV
+MOVPL
+MOVPLS
+The second MOV
+instruction is suffixed with “PL” which tells the processor to only execute the move if the last instruction that updated the CPSR flags resulted in a non-negative (positive or zero) value. The third MOV instruction is suffixed with both “PL” and “S” so it too will be conditionally executed and depending on the result stored in the destination register, will update the N, Z or C flags in the CPSR.
+
+r14 is often called the link register (lr)
+ARM’s subroutine call mechanism
+saves the return address in r14
+BL  SUBR     ; branch to SUBR
+..           ; return to here
+..
+
+SUBR         ; subroutine entry point
+MOV pc, r14  ; return
+
+
+calls to operating system functions
+SWI
+
+
+
+MOV  PC, LR
+or
+LDR  PC, [SP], #4
+são equivalentes ao RET
+
+STMFD SP!, {register list}; Push
+LDMFD SP!, {register list}; Pop
+
+

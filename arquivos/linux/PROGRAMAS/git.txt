@@ -141,8 +141,40 @@ dig ns t7m8.com.br +nostats +nocomments +nocmd
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+Listar arquivos que foram apagados do repositório
+
+git log --diff-filter=D --name-only
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
 Ver arquivo que já foi apagado
 
 git log --all --  arquivos/programacao/mysql/mysql.txt
 
 git checkout <hash_do_commit_anterior_a_exclusao> -- arquivos/programacao/mysql/mysql.txt   # restaura o arquivo
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Ver como era o conteúdo de um arquivo após um commit
+
+git log --all --  arquivos/filetypes/webp/libwebp-1.2.1/src/webp/config.h.in
+commit c89b5df1842a74416b915e3d4c1b333aa2a095bf (HEAD -> main, origin/main)
+Author: tarcisomesquita <tarcisomesquita@gmail.com>
+Date:   Fri Jul 11 16:01:24 2025 -0300
+
+    11-07-2025_16:01:24
+
+commit 2bf4e155c68ed7b57477cb58864bcd3c01844712
+Author: tarcisomesquita <tarcisomesquita@gmail.com>
+Date:   Fri Jul 11 15:37:26 2025 -0300
+
+    11-07-2025_15:37:26
+
+$ git show 2bf4e155c68ed7b57477cb58864bcd3c01844712:arquivos/filetypes/webp/libwebp-1.2.1/src/webp/config.h.in
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Ver todo histórico de alteração de um arquivo
+
+git log -p -- arquivos/linux/PROGRAMAS/git.txt
+

@@ -1,0 +1,9 @@
+Firefox will not run without the following:
+libc6 libgtk-3-0 libglib2.0-0 libstdc++6 xserver-xorg
+
+libgtk2.0-0 (old)
+
+We recommend for optimal functionality:
+dbus network-manager pulseaudio
+
+Fonte: https://www.mozilla.org/en-US/firefox/139.0.4/system-requirements/

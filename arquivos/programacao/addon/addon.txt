@@ -1,0 +1,76 @@
+usa API WebExtension
+Funciona no Firefox, Chrome e Edge
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Instalando
+about:debugging
+Este Firefox > Carregar extensão temporária
+
+cd path/to/my-extension/
+zip -r ../my-extension.zip *
+
+https://addons.mozilla.org/developers/addon/submit/
+Submit a New Add-on
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+https://github.com/mdn/webextensions-examples/
+
+
+https://developer.chrome.com/docs/extensions/get-started?hl=pt-br
+https://developer.mozilla.org/pt-BR/docs/Mozilla/Add-ons/WebExtensions
+
+    Extensões do Chrome: Se você precisa acessar cookies de diferentes sites, pode criar uma extensão do Chrome que utilize a API chrome.cookies. Isso permite que você leia e manipule cookies de diferentes domínios, desde que tenha as permissões corretas.
+
+Exemplo de Uso em Extensão:
+javascript
+
+chrome.cookies.getAll({}, function(cookies) {
+    cookies.forEach(function(cookie) {
+        console.log(cookie);
+    });
+});
+
+The manifest.json file is the only file that every extension using WebExtension APIs must contain.
+"manifest_version", "version", and "name" are the only mandatory keys.
+
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json
+
+manifest.json
+{
+  "manifest_version": 2,
+  "name": "Teste",
+  "description": "É para estudar addon",
+  "version": "0.0.1",
+  "author": "Tarciso Mesquita",
+  "icons":{
+    "128": "images/icon128.png",
+    "48": "images/icon48.png"
+  },
+  
+  "browser_action": {
+    "default_icon": "images/icon128.png",
+    "default_title": "TESTE"
+  },
+  
+  "background": {
+    "scripts": ["app.js"],
+    "persistent": false
+  }
+}
+
+app.js
+chrome.browserAction.onClicked.addListener(function(tab) {
+  chrome.tabs.create({ url: "https://tarcisomesquita.github.io" });
+});
+
+
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/icons
+
+if you would like to have a limited group of users test a beta version of your extension
+In the manifest.json of the beta version, specify the location of your update manifest
+https://extensionworkshop.com/documentation/manage/updating-your-extension/
+
+npm install --global web-ext
+https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/

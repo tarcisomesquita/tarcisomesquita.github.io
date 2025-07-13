@@ -1,0 +1,6 @@
+e_machine is set to EM_ARM (defined as 40)
+e_ident[EI_CLASS] is set to ELFCLASS32
+e_ident[EI_DATA] is set to:
+ELFDATA2LSB for little-endian targets
+ELFDATA2MSB for big-endian targets
+

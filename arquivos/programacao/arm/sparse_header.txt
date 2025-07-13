@@ -1,0 +1,11 @@
+sparse image header
+Offset   Length   Field
+0        4        Magic value (0xed26ff3a)
+4        4        Version (as Major + Minor). Currently 0x00000001 .
+8        2        Header Size. Always 0x001c (= 28)
+10       2        Chunk Size
+12       4        Block Size. Usually 0x1000 (4k) for Ext filesystems
+16       4        Number of Blocks in filesystem
+20       4        Number of Chunks in this file
+24       4        Optional Checksum (usually zero)
+

@@ -1,0 +1,56 @@
+ARM processor has:
+• thirteen general-purpose 32 bit registers, R0 to R12
+• three 32 bit registers, R13 to R15, that have a special use.
+
+SP, the Stack Pointer, is register R13. Used as a pointer to the active stack.
+
+LR, the Link Register, is Register R14. Used to store the return address from a subroutine.
+When a BL or BLX instruction performs a subroutine call, LR is set to the subroutine return address.
+Subroutine return is done in one of two ways:
+• Return with a BX LR instruction.
+• Using stack:
+PUSH {<registers>,LR}
+POP {<registers>,PC}
+
+PC, the Program Counter, is register R15.
+When executing an ARM instruction, PC reads as the address of the current instruction plus 8.
+Writing an address to PC causes a branch to that address.
+
+
+parei na página 46 de ARMv7-AR_TRM.pdf
+
+
+While in FIQ mode, you could write to register r13 again and not impact the value you wrote during user mode.
+On the other hand, non-banked registers are shared, so regardless of what mode you are in if
+you write a value to, say, r0 while in User mode and then switch to FIQ mode, the value you
+wrote is still available in r0 and would be overwritten if you chose to write to r0 while in FIQ
+mode.
+
+Register r13 is reserved for a stack pointer. Register r14 is the “link” register that is
+used to hold return addresses for function calls. Register r15 is the program counter. It will continually be updating automatically from hardware and really cannot be used for anything else.
+
+Current Processor Status Register (CPSR)
+   3                   2                   1
+ 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|N|Z|C|V|                                       |I|F|T|   mode  |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+• N: Negative flag. A negative result occurred from the last instruction (e.g. the result has
+bit 31 set)
+• Z: Zero flag. The last instruction resulted in 0 (e.g. subtract two registers r1 – r2 where
+r1 = r2)
+• C: Carry flag. A carry, borrow or extend occurred out of the MSB (bit 31) in the last
+operation (e.g. r1 was shifted left when r1 held 0xf000 0000, or two large numbers were
+added where the result was larger than 32 bits)
+• Overflow flag. An overflow into the sign bit occurred (e.g. add two registers r1 + r2,
+where the resulting sum is greater than 0xfff ffff)
+
+Control bits:
+• I: set to disable interrupts
+• F: set to disable fast interrupts
+• T: cleared to keep processor in 32-bit ARM state (vs. 16-bit THUMB state)
+• Mode: 5 bits to define one of the 7 processor modes of operation (User, Fast Interrupt, Interrupt, Supervisor, Abort, System, Undefined)
+The remaining bits are reserved
+
+

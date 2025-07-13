@@ -1,0 +1,31 @@
+$ sudo apt-get install gcc-arm-none-eabi
+Os NOVOS pacotes a seguir serão instalados:
+  binutils-arm-none-eabi gcc-arm-none-eabi libnewlib-arm-none-eabi libnewlib-dev libstdc++-arm-none-eabi-newlib
+
+arm-none-eabi-gcc -v -static -Wall teste.c -o teste.elf
+
+/usr/lib/gcc/arm-none-eabi/5.4.1/cc1 -Wall -o teste.s teste.c
+
+/usr/lib/gcc/arm-none-eabi/5.4.1/include
+/usr/lib/gcc/arm-none-eabi/5.4.1/include-fixed
+/usr/lib/arm-none-eabi/include
+
+/usr/lib/arm-none-eabi/bin/as -v -meabi=5 -o /tmp/ccEYCWrI.o /tmp/ccXgDci3.s
+
+/usr/lib/gcc/arm-none-eabi/5.4.1/collect2 \
+-plugin /usr/lib/gcc/arm-none-eabi/5.4.1/liblto_plugin.so \
+-plugin-opt=/usr/lib/gcc/arm-none-eabi/5.4.1/lto-wrapper \
+-plugin-opt=-fresolution=/tmp/ccaSrsCn.res \
+-plugin-opt=-pass-through=-lgcc \
+-plugin-opt=-pass-through=-lc \
+-Bstatic -X -o teste.elf \
+/usr/lib/gcc/arm-none-eabi/5.4.1/crti.o \
+/usr/lib/gcc/arm-none-eabi/5.4.1/crtbegin.o \
+/usr/lib/arm-none-eabi/lib/crt0.o \
+-L/usr/lib/gcc/arm-none-eabi/5.4.1 \
+-L/usr/lib/arm-none-eabi/lib \
+/tmp/ccEYCWrI.o \
+--start-group -lgcc -lc --end-group \
+/usr/lib/gcc/arm-none-eabi/5.4.1/crtend.o \
+/usr/lib/gcc/arm-none-eabi/5.4.1/crtn.o
+

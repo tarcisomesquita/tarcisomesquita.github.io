@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Teste",
+  "description": "É para estudar addon",
+  "version": "1",
+  "author": "Tarciso Mesquita",
+  "icons":{
+    "128": "images/icon128.png",
+    "48": "images/icon48.png"
+  },
+  
+  "action": {
+    "default_icon": "images/icon128.png",
+    "default_title": "TESTE"
+  },
+  
+  "background": {
+    "scripts": ["app.js"],
+    "persistent": false
+  }
+}
