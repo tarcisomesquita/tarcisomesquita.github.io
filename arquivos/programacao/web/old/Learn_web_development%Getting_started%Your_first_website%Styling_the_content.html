@@ -1,0 +1,239 @@
+<article class="main-page-content" lang="en-US">
+<header><h1>CSS: Styling the content</h1></header><div class="section-content"><ul class="prev-next"><li class="prev"><a class="button secondary" href="/en-US/docs/Learn_web_development/Getting_started/Your_first_website/Creating_the_content"><span class="button-wrap"> Previous </span></a></li><li class="menu"><a class="button secondary" href="/en-US/docs/Learn_web_development/Getting_started/Your_first_website"><span class="button-wrap"> Overview: Your first website</span></a></li><li class="next"><a class="button secondary" href="/en-US/docs/Learn_web_development/Getting_started/Your_first_website/Adding_interactivity"><span class="button-wrap"> Next  </span></a></li></ul>
+<p>CSS (Cascading Style Sheets) is the code that styles web content. This article walks you through a basic understanding of CSS — how it works and how to improve the look and feel of the content structure you created in the previous article.</p>
+<figure class="table-container"><table>
+  <tbody>
+    <tr>
+      <th scope="row">Prerequisites:</th>
+      <td>
+        Basic familiarity with your computer operating system, the basic software you will use to build a website, and file systems.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Learning outcomes:</th>
+      <td>
+        <ul>
+          <li>The purpose and function of CSS.</li>
+          <li>The basic parts of CSS syntax — rulesets, selectors, declarations, properties, property values.</li>
+          <li>Common CSS functionality including box model, changing colors and fonts, and positioning HTML elements.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table></figure></div><section aria-labelledby="what_is_css"><h2 id="what_is_css"><a href="#what_is_css">What is CSS?</a></h2><div class="section-content"><p>Like HTML, CSS is not a programming language. It's not a markup language either. <strong>CSS is a style sheet language.</strong> CSS is used to style HTML elements: you select the elements you want to style and set values for their style properties, which define how they will look.</p>
+<p>Let's revisit the basic HTML example from the article <a href="/en-US/docs/Learn_web_development/Getting_started/Your_first_website/Creating_the_content">Creating the content</a>:</p>
+<div class="code-example"><div class="example-header"><span class="language-name">html</span></div><pre class="brush: html live-sample___basic-html live-sample___basic-css notranslate live-sample---basic-html live-sample---basic-css"><code>&lt;p&gt;Instructions for life:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Eat&lt;/li&gt;
+  &lt;li&gt;Sleep&lt;/li&gt;
+  &lt;li&gt;Repeat&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre></div>
+<p>This renders as follows on its own:</p>
+<div class="code-example"><div class="example-header"></div><iframe class="sample-code-frame" title="basic-html sample" id="frame_basic-html" width="100%" height="140px" src="about:blank" data-live-path="/en-US/docs/Learn_web_development/Getting_started/Your_first_website/Styling_the_content/" data-live-id="basic-html" sandbox="allow-same-origin allow-scripts" loading="lazy"></iframe></div>
+<p>If we add some CSS into the mix, we can change how the HTML looks. The following snippet selects the <a href="/en-US/docs/Web/HTML/Reference/Elements/p"><code>&lt;p&gt;</code></a> element and gives it a different <a href="/en-US/docs/Web/CSS/font-family">font</a> and a red text <a href="/en-US/docs/Web/CSS/color"><code>color</code></a>. It then selects all the <a href="/en-US/docs/Web/HTML/Reference/Elements/li"><code>&lt;li&gt;</code></a> elements and gives each one a greeny-yellow <a href="/en-US/docs/Web/CSS/background-color"><code>background-color</code></a>, a 1-pixel solid black <a href="/en-US/docs/Web/CSS/border"><code>border</code></a>, and a 5-pixel <a href="/en-US/docs/Web/CSS/margin-bottom">bottom margin</a>:</p>
+<div class="code-example"><div class="example-header"><span class="language-name">css</span></div><pre class="brush: css live-sample___basic-css notranslate live-sample---basic-css"><code>p {
+  font-family: sans-serif;
+  color: red;
+}
+
+li {
+  background-color: greenyellow;
+  border: 1px solid black;
+  margin-bottom: 5px;
+}
+</code></pre></div>
+<p>With the CSS applied to the HTML, the demo now renders like this:</p>
+<div class="code-example"><div class="example-header"></div><iframe class="sample-code-frame" title="basic-css sample" id="frame_basic-css" width="100%" height="160px" src="about:blank" data-live-path="/en-US/docs/Learn_web_development/Getting_started/Your_first_website/Styling_the_content/" data-live-id="basic-css" sandbox="allow-same-origin allow-scripts" loading="lazy"></iframe></div>
+<p>As you can see, with just a little CSS, we were able to change the appearance of a plain-looking list.</p>
+<p>CSS has many other functions, from specifying background images and gradients, to controlling typography and scrolling behavior, to adding animations and building entire web page layouts.</p></div></section><section aria-labelledby="applying_css_to_your_html"><h2 id="applying_css_to_your_html"><a href="#applying_css_to_your_html">Applying CSS to your HTML</a></h2><div class="section-content"><p>When using CSS, the first thing to get right is to make sure that your CSS is successfully applied to your HTML. In this section, we'll add a CSS <strong>stylesheet</strong> to your <code>first-website</code> and apply it to your page.</p>
+<ol>
+<li>
+<p>Inside your <code>first-website</code> folder, create another new folder called <code>styles</code>.</p>
+</li>
+<li>
+<p>Using a text editor, paste the following CSS into a new file, which will give your <code>&lt;p&gt;</code> elements a red text color. It's useful to start with something like this to test whether your stylesheet is being applied to your HTML correctly.</p>
+<div class="code-example"><div class="example-header"><span class="language-name">css</span></div><pre class="brush: css notranslate"><code>p {
+  color: red;
+}
+</code></pre></div>
+</li>
+<li>
+<p>Save the file in the <code>styles</code> folder with the filename <code>style.css</code>.</p>
+</li>
+<li>
+<p>Open your <code>index.html</code> file. Paste the following line inside the HTML head (between the <a href="/en-US/docs/Web/HTML/Reference/Elements/head"><code>&lt;head&gt;</code></a> and <code>&lt;/head&gt;</code> tags):</p>
+<div class="code-example"><div class="example-header"><span class="language-name">html</span></div><pre class="brush: html notranslate"><code>&lt;link href="styles/style.css" rel="stylesheet" /&gt;
+</code></pre></div>
+</li>
+<li>
+<p>Save <code>index.html</code> and load it in your browser. You should see something like this:</p>
+</li>
+</ol>
+<p><img src="/en-US/docs/Learn_web_development/Getting_started/Your_first_website/Styling_the_content/website-screenshot-styled.png" alt="A Mozilla logo and some paragraphs. The paragraph text has been styled red by our css." width="711" height="832" loading="lazy"></p>
+<p>If your paragraph text is red, congratulations! Your CSS is working. If not, go through the above steps and check carefully that you have followed each one correctly.</p></div></section><section aria-labelledby="css_syntax_basics"><h2 id="css_syntax_basics"><a href="#css_syntax_basics">CSS syntax basics</a></h2><div class="section-content"><p>In the previous CSS example, <code>p</code> is called a <strong>selector</strong> — it selects the element(s) to style. In particular, <code>p</code> selects all the paragraphs in the HTML. The line inside the curly braces (<code>{ }</code>) is called a <strong>declaration</strong> – it sets a value for a specific property. In this case, the <strong>property</strong> is <code>color</code>, which controls the text color of the paragraphs, and the <strong>property value</strong> set is <code>red</code>.</p>
+<p>The whole structure is called a <strong>ruleset</strong>. (The term <em>ruleset</em> is often referred to as just <em>rule</em>.)</p>
+<p>Let's look at another ruleset, this time with multiple declarations:</p>
+<div class="code-example"><div class="example-header"><span class="language-name">css</span></div><pre class="brush: css notranslate"><code>p {
+  color: red;
+  width: 500px;
+  border: 1px solid black;
+}
+</code></pre></div>
+<p>Within a ruleset, you must use a semicolon (<code>;</code>) to separate one declaration from the next. Within each declaration, you must use a colon (<code>:</code>) to separate the property and its value.</p>
+<p>You can also include multiple selectors in one rule, separated by commas, to select multiple elements. For example:</p>
+<div class="code-example"><div class="example-header"><span class="language-name">css</span></div><pre class="brush: css notranslate"><code>p,
+.my-class,
+#my-id {
+  color: red;
+}
+</code></pre></div>
+<p>In this CSS rule, we've included an <strong>element</strong> (or <strong>type</strong>) selector, which selects a specific HTML element. We've also included two other selector types, which aren't relevant to the rest of this tutorial. If you're curious about what they do, check out our <a href="/en-US/docs/Learn_web_development/Core/Styling_basics/Basic_selectors">Basic selectors</a> guide.</p>
+<div class="notecard note">
+<p><strong>Note:</strong>
+Scrimba's <a href="https://scrimba.com/the-frontend-developer-career-path-c0j/~015?via=mdn" class="external" target="_blank">Write your first lines of CSS!</a> <sup><a href="/en-US/docs/MDN/Writing_guidelines/Learning_content#partner_links_and_embeds"><em>MDN learning partner</em></a></sup> provides a useful interactive introduction to CSS syntax.</p>
+</div></div></section><section aria-labelledby="improving_the_text"><h2 id="improving_the_text"><a href="#improving_the_text">Improving the text</a></h2><div class="section-content"><p>Let's return to our example and use CSS to improve the appearance of the text. We'll set a new font for the page and change some text settings for different elements.</p>
+<ol>
+<li>
+<p>First, find the <a href="/en-US/docs/Learn_web_development/Getting_started/Your_first_website/What_will_your_website_look_like#choosing_a_font">output from Google Fonts</a> that you previously saved. If you've not already chosen a font, follow the link and do it now.</p>
+</li>
+<li>
+<p>Add the <a href="/en-US/docs/Web/HTML/Reference/Elements/link"><code>&lt;link&gt;</code></a> elements inside your <code>index.html</code>'s <a href="/en-US/docs/Web/HTML/Reference/Elements/head"><code>&lt;head&gt;</code></a>, just before the closing <code>&lt;/head&gt;</code> tag. They should look something like this:</p>
+<div class="code-example"><div class="example-header"><span class="language-name">html</span></div><pre class="brush: html notranslate"><code>&lt;link rel="preconnect" href="https://fonts.googleapis.com" /&gt;
+&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /&gt;
+&lt;link
+  href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&amp;display=swap"
+  rel="stylesheet" /&gt;
+</code></pre></div>
+<p>This code links your page to a stylesheet hosted by the Google Fonts service, which loads your chosen font.</p>
+</li>
+<li>
+<p>Next, go to your <code>style.css</code> file and delete the existing rule. We no longer want our paragraphs to be red.</p>
+</li>
+<li>
+<p>Add the following lines to <code>style.css</code>:</p>
+<div class="code-example"><div class="example-header"><span class="language-name">css</span></div><pre class="brush: css notranslate"><code>html {
+  /* px means "pixels". The base font size is now 10 pixels high */
+  font-size: 10px;
+  /* Replace PLACEHOLDER with the font-family property value you got from Google Fonts */
+  font-family: PLACEHOLDER;
+}
+</code></pre></div>
+<div class="notecard note">
+<p><strong>Note:</strong>
+Anything in CSS between <code>/*</code> and <code>*/</code> is a <strong>CSS comment</strong>, which is ignored by the browser. CSS comments are a way for you to include helpful notes about your code or logic, without affecting how your webpage is rendered.</p>
+</div>
+</li>
+<li>
+<p>Replace the <code>font-family</code> placeholder line with the <code>font-family</code> line from your Google Fonts code, for example:</p>
+<div class="code-example"><div class="example-header"><span class="language-name">css</span></div><pre class="brush: css notranslate"><code>font-family: "Roboto", sans-serif;
+</code></pre></div>
+<p>The <code>font-family</code> property sets the font(s) you want to apply to your HTML. This rule defines a global base font and font size for the whole page. All elements inside the <a href="/en-US/docs/Web/HTML/Reference/Elements/html"><code>&lt;html&gt;</code></a> element will inherit the same <code>font-size</code> and <code>font-family</code>.</p>
+</li>
+<li>
+<p>Now let's set some font and text styles on our <a href="/en-US/docs/Web/HTML/Reference/Elements/Heading_Elements"><code>&lt;h1&gt;</code></a>, <a href="/en-US/docs/Web/HTML/Reference/Elements/li"><code>&lt;li&gt;</code></a>, and <a href="/en-US/docs/Web/HTML/Reference/Elements/p"><code>&lt;p&gt;</code></a> elements. We'll set new <a href="/en-US/docs/Web/CSS/font-size"><code>font-size</code></a> values for each element. We'll also center the heading using <a href="/en-US/docs/Web/CSS/text-align"><code>text-align</code></a> and increase the <a href="/en-US/docs/Web/CSS/line-height"><code>line-height</code></a> and <a href="/en-US/docs/Web/CSS/letter-spacing"><code>letter-spacing</code></a> of the paragraphs and list items to make the body content more readable.</p>
+<div class="code-example"><div class="example-header"><span class="language-name">css</span></div><pre class="brush: css notranslate"><code>h1 {
+  font-size: 60px;
+  text-align: center;
+}
+
+p,
+li {
+  font-size: 16px;
+  line-height: 2;
+  letter-spacing: 1px;
+}
+</code></pre></div>
+</li>
+<li>
+<p>Save your code and load your HTML in a browser (refresh it if you've got it open from before). Your work-in-progress should look similar to this:</p>
+<p><img src="/en-US/docs/Learn_web_development/Getting_started/Your_first_website/Styling_the_content/website-screenshot-font-small.png" alt="A Mozilla logo and some paragraphs. A sans-serif font has been set, the font sizes, line height and letter spacing are adjusted, and the main page heading has been centered" width="921" height="1020" loading="lazy"></p>
+<div class="notecard note">
+<p><strong>Note:</strong>
+Try adjusting the <code>px</code> values until you end up with font sizes that you like for your heading and body text.</p>
+</div>
+</li>
+</ol></div></section><section aria-labelledby="css_is_all_about_boxes"><h2 id="css_is_all_about_boxes"><a href="#css_is_all_about_boxes">CSS is all about boxes</a></h2><div class="section-content"><p>Something you'll notice about CSS as you use it more is that a lot of it is about boxes. Most HTML elements on a page can be thought of as boxes that sit on top of (or alongside) other boxes. You can set values on these boxes for size, color, positioning, etc. This is referred to as <a href="/en-US/docs/Learn_web_development/Core/Styling_basics/Box_model"><strong>the box model</strong></a>.</p>
+<p><img src="/en-US/docs/Learn_web_development/Getting_started/Your_first_website/Styling_the_content/box-model.png" alt="Three boxes sat inside one another. From outside to in they are labelled margin, border and padding" width="574" height="450" loading="lazy"></p>
+<p>Each box that takes up space on your page has properties like:</p>
+<ul>
+<li><a href="/en-US/docs/Web/CSS/padding"><code>padding</code></a>: The space around the content. In the previous example, it is the space around the paragraph text.</li>
+<li><a href="/en-US/docs/Web/CSS/border"><code>border</code></a>: The solid line just outside the padding.</li>
+<li><a href="/en-US/docs/Web/CSS/margin"><code>margin</code></a>: The space outside the border.</li>
+</ul>
+<p>In this section, we also use the following properties, some of which you've seen before:</p>
+<ul>
+<li><a href="/en-US/docs/Web/CSS/width"><code>width</code></a>: The width of an element.</li>
+<li><a href="/en-US/docs/Web/CSS/background-color"><code>background-color</code></a>: The color behind an element's content and padding.</li>
+<li><a href="/en-US/docs/Web/CSS/color"><code>color</code></a>: The color of an element's content (usually text).</li>
+<li><a href="/en-US/docs/Web/CSS/text-shadow"><code>text-shadow</code></a>: A drop shadow on the text inside an element.</li>
+<li><a href="/en-US/docs/Web/CSS/display"><code>display</code></a>: The display mode of an element (which basically refers to how it appears or is laid out on the web page).</li>
+</ul>
+<p>In each of the sections that follow:</p>
+<ol>
+<li>Add the provided CSS code to the bottom of your <code>style.css</code> file.</li>
+<li>Save the file and refresh your browser to see how the CSS has affected the HTML rendering.</li>
+<li>Read the provided explanation to help you understand how the CSS works.</li>
+<li>If you are feeling adventurous, experiment with changing the property values to further customize your page.</li>
+</ol></div></section><section aria-labelledby="changing_the_page_color"><h2 id="changing_the_page_color"><a href="#changing_the_page_color">Changing the page color</a></h2><div class="section-content"><p>Add the following:</p>
+<div class="code-example"><div class="example-header"><span class="language-name">css</span></div><pre class="brush: css notranslate"><code>html {
+  background-color: #00539f;
+}
+</code></pre></div>
+<p>This rule sets a background color for the entire page. Change the color code to the color you chose in <a href="/en-US/docs/Learn_web_development/Getting_started/Your_first_website/What_will_your_website_look_like#choosing_a_theme_color">What will your website look like?</a>.</p></div></section><section aria-labelledby="styling_the_body"><h2 id="styling_the_body"><a href="#styling_the_body">Styling the body</a></h2><div class="section-content"><p>Next, add this rule:</p>
+<div class="code-example"><div class="example-header"><span class="language-name">css</span></div><pre class="brush: css notranslate"><code>body {
+  width: 600px;
+  margin: 0 auto;
+  background-color: #ff9500;
+  padding: 0 20px 20px 20px;
+  border: 5px solid black;
+}
+</code></pre></div>
+<p>The above code sets new values for several properties of the <a href="/en-US/docs/Web/HTML/Reference/Elements/body"><code>&lt;body&gt;</code></a> element. Let's go through these line-by-line:</p>
+<ul>
+<li><code>width: 600px;</code>: This forces the body to always be 600 pixels wide.</li>
+<li><code>margin: 0 auto;</code>: When you set two values on a property like <code>margin</code> or <code>padding</code>, the first value affects the element's top <em>and</em> bottom side (setting it to <code>0</code> in this case); the second value affects the left <em>and</em> right side. <code>auto</code> is a special value that divides the available horizontal space evenly between left and right.</li>
+<li><code>background-color: #FF9500;</code>: This sets the element's background color. Our project uses a reddish orange for the <code>&lt;body&gt;</code> background color to contrast with the dark blue used for the <a href="/en-US/docs/Web/HTML/Reference/Elements/html"><code>&lt;html&gt;</code></a> element.</li>
+<li><code>padding: 0 20px 20px 20px;</code>: This sets four values for padding. The goal is to put some space around the content. In this example, there is no padding on the top of the body, and 20 pixels on the right, bottom, and left. The values set top, right, bottom, and left padding, in that order.</li>
+<li><code>border: 5px solid black;</code>: This sets values for the width, style, and color of the border. In this case, it's a 5-pixel-wide solid black border around all sides of the body.</li>
+</ul></div></section><section aria-labelledby="positioning_and_styling_the_main_page_title"><h2 id="positioning_and_styling_the_main_page_title"><a href="#positioning_and_styling_the_main_page_title">Positioning and styling the main page title</a></h2><div class="section-content"><p>Now add this:</p>
+<div class="code-example"><div class="example-header"><span class="language-name">css</span></div><pre class="brush: css notranslate"><code>h1 {
+  margin: 0;
+  padding: 20px 0;
+  color: #00539f;
+  text-shadow: 3px 3px 1px black;
+}
+</code></pre></div>
+<p>You may have noticed a horrible gap at the top of the body. That happens because browsers apply default styling to the <code>&lt;h1&gt;</code> element. That might seem like a bad idea, but the intent is to provide basic readability for unstyled pages. To eliminate the gap, we overwrite the browser's default styling with the setting <code>margin: 0;</code>.</p>
+<p>Next, we set the heading's top and bottom padding to 20 pixels, and set the heading text to be the same color as the HTML background color.</p>
+<p>Finally, <code>text-shadow</code> applies a shadow to the text content of the element:</p>
+<ul>
+<li>The first pixel value sets the <strong>horizontal offset</strong> of the shadow from the text: how far it moves across.</li>
+<li>The second pixel value sets the <strong>vertical offset</strong> of the shadow from the text: how far it moves down.</li>
+<li>The third pixel value sets the <strong>blur radius</strong> of the shadow. A larger value produces a more fuzzy-looking shadow.</li>
+<li>The fourth value sets the base color of the shadow.</li>
+</ul></div></section><section aria-labelledby="centering_the_image"><h2 id="centering_the_image"><a href="#centering_the_image">Centering the image</a></h2><div class="section-content"><p>Finally, insert this rule:</p>
+<div class="code-example"><div class="example-header"><span class="language-name">css</span></div><pre class="brush: css notranslate"><code>img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+</code></pre></div>
+<p>Next, we center the image to make it look better. We can use the same <code>margin: 0 auto</code> trick as we did for the body, but there are differences that require an additional setting to make the CSS work.</p>
+<p>The <a href="/en-US/docs/Web/HTML/Reference/Elements/body"><code>&lt;body&gt;</code></a> element is a <strong>block</strong> element, meaning it takes up space on the page and can accept margin, padding, and other box properties. <a href="/en-US/docs/Web/HTML/Reference/Elements/img"><code>&lt;img&gt;</code></a> (image) elements, on the other hand, are <strong>inline</strong> elements: by default, they don't accept margin values in the same way block elements do. For the auto-margin trick to work on this image, we must give it block-level behavior by using <code>display: block;</code>.</p>
+<p>Finally, we set the <a href="/en-US/docs/Web/CSS/max-width"><code>max-width</code></a> property to <code>100%</code> to ensure that if the image is larger than the <code>width</code> set on the body (600 pixels), it will be constrained to <code>600px</code> and won't stretch wider.</p>
+<div class="notecard note">
+<p><strong>Note:</strong>
+Don't be too concerned if you don't completely understand <code>display: block;</code> and the differences between a block element and an inline element, or <code>max-width: 100%;</code>. They will make more sense as you continue your study of CSS.</p>
+</div></div></section><section aria-labelledby="conclusion"><h2 id="conclusion"><a href="#conclusion">Conclusion</a></h2><div class="section-content"><p>If you followed all the instructions in this article, you should have a page that looks similar to this one:</p>
+<p><img src="/en-US/docs/Learn_web_development/Getting_started/Your_first_website/Styling_the_content/website-screenshot-final.png" alt="A Mozilla logo, centered, and a header and paragraphs. It now looks nicely styled, with a blue background for the whole page and orange background for the centered main content strip." width="940" height="1084" loading="lazy"></p>
+<p>You can <a href="https://mdn.github.io/beginner-html-site-styled/" class="external" target="_blank">view our version here</a>. If you get stuck, you can always compare your work with our <a href="https://github.com/mdn/beginner-html-site-styled/blob/gh-pages/styles/style.css" class="external" target="_blank">finished example code on GitHub</a>.</p>
+<p>In this article, we've only scratched the surface of CSS. You'll learn a lot more in our <a href="/en-US/docs/Learn_web_development/Core/Styling_basics">CSS styling basics</a> Core module later in the course.</p></div></section><section aria-labelledby="see_also"><h2 id="see_also"><a href="#see_also">See also</a></h2><div class="section-content"><dl>
+<dt id="learn_html_and_css"><a href="https://scrimba.com/learn-html-and-css-c0p?via=mdn" class="external" target="_blank">Learn HTML and CSS</a>, Scrimba <sup><a href="/en-US/docs/MDN/Writing_guidelines/Learning_content#partner_links_and_embeds"><em>MDN learning partner</em></a></sup></dt>
+<dd>
+<p><a href="https://scrimba.com?via=mdn" class="external" target="_blank">Scrimba's</a> <em>Learn HTML and CSS</em> course teaches you HTML and CSS through building and deploying five awesome projects, with fun interactive lessons and challenges taught by knowledgeable teachers.</p>
+</dd>
+</dl>
+<ul class="prev-next"><li class="prev"><a class="button secondary" href="/en-US/docs/Learn_web_development/Getting_started/Your_first_website/Creating_the_content"><span class="button-wrap"> Previous </span></a></li><li class="menu"><a class="button secondary" href="/en-US/docs/Learn_web_development/Getting_started/Your_first_website"><span class="button-wrap"> Overview: Your first website</span></a></li><li class="next"><a class="button secondary" href="/en-US/docs/Learn_web_development/Getting_started/Your_first_website/Adding_interactivity"><span class="button-wrap"> Next  </span></a></li></ul></div></section>
+</article>

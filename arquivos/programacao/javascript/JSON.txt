@@ -17,4 +17,6 @@ const listaNatal = { mike:"Livro", jason:"blusa", chelsea:"iPad" }
 console.log(JSON.stringify(listaNatal));
 console.log(JSON.stringify(listaNatal,null,2));
 
-obj = eval("(" + listaNatalString + ")");
+const listaNatalString = JSON.stringify(listaNatal)
+const obj = eval("(" + listaNatalString + ")");
+const obj2 = JSON.parse(listaNatalString)

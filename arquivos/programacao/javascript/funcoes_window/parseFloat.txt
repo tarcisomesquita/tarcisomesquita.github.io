@@ -1,5 +1,0 @@
-
-parseFloat(string);
-
-let valor = parseFloat('2.5');
-

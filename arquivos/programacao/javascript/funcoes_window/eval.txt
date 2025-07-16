@@ -1,4 +1,0 @@
-// precisa ter uma página carregada
-
-let minhaString = "console.log('teste')"
-eval(minhaString);

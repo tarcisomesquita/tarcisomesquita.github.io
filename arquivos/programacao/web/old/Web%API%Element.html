@@ -1,0 +1,969 @@
+<article class="main-page-content" lang="en-US">
+<header><h1>Element</h1><details class="baseline-indicator high"><summary><span class="indicator" role="img" aria-label="Baseline Check"></span><div class="status-title">Baseline<!-- --> <span class="not-bold">Widely available</span> *</div><div class="browsers"><span class="engine" title="Supported in Chrome and Edge"><span class="browser chrome supported" role="img" aria-label="Chrome check"></span><span class="browser edge supported" role="img" aria-label="Edge check"></span></span><span class="engine" title="Supported in Firefox"><span class="browser firefox supported" role="img" aria-label="Firefox check"></span></span><span class="engine" title="Supported in Safari"><span class="browser safari supported" role="img" aria-label="Safari check"></span></span></div><span class="icon icon-chevron "></span></summary><div class="extra"><p>This feature is well established and works across many devices and browser versions. It’s been available across browsers since<!-- --> <!-- -->July 2015<!-- -->.</p><p>* Some parts of this feature may have varying levels of support.</p><ul><li><a href="/en-US/docs/Glossary/Baseline/Compatibility" data-glean="baseline_link_learn_more" target="_blank" class="learn-more">Learn more</a></li><li><a href="#browser_compatibility" data-glean="baseline_link_bcd_table">See full compatibility</a></li><li><a href="https://survey.alchemer.com/s3/7634825/MDN-baseline-feedback?page=%2Fen-US%2Fdocs%2FWeb%2FAPI%2FElement&amp;level=high" data-glean="baseline_link_feedback" class="feedback-link" target="_blank" rel="noreferrer">Report feedback</a></li></ul></div></details></header><div class="section-content"><p><strong><code>Element</code></strong> is the most general base class from which all element objects (i.e., objects that represent elements) in a <a href="/en-US/docs/Web/API/Document"><code>Document</code></a> inherit. It only has methods and properties common to all kinds of elements. More specific classes inherit from <code>Element</code>.</p>
+<p>For example, the <a href="/en-US/docs/Web/API/HTMLElement"><code>HTMLElement</code></a> interface is the base interface for HTML elements. Similarly, the <a href="/en-US/docs/Web/API/SVGElement"><code>SVGElement</code></a> interface is the basis for all SVG elements, and the <a href="/en-US/docs/Web/API/MathMLElement"><code>MathMLElement</code></a> interface is the base interface for MathML elements. Most functionality is specified further down the class hierarchy.</p>
+<p>Languages outside the realm of the Web platform, like XUL through the <code>XULElement</code> interface, also implement <code>Element</code>.</p>
+<svg viewBox="-1 -1 650 42" preserveAspectRatio="xMinYMin meet"><a style="text-decoration: none;" href="/en-US/docs/Web/API/EventTarget">
+        <rect x="0" y="0" width="88" height="25" fill="#fff" stroke="#D4DDE4" stroke-width="2px"></rect>
+        <text x="44" y="16" font-size="10px" fill="#4D4E53" text-anchor="middle">
+          EventTarget
+        </text>
+      </a><line x1="88" y1="14" x2="118" y2="14" stroke="#D4DDE4"></line><polyline points="88,14 98,9 98,19 88,14" stroke="#D4DDE4" fill="#fff"></polyline><a style="text-decoration: none;" href="/en-US/docs/Web/API/Node">
+        <rect x="118" y="0" width="75" height="25" fill="#fff" stroke="#D4DDE4" stroke-width="2px"></rect>
+        <text x="155.5" y="16" font-size="10px" fill="#4D4E53" text-anchor="middle">
+          Node
+        </text>
+      </a><line x1="193" y1="14" x2="223" y2="14" stroke="#D4DDE4"></line><polyline points="193,14 203,9 203,19 193,14" stroke="#D4DDE4" fill="#fff"></polyline><a style="text-decoration: none;" href="/en-US/docs/Web/API/Element" aria-current="page">
+        <rect x="223" y="0" width="75" height="25" fill="#F4F7F8" stroke="#D4DDE4" stroke-width="2px"></rect>
+        <text x="260.5" y="16" font-size="10px" fill="#4D4E53" text-anchor="middle">
+          Element
+        </text>
+      </a></svg></div><section aria-labelledby="instance_properties"><h2 id="instance_properties"><a href="#instance_properties">Instance properties</a></h2><div class="section-content"><p><em><code>Element</code> inherits properties from its parent interface, <a href="/en-US/docs/Web/API/Node"><code>Node</code></a>, and by extension that interface's parent, <a href="/en-US/docs/Web/API/EventTarget"><code>EventTarget</code></a>.</em></p>
+<dl>
+<dt id="element.assignedslot"><a href="/en-US/docs/Web/API/Element/assignedSlot"><code>Element.assignedSlot</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns a <a href="/en-US/docs/Web/API/HTMLSlotElement"><code>HTMLSlotElement</code></a> representing the <a href="/en-US/docs/Web/HTML/Reference/Elements/slot"><code>&lt;slot&gt;</code></a> the node is inserted in.</p>
+</dd>
+<dt id="element.attributes"><a href="/en-US/docs/Web/API/Element/attributes"><code>Element.attributes</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns a <a href="/en-US/docs/Web/API/NamedNodeMap"><code>NamedNodeMap</code></a> object containing the assigned attributes of the corresponding HTML element.</p>
+</dd>
+<dt id="element.childelementcount"><a href="/en-US/docs/Web/API/Element/childElementCount"><code>Element.childElementCount</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns the number of child elements of this element.</p>
+</dd>
+<dt id="element.children"><a href="/en-US/docs/Web/API/Element/children"><code>Element.children</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns the child elements of this element.</p>
+</dd>
+<dt id="element.classlist"><a href="/en-US/docs/Web/API/Element/classList"><code>Element.classList</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns a <a href="/en-US/docs/Web/API/DOMTokenList"><code>DOMTokenList</code></a> containing the list of class attributes.</p>
+</dd>
+<dt id="element.classname"><a href="/en-US/docs/Web/API/Element/className"><code>Element.className</code></a></dt>
+<dd>
+<p>A string representing the class of the element.</p>
+</dd>
+<dt id="element.clientheight"><a href="/en-US/docs/Web/API/Element/clientHeight"><code>Element.clientHeight</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns a number representing the inner height of the element.</p>
+</dd>
+<dt id="element.clientleft"><a href="/en-US/docs/Web/API/Element/clientLeft"><code>Element.clientLeft</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns a number representing the width of the left border of the element.</p>
+</dd>
+<dt id="element.clienttop"><a href="/en-US/docs/Web/API/Element/clientTop"><code>Element.clientTop</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns a number representing the width of the top border of the element.</p>
+</dd>
+<dt id="element.clientwidth"><a href="/en-US/docs/Web/API/Element/clientWidth"><code>Element.clientWidth</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns a number representing the inner width of the element.</p>
+</dd>
+<dt id="element.currentcsszoom"><a href="/en-US/docs/Web/API/Element/currentCSSZoom"><code>Element.currentCSSZoom</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>A number indicating the effective zoom size of the element, or 1.0 if the element is not rendered.</p>
+</dd>
+<dt id="element.elementtiming"><a href="/en-US/docs/Web/API/Element/elementTiming"><code>Element.elementTiming</code></a> <abbr class="icon icon-experimental" title="Experimental. Expect behavior to change in the future.">
+<span class="visually-hidden">Experimental</span>
+</abbr></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/HTML/Reference/Attributes/elementtiming"><code>elementtiming</code></a> attribute which marks an element for observation in the <a href="/en-US/docs/Web/API/PerformanceElementTiming"><code>PerformanceElementTiming</code></a> API.</p>
+</dd>
+<dt id="element.firstelementchild"><a href="/en-US/docs/Web/API/Element/firstElementChild"><code>Element.firstElementChild</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns the first child element of this element.</p>
+</dd>
+<dt id="element.id"><a href="/en-US/docs/Web/API/Element/id"><code>Element.id</code></a></dt>
+<dd>
+<p>A string representing the id of the element.</p>
+</dd>
+<dt id="element.innerhtml"><a href="/en-US/docs/Web/API/Element/innerHTML"><code>Element.innerHTML</code></a></dt>
+<dd>
+<p>A string representing the markup of the element's content.</p>
+</dd>
+<dt id="element.lastelementchild"><a href="/en-US/docs/Web/API/Element/lastElementChild"><code>Element.lastElementChild</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns the last child element of this element.</p>
+</dd>
+<dt id="element.localname"><a href="/en-US/docs/Web/API/Element/localName"><code>Element.localName</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>A string representing the local part of the qualified name of the element.</p>
+</dd>
+<dt id="element.namespaceuri"><a href="/en-US/docs/Web/API/Element/namespaceURI"><code>Element.namespaceURI</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>The namespace URI of the element, or <code>null</code> if it is no namespace.</p>
+</dd>
+<dt id="element.nextelementsibling"><a href="/en-US/docs/Web/API/Element/nextElementSibling"><code>Element.nextElementSibling</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>An <code>Element</code>, the element immediately following the given one in the tree, or <code>null</code> if there's no sibling node.</p>
+</dd>
+<dt id="element.outerhtml"><a href="/en-US/docs/Web/API/Element/outerHTML"><code>Element.outerHTML</code></a></dt>
+<dd>
+<p>A string representing the markup of the element including its content. When used as a setter, replaces the element with nodes parsed from the given string.</p>
+</dd>
+<dt id="element.part"><a href="/en-US/docs/Web/API/Element/part"><code>Element.part</code></a></dt>
+<dd>
+<p>Represents the part identifier(s) of the element (i.e., set using the <code>part</code> attribute), returned as a <a href="/en-US/docs/Web/API/DOMTokenList"><code>DOMTokenList</code></a>.</p>
+</dd>
+<dt id="element.prefix"><a href="/en-US/docs/Web/API/Element/prefix"><code>Element.prefix</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>A string representing the namespace prefix of the element, or <code>null</code> if no prefix is specified.</p>
+</dd>
+<dt id="element.previouselementsibling"><a href="/en-US/docs/Web/API/Element/previousElementSibling"><code>Element.previousElementSibling</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>An <code>Element</code>, the element immediately preceding the given one in the tree, or <code>null</code> if there is no sibling element.</p>
+</dd>
+<dt id="element.scrollheight"><a href="/en-US/docs/Web/API/Element/scrollHeight"><code>Element.scrollHeight</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns a number representing the scroll view height of an element.</p>
+</dd>
+<dt id="element.scrollleft"><a href="/en-US/docs/Web/API/Element/scrollLeft"><code>Element.scrollLeft</code></a></dt>
+<dd>
+<p>A number representing the left scroll offset of the element.</p>
+</dd>
+<dt id="element.scrollleftmax"><a href="/en-US/docs/Web/API/Element/scrollLeftMax"><code>Element.scrollLeftMax</code></a> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns a number representing the maximum left scroll offset possible for the element.</p>
+</dd>
+<dt id="element.scrolltop"><a href="/en-US/docs/Web/API/Element/scrollTop"><code>Element.scrollTop</code></a></dt>
+<dd>
+<p>A number representing number of pixels the top of the element is scrolled vertically.</p>
+</dd>
+<dt id="element.scrolltopmax"><a href="/en-US/docs/Web/API/Element/scrollTopMax"><code>Element.scrollTopMax</code></a> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns a number representing the maximum top scroll offset possible for the element.</p>
+</dd>
+<dt id="element.scrollwidth"><a href="/en-US/docs/Web/API/Element/scrollWidth"><code>Element.scrollWidth</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns a number representing the scroll view width of the element.</p>
+</dd>
+<dt id="element.shadowroot"><a href="/en-US/docs/Web/API/Element/shadowRoot"><code>Element.shadowRoot</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns the open shadow root that is hosted by the element, or null if no open shadow root is present.</p>
+</dd>
+<dt id="element.slot"><a href="/en-US/docs/Web/API/Element/slot"><code>Element.slot</code></a></dt>
+<dd>
+<p>Returns the name of the shadow DOM slot the element is inserted in.</p>
+</dd>
+<dt id="element.tagname"><a href="/en-US/docs/Web/API/Element/tagName"><code>Element.tagName</code></a> <span class="badge inline readonly" title="This value may not be changed.">Read only</span></dt>
+<dd>
+<p>Returns a string with the name of the tag for the given element.</p>
+</dd>
+</dl></div></section><section aria-labelledby="instance_properties_included_from_aria"><h3 id="instance_properties_included_from_aria"><a href="#instance_properties_included_from_aria">Instance properties included from ARIA</a></h3><div class="section-content"><p><em>The <code>Element</code> interface also includes the following properties.</em></p>
+<dl>
+<dt id="element.ariaatomic"><a href="/en-US/docs/Web/API/Element/ariaAtomic"><code>Element.ariaAtomic</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-atomic"><code>aria-atomic</code></a> attribute, which indicates whether assistive technologies will present all, or only parts of, the changed region based on the change notifications defined by the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-relevant"><code>aria-relevant</code></a> attribute.</p>
+</dd>
+<dt id="element.ariaautocomplete"><a href="/en-US/docs/Web/API/Element/ariaAutoComplete"><code>Element.ariaAutoComplete</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-autocomplete"><code>aria-autocomplete</code></a> attribute, which indicates whether inputting text could trigger display of one or more predictions of the user's intended value for a combobox, searchbox, or textbox and specifies how predictions would be presented if they were made.</p>
+</dd>
+<dt id="element.ariabraillelabel"><a href="/en-US/docs/Web/API/Element/ariaBrailleLabel"><code>Element.ariaBrailleLabel</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-braillelabel"><code>aria-braillelabel</code></a> attribute, which defines the braille label of the element.</p>
+</dd>
+<dt id="element.ariabrailleroledescription"><a href="/en-US/docs/Web/API/Element/ariaBrailleRoleDescription"><code>Element.ariaBrailleRoleDescription</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-brailleroledescription"><code>aria-brailleroledescription</code></a> attribute, which defines the ARIA braille role description of the element.</p>
+</dd>
+<dt id="element.ariabusy"><a href="/en-US/docs/Web/API/Element/ariaBusy"><code>Element.ariaBusy</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-busy"><code>aria-busy</code></a> attribute, which indicates whether an element is being modified, as assistive technologies may want to wait until the modifications are complete before exposing them to the user.</p>
+</dd>
+<dt id="element.ariachecked"><a href="/en-US/docs/Web/API/Element/ariaChecked"><code>Element.ariaChecked</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-checked"><code>aria-checked</code></a> attribute, which indicates the current "checked" state of checkboxes, radio buttons, and other widgets that have a checked state.</p>
+</dd>
+<dt id="element.ariacolcount"><a href="/en-US/docs/Web/API/Element/ariaColCount"><code>Element.ariaColCount</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-colcount"><code>aria-colcount</code></a> attribute, which defines the number of columns in a table, grid, or treegrid.</p>
+</dd>
+<dt id="element.ariacolindex"><a href="/en-US/docs/Web/API/Element/ariaColIndex"><code>Element.ariaColIndex</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-colindex"><code>aria-colindex</code></a> attribute, which defines an element's column index or position with respect to the total number of columns within a table, grid, or treegrid.</p>
+</dd>
+<dt id="element.ariacolindextext"><a href="/en-US/docs/Web/API/Element/ariaColIndexText"><code>Element.ariaColIndexText</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-colindextext"><code>aria-colindextext</code></a> attribute, which defines a human readable text alternative of aria-colindex.</p>
+</dd>
+<dt id="element.ariacolspan"><a href="/en-US/docs/Web/API/Element/ariaColSpan"><code>Element.ariaColSpan</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-colspan"><code>aria-colspan</code></a> attribute, which defines the number of columns spanned by a cell or gridcell within a table, grid, or treegrid.</p>
+</dd>
+<dt id="element.ariacurrent"><a href="/en-US/docs/Web/API/Element/ariaCurrent"><code>Element.ariaCurrent</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-current"><code>aria-current</code></a> attribute, which indicates the element that represents the current item within a container or set of related elements.</p>
+</dd>
+<dt id="element.ariadescription"><a href="/en-US/docs/Web/API/Element/ariaDescription"><code>Element.ariaDescription</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-description"><code>aria-description</code></a> attribute, which defines a string value that describes or annotates the current element.</p>
+</dd>
+<dt id="element.ariadisabled"><a href="/en-US/docs/Web/API/Element/ariaDisabled"><code>Element.ariaDisabled</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-disabled"><code>aria-disabled</code></a> attribute, which indicates that the element is perceivable but disabled, so it is not editable or otherwise operable.</p>
+</dd>
+<dt id="element.ariaexpanded"><a href="/en-US/docs/Web/API/Element/ariaExpanded"><code>Element.ariaExpanded</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-expanded"><code>aria-expanded</code></a> attribute, which indicates whether a grouping element owned or controlled by this element is expanded or collapsed.</p>
+</dd>
+<dt id="element.ariahaspopup"><a href="/en-US/docs/Web/API/Element/ariaHasPopup"><code>Element.ariaHasPopup</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-haspopup"><code>aria-haspopup</code></a> attribute, which indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element.</p>
+</dd>
+<dt id="element.ariahidden"><a href="/en-US/docs/Web/API/Element/ariaHidden"><code>Element.ariaHidden</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-hidden"><code>aria-hidden</code></a> attribute, which indicates whether the element is exposed to an accessibility API.</p>
+</dd>
+<dt id="element.ariainvalid"><a href="/en-US/docs/Web/API/Element/ariaInvalid"><code>Element.ariaInvalid</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-invalid"><code>aria-invalid</code></a> attribute, which indicates the entered value does not conform to the format expected by the application.</p>
+</dd>
+<dt id="element.ariakeyshortcuts"><a href="/en-US/docs/Web/API/Element/ariaKeyShortcuts"><code>Element.ariaKeyShortcuts</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-keyshortcuts"><code>aria-keyshortcuts</code></a> attribute, which indicates keyboard shortcuts that an author has implemented to activate or give focus to an element.</p>
+</dd>
+<dt id="element.arialabel"><a href="/en-US/docs/Web/API/Element/ariaLabel"><code>Element.ariaLabel</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-label"><code>aria-label</code></a> attribute, which defines a string value that labels the current element.</p>
+</dd>
+<dt id="element.arialevel"><a href="/en-US/docs/Web/API/Element/ariaLevel"><code>Element.ariaLevel</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-level"><code>aria-level</code></a> attribute, which defines the hierarchical level of an element within a structure.</p>
+</dd>
+<dt id="element.arialive"><a href="/en-US/docs/Web/API/Element/ariaLive"><code>Element.ariaLive</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live"><code>aria-live</code></a> attribute, which indicates that an element will be updated, and describes the types of updates the user agents, assistive technologies, and user can expect from the live region.</p>
+</dd>
+<dt id="element.ariamodal"><a href="/en-US/docs/Web/API/Element/ariaModal"><code>Element.ariaModal</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-modal"><code>aria-modal</code></a> attribute, which indicates whether an element is modal when displayed.</p>
+</dd>
+<dt id="element.ariamultiline"><a href="/en-US/docs/Web/API/Element/ariaMultiLine"><code>Element.ariaMultiline</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-multiline"><code>aria-multiline</code></a> attribute, which indicates whether a text box accepts multiple lines of input or only a single line.</p>
+</dd>
+<dt id="element.ariamultiselectable"><a href="/en-US/docs/Web/API/Element/ariaMultiSelectable"><code>Element.ariaMultiSelectable</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-multiselectable"><code>aria-multiselectable</code></a> attribute, which indicates that the user may select more than one item from the current selectable descendants.</p>
+</dd>
+<dt id="element.ariaorientation"><a href="/en-US/docs/Web/API/Element/ariaOrientation"><code>Element.ariaOrientation</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-orientation"><code>aria-orientation</code></a> attribute, which indicates whether the element's orientation is horizontal, vertical, or unknown/ambiguous.</p>
+</dd>
+<dt id="element.ariaplaceholder"><a href="/en-US/docs/Web/API/Element/ariaPlaceholder"><code>Element.ariaPlaceholder</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-placeholder"><code>aria-placeholder</code></a> attribute, which defines a short hint intended to aid the user with data entry when the control has no value.</p>
+</dd>
+<dt id="element.ariaposinset"><a href="/en-US/docs/Web/API/Element/ariaPosInSet"><code>Element.ariaPosInSet</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-posinset"><code>aria-posinset</code></a> attribute, which defines an element's number or position in the current set of listitems or treeitems.</p>
+</dd>
+<dt id="element.ariapressed"><a href="/en-US/docs/Web/API/Element/ariaPressed"><code>Element.ariaPressed</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-pressed"><code>aria-pressed</code></a> attribute, which indicates the current "pressed" state of toggle buttons.</p>
+</dd>
+<dt id="element.ariareadonly"><a href="/en-US/docs/Web/API/Element/ariaReadOnly"><code>Element.ariaReadOnly</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-readonly"><code>aria-readonly</code></a> attribute, which indicates that the element is not editable, but is otherwise operable.</p>
+</dd>
+<dt id="element.ariarelevant"><a href="/en-US/docs/Web/API/Element/ariaRelevant"><code>Element.ariaRelevant</code></a> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-relevant"><code>aria-relevant</code></a> attribute, which indicates what notifications the user agent will trigger when the accessibility tree within a live region is modified. This is used to describe what changes in an <code>aria-live</code> region are relevant and should be announced.</p>
+</dd>
+<dt id="element.ariarequired"><a href="/en-US/docs/Web/API/Element/ariaRequired"><code>Element.ariaRequired</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-required"><code>aria-required</code></a> attribute, which indicates that user input is required on the element before a form may be submitted.</p>
+</dd>
+<dt id="element.ariaroledescription"><a href="/en-US/docs/Web/API/Element/ariaRoleDescription"><code>Element.ariaRoleDescription</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-roledescription"><code>aria-roledescription</code></a> attribute, which defines a human-readable, author-localized description for the role of an element.</p>
+</dd>
+<dt id="element.ariarowcount"><a href="/en-US/docs/Web/API/Element/ariaRowCount"><code>Element.ariaRowCount</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-rowcount"><code>aria-rowcount</code></a> attribute, which defines the total number of rows in a table, grid, or treegrid.</p>
+</dd>
+<dt id="element.ariarowindex"><a href="/en-US/docs/Web/API/Element/ariaRowIndex"><code>Element.ariaRowIndex</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-rowindex"><code>aria-rowindex</code></a> attribute, which defines an element's row index or position with respect to the total number of rows within a table, grid, or treegrid.</p>
+</dd>
+<dt id="element.ariarowindextext"><a href="/en-US/docs/Web/API/Element/ariaRowIndexText"><code>Element.ariaRowIndexText</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-rowindextext"><code>aria-rowindextext</code></a> attribute, which defines a human readable text alternative of aria-rowindex.</p>
+</dd>
+<dt id="element.ariarowspan"><a href="/en-US/docs/Web/API/Element/ariaRowSpan"><code>Element.ariaRowSpan</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-rowspan"><code>aria-rowspan</code></a> attribute, which defines the number of rows spanned by a cell or gridcell within a table, grid, or treegrid.</p>
+</dd>
+<dt id="element.ariaselected"><a href="/en-US/docs/Web/API/Element/ariaSelected"><code>Element.ariaSelected</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-selected"><code>aria-selected</code></a> attribute, which indicates the current "selected" state of elements that have a selected state.</p>
+</dd>
+<dt id="element.ariasetsize"><a href="/en-US/docs/Web/API/Element/ariaSetSize"><code>Element.ariaSetSize</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-setsize"><code>aria-setsize</code></a> attribute, which defines the number of items in the current set of listitems or treeitems.</p>
+</dd>
+<dt id="element.ariasort"><a href="/en-US/docs/Web/API/Element/ariaSort"><code>Element.ariaSort</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-sort"><code>aria-sort</code></a> attribute, which indicates if items in a table or grid are sorted in ascending or descending order.</p>
+</dd>
+<dt id="element.ariavaluemax"><a href="/en-US/docs/Web/API/Element/ariaValueMax"><code>Element.ariaValueMax</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-valuemax"><code>aria-valueMax</code></a> attribute, which defines the maximum allowed value for a range widget.</p>
+</dd>
+<dt id="element.ariavaluemin"><a href="/en-US/docs/Web/API/Element/ariaValueMin"><code>Element.ariaValueMin</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-valuemin"><code>aria-valueMin</code></a> attribute, which defines the minimum allowed value for a range widget.</p>
+</dd>
+<dt id="element.ariavaluenow"><a href="/en-US/docs/Web/API/Element/ariaValueNow"><code>Element.ariaValueNow</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-valuenow"><code>aria-valueNow</code></a> attribute, which defines the current value for a range widget.</p>
+</dd>
+<dt id="element.ariavaluetext"><a href="/en-US/docs/Web/API/Element/ariaValueText"><code>Element.ariaValueText</code></a></dt>
+<dd>
+<p>A string reflecting the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-valuetext"><code>aria-valuetext</code></a> attribute, which defines the human-readable text alternative of <code>aria-valuenow</code> for a range widget.</p>
+</dd>
+<dt id="element.role"><a href="/en-US/docs/Web/API/Element/role"><code>Element.role</code></a></dt>
+<dd>
+<p>A string reflecting the explicitly set <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Roles"><code>role</code></a> attribute, which provides the semantic role of the element.</p>
+</dd>
+</dl>
+<h4 id="instance_properties_reflected_from_aria_element_references">Instance properties reflected from ARIA element references</h4>
+<p>The properties reflect the elements specified by <code>id</code> reference in the corresponding attributes, but with some caveats. See <a href="/en-US/docs/Web/API/Document_Object_Model/Reflected_attributes#reflected_element_references">Reflected element references</a> in the <em>Reflected attributes</em> guide for more information.</p>
+<dl>
+<dt id="element.ariaactivedescendantelement"><a href="/en-US/docs/Web/API/Element/ariaActiveDescendantElement"><code>Element.ariaActiveDescendantElement</code></a></dt>
+<dd>
+<p>An element that represents the current active element when focus is on a <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/composite_role"><code>composite</code></a> widget, <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/combobox_role"><code>combobox</code></a>, <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/textbox_role"><code>textbox</code></a>, <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/group_role"><code>group</code></a>, or <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Roles/application_role"><code>application</code></a>.
+Reflects the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-activedescendant"><code>aria-activedescendant</code></a> attribute.</p>
+</dd>
+<dt id="element.ariacontrolselements"><a href="/en-US/docs/Web/API/Element/ariaControlsElements"><code>Element.ariaControlsElements</code></a></dt>
+<dd>
+<p>An array of elements whose contents or presence are controlled by the element it is applied to.
+Reflects the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-controls"><code>aria-controls</code></a> attribute.</p>
+</dd>
+<dt id="element.ariadescribedbyelements"><a href="/en-US/docs/Web/API/Element/ariaDescribedByElements"><code>Element.ariaDescribedByElements</code></a></dt>
+<dd>
+<p>An array of elements that contain the accessible description for the element it is applied to.
+Reflects the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-describedby"><code>aria-describedby</code></a> attribute.</p>
+</dd>
+<dt id="element.ariadetailselements"><a href="/en-US/docs/Web/API/Element/ariaDetailsElements"><code>Element.ariaDetailsElements</code></a></dt>
+<dd>
+<p>An array of elements that provide accessible details for the element it is applied to.
+Reflects the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-details"><code>aria-details</code></a> attribute.</p>
+</dd>
+<dt id="element.ariaerrormessageelements"><a href="/en-US/docs/Web/API/Element/ariaErrorMessageElements"><code>Element.ariaErrorMessageElements</code></a></dt>
+<dd>
+<p>An array of elements that provide an error message for the element it is applied to.
+Reflects the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-errormessage"><code>aria-errormessage</code></a> attribute.</p>
+</dd>
+<dt id="element.ariaflowtoelements"><a href="/en-US/docs/Web/API/Element/ariaFlowToElements"><code>Element.ariaFlowToElements</code></a></dt>
+<dd>
+<p>An array of elements that identify the next element (or elements) in an alternate reading order of content, overriding the general default reading order at the user's discretion.
+Reflects the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-flowto"><code>aria-flowto</code></a> attribute.</p>
+</dd>
+<dt id="element.arialabelledbyelements"><a href="/en-US/docs/Web/API/Element/ariaLabelledByElements"><code>Element.ariaLabelledByElements</code></a></dt>
+<dd>
+<p>An array of elements that provide the accessible name for the element it is applied to.
+Reflects the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-labelledby"><code>aria-labelledby</code></a> attribute.</p>
+</dd>
+<dt id="element.ariaownselements"><a href="/en-US/docs/Web/API/Element/ariaOwnsElements"><code>Element.ariaOwnsElements</code></a></dt>
+<dd>
+<p>An array of elements owned by the element this is applied to.
+This is used to define a visual, functional, or contextual relationship between a parent and its child elements when the DOM hierarchy cannot be used to represent the relationship.
+Reflects the <a href="/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-owns"><code>aria-owns</code></a> attribute.</p>
+</dd>
+</dl></div></section><section aria-labelledby="instance_methods"><h2 id="instance_methods"><a href="#instance_methods">Instance methods</a></h2><div class="section-content"><p><em><code>Element</code> inherits methods from its parents <a href="/en-US/docs/Web/API/Node"><code>Node</code></a>, and its own parent, <a href="/en-US/docs/Web/API/EventTarget"><code>EventTarget</code></a>.</em></p>
+<dl>
+<dt id="element.after"><a href="/en-US/docs/Web/API/Element/after"><code>Element.after()</code></a></dt>
+<dd>
+<p>Inserts a set of <a href="/en-US/docs/Web/API/Node"><code>Node</code></a> objects or strings in the children list of the <code>Element</code>'s parent, just after the <code>Element</code>.</p>
+</dd>
+<dt id="element.animate"><a href="/en-US/docs/Web/API/Element/animate"><code>Element.animate()</code></a></dt>
+<dd>
+<p>A shortcut method to create and run an animation on an element. Returns the created Animation object instance.</p>
+</dd>
+<dt id="element.append"><a href="/en-US/docs/Web/API/Element/append"><code>Element.append()</code></a></dt>
+<dd>
+<p>Inserts a set of <a href="/en-US/docs/Web/API/Node"><code>Node</code></a> objects or strings after the last child of the element.</p>
+</dd>
+<dt id="element.attachshadow"><a href="/en-US/docs/Web/API/Element/attachShadow"><code>Element.attachShadow()</code></a></dt>
+<dd>
+<p>Attaches a shadow DOM tree to the specified element and returns a reference to its <a href="/en-US/docs/Web/API/ShadowRoot"><code>ShadowRoot</code></a>.</p>
+</dd>
+<dt id="element.before"><a href="/en-US/docs/Web/API/Element/before"><code>Element.before()</code></a></dt>
+<dd>
+<p>Inserts a set of <a href="/en-US/docs/Web/API/Node"><code>Node</code></a> objects or strings in the children list of the <code>Element</code>'s parent, just before the <code>Element</code>.</p>
+</dd>
+<dt id="element.checkvisibility"><a href="/en-US/docs/Web/API/Element/checkVisibility"><code>Element.checkVisibility()</code></a></dt>
+<dd>
+<p>Returns whether an element is expected to be visible or not based on configurable checks.</p>
+</dd>
+<dt id="element.closest"><a href="/en-US/docs/Web/API/Element/closest"><code>Element.closest()</code></a></dt>
+<dd>
+<p>Returns the <code>Element</code> which is the closest ancestor of the current element (or the current element itself) which matches the selectors given in parameter.</p>
+</dd>
+<dt id="element.computedstylemap"><a href="/en-US/docs/Web/API/Element/computedStyleMap"><code>Element.computedStyleMap()</code></a></dt>
+<dd>
+<p>Returns a <a href="/en-US/docs/Web/API/StylePropertyMapReadOnly"><code>StylePropertyMapReadOnly</code></a> interface which provides a read-only representation of a CSS declaration block that is an alternative to <a href="/en-US/docs/Web/API/CSSStyleDeclaration"><code>CSSStyleDeclaration</code></a>.</p>
+</dd>
+<dt id="element.getanimations"><a href="/en-US/docs/Web/API/Element/getAnimations"><code>Element.getAnimations()</code></a></dt>
+<dd>
+<p>Returns an array of Animation objects currently active on the element.</p>
+</dd>
+<dt id="element.getattribute"><a href="/en-US/docs/Web/API/Element/getAttribute"><code>Element.getAttribute()</code></a></dt>
+<dd>
+<p>Retrieves the value of the named attribute from the current node and returns it as a string.</p>
+</dd>
+<dt id="element.getattributenames"><a href="/en-US/docs/Web/API/Element/getAttributeNames"><code>Element.getAttributeNames()</code></a></dt>
+<dd>
+<p>Returns an array of attribute names from the current element.</p>
+</dd>
+<dt id="element.getattributenode"><a href="/en-US/docs/Web/API/Element/getAttributeNode"><code>Element.getAttributeNode()</code></a></dt>
+<dd>
+<p>Retrieves the node representation of the named attribute from the current node and returns it as an <a href="/en-US/docs/Web/API/Attr"><code>Attr</code></a>.</p>
+</dd>
+<dt id="element.getattributenodens"><a href="/en-US/docs/Web/API/Element/getAttributeNodeNS"><code>Element.getAttributeNodeNS()</code></a></dt>
+<dd>
+<p>Retrieves the node representation of the attribute with the specified name and namespace, from the current node and returns it as an <a href="/en-US/docs/Web/API/Attr"><code>Attr</code></a>.</p>
+</dd>
+<dt id="element.getattributens"><a href="/en-US/docs/Web/API/Element/getAttributeNS"><code>Element.getAttributeNS()</code></a></dt>
+<dd>
+<p>Retrieves the value of the attribute with the specified namespace and name from the current node and returns it as a string.</p>
+</dd>
+<dt id="element.getboundingclientrect"><a href="/en-US/docs/Web/API/Element/getBoundingClientRect"><code>Element.getBoundingClientRect()</code></a></dt>
+<dd>
+<p>Returns the size of an element and its position relative to the viewport.</p>
+</dd>
+<dt id="element.getboxquads"><a class="page-not-created" data-href="/en-US/docs/Web/API/Element/getBoxQuads" title="The documentation about this has not yet been written; please consider contributing!"><code>Element.getBoxQuads()</code></a> <abbr class="icon icon-experimental" title="Experimental. Expect behavior to change in the future.">
+<span class="visually-hidden">Experimental</span>
+</abbr></dt>
+<dd>
+<p>Returns a list of <a href="/en-US/docs/Web/API/DOMQuad"><code>DOMQuad</code></a> objects representing the CSS fragments of the node.</p>
+</dd>
+<dt id="element.getclientrects"><a href="/en-US/docs/Web/API/Element/getClientRects"><code>Element.getClientRects()</code></a></dt>
+<dd>
+<p>Returns a collection of rectangles that indicate the bounding rectangles for each line of text in a client.</p>
+</dd>
+<dt id="element.getelementsbyclassname"><a href="/en-US/docs/Web/API/Element/getElementsByClassName"><code>Element.getElementsByClassName()</code></a></dt>
+<dd>
+<p>Returns a live <a href="/en-US/docs/Web/API/HTMLCollection"><code>HTMLCollection</code></a> that contains all descendants of the current element that possess the list of classes given in the parameter.</p>
+</dd>
+<dt id="element.getelementsbytagname"><a href="/en-US/docs/Web/API/Element/getElementsByTagName"><code>Element.getElementsByTagName()</code></a></dt>
+<dd>
+<p>Returns a live <a href="/en-US/docs/Web/API/HTMLCollection"><code>HTMLCollection</code></a> containing all descendant elements, of a particular tag name, from the current element.</p>
+</dd>
+<dt id="element.getelementsbytagnamens"><a href="/en-US/docs/Web/API/Element/getElementsByTagNameNS"><code>Element.getElementsByTagNameNS()</code></a></dt>
+<dd>
+<p>Returns a live <a href="/en-US/docs/Web/API/HTMLCollection"><code>HTMLCollection</code></a> containing all descendant elements, of a particular tag name and namespace, from the current element.</p>
+</dd>
+<dt id="element.gethtml"><a href="/en-US/docs/Web/API/Element/getHTML"><code>Element.getHTML()</code></a></dt>
+<dd>
+<p>Returns the DOM content of the element as an HTML string, optionally including any shadow DOM.</p>
+</dd>
+<dt id="element.hasattribute"><a href="/en-US/docs/Web/API/Element/hasAttribute"><code>Element.hasAttribute()</code></a></dt>
+<dd>
+<p>Returns a boolean value indicating if the element has the specified attribute or not.</p>
+</dd>
+<dt id="element.hasattributens"><a href="/en-US/docs/Web/API/Element/hasAttributeNS"><code>Element.hasAttributeNS()</code></a></dt>
+<dd>
+<p>Returns a boolean value indicating if the element has the specified attribute, in the specified namespace, or not.</p>
+</dd>
+<dt id="element.hasattributes"><a href="/en-US/docs/Web/API/Element/hasAttributes"><code>Element.hasAttributes()</code></a></dt>
+<dd>
+<p>Returns a boolean value indicating if the element has one or more HTML attributes present.</p>
+</dd>
+<dt id="element.haspointercapture"><a href="/en-US/docs/Web/API/Element/hasPointerCapture"><code>Element.hasPointerCapture()</code></a></dt>
+<dd>
+<p>Indicates whether the element on which it is invoked has pointer capture for the pointer identified by the given pointer ID.</p>
+</dd>
+<dt id="element.insertadjacentelement"><a href="/en-US/docs/Web/API/Element/insertAdjacentElement"><code>Element.insertAdjacentElement()</code></a></dt>
+<dd>
+<p>Inserts a given element node at a given position relative to the element it is invoked upon.</p>
+</dd>
+<dt id="element.insertadjacenthtml"><a href="/en-US/docs/Web/API/Element/insertAdjacentHTML"><code>Element.insertAdjacentHTML()</code></a></dt>
+<dd>
+<p>Parses the text as HTML or XML and inserts the resulting nodes into the tree in the position given.</p>
+</dd>
+<dt id="element.insertadjacenttext"><a href="/en-US/docs/Web/API/Element/insertAdjacentText"><code>Element.insertAdjacentText()</code></a></dt>
+<dd>
+<p>Inserts a given text node at a given position relative to the element it is invoked upon.</p>
+</dd>
+<dt id="element.matches"><a href="/en-US/docs/Web/API/Element/matches"><code>Element.matches()</code></a></dt>
+<dd>
+<p>Returns a boolean value indicating whether or not the element would be selected by the specified selector string.</p>
+</dd>
+<dt id="element.movebefore"><a href="/en-US/docs/Web/API/Element/moveBefore"><code>Element.moveBefore()</code></a> <abbr class="icon icon-experimental" title="Experimental. Expect behavior to change in the future.">
+<span class="visually-hidden">Experimental</span>
+</abbr></dt>
+<dd>
+<p>Moves a given <a href="/en-US/docs/Web/API/Node"><code>Node</code></a> inside the invoking node as a direct child, before a given reference node, without removing and then inserting the node.</p>
+</dd>
+<dt id="element.prepend"><a href="/en-US/docs/Web/API/Element/prepend"><code>Element.prepend()</code></a></dt>
+<dd>
+<p>Inserts a set of <a href="/en-US/docs/Web/API/Node"><code>Node</code></a> objects or strings before the first child of the element.</p>
+</dd>
+<dt id="element.queryselector"><a href="/en-US/docs/Web/API/Element/querySelector"><code>Element.querySelector()</code></a></dt>
+<dd>
+<p>Returns the first <a href="/en-US/docs/Web/API/Node"><code>Node</code></a> which matches the specified selector string relative to the element.</p>
+</dd>
+<dt id="element.queryselectorall"><a href="/en-US/docs/Web/API/Element/querySelectorAll"><code>Element.querySelectorAll()</code></a></dt>
+<dd>
+<p>Returns a <a href="/en-US/docs/Web/API/NodeList"><code>NodeList</code></a> of nodes which match the specified selector string relative to the element.</p>
+</dd>
+<dt id="element.releasepointercapture"><a href="/en-US/docs/Web/API/Element/releasePointerCapture"><code>Element.releasePointerCapture()</code></a></dt>
+<dd>
+<p>Releases (stops) pointer capture that was previously set for a specific <a href="/en-US/docs/Web/API/PointerEvent"><code>PointerEvent</code></a>.</p>
+</dd>
+<dt id="element.remove"><a href="/en-US/docs/Web/API/Element/remove"><code>Element.remove()</code></a></dt>
+<dd>
+<p>Removes the element from the children list of its parent.</p>
+</dd>
+<dt id="element.removeattribute"><a href="/en-US/docs/Web/API/Element/removeAttribute"><code>Element.removeAttribute()</code></a></dt>
+<dd>
+<p>Removes the named attribute from the current node.</p>
+</dd>
+<dt id="element.removeattributenode"><a href="/en-US/docs/Web/API/Element/removeAttributeNode"><code>Element.removeAttributeNode()</code></a></dt>
+<dd>
+<p>Removes the node representation of the named attribute from the current node.</p>
+</dd>
+<dt id="element.removeattributens"><a href="/en-US/docs/Web/API/Element/removeAttributeNS"><code>Element.removeAttributeNS()</code></a></dt>
+<dd>
+<p>Removes the attribute with the specified name and namespace, from the current node.</p>
+</dd>
+<dt id="element.replacechildren"><a href="/en-US/docs/Web/API/Element/replaceChildren"><code>Element.replaceChildren()</code></a></dt>
+<dd>
+<p>Replaces the existing children of a <a href="/en-US/docs/Web/API/Node"><code>Node</code></a> with a specified new set of children.</p>
+</dd>
+<dt id="element.replacewith"><a href="/en-US/docs/Web/API/Element/replaceWith"><code>Element.replaceWith()</code></a></dt>
+<dd>
+<p>Replaces the element in the children list of its parent with a set of <a href="/en-US/docs/Web/API/Node"><code>Node</code></a> objects or strings.</p>
+</dd>
+<dt id="element.requestfullscreen"><a href="/en-US/docs/Web/API/Element/requestFullscreen"><code>Element.requestFullscreen()</code></a></dt>
+<dd>
+<p>Asynchronously asks the browser to make the element fullscreen.</p>
+</dd>
+<dt id="element.requestpointerlock"><a href="/en-US/docs/Web/API/Element/requestPointerLock"><code>Element.requestPointerLock()</code></a></dt>
+<dd>
+<p>Allows to asynchronously ask for the pointer to be locked on the given element.</p>
+</dd>
+<dt id="element.scroll"><a href="/en-US/docs/Web/API/Element/scroll"><code>Element.scroll()</code></a></dt>
+<dd>
+<p>Scrolls to a particular set of coordinates inside a given element.</p>
+</dd>
+<dt id="element.scrollby"><a href="/en-US/docs/Web/API/Element/scrollBy"><code>Element.scrollBy()</code></a></dt>
+<dd>
+<p>Scrolls an element by the given amount.</p>
+</dd>
+<dt id="element.scrollintoview"><a href="/en-US/docs/Web/API/Element/scrollIntoView"><code>Element.scrollIntoView()</code></a></dt>
+<dd>
+<p>Scrolls the page until the element gets into the view.</p>
+</dd>
+<dt id="element.scrollintoviewifneeded"><a href="/en-US/docs/Web/API/Element/scrollIntoViewIfNeeded"><code>Element.scrollIntoViewIfNeeded()</code></a> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr></dt>
+<dd>
+<p>Scrolls the current element into the visible area of the browser window if it's not already within the visible area of the browser window. <strong>Use the standard <a href="/en-US/docs/Web/API/Element/scrollIntoView"><code>Element.scrollIntoView()</code></a> instead.</strong></p>
+</dd>
+<dt id="element.scrollto"><a href="/en-US/docs/Web/API/Element/scrollTo"><code>Element.scrollTo()</code></a></dt>
+<dd>
+<p>Scrolls to a particular set of coordinates inside a given element.</p>
+</dd>
+<dt id="element.setattribute"><a href="/en-US/docs/Web/API/Element/setAttribute"><code>Element.setAttribute()</code></a></dt>
+<dd>
+<p>Sets the value of a named attribute of the current node.</p>
+</dd>
+<dt id="element.setattributenode"><a href="/en-US/docs/Web/API/Element/setAttributeNode"><code>Element.setAttributeNode()</code></a></dt>
+<dd>
+<p>Sets the node representation of the named attribute from the current node.</p>
+</dd>
+<dt id="element.setattributenodens"><a href="/en-US/docs/Web/API/Element/setAttributeNodeNS"><code>Element.setAttributeNodeNS()</code></a></dt>
+<dd>
+<p>Sets the node representation of the attribute with the specified name and namespace, from the current node.</p>
+</dd>
+<dt id="element.setattributens"><a href="/en-US/docs/Web/API/Element/setAttributeNS"><code>Element.setAttributeNS()</code></a></dt>
+<dd>
+<p>Sets the value of the attribute with the specified name and namespace, from the current node.</p>
+</dd>
+<dt id="element.setcapture"><a href="/en-US/docs/Web/API/Element/setCapture"><code>Element.setCapture()</code></a> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr> <abbr class="icon icon-deprecated" title="Deprecated. Not for use in new websites.">
+<span class="visually-hidden">Deprecated</span>
+</abbr></dt>
+<dd>
+<p>Sets up mouse event capture, redirecting all mouse events to this element.</p>
+</dd>
+<dt id="element.sethtml"><a href="/en-US/docs/Web/API/Element/setHTML"><code>Element.setHTML()</code></a> <span class="badge inline secure" title="This feature is available only in secure contexts (HTTPS)">Secure context</span> <abbr class="icon icon-experimental" title="Experimental. Expect behavior to change in the future.">
+<span class="visually-hidden">Experimental</span>
+</abbr></dt>
+<dd>
+<p>Parses and <a href="/en-US/docs/Web/API/HTML_Sanitizer_API">sanitizes</a> a string of HTML into a document fragment, which then replaces the element's original subtree in the DOM.</p>
+</dd>
+<dt id="element.sethtmlunsafe"><a href="/en-US/docs/Web/API/Element/setHTMLUnsafe"><code>Element.setHTMLUnsafe()</code></a></dt>
+<dd>
+<p>Parses a string of HTML into a document fragment, without sanitization, which then replaces the element's original subtree in the DOM. The HTML string may include declarative shadow roots, which would be parsed as template elements if the HTML was set using <a href="/en-US/docs/Web/API/Element/innerHTML"><code>Element.innerHTML</code></a>.</p>
+</dd>
+<dt id="element.setpointercapture"><a href="/en-US/docs/Web/API/Element/setPointerCapture"><code>Element.setPointerCapture()</code></a></dt>
+<dd>
+<p>Designates a specific element as the capture target of future <a href="/en-US/docs/Web/API/Pointer_events">pointer events</a>.</p>
+</dd>
+<dt id="element.toggleattribute"><a href="/en-US/docs/Web/API/Element/toggleAttribute"><code>Element.toggleAttribute()</code></a></dt>
+<dd>
+<p>Toggles a boolean attribute, removing it if it is present and adding it if it is not present, on the specified element.</p>
+</dd>
+</dl></div></section><section aria-labelledby="events"><h2 id="events"><a href="#events">Events</a></h2><div class="section-content"><p>Listen to these events using <code>addEventListener()</code> or by assigning an event listener to the <code>oneventname</code> property of this interface.</p>
+<dl>
+<dt id="afterscriptexecute"><a href="/en-US/docs/Web/API/Element/afterscriptexecute_event" title="afterscriptexecute"><code>afterscriptexecute</code></a> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr> <abbr class="icon icon-deprecated" title="Deprecated. Not for use in new websites.">
+<span class="visually-hidden">Deprecated</span>
+</abbr></dt>
+<dd>
+<p>Fired when a script has been executed.</p>
+</dd>
+<dt id="beforeinput"><a href="/en-US/docs/Web/API/Element/beforeinput_event" title="beforeinput"><code>beforeinput</code></a></dt>
+<dd>
+<p>Fired when the value of an input element is about to be modified.</p>
+</dd>
+<dt id="beforematch"><a href="/en-US/docs/Web/API/Element/beforematch_event" title="beforematch"><code>beforematch</code></a></dt>
+<dd>
+<p>Fires on an element that is in the <a href="/en-US/docs/Web/HTML/Reference/Global_attributes/hidden"><em>hidden until found</em></a> state, when the browser is about to reveal its content because the user has found the content through the "find in page" feature or through fragment navigation.</p>
+</dd>
+<dt id="beforescriptexecute"><a href="/en-US/docs/Web/API/Element/beforescriptexecute_event" title="beforescriptexecute"><code>beforescriptexecute</code></a> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr> <abbr class="icon icon-deprecated" title="Deprecated. Not for use in new websites.">
+<span class="visually-hidden">Deprecated</span>
+</abbr></dt>
+<dd>
+<p>Fired when a script is about to be executed.</p>
+</dd>
+<dt id="beforexrselect"><a href="/en-US/docs/Web/API/Element/beforexrselect_event" title="beforexrselect"><code>beforexrselect</code></a> <abbr class="icon icon-experimental" title="Experimental. Expect behavior to change in the future.">
+<span class="visually-hidden">Experimental</span>
+</abbr></dt>
+<dd>
+<p>Fired before WebXR select events (<a href="/en-US/docs/Web/API/XRSession/select_event" title="select"><code>select</code></a>, <a href="/en-US/docs/Web/API/XRSession/selectstart_event" title="selectstart"><code>selectstart</code></a>, <a href="/en-US/docs/Web/API/XRSession/selectend_event" title="selectend"><code>selectend</code></a>) are dispatched.</p>
+</dd>
+<dt id="contentvisibilityautostatechange"><a href="/en-US/docs/Web/API/Element/contentvisibilityautostatechange_event" title="contentvisibilityautostatechange"><code>contentvisibilityautostatechange</code></a></dt>
+<dd>
+<p>Fires on any element with <a href="/en-US/docs/Web/CSS/content-visibility"><code>content-visibility: auto</code></a> set on it when it starts or stops being <a href="/en-US/docs/Web/CSS/CSS_containment/Using_CSS_containment#relevant_to_the_user">relevant to the user</a> and <a href="/en-US/docs/Web/CSS/CSS_containment/Using_CSS_containment#skips_its_contents">skipping its contents</a>.</p>
+</dd>
+<dt id="input"><a href="/en-US/docs/Web/API/Element/input_event" title="input"><code>input</code></a></dt>
+<dd>
+<p>Fires when an element's value is changed as a direct result of a user action.</p>
+</dd>
+<dt id="securitypolicyviolation"><a href="/en-US/docs/Web/API/Element/securitypolicyviolation_event" title="securitypolicyviolation"><code>securitypolicyviolation</code></a></dt>
+<dd>
+<p>Fired when a <a href="/en-US/docs/Web/HTTP/Guides/CSP">Content Security Policy</a> is violated.</p>
+</dd>
+<dt id="wheel"><a href="/en-US/docs/Web/API/Element/wheel_event" title="wheel"><code>wheel</code></a></dt>
+<dd>
+<p>Fired when the user rotates a wheel button on a pointing device (typically a mouse).</p>
+</dd>
+</dl></div></section><section aria-labelledby="animation_events"><h3 id="animation_events"><a href="#animation_events">Animation events</a></h3><div class="section-content"><dl>
+<dt id="animationcancel"><a href="/en-US/docs/Web/API/Element/animationcancel_event" title="animationcancel"><code>animationcancel</code></a></dt>
+<dd>
+<p>Fired when an animation unexpectedly aborts.</p>
+</dd>
+<dt id="animationend"><a href="/en-US/docs/Web/API/Element/animationend_event" title="animationend"><code>animationend</code></a></dt>
+<dd>
+<p>Fired when an animation has completed normally.</p>
+</dd>
+<dt id="animationiteration"><a href="/en-US/docs/Web/API/Element/animationiteration_event" title="animationiteration"><code>animationiteration</code></a></dt>
+<dd>
+<p>Fired when an animation iteration has completed.</p>
+</dd>
+<dt id="animationstart"><a href="/en-US/docs/Web/API/Element/animationstart_event" title="animationstart"><code>animationstart</code></a></dt>
+<dd>
+<p>Fired when an animation starts.</p>
+</dd>
+</dl></div></section><section aria-labelledby="clipboard_events"><h3 id="clipboard_events"><a href="#clipboard_events">Clipboard events</a></h3><div class="section-content"><dl>
+<dt id="copy"><a href="/en-US/docs/Web/API/Element/copy_event" title="copy"><code>copy</code></a></dt>
+<dd>
+<p>Fired when the user initiates a copy action through the browser's user interface.</p>
+</dd>
+<dt id="cut"><a href="/en-US/docs/Web/API/Element/cut_event" title="cut"><code>cut</code></a></dt>
+<dd>
+<p>Fired when the user initiates a cut action through the browser's user interface.</p>
+</dd>
+<dt id="paste"><a href="/en-US/docs/Web/API/Element/paste_event" title="paste"><code>paste</code></a></dt>
+<dd>
+<p>Fired when the user initiates a paste action through the browser's user interface.</p>
+</dd>
+</dl></div></section><section aria-labelledby="composition_events"><h3 id="composition_events"><a href="#composition_events">Composition events</a></h3><div class="section-content"><dl>
+<dt id="compositionend"><a href="/en-US/docs/Web/API/Element/compositionend_event" title="compositionend"><code>compositionend</code></a></dt>
+<dd>
+<p>Fired when a text composition system such as an <a href="/en-US/docs/Glossary/Input_method_editor">input method editor</a> completes or cancels the current composition session.</p>
+</dd>
+<dt id="compositionstart"><a href="/en-US/docs/Web/API/Element/compositionstart_event" title="compositionstart"><code>compositionstart</code></a></dt>
+<dd>
+<p>Fired when a text composition system such as an <a href="/en-US/docs/Glossary/Input_method_editor">input method editor</a> starts a new composition session.</p>
+</dd>
+<dt id="compositionupdate"><a href="/en-US/docs/Web/API/Element/compositionupdate_event" title="compositionupdate"><code>compositionupdate</code></a></dt>
+<dd>
+<p>Fired when a new character is received in the context of a text composition session controlled by a text composition system such as an <a href="/en-US/docs/Glossary/Input_method_editor">input method editor</a>.</p>
+</dd>
+</dl></div></section><section aria-labelledby="focus_events"><h3 id="focus_events"><a href="#focus_events">Focus events</a></h3><div class="section-content"><dl>
+<dt id="blur"><a href="/en-US/docs/Web/API/Element/blur_event" title="blur"><code>blur</code></a></dt>
+<dd>
+<p>Fired when an element has lost focus.</p>
+</dd>
+<dt id="focus"><a href="/en-US/docs/Web/API/Element/focus_event" title="focus"><code>focus</code></a></dt>
+<dd>
+<p>Fired when an element has gained focus.</p>
+</dd>
+<dt id="focusin"><a href="/en-US/docs/Web/API/Element/focusin_event" title="focusin"><code>focusin</code></a></dt>
+<dd>
+<p>Fired when an element has gained focus, after <a href="/en-US/docs/Web/API/Element/focus_event" title="focus"><code>focus</code></a>.</p>
+</dd>
+<dt id="focusout"><a href="/en-US/docs/Web/API/Element/focusout_event" title="focusout"><code>focusout</code></a></dt>
+<dd>
+<p>Fired when an element has lost focus, after <a href="/en-US/docs/Web/API/Element/blur_event" title="blur"><code>blur</code></a>.</p>
+</dd>
+</dl></div></section><section aria-labelledby="fullscreen_events"><h3 id="fullscreen_events"><a href="#fullscreen_events">Fullscreen events</a></h3><div class="section-content"><dl>
+<dt id="fullscreenchange"><a href="/en-US/docs/Web/API/Element/fullscreenchange_event" title="fullscreenchange"><code>fullscreenchange</code></a></dt>
+<dd>
+<p>Sent to an <code>Element</code> when it transitions into or out of <a href="/en-US/docs/Web/API/Fullscreen_API/Guide">fullscreen</a> mode.</p>
+</dd>
+<dt id="fullscreenerror"><a href="/en-US/docs/Web/API/Element/fullscreenerror_event" title="fullscreenerror"><code>fullscreenerror</code></a></dt>
+<dd>
+<p>Sent to an <code>Element</code> if an error occurs while attempting to switch it into or out of <a href="/en-US/docs/Web/API/Fullscreen_API/Guide">fullscreen</a> mode.</p>
+</dd>
+</dl></div></section><section aria-labelledby="keyboard_events"><h3 id="keyboard_events"><a href="#keyboard_events">Keyboard events</a></h3><div class="section-content"><dl>
+<dt id="keydown"><a href="/en-US/docs/Web/API/Element/keydown_event" title="keydown"><code>keydown</code></a></dt>
+<dd>
+<p>Fired when a key is pressed.</p>
+</dd>
+<dt id="keypress"><a href="/en-US/docs/Web/API/Element/keypress_event" title="keypress"><code>keypress</code></a> <abbr class="icon icon-deprecated" title="Deprecated. Not for use in new websites.">
+<span class="visually-hidden">Deprecated</span>
+</abbr></dt>
+<dd>
+<p>Fired when a key that produces a character value is pressed down.</p>
+</dd>
+<dt id="keyup"><a href="/en-US/docs/Web/API/Element/keyup_event" title="keyup"><code>keyup</code></a></dt>
+<dd>
+<p>Fired when a key is released.</p>
+</dd>
+</dl></div></section><section aria-labelledby="mouse_events"><h3 id="mouse_events"><a href="#mouse_events">Mouse events</a></h3><div class="section-content"><dl>
+<dt id="auxclick"><a href="/en-US/docs/Web/API/Element/auxclick_event" title="auxclick"><code>auxclick</code></a></dt>
+<dd>
+<p>Fired when a non-primary pointing device button (e.g., any mouse button other than the left button) has been pressed and released on an element.</p>
+</dd>
+<dt id="click"><a href="/en-US/docs/Web/API/Element/click_event" title="click"><code>click</code></a></dt>
+<dd>
+<p>Fired when a pointing device button (e.g., a mouse's primary button) is pressed and released on a single element.</p>
+</dd>
+<dt id="contextmenu"><a href="/en-US/docs/Web/API/Element/contextmenu_event" title="contextmenu"><code>contextmenu</code></a></dt>
+<dd>
+<p>Fired when the user attempts to open a context menu.</p>
+</dd>
+<dt id="dblclick"><a href="/en-US/docs/Web/API/Element/dblclick_event" title="dblclick"><code>dblclick</code></a></dt>
+<dd>
+<p>Fired when a pointing device button (e.g., a mouse's primary button) is clicked twice on a single element.</p>
+</dd>
+<dt id="domactivate"><a href="/en-US/docs/Web/API/Element/DOMActivate_event" title="DOMActivate"><code>DOMActivate</code></a> <abbr class="icon icon-deprecated" title="Deprecated. Not for use in new websites.">
+<span class="visually-hidden">Deprecated</span>
+</abbr></dt>
+<dd>
+<p>Occurs when an element is activated, for instance, through a mouse click or a keypress.</p>
+</dd>
+<dt id="dommousescroll"><a href="/en-US/docs/Web/API/Element/DOMMouseScroll_event" title="DOMMouseScroll"><code>DOMMouseScroll</code></a> <abbr class="icon icon-deprecated" title="Deprecated. Not for use in new websites.">
+<span class="visually-hidden">Deprecated</span>
+</abbr> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr></dt>
+<dd>
+<p>Occurs when mouse wheel or similar device is operated and the accumulated scroll amount is over 1 line or 1 page since last event.</p>
+</dd>
+<dt id="mousedown"><a href="/en-US/docs/Web/API/Element/mousedown_event" title="mousedown"><code>mousedown</code></a></dt>
+<dd>
+<p>Fired when a pointing device button is pressed on an element.</p>
+</dd>
+<dt id="mouseenter"><a href="/en-US/docs/Web/API/Element/mouseenter_event" title="mouseenter"><code>mouseenter</code></a></dt>
+<dd>
+<p>Fired when a pointing device (usually a mouse) is moved over the element that has the listener attached.</p>
+</dd>
+<dt id="mouseleave"><a href="/en-US/docs/Web/API/Element/mouseleave_event" title="mouseleave"><code>mouseleave</code></a></dt>
+<dd>
+<p>Fired when the pointer of a pointing device (usually a mouse) is moved out of an element that has the listener attached to it.</p>
+</dd>
+<dt id="mousemove"><a href="/en-US/docs/Web/API/Element/mousemove_event" title="mousemove"><code>mousemove</code></a></dt>
+<dd>
+<p>Fired when a pointing device (usually a mouse) is moved while over an element.</p>
+</dd>
+<dt id="mouseout"><a href="/en-US/docs/Web/API/Element/mouseout_event" title="mouseout"><code>mouseout</code></a></dt>
+<dd>
+<p>Fired when a pointing device (usually a mouse) is moved off the element to which the listener is attached or off one of its children.</p>
+</dd>
+<dt id="mouseover"><a href="/en-US/docs/Web/API/Element/mouseover_event" title="mouseover"><code>mouseover</code></a></dt>
+<dd>
+<p>Fired when a pointing device is moved onto the element to which the listener is attached or onto one of its children.</p>
+</dd>
+<dt id="mouseup"><a href="/en-US/docs/Web/API/Element/mouseup_event" title="mouseup"><code>mouseup</code></a></dt>
+<dd>
+<p>Fired when a pointing device button is released on an element.</p>
+</dd>
+<dt id="mousewheel"><a href="/en-US/docs/Web/API/Element/mousewheel_event" title="mousewheel"><code>mousewheel</code></a> <abbr class="icon icon-deprecated" title="Deprecated. Not for use in new websites.">
+<span class="visually-hidden">Deprecated</span>
+</abbr> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr></dt>
+<dd>
+<p>Fired when a mouse wheel or similar device is operated.</p>
+</dd>
+<dt id="mozmousepixelscroll"><a href="/en-US/docs/Web/API/Element/MozMousePixelScroll_event" title="MozMousePixelScroll"><code>MozMousePixelScroll</code></a> <abbr class="icon icon-deprecated" title="Deprecated. Not for use in new websites.">
+<span class="visually-hidden">Deprecated</span>
+</abbr> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr></dt>
+<dd>
+<p>Fired when a mouse wheel or similar device is operated.</p>
+</dd>
+<dt id="webkitmouseforcechanged"><a href="/en-US/docs/Web/API/Element/webkitmouseforcechanged_event" title="webkitmouseforcechanged"><code>webkitmouseforcechanged</code></a> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr></dt>
+<dd>
+<p>Fired each time the amount of pressure changes on the trackpad touch screen.</p>
+</dd>
+<dt id="webkitmouseforcedown"><a href="/en-US/docs/Web/API/Element/webkitmouseforcedown_event" title="webkitmouseforcedown"><code>webkitmouseforcedown</code></a> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr></dt>
+<dd>
+<p>Fired after the mousedown event as soon as sufficient pressure has been applied to qualify as a "force click".</p>
+</dd>
+<dt id="webkitmouseforcewillbegin"><a href="/en-US/docs/Web/API/Element/webkitmouseforcewillbegin_event" title="webkitmouseforcewillbegin"><code>webkitmouseforcewillbegin</code></a> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr></dt>
+<dd>
+<p>Fired before the <a href="/en-US/docs/Web/API/Element/mousedown_event" title="mousedown"><code>mousedown</code></a> event.</p>
+</dd>
+<dt id="webkitmouseforceup"><a href="/en-US/docs/Web/API/Element/webkitmouseforceup_event" title="webkitmouseforceup"><code>webkitmouseforceup</code></a> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr></dt>
+<dd>
+<p>Fired after the <a href="/en-US/docs/Web/API/Element/webkitmouseforcedown_event" title="webkitmouseforcedown"><code>webkitmouseforcedown</code></a> event as soon as the pressure has been reduced sufficiently to end the "force click".</p>
+</dd>
+</dl></div></section><section aria-labelledby="pointer_events"><h3 id="pointer_events"><a href="#pointer_events">Pointer events</a></h3><div class="section-content"><dl>
+<dt id="gotpointercapture"><a href="/en-US/docs/Web/API/Element/gotpointercapture_event" title="gotpointercapture"><code>gotpointercapture</code></a></dt>
+<dd>
+<p>Fired when an element captures a pointer using <a href="/en-US/docs/Web/API/Element/setPointerCapture" title="setPointerCapture()"><code>setPointerCapture()</code></a>.</p>
+</dd>
+<dt id="lostpointercapture"><a href="/en-US/docs/Web/API/Element/lostpointercapture_event" title="lostpointercapture"><code>lostpointercapture</code></a></dt>
+<dd>
+<p>Fired when a <a href="/en-US/docs/Web/API/Pointer_events#pointer_capture">captured pointer</a> is released.</p>
+</dd>
+<dt id="pointercancel"><a href="/en-US/docs/Web/API/Element/pointercancel_event" title="pointercancel"><code>pointercancel</code></a></dt>
+<dd>
+<p>Fired when a pointer event is canceled.</p>
+</dd>
+<dt id="pointerdown"><a href="/en-US/docs/Web/API/Element/pointerdown_event" title="pointerdown"><code>pointerdown</code></a></dt>
+<dd>
+<p>Fired when a pointer becomes active.</p>
+</dd>
+<dt id="pointerenter"><a href="/en-US/docs/Web/API/Element/pointerenter_event" title="pointerenter"><code>pointerenter</code></a></dt>
+<dd>
+<p>Fired when a pointer is moved into the hit test boundaries of an element or one of its descendants.</p>
+</dd>
+<dt id="pointerleave"><a href="/en-US/docs/Web/API/Element/pointerleave_event" title="pointerleave"><code>pointerleave</code></a></dt>
+<dd>
+<p>Fired when a pointer is moved out of the hit test boundaries of an element.</p>
+</dd>
+<dt id="pointermove"><a href="/en-US/docs/Web/API/Element/pointermove_event" title="pointermove"><code>pointermove</code></a></dt>
+<dd>
+<p>Fired when a pointer changes coordinates.</p>
+</dd>
+<dt id="pointerout"><a href="/en-US/docs/Web/API/Element/pointerout_event" title="pointerout"><code>pointerout</code></a></dt>
+<dd>
+<p>Fired when a pointer is moved out of the <em>hit test</em> boundaries of an element (among other reasons).</p>
+</dd>
+<dt id="pointerover"><a href="/en-US/docs/Web/API/Element/pointerover_event" title="pointerover"><code>pointerover</code></a></dt>
+<dd>
+<p>Fired when a pointer is moved into an element's hit test boundaries.</p>
+</dd>
+<dt id="pointerrawupdate"><a href="/en-US/docs/Web/API/Element/pointerrawupdate_event" title="pointerrawupdate"><code>pointerrawupdate</code></a></dt>
+<dd>
+<p>Fired when a pointer changes any properties that don't fire <a href="/en-US/docs/Web/API/Element/pointerdown_event" title="pointerdown"><code>pointerdown</code></a> or <a href="/en-US/docs/Web/API/Element/pointerup_event" title="pointerup"><code>pointerup</code></a> events.</p>
+</dd>
+<dt id="pointerup"><a href="/en-US/docs/Web/API/Element/pointerup_event" title="pointerup"><code>pointerup</code></a></dt>
+<dd>
+<p>Fired when a pointer is no longer active.</p>
+</dd>
+</dl></div></section><section aria-labelledby="scroll_events"><h3 id="scroll_events"><a href="#scroll_events">Scroll events</a></h3><div class="section-content"><dl>
+<dt id="scroll"><a href="/en-US/docs/Web/API/Element/scroll_event" title="scroll"><code>scroll</code></a></dt>
+<dd>
+<p>Fired when the document view or an element has been scrolled.</p>
+</dd>
+<dt id="scrollend"><a href="/en-US/docs/Web/API/Element/scrollend_event" title="scrollend"><code>scrollend</code></a></dt>
+<dd>
+<p>Fires when the document view has completed scrolling.</p>
+</dd>
+<dt id="scrollsnapchange"><a href="/en-US/docs/Web/API/Element/scrollsnapchange_event" title="scrollsnapchange"><code>scrollsnapchange</code></a> <abbr class="icon icon-experimental" title="Experimental. Expect behavior to change in the future.">
+<span class="visually-hidden">Experimental</span>
+</abbr></dt>
+<dd>
+<p>Fired on the scroll container at the end of a scrolling operation when a new scroll snap target has been selected.</p>
+</dd>
+<dt id="scrollsnapchanging"><a href="/en-US/docs/Web/API/Element/scrollsnapchanging_event" title="scrollsnapchanging"><code>scrollsnapchanging</code></a> <abbr class="icon icon-experimental" title="Experimental. Expect behavior to change in the future.">
+<span class="visually-hidden">Experimental</span>
+</abbr></dt>
+<dd>
+<p>Fired on the scroll container when the browser determines a new scroll snap target is pending, i.e., it will be selected when the current scroll gesture ends.</p>
+</dd>
+</dl></div></section><section aria-labelledby="touch_events"><h3 id="touch_events"><a href="#touch_events">Touch events</a></h3><div class="section-content"><dl>
+<dt id="gesturechange"><a href="/en-US/docs/Web/API/Element/gesturechange_event" title="gesturechange"><code>gesturechange</code></a> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr></dt>
+<dd>
+<p>Fired when digits move during a touch gesture.</p>
+</dd>
+<dt id="gestureend"><a href="/en-US/docs/Web/API/Element/gestureend_event" title="gestureend"><code>gestureend</code></a> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr></dt>
+<dd>
+<p>Fired when there are no longer multiple fingers contacting the touch surface, thus ending the gesture.</p>
+</dd>
+<dt id="gesturestart"><a href="/en-US/docs/Web/API/Element/gesturestart_event" title="gesturestart"><code>gesturestart</code></a> <abbr class="icon icon-nonstandard" title="Non-standard. Check cross-browser support before using.">
+<span class="visually-hidden">Non-standard</span>
+</abbr></dt>
+<dd>
+<p>Fired when multiple fingers contact the touch surface, thus starting a new gesture.</p>
+</dd>
+<dt id="touchcancel"><a href="/en-US/docs/Web/API/Element/touchcancel_event" title="touchcancel"><code>touchcancel</code></a></dt>
+<dd>
+<p>Fired when one or more touch points have been disrupted in an implementation-specific manner (for example, too many touch points are created).</p>
+</dd>
+<dt id="touchend"><a href="/en-US/docs/Web/API/Element/touchend_event" title="touchend"><code>touchend</code></a></dt>
+<dd>
+<p>Fired when one or more touch points are removed from the touch surface.</p>
+</dd>
+<dt id="touchmove"><a href="/en-US/docs/Web/API/Element/touchmove_event" title="touchmove"><code>touchmove</code></a></dt>
+<dd>
+<p>Fired when one or more touch points are moved along the touch surface.</p>
+</dd>
+<dt id="touchstart"><a href="/en-US/docs/Web/API/Element/touchstart_event" title="touchstart"><code>touchstart</code></a></dt>
+<dd>
+<p>Fired when one or more touch points are placed on the touch surface.</p>
+</dd>
+</dl></div></section><section aria-labelledby="transition_events"><h3 id="transition_events"><a href="#transition_events">Transition events</a></h3><div class="section-content"><dl>
+<dt id="transitioncancel"><a href="/en-US/docs/Web/API/Element/transitioncancel_event" title="transitioncancel"><code>transitioncancel</code></a></dt>
+<dd>
+<p>An <a href="/en-US/docs/Web/API/Event"><code>Event</code></a> fired when a <a href="/en-US/docs/Web/CSS/CSS_transitions">CSS transition</a> has been cancelled.</p>
+</dd>
+<dt id="transitionend"><a href="/en-US/docs/Web/API/Element/transitionend_event" title="transitionend"><code>transitionend</code></a></dt>
+<dd>
+<p>An <a href="/en-US/docs/Web/API/Event"><code>Event</code></a> fired when a <a href="/en-US/docs/Web/CSS/CSS_transitions">CSS transition</a> has finished playing.</p>
+</dd>
+<dt id="transitionrun"><a href="/en-US/docs/Web/API/Element/transitionrun_event" title="transitionrun"><code>transitionrun</code></a></dt>
+<dd>
+<p>An <a href="/en-US/docs/Web/API/Event"><code>Event</code></a> fired when a <a href="/en-US/docs/Web/CSS/CSS_transitions">CSS transition</a> is created (i.e., when it is added to a set of running transitions), though not necessarily started.</p>
+</dd>
+<dt id="transitionstart"><a href="/en-US/docs/Web/API/Element/transitionstart_event" title="transitionstart"><code>transitionstart</code></a></dt>
+<dd>
+<p>An <a href="/en-US/docs/Web/API/Event"><code>Event</code></a> fired when a <a href="/en-US/docs/Web/CSS/CSS_transitions">CSS transition</a> has started transitioning.</p>
+</dd>
+</dl></div></section><h2 id="specifications"><a href="#specifications">Specifications</a></h2><table class="standard-table"><thead><tr><th scope="col">Specification</th></tr></thead><tbody><tr><td><a href="https://dom.spec.whatwg.org/#interface-element">DOM<!-- --> <br/><small># <!-- -->interface-element</small></a></td></tr><tr><td><a href="https://w3c.github.io/pointerevents/#extensions-to-the-element-interface">Pointer Events<!-- --> <br/><small># <!-- -->extensions-to-the-element-interface</small></a></td></tr><tr><td><a href="https://fullscreen.spec.whatwg.org/#api">Fullscreen API<!-- --> <br/><small># <!-- -->api</small></a></td></tr><tr><td><a href="https://w3c.github.io/DOM-Parsing/#extensions-to-the-element-interface">DOM Parsing and Serialization<!-- --> <br/><small># <!-- -->extensions-to-the-element-interface</small></a></td></tr><tr><td><a href="https://drafts.csswg.org/cssom-view/#extension-to-the-element-interface">CSSOM View Module<!-- --> <br/><small># <!-- -->extension-to-the-element-interface</small></a></td></tr></tbody></table><!--$--><h2 id="browser_compatibility"><a href="#browser_compatibility">Browser compatibility</a></h2><lazy-compat-table></lazy-compat-table><!--/$-->
+</article>

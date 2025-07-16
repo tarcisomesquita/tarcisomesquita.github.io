@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atendimentos</title>
+  <meta name="description" content="Tabela para registro de atendimentos em CEEJA.">
+
+<style>
+body {
+  overflow: hidden;
+  
+  font-size: 15px;
+  font-family: 'Open Sans',sans-serif;
+  
+  margin: 0px;
+}
+
+.table-container {
+  overflow-y: auto;
+  height: 624px; /* window.innerHeight */
+}
+
+table {
+  border-collapse: collapse;
+  margin: 0px; 
+}
+
+th, td {
+  border: 1px solid #000000;
+  padding: 2px;
+  height: 19px;
+}
+
+thead {
+  display: table-header-group;
+  background-color: #f2f2f2; 
+  position: sticky;
+  top: 0px;
+  z-index: 1; /* Garante que ele fique acima do conteúdo que rola */
+}
+
+th:nth-child(1), td:nth-child(1) { width:  40px; text-align: center; } /* Número da linha */
+th:nth-child(2), td:nth-child(2) { width: 140px; text-align: right;  } /* RA */
+th:nth-child(3), td:nth-child(3) { width:  60px; text-align: center; } /* Atividade */
+th:nth-child(4), td:nth-child(4) { width:  40px; text-align: center; } /* Nota */
+th:nth-child(5), td:nth-child(5) { width:  90px; text-align: center; } /* Dia */
+th:nth-child(6), td:nth-child(6) { width:  40px; text-align: center; } /* Início */
+th:nth-child(7), td:nth-child(7) { width:  40px; text-align: center; } /* Final */
+th:nth-child(8), td:nth-child(8) { width: 310px; text-align: left;   } /* Nome */
+th:nth-child(9), td:nth-child(9) { width: 460px; text-align: left;   } /* Avisos */
+</style>
+</head>
+<body>
+
+<div class="table-container">
+<table id="myFixedHeaderTable">
+<thead>
+  <tr>
+    <th></th>
+    <th>RA</th>
+    <th>Atividade</th>
+    <th>Nota</th>
+    <th>Dia</th>
+    <th>Início</th>
+    <th>Final</th>
+    <th>Nome</th>
+    <th>Avisos</th>
+  </tr>
+</thead>
+<tbody id="tbody">
+</tbody>
+</table>
+</div>
+
+    <th>RA</th>
+    <th>Atividade</th>
+    <th>Nota</th>
+    <th>Dia</th>
+    <th>Início</th>
+    <th>Final</th>
+    <th>Nome</th>
+    <th>Avisos</th>
+
+<script>
+let atendimentos = JSON.parse(localStorage.getItem('atendimentos'));
+let oldValue = '';
+
+const foco = (cell) => {
+  oldValue = cell.textContent;
+}
+
+const blur = (cell) => {
+  const rowIndex = cell.parentNode.rowIndex;
+  const colIndex = cell.cellIndex;
+  
+  atendimentos[rowIndex - 1][colIndex - 1] = cell.textContent;
+
+  if (colIndex === 1 && oldValue === '' && cell.textContent !== '') linhaNova();
+  
+  localStorage.setItem('atendimentos', JSON.stringify(atendimentos));
+  console.log(JSON.stringify(atendimentos));
+}
+
+const linhaNova = () => {
+  let linha = ["","","","","","","",""];
+  adicionarLinha((atendimentos.length + 1).toString(), linha);
+  atendimentos.push(linha);
+}
+
+const adicionarLinha = (numero, linha) => {
+  const newRow = document.createElement('tr');
+  
+  const cellLinha = document.createElement('td');
+  cellLinha.textContent = numero;
+  newRow.appendChild(cellLinha);
+  
+  for (let i = 0; i < linha.length; i++) {
+    const cell = document.createElement('td');
+    if (i !== (linha.length - 1)) cell.setAttribute('contenteditable', 'true');
+    
+    cell.textContent = linha[i];
+    cell.onfocus = () => { foco(cell) };
+    cell.onblur  = () => { blur(cell) };
+    
+    newRow.appendChild(cell);
+  }
+  
+  tbody.appendChild(newRow);
+}
+
+const listar = () => {
+  console.log(JSON.stringify(atendimentos));
+  
+  for (let i = 0; i < atendimentos.length; i++) adicionarLinha((i+1).toString(), atendimentos[i]);
+}
+
+if (atendimentos === null || atendimentos.length === 0) {
+  atendimentos = [];
+  
+  for (let i = 0; i < 5; i++) linhaNova();
+}
+else listar();
+</script>
+
+</body>
+</html>

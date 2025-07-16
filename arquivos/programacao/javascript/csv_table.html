@@ -1,3 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML5 Storage com JSON</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+
+<script>
+$(function(){
+    var operacao = "A"; //"A"=Adição; "E"=Edição
+    var indice_selecionado = -1; //Índice do item selecionado na lista
+    var tbClientes = localStorage.getItem("tbClientes");// Recupera os dados armazenados
+    tbClientes = JSON.parse(tbClientes); // Converte string para objeto
+    if(tbClientes == null) // Caso não haja conteúdo, iniciamos um vetor vazio
+    tbClientes = [];
+});
+ 
+function Adicionar(){
+    var cliente = JSON.stringify({
+        Codigo   : $("#txtCodigo").val(),
+        Nome     : $("#txtNome").val(),
+        Telefone : $("#txtTelefone").val(),
+        Email    : $("#txtEmail").val()
+    });
+    tbClientes.push(cliente);
+    localStorage.setItem("tbClientes", JSON.stringify(tbClientes));
+    alert("Registro adicionado.");
+    return true;
+}
+ 
+function Editar(){
+    tbClientes[indice_selecionado] = JSON.stringify({
+            Codigo   : $("#txtCodigo").val(),
+            Nome     : $("#txtNome").val(),
+            Telefone : $("#txtTelefone").val(),
+            Email    : $("#txtEmail").val()
+        });//Altera o item selecionado na tabela
+    localStorage.setItem("tbClientes", JSON.stringify(tbClientes));
+    alert("Informações editadas.")
+    operacao = "A"; //Volta ao padrão
+    return true;
+}
+ 
+function Excluir(){
+    tbClientes.splice(indice_selecionado, 1);
+    localStorage.setItem("tbClientes", JSON.stringify(tbClientes));
+    alert("Registro excluído.");
+}
+ 
+function Listar(){
+    $("#tblListar").html("");
+    $("#tblListar").html(
+        "<thead>"+
+        "   <tr>"+
+        "   <th></th>"+
+        "   <th>Código</th>"+
+        "   <th>Nome</th>"+
+        "   <th>Telefone</th>"+
+        "   <th>Email</th>"+
+        "   </tr>"+
+        "</thead>"+
+        "<tbody>"+
+        "</tbody>"
+        );
+    for(var i in tbClientes){
+        var cli = JSON.parse(tbClientes[i]);
+        $("#tblListar tbody").append("<tr>");
+        $("#tblListar tbody").append("<td><img src='edit.png' alt='"+i+"'
+              class='btnEditar'/><img src='delete.png' alt='"+i+"' class='btnExcluir'/></td>");
+        $("#tblListar tbody").append("<td>"+cli.Codigo+"</td>");
+        $("#tblListar tbody").append("<td>"+cli.Nome+"</td>");
+        $("#tblListar tbody").append("<td>"+cli.Telefone+"</td>");
+        $("#tblListar tbody").append("<td>"+cli.Email+"</td>");
+        $("#tblListar tbody").append("</tr>");
+    }
+}
+ 
+$("#frmCadastro").on("submit",function(){
+    if(operacao == "A")
+        return Adicionar();
+    else
+        return Editar();       
+});
+ 
+ 
+$("#tblListar").on("click", ".btnEditar", function(){
+    operacao = "E";
+    indice_selecionado = parseInt($(this).attr("alt"));
+    var cli = JSON.parse(tbClientes[indice_selecionado]);
+    $("#txtCodigo").val(cli.Codigo);
+    $("#txtNome").val(cli.Nome);
+    $("#txtTelefone").val(cli.Telefone);
+    $("#txtEmail").val(cli.Email);
+$("#txtCodigo").attr("readonly","readonly");
+    $("#txtNome").focus();
+});
+ 
+$("#tblListar").on("click", ".btnExcluir",function(){
+    indice_selecionado = parseInt($(this).attr("alt"));
+    Excluir();
+    Listar();
+});
+</script>
+
+<style>
+table {
+  margin: 0 auto;
+  text-align: center;
+  border-collapse: collapse;
+  border: 1px solid #d4d4d4;
+}
+ 
+tr:nth-child(even) {
+  background: #d4d4d4;
+}
+ 
+th, td {
+  padding: 10px 30px;
+}
+ 
+th {
+  border-bottom: 1px solid #d4d4d4;
+} 
+</style>
+
+</head>
+<body>
+    <form id="frmCadastro">
+        <ul>
+            <li>
+                <label for="txtCodigo">Código:</label>
+                <input type="text" id="txtCodigo"/>
+            </li>
+            <li>
+                <label for="txtNome">Nome:</label>
+                <input type="text" id="txtNome"/>
+            </li>
+            <li>
+                <label for="txtTelefone">Telefone:</label>
+                <input type="text" id="txtTelefone"/>
+            </li>
+            <li>
+                <label for="txtEmail">Email:</label>
+                <input type="text" id="txtEmail"/>
+            </li>
+            <li>
+                <input type="submit" value="Salvar" id="btnSalvar"/>
+            </li>
+        </ul>
+    </form>
+ 
+    <table id="tblListar">
+ 
+    </table>
+</body>
+</html>
+
+
 function successFunction(data) {
   var allRows = data.split(/\r?\n|\r/);
   var table = '<table>';
@@ -33,36 +191,6 @@ function successFunction(data) {
   $('body').append(table);
 }
 
-<style>
-table {
-  margin: 0 auto;
-  text-align: center;
-  border-collapse: collapse;
-  border: 1px solid #d4d4d4;
-}
- 
-tr:nth-child(even) {
-  background: #d4d4d4;
-}
- 
-th, td {
-  padding: 10px 30px;
-}
- 
-th {
-  border-bottom: 1px solid #d4d4d4;
-} 
-</style>
-
-
-
-
-
-
-
-
-
-parses CSV data, accounting for commas found inside quotes.
 
 // Parse a CSV row, accounting for commas inside quotes                   
 function parse(row){
@@ -290,149 +418,3 @@ Google Chrome records Web storage data in a SQLite file in the user's profile. T
       <button onclick = "remove()">Delete data </button>
    </body>
 </html>
-
-
-
-
-
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>HTML5 Storage com JSON</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
-    <script type="text/javascript" src="funcoes.js"></script>
-</head>
-<body>
-    <form id="frmCadastro">
-        <ul>
-            <li>
-                <label for="txtCodigo">Código:</label>
-                <input type="text" id="txtCodigo"/>
-            </li>
-            <li>
-                <label for="txtNome">Nome:</label>
-                <input type="text" id="txtNome"/>
-            </li>
-            <li>
-                <label for="txtTelefone">Telefone:</label>
-                <input type="text" id="txtTelefone"/>
-            </li>
-            <li>
-                <label for="txtEmail">Email:</label>
-                <input type="text" id="txtEmail"/>
-            </li>
-            <li>
-                <input type="submit" value="Salvar" id="btnSalvar"/>
-            </li>
-        </ul>
-    </form>
- 
-    <table id="tblListar">
- 
-    </table>
-</body>
-</html>
-
-funções.js
-$(function(){
-    var operacao = "A"; //"A"=Adição; "E"=Edição
-    var indice_selecionado = -1; //Índice do item selecionado na lista
-    var tbClientes = localStorage.getItem("tbClientes");// Recupera os dados armazenados
-    tbClientes = JSON.parse(tbClientes); // Converte string para objeto
-    if(tbClientes == null) // Caso não haja conteúdo, iniciamos um vetor vazio
-    tbClientes = [];
-});
- 
-function Adicionar(){
-    var cliente = JSON.stringify({
-        Codigo   : $("#txtCodigo").val(),
-        Nome     : $("#txtNome").val(),
-        Telefone : $("#txtTelefone").val(),
-        Email    : $("#txtEmail").val()
-    });
-    tbClientes.push(cliente);
-    localStorage.setItem("tbClientes", JSON.stringify(tbClientes));
-    alert("Registro adicionado.");
-    return true;
-}
- 
-function Editar(){
-    tbClientes[indice_selecionado] = JSON.stringify({
-            Codigo   : $("#txtCodigo").val(),
-            Nome     : $("#txtNome").val(),
-            Telefone : $("#txtTelefone").val(),
-            Email    : $("#txtEmail").val()
-        });//Altera o item selecionado na tabela
-    localStorage.setItem("tbClientes", JSON.stringify(tbClientes));
-    alert("Informações editadas.")
-    operacao = "A"; //Volta ao padrão
-    return true;
-}
- 
-function Excluir(){
-    tbClientes.splice(indice_selecionado, 1);
-    localStorage.setItem("tbClientes", JSON.stringify(tbClientes));
-    alert("Registro excluído.");
-}
- 
-function Listar(){
-    $("#tblListar").html("");
-    $("#tblListar").html(
-        "<thead>"+
-        "   <tr>"+
-        "   <th></th>"+
-        "   <th>Código</th>"+
-        "   <th>Nome</th>"+
-        "   <th>Telefone</th>"+
-        "   <th>Email</th>"+
-        "   </tr>"+
-        "</thead>"+
-        "<tbody>"+
-        "</tbody>"
-        );
-    for(var i in tbClientes){
-        var cli = JSON.parse(tbClientes[i]);
-        $("#tblListar tbody").append("<tr>");
-        $("#tblListar tbody").append("<td><img src='edit.png' alt='"+i+"'
-              class='btnEditar'/><img src='delete.png' alt='"+i+"' class='btnExcluir'/></td>");
-        $("#tblListar tbody").append("<td>"+cli.Codigo+"</td>");
-        $("#tblListar tbody").append("<td>"+cli.Nome+"</td>");
-        $("#tblListar tbody").append("<td>"+cli.Telefone+"</td>");
-        $("#tblListar tbody").append("<td>"+cli.Email+"</td>");
-        $("#tblListar tbody").append("</tr>");
-    }
-}
- 
-$("#frmCadastro").on("submit",function(){
-    if(operacao == "A")
-        return Adicionar();
-    else
-        return Editar();       
-});
- 
- 
-$("#tblListar").on("click", ".btnEditar", function(){
-    operacao = "E";
-    indice_selecionado = parseInt($(this).attr("alt"));
-    var cli = JSON.parse(tbClientes[indice_selecionado]);
-    $("#txtCodigo").val(cli.Codigo);
-    $("#txtNome").val(cli.Nome);
-    $("#txtTelefone").val(cli.Telefone);
-    $("#txtEmail").val(cli.Email);
-$("#txtCodigo").attr("readonly","readonly");
-    $("#txtNome").focus();
-});
- 
-$("#tblListar").on("click", ".btnExcluir",function(){
-    indice_selecionado = parseInt($(this).attr("alt"));
-    Excluir();
-    Listar();
-});
-
-
-sso é um CRUD
-
-
-
