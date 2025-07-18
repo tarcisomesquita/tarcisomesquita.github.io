@@ -1,0 +1,88 @@
+function doSomething() {
+  const x = y + 1; // y is not defined
+}
+try {
+  doSomething();
+} catch (err) {
+  console.log(err.name);    // ReferenceError
+  console.log(err.message); // y is not defined
+  console.log(err.stack);
+}
+
+list of possible runtime errors you may encounter, along with their descriptions:
+    ReferenceError – Occurs when trying to access a variable that is not defined.
+    TypeError – Occurs when an operation is performed on a value of the wrong type.
+    RangeError – Occurs when a value is outside the allowable range.
+    SyntaxError – Occurs when there is a mistake in the syntax of the JavaScript code.
+    URIError – Occurs when an incorrect URI function is used in encoding and decoding URIs.
+    EvalError – Occurs when there is an issue with the eval() function.
+    InternalError – Occurs when the JavaScript engine runs into an internal limit (stack overflow).
+    AggregateError – Introduced in ES2021, used for handling multiple errors at once.
+    Custom Errors – These are user-defined errors, and we will learn how to create and use them soon.
+
+use try catch for parse JSON
+
+If you need any specific properties from the error object, you can use destructuring to do that.
+try {
+  JSON.parse("{ invalid json }");
+}
+catch ({name, message}) {
+  console.log("Name:", name);       // Name: SyntaxError
+  console.log("Message:", message); // Message: Expected property name or '}' in JSON at position 2 (line 1 column 3)
+}
+
+throw new Error("Something is bad!");
+
+
+rethrow
+function processData() {
+  try {
+    parseUserData();
+  } catch (err) {
+    console.error("Error in processData:", err.message);
+    throw err; // Rethrow so the outer function can handle it too
+  }
+}
+function main() {
+  try {
+    processData();
+  } catch (err) {
+    handleErrorBetter(err);
+  }
+}
+
+
+Use finally for cleanup activities, such as closing files, connections, and stopping loading spinners, etc.
+Avoid returns and throws from finally as much as possible.
+
+class MyCustomError extends Error {
+  constructor(message) {
+    super(message);                                  // Inherit message property
+    this.name = this.constructor.name;               // Optional but recommended
+    Error.captureStackTrace(this, this.constructor); // Clean stack trace
+  }
+}
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+class ValidationError extends Error {
+  constructor(field, message) {
+    super(`${field}: ${message}`);
+    this.name = "ValidationError";
+    this.field = field;
+  }
+}
+
+function validateUser(user) {
+  if (!user.email.includes("@")) {
+    throw new ValidationError("email", "Invalid email format");
+  }
+  if (!user.age || user.age < 18) {
+    throw new ValidationError("age", "User must be 18+");
+  }
+}
+
+validateUser({email:"teste@t", age:15}) 
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+

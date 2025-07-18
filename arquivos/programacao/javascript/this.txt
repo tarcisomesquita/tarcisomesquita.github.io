@@ -1,0 +1,187 @@
+
+
+const person1 = {
+    name: "Alice",
+    age: 30
+};
+
+const person2 = {
+    name: "Bob",
+    age: 25
+};
+
+function greet(greeting, punctuation) {
+    console.log(`${greeting}, I'm ${this.name} and I'm ${this.age} years old${punctuation}`);
+}
+
+// Using call() to explicitly set 'this' to person1
+greet.call(person1, "Hello", "!"); 
+// Output: "Hello, I'm Alice and I'm 30 years old!"
+
+// Using call() to explicitly set 'this' to person2
+greet.call(person2, "Hi", ".");
+// Output: "Hi, I'm Bob and I'm 25 years old."
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+The apply() method is similar to call(), but arguments are passed as an array instead of individually.
+
+const student = {
+    name: "Sarah",
+    grades: [85, 92, 78, 96]
+};
+
+function calculateAverage(subject, semester) {
+    const average = this.grades.reduce((sum, grade) => sum + grade, 0) / this.grades.length;
+    console.log(`${this.name}'s average in ${subject} for ${semester} is ${average.toFixed(1)}`);
+    return average;
+}
+
+// Using apply() with arguments as an array
+calculateAverage.apply(student, ["Mathematics", "Fall 2024"]);
+// Output: "Sarah's average in Mathematics for Fall 2024 is 87.8"
+
+// Equivalent using call()
+calculateAverage.call(student, "Mathematics", "Fall 2024");
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+bind() method creates a new function with a permanently bound this value
+
+const car = {
+    brand: "Tesla",
+    model: "Model 3",
+    year: 2023
+};
+
+function displayInfo() {
+    console.log(`This is a ${this.year} ${this.brand} ${this.model}`);
+}
+
+// Create a bound function
+const showCarInfo = displayInfo.bind(car);
+
+// Now showCarInfo will always use 'car' as 'this'
+showCarInfo(); // Output: "This is a 2023 Tesla Model 3"
+
+// Even if we try to call it differently, 'this' remains bound to 'car'
+const anotherCar = { brand: "BMW", model: "X3", year: 2022 };
+showCarInfo.call(anotherCar); // Still outputs: "This is a 2023 Tesla Model 3"
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+function multiply(a, b, c) {
+    console.log(`${this.name} calculated: ${a} × ${b} × ${c} = ${a * b * c}`);
+    return a * b * c;
+}
+
+const calculator = { name: "SuperCalc" };
+
+// Bind 'this' and the first argument
+const multiplyByTwo = multiply.bind(calculator, 2);
+
+multiplyByTwo(3, 4); // Output: "SuperCalc calculated: 2 × 3 × 4 = 24"
+multiplyByTwo(5, 6); // Output: "SuperCalc calculated: 2 × 5 × 6 = 60"
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Implicit Binding – The Natural Way
+const restaurant = {
+    name: "Mario's Pizza",
+    location: "New York",
+    chef: "Mario",
+
+    welcomeGuest: function() {
+        console.log(`Welcome to ${this.name} in ${this.location}!`);
+    },
+
+    cookPizza: function(toppings) {
+        console.log(`${this.chef} at ${this.name} is cooking pizza with ${toppings}`);
+    }
+};
+
+// Implicit binding - 'this' refers to the restaurant object
+restaurant.welcomeGuest(); // Output: "Welcome to Mario's Pizza in New York!"
+restaurant.cookPizza("pepperoni and mushrooms"); 
+// Output: "Mario at Mario's Pizza is cooking pizza with pepperoni and mushrooms"
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+const company = {
+    name: "TechCorp",
+    departments: {
+        name: "Engineering",
+        head: "Jane Smith",
+        introduce: function() {
+            console.log(`This is the ${this.name} department, led by ${this.head}`);
+        }
+    }
+};
+
+// 'this' refers to the departments object, not the company object
+company.departments.introduce(); 
+// Output: "This is the Engineering department, led by Jane Smith"
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+JavaScript determines this based on how a function is called, not where it's defined.
+When you pass a method as a callback (like to setInterval, setTimeout, or array methods), the function gets called without its original object context. 
+
+const timer = {
+    seconds: 0,
+
+    tick: function() {
+        this.seconds++;
+        console.log(`Timer: ${this.seconds} seconds`);
+    },
+
+    start: function() {
+        // This will lose context!
+        setInterval(this.tick, 1000);
+    },
+
+    startCorrect: function() {
+        // Solution 1: Using bind()
+        setInterval(this.tick.bind(this), 1000);
+
+        // Solution 2: Using arrow function
+        // setInterval(() => this.tick(), 1000);
+    }
+};
+
+timer.start(); // Will log "Timer: NaN seconds" because 'this' is lost
+timer.startCorrect(); // Will correctly increment and log the timer
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+unction Person(name, age, profession) {
+    // 'this' refers to the new object being created
+    this.name = name;
+    this.age = age;
+    this.profession = profession;
+
+    this.introduce = function() {
+        console.log(`Hi, I'm ${this.name}, a ${this.age}-year-old ${this.profession}`);
+    };
+}
+
+// Creating new instances
+const alice = new Person("Alice", 28, "developer");
+const bob = new Person("Bob", 35, "designer");
+
+alice.introduce(); // Output: "Hi, I'm Alice, a 28-year-old developer"
+bob.introduce(); // Output: "Hi, I'm Bob, a 35-year-old designer"
+
+console.log(alice.name); // Output: "Alice"
+console.log(bob.name); // Output: "Bob"
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
