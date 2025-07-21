@@ -17,33 +17,31 @@ Submit a New Add-on
 
 https://github.com/mdn/webextensions-examples/
 
-
+https://developer.chrome.com/docs/extensions/reference/
 https://developer.chrome.com/docs/extensions/get-started?hl=pt-br
-https://developer.mozilla.org/pt-BR/docs/Mozilla/Add-ons/WebExtensions
+https://extensionworkshop.com/documentation/develop/porting-a-google-chrome-extension/
 
-    Extensões do Chrome: Se você precisa acessar cookies de diferentes sites, pode criar uma extensão do Chrome que utilize a API chrome.cookies. Isso permite que você leia e manipule cookies de diferentes domínios, desde que tenha as permissões corretas.
-
-Exemplo de Uso em Extensão:
-javascript
-
+chrome.cookies permite manipular cookies de diferentes domínios
 chrome.cookies.getAll({}, function(cookies) {
     cookies.forEach(function(cookie) {
         console.log(cookie);
     });
 });
 
-The manifest.json file is the only file that every extension using WebExtension APIs must contain.
-"manifest_version", "version", and "name" are the only mandatory keys.
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json
 
-manifest.json
+manifest.json   // "manifest_version", "name" and "version" are the only mandatory keys.
+                // "default_locale" must be present if the _locales directory is present, and must be absent otherwise.
 {
   "manifest_version": 2,
   "name": "Teste",
-  "description": "É para estudar addon",
   "version": "0.0.1",
+  
+  "description": "É para estudar addon",
   "author": "Tarciso Mesquita",
+  
   "icons":{
     "128": "images/icon128.png",
     "48": "images/icon48.png"
@@ -65,12 +63,87 @@ chrome.browserAction.onClicked.addListener(function(tab) {
   chrome.tabs.create({ url: "https://tarcisomesquita.github.io" });
 });
 
-
-https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/icons
-
-if you would like to have a limited group of users test a beta version of your extension
-In the manifest.json of the beta version, specify the location of your update manifest
-https://extensionworkshop.com/documentation/manage/updating-your-extension/
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 npm install --global web-ext
 https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization
+Two underscores, followed by
+The string "MSG", followed by
+One underscore, followed by
+
+"default_locale": "en"
+
+_locales/en/messages.json
+
+let title = browser.i18n.getMessage("notificationTitle");
+
+
+console.log(browser.runtime.getManifest().version);
+
+
+"content_scripts" instructs the browser to load scripts into web pages whose URL matches a pattern.
+"content_scripts": [
+  {
+    "matches": ["*://*.mozilla.org/*"],
+    "js": ["borderify.js"]
+  }
+]
+
+"content_scripts": [
+{
+    "matches": ["*://*.mozilla.org/*"],
+    "css": ["my-css.css"],
+    "js": ["another-content-script.js", "yet-another-content-script.js"],
+    "run_at": "document_idle"
+  },
+  {
+    "matches": ["*://*.mozilla.org/*"],
+    "js": ["run-first.js"],
+    "run_at": "document_start"
+  }
+]
+
+"content_scripts": [
+  {
+    "exclude_matches": ["*://developer.mozilla.org/*"],
+    "matches": ["*://*.mozilla.org/*"],
+    "js": ["jquery.js", "borderify.js"]
+  }
+]
+
+<scheme>://<host><path>
+
+special "<all_urls>" pattern, match patterns consist of three parts: scheme, host, and path. 
+
+Invalid match patterns
+https://mozilla.org 	No path.
+https://mozilla.*.org/ 	"*" in host must be at the start.
+https://*zilla.org/ 	"*" in host must be the only character or be followed by ".".
+*://* 	Empty path: this should be *://*/*.
+
+Content script behavior is similar to scripts that are part of a website, such as those loaded using the <script> element. However, content scripts can only access page content when host permissions for the web page's origin are granted.
+
+Content scripts can can communicate with background scripts
+
+Background scripts can access all the WebExtension JavaScript APIs but can't directly access the content of web pages.
+
+host permissions are not automatically granted at install time. 
+"permissions": [
+  "webRequest"
+]
+
+
+
+"host_permissions": [
+  "*://developer.mozilla.org/*",
+  "*://*.example.org/*"
+]
+cookies, webRequest, and tabs
+permissions listed in host_permissions and content_scripts are displayed in the install prompt
+check permissions using permissions.contains
+request permissions using permissions.request
+

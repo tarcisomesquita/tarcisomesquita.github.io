@@ -1,0 +1,65 @@
+TypeScript is a superset of JavaScript, meaning that all valid JavaScript code is also valid TypeScript code.
+
+npm install -g typescript
+
+mkdir meu-projeto-ts
+cd meu-projeto-ts
+
+pm init -y # cria package.json para gerenciar dependências e scripts
+
+
+// app.ts
+function saudar(nome: string): string {
+    return `Olá, ${nome}! Bem-vindo ao TypeScript!`;
+}
+
+let usuario: string = "Mundo";
+console.log(saudar(usuario));
+
+tsc app.ts # irá gerar app.js
+
+node app.js
+
+tsc --init # cria tsconfig.json, com ele, basta o comando tsc
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
+
+"target": "es2016": Especifica a versão do ECMAScript para a qual o código será compilado.
+"outDir": "./dist": Define o diretório onde os arquivos JavaScript compilados serão salvos.
+"rootDir": "./src": Define o diretório raiz dos seus arquivos TypeScript.
+"strict": true: Habilita um conjunto rigoroso de verificações de tipo. É altamente recomendado.
+
+https://www.typescriptlang.org/docs/
+
+interface User {
+  name: string;
+  id: number;
+}
+ 
+class UserAccount {
+  name: string;
+  id: number;
+ 
+  constructor(name: string, id: number) {
+    this.name = name;
+    this.id = id;
+  }
+}
+ 
+const user: User = new UserAccount("Murphy", 1);
+
+https://www.typescriptlang.org/docs/handbook/intro.html
+document.getElementById('handbook-content').getElementsByTagName('article')[0].innerHTML 
