@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<!--
+  Session Boss
+  A Firefox extension to manage the browser tab sessions.
+  Copyright (C) 2018 William Wong.  All rights reserved.
+  williamw520@gmail.com
+-->
+
+<html style="height: 100%;">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="/pkg/spectre.css/spectre.min.css" />
+    <link rel="stylesheet" type="text/css" href="/pkg/spectre.css/spectre-icons.min.css" />
+    <link rel="stylesheet" type="text/css" href="/pkg/spectre.css/spectre-exp.min.css" />
+    <link rel="stylesheet" type="text/css" href="/pkg/jquery-ui/jquery-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="boss_popup.css"/>
+    <title>Session Boss Import Panel</title>
+    <script src="/pkg/jquery/jquery.min.js"></script>
+    <script src="/pkg/jquery-ui/jquery-ui.min.js"></script>
+    <script src="/pkg/moment/moment-with-locales.min.js"></script>
+    <script src="/pkg/spark-md5/spark-md5.min.js"></script>
+    <script src="/components/_pmc.js"></script>
+    <script src="/components/about-dlg.js"></script>
+    <script src="/components/single-input-dlg.js"></script>
+    <script src="/components/two-input-dlg.js"></script>
+    <script src="/components/confirm-dlg.js"></script>
+    <script src="/components/popup-msg.js"></script>
+    <script src="/scripts/util/logger.js"></script>
+    <script src="/scripts/util/appcfg.js"></script>
+    <script src="/scripts/util/app.js"></script>
+    <script src="/scripts/util/ringbuf.js"></script>
+    <script src="/scripts/util/dlg.js"></script>
+    <script src="/scripts/util/db.js"></script>
+    <script src="/scripts/util/container.js"></script>
+    <script src="/options/settings.js"></script>
+    <script src="/scripts/session.js"></script>
+    <script src="/scripts/sessiongroup.js"></script>
+    <script src="/scripts/sessions.js"></script>
+    <script src="/scripts/dataio.js"></script>
+  </head>
+
+  <body class="flex-flow-vertical"> <!-- let child take up all height -->
+
+    <div id="import-container" class="flex-flow-child-max" >
+
+      <div id="global-cmds" class="navbar" style="margin-left: 0.8rem">
+
+        <div class="navbar-section nowrap" style="flex-grow: 0">
+          <div class="flex-centered pr-1">
+            <div class="logo logo-sm" title="Session Boss"><img src="/icons/app-128.png"></div>
+          </div>
+          <div class="h4 px-1 pb-1 logo-app-name">Session Boss Import Panel</div>
+        </div><!-- navbar-section -->
+
+        <div id="global-cmd-pane" class="navbar-section nowrap" style="display: flex; justify-content: flex-end;">
+
+          <button class="cmd-close-ui  btn btn-lv1" title="Close the Import Panel"> <i class="icon icon-cross"></i> </button>
+          <button class="cmd-fullpage-ui  btn btn-lv1" title="Full Page UI"> <i class="icon icon-resize-horiz"></i> </button>
+          <div class="dropdown dropdown-right" style="top: .1rem; margin-left: 0.3rem;">
+            <div class="btn-group">
+              <a href="#" class="btn btn-link btn-dropdown dropdown-toggle" tabindex="0"><i class="icon icon-menu"></i></a>
+              <ul class="menu">
+                <li class="menu-item"> <a href="#" class="cmd-about"><i class="icon"></i>&nbsp; About</a> </li>
+              </ul>
+            </div>
+          </div>
+        </div><!-- navbar-section -->
+
+      </div><!-- navbar -->
+
+      <div id="main-content" class="main-content" style="padding-left: 0.6rem; padding-right: 0.6rem; ">
+
+        <div class="flex-flow-vertical">
+          <div class="import-file" style="border-bottom: .05rem solid #b7b9bd; padding: 0.4rem 0.4rem 0.2rem 0.4rem;">
+            <form>
+              <div class="form-group">
+                <label class="form-label input-label bold" for="input-value">Select Data File to Import (sessions.json, session.json, or favicon-db.json) </label>
+                <input type="file" class="import-file-input" style="margin: 0.6rem 0 0.8rem 0; padding: 0 1rem;" accept=".json" />
+              </div>
+            </form>
+            <div id="import-file-info" class="hidden" style="margin: 0.2rem 1.2rem 0 1.2rem; font-size:80%"></div>
+          </div>
+          <div id="import-parsed-pane" class="hidden" style="padding: 0.4rem 1.4rem 1.4rem 1.4rem; border-bottom: .05rem solid #b7b9bd;">
+            <div class="mt-2 mb-4">
+              <span id="session-import-cmds" class="hidden">
+                <button class="cmd-import-merge   btn btn-action btn-sm mw9 mr-3" title="Import and merge all existing sessions">Merging Import All</button>
+                <button class="cmd-import-replace btn btn-action btn-sm mw9 mr-3" title="Delete all existing sessions and import all">Replacing Import All</button>
+              </span>
+              <span id="favicon-import-cmds" class="hidden">
+                <button class="cmd-import-favicon btn btn-action btn-sm mw9 mr-3" title="Import the favicon database">Import the Favicons</button>
+              </span>
+              <span id="container-import-cmds" class="hidden">
+                <button class="cmd-import-cdef btn btn-action btn-sm mw9 mr-3" title="Create the containers from import">Re-create the Containers</button>
+              </span>
+            </div>
+            <div id="import-parsed"></div>
+          </div>
+          <div id ="import-status-pane" class="flex-flow-child-max hidden" style="padding: 0.8rem 0.4rem 2.0rem 0.4rem;">
+            <label class="bold" style="border-bottom: .05rem solid #b7b9bd;">Import Status</label>
+            <div id="import-status"></div>
+          </div>
+          
+        </div><!-- flex-flow-vertical -->
+        
+      </div><!-- main-content -->
+
+    </div><!-- import-container -->
+
+    <about-dlg></about-dlg>
+    <confirm-dlg></confirm-dlg>
+    <popup-msg></popup-msg>
+
+    <script src="boss_import.js"></script>
+  </body>
+
+</html>

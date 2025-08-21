@@ -1,0 +1,3 @@
+Apaguei alguns arquivos.
+
+Útil apenas para conhecer a estrutura de um plugin.

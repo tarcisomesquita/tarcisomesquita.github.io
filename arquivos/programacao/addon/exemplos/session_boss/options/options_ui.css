@@ -1,0 +1,51 @@
+/*
+  Session Boss
+  A Firefox extension to manage the browser tab sessions.
+  Copyright (C) 2018 William Wong.  All rights reserved.
+  williamw520@gmail.com
+*/
+
+:root {
+    --header-height:        2.2rem;
+    --footer-height:        2.2rem;
+}
+    
+
+html {
+    /* font-size controls the root em (rem) unit size.  Set this to control the size of all components. */
+    font-size:      18px;
+}
+
+.form-input-error {
+    display:        none;
+    font-size:      .7rem;
+    margin-top:     .2rem;
+}
+.is-error + .form-input-error {
+    display:        block;
+    color:          #e85600;
+}
+
+.hidden {
+    display:        none;
+}
+
+
+.dbg-border {
+    border: 1px dotted red;
+}
+.dbg-border2 {
+    border: 1px dotted blue;
+}
+.dbg-border3 {
+    border: 1px dotted orange;
+}
+.dbg-bg {
+    background: yellow;
+}
+.dbg-bg2 {
+    background: red;
+}
+.dbg-bg3 {
+    background: blue;
+}

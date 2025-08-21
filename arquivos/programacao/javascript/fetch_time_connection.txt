@@ -15,7 +15,7 @@ alert(response.headers.get('Content-Type')); // application/json; charset=utf-8
 
 // iterate over all headers
 async function teste() {
-  let response = await fetch('https://tarcisomesquita.github.io/ceejapd/index4.html');
+  let response = await fetch('https://tarcisomesquita.github.io/ceejapd/index.html');
   for (let [key, value] of response.headers) {
     console.log(`${key} = ${value}`);
   }

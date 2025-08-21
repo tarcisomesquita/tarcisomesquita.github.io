@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<!--
+  Session Boss
+  A Firefox extension to manage the browser tab sessions.
+  Copyright (C) 2018 William Wong.  All rights reserved.
+  williamw520@gmail.com
+-->
+
+<html class="hidden" style="height: 100%;">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="/pkg/spectre.css/spectre.min.css" />
+    <link rel="stylesheet" type="text/css" href="/pkg/spectre.css/spectre-icons.min.css" />
+    <link rel="stylesheet" type="text/css" href="/pkg/spectre.css/spectre-exp.min.css" />
+    <link rel="stylesheet" type="text/css" href="/pkg/jquery-ui/jquery-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="boss_popup.css"/>
+    <script src="/pkg/jquery/jquery.min.js"></script>
+    <script src="/pkg/jquery-ui/jquery-ui.min.js"></script>
+    <script src="/pkg/moment/moment-with-locales.min.js"></script>
+    <script src="/pkg/spark-md5/spark-md5.min.js"></script>
+    <script src="/components/_pmc.js"></script>
+    <script src="/components/about-dlg.js"></script>
+    <script src="/components/single-input-dlg.js"></script>
+    <script src="/components/two-input-dlg.js"></script>
+    <script src="/components/confirm-dlg.js"></script>
+    <script src="/components/popup-msg.js"></script>
+    <script src="/scripts/util/logger.js"></script>
+    <script src="/scripts/util/appcfg.js"></script>
+    <script src="/scripts/util/app.js"></script>
+    <script src="/scripts/util/ringbuf.js"></script>
+    <script src="/scripts/util/dlg.js"></script>
+    <script src="/scripts/util/db.js"></script>
+    <script src="/scripts/util/container.js"></script>
+    <script src="/options/settings.js"></script>
+    <script src="/scripts/session.js"></script>
+    <script src="/scripts/sessiongroup.js"></script>
+    <script src="/scripts/sessions.js"></script>
+    <title>Session Boss</title>
+  </head>
+
+  <body style="height: 100%;">
+
+    <div id="popup-container" class="container flex-flow-vertical"> <!-- Firefox popup has max dimension of 800x600.  Smaller to allow for borders. -->
+
+      <!--
+      Ugly hack to fill in some spaces ahead of time to force the width of the popup to the max.
+      There is no fixed width set ahead of time for responsive UI, where the outer window's width is set by the user or device.
+      When no width is set, the actual width is negotiated between the dynamic content's width and the window's width.
+      The step-wise width negotiation causes redrawing and flickering, and slows down rendering.
+      Filling spaces to the max set the content's width and stops the width negotiation, making rendering snappy.
+      -->
+      <div class="lots-of-spaces">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </div>
+      
+      <div id="global-cmds" class="navbar">
+
+        <div class="navbar-section nowrap" style="flex-grow: 0">
+          <div class="flex-centered pr-1">
+            <div class="logo logo-sm cmd-fullpage-ui" title="Session Boss"><img src="/icons/app-128.png"></div>
+          </div>
+          <div class="h4 px-1 pb-1 cmd-fullpage-ui logo-app-name">Session Boss <span class="logo-version"></span></div>
+        </div><!-- navbar-section -->
+
+        <div id="clipboard" class="navbar-section" style="display: flex; justify-content: flex-end;">
+          <div class="clipboard-msg"></div>
+        </div><!-- navbar-section -->
+
+        <div id="global-cmd-pane" class="navbar-section nowrap" style="display: flex; justify-content: flex-end;">
+
+          <div id="undo-pane" class="mx-6 mt-1">
+            <small class="text-gray" id="undo-msg"></small>
+            <button class="cmd-undo-snapshot btn btn-link btn-cmd-i badge"
+                    title="Undo the user session change.  New changes after the undo go to the end of the change log.  Undo not does not apply to backup sessions.">
+              <i class="icon icon-back"></i></button>
+            <button class="cmd-redo-snapshot btn btn-link btn-cmd-i badge"
+                    title="Redo the user session change.">
+              <i class="icon icon-forward"></i></button>
+          </div>
+
+          <button class="cmd-save-all     btn btn-lv1" title="Capture all tabs in all windows as a new session"> <i class="icon icon-people"></i> </button>
+          <button class="cmd-save-window  btn btn-lv1" title="Capture the tabs of the current window as a new sesison"> <i class="icon icon-photo"></i> </button>
+          <button class="cmd-fullpage-ui  btn btn-lv1" title="Full Page UI"> <i class="icon icon-resize-horiz"></i> </button>
+          <div class="dropdown dropdown-right" style="top: .1rem; margin-left: 0.3rem;">
+            <div class="btn-group">
+              <a class="btn btn-link btn-dropdown dropdown-toggle" tabindex="0"><i class="icon icon-menu"></i></a>
+              <ul class="menu" style="min-height:24.5rem;">
+                <li class="menu-item"> <a class="cmd-about"><i class="icon"></i>&nbsp; About</a> </li>
+                <li class="menu-item"> <a class="cmd-preferences"><i class="icon icon-edit"></i>&nbsp; Preferences ...</a> </li>
+                <li class="menu-item"> <a class="cmd-undo-snapshot badge"><i class="icon icon-back"></i>&nbsp; Undo &nbsp;</a> </li>
+                <li class="menu-item"> <a class="cmd-redo-snapshot badge"><i class="icon icon-forward"></i>&nbsp; Redo &nbsp;</a> </li>
+                <li class="menu-item"> <a class="cmd-backup-now" title="Back up the browser session as an on-change session now"><i class="icon icon-location"></i>&nbsp; Back up On-Change Now &nbsp;</a> </li>
+                <li class="menu-item"> <a class="cmd-export" title="Export sessions and others"><i class="icon icon-downward"></i>&nbsp; Export ... </a> </li>
+                <li class="menu-item"> <a class="cmd-import" title="Import sessions and others"><i class="icon icon-upward"></i>&nbsp; Import ... </a> </li>
+                <li class="divider" data-content=""></li>
+                <li class="menu-item"> <a class="cmd-del-all-user"><i class="icon icon-delete"></i>&nbsp; Delete User Sessions</a> </li>
+                <li class="menu-item"> <a class="cmd-del-all-backup"><i class="icon icon-cross"></i>&nbsp; Delete Scheduled Backups</a> </li>
+                <li class="menu-item"> <a class="cmd-del-all-onchange"><i class="icon icon-cross"></i>&nbsp; Delete On-Change Backups</a> </li>
+                <li class="menu-item"> <a class="cmd-purge-all"><i class="icon icon-cross"></i>&nbsp; Purge All History/Data</a> </li>
+                <li class="menu-item"> <a class="cmd-del-all-favicons"><i class="icon icon-cross"></i>&nbsp; Delete All Favicons</a> </li>
+                <!--
+                <li class="divider" data-content=""></li>
+                <li class="menu-item"> <a class="cmd-clear-crash"><i class="icon icon-stop"></i>&nbsp; Clear Crash State</a> </li>
+                <li class="divider" data-content=""></li>
+                -->
+                <!--
+                <li class="divider" data-content=""></li>
+                <li class="divider" data-content="Debug"></li>
+                <li class="menu-item"> <a class="dbg-log-tabs">dump tabs</a> </li>
+                -->
+                <!--
+                <li class="menu-item"> <a class="dbg-test">test</a> </li>
+                -->
+              </ul>
+            </div>
+          </div>
+        </div><!-- navbar-section -->
+
+      </div><!-- navbar -->
+
+      <div id="empty-content" class="empty hidden mb-2 flex-flow-child-max">
+        <div class="empty-icon"> <i class="icon icon-message"></i> </div>
+        <p class="empty-title h5">No session saved yet.</p>
+        <p class="empty-subtitle">Click on Save All to save a session.</p>
+      </div>
+
+      <div id="main-content" class="main-content hidden mb-2 flex-flow-child-max">
+
+        <div class="flex-flow-vertical">
+          
+          <nav class="mt-3 mb-2">
+            <ul class="tab" style="border-bottom: .05rem solid #b7b9bd;">
+              <li class="tab-item active" data-tab="all-sessions">
+                <a class="badge ptr" data-badge="0" title="All sessions">
+                  <span class="long">All Sessions</span><span class="short">All Sessions</span> </a>
+              </li>
+              
+              <li class="tab-item" data-tab="user-sessions">
+                <a class="badge ptr" data-badge="0" title="Sessions saved by user">
+                  <span class="long">User Sessions</span><span class="short">User Sessions</span> </a>
+              </li>
+              
+              <li class="tab-item" data-tab="scheduled-sessions">
+                <a class="badge ptr" data-badge="0" title="Sessions saved by the scheduled backup">
+                  <span class="long"> Scheduled Backup </span><span class="short"> Scheduled </span></a>
+              </li>
+              
+              <li class="tab-item" data-tab="onchange-sessions">
+                <a class="badge ptr" data-badge="0" title="Sessions saved on change of the tabs">
+                  <span class="long"> On-Change Backup </span><span class="short"> On-Change </span></a>
+              </li>
+            </ul>
+          </nav>
+
+          <div class="flex-flow-child-max ">
+            <div id="all-sessions"          class="sessions-tab-content columns col-gapless""></div>
+            <div id="user-sessions"         class="sessions-tab-content columns col-gapless"></div>
+            <div id="scheduled-sessions"    class="sessions-tab-content columns col-gapless"></div>
+            <div id="onchange-sessions"     class="sessions-tab-content columns col-gapless"></div>
+          </div>
+          
+        </div><!-- flex-flow-vertical -->
+        
+      </div><!-- main-content -->
+
+    </div><!-- container -->
+
+    <about-dlg></about-dlg>
+    <single-input-dlg id="set-group-dlg" title="Set Group for Session" label="Group" maxlength="20" placeholder="(max 20 characters)"></single-input-dlg>
+    <single-input-dlg id="rename-window-dlg" title="Set Window Title Preface" label="New Window Title Preface" maxlength="64" placeholder="(max 64 characters)"></single-input-dlg>
+    <two-input-dlg id="tab-edit-url-dlg" title="Edit Tab Title and URL" label1="Tab Title" label2="Tab URL" textRows1="1" textRows2="2" ></two-input-dlg>
+    <confirm-dlg></confirm-dlg>
+    <popup-msg></popup-msg>
+
+    <div id="session-name-dlg" class="modal">
+      <div class="modal-container" role="document">
+        <div class="modal-header">
+          <a href="javascript:void(0)" class="btn btn-clear float-right  modal-close" aria-label="Close"></a>
+          <div class="modal-title h5 dlg-title">Set Session Name</div>
+        </div>
+        <div class="modal-body" style="border-top:1px dotted gray; border-bottom:1px dotted gray; padding-bottom:1.8rem;">
+          <div class="content">
+            <form>
+              <div class="form-group">
+                <label class="form-label input-label" for="input-value">Session Name</label>
+                <input class="form-input input-value" type="text">
+              </div>
+              <div class="form-group" style="margin-top: 0.8rem;">
+                <div class="btn-group" >
+                  <button class="btn btn-cmd mw5 dlg-btn-datetime"  title="use the date and time to format the session name">Datetime</button>
+                  <button class="btn btn-cmd mw5 dlg-btn-title"     title="use the active window's title as the session name">Window Title</button>
+                </div>
+              </div>
+              <input class="input-context" type="hidden">
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn mw4 btn-primary modal-submit">Save</button>
+          <button class="btn mw4             modal-cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="export-dlg" class="modal">
+      <div class="modal-container" role="document">
+        <div class="modal-header">
+          <a href="javascript:void(0)" class="btn btn-clear float-right  modal-close" aria-label="Close"></a>
+          <div class="modal-title h5 dlg-title">Export Data</div>
+        </div>
+        <div class="modal-body" style="border-top:1px dotted gray; border-bottom:1px dotted gray; padding-bottom:1.8rem;">
+          <div class="content">
+            <form>
+              <div class="form-group">
+                <label class="form-label input-label bold" for="input-value">Export All Sessions:</label>
+                <label class="form-radio"> <input type="radio" name="stype" value="all-sessions"><i class="form-icon"></i> All Sessions (include all User, Scheduled, and On-Change) </label>
+              </div>
+              <div class="form-group">
+                <label class="form-label input-label bold" for="input-value">Export Sessions by Type:</label>
+                <label class="form-radio"> <input type="radio" name="stype" value="user-sessions"><i class="form-icon"></i> User Sessions </label>
+                <label class="form-radio"> <input type="radio" name="stype" value="scheduled-sessions"><i class="form-icon"></i> Scheduled Backup Sessions </label>
+                <label class="form-radio"> <input type="radio" name="stype" value="onchange-sessions"><i class="form-icon"></i> On-Change Backup Sessions </label>
+              </div>
+              <div class="form-group">
+                <label class="form-label input-label bold" for="input-value">Export Favicon Database:</label>
+                <label class="form-radio"> <input type="radio" name="stype" value="favicon-db"><i class="form-icon"></i> Favicon Database </label>
+              </div>
+              <input class="input-context" type="hidden">
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn mw4 btn-primary modal-submit">Export</button>
+          <button class="btn mw4             modal-cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="boss_popup.js"></script>
+  </body>
+
+</html>

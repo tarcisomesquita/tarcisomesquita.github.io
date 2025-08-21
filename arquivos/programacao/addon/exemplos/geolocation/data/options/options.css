@@ -1,0 +1,162 @@
+body {
+  border: 0;
+  padding: 0;
+  margin: auto;
+  font-size: 13px;
+  max-width: 1200px;
+  align-items: center;
+  font-family: system-ui, sans-serif;
+}
+
+table {
+  width: 100%;
+  color: #333;
+  margin: 0 auto;
+  font-size: 13px;
+  table-layout: fixed;
+  border-spacing: 15px;
+  font-family: system-ui, sans-serif;
+}
+
+table tr td {
+  padding: 0;
+  text-align: right;
+  vertical-align: middle;
+}
+
+input[type='number'] {
+  margin: 0;
+  padding: 0;
+  width: 250px;
+  height: 42px;
+  outline: none;
+  font-size: 14px;
+  font-weight: 600;
+  text-indent: 10px;
+  letter-spacing: 1px;
+  font-family: monospace;
+  border: solid 1px rgba(0,0,0,0.25);
+}
+
+.container {
+  border: 0;
+  padding: 0;
+  margin: auto;
+  box-sizing: border-box;
+}
+
+.title {
+  padding: 0;
+  height: 38px;
+  text-align: left;
+  text-indent: 5px;
+  line-height: 18px;
+}
+
+.interactive {
+  color: #000;
+  font-size: 14px;
+  text-align: left;
+  padding: 5px 10px;
+  line-height: 28px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  border: solid 1px rgba(0,0,0,0.25);
+  background-color: rgb(94 153 6 / 20%);
+}
+
+.interactive p {
+  margin: 0;
+  padding: 0;
+}
+
+.interactive a {
+  color: #0058ff;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: monospace;
+  transition: 300ms ease color;
+}
+
+.interactive a:hover {
+  color: #0048d1;
+}
+
+.toolbar {
+  top: 0;
+  right: 0;
+  z-index: 11;
+  width: 42px;
+  position: fixed;
+}
+
+.toolbar table {
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+.toolbar table tr td {
+  padding: 0;
+  width: 100%;
+  height: 42px;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  transition: 300ms ease all;
+  font-family: arial,sans-serif;
+}
+
+.toolbar table tr td:hover {
+  background-color: rgba(0,0,0,0.1);
+}
+
+.toolbar table tr td svg {
+  fill: #555;
+  pointer-events: none;
+  vertical-align: middle;
+}
+
+.logo {
+  width: 100%;
+  height: 128px;
+  border-bottom: solid 1px rgba(0,0,0,0.1);
+  background: url('../icons/128.png') no-repeat center center;
+  background-size: 64px;
+}
+
+@media (prefers-color-scheme: dark) {
+  html, body {
+    color: #ebebeb;
+    color-scheme: dark;
+    background-color: #1e1e1e;
+  }
+  .container,
+  .container table,
+  .container select,
+  .container input[type='text'],
+  .container input[type='button'],
+  .container input[type='number'] {
+    color: #ebebeb;
+    background-color: #1e1e1e !important;
+  }
+  .interactive {
+    color: #ebebeb;
+    border: solid 1px rgb(255 255 255 / 25%);
+  }
+  .container .note {
+    color: #c3c3c3;
+  }
+  .container select,
+  .container input[type='text'],
+  .container input[type='button'],
+  .container input[type='number'] {
+    border-color: rgb(255 255 255 / 25%);
+  }
+  .logo {
+    border-bottom-color: rgb(255 255 255 / 10%);
+  }
+  .toolbar table tr td svg {
+    fill: #ebebeb;
+  }
+}

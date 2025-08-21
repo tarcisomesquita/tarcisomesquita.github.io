@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+<!--
+  Session Boss
+  A Firefox extension to manage the browser tab sessions.
+  Copyright (C) 2018 William Wong.  All rights reserved.
+  williamw520@gmail.com
+-->
+
+<html style="height: 100%;">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="/pkg/spectre.css/spectre.min.css" />
+    <link rel="stylesheet" type="text/css" href="/pkg/spectre.css/spectre-icons.min.css" />
+    <link rel="stylesheet" type="text/css" href="/pkg/spectre.css/spectre-exp.min.css" />
+    <link rel="stylesheet" type="text/css" href="/pkg/jquery-ui/jquery-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="boss_popup.css"/>
+    <title>Session Boss Export Panel</title>
+    <script src="/pkg/jquery/jquery.min.js"></script>
+    <script src="/pkg/jquery-ui/jquery-ui.min.js"></script>
+    <script src="/pkg/moment/moment-with-locales.min.js"></script>
+    <script src="/pkg/spark-md5/spark-md5.min.js"></script>
+    <script src="/components/_pmc.js"></script>
+    <script src="/components/about-dlg.js"></script>
+    <script src="/components/single-input-dlg.js"></script>
+    <script src="/components/two-input-dlg.js"></script>
+    <script src="/components/confirm-dlg.js"></script>
+    <script src="/components/popup-msg.js"></script>
+    <script src="/scripts/util/logger.js"></script>
+    <script src="/scripts/util/appcfg.js"></script>
+    <script src="/scripts/util/app.js"></script>
+    <script src="/scripts/util/ringbuf.js"></script>
+    <script src="/scripts/util/dlg.js"></script>
+    <script src="/scripts/util/db.js"></script>
+    <script src="/scripts/util/container.js"></script>
+    <script src="/options/settings.js"></script>
+    <script src="/scripts/session.js"></script>
+    <script src="/scripts/sessiongroup.js"></script>
+    <script src="/scripts/sessions.js"></script>
+    <script src="/scripts/dataio.js"></script>
+  </head>
+
+  <body class="flex-flow-vertical"> <!-- let child take up all height -->
+
+    <div id="export-container" class="flex-flow-child-max flex-flow-vertical">
+
+      <div id="global-cmds" class="navbar" style="margin-left: 0.8rem">
+
+        <div class="navbar-section nowrap" style="flex-grow: 0">
+          <div class="flex-centered pr-1">
+            <div class="logo logo-sm" title="Session Boss"><img src="/icons/app-128.png"></div>
+          </div>
+          <div class="h4 px-1 pb-1 logo-app-name">Session Boss Export Panel</div>
+        </div><!-- navbar-section -->
+
+        <div id="global-cmd-pane" class="navbar-section nowrap" style="display: flex; justify-content: flex-end;">
+
+          <button class="cmd-close-ui  btn btn-lv1" title="Close the Export Panel"> <i class="icon icon-cross"></i> </button>
+          <button class="cmd-fullpage-ui  btn btn-lv1" title="Full Page UI"> <i class="icon icon-resize-horiz"></i> </button>
+          <div class="dropdown dropdown-right" style="top: .1rem; margin-left: 0.3rem;">
+            <div class="btn-group">
+              <a href="#" class="btn btn-link btn-dropdown dropdown-toggle" tabindex="0"><i class="icon icon-menu"></i></a>
+              <ul class="menu">
+                <li class="menu-item"> <a href="#" class="cmd-about"><i class="icon"></i>&nbsp; About</a> </li>
+              </ul>
+            </div>
+          </div>
+        </div><!-- navbar-section -->
+
+      </div><!-- navbar -->
+
+      <div id="main-content" class="main-content flex-flow-child-max  flex-flow-vertical" style="padding: 1.0rem 1.2rem;">
+        <h5 class="bold">Export Data</h5>
+        <div class="px-2 pt-2 pb-4" style="border-top:1px dotted gray; border-bottom:1px dotted gray;">
+          <form>
+            <div class="" >
+              <label class="form-label bold">Export Sessions:</label>
+              <label class="form-radio ml-2"> <input type="radio" name="stype" value="all-sessions" checked>
+                <i class="form-icon"></i> All Sessions (including User, Scheduled, and On-Change sessions)
+              </label>
+              <label class="form-radio ml-2"> <input type="radio" name="stype" value="user-sessions"><i class="form-icon"></i> Only the User Sessions </label>
+              <label class="form-radio ml-2"> <input type="radio" name="stype" value="scheduled-sessions"><i class="form-icon"></i> Only the Scheduled Backup Sessions </label>
+              <label class="form-radio ml-2"> <input type="radio" name="stype" value="onchange-sessions"><i class="form-icon"></i> Only the On-Change Backup Sessions </label>
+            </div>
+            <div class="">
+              <label class="form-label bold">Export Other Data:</label>
+              <label class="form-radio ml-2"> <input type="radio" name="stype" value="favicon-db"><i class="form-icon"></i> Favicon Database </label>
+              <!--
+                // TODO: Big problem. contextualIdentities.create() will create a new cookieStoreId every single time.
+                // This makes it not portable across machines.  The cookieStoreId in tabs are not portable across machine.
+                // Need to have a container management process to migrate all the tab's cookieStoreId to new cookieStoreId
+                // in a new machine.
+              -->
+              <label class="form-radio ml-2"> <input type="radio" name="stype" value="container-def"><i class="form-icon"></i> Container Definition </label>
+            </div>
+          </form>
+        </div>
+        <div class="mt-2">
+          <button class="btn mw6 mr-4 btn-primary cmd-export-file">Export to File</button>
+          <button class="btn mw6 mr-4             cmd-export-text">Export to Text</button>
+          <button class="btn mw6 mr-4             cmd-clear-text" >Clear Text</button>
+        </div>
+
+        <div id ="export-status-pane" class="px-2 pt-4 pb-2 hidden">
+          <label class="bold" style="border-bottom: .05rem solid #b7b9bd;">Export Status</label>
+          <div id="export-status">This is a status.</div>
+        </div>
+
+        <div id ="export-text-pane" class="flex-flow-child-max flex-flow-vertical mt-3 mb-2 d-invisible">
+          <h5 class="bold">Export Text Output <small>(can be copied and pasted into an external text file to be saved as a .json file.)</small></h5>
+          <textarea id="export-text" style="height: 100%; box-sizing: border-box;" readonly></textarea>
+        </div>
+
+      </div><!-- main-content -->
+
+    </div><!-- export-container -->
+
+    <about-dlg></about-dlg>
+    <confirm-dlg></confirm-dlg>
+    <popup-msg></popup-msg>
+
+    <script src="boss_export.js"></script>
+  </body>
+
+</html>
