@@ -1,0 +1,96 @@
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/permissions
+
+Manifest version: 2 or higher
+
+Use the permissions key to request special powers for your extension.
+
+"permissions": [
+  "webRequest"
+]
+
+These permissions are available in Manifest V2 and above unless otherwise noted:
+    activeTab
+    alarms
+    background
+    bookmarks
+    browserSettings
+    browsingData
+    captivePortal
+    clipboardRead
+    clipboardWrite
+    contentSettings
+    contextMenus
+    contextualIdentities
+    cookies
+    debugger
+    declarativeNetRequest
+    declarativeNetRequestFeedback
+    declarativeNetRequestWithHostAccess
+    devtools (This permission is granted implicitly when the devtools_page manifest key is present.)
+    dns
+    downloads
+    downloads.open
+    find
+    geolocation
+    history
+    identity
+    idle
+    management
+    menus
+    menus.overrideContext
+    nativeMessaging
+    notifications
+    pageCapture
+    pkcs11
+    privacy
+    proxy
+    scripting
+    search
+    sessions
+    storage
+    tabGroups
+    tabHide
+    tabs
+    theme
+    topSites
+    unlimitedStorage
+    'userScripts' (see userScripts permission)
+    webNavigation
+    webRequest
+    webRequestAuthProvider (Manifest V3 and above)
+    webRequestBlocking
+    webRequestFilterResponse
+    webRequestFilterResponse.serviceWorkerScript
+
+These permissions don't get alerted to users:
+    API permissions:
+        alarms
+        contextMenus
+        contextualIdentities
+        cookies
+        declarativeNetRequestWithHostAccess
+        identity
+        idle
+        menus
+        storage
+        theme
+        webRequest
+        webRequestBlocking
+    Other permissions:
+        unlimitedStorage
+        activeTab
+
+webRequestBlocking enables you to use the "blocking" argument, so you can modify and cancel requests.
+ver https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest
+
+If an extension has the activeTab permission, then when the user interacts with the extension, the extension is granted extra privileges for the active tab only.
+"User interaction" includes:
+    the user clicks the extension's browser action or page action
+    the user selects its context menu item
+    the user activates a keyboard shortcut defined by the extension
+The extra privileges are:
+    The ability to inject JavaScript or CSS into the tab programmatically (ver https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Content_scripts).
+    Access to the privileged parts of the tabs API for the current tab: Tab.url, Tab.title, and Tab.faviconUrl.
+ver https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Content_scripts#permissions_restrictions_and_limitations
+
+

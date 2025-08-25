@@ -1,0 +1,11 @@
+https://acorn.firefox.com/latest/foundations/styles/iconography-QEDMXQqj
+
+Firefox desktop has 3 standard icon sizes:
+12×12 used for badging.
+16×16 is the default icon size.
+20×20 primarily used for navigation icons in about:preferences.
+
+Firefox mobile has 3 standard icon sizes:
+16×16 typically used for badging.
+20×20 is a secondary size.
+24×24 is the default icon size.

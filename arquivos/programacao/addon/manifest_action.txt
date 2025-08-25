@@ -1,0 +1,43 @@
+vi
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/action
+
+Manifest version: 3 or higher
+
+An action is a button that your extension adds to the browser's toolbar. The button has an icon, and may optionally have a popup whose content is specified using HTML, CSS, and JavaScript.
+
+"action" replaces "browser_action".
+
+The toolbar button (browser action) is very like the address bar button (page action).
+
+"action": {
+  "default_icon": {
+    "16": "button/geo-16.png",
+    "32": "button/geo-32.png"
+  },
+  "default_title": "Whereami?",
+  "default_popup": "popup/geo.html"
+}
+
+
+"default_area": "navbar"
+the button is placed in the main browser toolbar, alongside the URL bar.
+This property is only supported in Firefox.
+This property is optional, and defaults to "menupanel" (button is placed in a popup panel).
+
+"default_popup"
+The HTML file may include CSS and JavaScript files using <link> and <script> elements, just like a normal web page. However, <script> must have src attribute to load a file.
+JavaScript running in the popup can access all the WebExtension APIs
+
+"default_title"
+displayed when the user moves their mouse over it
+
+You can supply a single icon as an SVG file, and it will be scaled correctly:
+"default_icon": "path/to/geo.svg"
+The default height and width for icons in the toolbar is 16 * window.devicePixelRatio
+
+An action with an icon, a title, and a popup. The popup is shown when the user clicks the button.
+
+An action with just an icon, specified in 2 sizes. The extension's background scripts can receive click events when the user clicks the icon using code like this:
+browser.action.onClicked.addListener(handleClick);
+
+ver ações em https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/action

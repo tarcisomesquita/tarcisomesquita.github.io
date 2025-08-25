@@ -1,0 +1,61 @@
+
+vi
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/background
+
+ver
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Background_scripts
+https://developer.chrome.com/blog/background-fetch?hl=pt-br
+
+Manifest version: 2 or higher
+
+"background": {
+  "scripts": ["background.js"]
+}
+
+Background scripts are loaded as soon as the extension is loaded and stay loaded until the extension is disabled or uninstalled unless persistent is specified as false.
+
+"service_worker": ""
+Specify a JavaScript file as the extension service worker
+ver https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API
+
+"persistent"
+A boolean value
+If omitted, this property defaults to true in Manifest V2 and false in Manifest V3. Setting to true in Manifest V3 results in an error.
+false indicates the background page may be unloaded from memory when idle and recreated when needed. 
+If you want to store data persistently in an event page, then you should use the storage API (https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage).
+
+"preferred_environment": "service_worker"
+Chrome only supports service workers, so it ignores this key
+
+"type"
+A string value.
+Determines whether the scripts specified in scripts are loaded as ES modules.
+ - classic indicates the background scripts or service workers are not included as an ES Module. (default)
+ - module indicates the background scripts or service workers are included as an ES Module. This enables the background page or service worker to import code.
+
+chrome supports background.scripts (and background.page) in Manifest V2 extensions only
+chrome supports background.service_worker
+
+firefox not supports background.service_worker
+
+example of a cross-browser extension
+{
+  "name": "Demo of service worker + event page",
+  "version": "1",
+  "manifest_version": 3,
+  "background": {
+    "scripts": ["background.js"],
+    "service_worker": "background.js"
+  }
+}
+
+background.js
+if (typeof browser === "undefined") {
+  // Chrome does not support the browser namespace yet.
+  globalThis.browser = chrome;
+}
+
+browser.runtime.onInstalled.addListener(() => {
+  browser.tabs.create({ url: "http://example.com/first-run.html" });
+});
+

@@ -14,7 +14,7 @@ for FILE in $(ls old/); do
   echo "Baixando https://developer.mozilla.org/en-US/docs/${NAME//\%//}";
   
   wget -q -O - "https://developer.mozilla.org/en-US/docs/${NAME//\%//}" | \
-  sed 's/\(<article[^>]*>\)/\n\1\n/; s|\(</article>\)|\n\1\n|;' | sed -n '/<article/,/article>/{p}' > new/${NAME}.html;
+  sed 's/\(<article[^>]*>\)/\n\1\n/; s|\(</article>\)|\n\1\n|;' | sed -n '/<main/,/main>/{p}' > new/${NAME}.html;
   sleep 0.3;
   if diff -q old/$FILE new/$FILE; then rm new/$FILE; fi | sed 's/^Files /diff /; s/ and / /; s/ differ//' >> diff.txt
 done

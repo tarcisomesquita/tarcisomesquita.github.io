@@ -1,0 +1,87 @@
+
+vi
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/cookies
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Work_with_the_Cookies_API
+
+ver
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Work_with_the_Cookies_API
+https://developer.chrome.com/docs/extensions/reference/api/cookies
+https://developer.mozilla.org/en-US/docs/Web/API/Cookie_Store_API (não sei se aplica para webExtension)
+
+
+"permissions": ["cookies"]
+e
+"host_permissions": ["<all_urls>"]
+Enables extensions to get, set, and remove cookies, and be notified when they change.
+
+"http://*.example.com/"
+It can not read a secure cookie for www.example.com.
+
+"*://*.example.com/"
+can read or write a secure or non-secure cookie for www.example.com with any path
+
+Ver tipos, métodos e eventos
+
+Exemplos
+https://github.com/mdn/webextensions-examples/tree/main/list-cookies
+https://github.com/mdn/webextensions-examples/tree/main/cookie-bg-picker
+
+detalhe sobre cookie: https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies
+e em https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/cookies/Cookie
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+function logCookies(cookies) {
+  for (cookie of cookies) {
+    console.log(`Domain: ${cookie.domain}`);
+    console.log(`Domain: ${cookie.url}`);
+    console.log(`Name: ${cookie.name}`);
+    console.log(`Value: ${cookie.value}`);
+    console.log(`Persistent: ${cookie.session}`);
+    console.log(`Persistent: ${cookie.secure}`);
+  }
+}
+
+let gettingAll = browser.cookies.getAll({});
+gettingAll.then(logCookies);
+
+// browser.cookies.getAll({name: "favorite-color"})
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+function logCookie(cookie) {
+  if (cookie) {
+    console.log(cookie.value);
+  }
+}
+
+function getCookie(tabs) {
+  let getting = browser.cookies.get({
+    url: tabs[0].url,
+    name: "favorite-color",
+  });
+  getting.then(logCookie);
+}
+
+let getActive = browser.tabs.query({
+  active: true,
+  currentWindow: true,
+});
+getActive.then(getCookie);
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/cookies/onChanged
+// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/cookies/OnChangedCause
+
+browser.cookies.onChanged.addListener((changeInfo) => {
+  console.log(
+    `Cookie changed: \n` +
+      ` * Cookie: ${JSON.stringify(changeInfo.cookie)}\n` +
+      ` * Cause: ${changeInfo.cause}\n` +
+      ` * Removed: ${changeInfo.removed}`,
+  );
+});
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+

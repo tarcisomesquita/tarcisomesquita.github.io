@@ -1,0 +1,47 @@
+
+ver
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Content_scripts
+
+"content_scripts" instructs the browser to load scripts into web pages whose URL matches a pattern.
+"content_scripts": [
+  {
+    "matches": ["*://*.mozilla.org/*"],
+    "js": ["borderify.js"]
+  }
+]
+
+"content_scripts": [
+{
+    "matches": ["*://*.mozilla.org/*"],
+    "css": ["my-css.css"],
+    "js": ["another-content-script.js", "yet-another-content-script.js"],
+    "run_at": "document_idle"
+  },
+  {
+    "matches": ["*://*.mozilla.org/*"],
+    "js": ["run-first.js"],
+    "run_at": "document_start"
+  }
+]
+
+"content_scripts": [
+  {
+    "exclude_matches": ["*://developer.mozilla.org/*"],
+    "matches": ["*://*.mozilla.org/*"],
+    "js": ["jquery.js", "borderify.js"]
+  }
+]
+
+<scheme>://<host><path>
+
+special "<all_urls>" pattern, match patterns consist of three parts: scheme, host, and path. 
+
+Invalid match patterns
+https://mozilla.org 	No path.
+https://mozilla.*.org/ 	"*" in host must be at the start.
+https://*zilla.org/ 	"*" in host must be the only character or be followed by ".".
+*://* 	Empty path: this should be *://*/*.
+
+Content script behavior is similar to scripts that are part of a website, such as those loaded using the <script> element.
+
+Content scripts can communicate with background scripts

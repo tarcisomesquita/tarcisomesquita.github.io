@@ -1,6 +1,30 @@
 usa API WebExtension
 Funciona no Firefox, Chrome e Edge
 
+Firefox, Chrome, Edge, and Opera all use a simple zip format
+manifest.json file to be at the root of the zip package
+
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions
+https://developer.chrome.com/docs/extensions
+https://browserext.github.io/browserext/
+
+https://chrome.google.com/webstore?hl=pt-br
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+browser object
+    browserAction
+    contextMenus
+    extension
+    i18n
+    pageAction
+    runtime
+    tabs
+    webNavigation
+    webRequest
+    windows
+ver seção 2 em https://browserext.github.io/browserext/
+
  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 Instalando
@@ -14,8 +38,6 @@ https://addons.mozilla.org/developers/addon/submit/
 Submit a New Add-on
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-https://github.com/mdn/webextensions-examples/
 
 https://developer.chrome.com/docs/extensions/reference/
 https://developer.chrome.com/docs/extensions/get-started?hl=pt-br
@@ -70,64 +92,6 @@ https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization
-Two underscores, followed by
-The string "MSG", followed by
-One underscore, followed by
-
-"default_locale": "en"
-
-_locales/en/messages.json
-
-let title = browser.i18n.getMessage("notificationTitle");
-
-
-console.log(browser.runtime.getManifest().version);
-
-
-"content_scripts" instructs the browser to load scripts into web pages whose URL matches a pattern.
-"content_scripts": [
-  {
-    "matches": ["*://*.mozilla.org/*"],
-    "js": ["borderify.js"]
-  }
-]
-
-"content_scripts": [
-{
-    "matches": ["*://*.mozilla.org/*"],
-    "css": ["my-css.css"],
-    "js": ["another-content-script.js", "yet-another-content-script.js"],
-    "run_at": "document_idle"
-  },
-  {
-    "matches": ["*://*.mozilla.org/*"],
-    "js": ["run-first.js"],
-    "run_at": "document_start"
-  }
-]
-
-"content_scripts": [
-  {
-    "exclude_matches": ["*://developer.mozilla.org/*"],
-    "matches": ["*://*.mozilla.org/*"],
-    "js": ["jquery.js", "borderify.js"]
-  }
-]
-
-<scheme>://<host><path>
-
-special "<all_urls>" pattern, match patterns consist of three parts: scheme, host, and path. 
-
-Invalid match patterns
-https://mozilla.org 	No path.
-https://mozilla.*.org/ 	"*" in host must be at the start.
-https://*zilla.org/ 	"*" in host must be the only character or be followed by ".".
-*://* 	Empty path: this should be *://*/*.
-
-Content script behavior is similar to scripts that are part of a website, such as those loaded using the <script> element. However, content scripts can only access page content when host permissions for the web page's origin are granted.
-
-Content scripts can can communicate with background scripts
 
 Background scripts can access all the WebExtension JavaScript APIs but can't directly access the content of web pages.
 
@@ -147,3 +111,7 @@ permissions listed in host_permissions and content_scripts are displayed in the 
 check permissions using permissions.contains
 request permissions using permissions.request
 
+These permissions don't get alerted to users:
+cookies
+webRequest
+activeTab

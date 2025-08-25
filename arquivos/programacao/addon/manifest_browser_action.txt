@@ -1,0 +1,8 @@
+Manifest version: 2 only
+This key is replaced by action in Manifest V3 extensions.
+
+veja manifest_action.txt
+
+Vi
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/user_interface/Toolbar_button
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/browser_action
