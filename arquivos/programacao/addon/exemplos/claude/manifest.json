@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Cookie Logger Extension",
+  "version": "1.0",
+  "description": "Faz console.log dos cookies quando acessa tarcisomesquita.github.io",
+  
+  "permissions": [
+    "cookies",
+    "activeTab"
+  ],
+  
+  "host_permissions": [
+    "https://tarcisomesquita.github.io/*"
+  ],
+  
+  "content_scripts": [
+    {
+      "matches": ["https://tarcisomesquita.github.io/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}

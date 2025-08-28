@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Logger de Cookies",
+  "version": "1.0",
+  "description": "Faz console.log dos cookies da página https://tarcisomesquita.github.io",
+  "permissions": ["scripting", "tabs"],
+  "content_scripts": [
+    {
+      "matches": ["https://tarcisomesquita.github.io/*"],
+      "js": ["content.js"]
+    }
+  ]
+}

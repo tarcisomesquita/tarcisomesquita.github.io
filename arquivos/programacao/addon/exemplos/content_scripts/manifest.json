@@ -1,8 +1,10 @@
 {
   "manifest_version": 3,
+  
   "name": "content_scripts",
-  "version": "2025.8.23",
   "description": "Adds a solid blue border to all webpages of tarcisomesquita.github.io.",
+  "version": "2025.8.23",
+  
   "icons": {
     "48": "border-48.png"
   },

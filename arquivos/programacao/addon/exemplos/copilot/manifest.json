@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Log Cookies on Page Access",
+  "version": "1.0",
+  "description": "Faz console.log dos cookies ao acessar https://tarcisomesquita.github.io",
+  "permissions": ["scripting"],
+  "host_permissions": [
+    "https://tarcisomesquita.github.io/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://tarcisomesquita.github.io/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
