@@ -41,3 +41,13 @@ An action with just an icon, specified in 2 sizes. The extension's background sc
 browser.action.onClicked.addListener(handleClick);
 
 ver ações em https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/action
+
+chrome: O SVG não é compatível. As extensões descompactadas precisam usar imagens PNG.
+
+const canvas = new OffscreenCanvas(16, 16);
+const context = canvas.getContext('2d');
+context.clearRect(0, 0, 16, 16);
+context.fillStyle = '#00FF00';  // Green
+context.fillRect(0, 0, 16, 16);
+const imageData = context.getImageData(0, 0, 16, 16);
+chrome.action.setIcon({imageData: imageData}, () => { /* ... */ });

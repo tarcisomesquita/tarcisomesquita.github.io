@@ -1,0 +1,22 @@
+sudo dpkg -i /media/live/TMP/code_1.103.2-1755709794_amd64.deb
+PATH=$PATH:/media/live/TMP/node-v24.7.0-linux-x64/bin
+
+npm install --save-dev @types/chrome
+
+cat node_modules/@types/chrome/index.d.ts  | less
+
+
+https://github.com/vaibhavhrt/web-extension/tree/master/src/chrome/stable
+
+mkdir hello
+cd hello
+code .
+
+You can access your user settings in a few ways:
+Select the Preferences: Open User Settings command in the Command Palette (Ctrl+Shift+P)
+Select the User tab in the Settings editor (Ctrl+,)
+ou
+File > Preferences > Settings
+
+Install extension prettier
+Ctrl + Shift + I
