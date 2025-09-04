@@ -28,8 +28,9 @@ a { color: Blue;}
 }
 </style>
 
-<script type="text/javascript">
-var tbl, rows, cols;
+<script>
+const nRow = 4, nCol = 4;
+let tbl;
 
 function Move(d) {
    //Get the td
@@ -74,26 +75,21 @@ function IsInOrder() {
          break;
       }
    }
-   if (inorder && IsCellEmpty(tbl.rows[tbl.rows.length - 1].cells[cols - 1])) {
+   if (inorder && IsCellEmpty(tbl.rows[tbl.rows.length - 1].cells[nCol - 1])) {
       for (var i = 0; i < arrDiv.length; i++) {
          arrDiv[i].style.backgroundColor = "#FFFFCC";
       }
    }
 }
 
-function Reset() {
-   rows = 4;
-   cols = 4;
-   
-   var n = (rows * cols) - 1;
-   var arrN = new Array();
-   for (var i = 1; i <= n; i++) {
-      arrN.push(i);
-   }
+const reset = () => {
+   var n = (nRow * nCol) - 1;
+   let arrN = [];
+   for (let i = 1; i <= n; i++) arrN.push(i);
    
    var inversions = 1;
    while (inversions % 2 == 1) {
-      arrN = Shuffle(arrN);
+      arrN = shuffle(arrN);
       
       // Check if the resulting array is solvable
       inversions = 0;
@@ -108,14 +104,14 @@ function Reset() {
    tbl = document.getElementById("tbl");
    
    n = 0;
-   for (var i = 0; i < rows; i++) {
+   for (var i = 0; i < nRow; i++) {
       tbl.insertRow(i);
       var tr = tbl.rows[i];
-      for (var j = 0; j < cols; j++) {
+      for (var j = 0; j < nCol; j++) {
          tr.insertCell(j);
          var td = tr.cells[j];
          td.className = "cell";
-         if (i == rows - 1 && j == cols - 1)
+         if (i == nRow - 1 && j == nCol - 1)
             td.innerHTML = "";
          else
             td.innerHTML = "<div id='n" + arrN[n] + "' class='num' onclick='Move(this)'>" + arrN[n] + "</div>";
@@ -125,8 +121,8 @@ function Reset() {
    }
 }
 
-function Shuffle(o) {
-   for (var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+const shuffle = (o) => {
+   for (let j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
    return o;
 }
 
@@ -180,10 +176,13 @@ function ChangeParent(sourceElement, targetElement) {
 </script>
 
 </head>
-<body onload="Reset()">
+
+<body onload="reset()">
 <h2 style="text-align: center">15 Puzzle in JavaScript</h2>
 <br />
+
 <table cellpadding="0" cellspacing="4" align="center" id="tbl">
 </table>
+
 </body>
 </html>
