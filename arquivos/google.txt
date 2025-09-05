@@ -17,15 +17,12 @@ https://shell.cloud.google.com/
 Ver APIs ativadas
 https://console.cloud.google.com/apis
 
+https://developers.google.com/sheets/api/quickstart/js?hl=pt_BR
+
  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 https://myaccount.google.com/permissions?hl=pt-br
 Quem faz login com Google
-
-APIs ativas
-https://console.cloud.google.com/apis/dashboard?hl=pt-br&project=concluir
-
-https://developers.google.com/sheets/api/quickstart/js?hl=pt_BR
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
@@ -33,9 +30,6 @@ https://console.cloud.google.com/
 Criar credenciais > ID do cliente OAuth
 Tipo de aplicativo, selecione Aplicativo da Web
 Adicione o URI do seu site às origens JavaScript autorizadas
-
-https://console.developers.google.com/apis/credentials/consent?hl=pt-br
-Domínios autorizados
 
 https://console.cloud.google.com/apis/credentials/consent?project=github-ceejapd-id
 
