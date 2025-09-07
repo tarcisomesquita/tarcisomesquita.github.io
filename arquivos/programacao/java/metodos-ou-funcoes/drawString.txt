@@ -1,4 +1,0 @@
-
-g.drawString("Hello, Applet World", 100, 25);
-escreve o texto "Hello, Applet World' na tela.
-

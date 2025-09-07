@@ -20,6 +20,8 @@ ${var//texto/novo} 	Substitui 'texto' por 'novo', sempre
 ${var/#texto/novo} 	Se a string começar com 'texto', substitui 'texto' por 'novo'
 ${var/%texto/novo} 	Se a string terminar com 'texto', substitui 'texto' por 'novo'
 
+echo teste | (read; echo ${REPLY//te/G}) # equivale a echo teste | sed 's/te/G/g'
+
 $ TESTE="primeira linha da variavel
 > segunda linha
 > terceira...

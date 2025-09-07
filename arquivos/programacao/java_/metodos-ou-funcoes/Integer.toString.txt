@@ -1,4 +1,0 @@
-
-t2.setText(Integer.toString(count2++));
-sleep(500);
-

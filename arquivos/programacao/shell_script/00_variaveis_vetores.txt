@@ -32,3 +32,23 @@ FILE=([0]="teste 3.txt" [1]="teste.sh" [2]="teste.sh~")
 
 VAR[2][3]=teste, retorna erro
 
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+LISTA_DE_NOMES="Ana,João,Maria,Pedro"
+IFS=','; read -r -a nomes <<< "$LISTA_DE_NOMES"
+echo ${nomes[1]}
+
+cat > dados.csv << EOF
+nome,idade,cidade
+João,30,São Paulo
+Maria,25,Rio de Janeiro
+Carlos,42,Belo Horizonte
+EOF
+
+IFS=','
+cat dados.csv | while read nome idade cidade; do
+  echo "Nome: $nome, Idade: $idade, Cidade: $cidade"
+done
+IFS=$' \t\n' # Restaura o IFS original
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

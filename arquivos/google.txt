@@ -23,27 +23,3 @@ https://developers.google.com/sheets/api/quickstart/js?hl=pt_BR
 
 https://myaccount.google.com/permissions?hl=pt-br
 Quem faz login com Google
-
- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-https://console.cloud.google.com/
-Criar credenciais > ID do cliente OAuth
-Tipo de aplicativo, selecione Aplicativo da Web
-Adicione o URI do seu site às origens JavaScript autorizadas
-
-https://console.cloud.google.com/apis/credentials/consent?project=github-ceejapd-id
-
-Acesso às APIs do Google para apps da web javascript
-
-1) Go to the Credentials page (https://console.developers.google.com/apis/credentials?hl=pt-br).
-   Selecione um projeto
-2) Clique em Criar credenciais > ID do cliente OAuth.
-3) Selecione o tipo de aplicativo Web app.
-4) Preencha o formulário.
-
- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-https://oauth2.googleapis.com/tokeninfo?id_token=${token} 
-
-id_token é usado para autenticação (login)
-access_token usado para autorização (ScriptApp.getOAuthToken())

@@ -1,5 +1,0 @@
-
-. file
-
-The commands in the specified file are read and executed by the shell.
-

@@ -1,5 +1,0 @@
-
-exit [exitstatus]
-
-Terminate the shell process. If exitstatus is given it is used as the exit status of the shell; otherwise the exit status of the preceding command is used.
-

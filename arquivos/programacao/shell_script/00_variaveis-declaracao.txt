@@ -15,7 +15,24 @@ NUM=2; echo "isto é o ${NUM}nd"
 
 $ readonly NOME="Meleu Zord"
 $ declare -r NOME="Meleu Zord"
+variáveis readonly são apagadas ao sair do shell.
 
-O comando "readonly" quando usado sem parâmetros (ou o comando "declare" apenas com o parâmetro "-r") nos mostra todas as variáveis declaradas como somente-leitura.
-O único meio de apagar as variáveis readonly declaradas pelo usuário é saindo do shell (logout).
+comando "declare", sem parâmetros, mostra todas as variáveis declaradas.
 
+T=$'T\x54T'
+echo -n "$T" | hexdump -C
+00000000  54 54 54                                          |TTT|
+
+T=$'T\x00T'
+echo -n "$T" | hexdump -C
+00000000  54                                                |T|
+
+let "bin = 2#1001"
+echo "binary number = $bin" # 9
+
+let "b64 = 64#_"
+echo "base-64 number = $b64" # 63
+
+# base64 characters =  10 digits + 26 lowercase characters + 26 uppercase characters + @ + _
+
+echo $((2#10)) $((16#10)) $((64#10))

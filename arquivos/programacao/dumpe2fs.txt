@@ -1,2 +1,0 @@
-sudo dumpe2fs /dev/sda2 | head -n 50 | grep 'time:'
-

@@ -1,3 +1,0 @@
-
-package Geometria.*; e import Geometria.*; devem ser inseridas logo no início do arquivo, só podendo ser precedidas por comentários.
-

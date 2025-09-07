@@ -6,8 +6,13 @@ Control operators:
 Redirection operators:
 < > >| << >> <& >& <<- <>
 
-
-
+read TEXTO << DELIMITADOR
+meu texto
+DELIMITADOR
+equivale a
+read TEXTO <<< "meu texto"
+<< é pra multilinha
+<<< é para uma única linha
 
 && equivale a AND
 

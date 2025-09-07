@@ -1,0 +1,8 @@
+alert("meu texto");
+
+if (confirm("Você concorda?")) console.log('SIM');
+else console.log('NAO');
+
+console.log(prompt('Qual é seu nome?', 'teste'));
+
+document.write('teste'); // precisa ter uma página carregada

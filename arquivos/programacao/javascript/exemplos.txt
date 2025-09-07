@@ -1,0 +1,81 @@
+
+<script>
+const goJump = () => { top.location.href = 'https://tarcisomesquita.github.io' };
+
+setTimeout('goJump()', 1000);
+</script>
+
+<p>Redirecionando para <a href="https://tarcisomesquita.github.io" target="_top">minha página</a>.</p>
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+top.location.href = 'https://tarcisomesquita.github.io'
+
+document.body.innerHTML = '<p id="show"></p>'
+
+let counter = 0;
+
+const timedCount = () => {
+  setTimeout('timedCount()', 1000);
+  
+  counter++;
+  show.innerHTML = counter;
+}
+
+timedCount();
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+<html>
+<head>
+<title>style</title>
+
+<script>
+function ChangeStyle() {
+   document.getElementById("p1").style.color = "blue";
+   document.getElementById("p1").style.fontFamily = "Arial";
+}
+</script>
+
+<script>
+let size = 1;
+const changeStyle = () => {
+   size++;
+   document.getElementById("p1").style.fontSize = size + 'px';
+}
+</script>
+
+</head>
+
+<body>
+<p id="p1">Hello world!</p>
+<input type="button" onclick="changeStyle()" value="Change style" />
+</body>
+</html> 
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+top.location.href = 'https://tarcisomesquita.github.io'
+
+document.body.innerHTML = '<p id="intro">Hello World!</p>';
+
+console.log(document.getElementById('intro').childNodes[0].nodeValue);
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+document.getElementById("intro1").parentNode.nodeName
+
+for (let x of document.body.childNodes) console.log(x.nodeName)
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+document.body.innerHTML = '<p id="intro">Hello World!</p>'
+
+intro.setAttribute('class', 'teste');
+
+console.log(intro.attributes[1].name)   // 'class'
+console.log(intro.attributes[1].value)  // 'teste'   
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+
