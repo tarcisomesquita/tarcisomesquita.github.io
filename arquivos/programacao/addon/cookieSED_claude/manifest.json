@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "cookieSED claude",
+  "version": "1.0",
+  "description": "Captura cookie SED e envia para Google Apps Script",
+  
+  "permissions": [
+    "cookies",
+    "activeTab",
+    "scripting"
+  ],
+  
+  "host_permissions": [
+    "https://sed.educacao.sp.gov.br/*",
+    "https://script.google.com/*"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["https://sed.educacao.sp.gov.br/*"],
+      "js": ["content.js"]
+    }
+  ],
+  
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "SED Cookie Sender"
+  }
+}

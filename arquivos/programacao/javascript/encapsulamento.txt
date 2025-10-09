@@ -1,0 +1,20 @@
+class Contador {
+  #valor = 0; // Campo de classe privado
+
+  incrementar() {
+    this.#valor++;
+  }
+
+  decrementar() {
+    this.#valor--;
+  }
+
+  pegarValor() {
+    return this.#valor;
+  }
+}
+
+const meuContador = new Contador();
+meuContador.incrementar();
+meuContador.incrementar();
+console.log(meuContador.pegarValor()); // Saída: 2

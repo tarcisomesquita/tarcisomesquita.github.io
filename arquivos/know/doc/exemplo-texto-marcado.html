@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>texto exemplo</title>
+  <meta name="description" content="exemplo de texto marcado">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+body {
+  line-height: 23px;
+  font-size: 16px;
+  font-family: 'Open Sans',sans-serif;
+}
+
+.data:link    {color:#000000; text-decoration:none;}      /* unvisited link  */
+.data:visited {color:#000000; text-decoration:none;}      /* visited link    */
+.data:hover   {color:#000000; text-decoration:underline; background: #FFFFCC;} /* mouse over link */
+.data:active  {color:#000000; text-decoration:underline;} /* selected link   */
+}
+
+</style>
+</head>
+
+<body>
+
+<p>Passe o <span data-id="Q107602">ponteiro do mouse</span> sobre o <span data-id="Q194431">parágrafo</span> abaixo.</p>
+
+<p>O <span data-id="Q36253">comprimento</span> é uma <span data-id="Q107715">grandeza</span>.</p>
+
+<p>O <span data-id="Q194431">parágrafo</span> acima está usando a <span data-id="Q2013">wikidata</span> como <span data-id="Q121769">referência</span>. Uma das <span data-id="Q121769">referências</span> usadas foi <a href="https://www.wikidata.org/entity/Q36253">https://www.wikidata.org/entity/Q36253</a>.</p>
+
+<script>
+const data = document.querySelectorAll('[data-id]');
+
+for (let i = 0; i < data.length; i++)
+  data[i].innerHTML = `<a class="data" href="https://www.wikidata.org/entity/${data[i].dataset.id}" target="blank">${data[i].innerHTML}</a>`;
+</script>
+
+
+<p></p>
+<footer style='font-family:"sans-serif"; font-size:10px;'>
+Autor: <a href="https://tarcisomesquita.github.io" target="_blank">Tarciso Mesquita</a><br/>
+<a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.pt-br" target="_blank">
+<img alt="Licença Creative Commons" style="border-width:0" src="https://tarcisomesquita.github.io/CC-BY.png" /></a><br />
+Esta obra está licenciada com uma Licença <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.pt-br" target="_blank">Creative Commons Atribuição 4.0 Internacional</a>
+<script src="https://tarcisomesquita.github.io/log.js" onload="logsend()" async defer></script>
+</footer>
+</body>
+</html>

@@ -1,3 +1,22 @@
+/dev/random ideal for generating high-quality randoms.
+/dev/urandom when randomness is not much important.
+
+Quantidade e velocidade da memória RAM
+
+# dmidecode | grep -A 4 'Version: Intel'
+        Version: Intel(R) Core(TM) i5-8265U CPU @ 1.60GHz
+        Voltage: 0.7 V
+        External Clock: 100 MHz
+        Max Speed: 3900 MHz
+        Current Speed: 1485 MHz
+
+~# dmidecode | grep Signature
+        Signature: Type 0, Family 6, Model 142, Stepping 12
+
+ver especificações
+https://ark.intel.com/content/www/us/en/ark/search.html
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 swapoff -a
 echo 3 > /proc/sys/vm/drop_caches

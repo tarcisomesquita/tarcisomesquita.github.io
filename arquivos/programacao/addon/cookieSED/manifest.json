@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "cookie SED",
+  "version": "2025.9.15",
+  "description": "Envia cookie SED para is.gd/pceeja",
+  
+  "permissions": [
+    "cookies",
+    "activeTab"
+  ],
+  
+  "host_permissions": [
+    "https://sed.educacao.sp.gov.br/*",
+    "https://script.google.com/*"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "cookieSED"
+  },
+  
+  "icons": {
+    "16": "mouse_16.png",
+    "32": "mouse_32.png",
+    "48": "mouse_48.png",
+    "128": "mouse_128.png"
+  }
+}

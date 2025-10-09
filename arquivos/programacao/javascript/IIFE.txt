@@ -1,0 +1,35 @@
+IIFE (Immediately Invoked Function Expression)
+
+(() => {let teste = '123'; console.log(teste)})()
+
+Tudo o que é declarado dentro de uma IIFE (variáveis, funções, etc.) fica contido nesse escopo, protegendo o escopo global de ser "poluído".
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+const nome = 'João';
+((usuario) => {
+  console.log('Olá, ' + usuario + '!');
+})(nome); 
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+IIFE + encapsulamento
+
+const meuModulo = (() => {
+  let contadorPrivado = 0; // Privado
+  
+  const incrementar = () => contadorPrivado++;
+  
+  const decrementar = () => contadorPrivado--;
+  
+  return {
+    // Interface pública
+    inc: incrementar,
+    pegarValor: function() {
+      return contadorPrivado;
+    }
+  };
+})();
+
+meuModulo.inc();
+console.log(meuModulo.pegarValor()); // Saída: 1

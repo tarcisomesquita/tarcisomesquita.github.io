@@ -1,3 +1,13 @@
+O objeto window é o objeto global do navegador e o ponto de partida de tudo.
+
+O objeto window contém outros objetos, incluindo:
+- document: representa a página web e a sua DOM (Document Object Model).
+- navigator: contém informações sobre o navegador, como o seu nome, versão e plataforma. (navigator.geolocation)
+- screen: fornece informações sobre a tela do usuário.
+- location: lida com a URL da página atual.
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
 // Override the onload event
 window.onload = function() {
   console.log("hello from func1");

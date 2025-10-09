@@ -1,0 +1,24 @@
+let people = [
+  {
+    first: 'René',
+    last: 'Magritte',
+  },
+  {
+    first: 'Chaim',
+    last: 'Soutine',
+    birthday: '18930113',
+  },
+  {
+    first: 'Henri',
+    last: 'Matisse',
+  }
+];
+console.table(people);
+
+console.table(people, ['last', 'birthday']);
+
+console.time();
+for (var i = 0; i < 100000; i++) {
+  let square = i ** 2;
+}
+console.timeEnd();

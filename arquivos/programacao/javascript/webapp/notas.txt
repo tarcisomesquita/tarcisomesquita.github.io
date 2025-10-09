@@ -17,26 +17,6 @@ log de registros, edições e remoções
 https://developer.mozilla.org/en-US/docs/Web/API/Background_Tasks_API
 
 
-<video controls id="myvideo">
-  <source src="somevideo.webm"></source>
-  <source src="somevideo.mp4"></source>
-</video>
-
-We can put that video into fullscreen mode as follows:
-
-const elem = document.getElementById("myvideo");
-if (elem.requestFullscreen) {
-  elem.requestFullscreen();
-}
-
-
- Gecko automatically adds CSS rules to the element to stretch it to fill the screen: "width: 100%; height: 100%". WebKit doesn't do this; instead, it centers the fullscreen element at the same size in a screen that's otherwise black. To get the same fullscreen behavior in WebKit, you need to add your own "width: 100%; height: 100%;" CSS rules to the element yourself:
-
-#myvideo:-webkit-full-screen {
-  width: 100%;
-  height: 100%;
-}
-
 
 <!doctype html>
 <html>

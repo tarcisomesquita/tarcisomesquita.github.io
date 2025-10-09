@@ -1,17 +1,16 @@
 
-
 const person1 = {
-    name: "Alice",
-    age: 30
+  name: "Alice",
+  age: 30
 };
 
 const person2 = {
-    name: "Bob",
-    age: 25
+  name: "Bob",
+  age: 25
 };
 
 function greet(greeting, punctuation) {
-    console.log(`${greeting}, I'm ${this.name} and I'm ${this.age} years old${punctuation}`);
+  console.log(`${greeting}, I'm ${this.name} and I'm ${this.age} years old${punctuation}`);
 }
 
 // Using call() to explicitly set 'this' to person1
@@ -154,7 +153,7 @@ timer.startCorrect(); // Will correctly increment and log the timer
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-unction Person(name, age, profession) {
+function Person(name, age, profession) {
     // 'this' refers to the new object being created
     this.name = name;
     this.age = age;
@@ -174,14 +173,3 @@ bob.introduce(); // Output: "Hi, I'm Bob, a 35-year-old designer"
 
 console.log(alice.name); // Output: "Alice"
 console.log(bob.name); // Output: "Bob"
-
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

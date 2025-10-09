@@ -1,12 +1,13 @@
 try {
   writeMyFile(theData); //Isso pode lançar um erro
-} catch (e) {
-  handleError(e); // Se temos um erro temos que lidar com ele
-} finally {
-  closeMyFile(); // Sempre feche o recurso
+}
+catch (e) {
+  handleError(e);       // Se temos um erro temos que lidar com ele
+}
+finally {
+  closeMyFile();        // Sempre feche o recurso
 }
 
-throw "bogus";
+throw {message: 'bugou'};
 
 console.log(e.message);
-

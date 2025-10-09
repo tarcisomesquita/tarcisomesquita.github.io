@@ -1,0 +1,77 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix tm: <https://tarcisomesquita.github.io/know/base-de-conhecimento/> .
+
+tm:thing tm:type tm:class .
+tm:thing tm:label "coisa" .
+tm:thing tm:comment "tm:thing é a classe de todas as coisas." .
+tm:thing tm:sameAs owl:Thing .
+tm:thing tm:hasProperty tm:sameAs .
+
+tm:literal tm:type tm:thing .
+tm:literal tm:label "literal" .
+tm:literal tm:comment "tm:literal é a classe dos valores literais, como números e strings." .
+tm:literal tm:sameAs rdfs:Literal .
+tm:literal tm:hasProperty tm:format .
+
+tm:resource tm:type tm:thing .
+tm:resource tm:label "resource" .
+tm:resource tm:comment "tm:resource é a classe de todas as entidades, de tudo que pode ser representado por um endereço." .
+tm:resource tm:sameAs rdfs:Resource .
+tm:resource tm:hasProperty tm:type .
+tm:resource tm:hasProperty tm:label .
+tm:resource tm:hasProperty tm:comment .
+
+tm:class tm:type tm:resource .
+tm:class tm:label "classe" .
+tm:class tm:comment "tm:class é a classe de todas as classes." .
+tm:class tm:sameAs rdfs:Class .
+tm:class tm:hasProperty tm:hasProperty .
+
+tm:property tm:type tm:resource .
+tm:property tm:label "propriedade" .
+tm:property tm:comment "tm:property é a classe de todas as propriedades das classes." .
+tm:property tm:sameAs rdf:Property .
+tm:property tm:hasProperty tm:hasClass .
+
+
+tm:sameAs tm:type tm:property .
+tm:sameAs tm:label "mesma coisa que" .
+tm:sameAs tm:comment "tm:sameAs determina que duas coisas são iguais." .
+tm:sameAs owl:sameAs owl:sameAs .
+tm:sameAs tm:hasClass tm:thing .
+
+tm:format tm:type tm:property .
+tm:format tm:label "formato" .
+tm:format tm:comment "tm:format determina o formato de um literal. Veja https://www.w3.org/2001/XMLSchema." .
+tm:format owl:sameAs owl:sameAs .
+tm:format tm:hasClass tm:literal .
+
+tm:type tm:type tm:property .
+tm:type tm:label "tipo" .
+tm:type tm:comment "tm:type determina que um resource é uma instância de uma classe." .
+tm:type owl:sameAs rdf:type .
+tm:type tm:hasClass tm:resource .
+
+tm:label tm:type tm:property .
+tm:label tm:label "rótulo" .
+tm:label tm:comment "nome do resource para humanos." .
+tm:label owl:sameAs rdfs:label .
+tm:label tm:hasClass tm:resource .
+
+tm:comment tm:type tm:property .
+tm:comment tm:label "comentário" .
+tm:comment tm:comment "comentário sobre o que o resource representa." .
+tm:comment owl:sameAs rdfs:comment .
+tm:comment tm:hasClass tm:resource .
+
+tm:hasProperty tm:type tm:property .
+tm:hasProperty tm:label "tem a propriedade" .
+tm:hasProperty tm:comment "tm:hasProperty determina uma propriedade que a classe possui." .
+tm:hasProperty tm:hasClass tm:class .
+
+tm:hasClass tm:type tm:property .
+tm:hasClass tm:label "da classe" .
+tm:hasClass tm:comment "tm:hasClass determina que a propriedade é da classe." .
+tm:hasClass tm:hasClass tm:property .

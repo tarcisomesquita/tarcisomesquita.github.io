@@ -14,3 +14,24 @@ ENCTYPE=[ "application/x-www-form-urlencoded" | "multipart/form-data" | "text/pl
 METHOD=[POST | GET]
 NAME=string
 target = "_blank", "_self", "_parent", or "_top".
+
+
+float: left | rigth | none | inherit
+
+elementos block: main, div, h[1-6], p, pre, ul, ol, li, table, form, ...
+block: dois seguidos aparecem um abaixo do outro
+
+elementos inline: a, b, i, span, br, img, input, sup, sub, textarea, code, object, 
+inline: dois seguidos aparecem um do lado do outro
+
+usar lista para fazer menu
+ul, li { display: inline}
+list-style-type: none
+text-decoration: none
+
+Menu vertical
+li, a {display: block}
+submenu é uma lista dentro de outra
+position: absolute; display: none
+horizontal
+li {float:left}

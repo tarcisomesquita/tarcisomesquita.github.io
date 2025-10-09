@@ -1,0 +1,17 @@
+{
+  "name": "Enviar Cookie SED",
+  "version": "1.0",
+  "description": "Captura o cookie SED e envia via POST para o Google Apps Script",
+  "manifest_version": 3,
+  "permissions": [
+    "cookies",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "https://sed.educacao.sp.gov.br/*",
+    "https://script.google.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

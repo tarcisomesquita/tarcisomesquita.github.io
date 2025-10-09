@@ -1,24 +1,17 @@
 import { Gallery } from './image-list.js';
 
 const registerServiceWorker = async () => {
-  if ('serviceWorker' in navigator) {
-    try {
-      const registration = await navigator.serviceWorker.register(
-        'sw.js',
-        {
-          scope: '/',
-        }
-      );
-      if (registration.installing) {
-        console.log('Service worker installing');
-      } else if (registration.waiting) {
-        console.log('Service worker installed');
-      } else if (registration.active) {
-        console.log('Service worker active');
-      }
-    } catch (error) {
-      console.error(`Registration failed with ${error}`);
-    }
+  if (! 'serviceWorker' in navigator) return;
+  
+  try {
+    const registration = await navigator.serviceWorker.register('sw.js', {scope: '/'});
+    
+    if (registration.installing)   console.log('Service worker installing');
+    else if (registration.waiting) console.log('Service worker installed');
+    else if (registration.active)  console.log('Service worker active');
+  }
+  catch (error) {
+    console.error(`Registration failed with ${error}`);
   }
 };
 
@@ -26,13 +19,9 @@ const imgSection = document.querySelector('section');
 
 const getImageBlob = async (url) => {
   const imageResponse = await fetch(url);
-  if (!imageResponse.ok) {
-    throw new Error(
-      `Image didn't load successfully; error code: ${
-        imageResponse.statusText || imageResponse.status
-      }`
-    );
-  }
+  
+  if (! imageResponse.ok) throw {message: `Falhou ${url}`};
+  
   return imageResponse.blob();
 };
 
@@ -47,7 +36,8 @@ const createGalleryFigure = async (galleryImage) => {
     myImage.setAttribute('alt', galleryImage.alt);
     myFigure.append(myImage, myCaption);
     imgSection.append(myFigure);
-  } catch (error) {
+  }
+  catch (error) {
     console.error(error);
   }
 };
