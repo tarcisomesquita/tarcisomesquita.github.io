@@ -11,11 +11,23 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <script>
-const scriptId = 'AKfycbyKiS4-LdfDiEueCTVICP7JYfFawqE8itmnbHUr6_LahD8DqrJVyn1ImFlB143lvYg5qA';
+const scriptId = 'AKfycbweVsOPlQVYHe0oyLNsgOHQVtMcTu8bAIsSO2hqbAvFYGCjRoGfGi23i-v5pxxtZ2J6XA'; // primeira
+//const scriptId = 'AKfycbzblsl__nE6S5rDuqageiRQodx2-W7JKkYjLxaOVbk-2DnMZijUILOIrlzLy7ubAhChtg'; // teste
+//const scriptId = 'AKfycbyKiS4-LdfDiEueCTVICP7JYfFawqE8itmnbHUr6_LahD8DqrJVyn1ImFlB143lvYg5qA';
 function handleCredentialResponse(response) {
-  window.location.href = `https://script.google.com/macros/s/${scriptId}/exec?id_token=${response.credential}`;
+  window.location.href = `https://script.google.com/macros/s/${scriptId}/exec?id_token=${response.credential}&esc=${esc}&ra=${ra}`;
+  //window.location.href = `https://script.google.com/macros/s/AKfycbygi2SS3-1hvMTVJuLiR80fIrPP17tYKpC09LAQhsNK/dev?id_token=${response.credential}&esc=${esc}&ra=${ra}`;
 }
 // https://console.cloud.google.com/auth/overview?project=planilhaceeja-id
+
+let ra;
+let esc;
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+ra = urlParams.get('ra');
+esc = urlParams.get('esc');
+if (! ra) ra = '';
+if (! esc) esc = '';
 </script>
 
 <style>
@@ -36,9 +48,9 @@ body {
 <body>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/HLXPy-BS3_w?si=jZKiptmDWqPPQX7A" title="Planilha para CEEJA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-<h2>Acessar sua planilha</h2>
-<p>Login com seu email @prof.educacao.sp.gov.br</p>
-<div id="g_id_onload" data-client_id="453193392660-ftlj3r3c0s9vkembqckaub69fgnau7rm.apps.googleusercontent.com" data-callback="handleCredentialResponse"></div>
+<h2>Acessar notas</h2>
+<p>Login com seu email google</p>
+<div id="g_id_onload" data-client_id="453193392660-ftlj3r3c0s9vkembqckaub69fgnau7rm.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_select="true"></div>
 <div
   id="login"
   class="g_id_signin"
