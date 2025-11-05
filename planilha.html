@@ -11,28 +11,79 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <script>
-const scriptId = 'AKfycbwX2hoI5yF5QsqfFvIaoljfYa2fMuMldA5i_Vs-Arj7QH-hlewNTxwVleh_IE4-HOwtbA'; // barra vermelha
+const scriptId = 'AKfycbz_z-wM5xmHHGvcFqVwFk8Ss3YaMMJrM4JfosCzM64cJRRRsJ_ItSE4ckoDXSrGFB-QmQ'; // passaporte lastDia
+//const scriptId = 'AKfycbwX2hoI5yF5QsqfFvIaoljfYa2fMuMldA5i_Vs-Arj7QH-hlewNTxwVleh_IE4-HOwtbA'; // barra vermelha
 //const scriptId = 'AKfycbxJRV69XntJI1FlXk-i2EIFl9-CUgqmWx3aVdanxHHnagu8Dp7rEjAYN6v-LhP4bcTDhQ'; // cores passaporte
 //const scriptId = 'AKfycbwETS7AV32Lkmqg3elDk7LJIr8UiS6xSgt14LobsROPh7E3a_qAp7INfA35a5L6n4HPGQ'; // owner
 //const scriptId = 'AKfycbweVsOPlQVYHe0oyLNsgOHQVtMcTu8bAIsSO2hqbAvFYGCjRoGfGi23i-v5pxxtZ2J6XA'; // primeira
 //const scriptId = 'AKfycbzblsl__nE6S5rDuqageiRQodx2-W7JKkYjLxaOVbk-2DnMZijUILOIrlzLy7ubAhChtg'; // teste
 //const scriptId = 'AKfycbyKiS4-LdfDiEueCTVICP7JYfFawqE8itmnbHUr6_LahD8DqrJVyn1ImFlB143lvYg5qA';
 function handleCredentialResponse(response) {
+  let styleSheet = null;
+  let ruleIndex = -1;
+  
+  for (let i = 0; i < document.styleSheets.length; i++) {
+    const sheet = document.styleSheets[i];
+    try {
+      const rules = sheet.cssRules || sheet.rules; // compatibilidade
+      for (let j = 0; j < rules.length; j++) {
+        const rule = rules[j];
+        if (rule.selectorText === '.tela-cheia') {
+          styleSheet = sheet;
+          ruleIndex = j;
+          break;
+        }
+      }
+    }
+    catch (e) {
+      continue;
+    }
+    if (styleSheet) break;
+  }
+  
+  if (styleSheet && ruleIndex !== -1) {
+    styleSheet.deleteRule(ruleIndex);
+    styleSheet.insertRule(
+      `.tela-cheia {
+          position: fixed;
+          inset: 0;           /* top:0; right:0; bottom:0; left:0; */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #fff;
+      }`, 
+      ruleIndex
+    );
+  }
+  
+  const existing = document.querySelector('.tela-cheia');
+  if (existing) existing.remove();
+  
+  const div = document.createElement('div');
+  div.className = 'tela-cheia';
+  div.setAttribute('role', 'img');
+  div.setAttribute('aria-label', 'Ampulheta animada');
+  
+  const img = document.createElement('img');
+  img.src = 'https://tarcisomesquita.github.io/ceejapd/img/ampulheta.gif';
+  img.alt = 'Ampulheta animada';
+  
+  div.appendChild(img);
+  document.body.appendChild(div);
+  
   window.location.href = `https://script.google.com/macros/s/${scriptId}/exec?id_token=${response.credential}&esc=${esc}&ra=${ra}`;
-  //window.location.href = `https://script.google.com/macros/s/AKfycbygi2SS3-1hvMTVJuLiR80fIrPP17tYKpC09LAQhsNK/dev?id_token=${response.credential}&esc=${esc}&ra=${ra}&last=${last}`;
+  //window.location.href = `https://script.google.com/macros/s/AKfycbygi2SS3-1hvMTVJuLiR80fIrPP17tYKpC09LAQhsNK/dev?id_token=${response.credential}&esc=${esc}&ra=${ra}`;
 }
 // https://console.cloud.google.com/auth/overview?project=planilhaceeja-id
 
 let ra;
 let esc;
-let last;
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 ra = urlParams.get('ra');
 esc = urlParams.get('esc');
 if (! ra) ra = '';
 if (! esc) esc = '';
-if (! last) last = '';
 </script>
 
 <style>
@@ -47,10 +98,12 @@ body {
   margin: 0em;
   padding: 1em;
 }
+.tela-cheia {}
 </style>
 </head>
 
 <body>
+<div class="tela-cheia">
 <iframe width="560" height="315" src="https://www.youtube.com/embed/HLXPy-BS3_w?si=jZKiptmDWqPPQX7A" title="Planilha para CEEJA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 <h2>Acessar notas</h2>
@@ -79,5 +132,6 @@ Esta obra está licenciada com uma Licença <a rel="license" href="http://creati
 <script src="https://tarcisomesquita.github.io/log.js" onload="logsend()" async defer></script>
 </footer>
 <br>
+</div>
 </body>
 </html>
