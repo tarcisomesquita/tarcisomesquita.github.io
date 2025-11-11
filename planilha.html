@@ -11,6 +11,8 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <script>
+// https://console.cloud.google.com/auth/overview?project=planilhaceeja-id
+
 const scriptId = 'AKfycbzW51hfZWazEhLCbtczIVDY_WMv5TifM_ImKYVFasbmQDIMxdIge8ohkNajZ4FB7tVIDg'; // oficina2
 //const scriptId = 'AKfycbzBB4eG-N0wOpcsS3PmAArvzNLZi-rglmRr7Db0nQOg8D1evGDsJlqijCw3Utcu0cvyfA'; // PF ENCCEJA
 //const scriptId = 'AKfycbx-ZUzWz6wF1W4ej17XnQgso3ob3qp7zquMO3jnxv-6rsOsk3HUgAuTngT7G1E6Xa48vA'; // lastDia
@@ -20,7 +22,26 @@ const scriptId = 'AKfycbzW51hfZWazEhLCbtczIVDY_WMv5TifM_ImKYVFasbmQDIMxdIge8ohkN
 //const scriptId = 'AKfycbweVsOPlQVYHe0oyLNsgOHQVtMcTu8bAIsSO2hqbAvFYGCjRoGfGi23i-v5pxxtZ2J6XA'; // primeira
 //const scriptId = 'AKfycbzblsl__nE6S5rDuqageiRQodx2-W7JKkYjLxaOVbk-2DnMZijUILOIrlzLy7ubAhChtg'; // teste
 //const scriptId = 'AKfycbyKiS4-LdfDiEueCTVICP7JYfFawqE8itmnbHUr6_LahD8DqrJVyn1ImFlB143lvYg5qA';
+
+let ra;
+let esc;
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+ra = urlParams.get('ra');
+esc = urlParams.get('esc');
+if (! ra) ra = '';
+if (! esc) esc = '';
+
 function handleCredentialResponse(response) {
+  ampulheta();
+      usuario = auth2.currentUser.get().getBasicProfile().getEmail();
+    document.cookie = `usuario=${usuario};expires=2027-01-01T00:00:00.000Z;path=/;samesite=none;secure;`;
+
+  window.location.href = `https://script.google.com/macros/s/${scriptId}/exec?id_token=${response.credential}&esc=${esc}&ra=${ra}`;
+  //window.location.href = `https://script.google.com/macros/s/AKfycbygi2SS3-1hvMTVJuLiR80fIrPP17tYKpC09LAQhsNK/dev?id_token=${response.credential}&esc=${esc}&ra=${ra}`;
+}
+
+function ampulheta() {
   let styleSheet = null;
   let ruleIndex = -1;
   
@@ -72,20 +93,7 @@ function handleCredentialResponse(response) {
   
   div.appendChild(img);
   document.body.appendChild(div);
-  
-  window.location.href = `https://script.google.com/macros/s/${scriptId}/exec?id_token=${response.credential}&esc=${esc}&ra=${ra}`;
-  //window.location.href = `https://script.google.com/macros/s/AKfycbygi2SS3-1hvMTVJuLiR80fIrPP17tYKpC09LAQhsNK/dev?id_token=${response.credential}&esc=${esc}&ra=${ra}`;
 }
-// https://console.cloud.google.com/auth/overview?project=planilhaceeja-id
-
-let ra;
-let esc;
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-ra = urlParams.get('ra');
-esc = urlParams.get('esc');
-if (! ra) ra = '';
-if (! esc) esc = '';
 </script>
 
 <style>
