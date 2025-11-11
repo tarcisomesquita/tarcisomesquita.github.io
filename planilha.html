@@ -34,9 +34,6 @@ if (! esc) esc = '';
 
 function handleCredentialResponse(response) {
   ampulheta();
-      usuario = auth2.currentUser.get().getBasicProfile().getEmail();
-    document.cookie = `usuario=${usuario};expires=2027-01-01T00:00:00.000Z;path=/;samesite=none;secure;`;
-
   window.location.href = `https://script.google.com/macros/s/${scriptId}/exec?id_token=${response.credential}&esc=${esc}&ra=${ra}`;
   //window.location.href = `https://script.google.com/macros/s/AKfycbygi2SS3-1hvMTVJuLiR80fIrPP17tYKpC09LAQhsNK/dev?id_token=${response.credential}&esc=${esc}&ra=${ra}`;
 }
