@@ -14,6 +14,11 @@
 <p>Último acesso foi em <span id="lastData"></span>.</p>
 
 <script>
+/*
+limite de 5 MB a 10 MB de armazenamento por origem (domínio, protocolo e porta)
+2 bytes por caractere
+*/
+
 if (! localStorage.pageLoadCount) localStorage.pageLoadCount = 0;
 
 localStorage.pageLoadCount = parseInt(localStorage.pageLoadCount) + 1;
