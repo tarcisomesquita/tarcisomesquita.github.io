@@ -24,7 +24,7 @@ Maltose        Glicose + Glicose     Vegetais
 Um polissacarídeo é um polímero de monossacarídeos que contém mais de vinte unidades de monossacarídeos ligadas entre si. A maioria dos carboidratos encontrada na natureza ocorre como polissacarídeos.
 Ex.: quitina, amido, celulose
 
-Entre as biomoléculas, as proteínas são as moléculas que apresentam maior diversidade em termos estruturais e funcionais. Elas são formadas por um ou mais polímeros lineares denominados peptídeos, que consistem em várias combinações de monômeros, chamados de aminoácidos. Existem cerca de 20 tipos de aminoácidos; todos têm um grupo carboxila (-COOH) e um grupo amino separados entre si por um carbono, o carbono α. Em outra ligação do carbono α, há um átomo de hidrogênio e, em outra, existe um grupamento R, que consiste em um grupamento químico diferente que distingue cada tipo de aminoácido.
+Entre as biomoléculas, as proteínas são formadas por um ou mais polímeros lineares denominados peptídeos, que consistem em várias combinações de monômeros, chamados de aminoácidos. Existem cerca de 20 tipos de aminoácidos; todos têm um grupo carboxila (-COOH) e um grupo amino separados entre si por um carbono, o carbono α. Em outra ligação do carbono α, há um átomo de hidrogênio e, em outra, existe um grupamento R, que consiste em um grupamento químico diferente que distingue cada tipo de aminoácido.
 Os 20 aminoácidos que compõem as proteínas: valina, leucina, triptofano, prolina, isoleucina, metionina, fenilalanina, alanina, treonina, glicina, asparagina, glutamina, cisteína, serina, tirosina, arginina, histidina, lisina, ácido glutâmico, ácido aspártico.
 
 proteínas responsáveis pelos movimentos celulares, como na contração das células musculares. Exemplo: actina e miosina.
@@ -35,19 +35,9 @@ Três bases nitrogenadas, a adenina (A), a citosina (C) e a guanina (G), são en
 mitocôndria é o plural de mitocôndrio
 o mitocôndrio pode ser visualizado pela microscopia óptica, utilizando o corante Verde Janus. Estima-se que, nas células do fígado, 10-15% do volume celular seja composto pelas mitocôndria, e elas são mais abundantes nas células musculares, que necessitam de um maior consumo de energia (ATP) para executar a contração muscular
 
-Durante a divisão celular, os cromossomos compactam-se grandemente, para
-favorecer a transferência do material genético intacto para suas células filhas.
-Por isso, são chamados de cromossomos mitóticos, e são extremamente interessantes para os pesquisadores, uma vez que se tornam visíveis, pois adotam
-formas bem distintas, podendo ser fotografados, e posteriormente separados e
-ordenados de acordo com o tamanho, de forma decrescente, o que é chamado
-de cariótipo.
+Durante a divisão celular, os cromossomos compactam-se, se tornam visíveis, pois adotam formas bem distintas, podendo ser fotografados, e posteriormente separados e ordenados de acordo com o tamanho, de forma decrescente, o que é chamado de cariótipo.
 
-Watson e Crick, em 1953, esses pesquisadores sugeriram que a replicação do DNA ocorria pela separação
-das fitas de dupla hélice, devido a essas fitas serem complementares uma
-a outra.
-
-Durante o processo de replicação do DNA, ocorre a mobilização de vinte
-ou mais proteínas que fazem parte do sistema denominado de DNA replicase.
+Durante o processo de replicação do DNA, ocorre a mobilização de vinte ou mais proteínas que fazem parte do sistema denominado de DNA replicase.
 
 É necessário separar as cadeias complementares da dupla hélice, e quem realiza isso são as proteínas chamadas helicases.
 
