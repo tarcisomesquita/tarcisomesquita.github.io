@@ -1,6 +1,0 @@
-AH = 43h Extended Write
-Entry: 
-AL = 0x00
-DL = Drive number
-DS:SI Disk address packet
-
