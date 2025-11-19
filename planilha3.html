@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Planilha para CEEJA</title>
+
+<meta name="description" content="Esta planilha ajuda professores a lançar notas e presenças na SED.">
+<meta http-equiv="cache-control" content="max-age=0">
+<meta viewport="width=device-width, initial-scale=1">
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<style>
+/* Estilos gerais */
+body {
+  height: 100%;
+  background-color: #FFFFFF;
+  font-family: 'Open Sans',sans-serif;
+  color: #000000;
+  font-size: 1em;
+  line-height: 1.44em;
+  text-align: justify;
+  margin: 0em;
+  padding: 1em;
+}
+
+/* Estilo do Modal de Entrada de Dados */
+.modal-overlay {
+  display: none; /* Oculto por padrão */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.6); /* Fundo escuro transparente */
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.btn-confirm {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+}
+
+.btn-confirm:hover {
+  background-color: #45a049;
+}
+
+.tela-cheia {}
+</style>
+
+<script>
+const scriptId = 'AKfycbzTDlG4n22NieuQI2sZWtsAGwiW9Xn6Aa08_05Oe5u3MRooZDDvZbESiCmZs_gxXerpMg'; 
+
+let ra = '';
+let esc = '';
+
+// Função executada ao carregar a página
+window.onload = function() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    
+    let paramRa = urlParams.get('ra');
+    let paramEsc = urlParams.get('esc');
+
+    // Se faltar RA ou ESC, abre o modal
+    if (!paramRa || !paramEsc) {
+        document.getElementById('modal-dados').style.display = 'flex';
+    } else {
+        ra = paramRa;
+        esc = paramEsc;
+    }
+};
+
+function salvarDadosManuais() {
+    const inputEsc = document.getElementById('select-esc').value;
+    const inputRa = document.getElementById('input-ra').value;
+
+    if (!inputEsc || !inputRa) {
+        alert("Por favor, selecione a escola e informe o RA.");
+        return;
+    }
+
+    esc = inputEsc;
+    ra = inputRa;
+
+    // Fecha o modal
+    document.getElementById('modal-dados').style.display = 'none';
+
+    // Atualiza a URL visualmente para o usuário saber que os dados foram computados
+    const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?esc=${esc}&ra=${encodeURIComponent(ra)}`;
+    window.history.pushState({path:newUrl},'',newUrl);
+}
+
+function handleCredentialResponse(response) {
+  // Validação de segurança antes de enviar
+  if (!ra || !esc) {
+      alert("Dados de RA ou Escola não preenchidos. Recarregue a página.");
+      return;
+  }
+  ampulheta();
+  window.location.href = `https://script.google.com/macros/s/${scriptId}/exec?id_token=${response.credential}&esc=${esc}&ra=${ra}`;
+}
+
+function ampulheta() {
+  let styleSheet = null;
+  let ruleIndex = -1;
+  
+  for (let i = 0; i < document.styleSheets.length; i++) {
+    const sheet = document.styleSheets[i];
+    try {
+      const rules = sheet.cssRules || sheet.rules; 
+      for (let j = 0; j < rules.length; j++) {
+        const rule = rules[j];
+        if (rule.selectorText === '.tela-cheia') {
+          styleSheet = sheet;
+          ruleIndex = j;
+          break;
+        }
+      }
+    }
+    catch (e) {
+      continue;
+    }
+    if (styleSheet) break;
+  }
+  
+  if (styleSheet && ruleIndex !== -1) {
+    styleSheet.deleteRule(ruleIndex);
+    styleSheet.insertRule(
+      `.tela-cheia {
+          position: fixed;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #fff;
+          z-index: 2000;
+      }`, 
+      ruleIndex
+    );
+  }
+  
+  const existing = document.querySelector('.tela-cheia');
+  if (existing) existing.remove();
+  
+  const div = document.createElement('div');
+  div.className = 'tela-cheia';
+  div.setAttribute('role', 'img');
+  div.setAttribute('aria-label', 'Ampulheta animada');
+  
+  const img = document.createElement('img');
+  img.src = 'https://tarcisomesquita.github.io/ceejapd/img/ampulheta.gif';
+  img.alt = 'Ampulheta animada';
+  
+  div.appendChild(img);
+  document.body.appendChild(div);
+}
+</script>
+</head>
+
+<body>
+
+<div id="modal-dados" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Informe seus Dados</h3>
+        <p style="font-size: 0.9em; color: #666;">Não identificamos sua escola ou RA na URL.</p>
+        
+        <div class="form-group">
+            <label for="select-esc">Escola:</label>
+            <select id="select-esc">
+                <option value="" disabled selected>Selecione...</option>
+                <option value="980158">CEEJA PAULO DECOURT (980158)</option>
+                <option value="980183">CEEJA MAX DADA GALLIZZI (980183)</option>
+                <option value="565076">CEEJA DE ARACATUBA (565076)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="input-ra">RA:</label>
+            <input type="text" id="input-ra" placeholder="Ex: 123.456.789-0/SP">
+        </div>
+
+        <button class="btn-confirm" onclick="salvarDadosManuais()">Confirmar</button>
+    </div>
+</div>
+
+<div class="tela-cheia">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/HLXPy-BS3_w?si=jZKiptmDWqPPQX7A" title="Planilha para CEEJA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<h2>Acessar notas</h2>
+<p>Login com seu email google</p>
+<div id="g_id_onload" data-client_id="453193392660-ftlj3r3c0s9vkembqckaub69fgnau7rm.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_select="true"></div>
+<div
+  id="login"
+  class="g_id_signin"
+  data-type="standard"
+  data-shape="pill"
+  data-theme="outline"
+  data-text="signin_with."
+  data-size="medium"
+  data-locale="pt-BR"
+  data-logo_alignment="left"
+  data-width="280"
+></div>
+
+<br>
+<br>
+
+<p></p>
+<footer style='font-family:"sans-serif"; font-size:10px;'>
+Autor: <a href="https://tarcisomesquita.github.io" target="_blank">Tarciso Mesquita</a><br/>
+Esta obra está licenciada com uma Licença <a rel="license" href="http://creativecommons.org/licenses/by/4.0/deed.pt_BR" target="_blank">Creative Commons Atribuição 4.0 Internacional</a>
+<script src="https://tarcisomesquita.github.io/log.js" onload="logsend()" async defer></script>
+</footer>
+<br>
+</div>
+</body>
+</html>
