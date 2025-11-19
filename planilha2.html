@@ -19,20 +19,6 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 ra = urlParams.get('ra');
 esc = urlParams.get('esc');
-if (!ra) ra = '';
-if (!esc) esc = '';
-
-// Mostrar modal se faltarem parâmetros
-window.addEventListener('DOMContentLoaded', () => {
-  if (!ra || !esc) {
-    document.getElementById('modal-params').style.display = 'flex';
-    document.getElementById('login').style.display = 'none';
-    
-    // Preencher os valores existentes
-    if (esc) document.getElementById('input-esc').value = esc;
-    if (ra) document.getElementById('input-ra').value = ra;
-  }
-});
 
 function submitParams() {
   const inputEsc = document.getElementById('input-esc').value.trim();
@@ -62,6 +48,15 @@ function submitParams() {
 }
 
 function handleCredentialResponse(response) {
+  if (!ra || !esc) {
+    document.getElementById('modal-params').style.display = 'flex';
+    document.getElementById('login').style.display = 'none';
+    
+    // Preencher os valores existentes
+    if (esc) document.getElementById('input-esc').value = esc;
+    if (ra) document.getElementById('input-ra').value = ra;
+  }
+  
   ampulheta();
   window.location.href = `https://script.google.com/macros/s/${scriptId}/exec?id_token=${response.credential}&esc=${esc}&ra=${ra}`;
 }
