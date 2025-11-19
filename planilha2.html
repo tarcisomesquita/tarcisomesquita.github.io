@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Planilha para CEEJA</title>
+
+<meta name="description" content="Esta planilha ajuda professores a lançar notas e presenças na SED.">
+<meta http-equiv="cache-control" content="max-age=0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<script>
+const scriptId = 'AKfycbzTDlG4n22NieuQI2sZWtsAGwiW9Xn6Aa08_05Oe5u3MRooZDDvZbESiCmZs_gxXerpMg';
+
+let ra;
+let esc;
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+ra = urlParams.get('ra');
+esc = urlParams.get('esc');
+if (!ra) ra = '';
+if (!esc) esc = '';
+
+// Mostrar modal se faltarem parâmetros
+window.addEventListener('DOMContentLoaded', () => {
+  if (!ra || !esc) {
+    document.getElementById('modal-params').style.display = 'flex';
+    document.getElementById('login').style.display = 'none';
+    
+    // Preencher os valores existentes
+    if (esc) document.getElementById('input-esc').value = esc;
+    if (ra) document.getElementById('input-ra').value = ra;
+  }
+});
+
+function submitParams() {
+  const inputEsc = document.getElementById('input-esc').value.trim();
+  const inputRa = document.getElementById('input-ra').value.trim();
+  
+  if (!inputEsc) {
+    alert('Por favor, selecione uma escola.');
+    return;
+  }
+  
+  if (!inputRa) {
+    alert('Por favor, informe o RA do aluno.');
+    return;
+  }
+  
+  // Atualizar variáveis globais
+  esc = inputEsc;
+  ra = inputRa;
+  
+  // Fechar modal e mostrar botão de login
+  document.getElementById('modal-params').style.display = 'none';
+  document.getElementById('login').style.display = 'block';
+  
+  // Atualizar URL sem recarregar a página
+  const newUrl = `${window.location.pathname}?esc=${encodeURIComponent(esc)}&ra=${encodeURIComponent(ra)}`;
+  window.history.pushState({}, '', newUrl);
+}
+
+function handleCredentialResponse(response) {
+  ampulheta();
+  window.location.href = `https://script.google.com/macros/s/${scriptId}/exec?id_token=${response.credential}&esc=${esc}&ra=${ra}`;
+}
+
+function ampulheta() {
+  let styleSheet = null;
+  let ruleIndex = -1;
+  
+  for (let i = 0; i < document.styleSheets.length; i++) {
+    const sheet = document.styleSheets[i];
+    try {
+      const rules = sheet.cssRules || sheet.rules;
+      for (let j = 0; j < rules.length; j++) {
+        const rule = rules[j];
+        if (rule.selectorText === '.tela-cheia') {
+          styleSheet = sheet;
+          ruleIndex = j;
+          break;
+        }
+      }
+    }
+    catch (e) {
+      continue;
+    }
+    if (styleSheet) break;
+  }
+  
+  if (styleSheet && ruleIndex !== -1) {
+    styleSheet.deleteRule(ruleIndex);
+    styleSheet.insertRule(
+      `.tela-cheia {
+          position: fixed;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #fff;
+      }`, 
+      ruleIndex
+    );
+  }
+  
+  const existing = document.querySelector('.tela-cheia');
+  if (existing) existing.remove();
+  
+  const div = document.createElement('div');
+  div.className = 'tela-cheia';
+  div.setAttribute('role', 'img');
+  div.setAttribute('aria-label', 'Ampulheta animada');
+  
+  const img = document.createElement('img');
+  img.src = 'https://tarcisomesquita.github.io/ceejapd/img/ampulheta.gif';
+  img.alt = 'Ampulheta animada';
+  
+  div.appendChild(img);
+  document.body.appendChild(div);
+}
+</script>
+
+<style>
+body {
+  height: 100%;
+  background-color: #FFFFFF;
+  font-family: 'Open Sans',sans-serif;
+  color: #000000;
+  font-size: 1em;
+  line-height: 1.44em;
+  text-align: justify;
+  margin: 0em;
+  padding: 1em;
+}
+
+.tela-cheia {}
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2em;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 90%;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 1.5em;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+  color: #333;
+}
+
+.form-group select,
+.form-group input {
+  width: 100%;
+  padding: 0.75em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+  font-family: 'Open Sans', sans-serif;
+  box-sizing: border-box;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  outline: none;
+  border-color: #4285f4;
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+}
+
+.btn-submit {
+  background: #4285f4;
+  color: white;
+  padding: 0.75em 2em;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+}
+
+.btn-submit:hover {
+  background: #3367d6;
+}
+
+.btn-submit:active {
+  background: #2851a3;
+}
+</style>
+</head>
+
+<body>
+<!-- Modal para entrada de parâmetros -->
+<div id="modal-params" class="modal">
+  <div class="modal-content">
+    <h2>Informações Necessárias</h2>
+    
+    <div class="form-group">
+      <label for="input-esc">Escola:</label>
+      <select id="input-esc">
+        <option value="">Selecione uma escola</option>
+        <option value="980158">CEEJA PAULO DECOURT (980158)</option>
+        <option value="980183">CEEJA MAX DADA GALLIZZI (980183)</option>
+        <option value="565076">CEEJA DE ARAÇATUBA (565076)</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="input-ra">RA do Aluno:</label>
+      <input type="text" id="input-ra" placeholder="Ex: 125.173.238-0/SP">
+    </div>
+    
+    <button class="btn-submit" onclick="submitParams()">Continuar</button>
+  </div>
+</div>
+
+<div class="tela-cheia">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/HLXPy-BS3_w?si=jZKiptmDWqPPQX7A" title="Planilha para CEEJA" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<h2>Acessar notas</h2>
+<p>Login com seu email google</p>
+<div id="g_id_onload" data-client_id="453193392660-ftlj3r3c0s9vkembqckaub69fgnau7rm.apps.googleusercontent.com" data-callback="handleCredentialResponse" data-auto_select="true"></div>
+<div
+  id="login"
+  class="g_id_signin"
+  data-type="standard"
+  data-shape="pill"
+  data-theme="outline"
+  data-text="signin_with"
+  data-size="medium"
+  data-locale="pt-BR"
+  data-logo_alignment="left"
+  data-width="280"
+></div>
+
+<br>
+<br>
+
+<p></p>
+<footer style='font-family:"sans-serif"; font-size:10px;'>
+Autor: <a href="https://tarcisomesquita.github.io" target="_blank">Tarciso Mesquita</a><br/>
+Esta obra está licenciada com uma Licença <a rel="license" href="http://creativecommons.org/licenses/by/4.0/deed.pt_BR" target="_blank">Creative Commons Atribuição 4.0 Internacional</a>
+<script src="https://tarcisomesquita.github.io/log.js" onload="logsend()" async defer></script>
+</footer>
+<br>
+</div>
+</body>
+</html>
