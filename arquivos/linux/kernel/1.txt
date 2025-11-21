@@ -1,0 +1,174 @@
+tar -x -f linux-6.17.8.tar.xz
+cd linux-6.17.8
+
+mkdir initramfs
+mkdir -p initramfs/dev
+sudo mknod initramfs/dev/console c 5 1
+sudo mknod initramfs/dev/null c 1 3
+cp /home/live/init initramfs/init
+(cd initramfs && find . | cpio --create --format=newc --verbose) > initramfs.cpio
+
+make distclean
+make x86_64_defconfig
+make -j 8 CONFIG_INITRAMFS_SOURCE=initramfs.cpio CONFIG_INITRAMFS_COMPRESSION_NONE=y CONFIG_DRM_SIMPLEDRM=y CONFIG_DEVTMPFS=y CONFIG_DEVTMPFS_MOUNT=y bzImage
+
+mkdir -p UEFI/EFI/BOOT
+cp arch/x86/boot/bzImage ./UEFI/EFI/BOOT/BOOTx64.EFI
+
+qemu-system-x86_64 -enable-kvm -m 512 -bios /usr/share/ovmf/OVMF.fd -drive if=virtio,format=raw,file=fat:rw:./UEFI
+
+// para mostrar mensagens do kernel
+CONFIG_DRM=y CONFIG_DRM_KMS_HELPER=y CONFIG_DRM_FBDEV_EMULATION=y CONFIG_DRM_SIMPLEDRM=y 
+
+qemu-system-x86_64 -kernel arch/x86/boot/bzImage -initrd initramfs.cpio -append "console=ttyS0 loglevel=7" -serial mon:stdio
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+CONFIG_EFI=y
+CONFIG_EFI_STUB=y
+
+https://mirrors.edge.kernel.org/pub/linux/kernel/v6.x/linux-6.17.8.tar.xz
+
+sudo cp /boot/config-$(uname -r) .config
+sudo make oldconfig
+sudo make -j$(nproc)
+
+
+# losetup -o $((0x05000000*512)) $(losetup -f) /dev/nvme0n1
+# mkfs.ext4 -L KERNEL /dev/loop3 64G
+# chown live:live -R /media/live/KERNEL
+
+lsmod | cut -d' ' -f1 | sed '1d' | sort > ~/modulos_em_uso.txt
+
+Quando não há .config, use
+make defconfig
+
+Processor type and features → sua CPU x86_64 (default ok).
+Firmware Drivers → EFI (EXTensible Firmware Interface) -> habilitar EFI e também EFI_STUB (CONFIG_EFI e CONFIG_EFI_STUB=y).
+
+CONFIG_INITRAMFS_SOURCE="/caminho/para/initramfs.cpio.gz"
+make menuconfig → General setup → Initial RAM filesystem and RAM disk (initramfs/initrd) support → Initramfs source file(s)
+
+sudo make modules_install INSTALL_MOD_PATH=/tmp/kernel-mods
+
+
+CONFIG_IKCONFIG=y
+CONFIG_IKCONFIG_PROC=y
+Isso faz o kernel incluir o .config dentro da imagem como um blob gzip visível em:
+/proc/config.gz
+
+CONFIG_DEVTMPFS=y CONFIG_DEVTMPFS_MOUNT=y
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+CONFIG_DEVTMPFS=y - to get devtmpfs support, to provide a dynamic /dev
+CONFIG_INITRAMFS_ROOT_UID=0 - root user id
+CONFIG_INITRAMFS_ROOT_GID=0 - root group id
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+cat << EOF > hello.c
+#include <stdio.h>
+#include <unistd.h>
+
+int main(int argc, char *argv[]) {
+  printf("Hello world!\n");
+  sleep(999999999);
+}
+EOF
+gcc -static hello.c -o hello
+
+create an initramfs template and use the Linux gen_initramfs.sh script to create the cpio. Note that you need to run this relative to the linux directory
+# create list of files
+cat << EOF > initramfs
+dir /dev 755 0 0
+nod /dev/console 644 0 0 c 5 1
+nod /dev/loop0 644 0 0 b 7 0
+dir /bin 755 1000 1000
+dir /proc 755 0 0
+dir /sys 755 0 0
+dir /mnt 755 0 0
+file /init hello 755 0 0
+EOF
+# generate a cpio from it
+./usr/gen_initramfs.sh initramfs | gzip -9 > cpio 
+
+Note that we use gzip compression here so your kernel must have CONFIG_INITRAMFS_COMPRESSION_GZIP=y
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+mount -t devtmpfs  devtmpfs  /dev
+mount -t proc      proc      /proc
+mount -t sysfs     sysfs     /sys
+mount -t tmpfs     tmpfs     /tmp
+
+(cd $ROOTFS; find . | cpio -ov --format=newc) | gzip -9 > cpio
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+extract files from an existing gzipped cpio:
+# -i extract
+# -d create directories
+# -m preserve mtime
+# -v verbose
+mkdir rootfs_mod
+(cd rootfs_mod; gzip -cd ../cpio | sudo cpio -idmv)
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+// minimal_init.c
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/mount.h>
+
+int main() {
+    // Mount essential filesystems
+    mount("none", "/proc", "proc", 0, "");
+    mount("none", "/sys", "sysfs", 0, "");
+    
+    // Mount real root
+    mount("/dev/sda2", "/newroot", "ext4", MS_RDONLY, "");
+    
+    // Switch root
+    chdir("/newroot");
+    mount(".", "/", NULL, MS_MOVE, NULL);
+    chroot(".");
+    
+    // Execute real init
+    execl("/sbin/init", "init", NULL);
+    return 0;
+}
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+# Obtenha a versão do kernel atual
+KERNEL_VERSION=$(uname -r)
+
+# Gere a imagem initramfs para o kernel atual
+sudo update-initramfs -u -k "${KERNEL_VERSION}"
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+sudo make modules_install
+
+# Verifique a versão exata do seu novo kernel
+KERNEL_VERSION=$(make kernelversion)
+
+# Gere a imagem initramfs (usando o método dpkg/Debian-like):
+sudo mkinitramfs -o /tmp/initrd-$KERNEL_VERSION.img $KERNEL_VERSION
+
+ = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Analise o arquivo .config que tenho.
+Sugere alguma melhoria para meu sistema que usa ToRAM?
+
+filosofia ToRAM: alto desempenho e baixa latência.
+
+CONFIG_PREEMPT=y (Low-Latency)
+CONFIG_NO_HZ_FULL=y (reduz latência)
+CONFIG_IO_URING=y (Interface moderna e rápida de I/O)
+CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y desabilita a maioria das opções de debug e tracing
+
+CONFIG_HZ_250=y para CONFIG_HZ_1000=y
+CONFIG_RT_GROUP_SCHED Habilitar (y) (agendamento de tarefas em tempo real)
+CONFIG_UCLAMP_TASK Habilitar (y) (Permite que o userspace forneça dicas ao agendador sobre o uso mínimo e máximo da CPU de uma tarefa, melhorando a eficiência e o controle de frequências)
+CONFIG_NUMA_BALANCING_DEFAULT_ENABLED Desabilitar (N) 8Se você estiver usando um desktop com apenas um soquete de CPU (o caso mais comum), o balanceamento NUMA automático é desnecessário
