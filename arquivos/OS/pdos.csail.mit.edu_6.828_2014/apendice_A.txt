@@ -1,13 +1,0 @@
-x86 has eight 80-bit floating-point registers as well as a handful ofspecial-purpose registers like the control registers %cr0, %cr2, %cr3, and %cr4; thedebug registers %dr0, %dr1, %dr2, and %dr3; the segment registers %cs, %ds, %es,%fs, %gs, and %ss; and the global and local descriptor table pseudo-registers %gdtrand %ldtr.
-
-Intel Core 2 Duo E7200 at 2.53 GHz
-TODO: Plug in non-made-up numbers!
-storage access time size
-register 0.6 ns 64 bytes
-L1 cache 0.5 ns 64 kilobytes
-L2 cache 10 ns 4 megabytes
-main memory 100 ns 4 gigabytes
-
-The x86 processorprovides special in and out instructions that read and write values from device addresses called I/O ports. The hardware implementation of these instructions is essentially the same as reading and writing memory. Early x86 processors had an extra address line: 0 meant read/write from an I/O port and 1 meant read/write from mainmemory. Each hardware device monitors these lines for reads and writes to its as-signed range of I/O ports.
-
-The xv6 boot loader comprises two source files,one written in a combination of 16-bit and 32-bit x86 assembly (bootasm.S; (8900)) and one written in C (bootmain.c; (9000)).
