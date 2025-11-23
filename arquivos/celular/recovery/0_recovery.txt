@@ -1,29 +1,8 @@
 Ativar desbloqueio por OEM em Opções do desenvolvedor
 
-./unmkbootimg  -i recovery_J510MNZTO2BQL2_7.1.1.img
-
-mkdir ramdisk
-cd ramdisk/
-cat ../ramdisk.cpio.gz  | gzip --decompress --to-stdout | cpio -i -d
-
-strings -t d sbin/recovery | grep -C 5 'Wipe data/factory reset'
-
-dd if=sbin/recovery bs=1 skip=894095 count=193 status=none | hexdump -C
-
-echo -n -e "Reboot           \\x00Bootloader          \\x00Apply update from ADB\\x00Apply update from SD card\\x00Wipe data/factory reset\\x00Wipe cache partition\\x00Mount /system\\x00View recovery logs\\x00Run graphics test\\x00Power off\\x00" | dd of=sbin/recovery bs=1 seek=894095
-
-mv ../ramdisk.cpio.gz ../ramdisk.cpio.gz_
-
-find . -print | cpio -o -H newc | gzip -9 -c - > ../ramdisk.cpio.gz
-
-./mkbootimg --base 0 --pagesize 2048 --kernel_offset 0x80008000 --ramdisk_offset 0x82000000 --second_offset 0x80f00000 --tags_offset 0x81e00000 --cmdline 'console=null androidboot.hardware=qcom user_debug=23 msm_rtb.filter=0x3F ehci-hcd.park=3 androidboot.bootdevice=7824900.sdhci' --kernel kernel --ramdisk ramdisk.cpio.gz -o recovery_J510MNZTO2BQL2_7.1.1.img
-
-baixo + meio + power
-confirmei
+baixo + power
 
 conectei o cabo
-
-mv recovery_J510MNZTO2BQL2_7.1.1.img recovery_J510MNZTO2BQL2_7.1.1.img_
 
 sudo ./heimdall_2018-12-26 flash --RECOVERY recovery_TWRP_3.0.2.img --verbose --no-reboot
 
@@ -31,7 +10,7 @@ desconectei o cabo
 
 tirei a bateria
 
-cima + meio + power
+cima + power
 
 ERROR: Failed to unpack received packet.
 ERROR: RECOVERY upload failed!
@@ -47,8 +26,7 @@ após ativar, não entrou em modo recovery
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-baixo + meio + power
-confirmei
+baixo + power
 
 conectei o cabo
 
