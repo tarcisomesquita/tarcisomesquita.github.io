@@ -1,5 +1,0 @@
-https://builds.kolibrios.org/eng/latest-raw.7z
-
-http://mirror.slitaz.org/iso/rolling/slitaz-rolling-core64.iso
-
-https://download.tails.net/tails/stable/tails-amd64-5.13/tails-amd64-5.13.img
