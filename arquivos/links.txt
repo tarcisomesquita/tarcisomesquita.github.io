@@ -1,21 +1,19 @@
-
-
-https://jsbin.com/
 https://beautifier.io/
 https://ideone.com
 
+https://jspaint.app
+https://www.geogebra.org/calculator
+https://beta.simet.nic.br
 https://www.musicca.com/pt/piano
 
 https://security.google.com/settings/security/permissions?hl=pt-br
 
+https://developers.google.com/apps-script/reference/script?hl=pt-br
 https://developers.google.com/apps-script/reference/drive/file?hl=pt-br
 
-https://developers.google.com/apps-script/guides/libraries?hl=pt-br
-
-https://developers.google.com/apps-script/reference/script?hl=pt-br
-https://developers.google.com/apps-script/guides/services/quotas?hl=pt-br
-
 https://developers.google.com/apps-script/guides/content
+https://developers.google.com/apps-script/guides/services/quotas?hl=pt-br
+https://developers.google.com/apps-script/guides/libraries?hl=pt-br
 
 https://developers.google.com/sheets/api/guides/concepts
 https://developers.google.com/sheets/api/quickstart/nodejs
@@ -24,43 +22,17 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expression
 
 https://github.com/googleapis/google-api-nodejs-client/blob/main/samples/sheets/quickstart.js
 
-https://beta.simet.nic.br/
-
-https://jspaint.app/
-
-https://is.gd/_t_m_-
-ver estatísticas
-
 download pdf do google drive
 https://drive.google.com/uc?id=1_I4C4mI-P5eQPnd3SA9UYwipNtx59_HV
 https://drive.usercontent.google.com/download?id=1jwVF8MIb-mm38r8qSDqNKoetdFIGMIMA
 
-https://openrouter.ai/
+https://chatgpt.com
+https://gemini.google.com
+https://claude.ai
+https://openrouter.ai
 https://julius.ai
 https://x.ai
 https://chat.deepseek.com
-https://chatgpt.com
-https://gemini.google.com pro
-https://claude.ai
 https://poe.com
 https://lovable.dev
-https://www.napkin.ai/
-
-Comece dizendo o nome do arquivo fonte.
-
-Considere que o ouvinte é uma pessoa adulta que está começando a aprender sobre os assuntos do texto.
-
-
-Comece dizendo o nome do arquivo fonte.
-
-Considere que o ouvinte é uma pessoa adulta que está começando a aprender sobre os assuntos do texto.
-
-O áudio e os textos devem estar em língua portuguesa.
-
-
-Extraia o texto do arquivo para gerar um áudio da leitura.
-Clicar em ler a resposta.
-
-
-https://www.geogebra.org/calculator
-
+https://www.napkin.ai
