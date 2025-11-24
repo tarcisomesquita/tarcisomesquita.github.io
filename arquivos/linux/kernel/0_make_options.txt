@@ -1,5 +1,11 @@
 make help
 
+Quando não há .config, use
+make defconfig
+
+Quando já houver um .config, ou editá-lo manualmente, use
+make oldconfig
+
 make ARCH=ia64 CROSS_COMPILE=ia64-
 
 Cleaning targets:
@@ -27,10 +33,6 @@ Documentation targets:
 
 Architecture specific targets (x86):
 * bzImage      - Compressed kernel image (arch/x86/boot/bzImage)
-  isoimage     - Create a boot CD-ROM image (arch/x86/boot/image.iso)
-                  bzdisk/fdimage*/isoimage also accept:
-                  FDARGS="..."  arguments for the booted kernel
-                  FDINITRD=file initrd for the booted kernel
 
   i386_defconfig           - Build for i386
   x86_64_defconfig         - Build for x86_64
@@ -38,9 +40,6 @@ Architecture specific targets (x86):
   make V=0|1 [targets] 0 => quiet build (default), 1 => verbose build
   make V=2   [targets] 2 => give reason for rebuild of target
   make O=dir [targets] Locate all output files in "dir", including .config
-  make C=1   [targets] Check all c source with $CHECK (sparse by default)
-  make C=2   [targets] Force check of all c source with $CHECK
 
-Execute "make" or "make all" to build all targets marked with [*] 
 For further info see the ./README file
 
