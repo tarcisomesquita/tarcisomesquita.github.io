@@ -1,3 +1,8 @@
+lsmod | cut -d' ' -f1 | sed '1d' | sort > ~/modulos_em_uso.txt
+sudo make modules_install INSTALL_MOD_PATH=/tmp/kernel-mods
+
+make localmodconfig
+Update current config disabling modules not loaded
 
 # cat /proc/modules
 # cat /proc/cpuinfo
@@ -10,15 +15,12 @@
 # lsusb 
 
 Para verificar os módulos em execução: 
-
 # lsmod 
 
 Para verificar os módulos compilados: 
-
 # modprobe -l 
 
 Para identificar o que cada módulo faz, execute: 
-
 modinfo <nome_do_modulo> 
 
 = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -27,7 +29,7 @@ Acesse: Networking support >> Networking options >> Network packet filtering fra
 Marque: IPv4 NAT e iptables NAT support, ao marcar iptables NAT support vão abrir as opções: MASQUERADE target support, NETMAP target support e REDIRECT target support, marque as 3.
 
 Acesse: File Systems >> Native language support
-Marque com ‘*’ as opções: Codepage 860 (Portuguese), ASCII (United States), NLS ISO 8859-1 (Latin1; …) e NLS UTF-8.
+Marque com '*' as opções: Codepage 860 (Portuguese), ASCII (United States), NLS ISO 8859-1 (Latin1; …) e NLS UTF-8.
 
 Acesse: Networking support >> Wireless
 Se você for um usuário mais experiente escolha as opções que deseja, caso seja iniciante pode marcar todas as opções nesta tela.
@@ -37,5 +39,3 @@ Acesse: Device Drivers >> Network device support >> Wireless LAN
 Marque: Atheros Wireless Cards.
 Sem voltar acesse: Atheros Wireless Cards
 Marque: Atheros 802.11n wireless cards support e todas suas sub opções.
-
-make ARCH=arm CROSS_COMPILE=arm_linux_gnjeabi - uImage -j4
