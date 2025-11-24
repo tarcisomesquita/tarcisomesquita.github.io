@@ -1,3 +1,7 @@
+sudo apt-get build-dep linux
+
+wget https://mirrors.edge.kernel.org/pub/linux/kernel/v6.x/linux-6.17.8.tar.xz
+
 tar -x -f linux-6.17.8.tar.xz
 cd linux-6.17.8
 
@@ -10,7 +14,7 @@ cp /home/live/init initramfs/init
 
 make distclean
 make x86_64_defconfig
-make -j 8 CONFIG_INITRAMFS_SOURCE=initramfs.cpio CONFIG_INITRAMFS_COMPRESSION_NONE=y CONFIG_DRM_SIMPLEDRM=y CONFIG_DEVTMPFS=y CONFIG_DEVTMPFS_MOUNT=y bzImage
+make -j $(nproc) CONFIG_INITRAMFS_SOURCE=initramfs.cpio CONFIG_INITRAMFS_COMPRESSION_NONE=y CONFIG_DRM_SIMPLEDRM=y CONFIG_DEVTMPFS=y CONFIG_DEVTMPFS_MOUNT=y bzImage
 
 mkdir -p UEFI/EFI/BOOT
 cp arch/x86/boot/bzImage ./UEFI/EFI/BOOT/BOOTx64.EFI
@@ -27,30 +31,14 @@ qemu-system-x86_64 -kernel arch/x86/boot/bzImage -initrd initramfs.cpio -append 
 CONFIG_EFI=y
 CONFIG_EFI_STUB=y
 
-https://mirrors.edge.kernel.org/pub/linux/kernel/v6.x/linux-6.17.8.tar.xz
-
-sudo cp /boot/config-$(uname -r) .config
-sudo make oldconfig
-sudo make -j$(nproc)
-
-
-# losetup -o $((0x05000000*512)) $(losetup -f) /dev/nvme0n1
-# mkfs.ext4 -L KERNEL /dev/loop3 64G
-# chown live:live -R /media/live/KERNEL
-
-lsmod | cut -d' ' -f1 | sed '1d' | sort > ~/modulos_em_uso.txt
-
-Quando não há .config, use
-make defconfig
-
 Processor type and features → sua CPU x86_64 (default ok).
 Firmware Drivers → EFI (EXTensible Firmware Interface) -> habilitar EFI e também EFI_STUB (CONFIG_EFI e CONFIG_EFI_STUB=y).
 
 CONFIG_INITRAMFS_SOURCE="/caminho/para/initramfs.cpio.gz"
 make menuconfig → General setup → Initial RAM filesystem and RAM disk (initramfs/initrd) support → Initramfs source file(s)
 
+lsmod | cut -d' ' -f1 | sed '1d' | sort > ~/modulos_em_uso.txt
 sudo make modules_install INSTALL_MOD_PATH=/tmp/kernel-mods
-
 
 CONFIG_IKCONFIG=y
 CONFIG_IKCONFIG_PROC=y
@@ -66,6 +54,13 @@ CONFIG_INITRAMFS_ROOT_UID=0 - root user id
 CONFIG_INITRAMFS_ROOT_GID=0 - root group id
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Partição para compilar o kernel
+# losetup -o $((0x05000000*512)) $(losetup -f) /dev/nvme0n1
+# mkfs.ext4 -L KERNEL /dev/loop3 64G
+# chown live:live -R /media/live/KERNEL
+
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 cat << EOF > hello.c
 #include <stdio.h>
