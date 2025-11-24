@@ -1,0 +1,23 @@
+> Processor type and features > EFI stub support
+
+cd /home/ubuntu/Desktop/initrd
+find . -print | cpio --quiet -R 0:0 -o -H newc > ../initramfs.cpio
+
+linux-4.6$ scripts/gen_initramfs_list.sh ../initrd/ > ../teste.txt 
+linux-4.6$ usr/gen_init_cpio ../teste.txt > ../initramfs.cpio 
+
+scripts/gen_initramfs_list.sh -h
+usr/gen_init_cpio --help
+
+CONFIG_INITRAMFS_SOURCE can be interpreted as any legal argument to gen_initramfs_list.sh
+
+gcc -static hello.c -o init
+echo init | cpio -o -H newc | gzip > test.cpio.gz
+qemu -kernel /boot/vmlinuz -initrd test.cpio.gz /dev/zero
+
+kernel parameters "init=/bin/sh" or "rdinit=/bin/sh" is useful.
+
+init/initramfs.c
+
+linux-4.6/Documentation/early-userspace/buffer-format.txt
+
