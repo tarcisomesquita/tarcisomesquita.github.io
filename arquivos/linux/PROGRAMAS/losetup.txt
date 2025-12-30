@@ -17,15 +17,19 @@ setup read-only loop device
 EXAMPLE
 # insmod loop.ko
 
-
 # dd if=/dev/zero of=file.bin bs=1M count=100
 # losetup /dev/loop3 file.bin
 # mke2fs -t ext4 /dev/loop3
-sudo mkdir /media/teste
-sudo mount -t ext4 /dev/loop3 /media/teste
-sudo chown lubuntu:lubuntu -R /media/teste
-sudo umount /media/teste
+
+# mkdir /media/teste
+# mount -t ext4 /dev/loop3 /media/teste
+# chown lubuntu:lubuntu -R /media/teste
+# umount /media/teste
 # losetup -d /dev/loop3
 
 # rmmod loop
 
+
+4 GiB para SO + 12 GiB para dados
+# losetup -o $((0x00800000*512)) $(losetup -f) /dev/sda
+# mkfs.ext4 -L arq /dev/loop13 12G
