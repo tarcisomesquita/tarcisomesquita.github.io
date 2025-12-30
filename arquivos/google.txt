@@ -21,5 +21,6 @@ https://developers.google.com/sheets/api/quickstart/js?hl=pt_BR
 
  = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
+https://myaccount.google.com/connections
 https://myaccount.google.com/permissions?hl=pt-br
 Quem faz login com Google
