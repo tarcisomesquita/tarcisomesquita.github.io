@@ -36,3 +36,4 @@ https://chat.deepseek.com
 https://poe.com
 https://lovable.dev
 https://www.napkin.ai
+https://www.perplexity.ai
