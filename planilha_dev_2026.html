@@ -71,14 +71,14 @@ function handleCredentialResponse(response) {
   div.setAttribute('aria-label', 'Ampulheta animada');
   
   const img = document.createElement('img');
-  img.src = 'img/ampulheta.gif'; // coloque ampulheta.gif no mesmo diretório deste arquivo
+  img.src = 'https://tarcisomesquita.github.io/ceejapd/img/ampulheta.gif';
   img.alt = 'Ampulheta animada';
   
   div.appendChild(img);
   document.body.appendChild(div);
   
   //window.location.href = `https://script.google.com/macros/s/${scriptId}/exec?id_token=${response.credential}`;
-  window.location.href = `https://script.google.com/macros/s/AKfycbz5V3PtUU94OFVkOP-dH5BSwBMLEmVnzqGlh3gZRN71/dev?id_token=${response.credential}`;
+  window.location.href = `https://script.google.com/macros/s/AKfycbygi2SS3-1hvMTVJuLiR80fIrPP17tYKpC09LAQhsNK/dev?id_token=${response.credential}`;
 }
 // https://console.cloud.google.com/auth/overview?project=planilhaceeja-id
 </script>
