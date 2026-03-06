@@ -77,8 +77,8 @@ function handleCredentialResponse(response) {
   div.appendChild(img);
   document.body.appendChild(div);
   
-  //window.location.href = `https://script.google.com/macros/s/${scriptId}/exec?id_token=${response.credential}`;
-  window.location.href = `https://script.google.com/macros/s/AKfycbygi2SS3-1hvMTVJuLiR80fIrPP17tYKpC09LAQhsNK/dev?id_token=${response.credential}`;
+  //window.location.href = `https://script.google.com/macros/s/${scriptId}/exec?esc=${esc}&ra=${ra}&id_token=${response.credential}`;
+  window.location.href = `https://script.google.com/macros/s/AKfycbygi2SS3-1hvMTVJuLiR80fIrPP17tYKpC09LAQhsNK/dev?esc=${esc}&ra=${ra}&id_token=${response.credential}`;
 }
 // https://console.cloud.google.com/auth/overview?project=planilhaceeja-id
 </script>
