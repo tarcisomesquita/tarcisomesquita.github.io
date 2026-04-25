@@ -1,7 +1,0 @@
-
-TYPES OF OBJECT FILES
-There are three types:
-* executable file: a program.
-* relocatable file: a object.
-* shared object file: .so
-
