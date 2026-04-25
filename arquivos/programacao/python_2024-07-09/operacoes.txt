@@ -1,3 +1,0 @@
-// divisão (somente parte inteira)
-** potenciação
-
