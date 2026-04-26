@@ -1,0 +1,30 @@
+// Classe Pai (Base)
+class Usuario {
+  constructor(nome, email) {
+    this.nome = nome;
+    this.email = email;
+  }
+  
+  apresentar() {
+    return `Olá, meu nome é ${this.nome}.`;
+  }
+}
+
+// Classe Filha (Herda de Usuario)
+class Administrador extends Usuario {
+  constructor(nome, email, nivelAcesso) {
+    // Chama o construtor da classe pai
+    super(nome, email); 
+    this.nivelAcesso = nivelAcesso;
+  }
+  
+  // Método exclusivo da classe filha
+  relatorioPrivado() {
+    return `Acesso nível ${this.nivelAcesso}: Gerando dados...`;
+  }
+}
+
+const admin = new Administrador('Carlos', 'carlos@email.com', 'Total');
+
+console.log(admin.apresentar());       // Herdado de Usuario
+console.log(admin.relatorioPrivado()); // Próprio de Administrador
