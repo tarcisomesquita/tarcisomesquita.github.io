@@ -1,2 +1,0 @@
-a File object allows a programmer to easily create, delete, inspect, compare, or modify a file on the filesystem
-

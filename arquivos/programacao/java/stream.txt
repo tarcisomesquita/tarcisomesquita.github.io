@@ -1,4 +1,0 @@
-
-Um stream é como um cano por onde passam os bytes, a vantagem deste cano é que não precisamos nos preocupar de onde vem esses bytes, para nós eles vem do cano. Para quem escreve no stream também vale a mesma idéia do que agora do outro lado, empurrando os bytes para dentro.
-
-
