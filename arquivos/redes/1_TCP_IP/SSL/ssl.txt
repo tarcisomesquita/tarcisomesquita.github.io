@@ -1,0 +1,38 @@
+https://ssl4less.com.br/ssl-tools.html
+
+apt-get install ca-certificates
+
+
+strace -f wget https://www.google.com.br 2>&1 | grep crt
+ubuntu@ubuntu:~$ strace -f wget https://www.google.com.br 2>&1 | grep pem
+openat(AT_FDCWD, "/usr/lib/ssl/cert.pem", O_RDONLY) = -1 ENOENT (No such file or directory)
+
+ls -lh /usr/lib/ssl/
+lrwxrwxrwx 1 root root  14 mai 19  2017 certs -> /etc/ssl/certs
+lrwxrwxrwx 1 root root  16 mai 19  2017 private -> /etc/ssl/private
+
+ls -l /etc/ssl/certs
+DigiCert_Global_Root_G3.pem -> /usr/share/ca-certificates/mozilla/DigiCert_Global_Root_G3.crt
+
+sudo ln -s /usr/lib/ssl/cert.pem /home/ubuntu/DigiCertSHA2SecureServerCA.crt
+
+openssl s_client -showcerts -connect www.valoripva2018.fazenda.sp.gov.br:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >mycertfile.pem
+
+ver conteúdo
+openssl x509 -inform PEM -in mycertfile.pem -text -out certdata
+
+wget https://www.valoripva2018.fazenda.sp.gov.br --ca-certificate=mycertfile.pem
+openssl s_client -connect www.valoripva2018.fazenda.sp.gov.br:443
+
+openssl x509 -in mycert.crt -out mycert.pem -outform PEM
+openssl x509 -inform DER -in yourdownloaded.crt -out outcert.pem -text
+
+ls -lh /usr/share/ca-certificates/mozilla/  vários .crt
+
+
+
+    O servidor envia uma cópia do Certificado SSL, incluindo a chave pública do servidor.
+    O navegador verifica a origem do certificado em relação a uma lista de Autoridades Certificadoras confiáveis ​​e se o certificado não é vencido nem revogado para o site que está se conectando. Se o navegador confia no certificado, ele cria, criptografa e envia uma chave de sessão usando a chave pública do servidor.
+    O servidor descriptografa a chave de sessão usando sua chave privada e envia de volta uma confirmação criptografada com a chave de sessão para iniciar a sessão criptografada.
+    O servidor e o navegador agora criptografam todos os dados transmitidos pela chave de sessão.
+

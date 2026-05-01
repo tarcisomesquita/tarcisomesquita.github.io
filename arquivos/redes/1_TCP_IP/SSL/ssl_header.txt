@@ -1,0 +1,65 @@
+HTTP version 1.1 added a special HTTP method, CONNECT - intended to create the SSL tunnel, including the necessary protocol handshake and cryptographic setup.
+
+The client always sends so called HelloClient message first. It can be in SSL 2 format or SSL 3.0 format (the same format as in TLS 1.0 and 1.1).
+
+And there is also possibility that SSL 3.0/TLS 1.0/TLS 1.1 clients send HelloClient with the older format (SSL 2), just with the higher version number in the data. So, detection of SSL 2 HelloClient is neccessary for newer clients too. (For example Java SSL implementation does so)
+
+Let's say 'b' is your buffer. I tried to diagram the message format.
+SSL 2
+
++-----------------+------+-------
+| 2 byte header   | 0x01 | etc.
++-----------------|------+-------
+
+    b[0] & 0x80 == 0x80 (it means most significant bit of b[0] is '1')
+
+    ((b[0] & 0x7f) << 8 | b[1]) > 9 (It menas the low 7 bits of b[0] together with b[1] are length of data. You can have less in your buffer, so you cannot check them. But from the message format we know there are 3 field of 2 bytes (length fields), and at least one item in cipher list field (of size 3). So there should be at least 9 bytes (data length >= 9).
+
+    b[3] must be 0x01 (message type "ClientHello")
+
+SSL 3.0 or TLS 1.0 and 1.1
+
++-------+------------------+------------------+--------+------
+| 0x16  | 2 bytes version  |  2 bytes length  |  0x01  |  etc.
++-------+------------------+------------------+--------+------
+
+    b[0] == 0x16 (message type "SSL handshake")
+
+    b[1] should be 0x03 (currently newest major version, but who knows in future?)
+
+    b[5] must be 0x01 (handshake protocol message "HelloClient")
+ 2 down vote
+	
+
+The client always sends so called HelloClient message first. It can be in SSL 2 format or SSL 3.0 format (the same format as in TLS 1.0 and 1.1).
+
+And there is also possibility that SSL 3.0/TLS 1.0/TLS 1.1 clients send HelloClient with the older format (SSL 2), just with the higher version number in the data. So, detection of SSL 2 HelloClient is neccessary for newer clients too. (For example Java SSL implementation does so)
+
+Let's say 'b' is your buffer. I tried to diagram the message format.
+SSL 2
+
++-----------------+------+-------
+| 2 byte header   | 0x01 | etc.
++-----------------|------+-------
+
+    b[0] & 0x80 == 0x80 (it means most significant bit of b[0] is '1')
+
+    ((b[0] & 0x7f) << 8 | b[1]) > 9 (It menas the low 7 bits of b[0] together with b[1] are length of data. You can have less in your buffer, so you cannot check them. But from the message format we know there are 3 field of 2 bytes (length fields), and at least one item in cipher list field (of size 3). So there should be at least 9 bytes (data length >= 9).
+
+    b[3] must be 0x01 (message type "ClientHello")
+
+SSL 3.0 or TLS 1.0 and 1.1
+
++-------+------------------+------------------+--------+------
+| 0x16  | 2 bytes version  |  2 bytes length  |  0x01  |  etc.
++-------+------------------+------------------+--------+------
+
+    b[0] == 0x16 (message type "SSL handshake")
+
+    b[1] should be 0x03 (currently newest major version, but who knows in future?)
+
+    b[5] must be 0x01 (handshake protocol message "HelloClient")
+
+
+
+

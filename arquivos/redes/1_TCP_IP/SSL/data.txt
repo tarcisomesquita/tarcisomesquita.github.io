@@ -1,0 +1,31 @@
+The following diagram depicts the process of building an SSL Record.
+
+        -----------+
+          data   --+--------------> 1. Fragment data
+        -----------+
+                                    +------------------------+
+                                    |                        |
+                                    |                        |
+                                    +------------------------+
+
+                                    2. Compress data (generally no compression applied)
+
+                                    +------------------------+----+
+                                    |                        |MAC | Add a Message Authentication Code
+                                    |                        |    |
+                                    +------------------------+----+
+
+                                    3. Encrypt data
+
+                                    +-----------------------------+
+                                    |ciphertext                   |
+                                    |                             |
+                                    +-----------------------------+
+
+                                    4. Add header
+
+                               +----+-----------------------------+
+                    TLS Record |    |ciphertext                   | Add a TLS Record header
+                      header   |    |                             |
+                               +----+-----------------------------+
+
