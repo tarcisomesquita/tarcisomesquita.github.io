@@ -1,3 +1,0 @@
-The HEAD method is identical to GET except that the server MUST NOT return a message-body in the response.
-
-
