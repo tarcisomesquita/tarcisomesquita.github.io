@@ -1,0 +1,386 @@
+https://www.imagetotext.info/br/leitor-de-qr-code
+https://geradordepix.com/
+https://quickchart.io/documentation/qr-codes/
+https://quickchart.io/qr?text=01234567890123456789012345678901234567890123456789012345678901234567890123456789&dotStyle=circle&finderStyle=rounded&size=300&caption=scan%20me&captionFontSize=14&margin=2&ecLevel=L
+
+O QR Code Modelo 2 é dividido em 40 versões. Cada versão aumenta o número de módulos (os "pontinhos") na grade.
+Versão 4 tem 33 x 33 módulos) e suporta até 78 bytes (suficiente para links com alguns parâmetros).
+
+Um qr code, deve ser impresso com quantos centímetros de largura?
+A Versão 4 possui uma grade de 33 x 33 módulos.
+Com módulos de 0,5 mm: 33 x 0,5 = 1,65 cm (tamanho mínimo para uma distância 10 cm)
+ou
+Seguindo a proporção de 1:10 para garantir uma leitura rápida e estável, o cálculo, para uma distância de 6 metros, seria:
+600 cm (distância) / 10 = 60 cm de largura
+
+
+TABELA DE CAPACIDADE DE DADOS - QR CODE (Micro QR e Versões 1-8)
+=================================================================
+Version Error Correction Codewords Data Bits Numeric Alphanumeric Byte Kanji
+   M1      Error Det.         3         20       5         -        -     - 
+   M2               L         5         40      10         6        -     - 
+   M2               M         4         32       8         5        -     - 
+   M3               L        11         84      23        14        9     6 
+   M3               M         9         68      18        11        7     4 
+   M4               L        16        128      35        21       15     9 
+   M4               M        14        112      30        18       13     8 
+   M4               Q        10         80      21        13        9     5 
+    1               L        19        152      41        25       17    10 
+    1               M        16        128      34        20       14     8 
+    1               Q        13        104      27        16       11     7 
+    1               H         9         72      17        10        7     4 
+    2               L        34        272      77        47       32    20 
+    2               M        28        224      63        38       26    16 
+    2               Q        22        176      48        29       20    12 
+    2               H        16        128      34        20       14     8 
+    3               L        55        440     127        77       53    32 
+    3               M        44        352     101        61       42    26 
+    3               Q        34        272      77        47       32    20 
+    3               H        26        208      58        35       24    15 
+    4               L        80        640     187       114       78    48 
+    4               M        64        512     149        90       62    38 
+    4               Q        48        384     111        67       46    28 
+    4               H        36        288      82        50       34    21 
+    5               L       108        864     255       154      106    65 
+    5               M        86        688     202       122       84    52 
+    5               Q        62        496     144        87       60    37 
+    5               H        46        368     106        64       44    27 
+    6               L       136       1088     322       195      134    82 
+    6               M       108        864     255       154      106    65 
+    6               Q        76        608     178       108       74    45 
+    6               H        60        480     139        84       58    36 
+    7               L       156       1248     370       224      154    95 
+    7               M       124        992     293       178      122    75 
+    7               Q        88        704     207       125       86    53 
+    7               H        66        528     154        93       64    39 
+    8               L       194       1552     461       279      192   118 
+    8               M       154       1232     365       221      152    93 
+    8               Q       110        880     259       157      108    66 
+    8               H        86        688     202       122       84    52 
+
+
+Table 5 — Encoding/decoding table for Alphanumeric mode
+--------------------------------------------------------
+
+Char | Value   Char | Value   Char | Value   Char | Value
+--------------------------------------------------------
+0    | 0       6    | 6       C    | 12      I    | 18
+1    | 1       7    | 7       D    | 13      J    | 19
+2    | 2       8    | 8       E    | 14      K    | 20
+3    | 3       9    | 9       F    | 15      L    | 21
+4    | 4       A    | 10      G    | 16      M    | 22
+5    | 5       B    | 11      H    | 17      N    | 23
+
+Char | Value   Char | Value   Char | Value   Char | Value
+--------------------------------------------------------
+O    | 24      U    | 30      SP   | 36      .    | 42
+P    | 25      V    | 31      $    | 37      /    | 43
+Q    | 26      W    | 32      %    | 38      :    | 44
+R    | 27      X    | 33      *    | 39
+S    | 28      Y    | 34      +    | 40
+T    | 29      Z    | 35      -    | 41
+
+Usa 11 bits para codificar dois caracteres por vez.
+
+
+function gerarQRCodeVersao4(url) {
+  const versao = 4;
+  const nivelCorrecao = 'L'; // L, M, Q, H
+  const tamanho = 300; // Tamanho da imagem em pixels
+  
+  // version=4 força o uso da Versão 4 (33x33 módulos)
+  const apiUrl = `https://quickchart.io/qr?text=${encodeURIComponent(url)}&version=${versao}&ecLevel=${nivelCorrecao}&size=${tamanho}`;
+  
+  try {
+    const response = UrlFetchApp.fetch(apiUrl);
+    const imagemBlob = response.getBlob().setName("qrcode_versao4.png");
+    
+    return imagemBlob;
+  }
+  catch (e) {
+    Logger.log("Erro ao gerar QR Code: " + e.toString());
+    return null;
+  }
+}
+
+function salvarNoDrive() {
+  const link = "https://seulinkaqui.com";
+  const qrCodeBlob = gerarQRCodeVersao4(link);
+  
+  if (qrCodeBlob) {
+    DriveApp.createFile(qrCodeBlob);
+    Logger.log("QR Code Versão 4 criado com sucesso no seu Drive!");
+  }
+}
+
+function gerarQRCodeSVG(url) {
+  const versao = 4;
+  const nivelCorrecao = 'H'; // Nível H para permitir logo central
+  
+  // Adicionamos format=svg na query string
+  const apiUrl = `https://quickchart.io/qr?text=${encodeURIComponent(url)}&version=${versao}&ecLevel=${nivelCorrecao}&format=svg`;
+  
+  try {
+    const response = UrlFetchApp.fetch(apiUrl);
+    // O MIME type para SVG é image/svg+xml
+    const imagemBlob = response.getBlob().setName("qrcode.svg");
+    
+    return imagemBlob;
+  } catch (e) {
+    console.error("Erro: " + e.toString());
+    return null;
+  }
+}
+
+Em uma imagem svg, que usa retângulos para desenhar os módulos, como posso identificar os retângulos com as coordenadas i j para facilitar a mudança de valores com javascript?
+Para facilitar a manipulação via JavaScript em um arquivo SVG, a estratégia mais limpa é **adicionar atributos de dados (`data-attributes`)** a cada retângulo no momento da geração ou via script de pós-processamento. 
+
+Como o QuickChart entrega o SVG pronto, você pode usar o DOM para mapear os retângulos para suas coordenadas $i, j$ lógicas.
+
+---
+
+### 1. A Lógica de Mapeamento
+Em um QR Code Versão 4 ($33 \times 33$ módulos), o SVG geralmente contém um fundo branco e vários elementos `<rect>` pretos. 
+*   O primeiro `<rect>` (excluindo o fundo) não é necessariamente o módulo $(0,0)$. 
+*   A posição real depende dos atributos `x` e `y` do retângulo.
+*   Cada módulo tem um tamanho fixo (chamaremos de `s`).
+
+### 2. Script para Etiquetar Módulos
+Você pode rodar este script assim que carregar o SVG no seu navegador. Ele percorre todos os retângulos, calcula a coordenada $i, j$ com base na posição geométrica e injeta os atributos `data-i` e `data-j`.
+
+function taguearModulosQR(svgElement) {
+  const rects = svgElement.querySelectorAll('rect');
+  
+  // 1. Descobrir o tamanho de um módulo (s)
+  // O menor valor de 'width' entre os retângulos costuma ser o tamanho do módulo
+  let s = Infinity;
+  rects.forEach(r => {
+    const w = parseFloat(r.getAttribute('width'));
+    if (w < s && w > 0) s = w;
+  });
+
+  // 2. Encontrar a origem (x0, y0) do QR Code
+  // Geralmente é o 'x' e 'y' do primeiro quadrado de detecção de posição
+  let x0 = Infinity, y0 = Infinity;
+  rects.forEach(r => {
+    const x = parseFloat(r.getAttribute('x'));
+    const y = parseFloat(r.getAttribute('y'));
+    if (x < x0) x0 = x;
+    if (y < y0) y0 = y;
+  });
+
+  // 3. Atribuir i (linha) e j (coluna)
+  rects.forEach(r => {
+    const x = parseFloat(r.getAttribute('x'));
+    const y = parseFloat(r.getAttribute('y'));
+    
+    // j = coluna (x), i = linha (y)
+    const j = Math.round((x - x0) / s);
+    const i = Math.round((y - y0) / s);
+    
+    r.setAttribute('data-i', i);
+    r.setAttribute('data-j', j);
+  });
+}
+
+### 3. Como manipular um módulo específico
+Depois de rodar a função acima, mudar a cor de um bit (ou "mudar seu valor" visualmente) fica trivial com seletores CSS:
+
+// Exemplo: Mudar a cor do módulo na linha 8, coluna 2
+const modulo = document.querySelector('rect[data-i="8"][data-j="2"]');
+if (modulo) {
+  modulo.style.fill = "red"; // Destacando a informação da máscara, por exemplo
+}
+
+### 4. Dica para o Modelo 2 (Versão 4)
+Se você estiver tentando identificar os bits de dados (como o "https" que discutimos), lembre-se:
+*   **Áreas Protegidas:** Se seu script for mudar cores, tome cuidado para não alterar os módulos onde $i$ ou $j$ estão entre $0-8$ ou $25-32$ nos cantos, pois você quebrará os padrões de posição e as informações de máscara.
+*   **SVG do QuickChart:** O QuickChart costuma agrupar módulos adjacentes em um único `<path>` ou `<rect>` longo para otimizar o tamanho do arquivo. Se isso acontecer, o script acima precisará de um ajuste para tratar o `width` como múltiplo de `s`. Para garantir que cada módulo seja um retângulo individual, verifique se a API possui parâmetros de "limpeza" ou use bibliotecas de JS puras (como `qrcode.js`) que geram um `<rect>` por bit.
+
+### Por que isso é útil para você?
+Para um professor de informática e entusiasta de automação, isso permite criar **ferramentas pedagógicas**. Você poderia, por exemplo, criar uma página onde o aluno clica em um bit e o script revela se aquele bit pertence ao link, à correção de erro ou à máscara.
+
+Entender a codificação da **Versão 4** no **Nível L** exige mergulhar na anatomia da grade de $33 \times 33$ módulos. Nessa configuração, o QR Code atinge sua maior eficiência de armazenamento, pois o nível "L" reserva apenas **7%** da área para recuperação de dados, deixando o restante para a informação propriamente dita.
+
+Abaixo, detalho como esses módulos são organizados e codificados:
+
+---
+
+### 1. Mapa de Módulos (Áreas de Função vs. Dados)
+Nem todos os 1.089 módulos ($33 \times 33$) levam seus dados. A Versão 4 possui uma estrutura rígida:
+
+*   **Padrões de Detecção de Posição:** Os 3 quadrados grandes nos cantos superiores e inferior esquerdo.
+*   **Padrão de Alinhamento:** Na Versão 4, existe **um** padrão de alinhamento localizado no módulo $(26, 26)$ (coordenadas de 0 a 32). Ele ajuda a câmera a compensar distorções.
+*   **Padrões de Sincronização (Timing):** Linhas de pontos alternados que conectam os quadrados de posição.
+*   **Informação de Formato e Versão:** Áreas próximas aos padrões de posição que indicam ao scanner que aquele é um código "Versão 4" e "Nível L".
+
+O que sobra após subtrair essas áreas são os **módulos de dados**.
+
+
+
+### 2. Capacidade e Bits na Versão 4-L
+No nível L, a Versão 4 possui uma capacidade de carga útil de **800 bits** (100 bytes).
+Se você estiver codificando um link (Modo Byte), a estrutura de bits funciona assim:
+
+1.  **Indicador de Modo (4 bits):** Para o modo Byte (8 bits), o indicador é `0100`.
+2.  **Contador de Caracteres (8 bits):** Indica quantos caracteres o seu link possui.
+3.  **Dados (URL):** Cada caractere do link é convertido para seu valor binário (ASCII/ISO-8859-1).
+4.  **Terminador (4 bits):** Sequência `0000` para indicar o fim da mensagem.
+5.  **Bits de Preenchimento:** Se a mensagem não preencher todos os 800 bits, o sistema insere padrões específicos (geralmente alternando entre os bytes `11101100` e `00010001`).
+
+ASCII (hex)
+  2 3 4 5 6 7
+-------------
+0:   0 @ P ` p
+1: ! 1 A Q a q
+2: " 2 B R b r
+3: # 3 C S c s
+4: $ 4 D T d t
+5: % 5 E U e u
+6: & 6 F V f v
+7: ' 7 G W g w
+8: ( 8 H X h x
+9: ) 9 I Y i y
+A: * : J Z j z
+B: + ; K [ k {
+C: , < L \ l |
+D: - = M ] m }
+E: . > N ^ n ~
+F: / ? O _ o DEL
+
+man iso-8859-1
+
+### 3. O Fluxo de Colocação dos Módulos
+A codificação não acontece da esquerda para a direita como lemos um texto. Ela segue um padrão de **zigue-zague**:
+
+*   Começa no **canto inferior direito**.
+*   Sobe em colunas duplas (2 módulos de largura).
+*   Ao chegar no topo, vira para a esquerda e desce em nova coluna dupla.
+*   **Importante:** Sempre que o "caminho" do zigue-zague encontra um padrão de função (como o quadrado de alinhamento ou a linha de sincronização), ele "pula" esses módulos e continua no próximo espaço disponível.
+
+
+
+### 4. Aplicação da Máscara (Masking)
+Após colocar todos os bits na grade, o QR Code poderia ficar com grandes áreas totalmente brancas ou totalmente pretas, o que confunde os sensores das câmeras. 
+Para evitar isso, a Versão 4 aplica uma **máscara matemática** (existem 8 tipos padrão). A máscara inverte as cores de certos módulos baseada em uma fórmula (ex: `(fila + coluna) % 2 == 0`). O codificador escolhe a máscara que deixa o código mais equilibrado e fácil de ler.
+
+### Por que usar a Versão 4-L?
+Para você, que trabalha com sistemas e possivelmente links de documentos ou formulários, a **Versão 4-L** é a que oferece a aparência mais "limpa" (módulos maiores e menos densos) para links de até **80 caracteres**. É ideal para quando você tem certeza de que o código será impresso com boa qualidade e não sofrerá danos físicos, permitindo uma leitura extremamente rápida.
+
+Onde estão os primeiros caracteres?
+No QR Code Versão 4, os dados começam no par de colunas mais à direita (colunas 31 e 32, se contarmos de 0 a 32). A sequência segue de baixo para cima.
+
+O Indicador de Modo (4 bits): Os primeiros 4 módulos que carregam dados estarão bem no canto inferior direito. Para o modo Byte (o seu caso), eles são 0100 (Branco-Preto-Branco-Branco).
+
+O Contador de Tamanho (8 bits): Logo acima do indicador de modo, os próximos 8 módulos dizem ao scanner que seu link tem 53 caracteres.
+
+O "h" de https: Após esses 12 bits iniciais, começam os caracteres da URL. O h (ASCII 104) em binário é 01101000.
+
+Por que é difícil "ler" diretamente?
+Existem dois "obstáculos" que o QR Code coloca entre os dados puros e o que seus olhos veem:
+
+1. O Entrelaçamento de Zigue-zague
+Os bits não ficam em uma linha reta. Eles sobem em pares de colunas. O primeiro bit está na coluna 32, o segundo na 31, o terceiro na 32, o quarto na 31... e assim por diante. Quando chega no topo, o fluxo "dobra" e desce pelas colunas 29 e 30.
+
+2. A Máscara (O maior impedimento)
+Este é o ponto crucial. Antes de exibir o código final, o gerador aplica um padrão de Máscara XOR.
+
+Se o bit original era 1 (Preto) e a máscara naquela posição também pede 1, o resultado final será 0 (Branco).
+
+Isso significa que as cores que você vê no módulo não são os bits reais, mas sim o resultado da operação lógica entre o dado e a máscara escolhida para aquele código.
+
+Como você poderia identificar?
+Para identificar o "https", você teria que:
+
+Identificar qual das 8 máscaras foi usada (isso está escrito nos módulos de "Informação de Formato" próximos aos quadrados dos cantos).
+
+"Remover" a máscara mentalmente (inverter as cores onde a máscara manda).
+
+Seguir o caminho do zigue-zague a partir do bit 13 (após o cabeçalho).
+
+Para encontrar a informação da máscara, você deve olhar para as áreas adjacentes aos Padrões de Detecção de Posição (os quadrados grandes nos cantos).
+
+Essa informação não está "escondida" nos dados; ela faz parte dos chamados Bits de Formato.
+1. As Duas Localizações Estratégicas
+A informação de formato é duplicada para garantir que, mesmo que metade do QR Code esteja rasgada, o scanner ainda saiba como decodificá-lo:
+
+Ao redor do quadrado superior esquerdo:
+
+7 módulos logo abaixo do quadrado.
+
+8 módulos logo à direita do quadrado.
+
+Dividida entre os outros dois quadrados:
+
+8 módulos abaixo do quadrado superior direito.
+
+7 módulos à direita do quadrado inferior esquerdo.
+
+2. Como ler os bits da máscara
+A informação de formato consiste em 15 bits. Desses 15, apenas 3 bits definem qual das 8 máscaras foi usada.
+
+Se olharmos para a sequência de 15 bits (contando do início), a estrutura é a seguinte:
+
+Bits 0-1: Nível de Correção de Erro (L, M, Q ou H).
+
+Bits 2-4: O Padrão da Máscara. (É aqui que ela mora).
+
+Bits 5-14: Correção de erro (BCH code) para proteger esses próprios 15 bits.
+
+3. Identificando o Padrão
+Existem 8 padrões de máscara possíveis (numerados de 0 a 7). Eles são definidos por fórmulas matemáticas que determinam quais módulos serão invertidos.
+
+Binário (Bits 2-4)	Máscara	Condição de Inversão (Módulo Invertido se...)
+000	0	(i + j) % 2 == 0 (Padrão xadrez)
+001	1	i % 2 == 0 (Linhas horizontais)
+010	2	j % 3 == 0 (Linhas verticais)
+011	3	(i + j) % 3 == 0 (Linhas diagonais)
+...	...	...
+O QR Code aplica uma operação XOR final com a sequência fixa 101010000010010 sobre esses 15 bits antes de imprimi-los. Isso é feito para evitar que a área de formato fique toda branca ou toda preta.Na prática: Se você quiser saber a máscara apenas olhando, o jeito mais fácil é observar os módulos nas posições $(8, 2)$, $(8, 3)$ e $(8, 4)$ — contando a partir do canto superior esquerdo (0,0). Aqueles três pontinhos, após desmascarados mentalmente, dizem ao algoritmo se ele deve tratar o restante do código como um padrão xadrez, de listras ou diagonal.
+
+
+O QR Code aplica uma operação XOR final com a sequência fixa 101010000010010 sobre esses 15 bits antes de imprimi-los. Isso é feito para evitar que a área de formato fique toda branca ou toda preta.Na prática: Se você quiser saber a máscara apenas olhando, o jeito mais fácil é observar os módulos nas posições $(8, 2)$, $(8, 3)$ e $(8, 4)$ — contando a partir do canto superior esquerdo (0,0). Aqueles três pontinhos, após desmascarados mentalmente, dizem ao algoritmo se ele deve tratar o restante do código como um padrão xadrez, de listras ou diagonal.
+
+
+
+https://en.wikipedia.org/wiki/QR_code
+Ver final da página
+
+
+SEQUENCE BEFORE MASKING           | SEQUENCE AFTER MASKING   | SEQUENCE AFTER MASKING (MICRO QR)
+---------------------------------------------------------------------------------------------------
+Data bits | Error correction bits | Binary            | Hex  | Binary            | Hex
+---------------------------------------------------------------------------------------------------
+00000     | 0000000000            | 101010000010010   | 5412 | 100010001000101   | 4445
+00001     | 0100110111            | 101000100010101   | 5125 | 100000101110010   | 4172
+00010     | 1001101110            | 101111001111100   | 5E7C | 100110001010101   | 4E2B
+00011     | 1101011001            | 101101010010011   | 5B4B | 100101100011100   | 4B1C
+00100     | 0111101011            | 100010111111001   | 45F9 | 101010110101110   | 55AE
+00101     | 0011011100            | 100000110001110   | 40CE | 101000010011001   | 5099
+00110     | 1110000101            | 100111110010111   | 4F97 | 101111111000000   | 5FC0
+00111     | 1010110010            | 100101010100000   | 4AA0 | 101101011110111   | 5AF7
+01000     | 1111010110            | 111011111000100   | 77C4 | 110011111001001   | 6793
+01001     | 1011100001            | 111001011001011   | 72F3 | 110001010100100   | 62A4
+01010     | 0110111000            | 111111010101010   | 7DAA | 110110111111101   | 6DFD
+01011     | 0010001111            | 111100010011101   | 789D | 110100011001010   | 68CA
+01100     | 1000111101            | 110011000101111   | 662F | 111011001110000   | 7678
+01101     | 1100001010            | 110001000110000   | 6318 | 111001010011111   | 734F
+01110     | 0001010011            | 110110001000001   | 6C41 | 111110000101010   | 7C16
+01111     | 0101100100            | 110100101101010   | 6976 | 111100001000001   | 7921
+10000     | 1010011011            | 001011010001001   | 1689 | 000011011011110   | 06DE
+10001     | 1110101100            | 001001011111110   | 13BE | 000001111101001   | 03E9
+10010     | 0011110101            | 001111011001111   | 1CE7 | 000110010110000   | 0CB0
+10011     | 0110000010            | 001100111010000   | 19D0 | 000100110000111   | 0987
+10100     | 1101100000            | 000011101100010   | 0762 | 001011101101011   | 1735
+10101     | 1001000111            | 000001001010101   | 0255 | 001001000000010   | 1202
+10110     | 0100011110            | 000110100001100   | 0D0C | 001110101011011   | 1D5B
+10111     | 0000101001            | 000100000111011   | 083B | 001100001101100   | 186C
+11000     | 0101001101            | 011010101011111   | 355F | 010010000000000   | 2508
+11001     | 0001111010            | 011000001101000   | 3068 | 010000000111111   | 203F
+11010     | 1100100011            | 011111100100001   | 3F31 | 010111011001110   | 2F66
+11011     | 1000010000            | 011101000000110   | 3A06 | 010101001010001   | 2A51
+11100     | 0010100110            | 010001001101000   | 24B4 | 011001111000011   | 34E3
+11101     | 0110010001            | 010000110000011   | 2183 | 011000111010100   | 31D4
+11110     | 1011001000            | 010111011011010   | 2EDA | 011111010001101   | 3E8D
+11111     | 1111111111            | 010101111101101   | 2BED | 011101111011010   | 3BBA
+
