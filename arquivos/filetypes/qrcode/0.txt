@@ -1,0 +1,1 @@
+Entender como dados são codificados.
