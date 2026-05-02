@@ -1,0 +1,96 @@
+Para criar um "Hello World" funcional para UEFI, você precisará de um ambiente Linux (como o Debian que você costuma utilizar) com o compilador **GCC** e o pacote **GNU-EFI**, que fornece os headers necessários baseados na especificação que você está estudando[cite: 1].
+
+---
+
+### 1. O Código em C (`hello.c`)
+
+Este código implementa exatamente o fluxo de navegação pela `SystemTable` e o uso do protocolo `ConOut` que discutimos[cite: 1].
+
+```c
+#include <efi.h>
+#include <efilib.h>
+
+EFI_STATUS
+EFIAPI
+efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
+    // Inicializa a biblioteca GNU-EFI (opcional, mas recomendada)
+    InitializeLib(ImageHandle, SystemTable);
+
+    // Acessa o SystemTable -> ConOut -> chama OutputString
+    // O prefixo L indica que a string é Unicode (UCS-2)
+    SystemTable->ConOut->OutputString(SystemTable->ConOut, L"Hello World da UEFI!\r\n");
+
+    return EFI_SUCCESS;
+}
+```
+
+---
+
+### 2. Compilação com GCC
+
+A compilação para UEFI é diferente de um binário Linux comum. Você precisa gerar um arquivo **Shared Object (.so)** e depois convertê-lo para o formato **PE/COFF** (o formato `.efi`).
+
+Instale as dependências:
+```bash
+sudo apt-get install gnu-efi build-essential
+```
+
+Comandos para compilar (exemplo para x86_64):
+
+1. **Compilar o objeto:**
+   ```bash
+   gcc -I/usr/include/efi -I/usr/include/efi/x86_64 -fpic -ffreestanding -fno-stack-protector -fno-stack-check -fshort-wchar -mno-red-zone -maccumulate-outgoing-args -c hello.c -o hello.o
+   ```
+
+2. **Linkar o binário:**
+   ```bash
+   ld -shared -Bsymbolic -L/usr/lib -T /usr/lib/elf_x86_64_efi.lds /usr/lib/crt0-efi-x86_64.o hello.o -o hello.so -lgnuefi -lefi
+   ```
+
+3. **Gerar o arquivo .efi:**
+   ```bash
+   objcopy -j .text -j .sdata -j .data -j .dynamic -j .dynsym  -j .rel -j .rela -j .reloc --target=efi-app-x86_64 hello.so hello.efi
+   ```
+
+---
+
+### 3. Rodando no QEMU
+
+Para rodar o `.efi`, o QEMU precisa de um firmware UEFI (chamado **OVMF**).
+
+
+
+1. **Instale o firmware OVMF:**
+   ```bash
+   sudo apt-get install ovmf
+   ```
+
+2. **Prepare a estrutura de pastas:**
+   A UEFI procura por arquivos em locais específicos. Vamos simular um pendrive em uma pasta chamada `iso`:
+   ```bash
+   mkdir -p iso/EFI/BOOT
+   cp hello.efi iso/EFI/BOOT/BOOTX64.EFI
+   ```
+
+3. **Execute o QEMU:**
+   ```bash
+   qemu-system-x86_64 -pflash /usr/share/ovmf/OVMF.fd -drive file=fat:rw:iso,format=raw
+   ```
+
+**O que acontece aqui:**
+*   `-pflash`: Carrega o firmware UEFI (OVMF)[cite: 1].
+*   `-drive file=fat:rw:iso`: Cria uma unidade de disco virtual formatada em FAT (o único sistema de arquivos que a UEFI entende nativamente) contendo sua pasta `iso`.
+*   O firmware encontrará automaticamente o arquivo em `/EFI/BOOT/BOOTX64.EFI` e o executará, exibindo sua mensagem na tela.
+
+
+chatgpt sugere
+mkdir -p esp/EFI/BOOT
+cp hello.efi esp/EFI/BOOT/BOOTX64.EFI
+dd if=/dev/zero of=fat.img bs=1M count=64
+mkfs.vfat fat.img
+mmd -i fat.img ::/EFI
+mmd -i fat.img ::/EFI/BOOT
+mcopy -i fat.img esp/EFI/BOOT/BOOTX64.EFI ::/EFI/BOOT/
+qemu-system-x86_64 \
+  -bios /usr/share/OVMF/OVMF_CODE.fd \
+  -drive format=raw,file=fat.img
