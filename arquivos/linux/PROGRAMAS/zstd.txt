@@ -1,0 +1,36 @@
+substituto para o gzip
+
+sudo apt-get update
+sudo apt-get install zstd
+
+O que vem no pacote?
+zstd: O binário principal para compressão e descompressão.
+zstdgrep: Para buscar textos dentro de arquivos comprimidos sem precisar extraí-los primeiro.
+zstdcat: Para visualizar o conteúdo de um arquivo comprimido no terminal.
+Links simbólicos: Frequentemente inclui o unzstd (equivalente ao gunzip).
+
+Para comprimir: zstd arquivo.txt (gera arquivo.txt.zst)
+Para descompactar: zstd -d arquivo.txt.zst ou unzstd arquivo.txt.zst
+
+zstd --ultra -22 arquivo.ext
+Atenção: O nível 22 pode consumir vários gigabytes de RAM durante o processo de compressão. Certifique-se de que sua máquina aguenta o processo.
+
+zstd -22 --ultra --long arquivo.ext
+Isso é ideal para backups de bancos de dados ou logs gigantescos.
+
+Multi-thread
+zstd -22 --ultra --long -T0 arquivo.ext
+
+Se você tem milhares de arquivos pequenos e muito parecidos (como arquivos JSON, registros de configuração ou pequenas entradas de log), comprimi-los individualmente com o nível 22 não será eficiente porque o algoritmo não tem "histórico" suficiente em cada arquivo para encontrar padrões. O Zstandard permite criar um dicionário baseado em amostras para otimizar a compressão desses arquivos pequenos.
+Passo a passo:
+Treinar o dicionário:
+Bashzstd --train pasta_com_amostras/* -o meu_dicionario
+Comprimir usando o dicionário:
+Bashzstd -22 -D meu_dicionario arquivo_novo.json
+Isso pode reduzir arquivos pequenos a frações do tamanho que o gzip conseguiria.
+
+-22  Nível máximo de compressão.
+--ultra  Desbloqueia os níveis acima de 19.
+--long  Ativa a janela de busca estendida (ótimo para arquivos > 128MB).
+-T0  Usa todos os núcleos da CPU para não demorar uma eternidade.
+--adapt(Opcional)  Ajusta o nível dinamicamente se houver gargalo de escrita no disco.
