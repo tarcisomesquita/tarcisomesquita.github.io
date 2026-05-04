@@ -1,5 +1,15 @@
 substituto para o gzip
 
+ 48M log_page_2026-04-19.tsv
+6.4M log_page_2026-04-19.tsv.zip (zip -o log_page_2026-04-19.tsv.zip log_page_2026-04-19.tsv)
+6.4M log_page_2026-04-19.tsv.gz  (gzip --keep log_page_2026-04-19.tsv)
+4.1M log_page_2026-04-19.tsv.zst (zstd -22 --ultra --long log_page_2026-04-19.tsv # demorou e gastou RAM)
+4.0M log_page_2026-04-19.tsv.xz  (cat log_page_2026-04-19.tsv | xz --compress --to-stdout > log_page_2026-04-19.tsv.xz)
+3.8M log_page_2026-04-19.tsv.7z  (7z a -t7z -m0=lzma2 -mx=9 -md=128m -mfb=273 -ms=on -mmt=on log_page_2026-04-19.tsv.7z log_page_2026-04-19.tsv)
+
+sudo apt-get install zpaq
+zpaq add arquivo_final.zpaq arquivo_de_log.txt -method 5
+
 sudo apt-get update
 sudo apt-get install zstd
 
