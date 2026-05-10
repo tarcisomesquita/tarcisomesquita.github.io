@@ -143,3 +143,44 @@ const hasClass = new Property(
 //console.log(thing.label); // "coisa"
 //console.log(format.comment); // "tm:format determina o formato de um literal..."
 //console.log(sameAs instanceof Resource); // true
+// class_obj instanceof Object.getPrototypeOf(thing).constructor     // false
+// thing     instanceof Object.getPrototypeOf(class_obj).constructor // true
+// literal.constructor.name // 'Thing'
+
+const dicionario = {
+  "coisa": thing,
+  "literal": literal,
+  "resource": resource,
+  "classe": class_obj,
+  "propriedade": property,
+  "tipo": type,
+  "rótulo": label
+  // ... adicione as outras palavras
+};
+
+function validarSentenca(sentenca) {
+  const palavras = sentenca.toLowerCase().split(" ");
+  
+  // Exemplo simples: Sujeito (0) -> Predicado/Propriedade (1) -> Objeto (2)
+  const sujeito = dicionario[palavras[0]];
+  const predicado = dicionario[palavras[1]];
+  const objeto = dicionario[palavras[2]];
+
+  if (!sujeito || !predicado || !objeto) {
+    return "Erro: Uma das palavras não existe na base de dados.";
+  }
+
+  // Validação semântica baseada na sua classe 'Property'
+  // Verificamos se o predicado exige que o sujeito seja de uma classe específica
+  const classeExigidaPeloPredicado = predicado.hasClass; // ex: "tm:resource"
+  
+  if (sujeito.type === classeExigidaPeloPredicado) {
+    return `Válido: O ${sujeito.label} pode ter a propriedade ${predicado.label}.`;
+  } else {
+    return `Inválido: A propriedade ${predicado.label} pertence a ${classeExigidaPeloPredicado}, mas foi usada em um ${sujeito.type}.`;
+  }
+}
+
+// Testando:
+console.log(validarSentenca("resource tipo classe")); 
+// Saída: Válido: O resource pode ter a propriedade tipo.
