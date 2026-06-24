@@ -1,0 +1,18 @@
+https://www.genialinvestimentos.com.br/trader/plataformas/meta-trader
+
+https://www.mql5.com/pt/docs
+
+Exibir > Observação do mercado
+Botão direito > Ocultar tudo
+Clique em + para adicionar um ativo
+
+Botão direito (sobre o ativo) > janela do gráfico | Livro de Ofertas | nova ordem
+
+Em Livro de Ofertas, clicar em "mostrar em uma janela todas as negociações"
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Botão Algodrading, ativar (permite negociação via script).
+
+Exibir > Navegador (explorar Scripts e Consultor Expert. Arrastar e soltar sobre um gráfico)
+Exibir > Caixa de Ferramentas (ver Experts, é onde mostra os Prints dos scripts)
