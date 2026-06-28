@@ -1,0 +1,82 @@
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+pointerdown -> mousedown -> pointerup -> mouseup -> click
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+// Lista de eventos suspeitos para monitorar
+const eventosParaEspionar = ['click', 'mousedown', 'mouseup', 'pointerdown', 'focusin'];
+
+eventosParaEspionar.forEach(tipoEvento => {
+    document.addEventListener(tipoEvento, (e) => {
+        console.group(`🔥 Evento Capturado: ${tipoEvento}`);
+        console.log("Alvo (target - onde você clicou):", e.target);
+        console.log("Caminho (path):", e.composedPath());
+        console.log("Coordenadas:", e.clientX, e.clientY);
+        console.log("Detalhes do evento:", e);
+        console.groupEnd();
+    }, { capture: true }); // 'capture: true' pega o evento na descida, antes do framework
+});
+
+console.log("🕵️ Modo espião ativado! Clique na div agora.");
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+monitorEvents($0, ["mouse", "click", "pointer"]);
+
+unmonitorEvents($0);
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+$0.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true}))
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Interceptar a API do Canvas
+const ctx = document.querySelector('canvas').getContext('2d');
+const oldDrawImage = ctx.drawImage;
+ctx.drawImage = function(...args) {
+  console.log('drawImage chamado com:', args);
+  debugger; // pausa o código aqui
+  return oldDrawImage.apply(this, args);
+};
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Capturar a imagem como base64
+<canvas id="meuCanvas" width="200" height="200"></canvas>
+<img id="preview">
+
+<script>
+  const canvas = document.getElementById('meuCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // desenha algo no canvas
+  ctx.fillStyle = 'orange';
+  ctx.fillRect(20, 20, 160, 160);
+
+  // captura como imagem base64
+  const dataURL = canvas.toDataURL('image/png');
+
+  // mostra a imagem capturada
+  document.getElementById('preview').src = dataURL;
+
+  console.log(dataURL); // exibe a string base64 da imagem
+</script>
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Fazer download da imagem como arquivo .png
+<button id="baixar">Baixar imagem</button>
+
+<script>
+  const canvas = document.getElementById('meuCanvas');
+  document.getElementById('baixar').onclick = () => {
+    const link = document.createElement('a');
+    link.download = 'canvas.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+</script>
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
