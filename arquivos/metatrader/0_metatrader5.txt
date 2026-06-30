@@ -16,3 +16,19 @@ Botão Algodrading, ativar (permite negociação via script).
 
 Exibir > Navegador (explorar Scripts e Consultor Expert. Arrastar e soltar sobre um gráfico)
 Exibir > Caixa de Ferramentas (ver Experts, é onde mostra os Prints dos scripts)
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+Alguns códigos de scalping para estudar
+
+https://www.mql5.com/pt/code/10503
+Simple Scalping EA
+
+https://www.mql5.com/pt/code/27379
+Scalping With Virtual Pending Orders
+
+https://www.mql5.com/pt/code/26461
+5 Minutes Scalping System
+
+https://www.mql5.com/pt/code/71860
+Precision Sniper
