@@ -7,7 +7,7 @@ https://www.genialinvestimentos.com.br/trader/plataformas/meta-trader
 https://www.mql5.com/pt/docs
 https://www.mql5.com/pt/docs/basis
 https://www.mql5.com/pt/docs/trading
-
+https://www.mql5.com/pt/docs/basis/function/events
 
 Exibir > Observação do mercado
 Botão direito > Ocultar tudo
@@ -94,5 +94,87 @@ Para o scalping agressivo que você quer fazer, o Gráfico de Ticks ou tempos cu
 Imagine que você configurou o robô no gráfico de 10 segundos:O cronômetro do MT5 começa: 0s... 3s... 7s... Durante esse tempo, o preço sobe e desce no livro. A fórmula da média ignora essas oscilações para o cálculo oficial.No segundo 10, aquele bloco de tempo acaba. O MT5 registra qual foi o último preço negociado exatamente no milissegundo final desses 10 segundos. Esse valor é chamado de Preço de Fechamento (PRICE_CLOSE).É esse preço final fixo que entra na fórmula matemática que vimos antes.
 
 No MQL5, nós medimos o volume usando o iVolume
+
+Para Gráficos de Ticks: Se você quer que o robô tome decisões a cada negócio puro do Times & Trades, a lógica muda. Você não usará funções de períodos como iMA. O robô usará a função nativa CopyTicks() dentro do evento OnTick(). Ela puxa um array com o preço exato e o volume real dos últimos X negócios fechados na B3.
+
 Em ações, existem dois tipos de volume:Volume de Ticks (Quantidade de negócios): Quantas vezes o Times & Trades piscou.Volume Real (Quantidade de ações): Quantas ações mudaram de dono (ex: 10.000 ações da MGLU3). Este é o que importa para você.
+
+Em Gráficos > Periodicidade não tem tempos menores que 1 minuto.
+
+A função CopyTicks() serve para o robô extrair diretamente do servidor da Genial uma "fotografia" em array dos últimos negócios ocorridos na B3. Ela lê exatamente o que você vê piscando na tela: preços de execução e volumes reais.
+Ao contrário das barras de tempo, a CopyTicks() preenche um array baseado em uma struct nativa do MQL5 chamada MqlTick. Cada elemento do seu array terá as seguintes variáveis públicas:
+struct MqlTick {
+   datetime     time;          // Hora do negócio em segundos
+   double       bid;           // Preço atual de COMPRA no topo do livro
+   double       ask;           // Preço atual de VENDA no topo do livro
+   double       last;          // Preço exato do ÚLTIMO negócio realizado (Times & Trades)
+   ulong        volume;        // Volume de Ticks
+   long         time_msc;      // Hora do negócio em milissegundos (essencial para scalping)
+   uint         flags;         // O que mudou? (Se foi agressão de compra, venda, mudança no livro, etc)
+   long         real_volume;   // VOLUME REAL (Quantidade de ações exata negociada na B3)
+};
+
+int CopyTicks(string symbol_name, MqlTick &ticks_array[], uint flags=COPY_TICKS_ALL, ulong from=0, uint count=0);
+
+Ordenação do Array: Na CopyTicks(), o índice 0 é o negócio mais antigo capturado, e o último índice (ex: se pediu 5, o índice 4) é o negócio mais recente, que acabou de acontecer.
+
+//+------------------------------------------------------------------+
+//| Expert tick function                                             |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+   // Cria um array dinâmico do tipo MqlTick para receber os dados
+   MqlTick array_negocios[];
+   
+   // Solicitamos os últimos 5 negócios ocorridos no mercado (parâmetro count = 5)
+   // Passando from = 0, ele conta do momento atual para o passado
+   int total_copiado = CopyTicks(_Symbol, array_negocios, COPY_TICKS_ALL, 0, 5);
+   
+   // Proteção: se o mercado estiver sem liquidez e não retornar os 5, interrompe
+   if(total_copiado < 5) return;
+   
+   // Posições no Array:
+   // array_negocios[4] -> Último negócio (Agora)
+   // array_negocios[3] -> Negócio anterior
+   // ...
+   // array_negocios[0] -> O mais antigo dos 5
+   
+   double preco_ultimo_negocio = array_negocios[4].last;
+   long   volume_ultimo_negocio = array_negocios[4].real_volume; // Volume real na B3
+   
+   // Exemplo de Lógica de Scalping por Fluxo: 
+   // Se o último negócio saiu a um preço maior que o anterior E o volume foi "pesado" (Ex: > 5000 ações)
+   if(preco_ultimo_negocio > array_negocios[3].last && volume_ultimo_negocio >= 5000)
+   {
+      // Uma agressão forte de compra deslocou o preço para cima
+      Comment("ALERTA DE FLUXO: Preço subiu para ", preco_ultimo_negocio, " com volume de ", volume_ultimo_negocio, " ações!");
+      
+      // Aqui você usará o preço 'array_negocios[4].bid' para armar sua ordem LIMIT de Compra na fila
+   }
+}
+
+
+OnTick() dispara centenas de vezes por segundo, muitas vezes ele é ativado apenas porque alguém mudou uma oferta no livro (alteração de bid ou ask), sem que um negócio real tenha acontecido no Times & Trades
+Para seu robô de scalping não perder processamento à toa, você pode ler a variável flags. Se o bit TICK_FLAG_LAST estiver ativo, significa que aquela linha do array representa uma execução real de negócio.
+
+// Verifica se o tick atual foi uma negociação real na B3
+bool foi_negocio_real = (array_negocios[4].flags & TICK_FLAG_LAST) != 0;
+
+if(foi_negocio_real) {
+   // Roda sua lógica matemática de scalping
+}
+
+Como evitar ordens repetidas?
+Controle de Estado (Máquina de Estados Simples): Variáveis globais para rastrear se já temos uma ordem aberta ou posicionada na fila.
+Uso das Funções Posição e Ordem do MQL5: Verificar se a corretora está processando algo antes de tomar uma nova decisão.
+
+Adicionaremos as funções nativas PositionsTotal() (que verifica se já estamos comprados ou vendidos) e OrdersTotal() (que verifica se temos alguma ordem LIMIT pendente na fila do livro aguardando execução).
+
+Se o volume do último negócio foi muito alto, você quer colocar a ordem LIMIT um centavo mais cara para tentar garantir a execução rápida na fila
+
+https://www.mql5.com/pt/articles/14167
+trailing-stop
+
+https://www.mql5.com/pt/articles/15895
+Scalping OrderFlow
 
