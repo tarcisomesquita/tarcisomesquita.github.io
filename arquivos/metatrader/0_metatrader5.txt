@@ -1,6 +1,13 @@
+Por que escolher MetaTrader 5 (MT5) em vez do Profit (Nelogica)
+A plataforma é gratuita e permite criar robôs.
+A profit tem taxa, é mais manual, embora tenha foco na B3.
+
 https://www.genialinvestimentos.com.br/trader/plataformas/meta-trader
 
 https://www.mql5.com/pt/docs
+https://www.mql5.com/pt/docs/basis
+https://www.mql5.com/pt/docs/trading
+
 
 Exibir > Observação do mercado
 Botão direito > Ocultar tudo
@@ -10,6 +17,7 @@ Botão direito (sobre o ativo) > janela do gráfico | Livro de Ofertas | nova or
 
 Em Livro de Ofertas, clicar em "mostrar em uma janela todas as negociações"
 
+o Gráfico de Ticks fica na janela Observação do mercado
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 Botão Algodrading, ativar (permite negociação via script).
@@ -32,3 +40,59 @@ https://www.mql5.com/pt/code/26461
 
 https://www.mql5.com/pt/code/71860
 Precision Sniper
+
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+No MQL5, para usar qualquer indicador técnico dentro de um robô, você sempre segue três passos simples: criar o identificador (handle) no início, copiar os dados atuais para um array no evento de cotação e ler os valores para tomar a decisão.
+
+Em tempos gráficos extremamente curtos como o de 1 minuto, o mercado gera muito ruído, então a melhor alternativa técnica é trocar a Média Móvel Simples (SMA) pela Média Móvel Exponencial (EMA), que reage muito mais rápido às mudanças de preço.
+
+O Filtro do Spread (Custos Invisíveis): Ações abaixo de R$ 10,00 costumam ter variação mínima de R$ 0,01. Se você compra uma ação a R$ 5,00 e vende a R$ 5,01, seu ganho é de apenas 0,2%. Se o spread (diferença entre o preço de compra e venda no livro) for de R$ 0,02, o seu robô já entra perdendo. Dica: No código de envio de ordens, use sempre ordens do tipo LIMIT no preço do topo do livro, evite ordens a mercado (MARKET) para não sofrer rejeição ou prejuízo por atraso.
+
+EMAt = α * preço actual + (1- α) * EMA t-1
+Onde:
+α é uma constante suavizada com um valor entre 0 e 1. A fórmula é [2/(número de períodos escolhidos + 1)].
+EMA t-1 é a EMA para o período anterior.
+
+As duas estratégias mais eficientes e simples de programar usando a EMA no MT5 para scalping de ações são: O Cruzamento de Duas Médias e o Preço com Média como Suporte/Resistência.
+// array_rapida[1] é a média de 9 períodos do candle fechado anterior
+// array_lenta[1] é a média de 21 períodos do candle fechado anterior
+
+bool compra = (array_rapida[1] > array_lenta[1]) && (array_rapida[2] <= array_lenta[2]);
+bool venda  = (array_rapida[1] < array_lenta[1]) && (array_rapida[2] >= array_lenta[2]);
+
+if(compra) {
+   // Envia ordem LIMIT de Compra no preço atual do livro
+}
+if(venda) {
+   // Envia ordem LIMIT de Venda no preço atual do livro
+}
+
+Estratégia 2: O Preço "Atolado" na Média (Scalping de Retorno)
+Para ações baratas (abaixo de R$ 10,00), o preço costuma respeitar uma única EMA longa (como a EMA de 20 ou 50 períodos) como uma barreira física. Em vez de esperar um cruzamento, o robô opera o "repique" do preço na média.Sinal de Compra: O preço da ação cai, toca na EMA, mas o candle fecha acima dela. O robô entende que a média segurou o preço e coloca uma ordem LIMIT de compra um centavo acima da mínima desse candle.Sinal de Venda: O preço sobe, toca na EMA por baixo, mas o candle fecha abaixo dela. O robô coloca uma ordem LIMIT de venda um centavo abaixo da máxima desse candle.Traduzindo para o Código MQL5:
+// array_fechamento[1] é o preço de fechamento do último minuto
+// array_media[1] é o valor da EMA de 20 períodos do último minuto
+
+if(array_fechamento[1] > array_media[1] && array_minima[1] <= array_media[1]) {
+   // O preço tentou cair abaixo da média, mas fechou acima (Suporte)
+   // Sinal de COMPRA por repique
+}
+
+Cuidados Técnicos Importantes no Gráfico de 1 Minuto
+Evite o Candle 0: Nunca use o array_media[0] ou array_fechamento[0] para tomar decisões de envio de ordem. Como o minuto atual ainda não acabou, a média vai subir e descer a cada segundo, fazendo seu robô abrir e fechar dezenas de ordens erradas por minuto (efeito chicote).
+Filtro de Inclinação: Médias móveis horizontais significam mercado lateralizado (sem volume). Para fazer scalping com segurança, você pode programar o robô para só operar se a diferença entre a média atual e a média de alguns candles atrás for maior que o spread (mostrando inclinação clara para cima ou para fora).
+
+
+2. Como é feito o cálculo matemático?Ao contrário da Média Simples (que soma tudo e divide pelo número de períodos), a Média Exponencial usa o valor da média anterior para calcular a nova média. Ela aplica um Multiplicador de Peso (K).A fórmula padrão da EMA é:\(\text{EMA}_{\text{atual}}=(\text{Preço\ Atual}\times K)+(\text{EMA}_{\text{anterior}}\times (1-K))\)O multiplicador \(K\) depende do período escolhido (Janela \(N\)):\(K=\frac{2}{N+1}\)Exemplo Prático com uma EMA de 9 períodos (\(N = 9\)):Primeiro, calculamos o peso (\(K\)): \(2 / (9 + 1) = \mathbf{0,20}\) (ou seja, o último minuto fechado tem 20% de peso em todo o cálculo).Imagine que a EMA do minuto anterior terminou em R$ 5,00.O novo candle de 1 minuto acaba de fechar a R$ 5,10.Cálculo da nova EMA:\(\text{EMA}_{\text{nova}}=(5,10\times 0,20)+(5,00\times 0,80)\)\(\text{EMA}_{\text{nova}}=1,02+4,00=\mathbf{5,02}\)Repare que mesmo o preço subindo forte para R$ 5,10, a média se moveu suavemente para R$ 5,02. Ela filtrou o ruído, mas já curvou para cima acompanhando a alta.
+
+
+Se o gráfico for de 1 Minuto (M1): 1 período = 1 minuto. A média olha os últimos 9 minutos. (Longo para scalping).
+Se o gráfico for de 10 Segundos (10S): 1 período = 10 segundos. A média olha os últimos 90 segundos.
+Se o gráfico for de Ticks (Gráfico de Negócios): 1 período = 1 negócio realizado. Se você configurar uma média de 9 períodos em um gráfico de ticks, ela calculará a média das últimas 9 negociações que aconteceram no Times & Trades, ignorando totalmente o relógio.
+Para o scalping agressivo que você quer fazer, o Gráfico de Ticks ou tempos curtíssimos (como 5 segundos) são os ideais.
+
+Imagine que você configurou o robô no gráfico de 10 segundos:O cronômetro do MT5 começa: 0s... 3s... 7s... Durante esse tempo, o preço sobe e desce no livro. A fórmula da média ignora essas oscilações para o cálculo oficial.No segundo 10, aquele bloco de tempo acaba. O MT5 registra qual foi o último preço negociado exatamente no milissegundo final desses 10 segundos. Esse valor é chamado de Preço de Fechamento (PRICE_CLOSE).É esse preço final fixo que entra na fórmula matemática que vimos antes.
+
+No MQL5, nós medimos o volume usando o iVolume
+Em ações, existem dois tipos de volume:Volume de Ticks (Quantidade de negócios): Quantas vezes o Times & Trades piscou.Volume Real (Quantidade de ações): Quantas ações mudaram de dono (ex: 10.000 ações da MGLU3). Este é o que importa para você.
+
