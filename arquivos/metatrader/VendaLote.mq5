@@ -6,8 +6,8 @@ void OnStart() {
   double preco = 3.68;
   double volume = 100.0;
   
-  Print("Comprando ", volume, " ações de ", ativo, " a R$ ", preco);
+  Print("Vendendo ", volume, " ações de ", ativo, " a R$ ", preco);
   
   if (trade.SellLimit(volume, preco, ativo)) Print("Ordem enviada com sucesso! Ticket: ", trade.ResultOrder());
-  else                                      Print("Falha ao enviar a ordem. Erro: ", trade.ResultRetcodeDescription());
+  else                                       Print("Falha ao enviar a ordem. Erro: ", trade.ResultRetcodeDescription());
 }
