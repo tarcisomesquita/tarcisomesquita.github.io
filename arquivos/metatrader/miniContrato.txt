@@ -1,0 +1,39 @@
+Mini Dólar (WDO)
+Mensal (vence no 1º dia útil de cada mês)
+1 ponto = R$ 10,00 por contrato (variação mínima de 0,5 ponto = R$ 5,00)
+
+Mini Índice (WIN)
+Bimestral (vence na 4ª feira mais próxima do dia 15 dos meses pares)
+1 ponto = R$ 0,20 por contrato (variação mínima de 5 pontos = R$ 1,00)
+
+siglas WINQ26 e WDOU26
+[Ativo (3 letras)] + [Mês de Vencimento (1 letra)] + [Ano (2 dígitos)]
+
+F	Janeiro
+G	Fevereiro
+H	Março
+J	Abril
+K	Maio
+M	Junho
+N	Julho
+Q	Agosto
+U	Setembro
+V	Outubro
+X	Novembro
+Z	Dezembro
+
+Mercado Aberto das 09h00 às 18h30
+com picos de alta volatilidade na abertura dos mercados nos EUA (geralmente às 10h30 ou 11h30, a depender do horário de verão americano) e no momento do cálculo da PTAX (ao longo da manhã, principalmente perto das 13h00).
+
+Ao atingir 70% do saldo total, a corretora encerra a sua operação automaticamente (zeragem compulsória)
+Para abrir a posição de 1 WDO, a corretora exige R$ 140,00 retidos em custódia. (portanto o saldo em conta deve ser maior que isso)
+Se o mercado oscilar 5 pontos contra você (perda de R$ 50,00), seu saldo cai para R$ 90,00. (acontecem QUEDAs muito MAIORes que 5 pontos)
+Como seu saldo (R$ 90,00) agora é menor do que a margem mínima para manter o contrato aberto (R$ 140,00), o algoritmo de risco identifica a insuficiência de margem e envia uma ordem a mercado para fechar sua posição antes que sua conta fique negativa.
+
+Prejuízo no Trade (5 pontos): -R$ 50,00
+Taxa de Zeragem Compulsória da Genial: -R$ 24,50 (taxa cobrada pela intervenção do robô de risco)
+Taxas de Registro/Emolumentos B3: -R$ 1,50
+Perda Total: -R$ 76,00 (Metade do seu saldo vai embora em um único trade).
+
+Paga 20% de Imposto de Renda (DARF, código 6015) sobre o lucro no mês.
+lucro = ganhos - perdas
